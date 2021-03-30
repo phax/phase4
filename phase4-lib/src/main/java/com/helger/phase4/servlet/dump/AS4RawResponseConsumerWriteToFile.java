@@ -17,37 +17,24 @@
 package com.helger.phase4.servlet.dump;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.time.OffsetDateTime;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.CHttp;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.file.FileHelper;
-import com.helger.commons.io.file.FilenameHelper;
-import com.helger.commons.string.StringHelper;
-import com.helger.datetime.util.PDTIOHelper;
-import com.helger.phase4.client.AS4ClientSentMessage;
-import com.helger.phase4.client.AbstractAS4RawResponseConsumer;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Example implementation of {@link IAS4RawResponseConsumer} writing to a file.
- **
+ * Deprecated version. Use the one in package
+ * <code>com.helger.phase4.dump</code>.
+ *
  * @author Philip Helger
+ * @deprecated In v1.3.0 - use the class in package
+ *             <code>com.helger.phase4.dump</code>
  */
-public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseConsumer <AS4RawResponseConsumerWriteToFile>
+@Deprecated
+public class AS4RawResponseConsumerWriteToFile extends com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile
 {
   /**
    * Callback interface to create a file based on the provided metadata.
@@ -56,41 +43,15 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
    * @since 0.10.2
    */
   @FunctionalInterface
-  public interface IFileProvider
+  @Deprecated
+  public interface IFileProvider extends com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile.IFileProvider
   {
-    /**
-     * Get the {@link File} to write the raw response to. The filename must be
-     * globally unique. The resulting file should be an absolute path.
-     *
-     * @param sAS4MessageID
-     *        The AS4 message ID that was send out. Neither <code>null</code>
-     *        nor empty.
-     * @return A non-<code>null</code> {@link File}.
-     * @see AS4Configuration#getDumpBasePath()
-     */
-    @Nonnull
-    File createFile (@Nonnull String sAS4MessageID);
-
     @Nonnull
     static String getFilename (@Nonnull final String sAS4MessageID)
     {
-      final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-      return aNow.getYear () +
-             "/" +
-             StringHelper.getLeadingZero (aNow.getMonthValue (), 2) +
-             "/" +
-             StringHelper.getLeadingZero (aNow.getDayOfMonth (), 2) +
-             "/" +
-             PDTIOHelper.getTimeForFilename (aNow.toLocalTime ()) +
-             "-" +
-             FilenameHelper.getAsSecureValidASCIIFilename (sAS4MessageID) +
-             ".as4response";
+      return com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile.IFileProvider.getFilename (sAS4MessageID);
     }
   }
-
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4RawResponseConsumerWriteToFile.class);
-
-  private final IFileProvider m_aFileProvider;
 
   /**
    * Default constructor. Writes the files to the AS4 configured data path +
@@ -99,10 +60,7 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
    * @see AS4Configuration#getDumpBasePathFile()
    */
   public AS4RawResponseConsumerWriteToFile ()
-  {
-    this (sMessageID -> new File (AS4Configuration.getDumpBasePathFile (),
-                                  AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID)));
-  }
+  {}
 
   /**
    * Constructor with a custom file provider.
@@ -113,66 +71,7 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
    */
   public AS4RawResponseConsumerWriteToFile (@Nonnull final IFileProvider aFileProvider)
   {
-    ValueEnforcer.notNull (aFileProvider, "FileProvider");
-    m_aFileProvider = aFileProvider;
-  }
-
-  public void handleResponse (@Nonnull final AS4ClientSentMessage <byte []> aResponseEntity) throws Phase4Exception
-  {
-    final boolean bUseStatusLine = isHandleStatusLine () && aResponseEntity.hasResponseStatusLine ();
-    final boolean bUseHttpHeaders = isHandleHttpHeaders () && aResponseEntity.getResponseHeaders ().isNotEmpty ();
-    final boolean bUseBody = aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0;
-
-    if (bUseStatusLine || bUseHttpHeaders || bUseBody)
-    {
-      final String sSentMessageID = aResponseEntity.getMessageID ();
-
-      // Use the configured data path as the base
-      final File aResponseFile = m_aFileProvider.createFile (sSentMessageID);
-      if (LOGGER.isInfoEnabled ())
-        LOGGER.info ("Logging AS4 response to '" + aResponseFile.getAbsolutePath () + "'");
-
-      try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aResponseFile))
-      {
-        if (bUseStatusLine)
-        {
-          // Write the status line
-          aOS.write (aResponseEntity.getResponseStatusLine ().toString ().getBytes (CHttp.HTTP_CHARSET));
-        }
-
-        if (bUseHttpHeaders)
-        {
-          // Write the response headers
-          for (final Map.Entry <String, ICommonsList <String>> aEntry : aResponseEntity.getResponseHeaders ())
-          {
-            final String sHeader = aEntry.getKey ();
-            for (final String sValue : aEntry.getValue ())
-            {
-              // By default quoting is disabled
-              final boolean bQuoteIfNecessary = false;
-              final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
-              aOS.write ((sHeader + HttpHeaderMap.SEPARATOR_KEY_VALUE + sUnifiedValue + CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
-            }
-          }
-        }
-
-        if ((bUseStatusLine || bUseHttpHeaders) && bUseBody)
-        {
-          // Separator line
-          aOS.write (CHttp.EOL.getBytes (CHttp.HTTP_CHARSET));
-        }
-
-        if (bUseBody)
-        {
-          // Write the main content
-          aOS.write (aResponseEntity.getResponse ());
-        }
-      }
-      catch (final IOException ex)
-      {
-        throw new Phase4Exception ("Error writing AS4 response file to '" + aResponseFile.getAbsolutePath () + "'", ex);
-      }
-    }
+    super (aFileProvider);
   }
 
   /**
@@ -187,6 +86,7 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
   public static AS4RawResponseConsumerWriteToFile createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4RawResponseConsumerWriteToFile (sMessageID -> new File (aBaseDirectory, IFileProvider.getFilename (sMessageID)));
+    return new AS4RawResponseConsumerWriteToFile (sMessageID -> new File (aBaseDirectory,
+                                                                          com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile.IFileProvider.getFilename (sMessageID)));
   }
 }

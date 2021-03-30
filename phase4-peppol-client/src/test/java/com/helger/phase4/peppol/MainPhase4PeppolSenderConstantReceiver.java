@@ -24,10 +24,10 @@ import org.w3c.dom.Element;
 
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
+import com.helger.phase4.dump.AS4IncomingDumperFileBased;
+import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
-import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phive.peppol.PeppolValidation3_11_1;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.MockServletContext;

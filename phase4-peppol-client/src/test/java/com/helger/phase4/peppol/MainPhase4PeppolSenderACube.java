@@ -22,13 +22,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AS4DumpManager;
+import com.helger.phase4.dump.AS4IncomingDumperFileBased;
+import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.dump.AS4OutgoingDumperFileBased.IFileProvider;
+import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
-import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -63,6 +66,12 @@ public final class MainPhase4PeppolSenderACube
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
+                                  .sbdBytesConsumer (x -> SimpleFileIO.writeFile (new File (AS4Configuration.getDumpBasePathFile (),
+                                                                                            com.helger.phase4.dump.AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH +
+                                                                                                                                     IFileProvider.getFilename ("",
+                                                                                                                                                                1) +
+                                                                                                                                     ".sbdh"),
+                                                                                  x))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
