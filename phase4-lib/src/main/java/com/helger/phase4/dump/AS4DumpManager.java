@@ -30,6 +30,7 @@ import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.io.stream.WrappedInputStream;
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
@@ -102,6 +103,10 @@ public final class AS4DumpManager
    *        Request metadata. Never <code>null</code>.
    * @param aHttpHeaders
    *        the HTTP headers of the current request. Never <code>null</code>.
+   * @param aDumpOSHolder
+   *        A wrapper that holds the debug output stream. This can be used to
+   *        determine if the message should be dumped or not. Parameter was
+   *        added in v1.3.0.
    * @return the InputStream to be used. The caller is responsible for closing
    *         the stream. Never <code>null</code>.
    * @throws IOException
@@ -111,7 +116,8 @@ public final class AS4DumpManager
   public static InputStream getIncomingDumpAwareInputStream (@Nullable final IAS4IncomingDumper aIncomingDumper,
                                                              @Nonnull @WillNotClose final InputStream aRequestInputStream,
                                                              @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                             @Nonnull final HttpHeaderMap aHttpHeaders) throws IOException
+                                                             @Nonnull final HttpHeaderMap aHttpHeaders,
+                                                             @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
   {
     if (aIncomingDumper == null)
     {
@@ -126,6 +132,9 @@ public final class AS4DumpManager
       // No wrapping needed
       return aRequestInputStream;
     }
+
+    // Remember where we dump to
+    aDumpOSHolder.set (aOS);
 
     // Read and write at once
     return new WrappedInputStream (aRequestInputStream)

@@ -54,10 +54,10 @@ public interface IAS4IncomingDumper
 
   /**
    * Called after the request is finished. Can e.g. be used to cleanup resources
-   * belonging to the message. This method may not throw an exception. This
-   * method is called, also if
+   * belonging to the message. This method may not throw an exception. Since
+   * 1.3.0 this method is only called, if
    * {@link #onNewRequest(IAS4IncomingMessageMetadata, HttpHeaderMap)} returned
-   * <code>null</code>.
+   * non-<code>null</code>.
    *
    * @param aMessageMetadata
    *        Message metadata. Never <code>null</code>.

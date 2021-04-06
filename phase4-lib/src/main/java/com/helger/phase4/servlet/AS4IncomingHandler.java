@@ -18,6 +18,7 @@ package com.helger.phase4.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
@@ -170,6 +171,8 @@ public class AS4IncomingHandler
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
     final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+    final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
+
     if (aPlainContentType.equals (AS4RequestHandler.MT_MULTIPART_RELATED))
     {
       // MIME message
@@ -187,7 +190,8 @@ public class AS4IncomingHandler
       try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                           aPayloadIS,
                                                                                           aMessageMetadata,
-                                                                                          aHttpHeaders))
+                                                                                          aHttpHeaders,
+                                                                                          aDumpOSHolder))
       {
         // PARSING MIME Message via MultipartStream
         final MultipartStream aMulti = new MultipartStream (aRequestIS,
@@ -261,7 +265,8 @@ public class AS4IncomingHandler
       aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                             aPayloadIS,
                                                                                             aMessageMetadata,
-                                                                                            aHttpHeaders));
+                                                                                            aHttpHeaders,
+                                                                                            aDumpOSHolder));
 
       if (LOGGER.isDebugEnabled ())
         if (aSoapDocument != null)
@@ -287,7 +292,7 @@ public class AS4IncomingHandler
     }
 
     // Here, the incoming dump should be closed and usable
-    if (aRealIncomingDumper != null)
+    if (aRealIncomingDumper != null && aDumpOSHolder.isSet ())
       try
       {
         aRealIncomingDumper.onEndRequest (aMessageMetadata);

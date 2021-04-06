@@ -287,6 +287,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 * v1.3.0 - work in progress
     * Moved the classes `AS4IncomingDumperFileBased`, `AS4OutgoingDumperFileBased` and `AS4RawResponseConsumerWriteToFile` from package `com.helger.phase4.servlet.dump` to package `com.helger.phase4.dump`. The old classes remain there deprecated.
+    * `IAS4IncomingDumper.onEndRequest` is only called if `onNewRequest` returned a non-null stream
 * v1.2.0 - 2021-03-28
     * Added the response AS4 Message ID as parameter to `IAS4ServletMessageProcessorSPI.processAS4ResponseMessage`
     * Renamed class `EAS4IncomingMessageMode` to `EAS4MessageMode`
