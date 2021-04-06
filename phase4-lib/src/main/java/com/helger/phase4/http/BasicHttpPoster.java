@@ -153,6 +153,9 @@ public class BasicHttpPoster implements IHttpPoster
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
 
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("Starting to transmit AS4 Message to '" + sURL + "'");
+
     try (final HttpClientManager aClientMgr = new HttpClientManager (m_aHttpClientFactory))
     {
       final HttpPost aPost = new HttpPost (sURL);
