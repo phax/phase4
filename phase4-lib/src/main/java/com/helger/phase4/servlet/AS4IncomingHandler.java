@@ -291,31 +291,36 @@ public class AS4IncomingHandler
       }
     }
 
-    // Here, the incoming dump should be closed and usable
-    if (aRealIncomingDumper != null && aDumpOSHolder.isSet ())
-      try
+    try
+    {
+      if (aSoapDocument == null)
       {
-        aRealIncomingDumper.onEndRequest (aMessageMetadata);
-      }
-      catch (final Exception ex)
-      {
-        LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" + aRealIncomingDumper + "; MessageMetadata=" + aMessageMetadata, ex);
+        // We don't have a SOAP document
+        throw new Phase4Exception (eSoapVersion == null ? "Failed to parse incoming message!"
+                                                        : "Failed to parse incoming SOAP " + eSoapVersion.getVersion () + " document!");
       }
 
-    if (aSoapDocument == null)
-    {
-      // We don't have a SOAP document
-      throw new Phase4Exception (eSoapVersion == null ? "Failed to parse incoming message!"
-                                                      : "Failed to parse incoming SOAP " + eSoapVersion.getVersion () + " document!");
-    }
+      if (eSoapVersion == null)
+      {
+        // We're missing a SOAP version
+        throw new Phase4Exception ("Failed to determine SOAP version of XML document!");
+      }
 
-    if (eSoapVersion == null)
-    {
-      // We're missing a SOAP version
-      throw new Phase4Exception ("Failed to determine SOAP version of XML document!");
+      aCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
     }
-
-    aCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
+    finally
+    {
+      // Here, the incoming dump is finally ready closed and usable
+      if (aRealIncomingDumper != null && aDumpOSHolder.isSet ())
+        try
+        {
+          aRealIncomingDumper.onEndRequest (aMessageMetadata);
+        }
+        catch (final Exception ex)
+        {
+          LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" + aRealIncomingDumper + "; MessageMetadata=" + aMessageMetadata, ex);
+        }
+    }
   }
 
   private static void _processSoapHeaderElements (@Nonnull final SOAPHeaderElementProcessorRegistry aRegistry,
