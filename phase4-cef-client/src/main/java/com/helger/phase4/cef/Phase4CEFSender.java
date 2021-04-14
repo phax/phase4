@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.state.ESuccess;
+import com.helger.commons.string.StringHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -84,7 +85,8 @@ public final class Phase4CEFSender
    *        The implementation type
    */
   @NotThreadSafe
-  public abstract static class AbstractCEFUserMessageBuilder <IMPLTYPE extends AbstractCEFUserMessageBuilder <IMPLTYPE>> extends
+  public abstract static class AbstractCEFUserMessageBuilder <IMPLTYPE extends AbstractCEFUserMessageBuilder <IMPLTYPE>>
+                                                             extends
                                                              AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     public static final boolean DEFAULT_USE_ORIGINAL_SENDER_FINAL_RECIPIENT_TYPE_ATTR = true;
@@ -250,7 +252,8 @@ public final class Phase4CEFSender
     }
 
     @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
+    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
+                                                   @Nonnull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -304,6 +307,9 @@ public final class Phase4CEFSender
 
     protected final boolean isEndpointDetailProviderUsable ()
     {
+      if (m_aEndpointDetailProvider instanceof AS4EndpointDetailProviderConstant)
+        return true;
+
       // Sender ID doesn't matter here
       if (m_aReceiverID == null)
         return false;
@@ -355,9 +361,9 @@ public final class Phase4CEFSender
         return false;
       if (m_aReceiverID == null)
         return false;
-      if (m_aDocTypeID == null)
+      if (m_aDocTypeID == null && StringHelper.hasNoText (m_sAction))
         return false;
-      if (m_aProcessID == null)
+      if (m_aProcessID == null && StringHelper.hasNoText (m_sService))
         return false;
       if (m_aEndpointDetailProvider == null)
         return false;
@@ -384,8 +390,12 @@ public final class Phase4CEFSender
       }
       else
       {
-        addMessageProperty (MessageProperty.builder ().name (CAS4.ORIGINAL_SENDER).value (m_aSenderID.getURIEncoded ()));
-        addMessageProperty (MessageProperty.builder ().name (CAS4.FINAL_RECIPIENT).value (m_aReceiverID.getURIEncoded ()));
+        addMessageProperty (MessageProperty.builder ()
+                                           .name (CAS4.ORIGINAL_SENDER)
+                                           .value (m_aSenderID.getURIEncoded ()));
+        addMessageProperty (MessageProperty.builder ()
+                                           .name (CAS4.FINAL_RECIPIENT)
+                                           .value (m_aReceiverID.getURIEncoded ()));
       }
     }
   }
