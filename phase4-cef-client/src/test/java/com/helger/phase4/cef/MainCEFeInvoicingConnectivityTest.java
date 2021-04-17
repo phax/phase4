@@ -37,6 +37,11 @@ import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
+/**
+ * This is an example file for sending to the CEF eInvoicing test endpoint
+ *
+ * @author Philip Helger
+ */
 public class MainCEFeInvoicingConnectivityTest
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (MainCEFeInvoicingConnectivityTest.class);
