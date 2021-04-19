@@ -77,6 +77,7 @@ public class MainCEFeInvoicingConnectivityTest
 
     try (final WebScoped w = new WebScoped ())
     {
+      // Read a UBL Invoice
       final byte [] aPayloadBytes = SimpleFileIO.getAllFileBytes (new File ("src/test/resources/examples/base-example.xml"));
       if (aPayloadBytes == null)
         throw new IllegalStateException ();
@@ -98,8 +99,7 @@ public class MainCEFeInvoicingConnectivityTest
         {
           if (false)
             LOGGER.info ("SOAP Document:\n" +
-                         XMLWriter.getNodeAsString (aDoc,
-                                                    new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)));
+                         XMLWriter.getNodeAsString (aDoc, new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)));
         }
       };
       // TODO The message ID to use in the UI
