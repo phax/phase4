@@ -25,6 +25,9 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
@@ -45,6 +48,8 @@ import com.helger.phase4.util.Phase4Exception;
 @Immutable
 public final class Phase4ENTSOGSender
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4ENTSOGSender.class);
+
   private Phase4ENTSOGSender ()
   {}
 
@@ -147,7 +152,10 @@ public final class Phase4ENTSOGSender
         return false;
 
       if (m_aPayload == null)
+      {
+        LOGGER.warn ("The field 'payload' is not set");
         return false;
+      }
 
       return true;
     }

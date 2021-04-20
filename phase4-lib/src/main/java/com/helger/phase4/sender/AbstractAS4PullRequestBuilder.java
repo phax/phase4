@@ -21,6 +21,9 @@ import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
@@ -39,6 +42,8 @@ import com.helger.phase4.util.Phase4Exception;
 public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS4PullRequestBuilder <IMPLTYPE>> extends
                                                     AbstractAS4MessageBuilder <IMPLTYPE>
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4PullRequestBuilder.class);
+
   protected String m_sMPC;
   protected String m_sEndpointURL;
   protected IAS4UserMessageConsumer m_aUserMsgConsumer;
@@ -100,10 +105,16 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
       return false;
 
     if (StringHelper.hasNoText (m_sMPC))
+    {
+      LOGGER.warn ("The field 'MPC' is not set");
       return false;
+    }
 
     if (StringHelper.hasNoText (m_sEndpointURL))
+    {
+      LOGGER.warn ("The field 'endpointURL' is not set");
       return false;
+    }
 
     // m_aUserMsgConsumer is optional
 

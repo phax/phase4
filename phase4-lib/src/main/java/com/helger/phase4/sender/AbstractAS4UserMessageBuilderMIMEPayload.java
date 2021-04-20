@@ -20,6 +20,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
@@ -40,6 +43,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
                                                                extends
                                                                AbstractAS4UserMessageBuilder <IMPLTYPE>
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4UserMessageBuilderMIMEPayload.class);
   private Phase4OutgoingAttachment m_aPayload;
 
   /**
@@ -83,7 +87,10 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
       return false;
 
     if (m_aPayload == null)
+    {
+      LOGGER.warn ("The field 'payload' is not set");
       return false;
+    }
 
     // All valid
     return true;
