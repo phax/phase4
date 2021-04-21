@@ -156,9 +156,7 @@ public final class Phase4PeppolSender
     {
       sRealInstanceIdentifier = UUID.randomUUID ().toString ();
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" +
-                      sRealInstanceIdentifier +
-                      "'");
+        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" + sRealInstanceIdentifier + "'");
     }
 
     aData.setDocumentIdentification (aPayloadElement.getNamespaceURI (),
@@ -201,10 +199,7 @@ public final class Phase4PeppolSender
         else
         {
           // Custom registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement,
-                                                                   aRegistry,
-                                                                   aVESID,
-                                                                   aValidationResultHandler);
+          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aRegistry, aVESID, aValidationResultHandler);
         }
       }
       else
@@ -286,8 +281,7 @@ public final class Phase4PeppolSender
    * @since 0.9.6
    */
   @NotThreadSafe
-  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>>
-                                                                extends
+  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>> extends
                                                                 AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     protected IParticipantIdentifier m_aSenderID;
@@ -475,8 +469,7 @@ public final class Phase4PeppolSender
     }
 
     @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
-                                                   @Nonnull @Nonempty final String sDestURL)
+    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -517,13 +510,25 @@ public final class Phase4PeppolSender
     {
       // Sender ID doesn't matter here
       if (m_aReceiverID == null)
+      {
+        LOGGER.warn ("The field 'receiverID' is not set");
         return false;
+      }
       if (m_aDocTypeID == null)
+      {
+        LOGGER.warn ("The field 'docTypeID' is not set");
         return false;
+      }
       if (m_aProcessID == null)
+      {
+        LOGGER.warn ("The field 'processID' is not set");
         return false;
+      }
       if (m_aEndpointDetailProvider == null)
+      {
+        LOGGER.warn ("The field 'endpointDetailProvider' is not set");
         return false;
+      }
 
       return true;
     }
@@ -555,7 +560,7 @@ public final class Phase4PeppolSender
       // From receiver certificate
       toPartyID (PeppolCertificateHelper.getSubjectCN (aReceiverCert));
 
-      return ESuccess.SUCCESS;
+      return super.finishFields ();
     }
 
     @Override
@@ -566,19 +571,34 @@ public final class Phase4PeppolSender
         return false;
 
       if (m_aSenderID == null)
+      {
+        LOGGER.warn ("The field 'senderID' is not set");
         return false;
+      }
       if (m_aReceiverID == null)
+      {
+        LOGGER.warn ("The field 'receiverID' is not set");
         return false;
+      }
       if (m_aDocTypeID == null)
+      {
+        LOGGER.warn ("The field 'docTypeID' is not set");
         return false;
+      }
       if (m_aProcessID == null)
+      {
+        LOGGER.warn ("The field 'processID' is not set");
         return false;
+      }
 
       // m_aPayloadMimeType may be null
       // m_bCompressPayload may be null
 
       if (m_aEndpointDetailProvider == null)
+      {
+        LOGGER.warn ("The field 'endpointDetailProvider' is not set");
         return false;
+      }
       // m_aCertificateConsumer may be null
       // m_aAPEndointURLConsumer may be null
 
@@ -828,8 +848,7 @@ public final class Phase4PeppolSender
     @Nonnull
     public Builder validationConfiguration (@Nullable final VESID aVESID)
     {
-      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null
-                                                                      : new Phase4PeppolValidatonResultHandler ();
+      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null : new Phase4PeppolValidatonResultHandler ();
       return validationConfiguration (aVESID, aHdl);
     }
 
@@ -897,7 +916,10 @@ public final class Phase4PeppolSender
                                                         m_sSBDHTypeVersion,
                                                         aPayloadElement);
       if (aSBD == null)
+      {
+        // A log message was already provided
         return ESuccess.FAILURE;
+      }
 
       if (m_aSBDDocumentConsumer != null)
         m_aSBDDocumentConsumer.accept (aSBD);
@@ -984,7 +1006,10 @@ public final class Phase4PeppolSender
         return false;
 
       if (m_aPayloadBytes == null)
+      {
+        LOGGER.warn ("The field 'payloadBytes' is not set");
         return false;
+      }
 
       // All valid
       return true;

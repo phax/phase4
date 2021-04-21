@@ -444,17 +444,26 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   public boolean isEveryRequiredFieldSet ()
   {
     if (m_aHttpClientFactory == null)
+    {
+      LOGGER.warn ("The field 'httpClientFactory' is not set");
       return false;
+    }
     // m_aCryptoFactory may be null
     // m_sMessageID is optional
     // m_aSendingDateTime may be null
     if (m_eSoapVersion == null)
+    {
+      LOGGER.warn ("The field 'soapVersion' is not set");
       return false;
+    }
 
     // m_nMaxRetries doesn't matter
     // m_nRetryIntervalMS doesn't matter
     if (m_aLocale == null)
+    {
+      LOGGER.warn ("The field 'locale' is not set");
       return false;
+    }
     // m_aPModeResolver may be null
     // IIncomingAttachmentFactory may be null
 

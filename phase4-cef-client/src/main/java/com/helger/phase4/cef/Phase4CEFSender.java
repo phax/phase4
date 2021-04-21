@@ -85,8 +85,7 @@ public final class Phase4CEFSender
    *        The implementation type
    */
   @NotThreadSafe
-  public abstract static class AbstractCEFUserMessageBuilder <IMPLTYPE extends AbstractCEFUserMessageBuilder <IMPLTYPE>>
-                                                             extends
+  public abstract static class AbstractCEFUserMessageBuilder <IMPLTYPE extends AbstractCEFUserMessageBuilder <IMPLTYPE>> extends
                                                              AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     public static final boolean DEFAULT_USE_ORIGINAL_SENDER_FINAL_RECIPIENT_TYPE_ATTR = true;
@@ -252,8 +251,7 @@ public final class Phase4CEFSender
     }
 
     @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
-                                                   @Nonnull @Nonempty final String sDestURL)
+    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -358,15 +356,30 @@ public final class Phase4CEFSender
         return false;
 
       if (m_aSenderID == null)
+      {
+        LOGGER.warn ("The field 'senderID' is not set");
         return false;
+      }
       if (m_aReceiverID == null)
+      {
+        LOGGER.warn ("The field 'receiverID' is not set");
         return false;
+      }
       if (m_aDocTypeID == null && StringHelper.hasNoText (m_sAction))
+      {
+        LOGGER.warn ("Neither the field 'docTypeID' nor the field 'action' is set");
         return false;
+      }
       if (m_aProcessID == null && StringHelper.hasNoText (m_sService))
+      {
+        LOGGER.warn ("Neither the field 'processID' nor the field 'service' is set");
         return false;
+      }
       if (m_aEndpointDetailProvider == null)
+      {
+        LOGGER.warn ("The field 'endpointDetailProvider' is not set");
         return false;
+      }
       // m_aCertificateConsumer is optional
       // m_aAPEndointURLConsumer is optional
 
@@ -390,12 +403,8 @@ public final class Phase4CEFSender
       }
       else
       {
-        addMessageProperty (MessageProperty.builder ()
-                                           .name (CAS4.ORIGINAL_SENDER)
-                                           .value (m_aSenderID.getURIEncoded ()));
-        addMessageProperty (MessageProperty.builder ()
-                                           .name (CAS4.FINAL_RECIPIENT)
-                                           .value (m_aReceiverID.getURIEncoded ()));
+        addMessageProperty (MessageProperty.builder ().name (CAS4.ORIGINAL_SENDER).value (m_aSenderID.getURIEncoded ()));
+        addMessageProperty (MessageProperty.builder ().name (CAS4.FINAL_RECIPIENT).value (m_aReceiverID.getURIEncoded ()));
       }
     }
   }

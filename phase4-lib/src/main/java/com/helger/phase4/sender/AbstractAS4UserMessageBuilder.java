@@ -498,7 +498,10 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       return false;
 
     if (m_aPMode == null)
+    {
+      LOGGER.warn ("The field 'PMode' is not set");
       return false;
+    }
 
     // m_sServiceType may be null
     // m_sService may be null
@@ -508,15 +511,27 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
     // m_sFromPartyIDType may be null
     if (StringHelper.hasNoText (m_sFromPartyID))
+    {
+      LOGGER.warn ("The field 'fromPartyID' is not set");
       return false;
+    }
     if (StringHelper.hasNoText (m_sFromRole))
+    {
+      LOGGER.warn ("The field 'fromRole' is not set");
       return false;
+    }
 
     // m_sToPartyIDType may be null
     if (StringHelper.hasNoText (m_sToPartyID))
+    {
+      LOGGER.warn ("The field 'toPartyID' is not set");
       return false;
+    }
     if (StringHelper.hasNoText (m_sToRole))
+    {
+      LOGGER.warn ("The field 'toRole' is not set");
       return false;
+    }
 
     // m_sConversationID is optional
 
@@ -524,7 +539,10 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
     // m_aReceiverCertificate is optional
     if (StringHelper.hasNoText (m_sEndpointURL))
+    {
+      LOGGER.warn ("The field 'endpointURL' is not set");
       return false;
+    }
 
     // m_aAttachments may be null
 
