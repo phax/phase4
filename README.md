@@ -34,6 +34,7 @@ This solution is Peppol compliant. See the test report at https://github.com/pha
 
 Some known users of phase4 - mostly in the context of Peppol - are (in alphabetical order):
 
+* A-Cube S.r.l. (IT) - https://acubeapi.com/
 * Bundesrechenzentrum / Federal Computing Center (AT) - https://www.brz.gv.at/
 * ecosio GmbH (AT) - https://ecosio.com/
 * Fitek AS (EE) - https://fitek.com/
