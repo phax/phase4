@@ -36,6 +36,7 @@ Some known users of phase4 - mostly in the context of Peppol - are (in alphabeti
 
 * A-Cube S.r.l. (IT) - https://acubeapi.com/
 * Bundesrechenzentrum / Federal Computing Center (AT) - https://www.brz.gv.at/
+* DE4A (EU project) - http://www.de4a.eu/
 * ecosio GmbH (AT) - https://ecosio.com/
 * Fitek AS (EE) - https://fitek.com/
 * Formware GmbH (DE) - https://www.formware.de/
