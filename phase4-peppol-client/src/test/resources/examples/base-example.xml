@@ -40,7 +40,7 @@
     </cac:AccountingSupplierParty>
     <cac:AccountingCustomerParty>
         <cac:Party>
-            <cbc:EndpointID schemeID="0002">test-receiver</cbc:EndpointID>
+            <cbc:EndpointID schemeID="9915">helger</cbc:EndpointID>
             <cac:PartyName>
                 <cbc:Name>BuyerTradingName AS</cbc:Name>
             </cac:PartyName>
