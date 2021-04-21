@@ -32,21 +32,42 @@ public final class AS4Helper
   private AS4Helper ()
   {}
 
+  /**
+   * Check if the combination of Action and Service resembles an EBMS Ping (aka
+   * test) Message as described in chapter 5.2.2.9.
+   *
+   * @param sAction
+   *        Action value. May be <code>null</code>.
+   * @param sService
+   *        Service value. May be <code>null</code>.
+   * @return <code>true</code> if the action is {@value CAS4#DEFAULT_ACTION_URL}
+   *         and service is {@value CAS4#DEFAULT_SERVICE_URL},
+   *         <code>false</code> otherwise.
+   */
   public static boolean isPingMessage (@Nullable final String sAction, @Nullable final String sService)
   {
+    // See Chapter 5.2.2.9 of the ebMS 3 Core Spec
     return CAS4.DEFAULT_ACTION_URL.equals (sAction) && CAS4.DEFAULT_SERVICE_URL.equals (sService);
   }
 
+  /**
+   * Check if the combination of Action and Service resembles an EBMS Ping (aka
+   * test) Message as described in chapter 5.2.2.9.
+   *
+   * @param aBusinessInfo
+   *        PMode business information. May be <code>null</code>.
+   * @return <code>true</code> if the action is {@value CAS4#DEFAULT_ACTION_URL}
+   *         and service is {@value CAS4#DEFAULT_SERVICE_URL},
+   *         <code>false</code> otherwise.
+   */
   public static boolean isPingMessage (@Nullable final PModeLegBusinessInformation aBusinessInfo)
   {
     return aBusinessInfo != null && isPingMessage (aBusinessInfo.getAction (), aBusinessInfo.getService ());
   }
 
   /**
-   * EBMS core specification 4.2 details these default values. In eSENS they get
-   * used to implement a ping service, we took this over even outside of eSENS.
-   * If you use these default values you can try to "ping" the server, the
-   * method just checks if the pmode got these exact values set.
+   * Check if the combination of Action and Service resembles an EBMS Ping (aka
+   * test) Message as described in chapter 5.2.2.9.
    *
    * @param aPMode
    *        to check. May be <code>null</code>
