@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.helger.commons.wrapper.Wrapper;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
@@ -31,11 +30,11 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
-import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
 import com.helger.phive.peppol.PeppolValidation3_11_1;
+import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -74,7 +73,6 @@ public final class MainPhase4PeppolSenderHelger
                        "'");
         }
       };
-      final Wrapper <Ebms3SignalMessage> aSignalMsgWrapper = new Wrapper <> ();
       final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true)
                                                                                    .setHandleHttpHeaders (true)
                                                                                    .and (x -> {
@@ -97,12 +95,19 @@ public final class MainPhase4PeppolSenderHelger
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadElement)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
+                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                     aReceiverID,
+                                                                     ESML.DIGIT_TEST))
+                                  .sbdDocumentConsumer (x -> {
+                                    if (false)
+                                      LOGGER.info (SBDHWriter.standardBusinessDocument ()
+                                                             .setFormattedOutput (true)
+                                                             .getAsString (x));
+                                  })
                                   .validationConfiguration (PeppolValidation3_11_1.VID_OPENPEPPOL_INVOICE_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .rawResponseConsumer (aRRC)
-                                  .signalMsgConsumer (aSignalMsgWrapper::set)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
