@@ -671,7 +671,7 @@ public class AS4IncomingHandler
       final boolean bIsPingMessage = AS4Helper.isPingMessage (aPMode);
       aState.setPingMessage (bIsPingMessage);
       if (bIsPingMessage)
-        LOGGER.info ("Received an AS4 ping message");
+        LOGGER.info ("Received an AS4 Ping message - meaning it will NOT be handled by the custom handlers.");
     }
 
     return aState;
