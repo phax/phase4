@@ -399,7 +399,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
     // If the attachment has an compressionMode do it directly, so that
     // encryption later on works on the compressed content
-    File aRealFile;
+    final File aRealFile;
     if (eCompressionMode != null)
     {
       ret.setCompressionMode (eCompressionMode);
