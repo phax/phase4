@@ -23,6 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 class Phase4SpringbootApplicationTests
 {
   @Test
-  void contextLoads ()
+  void testContextLoads ()
   {}
 }

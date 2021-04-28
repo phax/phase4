@@ -78,7 +78,7 @@ public class ServletConfig
     }
   }
 
-  private void _initGlobalSettings ()
+  private static void _initGlobalSettings ()
   {
     // Logging: JUL to SLF4J
     SLF4JBridgeHandler.removeHandlersForRootLogger ();
@@ -99,12 +99,12 @@ public class ServletConfig
     AS4ProfileSelector.setCustomAS4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
   }
 
-  private void _initAS4 ()
+  private static void _initAS4 ()
   {
     AS4ServerInitializer.initAS4Server ();
   }
 
-  private void _initPeppolAS4 ()
+  private static void _initPeppolAS4 ()
   {
     // Check if crypto properties are okay
     final KeyStore aKS = AS4CryptoFactoryProperties.getDefaultInstance ().getKeyStore ();

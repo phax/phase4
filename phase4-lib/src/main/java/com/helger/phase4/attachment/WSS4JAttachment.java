@@ -346,15 +346,19 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                            aResHelper);
     }
 
-    // File based
-    assert aAttachment.hasDataFile ();
-    return createOutgoingFileAttachment (aAttachment.getDataFile (),
-                                         aAttachment.getContentID (),
-                                         aAttachment.getFilename (),
-                                         aAttachment.getMimeType (),
-                                         aAttachment.getCompressionMode (),
-                                         aAttachment.getCharset (),
-                                         aResHelper);
+    if (aAttachment.hasDataFile ())
+    {
+      // File based
+      return createOutgoingFileAttachment (aAttachment.getDataFile (),
+                                           aAttachment.getContentID (),
+                                           aAttachment.getFilename (),
+                                           aAttachment.getMimeType (),
+                                           aAttachment.getCompressionMode (),
+                                           aAttachment.getCharset (),
+                                           aResHelper);
+    }
+
+    throw new IllegalStateException ("Unsupported outgoing attachment data provider: " + aAttachment);
   }
 
   /**
