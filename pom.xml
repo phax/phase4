@@ -75,7 +75,7 @@
     <log4j.version>2.14.1</log4j.version>
     <ph-xsds.version>2.5.0</ph-xsds.version>
     <peppol-commons.version>8.5.1</peppol-commons.version>
-    <spring-boot.version>2.4.4</spring-boot.version>
+    <spring-boot.version>2.4.5</spring-boot.version>
   </properties>
   
   <dependencyManagement>
@@ -160,7 +160,7 @@
       <dependency>
         <groupId>com.helger.phive.rules</groupId>
         <artifactId>phive-rules-parent-pom</artifactId>
-        <version>2.1.0</version>
+        <version>2.1.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
