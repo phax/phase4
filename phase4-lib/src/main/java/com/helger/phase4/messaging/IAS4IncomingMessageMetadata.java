@@ -32,7 +32,10 @@ import com.helger.commons.string.StringHelper;
  * This interface lets you access optional metadata for a single incoming
  * message.<br>
  * See {@link AS4MessagingHelper} for a transformation method of this object to
- * a JSON representation.
+ * a JSON representation.<br>
+ * Note: it does not contain the AS4 message ID or similar parameters, because
+ * instance of the class must also be present for incoming messages that are
+ * invalid AS4 message and hence have no AS4 message ID.
  *
  * @author Philip Helger
  * @since 0.9.8
