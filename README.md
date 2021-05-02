@@ -287,7 +287,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v1.3.0 - work in progress
+* v1.3.0 - 2021-05-02
     * Updated to ph-commons 10.1
     * Moved the classes `AS4IncomingDumperFileBased`, `AS4OutgoingDumperFileBased` and `AS4RawResponseConsumerWriteToFile` from package `com.helger.phase4.servlet.dump` to package `com.helger.phase4.dump`. The old classes remain there deprecated.
     * `IAS4IncomingDumper.onEndRequest` is only called if `onNewRequest` returned a non-null stream
