@@ -26,9 +26,9 @@
           xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
           xmlns:S12="http://www.w3.org/2003/05/soap-envelope">
   <globalBindings typesafeEnumMaxMembers="2000" typesafeEnumMemberName="generateError">
-    <xjc:javaType name="java.time.OffsetDateTime" xmlType="xsd:dateTime" adapter="com.helger.jaxb.adapter.AdapterOffsetDateTime" />
-    <xjc:javaType name="com.helger.commons.datetime.OffsetDate" xmlType="xsd:date" adapter="com.helger.jaxb.adapter.AdapterOffsetDate" />
-    <xjc:javaType name="java.time.OffsetTime" xmlType="xsd:time" adapter="com.helger.jaxb.adapter.AdapterOffsetTime" />
+    <xjc:javaType name="com.helger.commons.datetime.XMLOffsetDateTime" xmlType="xsd:dateTime" adapter="com.helger.jaxb.adapter.AdapterXMLOffsetDateTime" />
+    <xjc:javaType name="com.helger.commons.datetime.XMLOffsetDate"     xmlType="xsd:date"     adapter="com.helger.jaxb.adapter.AdapterXMLOffsetDate" />
+    <xjc:javaType name="com.helger.commons.datetime.XMLOffsetTime"     xmlType="xsd:time"     adapter="com.helger.jaxb.adapter.AdapterXMLOffsetTime" />
   </globalBindings>
   <bindings schemaLocation="../resources/schemas/ebms-header-3_0-200704.xsd">
     <schemaBindings>

@@ -37,6 +37,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.AttributeContainerAny;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
+import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
@@ -360,7 +361,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   }
 
   @Nullable
-  public OffsetDateTime getMessageTimestamp ()
+  public XMLOffsetDateTime getMessageTimestamp ()
   {
     return getCastedValue (KEY_AS4_MESSAGE_TIMESTAMP);
   }
@@ -372,7 +373,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
    *        The timestamp to be set. May be <code>null</code>.
    * @since 1.2.0
    */
-  public void setMessageTimestamp (@Nullable final OffsetDateTime aMessageTimestamp)
+  public void setMessageTimestamp (@Nullable final XMLOffsetDateTime aMessageTimestamp)
   {
     putIn (KEY_AS4_MESSAGE_TIMESTAMP, aMessageTimestamp);
   }

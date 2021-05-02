@@ -36,6 +36,7 @@ import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
@@ -156,14 +157,16 @@ public final class Phase4PeppolSender
     {
       sRealInstanceIdentifier = UUID.randomUUID ().toString ();
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" + sRealInstanceIdentifier + "'");
+        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" +
+                      sRealInstanceIdentifier +
+                      "'");
     }
 
     aData.setDocumentIdentification (aPayloadElement.getNamespaceURI (),
                                      sRealTypeVersion,
                                      aPayloadElement.getLocalName (),
                                      sRealInstanceIdentifier,
-                                     MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
+                                     XMLOffsetDateTime.of (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ()));
     aData.setBusinessMessage (aPayloadElement);
     return new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
   }
@@ -199,7 +202,10 @@ public final class Phase4PeppolSender
         else
         {
           // Custom registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aRegistry, aVESID, aValidationResultHandler);
+          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement,
+                                                                   aRegistry,
+                                                                   aVESID,
+                                                                   aValidationResultHandler);
         }
       }
       else
@@ -281,7 +287,8 @@ public final class Phase4PeppolSender
    * @since 0.9.6
    */
   @NotThreadSafe
-  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>> extends
+  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>>
+                                                                extends
                                                                 AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     protected IParticipantIdentifier m_aSenderID;
@@ -469,7 +476,8 @@ public final class Phase4PeppolSender
     }
 
     @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
+    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
+                                                   @Nonnull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -848,7 +856,8 @@ public final class Phase4PeppolSender
     @Nonnull
     public Builder validationConfiguration (@Nullable final VESID aVESID)
     {
-      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null : new Phase4PeppolValidatonResultHandler ();
+      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null
+                                                                      : new Phase4PeppolValidatonResultHandler ();
       return validationConfiguration (aVESID, aHdl);
     }
 

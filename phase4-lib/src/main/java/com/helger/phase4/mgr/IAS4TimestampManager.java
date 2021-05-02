@@ -23,6 +23,7 @@ import java.time.OffsetTime;
 import javax.annotation.Nonnull;
 
 import com.helger.commons.datetime.PDTFactory;
+import com.helger.commons.datetime.XMLOffsetDateTime;
 
 /**
  * Interface for providing time stamps.<br>
@@ -41,6 +42,16 @@ public interface IAS4TimestampManager
    */
   @Nonnull
   OffsetDateTime getCurrentDateTime ();
+
+  /**
+   * @return The current date in time in the current time zone for XML
+   *         processing. Never <code>null</code>.
+   */
+  @Nonnull
+  default XMLOffsetDateTime getCurrentXMLDateTime ()
+  {
+    return XMLOffsetDateTime.of (getCurrentDateTime ());
+  }
 
   /**
    * @return The current date in the current time zone. Never <code>null</code>.

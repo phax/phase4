@@ -30,6 +30,7 @@ import org.w3c.dom.Node;
 
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
+import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -424,7 +425,7 @@ public interface IAS4MessageState
    * @since v1.2.0
    */
   @Nullable
-  OffsetDateTime getMessageTimestamp ();
+  XMLOffsetDateTime getMessageTimestamp ();
 
   /**
    * @return <code>true</code> if the incoming message is an AS4 ping message,

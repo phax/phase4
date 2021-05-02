@@ -39,6 +39,7 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
+import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.regex.RegExHelper;
 import com.helger.commons.string.StringHelper;
@@ -142,7 +143,9 @@ public final class MessageHelperMethods
   @Nonempty
   public static String createRandomMessageID ()
   {
-    return UUID.randomUUID ().toString () + "@" + StringHelper.getConcatenatedOnDemand (CAS4.LIB_NAME, '.', s_sCustomMessageIDSuffix);
+    return UUID.randomUUID ().toString () +
+           "@" +
+           StringHelper.getConcatenatedOnDemand (CAS4.LIB_NAME, '.', s_sCustomMessageIDSuffix);
   }
 
   @Nonnull
@@ -212,9 +215,12 @@ public final class MessageHelperMethods
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID, @Nullable final String sRefToMessageID)
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
+                                                         @Nullable final String sRefToMessageID)
   {
-    return createEbms3MessageInfo (sMessageID, sRefToMessageID, MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
+    return createEbms3MessageInfo (sMessageID,
+                                   sRefToMessageID,
+                                   MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
   }
 
   /**
@@ -244,7 +250,7 @@ public final class MessageHelperMethods
     if (StringHelper.hasText (sRefToMessageID))
       aMessageInfo.setRefToMessageId (sRefToMessageID);
 
-    aMessageInfo.setTimestamp (aDateTime);
+    aMessageInfo.setTimestamp (XMLOffsetDateTime.of (aDateTime));
     return aMessageInfo;
   }
 
@@ -399,12 +405,14 @@ public final class MessageHelperMethods
     final ICommonsSet <String> aUsedPropertyNames = new CommonsHashSet <> ();
 
     final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE, aAttachment.getUncompressedMimeType ()));
+    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE,
+                                                           aAttachment.getUncompressedMimeType ()));
     aUsedPropertyNames.add (PART_PROPERTY_MIME_TYPE);
 
     if (aAttachment.hasCharset ())
     {
-      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET, aAttachment.getCharset ().name ()));
+      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET,
+                                                             aAttachment.getCharset ().name ()));
       aUsedPropertyNames.add (PART_PROPERTY_CHARACTER_SET);
     }
     if (aAttachment.hasCompressionMode ())
@@ -469,7 +477,8 @@ public final class MessageHelperMethods
     for (final Header aHeader : aHeaders)
     {
       // Make a single-line HTTP header value!
-      aConsumer.accept (aHeader.getName (), bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
+      aConsumer.accept (aHeader.getName (),
+                        bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
     }
 
     // Remove all headers from MIME message
