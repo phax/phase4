@@ -289,11 +289,11 @@ If you like the project, a star on GitHub is always appreciated.
 
 * v1.3.0 - 2021-05-02
     * Updated to ph-commons 10.1
-    * Moved the classes `AS4IncomingDumperFileBased`, `AS4OutgoingDumperFileBased` and `AS4RawResponseConsumerWriteToFile` from package `com.helger.phase4.servlet.dump` to package `com.helger.phase4.dump`. The old classes remain there deprecated.
+    * Moved the classes `AS4IncomingDumperFileBased`, `AS4OutgoingDumperFileBased` and `AS4RawResponseConsumerWriteToFile` from package `com.helger.phase4.servlet.dump` to package `com.helger.phase4.dump`. The old classes remain there, but deprecated.
     * `IAS4IncomingDumper.onEndRequest` is only called if `onNewRequest` returned a non-null stream
     * Improved logging in case of failed sending prerequisites
     * Changed from `Offset(Date|Time|DateTime)` to `XMLOffset(Date|Time|DateTime)` where the message exchange is affected
-    * The JAXB implementation must now explicitly be added to an application pom.xml e.g. like this:
+    * The JAXB implementation must now explicitly be added to an application `pom.xml` e.g. like this:
 ```xml
 <dependency>
   <groupId>com.sun.xml.bind</groupId>
