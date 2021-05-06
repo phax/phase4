@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.phive.api.execute.ValidationExecutionManager;
 import com.helger.phive.api.executorset.IValidationExecutorSet;
 import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
@@ -49,6 +50,17 @@ public final class Phase4PeppolValidation
 
   private Phase4PeppolValidation ()
   {}
+
+  /**
+   * @return Get the existing default VES registry. Handle with care.
+   * @since 1.3.1
+   */
+  @Nonnull
+  @ReturnsMutableObject
+  public static IValidationExecutorSetRegistry <IValidationSourceXML> getDefaultRegistry ()
+  {
+    return VES_REGISTRY;
+  }
 
   /**
    * @return A new {@link ValidationExecutorSetRegistry} initialized with the
