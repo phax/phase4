@@ -23,13 +23,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -63,6 +66,7 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
+import com.helger.xml.XMLHelper;
 
 /**
  * This is a small tool that demonstrates how the "as4in" files can be decrypted
@@ -74,6 +78,20 @@ public final class MainDecipherAS4In
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (MainDecipherAS4In.class);
 
+  @Nullable
+  public static Element getChildElement (@Nonnull final Element aStartElement, @Nonnull final String... aTagNames)
+  {
+    ValueEnforcer.notEmpty (aTagNames, "TagNames");
+    Element aCurElement = aStartElement;
+    for (final String sTagName : aTagNames)
+    {
+      aCurElement = XMLHelper.getFirstChildElementOfName (aCurElement, sTagName);
+      if (aCurElement == null)
+        return null;
+    }
+    return aCurElement;
+  }
+
   public static void decrypt (@Nonnull final byte [] aAS4InData,
                               final IAS4CryptoFactory aCF,
                               @Nonnull final Consumer <byte []> aDecryptedConsumer) throws WSSecurityException,
@@ -82,8 +100,8 @@ public final class MainDecipherAS4In
                                                                                     MessagingException
   {
     final HttpHeaderMap hm = new HttpHeaderMap ();
-    int nStart = 0;
-    int nEnd = -1;
+    int nHttpStart = 0;
+    int nHttpEnd = -1;
     boolean bLastWasCR = false;
     for (int i = 0; i < aAS4InData.length; ++i)
     {
@@ -92,14 +110,14 @@ public final class MainDecipherAS4In
       {
         if (bLastWasCR)
         {
-          nEnd = i;
+          nHttpEnd = i;
           break;
         }
         bLastWasCR = true;
-        final String sLine = new String (aAS4InData, nStart, i - nStart, StandardCharsets.ISO_8859_1);
+        final String sLine = new String (aAS4InData, nHttpStart, i - nHttpStart, StandardCharsets.ISO_8859_1);
         final String [] aParts = StringHelper.getExplodedArray (':', sLine, 2);
         hm.addHeader (aParts[0].trim (), aParts[1].trim ());
-        nStart = i + 1;
+        nHttpStart = i + 1;
       }
       else
       {
@@ -108,7 +126,7 @@ public final class MainDecipherAS4In
       }
     }
 
-    LOGGER.info ("Now at byte " + nEnd + " having " + hm.getCount () + " HTTP headers");
+    LOGGER.info ("Now at byte " + nHttpEnd + " having " + hm.getCount () + " HTTP headers");
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
     try (final WebScoped w = new WebScoped ();
@@ -154,7 +172,7 @@ public final class MainDecipherAS4In
         }
       };
       rh.setProcessorSupplier ( () -> new CommonsArrayList <> (aSPI));
-      rh.handleRequest (new NonBlockingByteArrayInputStream (aAS4InData, nEnd, aAS4InData.length - nEnd),
+      rh.handleRequest (new NonBlockingByteArrayInputStream (aAS4InData, nHttpEnd, aAS4InData.length - nHttpEnd),
                         hm,
                         new IAS4ResponseAbstraction ()
                         {
