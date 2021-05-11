@@ -151,7 +151,7 @@ public final class MainDecipherAS4In
             final byte [] aDecryptedBytes = StreamHelper.getAllBytes (aIncomingAttachments.getFirst ()
                                                                                           .getInputStreamProvider ());
             aDecryptedConsumer.accept (aDecryptedBytes);
-            LOGGER.info ("Wrote decrypted payload with " + aDecryptedBytes.length + " bytes");
+            LOGGER.info ("Handled decrypted payload with " + aDecryptedBytes.length + " bytes");
             return AS4MessageProcessorResult.createSuccess ();
           }
           catch (final Exception ex)
