@@ -27,7 +27,7 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation3_11_1;
+import com.helger.phive.peppol.PeppolValidation3_12_0;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -75,7 +75,7 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadBytes)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                                  .validationConfiguration (PeppolValidation3_11_1.VID_OPENPEPPOL_INVOICE_V3,
+                                  .validationConfiguration (PeppolValidation3_12_0.VID_OPENPEPPOL_INVOICE_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
