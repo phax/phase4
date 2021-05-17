@@ -107,7 +107,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    */
   public void setUniqueID ()
   {
-    setId (MessageHelperMethods.createRandomAttachmentID ());
+    setId (MessageHelperMethods.createRandomContentID ());
   }
 
   /**

@@ -157,9 +157,7 @@ public final class Phase4PeppolSender
     {
       sRealInstanceIdentifier = UUID.randomUUID ().toString ();
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" +
-                      sRealInstanceIdentifier +
-                      "'");
+        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" + sRealInstanceIdentifier + "'");
     }
 
     aData.setDocumentIdentification (aPayloadElement.getNamespaceURI (),
@@ -202,10 +200,7 @@ public final class Phase4PeppolSender
         else
         {
           // Custom registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement,
-                                                                   aRegistry,
-                                                                   aVESID,
-                                                                   aValidationResultHandler);
+          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aRegistry, aVESID, aValidationResultHandler);
         }
       }
       else
@@ -287,8 +282,7 @@ public final class Phase4PeppolSender
    * @since 0.9.6
    */
   @NotThreadSafe
-  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>>
-                                                                extends
+  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>> extends
                                                                 AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     protected IParticipantIdentifier m_aSenderID;
@@ -298,6 +292,7 @@ public final class Phase4PeppolSender
 
     protected IMimeType m_aPayloadMimeType;
     protected boolean m_bCompressPayload;
+    protected String m_sPayloadContentID;
 
     protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
@@ -441,6 +436,23 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Set an optional payload "Content-ID". This method is usually not needed,
+     * because in Peppol there are currently no rules on the Content-ID. By
+     * default a random Content-ID is created.
+     *
+     * @param sPayloadContentID
+     *        The new payload content ID. May be null.
+     * @return this for chaining
+     * @since 1.3.1
+     */
+    @Nonnull
+    public final IMPLTYPE payloadContentID (@Nullable final String sPayloadContentID)
+    {
+      m_sPayloadContentID = sPayloadContentID;
+      return thisAsT ();
+    }
+
+    /**
      * Set the abstract endpoint detail provider to be used. This can be an SMP
      * lookup routine or in certain test cases a predefined certificate and
      * endpoint URL.
@@ -476,8 +488,7 @@ public final class Phase4PeppolSender
     }
 
     @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
-                                                   @Nonnull @Nonempty final String sDestURL)
+    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -601,6 +612,7 @@ public final class Phase4PeppolSender
 
       // m_aPayloadMimeType may be null
       // m_bCompressPayload may be null
+      // m_sPayloadContentID may be null
 
       if (m_aEndpointDetailProvider == null)
       {
@@ -856,8 +868,7 @@ public final class Phase4PeppolSender
     @Nonnull
     public Builder validationConfiguration (@Nullable final VESID aVESID)
     {
-      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null
-                                                                      : new Phase4PeppolValidatonResultHandler ();
+      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null : new Phase4PeppolValidatonResultHandler ();
       return validationConfiguration (aVESID, aHdl);
     }
 
@@ -941,7 +952,8 @@ public final class Phase4PeppolSender
       payload (Phase4OutgoingAttachment.builder ()
                                        .data (aSBDBytes)
                                        .mimeType (m_aPayloadMimeType)
-                                       .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null));
+                                       .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null)
+                                       .contentID (m_sPayloadContentID));
 
       return ESuccess.SUCCESS;
     }
