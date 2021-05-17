@@ -269,6 +269,12 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
       // According to
       // http://docs.oasis-open.org/wss-m/wss/v1.1.1/os/wss-SwAProfile-v1.1.1-os.html
       // chapter 5.2 the CID must be enclosed in angle brackets
+      // That is based on RFRC 2045 stating
+      // "Content-ID" ":" msg-id
+      // and RFC 822 stating
+      // msg-id = "<" addr-spec ">" ; Unique message id
+      // addr-spec = local-part "@" domain ; global address
+      // etc.
       String sContentID = getId ();
       if (StringHelper.hasText (sContentID))
       {
