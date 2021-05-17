@@ -146,6 +146,10 @@ public final class MessageHelperMethods
     return UUID.randomUUID ().toString () + "@" + StringHelper.getConcatenatedOnDemand (CAS4.LIB_NAME, '.', s_sCustomMessageIDSuffix);
   }
 
+  /**
+   * @return A random Content-ID that adheres to RFC 822. Neither
+   *         <code>null</code> nor empty.
+   */
   @Nonnull
   @Nonempty
   public static String createRandomContentID ()
@@ -164,6 +168,10 @@ public final class MessageHelperMethods
     return CAS4.LIB_NAME + "-msg-" + UUID.randomUUID ().toString ();
   }
 
+  /**
+   * @return A random Content-ID. Neither <code>null</code> nor empty.
+   * @deprecated Since v1.3.1. Use {@link #createRandomContentID()} instead.
+   */
   @Nonnull
   @Nonempty
   @Deprecated
