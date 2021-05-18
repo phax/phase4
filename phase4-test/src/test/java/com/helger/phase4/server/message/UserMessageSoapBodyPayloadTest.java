@@ -95,9 +95,9 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
                                                                         MockMessages.createUserMessageSigned (m_eSoapVersion,
-                                                                                                            aPayload,
-                                                                                                            null,
-                                                                                                            s_aResMgr),
+                                                                                                              aPayload,
+                                                                                                              null,
+                                                                                                              s_aResMgr),
                                                                         null);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 

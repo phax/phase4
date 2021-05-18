@@ -71,9 +71,9 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
 
   @Nonnull
   protected Document createTestSignedUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
-                                            @Nullable final Node aPayload,
-                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                            @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
+                                                  @Nullable final Node aPayload,
+                                                  @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                  @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = createTestUserMessageSoapNotSigned (aPayload, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,

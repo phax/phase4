@@ -130,10 +130,10 @@ public final class MainDecipherAS4In
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
     try (final WebScoped w = new WebScoped ();
-        final AS4RequestHandler rh = new AS4RequestHandler (aCF,
-                                                            DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-                                                            IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
-                                                            new AS4IncomingMessageMetadata (EAS4MessageMode.REQUEST)))
+         final AS4RequestHandler rh = new AS4RequestHandler (aCF,
+                                                             DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
+                                                             IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
+                                                             new AS4IncomingMessageMetadata (EAS4MessageMode.REQUEST)))
     {
       final IAS4ServletMessageProcessorSPI aSPI = new IAS4ServletMessageProcessorSPI ()
       {
@@ -148,8 +148,7 @@ public final class MainDecipherAS4In
         {
           try
           {
-            final byte [] aDecryptedBytes = StreamHelper.getAllBytes (aIncomingAttachments.getFirst ()
-                                                                                          .getInputStreamProvider ());
+            final byte [] aDecryptedBytes = StreamHelper.getAllBytes (aIncomingAttachments.getFirst ().getInputStreamProvider ());
             aDecryptedConsumer.accept (aDecryptedBytes);
             LOGGER.info ("Handled decrypted payload with " + aDecryptedBytes.length + " bytes");
             return AS4MessageProcessorResult.createSuccess ();

@@ -46,13 +46,7 @@ public final class AS4ENTSOGProfileRegistarSPI implements IAS4ProfileRegistrarSP
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
     final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = ENTSOGCompatibilityValidator::new;
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i,
-                                                            r,
-                                                            a) -> ENTSOGPMode.createENTSOGPMode (i,
-                                                                                                 r,
-                                                                                                 a,
-                                                                                                 PMODE_ID_PROVIDER,
-                                                                                                 true);
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> ENTSOGPMode.createENTSOGPMode (i, r, a, PMODE_ID_PROVIDER, true);
     final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
                                                 AS4_PROFILE_NAME,
                                                 aProfileValidatorProvider,

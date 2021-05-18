@@ -39,8 +39,7 @@ public final class AS4ConfigurationTest
     assertTrue (AS4Configuration.isUseInMemoryManagers ());
     assertTrue (AS4Configuration.isWSS4JSynchronizedSecurity ());
 
-    final ConfiguredValue aCV = AS4Configuration.getConfig ()
-                                                .getConfiguredValue (AS4Configuration.PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
+    final ConfiguredValue aCV = AS4Configuration.getConfig ().getConfiguredValue (AS4Configuration.PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
     assertNotNull (aCV);
 
     final IConfigurationSource aCS = aCV.getConfigurationSource ();

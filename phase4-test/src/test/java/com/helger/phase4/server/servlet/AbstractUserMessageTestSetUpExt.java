@@ -67,12 +67,12 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    */
   @Nonnull
   protected static final Document modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
-                                                      @Nullable final String sAnotherOrWrongPartyIdInitiator,
-                                                      @Nullable final String sAnotherOrWrongPartyIdResponder,
-                                                      @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
-                                                      @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                      @Nullable final String sReferenceToMessageID,
-                                                      @Nullable final Consumer <String> aMessagingIDConsumer) throws Exception
+                                                     @Nullable final String sAnotherOrWrongPartyIdInitiator,
+                                                     @Nullable final String sAnotherOrWrongPartyIdResponder,
+                                                     @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
+                                                     @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                     @Nullable final String sReferenceToMessageID,
+                                                     @Nullable final Consumer <String> aMessagingIDConsumer) throws Exception
   {
     // If argument is set replace the default one
     final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID : sAnotherOrWrongPartyIdInitiator;
