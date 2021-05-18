@@ -69,7 +69,9 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    * @param aProcessingErrorMessages
    *        List for error messages that occur during processing. Never
    *        <code>null</code>.
-   * @return A non-<code>null</code> result object.
+   * @return A non-<code>null</code> result object. If a failure is returned,
+   *         the message of the failure object itself is returned as an
+   *         EBMS_OTHER error.
    */
   @Nonnull
   AS4MessageProcessorResult processAS4UserMessage (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
@@ -102,7 +104,9 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    * @param aProcessingErrorMessages
    *        List for error messages that occur during processing. Never
    *        <code>null</code>.
-   * @return A non-<code>null</code> result object.
+   * @return A non-<code>null</code> result object. If a failure is returned,
+   *         the message of the failure object itself is returned as an
+   *         EBMS_OTHER error.
    */
   @Nonnull
   AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,

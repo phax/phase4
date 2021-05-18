@@ -103,9 +103,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
   private boolean m_bUseLeg1 = true;
   private IPMode m_aPMode;
-  private Function <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () +
-                                                                           "-" +
-                                                                           x.getToPartyID ();
+  private Function <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () + "-" + x.getToPartyID ();
 
   public AS4ClientUserMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
@@ -614,8 +612,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             getRefToMessageID (),
                                                                                             getSendingDateTimeOrNow ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null,
-                                                                                            m_aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null, m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,
                                                                                                               m_sAgreementRefValue,
                                                                                                               m_sServiceType,

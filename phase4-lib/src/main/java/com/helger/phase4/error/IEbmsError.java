@@ -85,8 +85,7 @@ public interface IEbmsError
                       .errorText ("[" +
                                   getCategory ().getDisplayName () +
                                   "] " +
-                                  StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale),
-                                                           getShortDescription ()))
+                                  StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale), getShortDescription ()))
                       .build ();
   }
 
@@ -114,8 +113,7 @@ public interface IEbmsError
                             sRefToMessageInError,
                             sOrigin,
                             sErrorDescription == null ? null
-                                                      : MessageHelperMethods.createEbms3Description (aContentLocale,
-                                                                                                     sErrorDescription));
+                                                      : MessageHelperMethods.createEbms3Description (aContentLocale, sErrorDescription));
   }
 
   @Nonnull

@@ -67,8 +67,7 @@ import com.helger.xml.microdom.serialize.MicroWriter;
  * @param <IMPLTYPE>
  *        Implementation type
  */
-public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> implements
-                                        IGenericImplTrait <IMPLTYPE>
+public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> implements IGenericImplTrait <IMPLTYPE>
 {
   /**
    * @return The default message ID factory to be used.
@@ -98,8 +97,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   // Retry handling
   private final HttpRetrySettings m_aHttpRetrySettings = new HttpRetrySettings ();
 
-  protected AbstractAS4Client (@Nonnull final EAS4MessageType eMessageType,
-                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  protected AbstractAS4Client (@Nonnull final EAS4MessageType eMessageType, @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     ValueEnforcer.notNull (eMessageType, "MessageType");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
@@ -461,9 +459,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
     final HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getCustomHeaders ();
 
-    if (m_aHttpRetrySettings.isRetryEnabled () ||
-        aOutgoingDumper != null ||
-        AS4DumpManager.getOutgoingDumper () != null)
+    if (m_aHttpRetrySettings.isRetryEnabled () || aOutgoingDumper != null || AS4DumpManager.getOutgoingDumper () != null)
     {
       // Ensure a repeatable entity is provided
       aBuiltEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);
@@ -508,8 +504,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                        aCallback,
                                                        aOutgoingDumper,
                                                        aRetryCallback).getResponse ();
-    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
-                               MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
+    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " + MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;
   }
 }

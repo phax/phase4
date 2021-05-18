@@ -36,8 +36,7 @@ import com.helger.photon.app.dao.AbstractPhotonMapBasedWALDAO;
  * @author Philip Helger
  */
 @ThreadSafe
-public class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4DuplicateItem, AS4DuplicateItem> implements
-                                 IAS4DuplicateManager
+public class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4DuplicateItem, AS4DuplicateItem> implements IAS4DuplicateManager
 {
   public AS4DuplicateManager (@Nullable final String sFilename) throws DAOException
   {
@@ -45,9 +44,7 @@ public class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4Dupli
   }
 
   @Nonnull
-  public EContinue registerAndCheck (@Nullable final String sMessageID,
-                                     @Nullable final String sProfileID,
-                                     @Nullable final String sPModeID)
+  public EContinue registerAndCheck (@Nullable final String sMessageID, @Nullable final String sProfileID, @Nullable final String sPModeID)
   {
     if (StringHelper.hasNoText (sMessageID))
     {
@@ -79,8 +76,7 @@ public class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4Dupli
   public ICommonsList <String> evictAllItemsBefore (@Nonnull final OffsetDateTime aRefDT)
   {
     // Get all message IDs to be removed
-    final ICommonsList <String> aEvictItems = getAllMapped (x -> x.getDateTime ().isBefore (aRefDT),
-                                                            IAS4DuplicateItem::getMessageID);
+    final ICommonsList <String> aEvictItems = getAllMapped (x -> x.getDateTime ().isBefore (aRefDT), IAS4DuplicateItem::getMessageID);
     if (aEvictItems.isNotEmpty ())
       // Bulk erase all
       m_aRWLock.writeLocked ( () -> {

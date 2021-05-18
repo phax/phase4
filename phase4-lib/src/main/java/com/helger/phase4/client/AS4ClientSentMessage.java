@@ -64,11 +64,7 @@ public class AS4ClientSentMessage <T>
                                @Nonnull final HttpHeaderMap aResponseHeaders,
                                @Nullable final T aResponseContent)
   {
-    this (aBuiltMsg,
-          aResponseStatusLine,
-          aResponseHeaders,
-          aResponseContent,
-          MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
+    this (aBuiltMsg, aResponseStatusLine, aResponseHeaders, aResponseContent, MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
   }
 
   /**

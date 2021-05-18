@@ -135,9 +135,7 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
     _validatePMode (aPMode);
 
     // Try in read-lock
-    final Predicate <IPMode> aFilter = IPModeManager.getPModeFilter (aPMode.getID (),
-                                                                     aPMode.getInitiatorID (),
-                                                                     aPMode.getResponderID ());
+    final Predicate <IPMode> aFilter = IPModeManager.getPModeFilter (aPMode.getID (), aPMode.getInitiatorID (), aPMode.getResponderID ());
     IPMode aExisting = findFirst (aFilter);
     if (aExisting == null)
     {

@@ -75,7 +75,8 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   }
 
   /**
-   * @return The error message. May be <code>null</code>.
+   * @return The error message. May be <code>null</code>, even in case of
+   *         failure.
    */
   @Nullable
   public String getErrorMessage ()
@@ -174,13 +175,13 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
    * Create a negative response with the provided error message.
    *
    * @param sErrorMsg
-   *        The error message to send back. May not be <code>null</code>.
+   *        The error message to send back. May be <code>null</code> or empty
+   *        since v1.3.1.
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static AS4MessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
+  public static AS4MessageProcessorResult createFailure (@Nullable final String sErrorMsg)
   {
-    ValueEnforcer.notNull (sErrorMsg, "ErrorMsg");
     return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, (ICommonsList <WSS4JAttachment>) null, (String) null);
   }
 }
