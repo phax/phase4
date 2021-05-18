@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,11 +40,14 @@ import com.helger.commons.annotation.UnsupportedOperation;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.error.IError;
+import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.string.StringHelper;
+import com.helger.jaxb.validation.WrappedCollectingValidationEventHandler;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
@@ -379,6 +383,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     final String sAction = aUserMessage.getCollaborationInfo ().getAction ();
     final String sConversationID = aUserMessage.getCollaborationInfo ().getConversationId ();
     final String sLogPrefix = "[" + sMessageID + "] ";
+    final Locale aDisplayLocale = aState.getLocale ();
 
     // Debug log
     if (LOGGER.isDebugEnabled ())
@@ -435,19 +440,35 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
         if (a.m_aPayloadBytes == null)
         {
-          final Ebms3Error aEbmsError = EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aState.getLocale (), aState.getMessageID ());
-          aProcessingErrorMessages.add (aEbmsError);
-          return AS4MessageProcessorResult.createFailure ("Processing errors occurred");
+          LOGGER.error (sLogPrefix + "Failed to decompress the payload");
+          aProcessingErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aDisplayLocale, aState.getMessageID ()));
+          return AS4MessageProcessorResult.createFailure (null);
         }
 
         // Read data as SBDH
-        a.m_aSBDH = SBDHReader.standardBusinessDocument ().read (a.m_aPayloadBytes);
+        final ErrorList aSBDHErrors = new ErrorList ();
+        a.m_aSBDH = SBDHReader.standardBusinessDocument ()
+                              .setValidationEventHandler (new WrappedCollectingValidationEventHandler (aSBDHErrors))
+                              .read (a.m_aPayloadBytes);
         if (a.m_aSBDH == null)
         {
-          final Ebms3Error aEbmsError = EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsEbms3Error (aState.getLocale (),
-                                                                                                aState.getMessageID ());
-          aProcessingErrorMessages.add (aEbmsError);
-          return AS4MessageProcessorResult.createFailure ("Failed to interprete payload as SBDH");
+          if (aSBDHErrors.isEmpty ())
+          {
+            final String sMsg = "Failed to read the provided SBDH document";
+            LOGGER.error (sLogPrefix + sMsg);
+            aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale, aState.getMessageID (), sMsg));
+          }
+          else
+          {
+            for (final IError aError : aSBDHErrors)
+            {
+              final String sMsg = "Peppol SBDH Issue: " + aError.getAsString (aDisplayLocale);
+              LOGGER.error (sLogPrefix + sMsg);
+              aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale, aState.getMessageID (), sMsg));
+            }
+          }
+
+          return AS4MessageProcessorResult.createFailure (null);
         }
 
         aReadAttachments.add (a);
@@ -474,11 +495,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     if (aReadAttachments.size () != 1)
     {
       // In Peppol there must be exactly one payload
-      final Ebms3Error aEbmsError = EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (), aState.getMessageID ());
-      aProcessingErrorMessages.add (aEbmsError);
-      return AS4MessageProcessorResult.createFailure ("In Peppol exactly one payload attachment is expected. This request has " +
-                                                      aReadAttachments.size () +
-                                                      " attachments");
+      final String sMsg = "In Peppol exactly one payload attachment is expected. This request has " +
+                          aReadAttachments.size () +
+                          " attachments";
+      LOGGER.error (sLogPrefix + sMsg);
+      return AS4MessageProcessorResult.createFailure (sMsg);
     }
 
     // The one and only
@@ -502,14 +523,18 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     }
     catch (final PeppolSBDHDocumentReadException ex)
     {
-      return AS4MessageProcessorResult.createFailure ("Failed to extract the Peppol data from SBDH. Technical details: " +
-                                                      ex.getClass ().getName () +
-                                                      " - " +
-                                                      ex.getMessage ());
+      final String sMsg = "Failed to extract the Peppol data from SBDH. Technical details: " +
+                          ex.getClass ().getName () +
+                          " - " +
+                          ex.getMessage ();
+      LOGGER.error (sLogPrefix + sMsg);
+      return AS4MessageProcessorResult.createFailure (sMsg);
     }
 
     if (m_aHandlers.isEmpty ())
+    {
       LOGGER.error (sLogPrefix + "No SPI handler is present - the message is unhandled and discarded");
+    }
     else
     {
       // Start consistency checks?
@@ -534,16 +559,17 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                                                        aProcessID);
           if (aReceiverEndpoint == null)
           {
-            return AS4MessageProcessorResult.createFailure (sLogPrefix +
-                                                            "Failed to resolve SMP endpoint for provided receiver ID (" +
-                                                            (aReceiverID == null ? "null" : aReceiverID.getURIEncoded ()) +
-                                                            ")/documentType ID (" +
-                                                            (aDocTypeID == null ? "null" : aDocTypeID.getURIEncoded ()) +
-                                                            ")/process ID (" +
-                                                            (aProcessID == null ? "null" : aProcessID.getURIEncoded ()) +
-                                                            ")/transport profile (" +
-                                                            m_aTransportProfile.getID () +
-                                                            ") - not handling incoming AS4 document");
+            final String sMsg = "Failed to resolve SMP endpoint for provided receiver ID (" +
+                                (aReceiverID == null ? "null" : aReceiverID.getURIEncoded ()) +
+                                ")/documentType ID (" +
+                                (aDocTypeID == null ? "null" : aDocTypeID.getURIEncoded ()) +
+                                ")/process ID (" +
+                                (aProcessID == null ? "null" : aProcessID.getURIEncoded ()) +
+                                ")/transport profile (" +
+                                m_aTransportProfile.getID () +
+                                ") - not handling incoming AS4 document";
+            LOGGER.error (sLogPrefix + sMsg);
+            return AS4MessageProcessorResult.createFailure (sMsg);
           }
 
           // Check if the message is for us
@@ -554,9 +580,12 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
         catch (final Phase4Exception ex)
         {
-          return AS4MessageProcessorResult.createFailure (sLogPrefix +
-                                                          "The addressing data contained in the SBD could not be verified. Technical details: " +
-                                                          ex.getMessage ());
+          final String sMsg = "The addressing data contained in the SBDH could not be verified. Technical details: " +
+                              ex.getClass ().getName () +
+                              " - " +
+                              ex.getMessage ();
+          LOGGER.error (sLogPrefix + sMsg);
+          return AS4MessageProcessorResult.createFailure (sMsg);
         }
       }
       else
@@ -583,9 +612,12 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
           LOGGER.error (sLogPrefix + "Error invoking Peppol handler " + aHandler, ex);
           if (aHandler.exceptionTranslatesToAS4Error ())
           {
-            return AS4MessageProcessorResult.createFailure (sLogPrefix +
-                                                            "The incoming Peppol message could not be processed: " +
-                                                            ex.getMessage ());
+            final String sMsg = "The incoming Peppol message could not be processed. Technical details: " +
+                                ex.getClass ().getName () +
+                                " - " +
+                                ex.getMessage ();
+            LOGGER.error (sLogPrefix + sMsg);
+            return AS4MessageProcessorResult.createFailure (sMsg);
           }
         }
       }
