@@ -230,6 +230,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                                    @Nonnull final HttpServletRequest aHttpRequest,
                                                    @Nonnull final IRequestWebScope aRequestScope)
   {
+    // Override from base class
     return new AS4UnifiedResponse (eHTTPVersion, eHTTPMethod, aHttpRequest);
   }
 
@@ -254,28 +255,57 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                                                    .setCookies (aRequestScope.getCookies ());
   }
 
-  public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                             @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  /**
+   * Handle an incoming request. Compared to
+   * {@link #handleRequest(IRequestWebScopeWithoutResponse, UnifiedResponse)}
+   * all the member variables are resolved into parameters to make overriding
+   * simpler and also avoid the risk of race conditions on members that use the
+   * Supplier pattern.
+   *
+   * @param aRequestScope
+   *        The request scope. May not be <code>null</code>.
+   * @param aUnifiedResponse
+   *        The response to be filled. May not be <code>null</code>.
+   * @param aCF
+   *        The AS4 crypto factory to be used. May not be <code>null</code>.
+   *        Defaults to {@link #getCryptoFactorySupplier()}<code>.get()</code>
+   * @param aPModeResolver
+   *        The PMode resolver to be used. May not be <code>null</code>.
+   *        Defaults to {@link #getPModeResolver()}.
+   * @param aIAF
+   *        The factory to parse incoming attachments. May not be
+   *        <code>null</code>. Defaults to
+   *        {@link #getIncomingAttachmentFactory()}.
+   * @param aHandlerCustomizer
+   *        An optional callback that can be used to modify the internal
+   *        {@link AS4RequestHandler} before and after processing. May be
+   *        <code>null</code>.
+   * @throws Exception
+   *         In case of a processing error
+   * @since 1.3.1
+   */
+  protected void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                                @Nonnull final AS4UnifiedResponse aUnifiedResponse,
+                                @Nonnull final IAS4CryptoFactory aCF,
+                                @Nonnull final IPModeResolver aPModeResolver,
+                                @Nonnull final IAS4IncomingAttachmentFactory aIAF,
+                                @Nullable final IHandlerCustomizer aHandlerCustomizer) throws Exception
   {
+
     // Created above in #createUnifiedResponse
     final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
     // Start metadata
     final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope);
 
-    // Resolved once per request
-    final IAS4CryptoFactory aCF = m_aCryptoFactorySupplier.get ();
-    if (aCF == null)
-      throw new IllegalStateException ("Failed to get an AS4 CryptoFactory");
-
-    try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCF, m_aPModeResolver, m_aIAF, aMessageMetadata))
+    try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCF, aPModeResolver, aIAF, aMessageMetadata))
     {
       // Customize before handling
-      if (m_aHandlerCustomizer != null)
+      if (aHandlerCustomizer != null)
       {
         if (LOGGER.isTraceEnabled ())
           LOGGER.trace ("Before customizeBeforeHandling");
-        m_aHandlerCustomizer.customizeBeforeHandling (aRequestScope, aHttpResponse, aHandler);
+        aHandlerCustomizer.customizeBeforeHandling (aRequestScope, aHttpResponse, aHandler);
         if (LOGGER.isTraceEnabled ())
           LOGGER.trace ("After customizeBeforeHandling");
       }
@@ -284,11 +314,11 @@ public class AS4XServletHandler implements IXServletSimpleHandler
       aHandler.handleRequest (aRequestScope, aHttpResponse);
 
       // Customize after handling
-      if (m_aHandlerCustomizer != null)
+      if (aHandlerCustomizer != null)
       {
         if (LOGGER.isTraceEnabled ())
           LOGGER.trace ("Before customizeAfterHandling");
-        m_aHandlerCustomizer.customizeAfterHandling (aRequestScope, aHttpResponse, aHandler);
+        aHandlerCustomizer.customizeAfterHandling (aRequestScope, aHttpResponse, aHandler);
         if (LOGGER.isTraceEnabled ())
           LOGGER.trace ("After customizeAfterHandling");
       }
@@ -303,5 +333,16 @@ public class AS4XServletHandler implements IXServletSimpleHandler
       // Logged inside
       aHttpResponse.setResponseError (CHttp.HTTP_INTERNAL_SERVER_ERROR, "Internal error processing AS4 request", ex);
     }
+  }
+
+  public final void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                                   @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  {
+    // Resolved once per request
+    final IAS4CryptoFactory aCF = m_aCryptoFactorySupplier.get ();
+    if (aCF == null)
+      throw new IllegalStateException ("Failed to get an AS4 CryptoFactory");
+
+    handleRequest (aRequestScope, (AS4UnifiedResponse) aUnifiedResponse, aCF, m_aPModeResolver, m_aIAF, m_aHandlerCustomizer);
   }
 }
