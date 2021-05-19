@@ -193,7 +193,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aState.setDecryptedAttachments (aResponseAttachments);
       return ESuccess.SUCCESS;
     }
-    catch (final WSSecurityException | IndexOutOfBoundsException ex)
+    catch (final IndexOutOfBoundsException | IllegalStateException | WSSecurityException ex)
     {
       // Decryption or Signature check failed
       LOGGER.error ("Error processing the WSSSecurity Header", ex);
