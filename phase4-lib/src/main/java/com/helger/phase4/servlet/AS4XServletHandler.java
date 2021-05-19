@@ -29,7 +29,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.EHttpMethod;
-import com.helger.commons.lang.GenericReflection;
 import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
@@ -264,8 +263,8 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    *
    * @param aRequestScope
    *        The request scope. May not be <code>null</code>.
-   * @param aUnifiedResponse
-   *        The response to be filled. May not be <code>null</code>.
+   * @param aHttpResponse
+   *        The HTTP response to be filled. May not be <code>null</code>.
    * @param aCF
    *        The AS4 crypto factory to be used. May not be <code>null</code>.
    *        Defaults to {@link #getCryptoFactorySupplier()}<code>.get()</code>
@@ -285,16 +284,12 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @since 1.3.1
    */
   protected void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                @Nonnull final AS4UnifiedResponse aUnifiedResponse,
+                                @Nonnull final AS4UnifiedResponse aHttpResponse,
                                 @Nonnull final IAS4CryptoFactory aCF,
                                 @Nonnull final IPModeResolver aPModeResolver,
                                 @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                 @Nullable final IHandlerCustomizer aHandlerCustomizer) throws Exception
   {
-
-    // Created above in #createUnifiedResponse
-    final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
-
     // Start metadata
     final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope);
 
@@ -343,6 +338,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     if (aCF == null)
       throw new IllegalStateException ("Failed to get an AS4 CryptoFactory");
 
+    // Created above in #createUnifiedResponse
     handleRequest (aRequestScope, (AS4UnifiedResponse) aUnifiedResponse, aCF, m_aPModeResolver, m_aIAF, m_aHandlerCustomizer);
   }
 }
