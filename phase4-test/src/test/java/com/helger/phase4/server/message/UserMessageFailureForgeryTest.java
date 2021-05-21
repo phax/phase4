@@ -241,7 +241,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
 
     // Delete the added Payload in the soap body to confirm right behaviour when
     // the payload is missing
-    Node aNext = XMLHelper.getFirstChildElementOfName (aDoc, "Envelope");
+    Element aNext = XMLHelper.getFirstChildElementOfName (aDoc, "Envelope");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.EBMS_NS, "Messaging");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.EBMS_NS, AS4TestConstants.USERMESSAGE_ASSERTCHECK);
