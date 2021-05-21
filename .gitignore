@@ -6,6 +6,7 @@
 *.cer
 *.jks
 *.p12
+*.releaseBackup
 private-*.properties*
 release.properties
 zz
