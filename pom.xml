@@ -70,7 +70,7 @@
   <properties>
     <!-- wss4j 2.2.5 requires xmlsec 2.1.5 -->
     <!-- wss4j 2.3.0 requires xmlsec 2.2.0 -->
-    <xmlsec.version>2.2.1</xmlsec.version>
+    <xmlsec.version>2.2.2</xmlsec.version>
     <wss4j.version>2.3.1</wss4j.version>
     <log4j.version>2.14.1</log4j.version>
     <ph-xsds.version>2.6.0</ph-xsds.version>

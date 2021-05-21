@@ -288,6 +288,7 @@ If you like the project, a star on GitHub is always appreciated.
 # News and noteworthy
 
 * v1.3.1 - work in progress
+    * Updated to xmlsec 2.2.2
     * Added the possibility to provide the content ID in the Peppol AS4 sender
     * Changed the layout of the default, random Content-IDs to match RFC 822
     * The error handling of the SPI invocations was improved
