@@ -20,6 +20,9 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
@@ -40,8 +43,13 @@ public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
   public static final String AS4_PROFILE_NAME = "CEF";
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CEFProfileRegistarSPI.class);
+
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
+
     final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = CEFCompatibilityValidator::new;
     final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> CEFPMode.createCEFPMode (i, r, a, PMODE_ID_PROVIDER, true);
     final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
