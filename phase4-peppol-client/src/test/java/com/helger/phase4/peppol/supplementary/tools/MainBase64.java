@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.peppol.utils;
+package com.helger.phase4.peppol.supplementary.tools;
 
 import java.io.File;
 
