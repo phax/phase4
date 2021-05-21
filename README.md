@@ -294,6 +294,7 @@ If you like the project, a star on GitHub is always appreciated.
     * The error handling of the SPI invocations was improved
     * `AS4MessageProcessorResult.createFailure` now also takes empty arguments
     * Extended the internal API of `AS4XServletHandler` to make calls from the outside simpler
+    * Added a new class `AS4DumpReader` that can be helpful in reading dumped ".as4in" messages at a later point in time
 * v1.3.0 - 2021-05-02
     * Updated to ph-commons 10.1
     * Moved the classes `AS4IncomingDumperFileBased`, `AS4OutgoingDumperFileBased` and `AS4RawResponseConsumerWriteToFile` from package `com.helger.phase4.servlet.dump` to package `com.helger.phase4.dump`. The old classes remain there, but deprecated.
