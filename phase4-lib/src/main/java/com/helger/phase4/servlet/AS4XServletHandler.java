@@ -330,8 +330,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     }
   }
 
-  public final void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                   @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  // Don't make this final, so that subclasses can call the other handleRequest
+  public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                             @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     // Resolved once per request
     final IAS4CryptoFactory aCF = m_aCryptoFactorySupplier.get ();
