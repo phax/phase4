@@ -270,7 +270,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the PMode resolver to be used.
+   * Set the PMode resolver to be used. This is only used to determine the PMode
+   * of an eventually received synchronous response message.
    *
    * @param aPModeResolver
    *        The PMode resolver to be used. May be <code>null</code>.
@@ -294,7 +295,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the incoming attachment factory to be used.
+   * Set the incoming attachment factory to be used. This is only used for an
+   * eventually received synchronous response message.
    *
    * @param aIAF
    *        The incoming attachment factory to be used. May not be
@@ -321,7 +323,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the selector for the AS4 profile of incoming messages.
+   * Set the selector for the AS4 profile of incoming messages. This is only
+   * used for an eventually received synchronous response message.
    *
    * @param aIncomingProfileSelector
    *        The profile selector to use. May not be <code>null</code>.
