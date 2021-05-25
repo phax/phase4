@@ -146,6 +146,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
 
     if (StringHelper.hasText (m_sMessageID))
       aPullRequestMsg.setMessageID (m_sMessageID);
+    if (StringHelper.hasText (m_sRefToMessageID))
+      aPullRequestMsg.setRefToMessageID (m_sRefToMessageID);
 
     aPullRequestMsg.setMPC (m_sMPC);
   }

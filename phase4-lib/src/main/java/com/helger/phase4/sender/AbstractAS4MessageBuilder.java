@@ -68,6 +68,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected HttpClientFactory m_aHttpClientFactory;
   protected IAS4CryptoFactory m_aCryptoFactory;
   protected String m_sMessageID;
+  protected String m_sRefToMessageID;
   protected OffsetDateTime m_aSendingDateTime;
   protected ESoapVersion m_eSoapVersion;
   protected HttpRetrySettings m_aHttpRetrySettings;
@@ -187,6 +188,22 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   public final IMPLTYPE messageID (@Nullable final String sMessageID)
   {
     m_sMessageID = sMessageID;
+    return thisAsT ();
+  }
+
+  /**
+   * Set the optional AS4 reference to a previous message ID.
+   *
+   * @param sRefToMessageID
+   *        The optional AS4 reference to a previous message ID to be used. May
+   *        be <code>null</code>.
+   * @return this for chaining
+   * @since 1.3.2
+   */
+  @Nonnull
+  public final IMPLTYPE refToMessageID (@Nullable final String sRefToMessageID)
+  {
+    m_sRefToMessageID = sRefToMessageID;
     return thisAsT ();
   }
 
@@ -450,6 +467,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     }
     // m_aCryptoFactory may be null
     // m_sMessageID is optional
+    // m_sRefToMessageID is optional
     // m_aSendingDateTime may be null
     if (m_eSoapVersion == null)
     {
