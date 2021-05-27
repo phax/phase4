@@ -54,12 +54,12 @@ import com.helger.xservlet.requesttrack.RequestTracker;
 @Configuration
 public class ServletConfig
 {
-
   private static final Logger LOGGER = LoggerFactory.getLogger (ServletConfig.class);
 
   @Bean
   public ServletRegistrationBean <Phase4PeppolServlet> servletRegistrationBean (final ServletContext ctx)
   {
+    // Must be called BEFORE the servlet is instantiated
     _init (ctx);
     final ServletRegistrationBean <Phase4PeppolServlet> bean = new ServletRegistrationBean <> (new Phase4PeppolServlet (), true, "/as4");
     bean.setLoadOnStartup (1);
