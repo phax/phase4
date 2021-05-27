@@ -238,6 +238,18 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       at org.apache.wss4j.dom.engine.WSSecurityEngine.processSecurityHeader(WSSecurityEngine.java:251) ~[task/:?]
       at com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorWSS4J._verifyAndDecrypt(SOAPHeaderElementProcessorWSS4J.java:128) ~[task/:?]
        * </pre>
+       *
+       * If the SMP provided AP certificate does not match the configured one:
+       *
+       * <pre>
+      org.apache.wss4j.common.ext.WSSecurityException: Cannot find key for certificate
+      at org.apache.wss4j.dom.processor.EncryptedKeyProcessor.getPrivateKey(EncryptedKeyProcessor.java:269) ~[wss4j-ws-security-dom-2.3.1.jar:2.3.1]
+      at org.apache.wss4j.dom.processor.EncryptedKeyProcessor.handleToken(EncryptedKeyProcessor.java:225) ~[wss4j-ws-security-dom-2.3.1.jar:2.3.1]
+      at org.apache.wss4j.dom.processor.EncryptedKeyProcessor.handleToken(EncryptedKeyProcessor.java:90) ~[wss4j-ws-security-dom-2.3.1.jar:2.3.1]
+      at org.apache.wss4j.dom.engine.WSSecurityEngine.processSecurityHeader(WSSecurityEngine.java:340) ~[wss4j-ws-security-dom-2.3.1.jar:2.3.1]
+      at org.apache.wss4j.dom.engine.WSSecurityEngine.processSecurityHeader(WSSecurityEngine.java:251) ~[wss4j-ws-security-dom-2.3.1.jar:2.3.1]
+      at com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorWSS4J._verifyAndDecrypt(SOAPHeaderElementProcessorWSS4J.java:128) ~[phase4-lib-1.3.1.jar:1.3.1]
+       * </pre>
        */
 
       // TODO we need a way to distinct
