@@ -378,41 +378,56 @@ public class AS4IncomingHandler
       // Error list for this processor
       final ErrorList aErrorList = new ErrorList ();
 
-      // Process element
-      if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList).isSuccess ())
+      try
       {
-        // Mark header as processed (for mustUnderstand check)
-        aHeader.setProcessed (true);
+        // Process element
+        if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList).isSuccess ())
+        {
+          // Mark header as processed (for mustUnderstand check)
+          aHeader.setProcessed (true);
+        }
+        else
+        {
+          // upon failure, the element stays unprocessed and sends back a signal
+          // message with the errors
+          LOGGER.error ("Failed to process SOAP header element " +
+                        aQName.toString () +
+                        " with processor " +
+                        aProcessor +
+                        "; error details: " +
+                        aErrorList);
+
+          final String sRefToMessageID = aState.getMessageID ();
+          final Locale aLocale = aState.getLocale ();
+          for (final IError aError : aErrorList)
+          {
+            final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
+            if (ePredefinedError != null)
+              aErrorMessages.add (ePredefinedError.getAsEbms3Error (aLocale, sRefToMessageID));
+            else
+            {
+              final Ebms3Error aEbms3Error = new Ebms3Error ();
+              aEbms3Error.setErrorDetail (aError.getErrorText (aLocale));
+              aEbms3Error.setErrorCode (aError.getErrorID ());
+              aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
+              aEbms3Error.setOrigin (aError.getErrorFieldName ());
+              aEbms3Error.setRefToMessageInError (sRefToMessageID);
+              aErrorMessages.add (aEbms3Error);
+            }
+          }
+
+          // Stop processing of other headers
+          break;
+        }
       }
-      else
+      catch (final Exception ex)
       {
         // upon failure, the element stays unprocessed and sends back a signal
         // message with the errors
-        LOGGER.error ("Failed to process SOAP header element " +
-                      aQName.toString () +
-                      " with processor " +
-                      aProcessor +
-                      "; error details: " +
-                      aErrorList);
-
-        final String sRefToMessageID = aState.getMessageID ();
-        final Locale aLocale = aState.getLocale ();
-        for (final IError aError : aErrorList)
-        {
-          final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
-          if (ePredefinedError != null)
-            aErrorMessages.add (ePredefinedError.getAsEbms3Error (aLocale, sRefToMessageID));
-          else
-          {
-            final Ebms3Error aEbms3Error = new Ebms3Error ();
-            aEbms3Error.setErrorDetail (aError.getErrorText (aLocale));
-            aEbms3Error.setErrorCode (aError.getErrorID ());
-            aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
-            aEbms3Error.setOrigin (aError.getErrorFieldName ());
-            aEbms3Error.setRefToMessageInError (sRefToMessageID);
-            aErrorMessages.add (aEbms3Error);
-          }
-        }
+        LOGGER.error ("Error processing SOAP header element " + aQName.toString () + " with processor " + aProcessor, ex);
+        aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
+                                                                   aState.getMessageID (),
+                                                                   "Error processing SOAP header element " + aQName.toString ()));
 
         // Stop processing of other headers
         break;
