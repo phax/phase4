@@ -196,10 +196,12 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     final KeyStore aKS = AS4CryptoFactoryProperties.getDefaultInstance ().getKeyStore ();
     if (aKS == null)
       throw new InitializationException ("Failed to load configured Keystore");
+    LOGGER.info ("Successfully loaded configured key store from the crypto factory");
 
     final PrivateKeyEntry aPKE = AS4CryptoFactoryProperties.getDefaultInstance ().getPrivateKeyEntry ();
     if (aPKE == null)
       throw new InitializationException ("Failed to load configured private key");
+    LOGGER.info ("Successfully loaded configured private key from the crypto factory");
 
     // No OCSP check for performance
     final X509Certificate aAPCert = (X509Certificate) aPKE.getCertificate ();
@@ -209,8 +211,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                           ETriState.FALSE,
                                                                                                           null);
     if (eCheckResult.isInvalid ())
-      throw new InitializationException ("The provided certificate is not a Peppol certificate. Check result: " + eCheckResult);
-    LOGGER.info ("Sucessfully checked that the provided Peppol AP certificate is valid.");
+      throw new InitializationException ("The provided certificate is not a valid Peppol certificate. Check result: " + eCheckResult);
+    LOGGER.info ("Successfully checked that the provided Peppol AP certificate is valid.");
 
     final String sSMPURL = AS4Configuration.getConfig ().getAsString ("smp.url");
     final String sAPURL = AS4Configuration.getThisEndpointAddress ();
