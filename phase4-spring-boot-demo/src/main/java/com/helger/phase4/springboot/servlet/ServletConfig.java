@@ -16,10 +16,12 @@
  */
 package com.helger.phase4.springboot.servlet;
 
+import java.io.File;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
 import javax.activation.CommandMap;
+import javax.annotation.Nonnull;
 import javax.annotation.PreDestroy;
 import javax.servlet.ServletContext;
 
@@ -47,6 +49,8 @@ import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
+import com.helger.photon.app.io.WebFileIO;
+import com.helger.servlet.ServletHelper;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xservlet.requesttrack.RequestTracker;
@@ -66,19 +70,19 @@ public class ServletConfig
     return bean;
   }
 
-  private void _init (final ServletContext ctx)
+  private void _init (@Nonnull final ServletContext aSC)
   {
     // Do it only once
     if (!WebScopeManager.isGlobalScopePresent ())
     {
-      WebScopeManager.onGlobalBegin (ctx);
-      _initGlobalSettings ();
+      WebScopeManager.onGlobalBegin (aSC);
+      _initGlobalSettings (aSC);
       _initAS4 ();
       _initPeppolAS4 ();
     }
   }
 
-  private static void _initGlobalSettings ()
+  private static void _initGlobalSettings (@Nonnull final ServletContext aSC)
   {
     // Logging: JUL to SLF4J
     SLF4JBridgeHandler.removeHandlersForRootLogger ();
@@ -97,6 +101,19 @@ public class ServletConfig
 
     // Enforce Peppol profile usage
     AS4ProfileSelector.setCustomAS4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
+
+    // Init the data path
+    {
+      // Get the ServletContext base path
+      final String sServletContextPath = ServletHelper.getServletContextBasePath (aSC);
+      // Get the data path
+      final String sDataPath = AS4Configuration.getDataPath ();
+      if (StringHelper.hasNoText (sDataPath))
+        throw new InitializationException ("No data path was provided!");
+      final boolean bFileAccessCheck = false;
+      // Init the IO layer
+      WebFileIO.initPaths (new File (sDataPath).getAbsoluteFile (), sServletContextPath, bFileAccessCheck);
+    }
   }
 
   private static void _initAS4 ()
@@ -110,15 +127,17 @@ public class ServletConfig
     final KeyStore aKS = AS4CryptoFactoryProperties.getDefaultInstance ().getKeyStore ();
     if (aKS == null)
       throw new InitializationException ("Failed to load configured Keystore");
+    LOGGER.info ("Successfully loaded configured key store from the crypto factory");
 
     final KeyStore.PrivateKeyEntry aPKE = AS4CryptoFactoryProperties.getDefaultInstance ().getPrivateKeyEntry ();
     if (aPKE == null)
       throw new InitializationException ("Failed to load configured private key");
+    LOGGER.info ("Successfully loaded configured private key from the crypto factory");
 
     // No OCSP check for performance
     final X509Certificate aAPCert = (X509Certificate) aPKE.getCertificate ();
 
-    // Right now i don't own a peppol certificate so this must be commented
+    // TODO This block SHOULD be uncommented once you have a Peppol certificate
     if (false)
     {
       final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
