@@ -289,6 +289,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 * v1.3.2 - work in progress
     * Allowing to set the "RefToMessageId" in the client sender builders
+    * Improved the error handling of `ISOAPHeaderElementProcessor` invocations (see [issue #52](https://github.com/phax/phase4/issues/52))
 * v1.3.1 - 2021-05-21
     * Updated to xmlsec 2.2.2
     * Added the possibility to provide the content ID in the Peppol AS4 sender
