@@ -661,6 +661,7 @@ public class AS4RequestHandler implements AutoCloseable
     if (aAllProcessors.isEmpty ())
       LOGGER.error ("No IAS4ServletMessageProcessorSPI is available to process an incoming message");
 
+    // Invoke ALL non-null SPIs
     for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
       if (aProcessor != null)
         try
