@@ -43,7 +43,7 @@ import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
  * File based implementation of {@link IAS4OutgoingDumper}. Was moved to this
- * package from `com.helger.phase4.servlet.dump` in v1.3.0.
+ * package from <code>com.helger.phase4.servlet.dump</code> in v1.3.0.
  *
  * @author Philip Helger
  * @since 0.9.3
