@@ -92,6 +92,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * {@link #soapVersion(ESoapVersion)}
    * {@link #pmodeResolver(IPModeResolver)}<br>
    * {@link #incomingAttachmentFactory(IAS4IncomingAttachmentFactory)}<br>
+   * {@link #incomingProfileSelector(IAS4IncomingProfileSelector)}<br>
    */
   public AbstractAS4MessageBuilder ()
   {
@@ -123,7 +124,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   /**
    * Set the HTTP client factory to be used. If the passed settings are
-   * provided, a new {@link HttpClientFactory} is created with them.
+   * non-<code>null</code>, a new {@link HttpClientFactory} is created with
+   * them, else a <code>null</code>-{@link HttpClientFactory} is set.
    *
    * @param aHttpClientSettings
    *        The new HTTP client settings to be used. May be <code>null</code>.
@@ -136,9 +138,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the HTTP client factory to be used. By default an instance of
-   * {@link HttpClientFactory} is used and there is no need to invoke this
-   * method.
+   * Set the HTTP client factory to be used. By default a default instance of
+   * {@link HttpClientFactory} is used (set in the constructor) and there is no
+   * need to invoke this method.
    *
    * @param aHttpClientFactory
    *        The new HTTP client factory to be used. May be <code>null</code>.
@@ -162,8 +164,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the crypto factory to be used. The default crypto factory uses the
-   * properties from the file "crypto.properties".
+   * Set the crypto factory to be used. The default crypto factory is set in the
+   * constructor to {@link AS4CryptoFactoryProperties#getDefaultInstance()}.
    *
    * @param aCryptoFactory
    *        The crypto factory to be used. May be <code>null</code>.
@@ -192,7 +194,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the optional AS4 reference to a previous message ID.
+   * Set the optional AS4 reference to a previous message ID. If this field is
+   * not set, it will not be emitted in the message.
    *
    * @param sRefToMessageID
    *        The optional AS4 reference to a previous message ID to be used. May
@@ -209,7 +212,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   /**
    * Set the optional sending date time. If no time is specified, the current
-   * date time is used.
+   * date time will be used.
    *
    * @param aSendingDateTime
    *        The sending date time to set. May be <code>null</code>.
@@ -233,7 +236,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the SOAP version to be used. Default is SOAP 1.2
+   * Set the SOAP version to be used. The default is SOAP 1.2 and is set in the
+   * constructor. Usually you don't need to call that method.
    *
    * @param eSoapVersion
    *        The SOAP version to be used. May be <code>null</code>.
