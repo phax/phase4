@@ -60,6 +60,9 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
   @FunctionalInterface
   public interface IFileProvider
   {
+    /** The default file extension to be used */
+    String DEFAULT_FILE_EXTENSION = ".as4response";
+
     /**
      * Get the {@link File} to write the raw response to. The filename must be
      * globally unique. The resulting file should be an absolute path.
@@ -86,7 +89,7 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
              PDTIOHelper.getTimeForFilename (aNow.toLocalTime ()) +
              "-" +
              FilenameHelper.getAsSecureValidASCIIFilename (sAS4MessageID) +
-             ".as4response";
+             DEFAULT_FILE_EXTENSION;
     }
   }
 

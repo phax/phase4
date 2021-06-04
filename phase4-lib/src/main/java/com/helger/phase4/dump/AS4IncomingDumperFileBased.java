@@ -54,6 +54,9 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   @FunctionalInterface
   public interface IFileProvider
   {
+    /** The default file extension to be used */
+    String DEFAULT_FILE_EXTENSION = ".as4in";
+
     /**
      * Get the {@link File} to write the dump to. The filename must be globally
      * unique. The resulting file should be an absolute path.
@@ -82,7 +85,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
              PDTIOHelper.getTimeForFilename (aLDT.toLocalTime ()) +
              "-" +
              FilenameHelper.getAsSecureValidASCIIFilename (aMessageMetadata.getIncomingUniqueID ()) +
-             ".as4in";
+             DEFAULT_FILE_EXTENSION;
     }
   }
 

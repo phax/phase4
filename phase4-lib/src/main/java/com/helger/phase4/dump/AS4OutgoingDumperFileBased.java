@@ -53,6 +53,9 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   @FunctionalInterface
   public interface IFileProvider
   {
+    /** The default file extension to be used */
+    String DEFAULT_FILE_EXTENSION = ".as4out";
+
     /**
      * Get the {@link File} to write the dump to. The filename must be globally
      * unique. The resulting file should be an absolute path.
@@ -87,7 +90,7 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
              FilenameHelper.getAsSecureValidASCIIFilename (sAS4MessageID) +
              "-" +
              nTry +
-             ".as4out";
+             DEFAULT_FILE_EXTENSION;
     }
   }
 
