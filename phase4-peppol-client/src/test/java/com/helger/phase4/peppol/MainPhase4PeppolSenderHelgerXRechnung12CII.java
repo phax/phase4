@@ -82,9 +82,9 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
       final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true).setHandleHttpHeaders (true);
 
       // Add XRechnung rulesets
-      final IValidationExecutorSetRegistry <IValidationSourceXML> aVESregistry = Phase4PeppolValidation.createDefaultRegistry ();
-      EN16931Validation.initEN16931 (aVESregistry);
-      XRechnungValidation.initXRechnung (aVESregistry);
+      final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry = Phase4PeppolValidation.createDefaultRegistry ();
+      EN16931Validation.initEN16931 (aVESRegistry);
+      XRechnungValidation.initXRechnung (aVESRegistry);
 
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
@@ -95,7 +95,7 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                                  .validationRegistry (aVESregistry)
+                                  .validationRegistry (aVESRegistry)
                                   .validationConfiguration (XRechnungValidation.VID_XRECHNUNG_CII_122,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
