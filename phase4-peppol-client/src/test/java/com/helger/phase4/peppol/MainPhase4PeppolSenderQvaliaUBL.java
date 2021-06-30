@@ -23,10 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.peppol.sml.ESML;
-import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
@@ -37,9 +35,9 @@ import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation3_12_0;
-import com.helger.security.keystore.EKeyStoreType;
-import com.helger.security.keystore.KeyStoreHelper;
+import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
+import com.helger.phive.en16931.EN16931Validation;
+import com.helger.phive.engine.source.IValidationSourceXML;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -64,7 +62,7 @@ public final class MainPhase4PeppolSenderQvaliaUBL
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/qvalia-example-ubl.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/example-ubl-en-qvalia.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
@@ -85,17 +83,12 @@ public final class MainPhase4PeppolSenderQvaliaUBL
         }
       };
 
+      // Add EN16931 rulesets
+      final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry = Phase4PeppolValidation.createDefaultRegistry ();
+      EN16931Validation.initEN16931 (aVESRegistry);
+
       // Invalid certificate is valid until 2029
-      final IAS4CryptoFactory cf = true ? AS4CryptoFactoryProperties.getDefaultInstance ()
-                                        : new AS4CryptoFactoryInMemoryKeyStore (KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.JKS,
-                                                                                                                   "invalid-keystore-pw-peppol.jks",
-                                                                                                                   "peppol"),
-                                                                                "1",
-                                                                                "peppol",
-                                                                                KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
-                                                                                                             PeppolKeyStoreHelper.Config2018.TRUSTSTORE_PRODUCTION_CLASSPATH,
-                                                                                                             PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
-                                                                                              .getKeyStore ());
+      final IAS4CryptoFactory cf = AS4CryptoFactoryProperties.getDefaultInstance ();
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
@@ -108,7 +101,8 @@ public final class MainPhase4PeppolSenderQvaliaUBL
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidation3_12_0.VID_OPENPEPPOL_INVOICE_V3,
+                                  .validationRegistry (aVESRegistry)
+                                  .validationConfiguration (EN16931Validation.VID_UBL_INVOICE_135,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .sendMessageAndCheckForReceipt ();
