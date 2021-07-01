@@ -4,7 +4,7 @@
   xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
   <cbc:CustomizationID>urn:cen.eu:en16931:2017</cbc:CustomizationID>
   <cbc:ProfileID>urn:fdc:peppol.eu:poacc:en16931:any</cbc:ProfileID>
-  <cbc:ID>example-ubl-en-123</cbc:ID>
+  <cbc:ID>example-ubl-en-1623</cbc:ID>
   <cbc:IssueDate>2017-11-13</cbc:IssueDate>
   <cbc:DueDate>2017-12-01</cbc:DueDate>
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
