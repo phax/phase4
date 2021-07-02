@@ -75,7 +75,7 @@
     <log4j.version>2.14.1</log4j.version>
     <ph-xsds.version>2.6.0</ph-xsds.version>
     <peppol-commons.version>8.6.1</peppol-commons.version>
-    <spring-boot.version>2.5.0</spring-boot.version>
+    <spring-boot.version>2.5.2</spring-boot.version>
   </properties>
   
   <dependencyManagement>
@@ -111,14 +111,14 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-css-parent-pom</artifactId>
-        <version>6.3.3</version>
+        <version>6.3.4</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.web</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>9.6.0</version>
+        <version>9.6.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -153,7 +153,7 @@
       <dependency>
         <groupId>com.helger.phive</groupId>
         <artifactId>phive-parent-pom</artifactId>
-        <version>7.2.0</version>
+        <version>7.2.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
