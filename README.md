@@ -288,6 +288,8 @@ If you like the project, a star on GitHub is always appreciated.
 # News and noteworthy
 
 * v1.3.2 - work in progress
+    * Updated to ph-web 9.6.1
+    * Updated to phive-rules 2.1.5
     * Allowing to set the "RefToMessageId" in the client sender builders
     * Improved the error handling of `ISOAPHeaderElementProcessor` invocations (see [issue #52](https://github.com/phax/phase4/issues/52))
 * v1.3.1 - 2021-05-21

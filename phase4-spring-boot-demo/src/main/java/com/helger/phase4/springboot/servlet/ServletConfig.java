@@ -53,7 +53,7 @@ import com.helger.photon.app.io.WebFileIO;
 import com.helger.servlet.ServletHelper;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
-import com.helger.xservlet.requesttrack.RequestTracker;
+import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
 @Configuration
 public class ServletConfig
@@ -89,7 +89,10 @@ public class ServletConfig
     SLF4JBridgeHandler.install ();
 
     if (GlobalDebug.isDebugMode ())
-      RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
+    {
+      RequestTrackerSettings.setLongRunningRequestsCheckEnabled (false);
+      RequestTrackerSettings.setParallelRunningRequestsCheckEnabled (false);
+    }
 
     HttpDebugger.setEnabled (false);
 

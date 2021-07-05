@@ -35,7 +35,7 @@ import com.helger.photon.app.io.WebFileIO;
 import com.helger.photon.jetty.JettyRunner;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
-import com.helger.xservlet.requesttrack.RequestTracker;
+import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
 public final class MockJettySetup extends AbstractAS4TestSetUp
 {
@@ -84,7 +84,9 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
       WebFileIO.initPaths (new File (AS4Configuration.getDataPath ()).getAbsoluteFile (), aSCPath.getAbsolutePath (), false);
       GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
     }
-    RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
+
+    RequestTrackerSettings.setLongRunningRequestsCheckEnabled (false);
+    RequestTrackerSettings.setParallelRunningRequestsCheckEnabled (false);
     s_aResMgr = new AS4ResourceHelper ();
 
     LOGGER.info ("MockJettySetup - started");

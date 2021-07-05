@@ -31,7 +31,7 @@ import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.IUserManager;
-import com.helger.xservlet.requesttrack.RequestTracker;
+import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
 /**
  * Internal web app listener to get the test requirements up and running
@@ -86,7 +86,8 @@ public final class AS4WebAppListener extends WebAppListener
     SLF4JBridgeHandler.install ();
 
     // Disable some bloat ware ;-)
-    RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
+    RequestTrackerSettings.setLongRunningRequestsCheckEnabled (false);
+    RequestTrackerSettings.setParallelRunningRequestsCheckEnabled (false);
     HttpDebugger.setEnabled (false);
   }
 
