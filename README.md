@@ -55,7 +55,7 @@ If you are a phase4 user and want to be listed here, write me an email to phase4
 
 The primary configuration file for phase4 is called `phase4.properties`.
 It contains both the phase4 specific configuration items as well as the WSS4J ones (see https://ws.apache.org/wss4j/config.html).
-The resolution of the configuration properties is not bound to the configuration file - system properties and environment variables can also be used. See https://github.com/phax/ph-commons#ph-config for details.
+The resolution of the configuration properties is not bound to the configuration file - system properties and environment variables can also be used. See https://github.com/phax/ph-commons/wiki/ph-config for details.
 Upon resolution of configuration values, Java system properties have the highest priority (400), before environment variables (300), the file `phase4.properties` (203), the file `private-application.json` (195), the file `private-application.properties` (190), the file `application.json` (185), the file `application.properties` (180) and finally the file `reference.properties` (1).
 
 Note: programmatic access to the configuration is solely achieved via class `com.helger.phase4.config.AS4Configuration`.
