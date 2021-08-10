@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+  xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+  xmlns:cec="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"
+  xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.0</cbc:CustomizationID>
+  
+  <cbc:ID>0000123456</cbc:ID>
+  <cbc:IssueDate>2017-12-11</cbc:IssueDate>
+  <cbc:DueDate>2018-01-10</cbc:DueDate>
+  <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+  <cbc:Note>[Invoice note]</cbc:Note>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+  <cbc:TaxCurrencyCode>EUR</cbc:TaxCurrencyCode>
+  <cbc:BuyerReference>11002002-98765-43</cbc:BuyerReference>
+  <cac:OrderReference>
+    <cbc:ID>10520</cbc:ID>
+  </cac:OrderReference>
+  <cac:ContractDocumentReference>
+    <cbc:ID>0000000752</cbc:ID>
+  </cac:ContractDocumentReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>01_15_Anhang_01.pdf</cbc:ID>
+    <cbc:DocumentDescription>Aufschlüsselung der einzelnen Leistungspositionen</cbc:DocumentDescription>
+    <cac:Attachment>
+      <cbc:EmbeddedDocumentBinaryObject mimeCode="application/pdf"
+        filename="01_15_Anhang_01.pdf" />
+    </cac:Attachment>
+  </cac:AdditionalDocumentReference>
+  <cac:ProjectReference>
+    <cbc:ID>Entwicklung System</cbc:ID>
+  </cac:ProjectReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyName>
+        <cbc:Name>[Seller name]</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>[Seller street]</cbc:StreetName>
+        <cbc:CityName>[Seller city]</cbc:CityName>
+        <cbc:PostalZone>10623</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>DE</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>DE123456789</cbc:CompanyID>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>[Seller name]</cbc:RegistrationName>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Name>[Seller contact person]</cbc:Name>
+        <cbc:Telephone>[Seller contact telephone number]</cbc:Telephone>
+        <cbc:ElectronicMail>contact@seller.de</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyName>
+        <cbc:Name>[Buyer name]</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>[Buyer street]</cbc:StreetName>
+        <cbc:CityName>[Buyer city]</cbc:CityName>
+        <cbc:PostalZone>12345</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>DE</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>[Buyer name]</cbc:RegistrationName>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Name>[Buyer contact person]</cbc:Name>
+        <cbc:ElectronicMail>buyer@contact.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode>48</cbc:PaymentMeansCode>
+    <cac:CardAccount>
+      <cbc:PrimaryAccountNumberID>41234</cbc:PrimaryAccountNumberID>
+      <cbc:NetworkID>mapped-from-cii</cbc:NetworkID>
+      <cbc:HolderName>[Payment card holder name]</cbc:HolderName>
+    </cac:CardAccount>
+  </cac:PaymentMeans>
+  <cac:PaymentTerms>
+    <cbc:Note>Bei Zahlungen binnen 14 Tagen, 2% Skonto</cbc:Note>
+  </cac:PaymentTerms>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="EUR">1706.2</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">8980</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">1706.2</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="EUR">8980</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="EUR">8980</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">10686.2</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="EUR">10686.2</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>0</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="XPP">1</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">850</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Description>Anforderungmanagament</cbc:Description>
+      <cbc:Name>Anforderungsaufnahme</cbc:Name>
+      <cac:SellersItemIdentification>
+        <cbc:ID>1034</cbc:ID>
+      </cac:SellersItemIdentification>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">850</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="XPP">1</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">2986</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Description>Erstellung Lastenheft bis Abnahme</cbc:Description>
+      <cbc:Name>Lastenheft</cbc:Name>
+      <cac:SellersItemIdentification>
+        <cbc:ID>1035</cbc:ID>
+      </cac:SellersItemIdentification>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">2986</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>2</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="XPP">1</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">2344</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Description>Erstellung Pflichtenheft bis Abnahme</cbc:Description>
+      <cbc:Name>Pflichtenheft</cbc:Name>
+      <cac:SellersItemIdentification>
+        <cbc:ID>1036</cbc:ID>
+      </cac:SellersItemIdentification>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">2344</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>3</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="XPP">1</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">2800</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Description>Entwicklung System bis Implementierung</cbc:Description>
+      <cbc:Name>Entwicklung</cbc:Name>
+      <cac:SellersItemIdentification>
+        <cbc:ID>1037</cbc:ID>
+      </cac:SellersItemIdentification>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">2800</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>
