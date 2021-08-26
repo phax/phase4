@@ -43,6 +43,7 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.commons.timing.StopWatch;
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
@@ -153,6 +154,7 @@ public class BasicHttpPoster implements IHttpPoster
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
 
+    final StopWatch aSW = StopWatch.createdStarted ();
     if (LOGGER.isInfoEnabled ())
       LOGGER.info ("Starting to transmit AS4 Message to '" + sURL + "'");
 
@@ -195,6 +197,12 @@ public class BasicHttpPoster implements IHttpPoster
       });
 
       return aClientMgr.execute (aPost, aResponseHandler);
+    }
+    finally
+    {
+      aSW.stop ();
+      if (LOGGER.isInfoEnabled ())
+        LOGGER.info ("Finished transmitting AS4 Message to '" + sURL + "' after " + aSW.getMillis () + " ms");
     }
   }
 
