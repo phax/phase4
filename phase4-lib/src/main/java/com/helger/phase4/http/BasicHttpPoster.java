@@ -236,6 +236,9 @@ public class BasicHttpPoster implements IHttpPoster
     // later)
     aDumpOSHolder.set (aDumpOS);
 
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Creating dumping entity for the current request");
+
     return new HttpEntityWrapper (aSrcEntity)
     {
       @Override
