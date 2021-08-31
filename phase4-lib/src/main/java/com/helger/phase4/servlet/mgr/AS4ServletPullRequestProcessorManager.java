@@ -41,8 +41,8 @@ public final class AS4ServletPullRequestProcessorManager
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServletPullRequestProcessorManager.class);
 
-  private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
-  @GuardedBy ("s_aRWLock")
+  private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
+  @GuardedBy ("RW_LOCK")
   private static final ICommonsList <IAS4ServletPullRequestProcessorSPI> s_aProcessors = new CommonsArrayList <> ();
 
   private AS4ServletPullRequestProcessorManager ()
@@ -60,7 +60,7 @@ public final class AS4ServletPullRequestProcessorManager
     else
       LOGGER.info ("Found " + aProcessorSPIs.size () + " AS4 pull requests processors");
 
-    s_aRWLock.writeLockedGet ( () -> s_aProcessors.setAll (aProcessorSPIs));
+    RW_LOCK.writeLocked ( () -> s_aProcessors.setAll (aProcessorSPIs));
   }
 
   static
@@ -77,6 +77,6 @@ public final class AS4ServletPullRequestProcessorManager
   @ReturnsMutableCopy
   public static ICommonsList <IAS4ServletPullRequestProcessorSPI> getAllProcessors ()
   {
-    return s_aRWLock.readLockedGet (s_aProcessors::getClone);
+    return RW_LOCK.readLockedGet (s_aProcessors::getClone);
   }
 }

@@ -42,10 +42,10 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 @ThreadSafe
 public final class AS4DumpManager
 {
-  private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
-  @GuardedBy ("s_aRWLock")
+  private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
+  @GuardedBy ("RW_LOCK")
   private static IAS4IncomingDumper s_aIncomingDumper;
-  @GuardedBy ("s_aRWLock")
+  @GuardedBy ("RW_LOCK")
   private static IAS4OutgoingDumper s_aOutgoingDumper;
 
   private AS4DumpManager ()
@@ -57,7 +57,7 @@ public final class AS4DumpManager
   @Nullable
   public static IAS4IncomingDumper getIncomingDumper ()
   {
-    return s_aRWLock.readLockedGet ( () -> s_aIncomingDumper);
+    return RW_LOCK.readLockedGet ( () -> s_aIncomingDumper);
   }
 
   /**
@@ -68,7 +68,7 @@ public final class AS4DumpManager
    */
   public static void setIncomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
   {
-    s_aRWLock.writeLockedGet ( () -> s_aIncomingDumper = aIncomingDumper);
+    RW_LOCK.writeLocked ( () -> s_aIncomingDumper = aIncomingDumper);
   }
 
   /**
@@ -77,7 +77,7 @@ public final class AS4DumpManager
   @Nullable
   public static IAS4OutgoingDumper getOutgoingDumper ()
   {
-    return s_aRWLock.readLockedGet ( () -> s_aOutgoingDumper);
+    return RW_LOCK.readLockedGet ( () -> s_aOutgoingDumper);
   }
 
   /**
@@ -88,7 +88,7 @@ public final class AS4DumpManager
    */
   public static void setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
   {
-    s_aRWLock.writeLockedGet ( () -> s_aOutgoingDumper = aOutgoingDumper);
+    RW_LOCK.writeLocked ( () -> s_aOutgoingDumper = aOutgoingDumper);
   }
 
   /**

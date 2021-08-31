@@ -31,8 +31,8 @@ import com.helger.phase4.config.AS4Configuration;
  */
 public final class AS4ProfileSelector
 {
-  private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
-  @GuardedBy ("s_aRWLock")
+  private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
+  @GuardedBy ("RW_LOCK")
   private static String s_sAS4ProfileID;
 
   private AS4ProfileSelector ()
@@ -41,12 +41,12 @@ public final class AS4ProfileSelector
   @Nullable
   public static String getCustomAS4ProfileID ()
   {
-    return s_aRWLock.readLockedGet ( () -> s_sAS4ProfileID);
+    return RW_LOCK.readLockedGet ( () -> s_sAS4ProfileID);
   }
 
   public static void setCustomAS4ProfileID (@Nullable final String sAS4ProfileID)
   {
-    s_aRWLock.writeLockedGet ( () -> s_sAS4ProfileID = sAS4ProfileID);
+    RW_LOCK.writeLocked ( () -> s_sAS4ProfileID = sAS4ProfileID);
   }
 
   /**

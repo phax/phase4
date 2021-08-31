@@ -43,8 +43,8 @@ public final class AS4ServerInitializer
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServerInitializer.class);
 
-  private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
-  @GuardedBy ("s_aRWLock")
+  private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
+  @GuardedBy ("RW_LOCK")
   private static TriggerKey s_aTriggerKey;
 
   private AS4ServerInitializer ()
@@ -64,7 +64,7 @@ public final class AS4ServerInitializer
       LOGGER.debug ("Scheduling AS4DuplicateCleanupJob to dispose incoming metadata that is older than " + nDisposalMinutes + " minutes");
 
     // Schedule jobs
-    s_aRWLock.writeLocked ( () -> {
+    RW_LOCK.writeLocked ( () -> {
       // Consecutive calls return null
       final TriggerKey aTriggerKey = AS4DuplicateCleanupJob.scheduleMe (nDisposalMinutes);
       if (aTriggerKey != null)
@@ -83,7 +83,7 @@ public final class AS4ServerInitializer
    */
   public static void shutdownAS4Server ()
   {
-    s_aRWLock.writeLocked ( () -> {
+    RW_LOCK.writeLocked ( () -> {
       AS4DuplicateCleanupJob.unschedule (s_aTriggerKey);
       s_aTriggerKey = null;
     });

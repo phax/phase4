@@ -55,7 +55,7 @@ public class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4Dupli
     final AS4DuplicateItem aItem = new AS4DuplicateItem (sMessageID, sProfileID, sPModeID);
     try
     {
-      m_aRWLock.writeLockedGet ( () -> internalCreateItem (aItem));
+      m_aRWLock.writeLocked ( () -> internalCreateItem (aItem));
     }
     catch (final IllegalArgumentException ex)
     {
