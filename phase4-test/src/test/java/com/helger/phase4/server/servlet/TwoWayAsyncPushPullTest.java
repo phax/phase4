@@ -37,7 +37,6 @@ import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.domain.AS4PullRequestMessage;
@@ -82,9 +81,7 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
   {
     final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
                                                   AS4TestConstants.TEST_RESPONDER,
-                                                  AS4Configuration.getConfig ()
-                                                                  .getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS,
-                                                                                AS4TestConstants.DEFAULT_SERVER_ADDRESS),
+                                                  MockJettySetup.getServerAddressFromSettings (),
                                                   (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
                                                   false);
     // Setting second leg to the same as first

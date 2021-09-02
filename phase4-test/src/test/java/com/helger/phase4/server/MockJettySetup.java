@@ -25,10 +25,12 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.url.URLHelper;
+import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.photon.app.io.WebFileIO;
@@ -55,6 +57,13 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
   private MockJettySetup ()
   {}
 
+  @Nonnull
+  @Nonempty
+  public static String getServerAddressFromSettings ()
+  {
+    return AS4Configuration.getConfig ().getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS, AS4TestConstants.DEFAULT_SERVER_ADDRESS);
+  }
+
   private static boolean _isRunJetty ()
   {
     return AS4Configuration.getConfig ().getAsBoolean (SETTINGS_SERVER_JETTY_ENABLED, false);
@@ -62,7 +71,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
 
   private static int _getJettyPort ()
   {
-    return URLHelper.getAsURL (AS4Configuration.getConfig ().getAsString (SETTINGS_SERVER_ADDRESS)).getPort ();
+    return URLHelper.getAsURL (getServerAddressFromSettings ()).getPort ();
   }
 
   @BeforeClass

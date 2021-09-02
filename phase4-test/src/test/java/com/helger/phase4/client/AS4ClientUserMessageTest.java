@@ -62,7 +62,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessageTest.class);
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
-  private static final String SERVER_URL = "http://127.0.0.1:8080/as4";
+  private static final String SERVER_URL = MockJettySetup.getServerAddressFromSettings ();
 
   @WillNotClose
   private static AS4ResourceHelper s_aResMgr;
@@ -153,6 +153,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
     try
     {
       aClient.buildMessage ("bla", null);
+      // expected
     }
     catch (final Exception ex)
     {
