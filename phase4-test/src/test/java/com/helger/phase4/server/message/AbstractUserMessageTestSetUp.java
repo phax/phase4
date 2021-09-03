@@ -53,7 +53,6 @@ import com.helger.config.IConfig;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientRetryHandler.ERetryMode;
 import com.helger.httpclient.HttpClientSettings;
-import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
@@ -135,7 +134,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   private HttpPost _createPost ()
   {
     final IConfig aConfig = AS4Configuration.getConfig ();
-    final String sURL = aConfig.getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS, AS4TestConstants.DEFAULT_SERVER_ADDRESS);
+    final String sURL = MockJettySetup.getServerAddressFromSettings ();
 
     LOGGER.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
     final HttpPost aPost = new HttpPost (sURL);

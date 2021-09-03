@@ -31,7 +31,6 @@ import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpMimeMessageEntity;
@@ -62,9 +61,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   {
     final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
                                                   AS4TestConstants.TEST_RESPONDER,
-                                                  AS4Configuration.getConfig ()
-                                                                  .getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS,
-                                                                                AS4TestConstants.DEFAULT_SERVER_ADDRESS),
+                                                  MockJettySetup.getServerAddressFromSettings (),
                                                   (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
                                                   false);
     // Setting second leg to the same as first
