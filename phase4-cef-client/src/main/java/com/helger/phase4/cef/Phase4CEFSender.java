@@ -322,6 +322,7 @@ public final class Phase4CEFSender
     }
 
     @Override
+    @OverridingMethodsMustInvokeSuper
     protected ESuccess finishFields () throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
@@ -345,7 +346,8 @@ public final class Phase4CEFSender
         m_aAPEndointURLConsumer.accept (sReceiverEndpointURL);
       endpointURL (sReceiverEndpointURL);
 
-      return ESuccess.SUCCESS;
+      // Call at the end
+      return super.finishFields ();
     }
 
     @Override

@@ -18,6 +18,7 @@ package com.helger.phase4.sender;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
@@ -81,6 +82,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   }
 
   @Override
+  @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
   {
     if (!super.isEveryRequiredFieldSet ())

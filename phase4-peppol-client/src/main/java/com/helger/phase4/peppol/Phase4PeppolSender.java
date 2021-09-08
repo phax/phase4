@@ -579,6 +579,7 @@ public final class Phase4PeppolSender
       // From receiver certificate
       toPartyID (PeppolCertificateHelper.getSubjectCN (aReceiverCert));
 
+      // Super at the end
       return super.finishFields ();
     }
 
@@ -1021,6 +1022,7 @@ public final class Phase4PeppolSender
     }
 
     @Override
+    @OverridingMethodsMustInvokeSuper
     public boolean isEveryRequiredFieldSet ()
     {
       if (!super.isEveryRequiredFieldSet ())
@@ -1037,6 +1039,7 @@ public final class Phase4PeppolSender
     }
 
     @Override
+    @OverridingMethodsMustInvokeSuper
     protected ESuccess finishFields () throws Phase4Exception
     {
       // Perform SMP lookup

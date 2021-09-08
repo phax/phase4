@@ -515,6 +515,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *         if something goes wrong
    */
   @OverrideOnDemand
+  @OverridingMethodsMustInvokeSuper
   protected ESuccess finishFields () throws Phase4Exception
   {
     return ESuccess.SUCCESS;
