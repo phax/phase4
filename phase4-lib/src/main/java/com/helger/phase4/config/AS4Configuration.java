@@ -72,7 +72,7 @@ public final class AS4Configuration
    * scheme defined by {@link ConfigFactory#createDefaultValueProvider()} but
    * adds support for AS4 specific files. For a sustainable solution use one of
    * the following files that have higher precedence than
-   * <code>applicatipn.properties</code>:
+   * <code>application.properties</code>:
    * <ul>
    * <li>private-phase4.properties - priority 204</li>
    * <li>phase4.properties - priority 203</li>
