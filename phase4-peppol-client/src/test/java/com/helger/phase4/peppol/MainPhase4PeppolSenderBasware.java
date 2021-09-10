@@ -63,7 +63,7 @@ public final class MainPhase4PeppolSenderBasware
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0007:baswareSIEEndpointForSNI");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0007:baswareAPAs4TestEndpoint");
       final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
       {
         public void onAS4Message (final AbstractAS4Message <?> aMsg)
