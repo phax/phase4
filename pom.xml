@@ -132,7 +132,7 @@
       <dependency>
         <groupId>com.helger.ubl</groupId>
         <artifactId>ph-ubl-parent-pom</artifactId>
-        <version>6.6.2</version>
+        <version>6.6.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
