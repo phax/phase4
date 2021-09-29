@@ -36,7 +36,7 @@ public class XMLDSigWriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE
   public XMLDSigWriterBuilder (@Nonnull final EXMLDSigDocumentType eDocType)
   {
     super (eDocType);
-    setNamespaceContext (new Ebms3NamespaceHandler ());
+    setNamespaceContext (Ebms3NamespaceHandler.getInstance ());
   }
 
   @Nonnull

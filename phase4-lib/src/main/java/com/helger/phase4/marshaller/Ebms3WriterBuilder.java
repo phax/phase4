@@ -38,7 +38,7 @@ public class Ebms3WriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE, 
   public Ebms3WriterBuilder (@Nonnull final EEbms3DocumentType eDocType)
   {
     super (eDocType);
-    setNamespaceContext (new Ebms3NamespaceHandler ());
+    setNamespaceContext (Ebms3NamespaceHandler.getInstance ());
   }
 
   @Nonnull

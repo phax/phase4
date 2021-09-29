@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.marshaller;
 
+import javax.annotation.Nonnull;
+
 import com.helger.phase4.CAS4;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
@@ -27,6 +29,11 @@ import com.helger.xml.namespace.MapBasedNamespaceContext;
  */
 public class Ebms3NamespaceHandler extends MapBasedNamespaceContext
 {
+  private static final class SingletonHolder
+  {
+    static final Ebms3NamespaceHandler INSTANCE = new Ebms3NamespaceHandler ();
+  }
+
   public Ebms3NamespaceHandler ()
   {
     addMapping ("ds", CAS4.DS_NS);
@@ -44,5 +51,17 @@ public class Ebms3NamespaceHandler extends MapBasedNamespaceContext
     addMapping ("xlink", "http://www.w3.org/1999/xlink");
     for (final ESoapVersion e : ESoapVersion.values ())
       addMapping (e.getNamespacePrefix (), e.getNamespaceURI ());
+  }
+
+  /**
+   * @return The global instance of the namespace handler. Never
+   *         <code>null</code>. Don't modify it! To modify it, please clone it
+   *         and go from there.
+   * @since 1.3.3
+   */
+  @Nonnull
+  public static Ebms3NamespaceHandler getInstance ()
+  {
+    return SingletonHolder.INSTANCE;
   }
 }

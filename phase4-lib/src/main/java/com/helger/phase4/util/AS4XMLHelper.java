@@ -43,7 +43,7 @@ public final class AS4XMLHelper
   public static final XMLWriterSettings XWS = XMLWriterSettings.createForCanonicalization ();
   static
   {
-    XWS.setNamespaceContext (new Ebms3NamespaceHandler ());
+    XWS.setNamespaceContext (Ebms3NamespaceHandler.getInstance ());
     XWS.setIndent (EXMLSerializeIndent.NONE);
     XWS.setSerializeXMLDeclaration (EXMLSerializeXMLDeclaration.EMIT_NO_STANDALONE);
   }

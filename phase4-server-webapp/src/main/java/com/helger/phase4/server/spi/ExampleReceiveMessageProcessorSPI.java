@@ -68,7 +68,7 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
       final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument () : aState.getOriginalSoapDocument ();
       final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc,
-                                                       new XMLWriterSettings ().setNamespaceContext (new Ebms3NamespaceHandler ())
+                                                       new XMLWriterSettings ().setNamespaceContext (Ebms3NamespaceHandler.getInstance ())
                                                                                .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
         LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "'");
