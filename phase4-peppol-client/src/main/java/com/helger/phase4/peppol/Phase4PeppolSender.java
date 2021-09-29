@@ -296,7 +296,7 @@ public final class Phase4PeppolSender
 
     protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
-    private Consumer <String> m_aAPEndointURLConsumer;
+    private Consumer <String> m_aAPEndpointURLConsumer;
 
     /**
      * Create a new builder, with the defaults from
@@ -514,14 +514,32 @@ public final class Phase4PeppolSender
      * Set an optional Consumer for the destination AP address retrieved from
      * the endpoint details provider, independent of its usability.
      *
-     * @param aAPEndointURLConsumer
+     * @param aAPEndpointURLConsumer
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
+     * @deprecated Since 1.3.3. Due to a typo. Use
+     *             {@link #endpointURLConsumer(Consumer)} instead.
      */
     @Nonnull
-    public final IMPLTYPE endointURLConsumer (@Nullable final Consumer <String> aAPEndointURLConsumer)
+    @Deprecated
+    public final IMPLTYPE endointURLConsumer (@Nullable final Consumer <String> aAPEndpointURLConsumer)
     {
-      m_aAPEndointURLConsumer = aAPEndointURLConsumer;
+      return endpointURLConsumer (aAPEndpointURLConsumer);
+    }
+
+    /**
+     * Set an optional Consumer for the destination AP address retrieved from
+     * the endpoint details provider, independent of its usability.
+     *
+     * @param aAPEndpointURLConsumer
+     *        The consumer to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since 1.3.3
+     */
+    @Nonnull
+    public final IMPLTYPE endpointURLConsumer (@Nullable final Consumer <String> aAPEndpointURLConsumer)
+    {
+      m_aAPEndpointURLConsumer = aAPEndpointURLConsumer;
       return thisAsT ();
     }
 
@@ -572,8 +590,8 @@ public final class Phase4PeppolSender
 
       // URL from e.g. SMP lookup (may throw an exception)
       final String sDestURL = m_aEndpointDetailProvider.getReceiverAPEndpointURL ();
-      if (m_aAPEndointURLConsumer != null)
-        m_aAPEndointURLConsumer.accept (sDestURL);
+      if (m_aAPEndpointURLConsumer != null)
+        m_aAPEndpointURLConsumer.accept (sDestURL);
       endpointURL (sDestURL);
 
       // From receiver certificate
@@ -621,7 +639,7 @@ public final class Phase4PeppolSender
         return false;
       }
       // m_aCertificateConsumer may be null
-      // m_aAPEndointURLConsumer may be null
+      // m_aAPEndpointURLConsumer may be null
 
       // All valid
       return true;

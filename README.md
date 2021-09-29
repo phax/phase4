@@ -289,6 +289,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 * v1.3.3 - work in progress
     * Updated to WSS4J 2.3.3
+    * Fixed a typo in method name of class `AbstractPeppolUserMessageBuilder` (missing `p` of `endpoint`)
 * v1.3.2 - 2021-09-27
     * Updated to ph-web 9.6.1
     * Updated to phive-rules 2.1.7
