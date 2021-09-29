@@ -191,7 +191,9 @@ public final class AS4Configuration
   }
 
   /**
-   * @return Use in-memory managers? Defaults to <code>true</code> since 0.11.0.
+   * @return Use in-memory managers, taken from the configuration item
+   *         <code>phase4.manager.inmemory</code>. Defaults to <code>true</code>
+   *         since 0.11.0.
    */
   public static boolean isUseInMemoryManagers ()
   {
@@ -206,6 +208,12 @@ public final class AS4Configuration
     return StringParser.parseBool (sValue, DEFAULT_PHASE4_MANAGER_INMEMORY);
   }
 
+  /**
+   * @return <code>true</code> if all WSS4J actions should be explicitly
+   *         synchronized. This is needed if multiple workers sending/receiving
+   *         AS4 messages from the same JBM. The configuration item is
+   *         <code>phase4.wss4j.syncsecurity</code>.
+   */
   public static boolean isWSS4JSynchronizedSecurity ()
   {
     if (false)
@@ -219,6 +227,10 @@ public final class AS4Configuration
     return StringParser.parseBool (sValue, DEFAULT_PHASE4_WSS4J_SYNCSECURITY);
   }
 
+  /**
+   * @return The AS4 profile to use, taken from the configuration item
+   *         <code>phase4.profile</code>. May be <code>null</code>.
+   */
   @Nullable
   public static String getAS4ProfileID ()
   {
@@ -227,8 +239,9 @@ public final class AS4Configuration
 
   /**
    * @return the number of minutes, the message IDs of incoming messages are
-   *         stored for duplication check. By default this is
-   *         {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES}
+   *         stored for duplication check. Taken from the configuration item
+   *         <code>phase4.incoming.duplicatedisposal.minutes</code>. By default
+   *         this is {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES}
    *         minutes.
    */
   public static long getIncomingDuplicateDisposalMinutes ()
@@ -236,19 +249,33 @@ public final class AS4Configuration
     return getConfig ().getAsLong ("phase4.incoming.duplicatedisposal.minutes", DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
   }
 
+  /**
+   * @return The dumping base path. Taken from the configuration item
+   *         <code>phase4.dump.path</code>.
+   * @see #getDumpBasePathFile() for the same data as a {@link File}
+   */
   @Nonnull
   public static String getDumpBasePath ()
   {
-    // "phase4-dumpy" relative to application startup directory
+    // "phase4-dumps" relative to application startup directory
     return getConfig ().getAsString ("phase4.dump.path", "phase4-dumps");
   }
 
+  /**
+   * @return The dumping base path as a {@link File}. Taken from the
+   *         configuration item <code>phase4.dump.path</code>.
+   * @see #getDumpBasePath() for the plain String
+   */
   @Nonnull
   public static File getDumpBasePathFile ()
   {
     return new File (getDumpBasePath ()).getAbsoluteFile ();
   }
 
+  /**
+   * @return The endpoint address of "our" AP for comparison. Taken from the
+   *         configuration item <code>phase4.endpoint.address/code>.
+   */
   @Nullable
   public static String getThisEndpointAddress ()
   {
