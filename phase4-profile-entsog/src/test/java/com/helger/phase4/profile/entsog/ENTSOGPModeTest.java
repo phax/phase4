@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2015-2021 Pavel Rotek
  * pavel[dot]rotek[at]gmail[dot]com
  *

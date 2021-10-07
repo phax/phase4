@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2015-2021 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
