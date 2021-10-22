@@ -75,9 +75,6 @@ public final class MainPhase4PeppolSenderZRE
           LOGGER.info ("Sending out AS4 message with message ID '" +
                        aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId () +
                        "'");
-          LOGGER.info ("Sending out AS4 message with conversation ID '" +
-                       aUserMsg.getEbms3UserMessage ().getCollaborationInfo ().getConversationId () +
-                       "'");
         }
       };
       final ESimpleUserMessageSendResult eResult = Phase4PeppolSender.builder ()

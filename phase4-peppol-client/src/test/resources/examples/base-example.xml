@@ -4,9 +4,9 @@
     xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
     <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
     <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
-    <cbc:ID>Snippet1</cbc:ID>
-    <cbc:IssueDate>2017-11-13</cbc:IssueDate>
-    <cbc:DueDate>2017-12-01</cbc:DueDate>
+    <cbc:ID>test-invoice-phase4</cbc:ID>
+    <cbc:IssueDate>2021-10-13</cbc:IssueDate>
+    <cbc:DueDate>2021-12-01</cbc:DueDate>
     <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
     <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
     <cbc:AccountingCost>4025:123:4343</cbc:AccountingCost>
@@ -71,7 +71,7 @@
         </cac:Party>
     </cac:AccountingCustomerParty>
     <cac:Delivery>
-        <cbc:ActualDeliveryDate>2017-11-01</cbc:ActualDeliveryDate>
+        <cbc:ActualDeliveryDate>2021-10-01</cbc:ActualDeliveryDate>
         <cac:DeliveryLocation>
             <cbc:ID schemeID="0088">9483759475923478</cbc:ID>
             <cac:Address>
