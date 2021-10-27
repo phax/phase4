@@ -54,8 +54,8 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
   {
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".sbd");
     if (SimpleFileIO.writeFile (aFile, aSBDBytes).isFailure ())
-      throw new IllegalStateException ("Failed to write SBD to '" + aFile.getAbsolutePath () + "'");
+      throw new IllegalStateException ("Failed to write SBD to '" + aFile.getAbsolutePath () + "' (" + aSBDBytes.length + " bytes)");
 
-    LOGGER.info ("Wrote SBD to '" + aFile.getAbsolutePath () + "'");
+    LOGGER.info ("Wrote SBD to '" + aFile.getAbsolutePath () + "' (" + aSBDBytes.length + " bytes)");
   }
 }
