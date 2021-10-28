@@ -57,7 +57,7 @@ public final class MainPhase4PeppolSenderZRE
 
     try
     {
-      final boolean bVerify = false;
+      final boolean bVerify = true;
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/" +
                                                                       (bVerify ? "zre/Verifizierungs_Rechnung_PEPPOL.xml"
                                                                                : "examples/base-example.xml")))
@@ -66,7 +66,8 @@ public final class MainPhase4PeppolSenderZRE
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0204:991-33333TEST-33");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme (bVerify ? "0204:991-55555PEPPO-82"
+                                                                                                                             : "0204:991-33333TEST-33");
       final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
       {
         public void onAS4Message (final AbstractAS4Message <?> aMsg)
@@ -81,7 +82,7 @@ public final class MainPhase4PeppolSenderZRE
                                                                      .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme (bVerify ? "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.0::2.1"
                                                                                                                                                                    : "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                                                      .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                                                                     .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
+                                                                     .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender2"))
                                                                      .receiverParticipantID (aReceiverID)
                                                                      .senderPartyID ("POP000306")
                                                                      .payload (aPayloadElement)

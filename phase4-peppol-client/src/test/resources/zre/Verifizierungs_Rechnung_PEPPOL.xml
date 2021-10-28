@@ -25,6 +25,14 @@
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cbc:BuyerReference>991-99012-32</cbc:BuyerReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>doc2</cbc:ID>
+    <cbc:DocumentDescription>Usage summary</cbc:DocumentDescription>
+    <!-- Special ZRE verification token XML as payload -->
+    <cac:Attachment>
+      <cbc:EmbeddedDocumentBinaryObject filename="bla.xml" mimeCode="application/xml">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHBlcHBvbFZlcmlmaWNhdGlvbj4KCTx1dWlkVG9rZW4+NWEyNjY5MzAtYTFlMS00ZDA4LTg3YTEtNmUxNzI4YjYwNWIwPC91dWlkVG9rZW4+Cgk8aWRUb2tlbj5FUl80Mzg4MTM4NjA8L2lkVG9rZW4+CjwvcGVwcG9sVmVyaWZpY2F0aW9uPg==</cbc:EmbeddedDocumentBinaryObject>
+    </cac:Attachment>
+  </cac:AdditionalDocumentReference>  
   <cac:AccountingSupplierParty>
     <cac:Party>
       <cbc:EndpointID schemeID="9915">phase4-test-sender</cbc:EndpointID>

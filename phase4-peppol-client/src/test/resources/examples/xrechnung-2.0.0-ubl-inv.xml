@@ -55,7 +55,7 @@
       <cac:Contact>
         <cbc:Name>[Seller contact person]</cbc:Name>
         <cbc:Telephone>[Seller contact telephone number]</cbc:Telephone>
-        <cbc:ElectronicMail>contact@seller.de</cbc:ElectronicMail>
+        <cbc:ElectronicMail>example@example.org</cbc:ElectronicMail>
       </cac:Contact>
     </cac:Party>
   </cac:AccountingSupplierParty>
