@@ -71,9 +71,9 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
                                                        new XMLWriterSettings ().setNamespaceContext (Ebms3NamespaceHandler.getInstance ())
                                                                                .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
-        LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "'");
+        LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
       else
-        LOGGER.info ("Wrote SOAP to '" + aFile.getAbsolutePath () + "'");
+        LOGGER.info ("Wrote SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
     }
 
     if (aState.hasUsedCertificate ())
@@ -85,9 +85,9 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
       final String sPEM = CertificateHelper.getPEMEncodedCertificate (aUsedCert);
       final byte [] aBytes = sPEM.getBytes (StandardCharsets.US_ASCII);
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
-        LOGGER.error ("Failed to write certificate to '" + aFile.getAbsolutePath () + "'");
+        LOGGER.error ("Failed to write certificate to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
       else
-        LOGGER.info ("Wrote certificate to '" + aFile.getAbsolutePath () + "'");
+        LOGGER.info ("Wrote certificate to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
     }
   }
 
@@ -98,9 +98,15 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".attachment" + nIndex);
     final byte [] aBytes = StreamHelper.getAllBytes (aIncomingAttachment.getInputStreamProvider ());
     if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
-      LOGGER.error ("Failed to write Incoming Attachment " + nIndex + " to '" + aFile.getAbsolutePath () + "'");
+      LOGGER.error ("Failed to write Incoming Attachment " +
+                    nIndex +
+                    " to '" +
+                    aFile.getAbsolutePath () +
+                    "' (" +
+                    aBytes.length +
+                    " bytes)");
     else
-      LOGGER.info ("Wrote Incoming Attachment " + nIndex + " to '" + aFile.getAbsolutePath () + "'");
+      LOGGER.info ("Wrote Incoming Attachment " + nIndex + " to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
   }
 
   @Nonnull
@@ -176,8 +182,8 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
   {
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".response");
     if (SimpleFileIO.writeFile (aFile, aResponseBytes).isFailure ())
-      LOGGER.error ("Failed to write response to '" + aFile.getAbsolutePath () + "'");
+      LOGGER.error ("Failed to write response to '" + aFile.getAbsolutePath () + "' (" + aResponseBytes.length + " bytes)");
     else
-      LOGGER.info ("Wrote response to '" + aFile.getAbsolutePath () + "'");
+      LOGGER.info ("Wrote response to '" + aFile.getAbsolutePath () + "' (" + aResponseBytes.length + " bytes)");
   }
 }
