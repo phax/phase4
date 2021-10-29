@@ -16,37 +16,15 @@
  */
 package com.helger.phase4.peppol;
 
-import java.io.Serializable;
-
-import javax.annotation.Nonnull;
-
-import com.helger.phive.api.result.ValidationResultList;
-
 /**
- * Interface for handling validation errors
+ * Wrong name. See #68
  *
  * @author Philip Helger
+ * @deprecated Since 1.3.3; Use {@link IPhase4PeppolValidationResultHandler}
+ *             instead.
  */
-public interface IPhase4PeppolValidatonResultHandler extends Serializable
+@Deprecated
+public interface IPhase4PeppolValidatonResultHandler extends IPhase4PeppolValidationResultHandler
 {
-  /**
-   * Invoked, if no validation error is present. This method is invoked if only
-   * warnings are present.
-   *
-   * @param aValidationResult
-   *        The full validation results. Never <code>null</code>.
-   * @throws Phase4PeppolException
-   *         Implementation dependent
-   */
-  void onValidationSuccess (@Nonnull final ValidationResultList aValidationResult) throws Phase4PeppolException;
-
-  /**
-   * Invoked, if at least one validation error is present.
-   *
-   * @param aValidationResult
-   *        The full validation results. Never <code>null</code>.
-   * @throws Phase4PeppolException
-   *         Implementation dependent
-   */
-  void onValidationErrors (@Nonnull final ValidationResultList aValidationResult) throws Phase4PeppolException;
+  /* empty */
 }

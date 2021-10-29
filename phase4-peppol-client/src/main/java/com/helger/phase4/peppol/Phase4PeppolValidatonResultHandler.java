@@ -21,12 +21,12 @@ import javax.annotation.Nonnull;
 import com.helger.phive.api.result.ValidationResultList;
 
 /**
- * The default implementation of {@link IPhase4PeppolValidatonResultHandler}.
+ * The default implementation of {@link IPhase4PeppolValidationResultHandler}.
  *
  * @author Philip Helger
  * @since 0.9.7
  */
-public class Phase4PeppolValidatonResultHandler implements IPhase4PeppolValidatonResultHandler
+public class Phase4PeppolValidatonResultHandler implements IPhase4PeppolValidationResultHandler
 {
   public void onValidationSuccess (@Nonnull final ValidationResultList aValidationResult)
   {
