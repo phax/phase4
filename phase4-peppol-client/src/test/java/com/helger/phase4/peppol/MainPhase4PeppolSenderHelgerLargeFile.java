@@ -66,6 +66,7 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadElement)
+                                  .compressPayload (false)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                                   .validationConfiguration (bNoValidate ? null : PeppolValidation3_12_0.VID_OPENPEPPOL_INVOICE_V3,
                                                             bNoValidate ? null : new Phase4PeppolValidatonResultHandler ())
