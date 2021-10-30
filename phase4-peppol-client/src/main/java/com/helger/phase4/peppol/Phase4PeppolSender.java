@@ -185,7 +185,7 @@ public final class Phase4PeppolSender
   private static void _validatePayload (@Nonnull final Element aPayloadElement,
                                         @Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aRegistry,
                                         @Nullable final VESID aVESID,
-                                        @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler) throws Phase4PeppolException
+                                        @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4PeppolException
   {
     // Client side validation
     if (aVESID != null)
@@ -682,7 +682,7 @@ public final class Phase4PeppolSender
 
     private IValidationExecutorSetRegistry <IValidationSourceXML> m_aVESRegistry;
     private VESID m_aVESID;
-    private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
+    private IPhase4PeppolValidationResultHandler m_aValidationResultHandler;
 
     /**
      * Create a new builder, with the defaults from
@@ -882,12 +882,12 @@ public final class Phase4PeppolSender
      *        <code>PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3</code>. May be
      *        <code>null</code>.
      * @return this for chaining
-     * @see #validationConfiguration(VESID, IPhase4PeppolValidatonResultHandler)
+     * @see #validationConfiguration(VESID, IPhase4PeppolValidationResultHandler)
      */
     @Nonnull
     public Builder validationConfiguration (@Nullable final VESID aVESID)
     {
-      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null : new Phase4PeppolValidatonResultHandler ();
+      final IPhase4PeppolValidationResultHandler aHdl = aVESID == null ? null : new Phase4PeppolValidatonResultHandler ();
       return validationConfiguration (aVESID, aHdl);
     }
 
@@ -908,7 +908,7 @@ public final class Phase4PeppolSender
      */
     @Nonnull
     public Builder validationConfiguration (@Nullable final VESID aVESID,
-                                            @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler)
+                                            @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler)
     {
       m_aVESID = aVESID;
       m_aValidationResultHandler = aValidationResultHandler;

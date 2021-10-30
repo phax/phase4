@@ -94,11 +94,11 @@ public final class Phase4PeppolValidation
    *         document will NOT be send out.
    * @see #validateOutgoingBusinessDocument(Element,
    *      IValidationExecutorSetRegistry, VESID,
-   *      IPhase4PeppolValidatonResultHandler)
+   *      IPhase4PeppolValidationResultHandler)
    */
   public static void validateOutgoingBusinessDocument (@Nonnull final Element aXML,
                                                        @Nonnull final VESID aVESID,
-                                                       @Nonnull final IPhase4PeppolValidatonResultHandler aValidationResultHandler) throws Phase4PeppolException
+                                                       @Nonnull final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4PeppolException
   {
     validateOutgoingBusinessDocument (aXML, VES_REGISTRY, aVESID, aValidationResultHandler);
   }
@@ -125,7 +125,7 @@ public final class Phase4PeppolValidation
   public static void validateOutgoingBusinessDocument (@Nonnull final Element aXML,
                                                        @Nonnull final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
                                                        @Nonnull final VESID aVESID,
-                                                       @Nonnull final IPhase4PeppolValidatonResultHandler aValidationResultHandler) throws Phase4PeppolException
+                                                       @Nonnull final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4PeppolException
   {
     ValueEnforcer.notNull (aXML, "XMLElement");
     ValueEnforcer.notNull (aVESRegistry, "VESRegistry");

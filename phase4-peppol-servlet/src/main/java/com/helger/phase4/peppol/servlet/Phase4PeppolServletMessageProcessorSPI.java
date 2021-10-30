@@ -446,6 +446,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
 
         // Read data as SBDH
+        // Hint for production systems: this may take a huge amount of memory,
+        // if the payload is large
         final ErrorList aSBDHErrors = new ErrorList ();
         a.m_aSBDH = SBDHReader.standardBusinessDocument ()
                               .setValidationEventHandler (new WrappedCollectingValidationEventHandler (aSBDHErrors))
