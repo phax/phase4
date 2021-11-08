@@ -102,7 +102,7 @@ public final class MainPhase4PeppolSenderQvaliaUBL
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .validationRegistry (aVESRegistry)
-                                  .validationConfiguration (EN16931Validation.VID_UBL_INVOICE_136,
+                                  .validationConfiguration (EN16931Validation.VID_UBL_INVOICE_137,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .sendMessageAndCheckForReceipt ();

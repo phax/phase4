@@ -32,7 +32,7 @@ import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation3_12_0;
+import com.helger.phive.peppol.PeppolValidation3_13_0;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -88,7 +88,7 @@ public final class MainPhase4PeppolSenderBasware
                                                                                                         aReceiverID,
                                                                                                         ESML.DIGIT_TEST))
                                                                      .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                                                     .validationConfiguration (PeppolValidation3_12_0.VID_OPENPEPPOL_INVOICE_V3,
+                                                                     .validationConfiguration (PeppolValidation3_13_0.VID_OPENPEPPOL_INVOICE_V3,
                                                                                                new Phase4PeppolValidatonResultHandler ())
                                                                      .buildMessageCallback (aBuildMessageCallback)
                                                                      .sendMessageAndCheckForReceipt ();
