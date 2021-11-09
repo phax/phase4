@@ -64,7 +64,8 @@ import com.helger.phase4.util.MultiOutputStream;
 public class BasicHttpPoster implements IHttpPoster
 {
   /**
-   * @return The default {@link HttpClientFactory} to be used.
+   * @return The default {@link HttpClientFactory} to be used. Never
+   *         <code>null</code>.
    * @since 0.8.3
    */
   @Nonnull
@@ -158,6 +159,7 @@ public class BasicHttpPoster implements IHttpPoster
     if (LOGGER.isInfoEnabled ())
       LOGGER.info ("Starting to transmit AS4 Message to '" + sURL + "'");
 
+    IOException aCaughtException = null;
     try (final HttpClientManager aClientMgr = new HttpClientManager (m_aHttpClientFactory))
     {
       final HttpPost aPost = new HttpPost (sURL);
@@ -198,11 +200,21 @@ public class BasicHttpPoster implements IHttpPoster
 
       return aClientMgr.execute (aPost, aResponseHandler);
     }
+    catch (final IOException ex)
+    {
+      aCaughtException = ex;
+      throw ex;
+    }
     finally
     {
       aSW.stop ();
       if (LOGGER.isInfoEnabled ())
-        LOGGER.info ("Finished transmitting AS4 Message to '" + sURL + "' after " + aSW.getMillis () + " ms");
+        LOGGER.info ((aCaughtException != null ? "Failed" : "Finished") +
+                     " transmitting AS4 Message to '" +
+                     sURL +
+                     "' after " +
+                     aSW.getMillis () +
+                     " ms");
     }
   }
 
