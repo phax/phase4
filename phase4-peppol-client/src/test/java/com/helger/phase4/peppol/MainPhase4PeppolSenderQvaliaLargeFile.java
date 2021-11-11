@@ -59,7 +59,7 @@ public final class MainPhase4PeppolSenderQvaliaLargeFile
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/large-files/base-example-large-70m.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/large-files/base-example-large-16m.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
@@ -92,6 +92,7 @@ public final class MainPhase4PeppolSenderQvaliaLargeFile
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                                   .validationConfiguration (PeppolValidation3_13_0.VID_OPENPEPPOL_INVOICE_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
+                                  .compressPayload (false)
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
