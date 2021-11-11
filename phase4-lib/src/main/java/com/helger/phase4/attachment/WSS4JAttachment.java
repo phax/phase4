@@ -529,8 +529,14 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
       ret.setId (sRealContentID);
     }
 
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Creating incoming WSS4J attachment with " + aBodyPart.getSize () + " bytes");
+
     if (canBeKeptInMemory (aBodyPart.getSize ()))
     {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Keeping WSS4J attachment in-memory");
+
       // keep some small parts in memory
       final DataHandler aDH = aBodyPart.getDataHandler ();
       final DataSource aDS = aDH.getDataSource ();
@@ -568,6 +574,10 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     {
       // Write to temp file
       final File aTempFile = aResHelper.createTempFile ();
+
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Storing WSS4J attachment to temporary file '" + aTempFile.getAbsolutePath () + "'");
+
       try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
@@ -587,6 +597,9 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     ret.addHeader (CHttpHeader.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION_ATTACHMENT);
     ret.addHeader (CHttpHeader.CONTENT_ID, CONTENT_ID_PREFIX + ret.getId () + CONTENT_ID_SUFFIX);
     ret.addHeader (CHttpHeader.CONTENT_TYPE, ret.getMimeType ());
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Finished handling of incoming WSS4J attachment");
 
     return ret;
   }
