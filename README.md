@@ -288,7 +288,8 @@ If you like the project, a star on GitHub is always appreciated.
 # News and noteworthy
 
 * v1.3.3 - work in progress
-    * Updated to WSS4J 2.3.3
+    * Updated to WSS4J 2.4.0
+    * Updated to xmlsec 2.3.0
     * Fixed a typo in method name of class `AbstractPeppolUserMessageBuilder` (missing `p` of `endpoint`)
     * Fixed the interface name from `IPhase4PeppolValidatonResultHandler` to `IPhase4PeppolValidationResultHandler` (see [issue #68](https://github.com/phax/phase4/issues/68))
 * v1.3.2 - 2021-09-27
