@@ -111,7 +111,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-css-parent-pom</artifactId>
-        <version>6.3.4</version>
+        <version>6.4.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -146,7 +146,7 @@
       <dependency>
         <groupId>com.helger.schematron</groupId>
         <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>6.2.4</version>
+        <version>6.2.5</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
