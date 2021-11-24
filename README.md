@@ -292,6 +292,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Updated to xmlsec 2.3.0
     * Fixed a typo in method name of class `AbstractPeppolUserMessageBuilder` (missing `p` of `endpoint`)
     * Fixed the interface name from `IPhase4PeppolValidatonResultHandler` to `IPhase4PeppolValidationResultHandler` (see [issue #68](https://github.com/phax/phase4/issues/68))
+    * Updated the Maven JAXB2 plugin so that it also build with Java 17
 * v1.3.2 - 2021-09-27
     * Updated to ph-web 9.6.1
     * Updated to phive-rules 2.1.7
