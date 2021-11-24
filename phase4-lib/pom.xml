@@ -204,9 +204,9 @@ osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTyp
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.jvnet.jaxb2.maven2</groupId>
-        <artifactId>maven-jaxb2-plugin</artifactId>
-        <version>0.14.0</version>
+        <groupId>com.evolvedbinary.maven.jvnet</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
+        <version>0.15.0</version>
         <executions>
           <execution>
             <goals>
