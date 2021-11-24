@@ -118,7 +118,7 @@
       <dependency>
         <groupId>com.helger.web</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>9.6.1</version>
+        <version>9.6.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
