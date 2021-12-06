@@ -70,12 +70,13 @@
   <properties>
     <!-- wss4j 2.2.5 requires xmlsec 2.1.5 -->
     <!-- wss4j 2.3.0 requires xmlsec 2.2.0 -->
+    <!-- wss4j 2.4.0 requires xmlsec 2.3.0 -->
     <xmlsec.version>2.3.0</xmlsec.version>
     <wss4j.version>2.4.0</wss4j.version>
     <log4j.version>2.14.1</log4j.version>
     <ph-xsds.version>2.6.0</ph-xsds.version>
     <peppol-commons.version>8.6.4</peppol-commons.version>
-    <spring-boot.version>2.6.0</spring-boot.version>
+    <spring-boot.version>2.6.1</spring-boot.version>
   </properties>
   
   <dependencyManagement>
