@@ -287,7 +287,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v1.3.3 - work in progress
+* v1.3.3 - 2021-12-10
+    * Updated to Log4J2 2.15.0
     * Updated to WSS4J 2.4.0
     * Updated to xmlsec 2.3.0
     * Fixed a typo in method name of class `AbstractPeppolUserMessageBuilder` (missing `p` of `endpoint`)
