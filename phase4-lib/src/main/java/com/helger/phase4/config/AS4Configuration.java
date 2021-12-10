@@ -274,7 +274,7 @@ public final class AS4Configuration
 
   /**
    * @return The endpoint address of "our" AP for comparison. Taken from the
-   *         configuration item <code>phase4.endpoint.address/code>.
+   *         configuration item <code>phase4.endpoint.address</code>.
    */
   @Nullable
   public static String getThisEndpointAddress ()
