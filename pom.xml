@@ -147,7 +147,7 @@
       <dependency>
         <groupId>com.helger.schematron</groupId>
         <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>6.2.6</version>
+        <version>6.2.7</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
