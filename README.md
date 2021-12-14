@@ -273,6 +273,7 @@ If you are importing this into your IDE and you get build errors, it maybe neces
 # Known limitations
 
 Per now the following known limitations exist:
+* The SMP lookup part does not work with Java 17 out of the box, because the Peppol SMP enforces the usage of SHA-1 as the signature method and digest method
 * phase4 is not a standalone project but a library that you need to manually integrate into your system 
 * Multi-hop is not implemented
 * Split and join is not implemented
