@@ -226,11 +226,6 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.littleshoot</groupId>
-        <artifactId>littleproxy</artifactId>
-        <version>1.1.2</version>
-      </dependency>    
-      <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-api</artifactId>
         <version>${log4j.version}</version>
@@ -254,13 +249,6 @@
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
         <version>1.15</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
       
       <dependency>

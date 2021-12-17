@@ -44,6 +44,17 @@
     <m2e.jpa.activation>false</m2e.jpa.activation>
     <m2e.jsf.activation>false</m2e.jsf.activation>
   </properties>
+  
+  <!-- Include here to not bloat the global scope -->  
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.littleshoot</groupId>
+        <artifactId>littleproxy</artifactId>
+        <version>1.1.2</version>
+      </dependency>    
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
