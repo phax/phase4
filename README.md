@@ -2,7 +2,6 @@
 
 ![Logo](https://github.com/phax/phase4/blob/master/docs/logo/phase4-logo-653-180.png)
 
-[![Build Status](https://travis-ci.com/phax/phase4.svg?branch=master)](https://travis-ci.com/phax/phase4)
 [![javadoc](https://javadoc.io/badge2/com.helger.phase4/phase4-lib/javadoc.svg)](https://javadoc.io/doc/com.helger.phase4/phase4-lib)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.helger.phase4/phase4-parent-pom/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.helger.phase4/phase4-parent-pom) 
 
