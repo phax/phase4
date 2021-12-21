@@ -288,6 +288,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v1.3.5 - 2021-12-21
+    * Updated to Log4J 2.17.0 for security reasons (CVE-2021-45105) - see https://logging.apache.org/log4j/2.x/security.html
 * v1.3.4 - 2021-12-14
     * Updated to Log4J 2.16.0 for security reasons (CVE-2021-45046) - see https://www.lunasec.io/docs/blog/log4j-zero-day/
 * v1.3.3 - 2021-12-10
