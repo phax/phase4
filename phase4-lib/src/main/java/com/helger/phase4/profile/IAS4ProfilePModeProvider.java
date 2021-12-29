@@ -39,12 +39,12 @@ public interface IAS4ProfilePModeProvider extends Serializable
    *        The initiator ID. May neither be <code>null</code> nor empty.
    * @param sResponderID
    *        The responder ID. May neither be <code>null</code> nor empty.
-   * @param sResponderAddress
+   * @param sAddress
    *        The endpoint URL address. May be <code>null</code>.
    * @return The PMode matching the params or <code>null</code>.
    */
   @Nullable
   PMode getOrCreatePMode (@Nonnull @Nonempty String sInitiatorID,
                           @Nonnull @Nonempty String sResponderID,
-                          @Nullable String sResponderAddress);
+                          @Nullable String sAddress);
 }

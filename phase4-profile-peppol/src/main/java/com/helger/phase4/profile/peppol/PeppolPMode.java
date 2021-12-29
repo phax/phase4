@@ -58,6 +58,11 @@ public final class PeppolPMode
   private PeppolPMode ()
   {}
 
+  /**
+   * @param sAddress
+   *        The endpoint address URL. Maybe <code>null</code>.
+   * @return The new {@link PModeLegProtocol}. Never <code>null</code>.
+   */
   @Nonnull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
@@ -111,10 +116,16 @@ public final class PeppolPMode
     return aPModeLegSecurity;
   }
 
+  /**
+   * @param sAddress
+   *        The endpoint address URL. Maybe <code>null</code>.
+   * @return The new {@link PModeLeg}. Never <code>null</code>.
+   * @see #generatePModeLegProtocol(String)
+   */
   @Nonnull
-  public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress)
+  public static PModeLeg generatePModeLeg (@Nullable final String sAddress)
   {
-    return new PModeLeg (generatePModeLegProtocol (sResponderAddress),
+    return new PModeLeg (generatePModeLegProtocol (sAddress),
                          generatePModeLegBusinessInformation (),
                          generatePModeLegErrorHandling (),
                          (PModeLegReliability) null,
@@ -129,11 +140,7 @@ public final class PeppolPMode
     final int nMaxRetries = 1;
     final int nRetryIntervalMS = 10_000;
     final ETriState eDuplicateDetection = ETriState.TRUE;
-    return new PModeReceptionAwareness (eReceptionAwareness,
-                                        eRetry,
-                                        nMaxRetries,
-                                        nRetryIntervalMS,
-                                        eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
   }
 
   @Nonnull
@@ -147,22 +154,22 @@ public final class PeppolPMode
    * One-Way Version of the PEPPOL pmode uses one-way push
    *
    * @param sInitiatorID
-   *        Initiator ID
+   *        Initiator ID. May neither be <code>null</code> nor empty.
    * @param sResponderID
-   *        Responder ID
-   * @param sResponderAddress
-   *        Responder URL
+   *        Responder ID. May neither be <code>null</code> nor empty.
+   * @param sAddress
+   *        Endpoint address URL. May be <code>null</code>.
    * @param aPModeIDProvider
-   *        PMode ID provider
+   *        PMode ID provider. May not be <code>null</code>.
    * @param bPersist
    *        <code>true</code> to persist the PMode in the PModeManager,
    *        <code>false</code> to have it only in memory.
-   * @return New PMode
+   * @return New PMode and never <code>null</code>.
    */
   @Nonnull
   public static PMode createPeppolPMode (@Nonnull @Nonempty final String sInitiatorID,
                                          @Nonnull @Nonempty final String sResponderID,
-                                         @Nullable final String sResponderAddress,
+                                         @Nullable final String sAddress,
                                          @Nonnull final IPModeIDProvider aPModeIDProvider,
                                          final boolean bPersist)
   {
@@ -175,7 +182,7 @@ public final class PeppolPMode
                                     DEFAULT_AGREEMENT_ID,
                                     EMEP.ONE_WAY,
                                     EMEPBinding.PUSH,
-                                    generatePModeLeg (sResponderAddress),
+                                    generatePModeLeg (sAddress),
                                     (PModeLeg) null,
                                     (PModePayloadService) null,
                                     generatePModeReceptionAwareness ());

@@ -274,7 +274,9 @@ public final class AS4Configuration
 
   /**
    * @return The endpoint address of "our" AP for comparison. Taken from the
-   *         configuration item <code>phase4.endpoint.address</code>.
+   *         configuration item <code>phase4.endpoint.address</code>. For Peppol
+   *         this is e.g. required to have the `https` protocol in production
+   *         mode.
    */
   @Nullable
   public static String getThisEndpointAddress ()
