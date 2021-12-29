@@ -91,7 +91,9 @@ The properties have the following meaning
 * **`phase4.profile`**: a specific AS4 profile ID that can be used to validate incoming messages. Only needed in specific circumstances. Not present by default.
 * **`phase4.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`.
 * **`phase4.dump.path`**: the base path where dumps of incoming and outgoing files should be created, if the respective dumpers are activated. The default value is `phase4-dumps` relative to the current working directory.
-* **`phase4.endpoint.address`**: the public URL of this AS4 server to send responses to. This value is optional.
+* **`phase4.endpoint.address`**: the public URL of this AS4 server to send responses to. This value is optional. This value is checked by the underlying profile.
+    * In the case of Peppol and CEF, this value needs to have the `https` protocol (except the global debug mode is enabled in which case the `http` protocol is also allowed)
+    * In the case of ENTSOG this value needs to be `http` or `https`
 
 # Profiles vs. PModes
 
