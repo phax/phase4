@@ -41,7 +41,6 @@ public final class CAS4
   public static final ClassPathResource XSD_EBBP_SIGNALS = new ClassPathResource (PATH_SCHEMATA + "ebbp-signals-2.0.4.xsd", _getCL ());
   public static final ClassPathResource XSD_SOAP11 = new ClassPathResource (PATH_SCHEMATA + "soap11.xsd", _getCL ());
   public static final ClassPathResource XSD_SOAP12 = new ClassPathResource (PATH_SCHEMATA + "soap12.xsd", _getCL ());
-  public static final ClassPathResource XSD_XML = new ClassPathResource (PATH_SCHEMATA + "xml.xsd", _getCL ());
 
   // Namespaces
   public static final String DS_NS = "http://www.w3.org/2000/09/xmldsig#";
