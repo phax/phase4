@@ -211,7 +211,7 @@ public final class AS4Configuration
   /**
    * @return <code>true</code> if all WSS4J actions should be explicitly
    *         synchronized. This is needed if multiple workers sending/receiving
-   *         AS4 messages from the same JBM. The configuration item is
+   *         AS4 messages from the same JVM. The configuration item is
    *         <code>phase4.wss4j.syncsecurity</code>.
    */
   public static boolean isWSS4JSynchronizedSecurity ()
