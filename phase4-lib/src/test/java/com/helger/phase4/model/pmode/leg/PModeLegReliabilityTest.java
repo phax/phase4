@@ -20,21 +20,22 @@ import javax.annotation.Nonnull;
 
 import org.junit.Test;
 
+import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.mock.CommonsTestHelper;
 import com.helger.json.IJsonObject;
 import com.helger.xml.mock.XMLTestHelper;
 
 /**
- * Test class for class {@link PModeLegSecurity}.
+ * Test class for class {@link PModeLegReliability}.
  *
  * @author Philip Helger
  */
-public final class PModeLegSecurityTest
+public final class PModeLegReliabilityTest
 {
-  private static void _testJson (@Nonnull final PModeLegSecurity p)
+  private static void _testJson (@Nonnull final PModeLegReliability p)
   {
-    final IJsonObject o = PModeLegSecurityJsonConverter.convertToJson (p);
-    final PModeLegSecurity p2 = PModeLegSecurityJsonConverter.convertToNative (o);
+    final IJsonObject o = PModeLegReliabilityJsonConverter.convertToJson (p);
+    final PModeLegReliability p2 = PModeLegReliabilityJsonConverter.convertToNative (o);
     CommonsTestHelper.testDefaultImplementationWithEqualContentObject (p, p2);
     XMLTestHelper.testMicroTypeConversion (p);
   }
@@ -42,17 +43,24 @@ public final class PModeLegSecurityTest
   @Test
   public void testBasic ()
   {
-    final PModeLegSecurity x = new PModeLegSecurity ();
+    final PModeLegReliability x = new PModeLegReliability ();
     _testJson (x);
   }
 
   @Test
-  public void testDisableAll ()
+  public void testWithValues ()
   {
-    final PModeLegSecurity x = new PModeLegSecurity ();
-    x.disableEncryption ();
-    x.disableSigning ();
-    x.disableUsernameToken ();
+    final PModeLegReliability x = new PModeLegReliability ();
+    x.setAtLeastOnceAckOnDelivery (true);
+    x.setAtLeastOnceContract (false);
+    x.setAtLeastOnceReplyPattern ("bla");
+    x.setAtLeastOnceContractAckResponse (true);
+    x.setAtLeastOnceContractAcksTo ("egon");
+    x.setAtMostOnceContract (false);
+    x.setCorrelation (new CommonsArrayList <> ("gus", "tav"));
+    x.setInOrderContract (true);
+    x.setStartGroup (false);
+    x.setTerminateGroup (true);
     _testJson (x);
   }
 }
