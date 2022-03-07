@@ -39,7 +39,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Example for sending something to the Basware test endpoint.
+ * Example for sending something to the Centiga/Intunor [NO] test endpoint.
  *
  * @author Philip Helger
  */

@@ -35,7 +35,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Example for sending something to the Fujitsu Test endpoint.
+ * Example for sending something to the Fujitsu [DE] Test endpoint.
  *
  * @author Philip Helger
  */

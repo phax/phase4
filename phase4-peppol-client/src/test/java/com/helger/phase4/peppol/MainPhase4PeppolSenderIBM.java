@@ -39,7 +39,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Example for sending something to the IBM test endpoint.
+ * Example for sending something to the IBM [US] test endpoint.
  *
  * @author Philip Helger
  */

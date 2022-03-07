@@ -36,7 +36,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Example for sending something to the Qvalia Test endpoint.
+ * Example for sending something to the Qvalia [SE] Test endpoint.
  *
  * @author Philip Helger
  */

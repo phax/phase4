@@ -38,7 +38,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Special main class with a constant receiver. This one skips the SMP lookup.
+ * Example for sending something to the acube.io [IT] Test endpoint.
  *
  * @author Philip Helger
  */

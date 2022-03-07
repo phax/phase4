@@ -38,7 +38,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Example for sending something to the Basware test endpoint.
+ * Example for sending something to the Dataport [DE] test endpoint.
  *
  * @author Philip Helger
  */

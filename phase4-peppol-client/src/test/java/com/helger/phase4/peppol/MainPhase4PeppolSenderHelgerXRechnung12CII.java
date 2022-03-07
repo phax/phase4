@@ -45,7 +45,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Example for sending something to the my test endpoint.
+ * Example for sending something to the my test endpoint [AT].
  *
  * @author Philip Helger
  */
