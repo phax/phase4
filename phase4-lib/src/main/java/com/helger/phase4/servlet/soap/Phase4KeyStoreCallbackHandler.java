@@ -38,13 +38,13 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
  *
  * @author Philip Helger
  */
-final class KeyStoreCallbackHandler implements CallbackHandler
+public final class Phase4KeyStoreCallbackHandler implements CallbackHandler
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (KeyStoreCallbackHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4KeyStoreCallbackHandler.class);
 
   private final IAS4CryptoFactory m_aCryptoFactory;
 
-  public KeyStoreCallbackHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory)
+  public Phase4KeyStoreCallbackHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     m_aCryptoFactory = aCryptoFactory;

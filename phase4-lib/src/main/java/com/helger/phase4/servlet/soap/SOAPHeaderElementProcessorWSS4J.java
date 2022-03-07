@@ -105,7 +105,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     try
     {
       // Convert to WSS4J attachments
-      final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler (m_aCryptoFactory);
+      final Phase4KeyStoreCallbackHandler aKeyStoreCallback = new Phase4KeyStoreCallbackHandler (m_aCryptoFactory);
       final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                             aState.getResourceHelper ());
 
