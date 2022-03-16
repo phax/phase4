@@ -91,10 +91,8 @@ public final class AS4Configuration
     final ReadableResourceProviderChain aResourceProvider = new ReadableResourceProviderChain (new FileSystemResourceProvider ().setCanReadRelativePaths (true),
                                                                                                new ClassPathResourceProvider ());
 
-    IReadableResource aRes;
-
-    // Phase 4 files
-    aRes = aResourceProvider.getReadableResourceIf ("private-phase4.properties", IReadableResource::exists);
+    // Phase4 files
+    IReadableResource aRes = aResourceProvider.getReadableResourceIf ("private-phase4.properties", IReadableResource::exists);
     if (aRes != null)
       ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 4);
 
