@@ -62,6 +62,7 @@ public final class MainPhase4PeppolSenderGovernikus
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
+      // Alternative one: 0204:gov06test-85
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:peppol-test-governikus-01");
       final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
       {
