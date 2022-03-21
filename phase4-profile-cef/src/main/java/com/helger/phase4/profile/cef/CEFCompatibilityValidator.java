@@ -60,8 +60,24 @@ import com.helger.phase4.wss.EWSSVersion;
  */
 public class CEFCompatibilityValidator implements IAS4ProfileValidator
 {
+  public static final boolean DEFAULT_EXPECT_FOUR_CORNER_MODEL = true;
+
+  private boolean m_bExpectFourCornerModel = DEFAULT_EXPECT_FOUR_CORNER_MODEL;
+
   public CEFCompatibilityValidator ()
   {}
+
+  public final boolean isExpectFourCornerModel ()
+  {
+    return m_bExpectFourCornerModel;
+  }
+
+  @Nonnull
+  public final CEFCompatibilityValidator setExpectFourCornerModel (final boolean b)
+  {
+    m_bExpectFourCornerModel = b;
+    return this;
+  }
 
   @Nonnull
   private static IError _createError (@Nonnull final String sMsg)
@@ -343,6 +359,7 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
       if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
 
+      if (m_bExpectFourCornerModel)
       {
         // Check if originalSender and finalRecipient are present
         // Since these two properties are mandatory

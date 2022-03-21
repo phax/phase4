@@ -16,20 +16,18 @@
  */
 package com.helger.phase4.profile.cef;
 
-import java.util.function.Supplier;
-
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.annotation.DevelopersNote;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
 import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
-import com.helger.phase4.profile.IAS4ProfileValidator;
 
 /**
  * Library specific implementation of {@link IAS4ProfileRegistrarSPI}.
@@ -39,26 +37,47 @@ import com.helger.phase4.profile.IAS4ProfileValidator;
 @IsSPIImplementation
 public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
-  public static final String AS4_PROFILE_ID = "cef";
-  public static final String AS4_PROFILE_NAME = "CEF";
+  public static final String AS4_PROFILE_ID_FOUR_CORNER = "cef";
+  @Deprecated
+  @DevelopersNote ("Deprecated since 1.3.6")
+  public static final String AS4_PROFILE_ID = AS4_PROFILE_ID_FOUR_CORNER;
+  public static final String AS4_PROFILE_NAME_FOUR_CORNER = "CEF (four corner)";
+  @Deprecated
+  @DevelopersNote ("Deprecated since 1.3.6")
+  public static final String AS4_PROFILE_NAME = AS4_PROFILE_NAME_FOUR_CORNER;
+
+  public static final String AS4_PROFILE_ID_TWO_CORNER = "cef-two-corner";
+  public static final String AS4_PROFILE_NAME_TWO_CORNER = "CEF (two corner)";
+
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4CEFProfileRegistarSPI.class);
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
-
-    final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = CEFCompatibilityValidator::new;
     final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> CEFPMode.createCEFPMode (i, r, a, PMODE_ID_PROVIDER, true);
-    final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
-                                                AS4_PROFILE_NAME,
-                                                aProfileValidatorProvider,
-                                                aDefaultPModeProvider,
-                                                PMODE_ID_PROVIDER,
-                                                false);
-    aRegistrar.registerProfile (aProfile);
-    aRegistrar.setDefaultProfile (aProfile);
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_FOUR_CORNER + "'");
+    final AS4Profile aProfileFourCorner = new AS4Profile (AS4_PROFILE_ID_FOUR_CORNER,
+                                                          AS4_PROFILE_NAME_FOUR_CORNER,
+                                                          () -> new CEFCompatibilityValidator ().setExpectFourCornerModel (true),
+                                                          aDefaultPModeProvider,
+                                                          PMODE_ID_PROVIDER,
+                                                          false);
+    aRegistrar.registerProfile (aProfileFourCorner);
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_TWO_CORNER + "'");
+    final AS4Profile aProfileTwoCorner = new AS4Profile (AS4_PROFILE_ID_TWO_CORNER,
+                                                         AS4_PROFILE_NAME_TWO_CORNER,
+                                                         () -> new CEFCompatibilityValidator ().setExpectFourCornerModel (false),
+                                                         aDefaultPModeProvider,
+                                                         PMODE_ID_PROVIDER,
+                                                         false);
+    aRegistrar.registerProfile (aProfileTwoCorner);
+
+    // The four corner profile is the default
+    aRegistrar.setDefaultProfile (aProfileFourCorner);
   }
 }
