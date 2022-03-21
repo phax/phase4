@@ -60,10 +60,10 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
 public final class CEFCompatibilityValidatorTwoWayFuncTest
 {
   @ClassRule
-  public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
+  public static final PhotonAppWebTestRule RULE = new PhotonAppWebTestRule ();
 
   private static final Locale LOCALE = Locale.US;
-  private static final CEFCompatibilityValidator VALIDATOR = new CEFCompatibilityValidator ();
+  private static final CEFCompatibilityValidator VALIDATOR = new CEFCompatibilityValidator ().setExpectFourCornerModel (true);
 
   private PMode m_aPMode;
   private ErrorList m_aErrorList;

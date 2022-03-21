@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.profile.cef;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
@@ -62,10 +63,10 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
 public final class CEFCompatibilityValidatorTest
 {
   @ClassRule
-  public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
+  public static final PhotonAppWebTestRule RULE = new PhotonAppWebTestRule ();
 
   private static final Locale LOCALE = Locale.US;
-  private static final CEFCompatibilityValidator VALIDATOR = new CEFCompatibilityValidator ();
+  private static final CEFCompatibilityValidator VALIDATOR = new CEFCompatibilityValidator ().setExpectFourCornerModel (true);
 
   private PMode m_aPMode;
   private ErrorList m_aErrorList;
@@ -423,6 +424,21 @@ public final class CEFCompatibilityValidatorTest
   }
 
   @Test
+  public void testTwoCornerCase ()
+  {
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+    aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
+    VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageProperties is missing")));
+
+    // Special validator for 2 corner
+    final CEFCompatibilityValidator aValidator = new CEFCompatibilityValidator ().setExpectFourCornerModel (false);
+    m_aErrorList.clear ();
+    aValidator.validateUserMessage (aUserMessage, m_aErrorList);
+    assertFalse (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageProperties is missing")));
+  }
+
+  @Test
   public void testValidateSignalMessageNoMessageID ()
   {
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
@@ -430,5 +446,4 @@ public final class CEFCompatibilityValidatorTest
     VALIDATOR.validateSignalMessage (aSignalMessage, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageID is missing")));
   }
-
 }
