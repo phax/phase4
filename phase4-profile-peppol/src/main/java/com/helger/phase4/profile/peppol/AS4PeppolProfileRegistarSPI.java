@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.profile.peppol;
 
-import java.util.function.Supplier;
-
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -29,7 +27,6 @@ import com.helger.phase4.profile.AS4Profile;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
 import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
-import com.helger.phase4.profile.IAS4ProfileValidator;
 
 /**
  * Library specific implementation of {@link IAS4ProfileRegistrarSPI}.
@@ -47,14 +44,13 @@ public final class AS4PeppolProfileRegistarSPI implements IAS4ProfileRegistrarSP
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> PeppolPMode.createPeppolPMode (i, r, a, PMODE_ID_PROVIDER, true);
+
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
-
-    final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = PeppolCompatibilityValidator::new;
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> PeppolPMode.createPeppolPMode (i, r, a, PMODE_ID_PROVIDER, true);
     final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
                                                 AS4_PROFILE_NAME,
-                                                aProfileValidatorProvider,
+                                                PeppolCompatibilityValidator::new,
                                                 aDefaultPModeProvider,
                                                 PMODE_ID_PROVIDER,
                                                 false);
