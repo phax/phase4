@@ -131,7 +131,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+    if (CommandMap.getDefaultCommandMap ()
+                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -195,13 +196,15 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
   private static void _initPeppolAS4 ()
   {
+    final AS4CryptoFactoryProperties aCP = AS4CryptoFactoryProperties.getDefaultInstance ();
+
     // Check if crypto properties are okay
-    final KeyStore aKS = AS4CryptoFactoryProperties.getDefaultInstance ().getKeyStore ();
+    final KeyStore aKS = aCP.getKeyStore ();
     if (aKS == null)
       throw new InitializationException ("Failed to load configured Keystore");
     LOGGER.info ("Successfully loaded configured key store from the crypto factory");
 
-    final PrivateKeyEntry aPKE = AS4CryptoFactoryProperties.getDefaultInstance ().getPrivateKeyEntry ();
+    final PrivateKeyEntry aPKE = aCP.getPrivateKeyEntry ();
     if (aPKE == null)
       throw new InitializationException ("Failed to load configured private key");
     LOGGER.info ("Successfully loaded configured private key from the crypto factory");
@@ -214,7 +217,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                           ETriState.FALSE,
                                                                                                           null);
     if (eCheckResult.isInvalid ())
-      throw new InitializationException ("The provided certificate is not a valid Peppol certificate. Check result: " + eCheckResult);
+      throw new InitializationException ("The provided certificate is not a valid Peppol certificate. Check result: " +
+                                         eCheckResult);
     LOGGER.info ("Successfully checked that the provided Peppol AP certificate is valid.");
 
     final String sSMPURL = AS4Configuration.getConfig ().getAsString ("smp.url");
