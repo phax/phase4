@@ -60,14 +60,20 @@ public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicr
   {
     final ETriState eReceptionAwareness = getTriState (aElement.getAttributeValue (ATTR_RECEPTION_AWARENESS),
                                                        PModeReceptionAwareness.DEFAULT_RECEPTION_AWARENESS);
-    final ETriState eRetry = getTriState (aElement.getAttributeValue (ATTR_RETRY), PModeReceptionAwareness.DEFAULT_RETRY);
-    final int nMaxRetries = aElement.getAttributeValueAsInt (ATTR_MAX_RETRIES, PModeReceptionAwareness.DEFAULT_MAX_RETRIES);
+    final ETriState eRetry = getTriState (aElement.getAttributeValue (ATTR_RETRY),
+                                          PModeReceptionAwareness.DEFAULT_RETRY);
+    final int nMaxRetries = aElement.getAttributeValueAsInt (ATTR_MAX_RETRIES,
+                                                             PModeReceptionAwareness.DEFAULT_MAX_RETRIES);
     // Was a typo
-    final int nRetryIntervalMS = aElement.getAttributeValueAsInt (ATTR_RETRY_INTERVAL_MS,
-                                                                  aElement.getAttributeValueAsInt ("MayRetries",
-                                                                                                   PModeReceptionAwareness.DEFAULT_RETRY_INTERVAL_MS));
+    final long nRetryIntervalMS = aElement.getAttributeValueAsLong (ATTR_RETRY_INTERVAL_MS,
+                                                                    aElement.getAttributeValueAsLong ("MayRetries",
+                                                                                                      PModeReceptionAwareness.DEFAULT_RETRY_INTERVAL_MS));
     final ETriState eDuplicateDetection = getTriState (aElement.getAttributeValue (ATTR_DUPLICATE_DETECTION),
                                                        PModeReceptionAwareness.DEFAULT_DUPLICATE_DETECTION);
-    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness,
+                                        eRetry,
+                                        nMaxRetries,
+                                        nRetryIntervalMS,
+                                        eDuplicateDetection);
   }
 }

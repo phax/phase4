@@ -22,6 +22,7 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.hashcode.HashCodeGenerator;
@@ -36,19 +37,19 @@ public class PModeReceptionAwareness implements Serializable
   public static final boolean DEFAULT_RECEPTION_AWARENESS = true;
   public static final boolean DEFAULT_RETRY = true;
   public static final int DEFAULT_MAX_RETRIES = 1;
-  public static final int DEFAULT_RETRY_INTERVAL_MS = 10_000;
+  public static final long DEFAULT_RETRY_INTERVAL_MS = 10 * CGlobal.MILLISECONDS_PER_SECOND;
   public static final boolean DEFAULT_DUPLICATE_DETECTION = true;
 
   private ETriState m_eReceptionAwareness;
   private ETriState m_eRetry;
   private int m_nMaxRetries;
-  private int m_nRetryIntervalMS;
+  private long m_nRetryIntervalMS;
   private ETriState m_eDuplicateDetection;
 
   public PModeReceptionAwareness (@Nonnull final ETriState eReceptionAwareness,
                                   @Nonnull final ETriState eRetry,
                                   final int nMaxRetries,
-                                  final int nRetryIntervalMS,
+                                  final long nRetryIntervalMS,
                                   @Nonnull final ETriState eDuplicateDetection)
   {
     setReceptionAwareness (eReceptionAwareness);
@@ -186,7 +187,7 @@ public class PModeReceptionAwareness implements Serializable
    * @return The milliseconds to wait between retries. Must be &ge; 0.
    */
   @Nonnegative
-  public final int getRetryIntervalMS ()
+  public final long getRetryIntervalMS ()
   {
     return m_nRetryIntervalMS;
   }
@@ -200,7 +201,7 @@ public class PModeReceptionAwareness implements Serializable
    * @return {@link EChange}
    */
   @Nonnull
-  public final EChange setRetryIntervalMS (@Nonnegative final int nRetryIntervalMS)
+  public final EChange setRetryIntervalMS (@Nonnegative final long nRetryIntervalMS)
   {
     ValueEnforcer.isGE0 (nRetryIntervalMS, "RetryIntervalMS");
     if (nRetryIntervalMS == m_nRetryIntervalMS)
