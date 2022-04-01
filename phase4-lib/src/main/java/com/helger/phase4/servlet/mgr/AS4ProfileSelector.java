@@ -18,6 +18,7 @@ package com.helger.phase4.servlet.mgr;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.phase4.config.AS4Configuration;
@@ -29,6 +30,7 @@ import com.helger.phase4.config.AS4Configuration;
  * @author Philip Helger
  * @since 0.9.13
  */
+@ThreadSafe
 public final class AS4ProfileSelector
 {
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
