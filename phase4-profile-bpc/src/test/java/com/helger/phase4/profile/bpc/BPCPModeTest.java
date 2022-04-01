@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
@@ -32,12 +33,16 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
 public final class BPCPModeTest
 {
   @ClassRule
-  public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
+  public static final PhotonAppWebTestRule RULE = new PhotonAppWebTestRule ();
 
   @Test
   public void testBPCPMode ()
   {
-    final PMode aPMode = BPCPMode.createBPCPMode ("TestInitiator", "TestResponder", "https://test.example.org", false);
+    final PMode aPMode = BPCPMode.createBPCPMode ("TestInitiator",
+                                                  "TestResponder",
+                                                  "https://test.example.org",
+                                                  IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                  false);
     assertNotNull (aPMode);
   }
 }

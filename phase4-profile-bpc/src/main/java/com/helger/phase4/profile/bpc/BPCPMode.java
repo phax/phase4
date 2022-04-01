@@ -30,6 +30,7 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
+import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.PModePayloadService;
@@ -86,6 +87,7 @@ public final class BPCPMode
     final ETriState eReportAsResponse = ETriState.TRUE;
     final ETriState eReportProcessErrorNotifyConsumer = ETriState.TRUE;
     final ETriState eReportProcessErrorNotifyProducer = ETriState.TRUE;
+    // Called Report.MissingReceiptNotifyProducer in BPC
     final ETriState eReportDeliveryFailuresNotifyProducer = ETriState.TRUE;
     return new PModeLegErrorHandling (aReportSenderErrorsTo,
                                       aReportReceiverErrorsTo,
@@ -112,9 +114,9 @@ public final class BPCPMode
   }
 
   @Nonnull
-  public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress)
+  public static PModeLeg generatePModeLeg (@Nullable final String sAddress)
   {
-    return new PModeLeg (generatePModeLegProtocol (sResponderAddress),
+    return new PModeLeg (generatePModeLegProtocol (sAddress),
                          generatePModeLegBusinessInformation (),
                          generatePModeLegErrorHandling (),
                          (PModeLegReliability) null,
@@ -147,11 +149,13 @@ public final class BPCPMode
    * One-Way Version of the BPC pmode uses one-way push
    *
    * @param sInitiatorID
-   *        Initiator ID
+   *        Initiator ID. May neither be <code>null</code> nor empty.
    * @param sResponderID
-   *        Responder ID
-   * @param sResponderAddress
-   *        Responder URL
+   *        Responder ID. May neither be <code>null</code> nor empty.
+   * @param sAddress
+   *        Endpoint address URL. May be <code>null</code>.
+   * @param aPModeIDProvider
+   *        PMode ID provider. May not be <code>null</code>.
    * @param bPersist
    *        <code>true</code> to persist the PMode in the PModeManager,
    *        <code>false</code> to have it only in memory.
@@ -160,19 +164,20 @@ public final class BPCPMode
   @Nonnull
   public static PMode createBPCPMode (@Nonnull @Nonempty final String sInitiatorID,
                                       @Nonnull @Nonempty final String sResponderID,
-                                      @Nullable final String sResponderAddress,
+                                      @Nullable final String sAddress,
+                                      @Nonnull final IPModeIDProvider aPModeIDProvider,
                                       final boolean bPersist)
   {
     final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
     final PModeParty aResponder = createParty (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
-    final PMode aPMode = new PMode (aInitiator.getID () + "-" + aResponder.getID (),
+    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (sInitiatorID, sResponderID),
                                     aInitiator,
                                     aResponder,
                                     DEFAULT_AGREEMENT_ID,
                                     EMEP.ONE_WAY,
                                     EMEPBinding.PUSH,
-                                    generatePModeLeg (sResponderAddress),
+                                    generatePModeLeg (sAddress),
                                     (PModeLeg) null,
                                     (PModePayloadService) null,
                                     generatePModeReceptionAwareness ());

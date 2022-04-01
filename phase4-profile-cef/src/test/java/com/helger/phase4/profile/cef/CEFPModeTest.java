@@ -16,15 +16,18 @@
  */
 package com.helger.phase4.profile.cef;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.helger.phase4.model.pmode.IPModeIDProvider;
+import com.helger.phase4.model.pmode.PMode;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
 /**
  * Test class for class {@link CEFPMode}.
- * 
+ *
  * @author Philip Helger
  */
 public final class CEFPModeTest
@@ -35,12 +38,22 @@ public final class CEFPModeTest
   @Test
   public void testCEFPMode ()
   {
-    CEFPMode.createCEFPMode ("TestInitiator", "TestResponder", "https://test.example.org", IPModeIDProvider.DEFAULT_DYNAMIC, false);
+    final PMode aPMode = CEFPMode.createCEFPMode ("TestInitiator",
+                                                  "TestResponder",
+                                                  "https://test.example.org",
+                                                  IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                  false);
+    assertNotNull (aPMode);
   }
 
   @Test
   public void testCEFPModeTwoWay ()
   {
-    CEFPMode.createCEFPModeTwoWay ("TestInitiator", "TestResponder", "https://test.example.org", IPModeIDProvider.DEFAULT_DYNAMIC, false);
+    final PMode aPMode = CEFPMode.createCEFPModeTwoWay ("TestInitiator",
+                                                        "TestResponder",
+                                                        "https://test.example.org",
+                                                        IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                        false);
+    assertNotNull (aPMode);
   }
 }

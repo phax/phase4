@@ -41,6 +41,7 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
+import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -73,7 +74,11 @@ public final class BPCCompatibilityValidatorTest
   public void before ()
   {
     m_aErrorList = new ErrorList ();
-    m_aPMode = BPCPMode.createBPCPMode ("TestInitiator", "TestResponder", "http://localhost:8080", true);
+    m_aPMode = BPCPMode.createBPCPMode ("TestInitiator",
+                                        "TestResponder",
+                                        "http://localhost:8080",
+                                        IPModeIDProvider.DEFAULT_DYNAMIC,
+                                        true);
   }
 
   @Test

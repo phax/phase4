@@ -242,11 +242,21 @@ public class BPCCompatibilityValidator implements IAS4ProfileValidator
         aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyConsumer is missing"));
       }
 
+      if (aErrorHandling.isReportProcessErrorNotifyProducerDefined ())
+      {
+        if (!aErrorHandling.isReportProcessErrorNotifyProducer ())
+          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
+      }
+      else
+      {
+        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer is missing"));
+      }
+
       if (aErrorHandling.isReportDeliveryFailuresNotifyProducerDefined ())
       {
         if (!aErrorHandling.isReportDeliveryFailuresNotifyProducer ())
-          aErrorList.add (_createError (sFieldPrefix +
-                                        "ErrorHandling.Report.DeliveryFailuresNotifyProducer must be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.DeliveryFailuresNotifyProducer should be 'true'"));
       }
       else
       {

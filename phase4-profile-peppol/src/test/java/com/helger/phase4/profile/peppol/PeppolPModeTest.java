@@ -16,25 +16,33 @@
  */
 package com.helger.phase4.profile.peppol;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.helger.phase4.model.pmode.IPModeIDProvider;
+import com.helger.phase4.model.pmode.PMode;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
 /**
  * Test class for class {@link PeppolPMode}
- * 
+ *
  * @author Philip Helger
  */
 public final class PeppolPModeTest
 {
   @ClassRule
-  public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
+  public static final PhotonAppWebTestRule RULE = new PhotonAppWebTestRule ();
 
   @Test
   public void testCEFPMode ()
   {
-    PeppolPMode.createPeppolPMode ("TestInitiator", "TestResponder", "https://test.example.org", IPModeIDProvider.DEFAULT_DYNAMIC, false);
+    final PMode aPMode = PeppolPMode.createPeppolPMode ("TestInitiator",
+                                                        "TestResponder",
+                                                        "https://test.example.org",
+                                                        IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                        false);
+    assertNotNull (aPMode);
   }
 }

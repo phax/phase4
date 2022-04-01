@@ -16,9 +16,10 @@
  */
 package com.helger.phase4.profile.bpc;
 
-import java.util.function.Supplier;
-
 import javax.annotation.Nonnull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
@@ -26,7 +27,6 @@ import com.helger.phase4.profile.AS4Profile;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
 import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
-import com.helger.phase4.profile.IAS4ProfileValidator;
 
 /**
  * Library specific implementation of {@link IAS4ProfileRegistrarSPI}.
@@ -36,17 +36,25 @@ import com.helger.phase4.profile.IAS4ProfileValidator;
 @IsSPIImplementation
 public final class AS4BPCProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
-  public static final String AS4_PROFILE_ID = "bpc";
-  public static final String AS4_PROFILE_NAME = "BPC";
+  public static final String AS4_PROFILE_ID = "bpc-mp";
+  public static final String AS4_PROFILE_NAME = "BPC Market Pilot";
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
+
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4BPCProfileRegistarSPI.class);
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = () -> new BPCCompatibilityValidator ();
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> BPCPMode.createBPCPMode (i, r, a, true);
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> BPCPMode.createBPCPMode (i,
+                                                                                                 r,
+                                                                                                 a,
+                                                                                                 PMODE_ID_PROVIDER,
+                                                                                                 true);
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
     final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
                                                 AS4_PROFILE_NAME,
-                                                aProfileValidatorProvider,
+                                                BPCCompatibilityValidator::new,
                                                 aDefaultPModeProvider,
                                                 PMODE_ID_PROVIDER,
                                                 false);
