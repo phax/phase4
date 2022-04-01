@@ -155,7 +155,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
         if (!aPModeLegSecurity.getX509SignatureHashFunction ().equals (ECryptoAlgorithmSignDigest.DIGEST_SHA_256))
         {
           aErrorList.add (_createError (sFieldPrefix +
-                                        "Securoty.X509SignatureHashFunction must use the value '" +
+                                        "Security.X509SignatureHashFunction must use the value '" +
                                         ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID () +
                                         "'"));
         }
@@ -169,7 +169,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
         if (!aPModeLegSecurity.getX509EncryptionAlgorithm ().equals (ECryptoAlgorithmCrypt.AES_128_GCM))
         {
           aErrorList.add (_createError (sFieldPrefix +
-                                        "Securoty.X509EncryptionAlgorithm must use the value '" +
+                                        "Security.X509EncryptionAlgorithm must use the value '" +
                                         ECryptoAlgorithmCrypt.AES_128_GCM.getID () +
                                         "' instead of '" +
                                         aPModeLegSecurity.getX509EncryptionAlgorithm ().getID () +
@@ -259,7 +259,6 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
-  @Override
   public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.isTrue (aErrorList.isEmpty (), () -> "Errors in global PMode validation: " + aErrorList.toString ());
@@ -322,7 +321,6 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
-  @Override
   public void validateUserMessage (@Nonnull final Ebms3UserMessage aUserMsg, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
@@ -445,7 +443,6 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
-  @Override
   public void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMsg, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aSignalMsg, "SignalMsg");
