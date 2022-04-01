@@ -18,6 +18,7 @@ package com.helger.phase4.peppol.server.servlet;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.cert.X509Certificate;
@@ -35,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.helger.commons.collection.CollectionHelper;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.file.SimpleFileIO;
@@ -49,6 +52,7 @@ import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
@@ -163,6 +167,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
   private static void _initAS4 ()
   {
+    // Start duplicate check
     AS4ServerInitializer.initAS4Server ();
 
     // Store the incoming file as is
@@ -196,31 +201,91 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
   private static void _initPeppolAS4 ()
   {
-    final AS4CryptoFactoryProperties aCP = AS4CryptoFactoryProperties.getDefaultInstance ();
+    final AS4CryptoFactoryProperties aCF = AS4CryptoFactoryProperties.getDefaultInstance ();
+    final AS4CryptoProperties aCP = aCF.cryptoProperties ();
 
-    // Check if crypto properties are okay
-    final KeyStore aKS = aCP.getKeyStore ();
+    // Check if crypto properties are okay - fail early if something is
+    // misconfigured
+    LOGGER.info ("Trying to load configured key store (type=" +
+                 aCP.getKeyStoreType () +
+                 ", path=" +
+                 aCP.getKeyStorePath () +
+                 ")");
+    final KeyStore aKS = aCF.getKeyStore ();
     if (aKS == null)
       throw new InitializationException ("Failed to load configured Keystore");
-    LOGGER.info ("Successfully loaded configured key store from the crypto factory");
+    LOGGER.info ("  Successfully loaded configured key store from the crypto factory.");
+    LOGGER.info ("  Loaded key store type is '" + aKS.getType () + "'");
 
-    final PrivateKeyEntry aPKE = aCP.getPrivateKeyEntry ();
+    // List all the aliases - debug only
+    try
+    {
+      final ICommonsList <String> aAliases = CollectionHelper.newList (aKS.aliases ());
+      LOGGER.info ("The keystore contains the following " + aAliases.size () + " alias(es): " + aAliases);
+      int nIndex = 1;
+      for (final String sAlias : aAliases)
+      {
+        String sType = "key-entry";
+        try
+        {
+          if (aKS.getCertificate (sAlias) != null)
+            sType = "certificate";
+        }
+        catch (final Exception ex)
+        {}
+        LOGGER.info ("  " +
+                     nIndex +
+                     ".: alias(" +
+                     sAlias +
+                     ") type(" +
+                     sType +
+                     ") date(" +
+                     aKS.getCreationDate (sAlias) +
+                     ")");
+        ++nIndex;
+      }
+    }
+    catch (final GeneralSecurityException ex)
+    {
+      LOGGER.error ("Failed to list all aliases in the keystore", ex);
+    }
+
+    // Check if the key configuration is okay - fail early if something is
+    // misconfigured
+    LOGGER.info ("Trying to load configured private key (alias=" + aCP.getKeyAlias () + ")");
+    final PrivateKeyEntry aPKE = aCF.getPrivateKeyEntry ();
     if (aPKE == null)
       throw new InitializationException ("Failed to load configured private key");
-    LOGGER.info ("Successfully loaded configured private key from the crypto factory");
+    LOGGER.info ("  Successfully loaded configured private key from the crypto factory");
 
-    // No OCSP check for performance
     final X509Certificate aAPCert = (X509Certificate) aPKE.getCertificate ();
+
+    // Try the reverse search in the key store - debug only
+    try
+    {
+      final String sAlias = aKS.getCertificateAlias (aAPCert);
+      LOGGER.info ("  The reverse search of the certificate lead to alias '" + sAlias + "'");
+    }
+    catch (final GeneralSecurityException ex)
+    {
+      LOGGER.error ("Failed to do a reverse search of the certificate", ex);
+    }
+
+    // Check if the certificate is really a Peppol AP certificate - fail early
+    // if something is misconfigured
+    // No CRL/OCSP check for performance
     final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
                                                                                                           MetaAS4Manager.getTimestampMgr ()
                                                                                                                         .getCurrentDateTime (),
                                                                                                           ETriState.FALSE,
                                                                                                           null);
     if (eCheckResult.isInvalid ())
-      throw new InitializationException ("The provided certificate is not a valid Peppol certificate. Check result: " +
+      throw new InitializationException ("The provided certificate is not a valid Peppol AP certificate. Check result: " +
                                          eCheckResult);
-    LOGGER.info ("Successfully checked that the provided Peppol AP certificate is valid.");
+    LOGGER.info ("Successfully checked that the provided certificate is a valid Peppol AP certificate.");
 
+    // Enable or disable, if upon receival, the received should be checked or
+    // not
     final String sSMPURL = AS4Configuration.getConfig ().getAsString ("smp.url");
     final String sAPURL = AS4Configuration.getThisEndpointAddress ();
     if (StringHelper.hasText (sSMPURL) && StringHelper.hasText (sAPURL))
@@ -229,7 +294,12 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       Phase4PeppolServletConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
       Phase4PeppolServletConfiguration.setAS4EndpointURL (sAPURL);
       Phase4PeppolServletConfiguration.setAPCertificate (aAPCert);
-      LOGGER.info (CAS4.LIB_NAME + " Peppol receiver checks are enabled");
+      LOGGER.info (CAS4.LIB_NAME +
+                   " Peppol receiver checks are enabled on SMP '" +
+                   sSMPURL +
+                   "' and AP '" +
+                   sAPURL +
+                   "'");
     }
     else
     {
