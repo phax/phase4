@@ -123,9 +123,13 @@ public final class CEFPMode
     final ETriState eReceptionAwareness = ETriState.TRUE;
     final ETriState eRetry = ETriState.TRUE;
     final int nMaxRetries = 1;
-    final int nRetryIntervalMS = 10_000;
+    final long nRetryIntervalMS = 10_000;
     final ETriState eDuplicateDetection = ETriState.TRUE;
-    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness,
+                                        eRetry,
+                                        nMaxRetries,
+                                        nRetryIntervalMS,
+                                        eDuplicateDetection);
   }
 
   /**

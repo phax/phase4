@@ -138,9 +138,13 @@ public final class PeppolPMode
     final ETriState eReceptionAwareness = ETriState.TRUE;
     final ETriState eRetry = ETriState.TRUE;
     final int nMaxRetries = 1;
-    final int nRetryIntervalMS = 10_000;
+    final long nRetryIntervalMS = 10_000;
     final ETriState eDuplicateDetection = ETriState.TRUE;
-    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness,
+                                        eRetry,
+                                        nMaxRetries,
+                                        nRetryIntervalMS,
+                                        eDuplicateDetection);
   }
 
   @Nonnull
@@ -151,7 +155,7 @@ public final class PeppolPMode
   }
 
   /**
-   * One-Way Version of the PEPPOL pmode uses one-way push
+   * One-Way Version of the Peppol pmode uses one-way push
    *
    * @param sInitiatorID
    *        Initiator ID. May neither be <code>null</code> nor empty.
