@@ -48,6 +48,7 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);
   private static final String KEY_MINUTES = "mins";
+  private static final AtomicBoolean WAS_SCHEDULED = new AtomicBoolean (false);
 
   public AS4DuplicateCleanupJob ()
   {}
@@ -64,8 +65,6 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Evicted " + aEvicted.size () + " incoming duplicate message IDs before " + aOldDT.toString ());
   }
-
-  private static final AtomicBoolean s_aScheduled = new AtomicBoolean (false);
 
   /**
    * Start a job that runs every minute, that removes all messages older than a
@@ -84,7 +83,7 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
     TriggerKey aTriggerKey = null;
     if (nDisposalMinutes > 0)
     {
-      if (!s_aScheduled.getAndSet (true))
+      if (!WAS_SCHEDULED.getAndSet (true))
       {
         final JobDataMap aJobDataMap = new JobDataMap ();
         aJobDataMap.putIn (KEY_MINUTES, nDisposalMinutes);
@@ -97,6 +96,9 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
                                                                            .withSchedule (SimpleScheduleBuilder.repeatMinutelyForever ()),
                                                          AS4DuplicateCleanupJob.class,
                                                          aJobDataMap);
+
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("AS4DuplicateCleanupJob was successfully scheduled");
       }
       else
       {
@@ -106,7 +108,7 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
     }
     else
     {
-      LOGGER.warn ("Incoming duplicate message cleaning is disabled!");
+      LOGGER.warn ("Incoming AS4 duplicate message cleanup is disabled!");
     }
     return aTriggerKey;
   }
@@ -116,7 +118,7 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
     if (aTriggerKey != null)
     {
       // Was the job scheduled?
-      if (s_aScheduled.getAndSet (false))
+      if (WAS_SCHEDULED.getAndSet (false))
       {
         GlobalQuartzScheduler.getInstance ().unscheduleJob (aTriggerKey);
 
