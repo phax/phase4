@@ -59,7 +59,9 @@ public class WSSConfigManager extends AbstractGlobalSingleton
     final boolean bContainsAttachmentCompleteSignatureTransform = IPrivilegedAction.securityGetProvider ("AttachmentCompleteSignatureTransform")
                                                                                    .invokeSafe () != null;
     final boolean bAddJCEProviders;
-    if (bContainsSTRTransform && bContainsAttachmentContentSignatureTransform && bContainsAttachmentCompleteSignatureTransform)
+    if (bContainsSTRTransform &&
+        bContainsAttachmentContentSignatureTransform &&
+        bContainsAttachmentCompleteSignatureTransform)
     {
       if (LOGGER.isInfoEnabled ())
         LOGGER.info ("All WSSConfig Security Providers are installed and therefore don't need to be installed again");
@@ -69,17 +71,19 @@ public class WSSConfigManager extends AbstractGlobalSingleton
     {
       // at least one is missing
       bAddJCEProviders = true;
-      if (!bContainsSTRTransform && !bContainsAttachmentContentSignatureTransform && !bContainsAttachmentCompleteSignatureTransform)
+      if (!bContainsSTRTransform &&
+          !bContainsAttachmentContentSignatureTransform &&
+          !bContainsAttachmentCompleteSignatureTransform)
       {
         // None of them is registered - that is understandable and we're
         // registering them now
         if (LOGGER.isInfoEnabled ())
-          LOGGER.info ("None of the WSSConfig Security Providers is already installed, so we're doing it now");
+          LOGGER.info ("None of the WSSConfig Security Providers is already installed - doing it now");
       }
       else
       {
         if (LOGGER.isWarnEnabled ())
-          LOGGER.warn ("Some of the WSSConfig Security Providers are already installed - we're replacing them now. STRTransform=" +
+          LOGGER.warn ("Some of the WSSConfig Security Providers are already installed - replacing them now. STRTransform=" +
                        bContainsSTRTransform +
                        "; AttachmentContentSignatureTransform=" +
                        bContainsAttachmentContentSignatureTransform +
