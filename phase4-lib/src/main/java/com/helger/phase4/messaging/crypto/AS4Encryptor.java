@@ -104,7 +104,20 @@ public final class AS4Encryptor
                                                    @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Now encrypting AS4 SOAP message");
+      LOGGER.info ("Now encrypting AS4 SOAP message. KeyIdentifierType=" +
+                   aCryptParams.getKeyIdentifierType ().name () +
+                   "; EncAlgo=" +
+                   aCryptParams.getAlgorithmCrypt ().getAlgorithmURI () +
+                   "; KeyEncAlgo=" +
+                   aCryptParams.getKeyEncAlgorithm () +
+                   "; MgfAlgo=" +
+                   aCryptParams.getMGFAlgorithm () +
+                   "; DigestAlgo=" +
+                   aCryptParams.getDigestAlgorithm () +
+                   (aCryptParams.hasAlias () ? "; KeyAlias=" + aCryptParams.getAlias () : "") +
+                   (aCryptParams.hasCertificate () ? "; CertificateSubjectCN=" +
+                                                     aCryptParams.getCertificate ().getSubjectDN ().getName ()
+                                                   : ""));
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
@@ -181,7 +194,20 @@ public final class AS4Encryptor
                                                      @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Now encrypting AS4 MIME message");
+      LOGGER.info ("Now encrypting AS4 MIME message. KeyIdentifierType=" +
+                   aCryptParams.getKeyIdentifierType ().name () +
+                   "; EncAlgo=" +
+                   aCryptParams.getAlgorithmCrypt ().getAlgorithmURI () +
+                   "; KeyEncAlgo=" +
+                   aCryptParams.getKeyEncAlgorithm () +
+                   "; MgfAlgo=" +
+                   aCryptParams.getMGFAlgorithm () +
+                   "; DigestAlgo=" +
+                   aCryptParams.getDigestAlgorithm () +
+                   (aCryptParams.hasAlias () ? "; KeyAlias=" + aCryptParams.getAlias () : "") +
+                   (aCryptParams.hasCertificate () ? "; CertificateSubjectCN=" +
+                                                     aCryptParams.getCertificate ().getSubjectDN ().getName ()
+                                                   : ""));
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
