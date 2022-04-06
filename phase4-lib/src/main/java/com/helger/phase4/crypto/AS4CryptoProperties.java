@@ -239,6 +239,13 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
     return _getProperty (KEY_PASSWORD);
   }
 
+  @Nullable
+  public char [] getKeyPasswordCharArray ()
+  {
+    final String s = getKeyPassword ();
+    return s == null ? null : s.toCharArray ();
+  }
+
   @Nonnull
   public final AS4CryptoProperties setKeyPassword (@Nullable final String sKeyPassword)
   {
