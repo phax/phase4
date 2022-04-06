@@ -225,11 +225,19 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       int nIndex = 1;
       for (final String sAlias : aAliases)
       {
-        String sType = "key-entry";
+        String sType = "unknown";
         try
         {
-          if (aKS.getCertificate (sAlias) != null)
-            sType = "certificate";
+          final KeyStore.Entry aEntry = aKS.getEntry (sAlias,
+                                                      new KeyStore.PasswordProtection (aCP.getKeyPasswordCharArray ()));
+          if (aEntry instanceof KeyStore.PrivateKeyEntry)
+            sType = "private-key";
+          else
+            if (aEntry instanceof KeyStore.SecretKeyEntry)
+              sType = "secret-key";
+            else
+              if (aEntry instanceof KeyStore.TrustedCertificateEntry)
+                sType = "trusted-certificate";
         }
         catch (final Exception ex)
         {}
