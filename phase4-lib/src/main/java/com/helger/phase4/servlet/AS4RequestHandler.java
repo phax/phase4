@@ -1269,14 +1269,14 @@ public class AS4RequestHandler implements AutoCloseable
       final String sProfileID = aState.getProfileID ();
 
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("No checking for duplicate message with message ID '" + sMessageID + "' and profile ID '" + sProfileID + "'");
+        LOGGER.debug ("Now checking for duplicate message with message ID '" + sMessageID + "' and profile ID '" + sProfileID + "'");
 
       final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
                                                  .registerAndCheck (sMessageID, sProfileID, aPMode == null ? null : aPMode.getID ())
                                                  .isBreak ();
       if (bIsDuplicate)
       {
-        LOGGER.error ("Not invoking SPIs, because message with Message ID '" + sMessageID + "' was already handled!");
+        LOGGER.error ("Not invoking SPIs, because message with Message ID '" + sMessageID + "' was already handled (this is a duplicate)");
         aErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
                                                                          sMessageID,
                                                                          "Another message with the same Message ID '" +
