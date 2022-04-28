@@ -102,11 +102,18 @@ public class MainVerifySignature
         if (aCert != null)
         {
           aCertSet.add (aCert);
-          if (nAction == WSConstants.BST && aPreferredCert == null)
-            aPreferredCert = aCert;
+          if (nAction == WSConstants.BST)
+          {
+            if (aPreferredCert == null)
+              aPreferredCert = aCert;
+            else
+              LOGGER.error ("Found a second BST certificate in the message. Weird.");
+          }
         }
       }
-      // this determines if a signature check or a decryption happened
+
+      if (aPreferredCert != null)
+        LOGGER.info ("Found this certificate Subject CN: " + aPreferredCert.getSubjectX500Principal ());
 
       // Decrypting the Attachments
       final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
