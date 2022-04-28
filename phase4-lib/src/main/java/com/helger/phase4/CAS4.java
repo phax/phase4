@@ -52,15 +52,27 @@ public final class CAS4
   public static final String XENC_NS = "http://www.w3.org/2001/04/xmlenc#";
   public static final String XENC11_NS = "http://www.w3.org/2009/xmlenc11#";
 
-  // Must start with a letter and must be a valid XML ID and token
+  /**
+   * Name of the library. Must start with a letter and must be a valid XML ID
+   * and token
+   */
   public static final String LIB_NAME = "phase4";
+  /** The URL of the library. */
   public static final String LIB_URL = "https://github.com/phax/phase4";
 
   // Constant Names
+  /**
+   * The name of the "original sender" (C1) message property for four-corner
+   * topology message exchanges.
+   */
   public static final String ORIGINAL_SENDER = "originalSender";
+  /**
+   * The name of the "final recipient" (C4) message property for four-corner
+   * topology message exchanges.
+   */
   public static final String FINAL_RECIPIENT = "finalRecipient";
 
-  // Defaults
+  // Default values
   public static final String DEFAULT_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole";
   public static final String DEFAULT_RESPONDER_URL = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
   public static final String DEFAULT_TO_URL = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultTo";
