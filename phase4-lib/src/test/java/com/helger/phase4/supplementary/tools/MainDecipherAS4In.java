@@ -56,6 +56,7 @@ public final class MainDecipherAS4In
     AS4DumpReader.decryptAS4In (aBytes,
                                 new AS4CryptoFactoryProperties (aCP),
                                 null,
-                                aDecryptedBytes -> SimpleFileIO.writeFile (new File (folder, "payload.decrypted"), aDecryptedBytes));
+                                (nIndex, aDecryptedBytes) -> SimpleFileIO.writeFile (new File (folder, "payload-" + nIndex + ".decrypted"),
+                                                                                     aDecryptedBytes));
   }
 }
