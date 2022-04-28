@@ -1,15 +1,12 @@
 package com.helger.phase4.peppol.supplementary.tools;
 
 import java.io.File;
-import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
-import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
@@ -24,8 +21,8 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
-import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.io.file.FileHelper;
+import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.state.ESuccess;
@@ -33,7 +30,6 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.servlet.soap.Phase4KeyStoreCallbackHandler;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
@@ -41,7 +37,16 @@ import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
-@SuppressWarnings ("unused")
+/**
+ * This is a small tool that takes the dump of an incoming AS4 message (from a
+ * File) and tries to verify if the signature is correct or not. Therefore
+ * relevant parts of the phase4 signature verification process have been
+ * extracted.<br>
+ * This tool can currently only check receipts that are SOAP messages only. MIME
+ * messages are currently not supported.
+ *
+ * @author Philip Helger
+ */
 public class MainVerifySignature
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (MainVerifySignature.class);
@@ -49,10 +54,8 @@ public class MainVerifySignature
   @Nonnull
   private static ESuccess _verifyAndDecrypt (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                              @Nonnull final Document aSOAPDoc,
-                                             @Nonnull final Locale aLocale,
                                              @Nonnull final AS4ResourceHelper aResHelper,
                                              @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
-                                             @Nonnull final ErrorList aErrorList,
                                              @Nonnull final Supplier <WSSConfig> aWSSConfigSupplier)
   {
     // Signing verification and Decryption
@@ -78,6 +81,8 @@ public class MainVerifySignature
       // afterwards!
       final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
       aSecurityEngine.setWssConfig (aWSSConfig);
+
+      // This starts the main verification - throws an exception
       final WSHandlerResult aHdlRes = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
       final List <WSSecurityEngineResult> aResults = aHdlRes.getResults ();
 
@@ -85,7 +90,6 @@ public class MainVerifySignature
       final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
       // Preferred certificate from BinarySecurityToken
       X509Certificate aPreferredCert = null;
-      int nWSS4JSecurityActions = 0;
       for (final WSSecurityEngineResult aResult : aResults)
       {
         if (LOGGER.isDebugEnabled ())
@@ -93,7 +97,6 @@ public class MainVerifySignature
 
         final Integer aAction = (Integer) aResult.get (WSSecurityEngineResult.TAG_ACTION);
         final int nAction = aAction != null ? aAction.intValue () : 0;
-        nWSS4JSecurityActions |= nAction;
 
         final X509Certificate aCert = (X509Certificate) aResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
         if (aCert != null)
@@ -104,27 +107,6 @@ public class MainVerifySignature
         }
       }
       // this determines if a signature check or a decryption happened
-
-      final X509Certificate aUsedCert;
-      if (aCertSet.size () > 1)
-      {
-        if (aPreferredCert == null)
-        {
-          LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message. Using the first one.");
-          if (LOGGER.isDebugEnabled ())
-            LOGGER.debug ("All gathered certificates: " + aCertSet);
-          aUsedCert = aCertSet.getAtIndex (0);
-        }
-        else
-          aUsedCert = aPreferredCert;
-      }
-      else
-        if (aCertSet.size () == 1)
-          aUsedCert = aCertSet.getAtIndex (0);
-        else
-          aUsedCert = null;
-
-      // Remember in State
 
       // Decrypting the Attachments
       final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
@@ -139,25 +121,14 @@ public class MainVerifySignature
         aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
       }
 
-      // Remember in State
+      LOGGER.info ("The certificate verification looks good");
+
       return ESuccess.SUCCESS;
     }
-    catch (final IndexOutOfBoundsException | IllegalStateException | WSSecurityException ex)
+    catch (final Exception ex)
     {
       // Decryption or Signature check failed
       LOGGER.error ("Error processing the WSSSecurity Header", ex);
-
-      // TODO we need a way to distinct
-      // signature and decrypt WSSecurityException provides no such thing
-      aErrorList.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsError (aLocale));
-      return ESuccess.FAILURE;
-    }
-    catch (final IOException ex)
-    {
-      // Decryption or Signature check failed
-
-      LOGGER.error ("IO error processing the WSSSecurity Header", ex);
-      aErrorList.add (EEbmsError.EBMS_OTHER.getAsError (aLocale));
       return ESuccess.FAILURE;
     }
   }
@@ -167,8 +138,14 @@ public class MainVerifySignature
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
     try (AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
-      final byte [] aBytes = StreamHelper.getAllBytes (FileHelper.getInputStream (new File ("src/test/resources/verify/dataport1-mustunderstand.as4in")));
+      // The file to read
+      final File aFile = new File ("src/test/resources/verify/dataport1-mustunderstand.as4in");
+      if (!aFile.exists ())
+        throw new IllegalStateException ("The file " + aFile.getAbsolutePath () + " does not exist");
 
+      final byte [] aBytes = SimpleFileIO.getAllFileBytes (aFile);
+
+      // Skip all the HTTP headers etc.
       int nHttpEnd = -1;
       boolean bLastWasCR = false;
       for (int i = 0; i < aBytes.length; ++i)
@@ -176,8 +153,10 @@ public class MainVerifySignature
         final byte b = aBytes[i];
         if (b == '\n')
         {
+          // 2 consecutive newlines?
           if (bLastWasCR)
           {
+            // Remember offset
             nHttpEnd = i + 1;
             break;
           }
@@ -190,19 +169,20 @@ public class MainVerifySignature
         }
       }
 
+      // Remember the index until we skipped
       LOGGER.info ("Now at byte " + nHttpEnd);
 
+      // Expects the main payload to be a SOAP message
       final Document aSOAPDoc = DOMReader.readXMLDOM (aBytes, nHttpEnd, aBytes.length - nHttpEnd);
       if (aSOAPDoc == null)
-        throw new IllegalStateException ();
+        throw new IllegalStateException ("Failed to read the payload as XML. Maybe it is a MIME message? MIME messages are unfortunately not yet supported.");
 
-      final ErrorList aErrorList = new ErrorList ();
+      // Main action
+      final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
       _verifyAndDecrypt (AS4CryptoFactoryProperties.getDefaultInstance (),
                          aSOAPDoc,
-                         Locale.US,
                          aResHelper,
-                         new CommonsArrayList <> (),
-                         aErrorList,
+                         aAttachments,
                          WSSConfigManager.getInstance ()::createWSSConfig);
     }
     WebScopeManager.onGlobalEnd ();
