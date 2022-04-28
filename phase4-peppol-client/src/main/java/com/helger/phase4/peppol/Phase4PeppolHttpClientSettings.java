@@ -34,6 +34,11 @@ import com.helger.phase4.CAS4Version;
  */
 public class Phase4PeppolHttpClientSettings extends HttpClientSettings
 {
+  public static final int DEFAULT_PEPPOL_CONNECTION_REQUEST_TIMEOUT_MS = 1_000;
+  public static final int DEFAULT_PEPPOL_CONNECTION_TIMEOUT_MS = 5_000;
+  // 5 minutes according to the TIA
+  public static final int DEFAULT_PEPPOL_SOCKET_TIMEOUT_MS = 300_000;
+
   public Phase4PeppolHttpClientSettings () throws GeneralSecurityException
   {
     // Peppol requires TLS v1.2
@@ -43,10 +48,9 @@ public class Phase4PeppolHttpClientSettings extends HttpClientSettings
     aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
     setSSLContext (aSSLContext);
 
-    setConnectionRequestTimeoutMS (1_000);
-    setConnectionTimeoutMS (5_000);
-    // 5 minutes according to the TIA
-    setSocketTimeoutMS (300_000);
+    setConnectionRequestTimeoutMS (DEFAULT_PEPPOL_CONNECTION_REQUEST_TIMEOUT_MS);
+    setConnectionTimeoutMS (DEFAULT_PEPPOL_CONNECTION_TIMEOUT_MS);
+    setSocketTimeoutMS (DEFAULT_PEPPOL_SOCKET_TIMEOUT_MS);
 
     // Set an explicit user agent
     setUserAgent (CAS4.LIB_NAME + "/" + CAS4Version.BUILD_VERSION + " " + CAS4.LIB_URL);
