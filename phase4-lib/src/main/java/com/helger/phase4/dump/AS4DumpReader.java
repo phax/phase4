@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
@@ -70,6 +71,20 @@ public final class AS4DumpReader
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4DumpReader.class);
 
+  @FunctionalInterface
+  public interface IDecryptedPayloadConsumer
+  {
+    /**
+     * Get invoked for every decrypted attachment.
+     *
+     * @param nAttachmentIndex
+     *        0-based attachment index.
+     * @param aPayload
+     *        Decrypted payload. Never <code>null</code>.
+     */
+    void accept (@Nonnegative int nAttachmentIndex, @Nonnull byte [] aPayload);
+  }
+
   private AS4DumpReader ()
   {}
 
@@ -99,44 +114,59 @@ public final class AS4DumpReader
    *         In case of error
    */
   public static void decryptAS4In (@Nonnull final byte [] aAS4InData,
-                                   final IAS4CryptoFactory aCF,
+                                   @Nonnull final IAS4CryptoFactory aCF,
                                    @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
-                                   @Nonnull final Consumer <byte []> aDecryptedConsumer) throws WSSecurityException,
-                                                                                         Phase4Exception,
-                                                                                         IOException,
-                                                                                         MessagingException
+                                   @Nonnull final IDecryptedPayloadConsumer aDecryptedConsumer) throws WSSecurityException,
+                                                                                                Phase4Exception,
+                                                                                                IOException,
+                                                                                                MessagingException
   {
     final HttpHeaderMap hm = new HttpHeaderMap ();
     int nHttpStart = 0;
     int nHttpEnd = -1;
+
+    // Read all the HTTP headers
     boolean bLastWasCR = false;
     for (int i = 0; i < aAS4InData.length; ++i)
     {
       final byte b = aAS4InData[i];
       if (b == '\n')
       {
+        // Do we have 2 consecutive newlines?
         if (bLastWasCR)
         {
+          // Remember index in byte array
           nHttpEnd = i;
           break;
         }
         bLastWasCR = true;
+
+        // The full header line
         final String sLine = new String (aAS4InData, nHttpStart, i - nHttpStart, StandardCharsets.ISO_8859_1);
+
+        // Split in name and value
         final String [] aParts = StringHelper.getExplodedArray (':', sLine, 2);
+
+        // Remember
         hm.addHeader (aParts[0].trim (), aParts[1].trim ());
+
+        // Remember start of the next line
         nHttpStart = i + 1;
       }
       else
       {
+        // No newline
         if (b != '\r')
           bLastWasCR = false;
       }
     }
 
+    // In case somebody cares about the HTTP headers
     if (aHttpHeaderConsumer != null)
       aHttpHeaderConsumer.accept (hm);
 
-    LOGGER.info ("Now at byte " + nHttpEnd + " having " + hm.getCount () + " HTTP headers");
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("Now at byte " + nHttpEnd + " having " + hm.getCount () + " HTTP headers");
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
     try (final WebScoped w = new WebScoped ();
@@ -158,9 +188,21 @@ public final class AS4DumpReader
         {
           try
           {
-            final byte [] aDecryptedBytes = StreamHelper.getAllBytes (aIncomingAttachments.getFirst ().getInputStreamProvider ());
-            aDecryptedConsumer.accept (aDecryptedBytes);
-            LOGGER.info ("Handled decrypted payload with " + aDecryptedBytes.length + " bytes");
+            // Once we're here, the payload is decrypted
+
+            int nIndex = 0;
+            // For all attachments
+            for (final WSS4JAttachment aAttachment : aIncomingAttachments)
+            {
+              // Read current
+              final byte [] aDecryptedBytes = StreamHelper.getAllBytes (aAttachment.getInputStreamProvider ());
+
+              // Invoke the consumer
+              aDecryptedConsumer.accept (nIndex, aDecryptedBytes);
+              LOGGER.info ("Handled decrypted payload #" + nIndex + " with " + aDecryptedBytes.length + " bytes");
+
+              nIndex++;
+            }
             return AS4MessageProcessorResult.createSuccess ();
           }
           catch (final Exception ex)
@@ -176,7 +218,7 @@ public final class AS4DumpReader
                                                                         final IAS4MessageState aState,
                                                                         final ICommonsList <Ebms3Error> aProcessingErrorMessages)
         {
-          LOGGER.error ("Unexpected signal msg");
+          LOGGER.error ("Unexpected signal msg. Can only handle user messages.");
           return AS4SignalMessageProcessorResult.createSuccess ();
         }
       };

@@ -23,7 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
+import com.helger.phase4.dump.AS4DumpReader.IDecryptedPayloadConsumer;
 
 /**
  * This is a small tool that demonstrates how the "as4in" files can be decrypted
@@ -37,17 +39,24 @@ public final class MainDecipherAS4In
 
   public static void main (final String [] args) throws Exception
   {
-    final File f = new File ("src/test/resources/incoming/165445-9-8a813f8d-3dda-4ef9-868e-f6d829972d4e.as4in");
-    if (!f.exists ())
-      throw new IllegalStateException ();
+    // The file to decipher. Should be MIME based message.
+    final File aFile = new File ("src/test/resources/incoming/165445-9-8a813f8d-3dda-4ef9-868e-f6d829972d4e.as4in");
+    if (!aFile.exists ())
+      throw new IllegalStateException ("The file " + aFile.getAbsolutePath () + " does not exist");
 
-    LOGGER.info ("Reading " + f.getName ());
-    final byte [] aBytes = SimpleFileIO.getAllFileBytes (f);
+    LOGGER.info ("Reading " + aFile.getName ());
+    final byte [] aBytes = SimpleFileIO.getAllFileBytes (aFile);
 
-    AS4DumpReader.decryptAS4In (aBytes,
-                                AS4CryptoFactoryProperties.getDefaultInstance (),
-                                null,
-                                aDecryptedBytes -> SimpleFileIO.writeFile (new File (f.getParentFile (), "payload.decrypted"),
-                                                                           aDecryptedBytes));
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
+    // What to do with the decrypted payload
+    final IDecryptedPayloadConsumer aDecryptedConsumer = (idx,
+                                                          aDecryptedBytes) -> SimpleFileIO.writeFile (new File (aFile.getParentFile (),
+                                                                                                                "payload-" +
+                                                                                                                                        idx +
+                                                                                                                                        ".decrypted"),
+                                                                                                      aDecryptedBytes);
+
+    // Do it
+    AS4DumpReader.decryptAS4In (aBytes, aCryptoFactory, null, aDecryptedConsumer);
   }
 }
