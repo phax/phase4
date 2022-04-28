@@ -21,10 +21,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
-import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.commons.io.stream.HasInputStream;
-import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.state.ESuccess;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
@@ -52,9 +49,9 @@ public class MainVerifySignature
   private static final Logger LOGGER = LoggerFactory.getLogger (MainVerifySignature.class);
 
   @Nonnull
-  private static ESuccess _verifyAndDecrypt (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  private static ESuccess _verifyAndDecrypt (@Nonnull final AS4ResourceHelper aResHelper,
+                                             @Nonnull final IAS4CryptoFactory aCryptoFactory,
                                              @Nonnull final Document aSOAPDoc,
-                                             @Nonnull final AS4ResourceHelper aResHelper,
                                              @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                              @Nonnull final Supplier <WSSConfig> aWSSConfigSupplier)
   {
@@ -115,19 +112,6 @@ public class MainVerifySignature
       if (aPreferredCert != null)
         LOGGER.info ("Found this certificate Subject CN: " + aPreferredCert.getSubjectX500Principal ());
 
-      // Decrypting the Attachments
-      final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
-      for (final WSS4JAttachment aResponseAttachment : aResponseAttachments)
-      {
-        // Always copy to a temporary file, so that decrypted content can be
-        // read more than once. By default the stream can only be read once
-        // Not nice, but working :)
-        final File aTempFile = aResHelper.createTempFile ();
-        StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aResponseAttachment.getSourceStream (),
-                                                              FileHelper.getBufferedOutputStream (aTempFile));
-        aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
-      }
-
       LOGGER.info ("The certificate verification looks good");
 
       return ESuccess.SUCCESS;
@@ -143,7 +127,7 @@ public class MainVerifySignature
   public static void main (final String [] args)
   {
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
-    try (AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
       // The file to read
       final File aFile = new File ("src/test/resources/verify/dataport1-mustunderstand.as4in");
@@ -185,12 +169,9 @@ public class MainVerifySignature
         throw new IllegalStateException ("Failed to read the payload as XML. Maybe it is a MIME message? MIME messages are unfortunately not yet supported.");
 
       // Main action
+      final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
       final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-      _verifyAndDecrypt (AS4CryptoFactoryProperties.getDefaultInstance (),
-                         aSOAPDoc,
-                         aResHelper,
-                         aAttachments,
-                         WSSConfigManager.getInstance ()::createWSSConfig);
+      _verifyAndDecrypt (aResHelper, aCryptoFactory, aSOAPDoc, aAttachments, WSSConfigManager.getInstance ()::createWSSConfig);
     }
     WebScopeManager.onGlobalEnd ();
   }
