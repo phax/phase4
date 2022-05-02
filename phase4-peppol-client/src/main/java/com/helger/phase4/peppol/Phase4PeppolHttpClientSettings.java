@@ -22,6 +22,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import com.helger.commons.ws.TrustManagerTrustAll;
+import com.helger.http.tls.ETLSVersion;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.CAS4Version;
@@ -42,7 +43,7 @@ public class Phase4PeppolHttpClientSettings extends HttpClientSettings
   public Phase4PeppolHttpClientSettings () throws GeneralSecurityException
   {
     // Peppol requires TLS v1.2
-    final SSLContext aSSLContext = SSLContext.getInstance ("TLSv1.2");
+    final SSLContext aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_12.getID (), ETLSVersion.TLS_13.getID ());
     // But we're basically trusting all hosts - the exact list is hard to
     // determine
     aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
