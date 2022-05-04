@@ -434,5 +434,4 @@ public final class PeppolCompatibilityValidatorTest
     VALIDATOR.validateSignalMessage (aSignalMessage, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageId is missing")));
   }
-
 }
