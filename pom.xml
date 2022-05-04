@@ -268,6 +268,11 @@
       </dependency>
       <dependency>
         <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-profile-eespa</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-profile-entsog</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -313,6 +318,7 @@
     <module>phase4-lib</module>
     <module>phase4-profile-bpc</module>
     <module>phase4-profile-cef</module>
+    <module>phase4-profile-eespa</module>
     <module>phase4-profile-entsog</module>
     <module>phase4-profile-peppol</module>
     <module>phase4-test</module>
