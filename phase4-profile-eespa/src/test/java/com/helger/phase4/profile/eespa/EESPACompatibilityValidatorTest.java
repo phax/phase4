@@ -420,5 +420,4 @@ public final class EESPACompatibilityValidatorTest
     VALIDATOR.validateSignalMessage (aSignalMessage, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageInfo/MessageId is missing")));
   }
-
 }
