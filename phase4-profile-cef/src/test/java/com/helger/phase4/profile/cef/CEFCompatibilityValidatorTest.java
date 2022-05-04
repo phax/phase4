@@ -444,6 +444,6 @@ public final class CEFCompatibilityValidatorTest
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
     aSignalMessage.setMessageInfo (new Ebms3MessageInfo ());
     VALIDATOR.validateSignalMessage (aSignalMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageID is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageId is missing")));
   }
 }

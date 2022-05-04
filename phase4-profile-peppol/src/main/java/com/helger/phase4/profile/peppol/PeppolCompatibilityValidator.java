@@ -454,7 +454,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     else
     {
       if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
-        aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+        aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
     }
   }
 }
