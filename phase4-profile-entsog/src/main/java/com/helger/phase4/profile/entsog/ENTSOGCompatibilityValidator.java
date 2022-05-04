@@ -145,7 +145,7 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
         if (!aPModeLegSecurity.getX509SignatureHashFunction ().equals (ECryptoAlgorithmSignDigest.DIGEST_SHA_256))
         {
           aErrorList.add (_createError (sFieldPrefix +
-                                        "Securoty.X509SignatureHashFunction must use the value '" +
+                                        "Security.X509SignatureHashFunction must use the value '" +
                                         ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID () +
                                         "'"));
         }
@@ -159,7 +159,7 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
         if (!aPModeLegSecurity.getX509EncryptionAlgorithm ().equals (ECryptoAlgorithmCrypt.AES_128_GCM))
         {
           aErrorList.add (_createError (sFieldPrefix +
-                                        "Securoty.X509EncryptionAlgorithm must use the value '" +
+                                        "Security.X509EncryptionAlgorithm must use the value '" +
                                         ECryptoAlgorithmCrypt.AES_128_GCM.getID () +
                                         "' instead of '" +
                                         aPModeLegSecurity.getX509EncryptionAlgorithm ().getID () +

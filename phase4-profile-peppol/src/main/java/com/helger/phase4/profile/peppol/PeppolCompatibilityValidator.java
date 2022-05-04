@@ -108,7 +108,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
       }
       else
       {
-        // Empty address protocol
+        // Empty address protocol (dynamically filled from SMP)
         if (false)
           aErrorList.add (_createError (sFieldPrefix + "AddressProtocol is missing"));
       }
