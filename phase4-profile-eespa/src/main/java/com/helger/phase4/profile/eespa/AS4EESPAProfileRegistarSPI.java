@@ -37,25 +37,48 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
 @IsSPIImplementation
 public final class AS4EESPAProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
-  public static final String AS4_PROFILE_ID = "eespa";
-  public static final String AS4_PROFILE_NAME = "EESPA";
+  public static final String AS4_PROFILE_ID_ACCEPTANCE = "eespa-acc";
+  public static final String AS4_PROFILE_NAME_ACCEPTANCE = "EESPA Acceptance";
+  public static final String AS4_PROFILE_ID_PROD = "eespa-prod";
+  public static final String AS4_PROFILE_NAME_PROD = "EESPA Production";
+
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4EESPAProfileRegistarSPI.class);
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> EESPAPMode.createEESPAPMode (i, r, a, PMODE_ID_PROVIDER, false);
+    final IAS4ProfilePModeProvider aDefaultPModeProviderAcc = (i,
+                                                               r,
+                                                               a) -> EESPAPMode.createEESPAPMode (i, r, a, PMODE_ID_PROVIDER, true, false);
+    final IAS4ProfilePModeProvider aDefaultPModeProviderProd = (i, r, a) -> EESPAPMode.createEESPAPMode (i,
+                                                                                                         r,
+                                                                                                         a,
+                                                                                                         PMODE_ID_PROVIDER,
+                                                                                                         false,
+                                                                                                         false);
 
     if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
-    final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
-                                                AS4_PROFILE_NAME,
-                                                EESPACompatibilityValidator::new,
-                                                aDefaultPModeProvider,
-                                                PMODE_ID_PROVIDER,
-                                                false);
-    aRegistrar.registerProfile (aProfile);
-    aRegistrar.setDefaultProfile (aProfile);
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_ACCEPTANCE + "'");
+    final AS4Profile aProfileAcc = new AS4Profile (AS4_PROFILE_ID_ACCEPTANCE,
+                                                   AS4_PROFILE_NAME_ACCEPTANCE,
+                                                   EESPACompatibilityValidator::new,
+                                                   aDefaultPModeProviderAcc,
+                                                   PMODE_ID_PROVIDER,
+                                                   false);
+    aRegistrar.registerProfile (aProfileAcc);
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_PROD + "'");
+    final AS4Profile aProfileProd = new AS4Profile (AS4_PROFILE_ID_PROD,
+                                                    AS4_PROFILE_NAME_PROD,
+                                                    EESPACompatibilityValidator::new,
+                                                    aDefaultPModeProviderProd,
+                                                    PMODE_ID_PROVIDER,
+                                                    false);
+    aRegistrar.registerProfile (aProfileProd);
+
+    // Default to acc
+    aRegistrar.setDefaultProfile (aProfileAcc);
   }
 }

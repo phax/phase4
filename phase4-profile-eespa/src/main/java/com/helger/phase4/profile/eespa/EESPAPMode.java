@@ -53,7 +53,9 @@ import com.helger.phase4.wss.EWSSVersion;
 @Immutable
 public final class EESPAPMode
 {
-  public static final String DEFAULT_AGREEMENT_ID = "urn:fdc:eespa.eu:2018:agreements:mifa:aa_pilot";
+  public static final String DEFAULT_AGREEMENT_ID_ACCEPTANCE = "urn:fdc:eespa.eu:2018:agreements:mifa:test";
+  public static final String DEFAULT_AGREEMENT_ID_PROD = "urn:fdc:eespa.eu:2018:agreements:mifa";
+  public static final String DEFAULT_PARTY_TYPE_ID = "http://docs.oasis-open.org/bdxr/AS4/1";
 
   private EESPAPMode ()
   {}
@@ -99,8 +101,8 @@ public final class EESPAPMode
     aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
     aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256);
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
-    aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
-    aPModeLegSecurity.setX509EncryptionMinimumStrength (Integer.valueOf (128));
+    aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_256_GCM);
+    aPModeLegSecurity.setX509EncryptionMinimumStrength (Integer.valueOf (256));
     aPModeLegSecurity.setPModeAuthorize (false);
     aPModeLegSecurity.setSendReceipt (true);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
@@ -129,6 +131,13 @@ public final class EESPAPMode
     return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
   }
 
+  @Nonnull
+  public static PModeParty createParty (@Nonnull @Nonempty final String sPartyID, @Nonnull @Nonempty final String sRole)
+  {
+    // Party type is needed for Peppol
+    return new PModeParty (DEFAULT_PARTY_TYPE_ID, sPartyID, sRole, null, null);
+  }
+
   /**
    * One-Way Version of the EESPA pmode uses one-way push
    *
@@ -140,6 +149,9 @@ public final class EESPAPMode
    *        Responder URL
    * @param aPModeIDProvider
    *        PMode ID provider
+   * @param bUseAcceptanceNetwork
+   *        <code>true</code> to configure a PMode for the acceptance network,
+   *        <code>false</code> to use the production network.
    * @param bPersist
    *        <code>true</code> to persist the PMode in the PModeManager,
    *        <code>false</code> to have it only in memory.
@@ -150,15 +162,16 @@ public final class EESPAPMode
                                         @Nonnull @Nonempty final String sResponderID,
                                         @Nullable final String sResponderAddress,
                                         @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                        final boolean bUseAcceptanceNetwork,
                                         final boolean bPersist)
   {
-    final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
-    final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
+    final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
+    final PModeParty aResponder = createParty (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
     final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (sInitiatorID, sResponderID),
                                     aInitiator,
                                     aResponder,
-                                    DEFAULT_AGREEMENT_ID,
+                                    bUseAcceptanceNetwork ? DEFAULT_AGREEMENT_ID_ACCEPTANCE : DEFAULT_AGREEMENT_ID_PROD,
                                     EMEP.ONE_WAY,
                                     EMEPBinding.PUSH,
                                     generatePModeLeg (sResponderAddress),

@@ -161,11 +161,11 @@ public class EESPACompatibilityValidator implements IAS4ProfileValidator
         aErrorList.add (_createError (sFieldPrefix + "Security.X509EncryptionAlgorithm is missing"));
       }
       else
-        if (!aPModeLegSecurity.getX509EncryptionAlgorithm ().equals (ECryptoAlgorithmCrypt.AES_128_GCM))
+        if (!aPModeLegSecurity.getX509EncryptionAlgorithm ().equals (ECryptoAlgorithmCrypt.AES_256_GCM))
         {
           aErrorList.add (_createError (sFieldPrefix +
                                         "Security.X509EncryptionAlgorithm must use the value '" +
-                                        ECryptoAlgorithmCrypt.AES_128_GCM.getID () +
+                                        ECryptoAlgorithmCrypt.AES_256_GCM.getID () +
                                         "' instead of '" +
                                         aPModeLegSecurity.getX509EncryptionAlgorithm ().getID () +
                                         "'"));
@@ -352,7 +352,7 @@ public class EESPACompatibilityValidator implements IAS4ProfileValidator
       {
         if (aTo.getPartyIdCount () > 1)
           aErrorList.add (_createError ("PartyInfo/To must contain no more than one PartyID"));
-      }  
+      }
     }
 
     if (aUserMsg.getCollaborationInfo () == null)

@@ -43,6 +43,7 @@ public final class EESPAPModeTest
                                                       "TestResponder",
                                                       "https://test.example.org",
                                                       IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                      true,
                                                       false);
     assertNotNull (aPMode);
   }

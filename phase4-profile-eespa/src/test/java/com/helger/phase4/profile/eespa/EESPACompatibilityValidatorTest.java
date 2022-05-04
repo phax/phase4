@@ -79,6 +79,7 @@ public final class EESPACompatibilityValidatorTest
                                             "TestResponder",
                                             "http://localhost:8080",
                                             IPModeIDProvider.DEFAULT_DYNAMIC,
+                                            true,
                                             true);
   }
 
@@ -226,7 +227,7 @@ public final class EESPACompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmCrypt.AES_256_GCM.getID ())));
   }
 
   @SuppressWarnings ("deprecation")
