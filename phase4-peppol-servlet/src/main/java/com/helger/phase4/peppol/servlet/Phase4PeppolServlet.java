@@ -37,7 +37,11 @@ import com.helger.xservlet.AbstractXServlet;
  * </pre>
  *
  * @author Philip Helger
+ * @deprecated Since 1.3.7. There is no reason, why this particular Servlet
+ *             class should be used. The usage of
+ *             {@link com.helger.phase4.servlet.AS4Servlet} is preferred.
  */
+@Deprecated
 public class Phase4PeppolServlet extends AbstractXServlet
 {
   /**
@@ -47,8 +51,7 @@ public class Phase4PeppolServlet extends AbstractXServlet
   {
     // Multipart is handled specifically inside
     settings ().setMultipartEnabled (false);
-    final AS4XServletHandler aHdl = new AS4XServletHandler ();
     // HTTP POST only
-    handlerRegistry ().registerHandler (EHttpMethod.POST, aHdl);
+    handlerRegistry ().registerHandler (EHttpMethod.POST, new AS4XServletHandler ());
   }
 }

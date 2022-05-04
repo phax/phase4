@@ -44,10 +44,10 @@ import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.peppol.servlet.Phase4PeppolServlet;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.servlet.AS4ServerInitializer;
+import com.helger.phase4.servlet.AS4Servlet;
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
 import com.helger.photon.app.io.WebFileIO;
 import com.helger.servlet.ServletHelper;
@@ -61,11 +61,11 @@ public class ServletConfig
   private static final Logger LOGGER = LoggerFactory.getLogger (ServletConfig.class);
 
   @Bean
-  public ServletRegistrationBean <Phase4PeppolServlet> servletRegistrationBean (final ServletContext ctx)
+  public ServletRegistrationBean <AS4Servlet> servletRegistrationBean (final ServletContext ctx)
   {
     // Must be called BEFORE the servlet is instantiated
     _init (ctx);
-    final ServletRegistrationBean <Phase4PeppolServlet> bean = new ServletRegistrationBean <> (new Phase4PeppolServlet (), true, "/as4");
+    final ServletRegistrationBean <AS4Servlet> bean = new ServletRegistrationBean <> (new AS4Servlet (), true, "/as4");
     bean.setLoadOnStartup (1);
     return bean;
   }
