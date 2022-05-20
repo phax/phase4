@@ -70,7 +70,8 @@ public final class Phase4ENTSOGSender
    * @param <IMPLTYPE>
    *        The implementation type
    */
-  public abstract static class AbstractENTSOGUserMessageBuilder <IMPLTYPE extends AbstractENTSOGUserMessageBuilder <IMPLTYPE>> extends
+  public abstract static class AbstractENTSOGUserMessageBuilder <IMPLTYPE extends AbstractENTSOGUserMessageBuilder <IMPLTYPE>>
+                                                                extends
                                                                 AbstractAS4UserMessageBuilder <IMPLTYPE>
   {
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.ISSUER_SERIAL;
@@ -179,14 +180,15 @@ public final class Phase4ENTSOGSender
         aUserMsg.setPayload (null);
 
         // Add main attachment
-        final WSS4JAttachment payloadAttachment = WSS4JAttachment.createOutgoingFileAttachment (m_aPayload, aResHelper);
+        final WSS4JAttachment aPayloadAttachment = WSS4JAttachment.createOutgoingFileAttachment (m_aPayload,
+                                                                                                 aResHelper);
 
         if (m_aPayloadParams != null)
         {
           if (m_aPayloadParams.getDocumentType () != null)
-            payloadAttachment.customPartProperties ().put ("EDIGASDocumentType", m_aPayloadParams.getDocumentType ());
+            aPayloadAttachment.customPartProperties ().put ("EDIGASDocumentType", m_aPayloadParams.getDocumentType ());
         }
-        aUserMsg.addAttachment (payloadAttachment);
+        aUserMsg.addAttachment (aPayloadAttachment);
 
         // Add other attachments
         for (final Phase4OutgoingAttachment aAttachment : m_aAttachments)
@@ -218,7 +220,6 @@ public final class Phase4ENTSOGSender
         throw new Phase4Exception ("Wrapped Phase4Exception", ex);
       }
     }
-
   }
 
   /**
