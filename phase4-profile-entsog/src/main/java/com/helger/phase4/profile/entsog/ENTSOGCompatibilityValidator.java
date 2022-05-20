@@ -108,7 +108,10 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
       if (!eSOAPVersion.isAS4Default ())
       {
-        aErrorList.add (_createError (sFieldPrefix + "SoapVersion '" + eSOAPVersion.getVersion () + "' is unsupported"));
+        aErrorList.add (_createError (sFieldPrefix +
+                                      "SoapVersion '" +
+                                      eSOAPVersion.getVersion () +
+                                      "' is unsupported"));
       }
     }
 
@@ -117,10 +120,11 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
     if (aPModeLegSecurity != null)
     {
       // Check Certificate
-      if (aPModeLegSecurity.getX509SignatureCertificate () == null)
-      {
-        aErrorList.add (_createError (sFieldPrefix + "Security.X509SignatureCertificate is missing"));
-      }
+      if (false)
+        if (aPModeLegSecurity.getX509SignatureCertificate () == null)
+        {
+          aErrorList.add (_createError (sFieldPrefix + "Security.X509SignatureCertificate is missing"));
+        }
 
       // Check Signature Algorithm
       if (aPModeLegSecurity.getX509SignatureAlgorithm () == null)
@@ -237,7 +241,8 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyConsumer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
       }
       else
       {
@@ -247,7 +252,8 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyProducerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyProducer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
       }
       else
       {
@@ -284,7 +290,8 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
     final EMEP eMEP = aPMode.getMEP ();
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
 
-    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) || (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
+    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
+        (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
     {
       // Valid
     }
@@ -329,10 +336,6 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
       {
         aErrorList.add (_createError ("PMode.PayloadService.CompressionMode is missing"));
       }
-    }
-    else
-    {
-      aErrorList.add (_createError ("PMode.PayloadService is missing"));
     }
   }
 
