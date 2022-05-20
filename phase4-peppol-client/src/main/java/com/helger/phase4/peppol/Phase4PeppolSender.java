@@ -157,7 +157,9 @@ public final class Phase4PeppolSender
     {
       sRealInstanceIdentifier = UUID.randomUUID ().toString ();
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" + sRealInstanceIdentifier + "'");
+        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" +
+                      sRealInstanceIdentifier +
+                      "'");
     }
 
     aData.setDocumentIdentification (aPayloadElement.getNamespaceURI (),
@@ -200,7 +202,10 @@ public final class Phase4PeppolSender
         else
         {
           // Custom registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aRegistry, aVESID, aValidationResultHandler);
+          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement,
+                                                                   aRegistry,
+                                                                   aVESID,
+                                                                   aValidationResultHandler);
         }
       }
       else
@@ -282,7 +287,8 @@ public final class Phase4PeppolSender
    * @since 0.9.6
    */
   @NotThreadSafe
-  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>> extends
+  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>>
+                                                                extends
                                                                 AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     protected IParticipantIdentifier m_aSenderID;
@@ -335,6 +341,8 @@ public final class Phase4PeppolSender
     public final IMPLTYPE senderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
     {
       ValueEnforcer.notNull (aSenderID, "SenderID");
+      if (m_aSenderID != null)
+        LOGGER.warn ("An existing SenderParticipantID is overridden");
       m_aSenderID = aSenderID;
       return thisAsT ();
     }
@@ -351,6 +359,8 @@ public final class Phase4PeppolSender
     public final IMPLTYPE receiverParticipantID (@Nonnull final IParticipantIdentifier aReceiverID)
     {
       ValueEnforcer.notNull (aReceiverID, "ReceiverID");
+      if (m_aReceiverID != null)
+        LOGGER.warn ("An existing ReceiverParticipantID is overridden");
       m_aReceiverID = aReceiverID;
       return thisAsT ();
     }
@@ -367,6 +377,8 @@ public final class Phase4PeppolSender
     public final IMPLTYPE documentTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
     {
       ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
+      if (m_aDocTypeID != null)
+        LOGGER.warn ("An existing DocumentTypeID is overridden");
       m_aDocTypeID = aDocTypeID;
       return action (aDocTypeID.getURIEncoded ());
     }
@@ -383,6 +395,8 @@ public final class Phase4PeppolSender
     public final IMPLTYPE processID (@Nonnull final IProcessIdentifier aProcessID)
     {
       ValueEnforcer.notNull (aProcessID, "ProcessID");
+      if (m_aProcessID != null)
+        LOGGER.warn ("An existing ProcessID is overridden");
       m_aProcessID = aProcessID;
       return service (aProcessID.getScheme (), aProcessID.getValue ());
     }
@@ -468,6 +482,8 @@ public final class Phase4PeppolSender
     public final IMPLTYPE endpointDetailProvider (@Nonnull final IAS4EndpointDetailProvider aEndpointDetailProvider)
     {
       ValueEnforcer.notNull (aEndpointDetailProvider, "EndpointDetailProvider");
+      if (m_aEndpointDetailProvider != null)
+        LOGGER.warn ("An existing EndpointDetailProvider is overridden");
       m_aEndpointDetailProvider = aEndpointDetailProvider;
       return thisAsT ();
     }
@@ -489,7 +505,8 @@ public final class Phase4PeppolSender
     }
 
     @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
+    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
+                                                   @Nonnull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -889,7 +906,8 @@ public final class Phase4PeppolSender
     @Nonnull
     public Builder validationConfiguration (@Nullable final VESID aVESID)
     {
-      final IPhase4PeppolValidationResultHandler aHdl = aVESID == null ? null : new Phase4PeppolValidatonResultHandler ();
+      final IPhase4PeppolValidationResultHandler aHdl = aVESID == null ? null
+                                                                       : new Phase4PeppolValidatonResultHandler ();
       return validationConfiguration (aVESID, aHdl);
     }
 
