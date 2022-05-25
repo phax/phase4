@@ -75,7 +75,7 @@
     <wss4j.version>2.4.1</wss4j.version>
     <log4j.version>2.17.2</log4j.version>
     <ph-xsds.version>2.6.0</ph-xsds.version>
-    <peppol-commons.version>8.7.4</peppol-commons.version>
+    <peppol-commons.version>8.7.5</peppol-commons.version>
     <spring-boot.version>2.7.0</spring-boot.version>
   </properties>
   
