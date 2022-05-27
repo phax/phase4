@@ -291,6 +291,9 @@ public final class Phase4PeppolSender
                                                                 extends
                                                                 AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
+    public static final boolean DEFAULT_COMPRESS_PAYLOAD = true;
+    public static final boolean DEFAULT_BOOLEAN_CHECK_AP_CERTIFICATE = true;
+
     protected IParticipantIdentifier m_aSenderID;
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
@@ -303,6 +306,7 @@ public final class Phase4PeppolSender
     protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private Consumer <String> m_aAPEndpointURLConsumer;
+    private boolean m_bCheckReceiverAPCertificate;
 
     /**
      * Create a new builder, with the defaults from
@@ -321,7 +325,8 @@ public final class Phase4PeppolSender
         toPartyIDType (PeppolPMode.DEFAULT_PARTY_TYPE_ID);
         toRole (CAS4.DEFAULT_RESPONDER_URL);
         payloadMimeType (CMimeType.APPLICATION_XML);
-        compressPayload (true);
+        compressPayload (DEFAULT_COMPRESS_PAYLOAD);
+        checkReceiverAPCertificate (DEFAULT_BOOLEAN_CHECK_AP_CERTIFICATE);
       }
       catch (final Exception ex)
       {
@@ -561,6 +566,21 @@ public final class Phase4PeppolSender
       return thisAsT ();
     }
 
+    /**
+     * Enable or disable the check of the receiver AP certificate.
+     *
+     * @param bCheckReceiverAPCertificate
+     *        <code>true</code> to enable it, <code>false</code> to disable it.
+     * @return this for chaining
+     * @since 1.3.10
+     */
+    @Nonnull
+    public final IMPLTYPE checkReceiverAPCertificate (final boolean bCheckReceiverAPCertificate)
+    {
+      m_bCheckReceiverAPCertificate = bCheckReceiverAPCertificate;
+      return thisAsT ();
+    }
+
     protected final boolean isEndpointDetailProviderUsable ()
     {
       // Sender ID doesn't matter here
@@ -603,7 +623,10 @@ public final class Phase4PeppolSender
 
       // Certificate from e.g. SMP lookup (may throw an exception)
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
-      _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer);
+      if (m_bCheckReceiverAPCertificate)
+        _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer);
+      else
+        LOGGER.warn ("The check of the receiver's Peppol AP certificate was explicitly disabled.");
       receiverCertificate (aReceiverCert);
 
       // URL from e.g. SMP lookup (may throw an exception)
