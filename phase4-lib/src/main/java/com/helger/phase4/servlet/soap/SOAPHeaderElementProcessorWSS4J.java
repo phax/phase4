@@ -312,11 +312,12 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         final ECryptoAlgorithmSign eSignAlgo = ECryptoAlgorithmSign.getFromURIOrNull (sAlgorithm);
         if (eSignAlgo == null)
         {
-          LOGGER.error ("Error processing the Security Header, your signing algorithm '" +
-                        sAlgorithm +
-                        "' is incorrect. Expected one of the following '" +
-                        Arrays.asList (ECryptoAlgorithmSign.values ()) +
-                        "' algorithms");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Error processing the Security Header, your signing algorithm '" +
+                          sAlgorithm +
+                          "' is incorrect. Expected one of the following '" +
+                          Arrays.asList (ECryptoAlgorithmSign.values ()) +
+                          "' algorithms");
 
           aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
 
