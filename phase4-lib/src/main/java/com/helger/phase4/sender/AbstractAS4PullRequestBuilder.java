@@ -135,10 +135,19 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     if (m_aHttpRetrySettings != null)
       aPullRequestMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
 
-    aPullRequestMsg.getHttpPoster ().setHttpClientFactory (m_aHttpClientFactory);
+    if (m_aCustomHttpPoster != null)
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Using a custom IHttpPoster implementation: " + m_aCustomHttpPoster);
+      aPullRequestMsg.setHttpPoster (m_aCustomHttpPoster);
+    }
+    else
+    {
+      aPullRequestMsg.getHttpPoster ().setHttpClientFactory (m_aHttpClientFactory);
+      // Otherwise Oxalis dies
+      aPullRequestMsg.getHttpPoster ().setQuoteHttpHeaders (false);
+    }
 
-    // Otherwise Oxalis dies
-    aPullRequestMsg.getHttpPoster ().setQuoteHttpHeaders (false);
     aPullRequestMsg.setSoapVersion (m_eSoapVersion);
     aPullRequestMsg.setSendingDateTimeOrNow (m_aSendingDateTime);
     // Set the keystore/truststore parameters

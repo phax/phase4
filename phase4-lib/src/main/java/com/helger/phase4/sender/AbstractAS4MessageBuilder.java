@@ -42,6 +42,7 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.http.HttpRetrySettings;
+import com.helger.phase4.http.IHttpPoster;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4IncomingProfileSelectorFromGlobal;
@@ -65,6 +66,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4MessageBuilder.class);
 
+  protected IHttpPoster m_aCustomHttpPoster;
   protected HttpClientFactory m_aHttpClientFactory;
   protected IAS4CryptoFactory m_aCryptoFactory;
   protected String m_sMessageID;
@@ -110,6 +112,36 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     {
       throw new IllegalStateException ("Failed to init AbstractAS4MessageBuilder", ex);
     }
+  }
+
+  /**
+   * @return The currently set {@link IHttpPoster}. May be <code>null</code>.
+   * @since 1.3.10
+   */
+  @Nullable
+  public final IHttpPoster customHttpPoster ()
+  {
+    return m_aCustomHttpPoster;
+  }
+
+  /**
+   * Set the HTTP poster to be used. This is a very low level API and should
+   * only be used if you know what you are doing! It allows you to overwrite how
+   * the message is sent over the wire.<br>
+   * Note: if this method is used with a non-<code>null</code> parameter,
+   * {@link #httpClientFactory()} becomes useless
+   *
+   * @param aCustomHttpPoster
+   *        The new HTTP poster to be used. May be <code>null</code> which means
+   *        "use the default" poster.
+   * @return this for chaining
+   * @since 1.3.10
+   */
+  @Nonnull
+  public final IMPLTYPE customHttpPoster (@Nullable final IHttpPoster aCustomHttpPoster)
+  {
+    m_aCustomHttpPoster = aCustomHttpPoster;
+    return thisAsT ();
   }
 
   /**

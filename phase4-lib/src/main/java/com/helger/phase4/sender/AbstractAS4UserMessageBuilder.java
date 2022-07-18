@@ -566,9 +566,18 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     if (m_aHttpRetrySettings != null)
       aUserMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
 
-    aUserMsg.getHttpPoster ().setHttpClientFactory (m_aHttpClientFactory);
-    // Otherwise Oxalis dies
-    aUserMsg.getHttpPoster ().setQuoteHttpHeaders (false);
+    if (m_aCustomHttpPoster != null)
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Using a custom IHttpPoster implementation: " + m_aCustomHttpPoster);
+      aUserMsg.setHttpPoster (m_aCustomHttpPoster);
+    }
+    else
+    {
+      aUserMsg.getHttpPoster ().setHttpClientFactory (m_aHttpClientFactory);
+      // Otherwise Oxalis dies
+      aUserMsg.getHttpPoster ().setQuoteHttpHeaders (false);
+    }
 
     aUserMsg.setSoapVersion (m_eSoapVersion);
     aUserMsg.setSendingDateTimeOrNow (m_aSendingDateTime);
@@ -593,7 +602,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     if (StringHelper.hasText (m_sRefToMessageID))
       aUserMsg.setRefToMessageID (m_sRefToMessageID);
     // Empty conversation ID is okay
-    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID : MessageHelperMethods.createRandomConversationID ());
+    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID
+                                                          : MessageHelperMethods.createRandomConversationID ());
 
     aUserMsg.setFromPartyIDType (m_sFromPartyIDType);
     aUserMsg.setFromPartyID (m_sFromPartyID);
