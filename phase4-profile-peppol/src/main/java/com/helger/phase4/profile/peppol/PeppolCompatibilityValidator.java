@@ -116,7 +116,10 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
       if (!eSOAPVersion.isAS4Default ())
       {
-        aErrorList.add (_createError (sFieldPrefix + "SoapVersion '" + eSOAPVersion.getVersion () + "' is unsupported"));
+        aErrorList.add (_createError (sFieldPrefix +
+                                      "SoapVersion '" +
+                                      eSOAPVersion.getVersion () +
+                                      "' is unsupported"));
       }
     }
 
@@ -236,7 +239,8 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyConsumer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
       }
       else
       {
@@ -246,7 +250,8 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyProducerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyProducer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
       }
       else
       {
@@ -339,7 +344,11 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
         // Since these two properties are mandatory
         final Ebms3MessageProperties aMessageProperties = aUserMsg.getMessageProperties ();
         if (aMessageProperties == null)
-          aErrorList.add (_createError ("MessageProperties is missing but 'originalSender' and 'finalRecipient' properties are required"));
+          aErrorList.add (_createError ("MessageProperties is missing but '" +
+                                        CAS4.ORIGINAL_SENDER +
+                                        "' and '" +
+                                        CAS4.FINAL_RECIPIENT +
+                                        "' properties are required"));
         else
         {
           final List <Ebms3Property> aProps = aMessageProperties.getProperty ();
