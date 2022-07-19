@@ -31,7 +31,7 @@ import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation3_13_0;
+import com.helger.phive.peppol.PeppolValidation3_14_0;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -71,9 +71,11 @@ public final class MainPhase4PeppolSenderComarch
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadElement)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
+                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                     aReceiverID,
+                                                                     ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidation3_13_0.VID_OPENPEPPOL_INVOICE_V3,
+                                  .validationConfiguration (PeppolValidation3_14_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);

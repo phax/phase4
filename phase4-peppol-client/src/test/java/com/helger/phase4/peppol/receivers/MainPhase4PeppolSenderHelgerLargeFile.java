@@ -32,7 +32,7 @@ import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation3_13_0;
+import com.helger.phive.peppol.PeppolValidation3_14_0;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -59,7 +59,8 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
-      final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true).setHandleHttpHeaders (true);
+      final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true)
+                                                                                   .setHandleHttpHeaders (true);
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
@@ -69,9 +70,13 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadElement)
                                   .compressPayload (false)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                                  .validationConfiguration (bNoValidate ? null : PeppolValidation3_13_0.VID_OPENPEPPOL_INVOICE_V3,
-                                                            bNoValidate ? null : new Phase4PeppolValidatonResultHandler ())
+                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                     aReceiverID,
+                                                                     ESML.DIGIT_TEST))
+                                  .validationConfiguration (bNoValidate ? null
+                                                                        : PeppolValidation3_14_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
+                                                            bNoValidate ? null
+                                                                        : new Phase4PeppolValidatonResultHandler ())
                                   .rawResponseConsumer (aRRC)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);

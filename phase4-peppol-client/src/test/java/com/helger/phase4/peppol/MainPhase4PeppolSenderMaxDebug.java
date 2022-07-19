@@ -61,7 +61,8 @@ public final class MainPhase4PeppolSenderMaxDebug
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/AU Invoice.xml")).getDocumentElement ();
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/AU Invoice.xml"))
+                                               .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
 
@@ -75,9 +76,11 @@ public final class MainPhase4PeppolSenderMaxDebug
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadElement)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
+                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                     aReceiverID,
+                                                                     ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_106,
+                                  .validationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_107,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
