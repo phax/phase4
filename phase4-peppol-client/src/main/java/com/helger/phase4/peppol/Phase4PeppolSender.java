@@ -372,7 +372,8 @@ public final class Phase4PeppolSender
 
     /**
      * Set the document type ID to be send. The document type must be provided
-     * prior to sending.
+     * prior to sending. This is a shortcut to the {@link #action(String)}
+     * method.
      *
      * @param aDocTypeID
      *        The document type ID to be used. May not be <code>null</code>.
@@ -390,7 +391,8 @@ public final class Phase4PeppolSender
 
     /**
      * Set the process ID to be send. The process ID must be provided prior to
-     * sending.
+     * sending. This is a shortcut to the {@link #service(String, String)}
+     * method.
      *
      * @param aProcessID
      *        The process ID to be used. May not be <code>null</code>.
@@ -409,7 +411,8 @@ public final class Phase4PeppolSender
     /**
      * Set the "sender party ID" which is the CN part of the PEPPOL AP
      * certificate. An example value is e.g. "POP000123" but it MUST match the
-     * certificate you are using. This must be provided prior to sending.
+     * certificate you are using. This must be provided prior to sending. This
+     * is a shortcut to the {@link #fromPartyID(String)} method.
      *
      * @param sSenderPartyID
      *        The sender party ID. May neither be <code>null</code> nor empty.
@@ -496,11 +499,13 @@ public final class Phase4PeppolSender
     /**
      * Set the SMP client to be used. This is the point where e.g. the
      * differentiation between SMK and SML can be done. This must be set prior
-     * to sending.
+     * to sending. If the endpoint information are already known you can also
+     * use {@link #receiverEndpointDetails(X509Certificate, String)} instead.
      *
      * @param aSMPClient
      *        The SMP client to be used. May not be <code>null</code>.
      * @return this for chaining
+     * @see #receiverEndpointDetails(X509Certificate, String)
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
     @Nonnull
@@ -509,6 +514,20 @@ public final class Phase4PeppolSender
       return endpointDetailProvider (new AS4EndpointDetailProviderPeppol (aSMPClient));
     }
 
+    /**
+     * Use this method to explicit set the AP certificate and AP endpoint URL
+     * that was retrieved externally (e.g. via an SMP call or for a static test
+     * case).
+     *
+     * @param aCert
+     *        The Peppol AP certificate that should be used to encrypt the
+     *        message for the receiver. May not be <code>null</code>.
+     * @param sDestURL
+     *        The destination URL of the receiving AP to send the AS4 message
+     *        to. Must be a valid URL and may neither be <code>null</code> nor
+     *        empty.
+     * @return this for chaining
+     */
     @Nonnull
     public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
                                                    @Nonnull @Nonempty final String sDestURL)
