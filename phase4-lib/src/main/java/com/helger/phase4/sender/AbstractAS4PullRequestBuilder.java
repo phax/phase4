@@ -51,7 +51,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   /**
    * Create a new builder, with the following fields already set:<br>
    */
-  public AbstractAS4PullRequestBuilder ()
+  protected AbstractAS4PullRequestBuilder ()
   {}
 
   /**

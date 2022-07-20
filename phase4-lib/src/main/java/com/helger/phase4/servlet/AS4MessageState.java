@@ -338,7 +338,8 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   {
     final String sOldMessageID = getMessageID ();
     if (sOldMessageID != null && !sOldMessageID.equals (sMessageID))
-      LOGGER.warn ("Overwriting the AS4 message ID from '" + sOldMessageID + "' to '" + sMessageID + "'");
+      if (LOGGER.isWarnEnabled ())
+        LOGGER.warn ("Overwriting the AS4 message ID from '" + sOldMessageID + "' to '" + sMessageID + "'");
     putIn (KEY_AS4_MESSAGE_ID, sMessageID);
   }
 

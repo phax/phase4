@@ -17,6 +17,7 @@
 package com.helger.phase4.util;
 
 import javax.annotation.Nonnull;
+import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -62,10 +63,16 @@ public final class AS4XMLHelper
   {
     try
     {
-      final Transformer aTransformer = TransformerFactory.newInstance ().newTransformer ();
-      final NonBlockingStringWriter aSW = new NonBlockingStringWriter ();
-      aTransformer.transform (new DOMSource (aNode), new StreamResult (aSW));
-      return aSW.getAsString ();
+      final TransformerFactory tf = TransformerFactory.newInstance ();
+      tf.setAttribute (XMLConstants.ACCESS_EXTERNAL_DTD, "");
+      tf.setAttribute (XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+      final Transformer aTransformer = tf.newTransformer ();
+
+      try (final NonBlockingStringWriter aSW = new NonBlockingStringWriter ())
+      {
+        aTransformer.transform (new DOMSource (aNode), new StreamResult (aSW));
+        return aSW.getAsString ();
+      }
     }
     catch (final TransformerException ex)
     {

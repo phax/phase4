@@ -166,7 +166,8 @@ public class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
+                                                                           : AS4DumpManager.getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -269,10 +270,12 @@ public class AS4IncomingHandler
                                                                                             aDumpOSHolder));
 
       if (LOGGER.isDebugEnabled ())
+      {
         if (aSoapDocument != null)
           LOGGER.debug ("Successfully parsed payload as XML");
         else
           LOGGER.debug ("Failed to parse payload as XML");
+      }
 
       if (aSoapDocument != null)
       {
@@ -297,7 +300,9 @@ public class AS4IncomingHandler
       {
         // We don't have a SOAP document
         throw new Phase4Exception (eSoapVersion == null ? "Failed to parse incoming message!"
-                                                        : "Failed to parse incoming SOAP " + eSoapVersion.getVersion () + " document!");
+                                                        : "Failed to parse incoming SOAP " +
+                                                          eSoapVersion.getVersion () +
+                                                          " document!");
       }
 
       if (eSoapVersion == null)
@@ -318,7 +323,12 @@ public class AS4IncomingHandler
         }
         catch (final Exception ex)
         {
-          LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" + aRealIncomingDumper + "; MessageMetadata=" + aMessageMetadata, ex);
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" +
+                          aRealIncomingDumper +
+                          "; MessageMetadata=" +
+                          aMessageMetadata,
+                          ex);
         }
     }
   }
@@ -381,7 +391,12 @@ public class AS4IncomingHandler
       try
       {
         // Process element
-        if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList).isSuccess ())
+        if (aProcessor.processHeaderElement (aSoapDocument,
+                                             aHeader.getNode (),
+                                             aIncomingAttachments,
+                                             aState,
+                                             aErrorList)
+                      .isSuccess ())
         {
           // Mark header as processed (for mustUnderstand check)
           aHeader.setProcessed (true);
@@ -390,12 +405,13 @@ public class AS4IncomingHandler
         {
           // upon failure, the element stays unprocessed and sends back a signal
           // message with the errors
-          LOGGER.error ("Failed to process SOAP header element " +
-                        aQName.toString () +
-                        " with processor " +
-                        aProcessor +
-                        "; error details: " +
-                        aErrorList);
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Failed to process SOAP header element " +
+                          aQName.toString () +
+                          " with processor " +
+                          aProcessor +
+                          "; error details: " +
+                          aErrorList);
 
           final String sRefToMessageID = aState.getMessageID ();
           final Locale aLocale = aState.getLocale ();
@@ -424,10 +440,14 @@ public class AS4IncomingHandler
       {
         // upon failure, the element stays unprocessed and sends back a signal
         // message with the errors
-        LOGGER.error ("Error processing SOAP header element " + aQName.toString () + " with processor " + aProcessor, ex);
+        if (LOGGER.isErrorEnabled ())
+          LOGGER.error ("Error processing SOAP header element " + aQName.toString () + " with processor " + aProcessor,
+                        ex);
+
         aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
                                                                    aState.getMessageID (),
-                                                                   "Error processing SOAP header element " + aQName.toString ()));
+                                                                   "Error processing SOAP header element " +
+                                                                                           aQName.toString ()));
 
         // Stop processing of other headers
         break;
@@ -441,7 +461,9 @@ public class AS4IncomingHandler
       // Are all must-understand headers processed?
       for (final AS4SingleSOAPHeader aHeader : aHeaders)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
-          throw new Phase4Exception ("Required SOAP header element " + aHeader.getQName ().toString () + " could not be handled");
+          throw new Phase4Exception ("Required SOAP header element " +
+                                     aHeader.getQName ().toString () +
+                                     " could not be handled");
     }
   }
 
@@ -462,8 +484,12 @@ public class AS4IncomingHandler
             final InputStream aSrcIS = aOldISP.getInputStream ();
             if (aSrcIS == null)
               throw new IllegalStateException ("Failed to create InputStream from " + aOldISP);
+
             if (LOGGER.isDebugEnabled ())
-              LOGGER.debug ("Decompressing attachment with ID '" + aIncomingAttachment.getId () + "' using " + eCompressionMode);
+              LOGGER.debug ("Decompressing attachment with ID '" +
+                            aIncomingAttachment.getId () +
+                            "' using " +
+                            eCompressionMode);
             return eCompressionMode.getDecompressStream (aSrcIS);
           }
           catch (final IOException ex)
@@ -495,11 +521,12 @@ public class AS4IncomingHandler
           {
             final String sMimeType = aProperty.getValue ();
             if (MimeTypeParser.safeParseMimeType (sMimeType) == null)
-              LOGGER.warn ("Value '" +
-                           sMimeType +
-                           "' of property '" +
-                           MessageHelperMethods.PART_PROPERTY_MIME_TYPE +
-                           "' is not a valid MIME type");
+              if (LOGGER.isWarnEnabled ())
+                LOGGER.warn ("Value '" +
+                             sMimeType +
+                             "' of property '" +
+                             MessageHelperMethods.PART_PROPERTY_MIME_TYPE +
+                             "' is not a valid MIME type");
             aIncomingAttachment.overwriteMimeType (sMimeType);
           }
         }
@@ -567,18 +594,20 @@ public class AS4IncomingHandler
                              (aEbmsError != null ? 1 : 0);
       if (nCountData != 1)
       {
-        LOGGER.error ("Expected a UserMessage(" +
-                      (aEbmsUserMessage != null ? 1 : 0) +
-                      "), a PullRequest(" +
-                      (aEbmsPullRequest != null ? 1 : 0) +
-                      "), a Receipt(" +
-                      (aEbmsReceipt != null ? 1 : 0) +
-                      ") or an Error(" +
-                      (aEbmsError != null ? 1 : 0) +
-                      ")");
+        if (LOGGER.isErrorEnabled ())
+          LOGGER.error ("Expected a UserMessage(" +
+                        (aEbmsUserMessage != null ? 1 : 0) +
+                        "), a PullRequest(" +
+                        (aEbmsPullRequest != null ? 1 : 0) +
+                        "), a Receipt(" +
+                        (aEbmsReceipt != null ? 1 : 0) +
+                        ") or an Error(" +
+                        (aEbmsError != null ? 1 : 0) +
+                        ")");
 
         // send EBMS:0001 error back
-        aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale, aState.getMessageID ()));
+        aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale,
+                                                                                        aState.getMessageID ()));
       }
 
       // Determine AS4 profile ID (since 0.13.0)
@@ -627,9 +656,10 @@ public class AS4IncomingHandler
             }
             else
             {
-              LOGGER.warn ("The AS4 profile '" +
-                           sProfileID +
-                           "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
+              if (LOGGER.isWarnEnabled ())
+                LOGGER.warn ("The AS4 profile '" +
+                             sProfileID +
+                             "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
             }
           }
         }
@@ -665,7 +695,9 @@ public class AS4IncomingHandler
                                                                    eSoapVersion.getNamespaceURI (),
                                                                    eSoapVersion.getBodyElementName ());
       if (aBodyNode == null)
-        throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") + " SOAP document is missing a Body element");
+        throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
+                                   " SOAP document is missing a Body element");
+
       aState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
 
       final boolean bIsPingMessage = AS4Helper.isPingMessage (aPMode);

@@ -92,13 +92,16 @@ public final class AS4Configuration
                                                                                                new ClassPathResourceProvider ());
 
     // Phase4 files
-    IReadableResource aRes = aResourceProvider.getReadableResourceIf ("private-phase4.properties", IReadableResource::exists);
+    IReadableResource aRes = aResourceProvider.getReadableResourceIf ("private-phase4.properties",
+                                                                      IReadableResource::exists);
     if (aRes != null)
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 4);
+      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
+                                  nResourceDefaultPrio + 4);
 
     aRes = aResourceProvider.getReadableResourceIf ("phase4.properties", IReadableResource::exists);
     if (aRes != null)
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 3);
+      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
+                                  nResourceDefaultPrio + 3);
 
     return ret;
   }
@@ -153,7 +156,8 @@ public final class AS4Configuration
     }
 
     if (!EqualsHelper.identityEqual (ret, aNewConfig))
-      LOGGER.info ("The phase4 configuration provider was changed to " + aNewConfig);
+      if (LOGGER.isInfoEnabled ())
+        LOGGER.info ("The phase4 configuration provider was changed to " + aNewConfig);
     return ret;
   }
 
@@ -244,7 +248,8 @@ public final class AS4Configuration
    */
   public static long getIncomingDuplicateDisposalMinutes ()
   {
-    return getConfig ().getAsLong ("phase4.incoming.duplicatedisposal.minutes", DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
+    return getConfig ().getAsLong ("phase4.incoming.duplicatedisposal.minutes",
+                                   DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
   }
 
   /**

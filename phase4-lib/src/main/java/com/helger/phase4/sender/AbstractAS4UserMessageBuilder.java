@@ -90,7 +90,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * Create a new builder, with the following fields already set:<br>
    * {@link #pmode(IPMode)}<br>
    */
-  public AbstractAS4UserMessageBuilder ()
+  protected AbstractAS4UserMessageBuilder ()
   {
     super ();
     // Set default values

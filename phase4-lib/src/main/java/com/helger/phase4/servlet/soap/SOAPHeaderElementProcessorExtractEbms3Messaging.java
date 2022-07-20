@@ -80,7 +80,8 @@ import com.helger.xml.XMLHelper;
 public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
   /** The QName for which this processor should be invoked */
-  public static final QName QNAME_MESSAGING = new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/", "Messaging");
+  public static final QName QNAME_MESSAGING = new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
+                                                         "Messaging");
 
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorExtractEbms3Messaging.class);
 
@@ -106,7 +107,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
     if (StringHelper.hasText (sRefToMessageID))
       if (sThisMessageID.equals (sRefToMessageID))
-        LOGGER.warn ("MessageID and ReferenceToMessageID are the same (" + sThisMessageID + ")!");
+        if (LOGGER.isWarnEnabled ())
+          LOGGER.warn ("MessageID and ReferenceToMessageID are the same (" + sThisMessageID + ")!");
 
     // If the message has a non-empty reference to a previous message, and this
     // reference differs from this message's ID, than leg 2 should be used
@@ -123,7 +125,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
    * @return the MPCID
    */
   @Nullable
-  private static String _getMPCIDOfUserMsg (@Nonnull final Ebms3UserMessage aUserMessage, @Nonnull final PModeLeg aPModeLeg)
+  private static String _getMPCIDOfUserMsg (@Nonnull final Ebms3UserMessage aUserMessage,
+                                            @Nonnull final PModeLeg aPModeLeg)
   {
     String sEffectiveMPCID = aUserMessage.getMpc ();
     if (sEffectiveMPCID == null)
@@ -159,7 +162,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       final String sPModeMPC = aPModeLeg.getBusinessInfo ().getMPCID ();
       if (sPModeMPC != null && !aMPCMgr.containsWithID (sPModeMPC))
       {
-        LOGGER.error ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
+        if (LOGGER.isErrorEnabled ())
+          LOGGER.error ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
 
         aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
         return ESuccess.FAILURE;
@@ -181,7 +185,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
   {
     // Check if a SOAPBodyPayload exists
     final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
-                                                                aPModeLeg.getProtocol ().getSoapVersion ().getBodyElementName ());
+                                                                aPModeLeg.getProtocol ()
+                                                                         .getSoapVersion ()
+                                                                         .getBodyElementName ());
     return aBody != null && aBody.hasChildNodes ();
   }
 
@@ -202,7 +208,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Ebms3Messaging aMessaging = Ebms3ReaderBuilder.ebms3Messaging ().setValidationEventHandler (aCVEH).read (aElement);
+    final Ebms3Messaging aMessaging = Ebms3ReaderBuilder.ebms3Messaging ()
+                                                        .setValidationEventHandler (aCVEH)
+                                                        .read (aElement);
 
     // If the ebms3reader above fails aMessageing will be null => invalid/not
     // wellformed
@@ -226,7 +234,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     final int nUserMessages = aMessaging.getUserMessageCount ();
     if (nUserMessages > 1)
     {
-      LOGGER.error ("Too many UserMessage objects (" + nUserMessages + ") contained.");
+      if (LOGGER.isErrorEnabled ())
+        LOGGER.error ("Too many UserMessage objects (" + nUserMessages + ") contained.");
       aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
       return ESuccess.FAILURE;
     }
@@ -235,7 +244,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     final int nSignalMessages = aMessaging.getSignalMessageCount ();
     if (nSignalMessages > 1)
     {
-      LOGGER.error ("Too many SignalMessage objects (" + nSignalMessages + ") contained.");
+      if (LOGGER.isErrorEnabled ())
+        LOGGER.error ("Too many SignalMessage objects (" + nSignalMessages + ") contained.");
       aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
       return ESuccess.FAILURE;
     }
@@ -243,7 +253,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     if (nUserMessages + nSignalMessages == 0)
     {
       // No Message was found
-      LOGGER.error ("Neither UserMessage nor SignalMessage object contained.");
+      if (LOGGER.isErrorEnabled ())
+        LOGGER.error ("Neither UserMessage nor SignalMessage object contained.");
       aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
       return ESuccess.FAILURE;
     }
@@ -270,7 +281,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
       if (aFromPartyIdList.size () > 1 || aToPartyIdList.size () > 1)
       {
-        LOGGER.error ("More than one PartyId is containted in From or To Recipient please check the message.");
+        if (LOGGER.isErrorEnabled ())
+          LOGGER.error ("More than one PartyId is containted in From or To Recipient please check the message.");
         aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
         return ESuccess.FAILURE;
       }
@@ -306,7 +318,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         // Should be screened by the XSD conversion already
         if (aPMode == null)
         {
-          LOGGER.error ("Failed to resolve PMode '" + sPModeID + "' using resolver " + m_aPModeResolver);
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Failed to resolve PMode '" + sPModeID + "' using resolver " + m_aPModeResolver);
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -329,7 +342,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         // both are present
         if (aPMode.getMEPBinding ().getRequiredLegs () == 2 && aPModeLeg2 == null)
         {
-          LOGGER.error ("Error processing the UserMessage, PMode does not contain leg 2.");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Error processing the UserMessage, PMode does not contain leg 2.");
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -339,7 +353,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         final int nLegNum = bUseLeg1 ? 1 : 2;
         if (aEffectiveLeg == null)
         {
-          LOGGER.error ("Error processing the UserMessage, PMode does not contain effective leg " + nLegNum + ".");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Error processing the UserMessage, PMode does not contain effective leg " + nLegNum + ".");
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -356,7 +371,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         aEffectiveMPC = aMPCMgr.getMPCOrDefaultOfID (sEffectiveMPCID);
         if (aEffectiveMPC == null)
         {
-          LOGGER.error ("Error processing the UserMessage, effective MPC ID '" + sEffectiveMPCID + "' is unknown!");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Error processing the UserMessage, effective MPC ID '" + sEffectiveMPCID + "' is unknown!");
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -370,7 +386,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       {
         if (bHasSoapBodyPayload)
         {
-          LOGGER.error ("No PayloadInfo/PartInfo is specified, so no SOAP body payload is allowed.");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("No PayloadInfo/PartInfo is specified, so no SOAP body payload is allowed.");
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -379,7 +396,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         // attachments in the message
         if (aAttachments.isNotEmpty ())
         {
-          LOGGER.error ("No PayloadInfo/PartInfo is specified, so no attachments are allowed.");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("No PayloadInfo/PartInfo is specified, so no attachments are allowed.");
           aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -389,11 +407,12 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         // Check if there are more Attachments then specified
         if (aAttachments.size () > aEbms3PayloadInfo.getPartInfoCount ())
         {
-          LOGGER.error ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected " +
-                        aEbms3PayloadInfo.getPartInfoCount () +
-                        " but having " +
-                        aAttachments.size () +
-                        " attachments.");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected " +
+                          aEbms3PayloadInfo.getPartInfoCount () +
+                          " but having " +
+                          aAttachments.size () +
+                          " attachments.");
           aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -408,7 +427,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
             // Check if there is a BodyPayload as specified in the UserMessage
             if (!bHasSoapBodyPayload)
             {
-              LOGGER.error ("Error processing the UserMessage. Expected a SOAPBody Payload but there is none present.");
+              if (LOGGER.isErrorEnabled ())
+                LOGGER.error ("Error processing the UserMessage. Expected a SOAPBody Payload but there is none present.");
               aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
               return ESuccess.FAILURE;
             }
@@ -421,13 +441,15 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
             nSpecifiedAttachments++;
 
             final String sAttachmentID = StringHelper.trimStart (aPartInfo.getHref (), MessageHelperMethods.PREFIX_CID);
-            final WSS4JAttachment aIncomingAttachment = aAttachments.findFirst (x -> EqualsHelper.equals (x.getId (), sAttachmentID));
+            final WSS4JAttachment aIncomingAttachment = aAttachments.findFirst (x -> EqualsHelper.equals (x.getId (),
+                                                                                                          sAttachmentID));
             if (aIncomingAttachment == null)
             {
-              LOGGER.warn ("Failed to resolve MIME attachment '" +
-                           sAttachmentID +
-                           "' in list of " +
-                           aAttachments.getAllMapped (WSS4JAttachment::getId));
+              if (LOGGER.isWarnEnabled ())
+                LOGGER.warn ("Failed to resolve MIME attachment '" +
+                             sAttachmentID +
+                             "' in list of " +
+                             aAttachments.getAllMapped (WSS4JAttachment::getId));
             }
 
             boolean bMimeTypePresent = false;
@@ -452,11 +474,12 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                     final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromMimeTypeStringOrNull (sPropertyValue);
                     if (eCompressionMode == null)
                     {
-                      LOGGER.error ("Error processing the UserMessage, CompressionType '" +
-                                    sPropertyValue +
-                                    "' of attachment '" +
-                                    sAttachmentID +
-                                    "' is not supported.");
+                      if (LOGGER.isErrorEnabled ())
+                        LOGGER.error ("Error processing the UserMessage, CompressionType '" +
+                                      sPropertyValue +
+                                      "' of attachment '" +
+                                      sAttachmentID +
+                                      "' is not supported.");
 
                       aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
                       return ESuccess.FAILURE;
@@ -473,13 +496,14 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                         final Charset aCharset = CharsetHelper.getCharsetFromNameOrNull (sPropertyValue);
                         if (aCharset == null)
                         {
-                          LOGGER.error ("Value '" +
-                                        sPropertyValue +
-                                        "' of property '" +
-                                        MessageHelperMethods.PART_PROPERTY_CHARACTER_SET +
-                                        "' of attachment '" +
-                                        sAttachmentID +
-                                        "' is not supported");
+                          if (LOGGER.isErrorEnabled ())
+                            LOGGER.error ("Value '" +
+                                          sPropertyValue +
+                                          "' of property '" +
+                                          MessageHelperMethods.PART_PROPERTY_CHARACTER_SET +
+                                          "' of attachment '" +
+                                          sAttachmentID +
+                                          "' is not supported");
                           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
                           return ESuccess.FAILURE;
                         }
@@ -496,9 +520,10 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
             // got compressed
             if (bCompressionTypePresent && !bMimeTypePresent)
             {
-              LOGGER.error ("Error processing the UserMessage, MimeType for a compressed attachment ('" +
-                            sAttachmentID +
-                            "') is not present.");
+              if (LOGGER.isErrorEnabled ())
+                LOGGER.error ("Error processing the UserMessage, MimeType for a compressed attachment ('" +
+                              sAttachmentID +
+                              "') is not present.");
 
               aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
               return ESuccess.FAILURE;
@@ -511,11 +536,12 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         // This may also be an indicator for "external payloads"
         if (nSpecifiedAttachments != aAttachments.size ())
         {
-          LOGGER.error ("Error processing the UserMessage: the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected " +
-                        aEbms3PayloadInfo.getPartInfoCount () +
-                        " but having " +
-                        aAttachments.size () +
-                        " attachments. This is an indicator, that an external attached was provided.");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Error processing the UserMessage: the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected " +
+                          aEbms3PayloadInfo.getPartInfoCount () +
+                          " but having " +
+                          aAttachments.size () +
+                          " attachments. This is an indicator, that an external attached was provided.");
 
           aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -546,7 +572,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         final IMPC aMPC = aMPCMgr.getMPCOfID (sMPC);
         if (aMPC == null)
         {
-          LOGGER.error ("Failed to resolve the PullRequest MPC '" + sMPC + "'");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Failed to resolve the PullRequest MPC '" + sMPC + "'");
 
           // Return value not recognized when MPC is not currently saved
           aErrorList.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsError (aLocale));
@@ -559,14 +586,21 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           aPMode = aProcessor.findPMode (aSignalMessage);
           if (aPMode != null)
           {
-            LOGGER.info ("Found PMode '" + aPMode.getID () + "' for MPC '" + sMPC + "' in SignalMessage " + aSignalMessage);
+            if (LOGGER.isInfoEnabled ())
+              LOGGER.info ("Found PMode '" +
+                           aPMode.getID () +
+                           "' for MPC '" +
+                           sMPC +
+                           "' in SignalMessage " +
+                           aSignalMessage);
             break;
           }
         }
 
         if (aPMode == null)
         {
-          LOGGER.error ("Failed to resolve PMode for PullRequest with MPC '" + sMPC + "'");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Failed to resolve PMode for PullRequest with MPC '" + sMPC + "'");
 
           aErrorList.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -578,7 +612,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           final String sRefToMessageID = aSignalMessage.getMessageInfo ().getRefToMessageId ();
           if (StringHelper.hasNoText (sRefToMessageID))
           {
-            LOGGER.error ("The Receipt does not contain a RefToMessageId");
+            if (LOGGER.isErrorEnabled ())
+              LOGGER.error ("The Receipt does not contain a RefToMessageId");
 
             aErrorList.add (EEbmsError.EBMS_INVALID_RECEIPT.getAsError (aLocale));
             return ESuccess.FAILURE;

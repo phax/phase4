@@ -51,9 +51,12 @@ public class AS4UnifiedResponse extends UnifiedResponse
     setAllowContentOnStatusCode (true);
   }
 
-  public void setResponseError (@Nonnegative final int nStatusCode, @Nonnull final String sMsg, @Nullable final Throwable t)
+  public void setResponseError (@Nonnegative final int nStatusCode,
+                                @Nonnull final String sMsg,
+                                @Nullable final Throwable t)
   {
-    LOGGER.error ("HTTP " + nStatusCode + ": " + sMsg, t);
+    if (LOGGER.isErrorEnabled ())
+      LOGGER.error ("HTTP " + nStatusCode + ": " + sMsg, t);
 
     String sBody = sMsg;
     if (t != null)

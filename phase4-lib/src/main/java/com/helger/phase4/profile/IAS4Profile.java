@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.profile;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -35,7 +33,7 @@ import com.helger.phase4.model.pmode.PMode;
  * @author Philip Helger
  */
 @MustImplementEqualsAndHashcode
-public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializable
+public interface IAS4Profile extends IHasID <String>, IHasDisplayName
 {
   /**
    * @return An optional validator. May be <code>null</code>.
@@ -55,10 +53,20 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializa
    *         responder, URLs, certificates.
    */
   @Nonnull
-  PMode createPModeTemplate (@Nonnull @Nonempty String sInitiatorID, @Nonnull @Nonempty String sResponderID, @Nullable String sAddress);
+  PMode createPModeTemplate (@Nonnull @Nonempty String sInitiatorID,
+                             @Nonnull @Nonempty String sResponderID,
+                             @Nullable String sAddress);
 
+  /**
+   * @return The PMode ID provider to be used for this profile. May not be
+   *         <code>null</code>.
+   */
   @Nonnull
   IPModeIDProvider getPModeIDProvider ();
 
+  /**
+   * @return <code>true</code> if this AS4 profile is deprecated and should
+   *         therefore not be used, or <code>false</code> if not.
+   */
   boolean isDeprecated ();
 }

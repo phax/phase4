@@ -78,7 +78,9 @@ public class AS4ResourceHelper implements Closeable
   {
     if (aTempDir != null)
       if (!aTempDir.isDirectory ())
-        throw new IllegalArgumentException ("Temporary directory '" + aTempDir.getAbsolutePath () + "' is not a directory");
+        throw new IllegalArgumentException ("Temporary directory '" +
+                                            aTempDir.getAbsolutePath () +
+                                            "' is not a directory");
     s_aTempDir = aTempDir;
   }
 
@@ -195,7 +197,13 @@ public class AS4ResourceHelper implements Closeable
 
           final FileIOError aError = AS4IOHelper.getFileOperationManager ().deleteFileIfExisting (aFile);
           if (aError.isFailure ())
-            LOGGER.warn ("  Failed to delete temporary " + CAS4.LIB_NAME + " file " + aFile.getAbsolutePath () + ": " + aError.toString ());
+            if (LOGGER.isWarnEnabled ())
+              LOGGER.warn ("  Failed to delete temporary " +
+                           CAS4.LIB_NAME +
+                           " file " +
+                           aFile.getAbsolutePath () +
+                           ": " +
+                           aError.toString ());
         }
       }
     }
@@ -227,7 +235,11 @@ public class AS4ResourceHelper implements Closeable
     // can be created
     final File aTempFile = createTempFile ();
 
-    LOGGER.info ("Converting " + aSrcEntity + " to a repeatable HTTP entity using file " + aTempFile.getAbsolutePath ());
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("Converting " +
+                   aSrcEntity +
+                   " to a repeatable HTTP entity using file " +
+                   aTempFile.getAbsolutePath ());
 
     try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
     {

@@ -96,7 +96,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * {@link #incomingAttachmentFactory(IAS4IncomingAttachmentFactory)}<br>
    * {@link #incomingProfileSelector(IAS4IncomingProfileSelector)}<br>
    */
-  public AbstractAS4MessageBuilder ()
+  protected AbstractAS4MessageBuilder ()
   {
     // Set default values
     try

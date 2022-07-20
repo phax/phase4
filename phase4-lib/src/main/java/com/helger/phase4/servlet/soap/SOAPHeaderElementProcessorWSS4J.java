@@ -161,7 +161,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       {
         if (aPreferredCert == null)
         {
-          LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message. Using the first one.");
+          if (LOGGER.isWarnEnabled ())
+            LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message. Using the first one.");
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("All gathered certificates: " + aCertSet);
           aUsedCert = aCertSet.getAtIndex (0);
@@ -170,10 +171,12 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           aUsedCert = aPreferredCert;
       }
       else
+      {
         if (aCertSet.size () == 1)
           aUsedCert = aCertSet.getAtIndex (0);
         else
           aUsedCert = null;
+      }
 
       // Remember in State
       aState.setUsedCertificate (aUsedCert);
@@ -199,7 +202,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     catch (final IndexOutOfBoundsException | IllegalStateException | WSSecurityException ex)
     {
       // Decryption or Signature check failed
-      LOGGER.error ("Error processing the WSSSecurity Header", ex);
+      if (LOGGER.isErrorEnabled ())
+        LOGGER.error ("Error processing the WSSSecurity Header", ex);
 
       /**
        * Error processing the WSSSecurity Header
@@ -265,7 +269,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     {
       // Decryption or Signature check failed
 
-      LOGGER.error ("IO error processing the WSSSecurity Header", ex);
+      if (LOGGER.isErrorEnabled ())
+        LOGGER.error ("IO error processing the WSSSecurity Header", ex);
       aErrorList.add (EEbmsError.EBMS_OTHER.getAsError (aLocale));
       aState.setSoapWSS4JException (ex);
       return ESuccess.FAILURE;
@@ -334,9 +339,10 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         final ECryptoAlgorithmSignDigest eSignDigestAlgo = ECryptoAlgorithmSignDigest.getFromURIOrNull (sAlgorithm);
         if (eSignDigestAlgo == null)
         {
-          LOGGER.error ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
-                        Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
-                        "' algorithms");
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
+                          Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
+                          "' algorithms");
 
           aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
 
@@ -363,21 +369,23 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           }
           if (!sAttachmentID.startsWith (WSS4JAttachment.CONTENT_ID_PREFIX))
           {
-            LOGGER.error ("The provided attachment ID '" +
-                          sAttachmentID +
-                          "' in the 'Content-ID' header does not start with the required prefix '" +
-                          WSS4JAttachment.CONTENT_ID_PREFIX +
-                          "'");
+            if (LOGGER.isErrorEnabled ())
+              LOGGER.error ("The provided attachment ID '" +
+                            sAttachmentID +
+                            "' in the 'Content-ID' header does not start with the required prefix '" +
+                            WSS4JAttachment.CONTENT_ID_PREFIX +
+                            "'");
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
             return ESuccess.FAILURE;
           }
           if (!sAttachmentID.endsWith (WSS4JAttachment.CONTENT_ID_SUFFIX))
           {
-            LOGGER.error ("The provided attachment ID '" +
-                          sAttachmentID +
-                          "' in the 'Content-ID' header does not end with the required suffix '" +
-                          WSS4JAttachment.CONTENT_ID_SUFFIX +
-                          "'");
+            if (LOGGER.isErrorEnabled ())
+              LOGGER.error ("The provided attachment ID '" +
+                            sAttachmentID +
+                            "' in the 'Content-ID' header does not end with the required suffix '" +
+                            WSS4JAttachment.CONTENT_ID_SUFFIX +
+                            "'");
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
             return ESuccess.FAILURE;
           }
@@ -392,11 +400,12 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                            .getHref ();
           if (!sHref.contains (sAttachmentID))
           {
-            LOGGER.error ("The usermessage part information '" +
-                          sHref +
-                          "' does not reference the respective attachment ID '" +
-                          sAttachmentID +
-                          "'");
+            if (LOGGER.isErrorEnabled ())
+              LOGGER.error ("The usermessage part information '" +
+                            sHref +
+                            "' does not reference the respective attachment ID '" +
+                            sAttachmentID +
+                            "'");
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
             return ESuccess.FAILURE;
           }

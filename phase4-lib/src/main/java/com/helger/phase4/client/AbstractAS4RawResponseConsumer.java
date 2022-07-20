@@ -28,7 +28,8 @@ import com.helger.commons.traits.IGenericImplTrait;
  * @author Philip Helger
  * @since 0.13.0
  */
-public abstract class AbstractAS4RawResponseConsumer <IMPLTYPE extends AbstractAS4RawResponseConsumer <IMPLTYPE>> implements
+public abstract class AbstractAS4RawResponseConsumer <IMPLTYPE extends AbstractAS4RawResponseConsumer <IMPLTYPE>>
+                                                     implements
                                                      IAS4RawResponseConsumer,
                                                      IGenericImplTrait <IMPLTYPE>
 {
@@ -38,7 +39,7 @@ public abstract class AbstractAS4RawResponseConsumer <IMPLTYPE extends AbstractA
   private boolean m_bHandleStatusLine = DEFAULT_HANDLE_STATUS_LINE;
   private boolean m_bHandleHttpHeaders = DEFAULT_HANDLE_HTTP_HEADERS;
 
-  public AbstractAS4RawResponseConsumer ()
+  protected AbstractAS4RawResponseConsumer ()
   {}
 
   public final boolean isHandleStatusLine ()
