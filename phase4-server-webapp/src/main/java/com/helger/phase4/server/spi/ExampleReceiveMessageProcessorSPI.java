@@ -61,12 +61,14 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (ExampleReceiveMessageProcessorSPI.class);
 
-  private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata, @Nonnull final IAS4MessageState aState)
+  private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                 @Nonnull final IAS4MessageState aState)
   {
     // Write formatted SOAP
     {
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
-      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument () : aState.getOriginalSoapDocument ();
+      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument ()
+                                                                   : aState.getOriginalSoapDocument ();
       final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc,
                                                        new XMLWriterSettings ().setNamespaceContext (Ebms3NamespaceHandler.getInstance ())
                                                                                .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
@@ -110,11 +112,18 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
       for (final WSS4JAttachment aIncomingAttachment : aIncomingAttachments)
       {
         final File aFile = StorageHelper.getStorageFile (aMessageMetadata, "-" + nIndex + ".payload");
-        if (StreamHelper.copyInputStreamToOutputStream (aIncomingAttachment.getSourceStream (), FileHelper.getOutputStream (aFile))
+        if (StreamHelper.copyInputStreamToOutputStream (aIncomingAttachment.getSourceStream (),
+                                                        FileHelper.getOutputStream (aFile))
                         .isFailure ())
-          LOGGER.error ("Failed to write incoming attachment [" + nIndex + "] to '" + aFile.getAbsolutePath () + "'");
+        {
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("Failed to write incoming attachment [" + nIndex + "] to '" + aFile.getAbsolutePath () + "'");
+        }
         else
-          LOGGER.info ("Wrote incoming attachment [" + nIndex + "] to '" + aFile.getAbsolutePath () + "'");
+        {
+          if (LOGGER.isInfoEnabled ())
+            LOGGER.info ("Wrote incoming attachment [" + nIndex + "] to '" + aFile.getAbsolutePath () + "'");
+        }
         ++nIndex;
       }
     }

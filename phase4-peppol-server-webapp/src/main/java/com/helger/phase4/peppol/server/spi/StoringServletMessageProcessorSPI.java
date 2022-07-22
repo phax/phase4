@@ -61,19 +61,27 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (StoringServletMessageProcessorSPI.class);
 
-  private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata, @Nonnull final IAS4MessageState aState)
+  private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                 @Nonnull final IAS4MessageState aState)
   {
     // Write formatted SOAP
     {
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
-      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument () : aState.getOriginalSoapDocument ();
+      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument ()
+                                                                   : aState.getOriginalSoapDocument ();
       final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc,
                                                        new XMLWriterSettings ().setNamespaceContext (Ebms3NamespaceHandler.getInstance ())
                                                                                .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
-        LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+      {
+        if (LOGGER.isErrorEnabled ())
+          LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+      }
       else
-        LOGGER.info ("Wrote SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+      {
+        if (LOGGER.isInfoEnabled ())
+          LOGGER.info ("Wrote SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+      }
     }
 
     if (aState.hasUsedCertificate ())
@@ -85,9 +93,19 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
       final String sPEM = CertificateHelper.getPEMEncodedCertificate (aUsedCert);
       final byte [] aBytes = sPEM.getBytes (StandardCharsets.US_ASCII);
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
-        LOGGER.error ("Failed to write certificate to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+      {
+        if (LOGGER.isErrorEnabled ())
+          LOGGER.error ("Failed to write certificate to '" +
+                        aFile.getAbsolutePath () +
+                        "' (" +
+                        aBytes.length +
+                        " bytes)");
+      }
       else
-        LOGGER.info ("Wrote certificate to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+      {
+        if (LOGGER.isInfoEnabled ())
+          LOGGER.info ("Wrote certificate to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+      }
     }
   }
 
@@ -106,7 +124,13 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
                     aBytes.length +
                     " bytes)");
     else
-      LOGGER.info ("Wrote Incoming Attachment " + nIndex + " to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+      LOGGER.info ("Wrote Incoming Attachment " +
+                   nIndex +
+                   " to '" +
+                   aFile.getAbsolutePath () +
+                   "' (" +
+                   aBytes.length +
+                   " bytes)");
   }
 
   @Nonnull
@@ -182,7 +206,11 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
   {
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".response");
     if (SimpleFileIO.writeFile (aFile, aResponseBytes).isFailure ())
-      LOGGER.error ("Failed to write response to '" + aFile.getAbsolutePath () + "' (" + aResponseBytes.length + " bytes)");
+      LOGGER.error ("Failed to write response to '" +
+                    aFile.getAbsolutePath () +
+                    "' (" +
+                    aResponseBytes.length +
+                    " bytes)");
     else
       LOGGER.info ("Wrote response to '" + aFile.getAbsolutePath () + "' (" + aResponseBytes.length + " bytes)");
   }

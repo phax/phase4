@@ -118,7 +118,8 @@ public interface IAS4MessageState
   default Ebms3Error getEbmsError ()
   {
     final Ebms3SignalMessage aEbmsSignalMessage = getEbmsSignalMessage ();
-    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
+    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0)
+                                                                               : null;
   }
 
   /**
@@ -322,9 +323,9 @@ public interface IAS4MessageState
   }
 
   /**
-   * @return The first provided certificate in the incoming message. May be
-   *         <code>null</code>. Usually the certificate that was used for
-   *         signing.
+   * @return The first provided certificate in the incoming message. Usually the
+   *         certificate that was used for signing. May be <code>null</code>.
+   * @see #hasUsedCertificate()
    */
   @Nullable
   X509Certificate getUsedCertificate ();
