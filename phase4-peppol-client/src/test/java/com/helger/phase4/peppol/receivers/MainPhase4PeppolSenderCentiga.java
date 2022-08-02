@@ -45,9 +45,9 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderIntunor
+public final class MainPhase4PeppolSenderCentiga
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderIntunor.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderCentiga.class);
 
   public static void main (final String [] args)
   {
