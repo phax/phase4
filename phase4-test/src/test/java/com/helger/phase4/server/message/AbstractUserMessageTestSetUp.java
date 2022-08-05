@@ -243,6 +243,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
    *        code as it will get searched for in the response.
    * @return Response as String
    * @throws IOException
+   *         In case HTTP sending fails
    */
   @Nonnull
   protected final String sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
@@ -264,6 +265,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
    *        code as it will get searched for in the response.
    * @return Response as String
    * @throws IOException
+   *         In case HTTP sending fails
    */
   @Nonnull
   protected final String sendPlainMessageAndWait (@Nonnull final HttpEntity aHttpEntity,
