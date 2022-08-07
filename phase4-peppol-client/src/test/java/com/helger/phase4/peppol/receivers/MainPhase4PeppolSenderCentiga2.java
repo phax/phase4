@@ -24,17 +24,11 @@ import org.w3c.dom.Element;
 
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
-import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
-import com.helger.phase4.messaging.domain.AS4UserMessage;
-import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation3_14_0;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -45,9 +39,9 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderIntunor
+public final class MainPhase4PeppolSenderCentiga2
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderIntunor.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderCentiga2.class);
 
   public static void main (final String [] args)
   {
@@ -65,20 +59,7 @@ public final class MainPhase4PeppolSenderIntunor
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:intunor-test");
-      final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
-      {
-        public void onAS4Message (final AbstractAS4Message <?> aMsg)
-        {
-          final AS4UserMessage aUserMsg = (AS4UserMessage) aMsg;
-          LOGGER.info ("Sending out AS4 message with message ID '" +
-                       aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId () +
-                       "'");
-          LOGGER.info ("Sending out AS4 message with conversation ID '" +
-                       aUserMsg.getEbms3UserMessage ().getCollaborationInfo ().getConversationId () +
-                       "'");
-        }
-      };
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0192:992156678");
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
@@ -87,13 +68,7 @@ public final class MainPhase4PeppolSenderIntunor
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadElement)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                     aReceiverID,
-                                                                     ESML.DIGIT_TEST))
-                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidation3_14_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
-                                                            new Phase4PeppolValidatonResultHandler ())
-                                  .buildMessageCallback (aBuildMessageCallback)
+                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

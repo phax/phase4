@@ -57,13 +57,23 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    * messages.
    *
    * @param sAnotherOrWrongPModeID
+   *        Custom pmode ID
    * @param sAnotherOrWrongPartyIdInitiator
+   *        Custom Initiator Party ID
    * @param sAnotherOrWrongPartyIdResponder
+   *        Custom Responder Party ID
    * @param aEbms3MessageProperties
-   *        Default should be with _defaultProperties(), only if you do not want
-   *        them change this
-   * @return
+   *        Default should be with {@link #createDefaultProperties()}, only if
+   *        you do not want them change this
+   * @param aAttachments
+   *        Custom attachments
+   * @param sReferenceToMessageID
+   *        Custom reference to another message
+   * @param aMessagingIDConsumer
+   *        Custom Message ID consumer
+   * @return The created SOAP document
    * @throws Exception
+   *         In case of error
    */
   @Nonnull
   protected static final Document modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
@@ -77,8 +87,8 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     // If argument is set replace the default one
     final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID : sAnotherOrWrongPartyIdInitiator;
     final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? DEFAULT_PARTY_ID : sAnotherOrWrongPartyIdResponder;
-    Ebms3PayloadInfo aEbms3PayloadInfo;
-    Node aPayload = null;
+    final Node aPayload;
+    final Ebms3PayloadInfo aEbms3PayloadInfo;
     if (aAttachments == null)
     {
       aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
@@ -86,6 +96,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     }
     else
     {
+      aPayload = null;
       aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false, aAttachments);
     }
 
