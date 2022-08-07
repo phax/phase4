@@ -634,5 +634,4 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
     return ESuccess.SUCCESS;
   }
-
 }
