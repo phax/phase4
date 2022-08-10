@@ -24,15 +24,12 @@ import org.w3c.dom.Element;
 
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
-import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.http.HttpRetrySettings;
-import com.helger.phase4.messaging.domain.AS4UserMessage;
-import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
@@ -61,23 +58,13 @@ public final class MainPhase4PeppolSenderQvaliaLargeFile
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/large-files/base-example-large-16m.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/large-files/base-example-large-22m.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0007:5567321707");
-      final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
-      {
-        public void onAS4Message (final AbstractAS4Message <?> aMsg)
-        {
-          final AS4UserMessage aUserMsg = (AS4UserMessage) aMsg;
-          LOGGER.info ("Sending out AS4 message with message ID '" +
-                       aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId () +
-                       "'");
-        }
-      };
 
       // Invalid certificate is valid until 2029
       final IAS4CryptoFactory cf = AS4CryptoFactoryProperties.getDefaultInstance ();
@@ -97,7 +84,6 @@ public final class MainPhase4PeppolSenderQvaliaLargeFile
                                   .validationConfiguration (PeppolValidation3_14_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .compressPayload (false)
-                                  .buildMessageCallback (aBuildMessageCallback)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
