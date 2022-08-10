@@ -132,9 +132,6 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    */
   protected final void applyToPullRequest (@Nonnull final AS4ClientPullRequestMessage aPullRequestMsg)
   {
-    if (m_aHttpRetrySettings != null)
-      aPullRequestMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
-
     if (m_aCustomHttpPoster != null)
     {
       if (LOGGER.isDebugEnabled ())
@@ -152,6 +149,9 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     aPullRequestMsg.setSendingDateTimeOrNow (m_aSendingDateTime);
     // Set the keystore/truststore parameters
     aPullRequestMsg.setAS4CryptoFactory (m_aCryptoFactory);
+
+    if (m_aHttpRetrySettings != null)
+      aPullRequestMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
 
     if (StringHelper.hasText (m_sMessageID))
       aPullRequestMsg.setMessageID (m_sMessageID);

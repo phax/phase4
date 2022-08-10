@@ -563,17 +563,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   @OverridingMethodsMustInvokeSuper
   protected void applyToUserMessage (@Nonnull final AS4ClientUserMessage aUserMsg)
   {
-    if (m_aHttpRetrySettings != null)
-      aUserMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
-
     if (m_aCustomHttpPoster != null)
     {
+      // Special case
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Using a custom IHttpPoster implementation: " + m_aCustomHttpPoster);
       aUserMsg.setHttpPoster (m_aCustomHttpPoster);
     }
     else
     {
+      // Default HTTP poster
       aUserMsg.getHttpPoster ().setHttpClientFactory (m_aHttpClientFactory);
       // Otherwise Oxalis dies
       aUserMsg.getHttpPoster ().setQuoteHttpHeaders (false);
@@ -584,6 +583,10 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // Set the keystore/truststore parameters
     aUserMsg.setAS4CryptoFactory (m_aCryptoFactory);
     aUserMsg.setPMode (m_aPMode, true);
+
+    // Set after PMode
+    if (m_aHttpRetrySettings != null)
+      aUserMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
 
     // Set after PMode
     if (m_aReceiverCertificate != null)
