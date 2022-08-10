@@ -58,7 +58,7 @@ public final class MainPhase4PeppolSenderQvaliaLargeFile
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/large-files/base-example-large-22m.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/large-files/base-example-large-13m.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
