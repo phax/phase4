@@ -56,14 +56,8 @@ public final class MainPhase4PeppolSenderQvalia
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderQvalia.class);
 
-  public static void main (final String [] args)
+  public static void send ()
   {
-    WebScopeManager.onGlobalBegin (MockServletContext.create ());
-
-    // Dump (for debugging purpose only)
-    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ());
-
     try
     {
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/base-example.xml"))
@@ -117,6 +111,24 @@ public final class MainPhase4PeppolSenderQvalia
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
+    }
+    catch (final Exception ex)
+    {
+      LOGGER.error ("Error sending Peppol message via AS4", ex);
+    }
+  }
+
+  public static void main (final String [] args)
+  {
+    WebScopeManager.onGlobalBegin (MockServletContext.create ());
+
+    // Dump (for debugging purpose only)
+    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ());
+
+    try
+    {
+      send ();
     }
     catch (final Exception ex)
     {

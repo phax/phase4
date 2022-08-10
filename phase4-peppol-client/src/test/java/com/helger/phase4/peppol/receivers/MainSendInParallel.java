@@ -31,11 +31,10 @@ public class MainSendInParallel
 
     try
     {
-      // https://accap.mypeppol.app/as4
       final ExecutorService aES = Executors.newFixedThreadPool (10);
 
-      for (int i = 0; i < 500; ++i)
-        aES.submit (MainPhase4PeppolSenderStorecoveConstantReceiver::send);
+      for (int i = 0; i < 100; ++i)
+        aES.submit (MainPhase4PeppolSenderQvalia::send);
 
       aES.shutdown ();
       ExecutorServiceHelper.waitUntilAllTasksAreFinished (aES);
