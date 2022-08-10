@@ -192,7 +192,8 @@ public class BasicHttpPoster implements IHttpPoster
         }
         catch (final Exception ex)
         {
-          ret.append ("## Exception listing payload: " + ex.getClass ().getName () + " -- " + ex.getMessage ()).append (CHttp.EOL);
+          ret.append ("## Exception listing payload: " + ex.getClass ().getName () + " -- " + ex.getMessage ())
+             .append (CHttp.EOL);
           ret.append ("## ").append (StackTraceHelper.getStackAsString (ex));
         }
         return ret.toString ();
@@ -233,7 +234,12 @@ public class BasicHttpPoster implements IHttpPoster
     }
 
     // We don't have a message processing state
-    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (EAS4MessageMode.REQUEST, null, null, sMessageID, aCustomHttpHeaders, nTry);
+    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (EAS4MessageMode.REQUEST,
+                                                                 null,
+                                                                 null,
+                                                                 sMessageID,
+                                                                 aCustomHttpHeaders,
+                                                                 nTry);
     if (aDumpOS == null)
     {
       // No dumping needed
@@ -277,7 +283,8 @@ public class BasicHttpPoster implements IHttpPoster
                                               @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
   {
     // Parameter or global one - may still be null
-    final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper : AS4DumpManager.getOutgoingDumper ();
+    final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper
+                                                                           : AS4DumpManager.getOutgoingDumper ();
 
     // This class holds the effective OutputStream to which the dump is written
     final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
@@ -295,7 +302,8 @@ public class BasicHttpPoster implements IHttpPoster
         for (int nTry = 0; nTry < nMaxTries; nTry++)
         {
           if (nTry > 0)
-            LOGGER.info ("Retry #" + nTry + "/" + nMaxRetries + " for sending message with ID '" + sMessageID + "'");
+            if (LOGGER.isInfoEnabled ())
+              LOGGER.info ("Retry #" + nTry + "/" + nMaxRetries + " for sending message with ID '" + sMessageID + "'");
 
           try
           {
@@ -319,37 +327,41 @@ public class BasicHttpPoster implements IHttpPoster
 
             // After the first retry, increase the waiting time
             if (nTry > 1)
-              aDurationBeforeRetry = HttpRetrySettings.getIncreased (aDurationBeforeRetry, aRetrySettings.getRetryIncreaseFactor ());
+              aDurationBeforeRetry = HttpRetrySettings.getIncreased (aDurationBeforeRetry,
+                                                                     aRetrySettings.getRetryIncreaseFactor ());
 
             if (aRetryCallback != null)
-              if (aRetryCallback.onBeforeRetry (sMessageID, sURL, nTry, nMaxTries, aDurationBeforeRetry.toMillis (), ex).isBreak ())
+              if (aRetryCallback.onBeforeRetry (sMessageID, sURL, nTry, nMaxTries, aDurationBeforeRetry.toMillis (), ex)
+                                .isBreak ())
               {
                 // Explicitly interrupt retry
-                LOGGER.warn ("Error sending message '" +
-                             sMessageID +
-                             "' to '" +
-                             sURL +
-                             ": " +
-                             ex.getClass ().getSimpleName () +
-                             " - " +
-                             ex.getMessage () +
-                             " - retrying was explicitly stopped by the RetryCallback");
+                if (LOGGER.isWarnEnabled ())
+                  LOGGER.warn ("Error sending message '" +
+                               sMessageID +
+                               "' to '" +
+                               sURL +
+                               ": " +
+                               ex.getClass ().getSimpleName () +
+                               " - " +
+                               ex.getMessage () +
+                               " - retrying was explicitly stopped by the RetryCallback");
 
                 // Propagate Exception as if it would be the last retry
                 throw ex;
               }
 
-            LOGGER.warn ("Error sending message '" +
-                         sMessageID +
-                         "' to '" +
-                         sURL +
-                         "': " +
-                         ex.getClass ().getSimpleName () +
-                         " - " +
-                         ex.getMessage () +
-                         " - waiting " +
-                         aDurationBeforeRetry.toMillis () +
-                         " ms, than retrying");
+            if (LOGGER.isWarnEnabled ())
+              LOGGER.warn ("Error sending message '" +
+                           sMessageID +
+                           "' to '" +
+                           sURL +
+                           "': " +
+                           ex.getClass ().getSimpleName () +
+                           " - " +
+                           ex.getMessage () +
+                           " - waiting " +
+                           aDurationBeforeRetry.toMillis () +
+                           " ms, than retrying");
 
             // Sleep and try again afterwards
             ThreadHelper.sleep (aDurationBeforeRetry.toMillis ());
@@ -393,7 +405,12 @@ public class BasicHttpPoster implements IHttpPoster
         }
         catch (final Exception ex)
         {
-          LOGGER.error ("OutgoingDumper.onEndRequest failed. Dumper=" + aRealOutgoingDumper + "; MessageID=" + sMessageID, ex);
+          if (LOGGER.isErrorEnabled ())
+            LOGGER.error ("OutgoingDumper.onEndRequest failed. Dumper=" +
+                          aRealOutgoingDumper +
+                          "; MessageID=" +
+                          sMessageID,
+                          ex);
         }
     }
   }
