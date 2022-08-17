@@ -126,7 +126,7 @@
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>8.4.1-SNAPSHOT</version>
+        <version>8.4.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -147,14 +147,14 @@
       <dependency>
         <groupId>com.helger.schematron</groupId>
         <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>6.3.2</version>
+        <version>6.3.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.phive</groupId>
         <artifactId>phive-parent-pom</artifactId>
-        <version>7.2.3</version>
+        <version>7.2.4</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
