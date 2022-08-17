@@ -31,8 +31,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.xml.namespace.QName;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -759,7 +759,7 @@ public class AS4IncomingHandler
 
     // Create header map from response headers
     final HttpHeaderMap aHttpHeaders = new HttpHeaderMap ();
-    for (final Header aHeader : aHttpResponse.getAllHeaders ())
+    for (final Header aHeader : aHttpResponse.getHeaders ())
       aHttpHeaders.addHeader (aHeader.getName (), aHeader.getValue ());
 
     try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))

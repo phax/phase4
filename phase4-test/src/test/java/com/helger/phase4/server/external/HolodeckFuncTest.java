@@ -133,6 +133,6 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                                AS4SigningParams.createDefault ());
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aSignedDoc, aAttachments);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
   }
 }

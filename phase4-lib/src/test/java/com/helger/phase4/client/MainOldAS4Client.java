@@ -23,11 +23,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.http.HttpHost;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -118,7 +118,9 @@ public final class MainOldAS4Client
         // Body
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
-        final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion, aPayload, aAttachments);
+        final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
+                                                                                   aPayload,
+                                                                                   aAttachments);
         final Document aDoc = aMsg.getAsSoapDocument (aPayload);
         aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
       }
@@ -126,14 +128,19 @@ public final class MainOldAS4Client
         if (false)
         {
           // BodyPayload SIGNED
-          final Document aDoc = MockClientMessages.createUserMessageSigned (eSoapVersion, aPayload, aAttachments, aResHelper);
+          final Document aDoc = MockClientMessages.createUserMessageSigned (eSoapVersion,
+                                                                            aPayload,
+                                                                            aAttachments,
+                                                                            aResHelper);
           aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
         }
         else
           if (false)
           {
             // BodyPayload ENCRYPTED
-            final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion, aPayload, aAttachments);
+            final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
+                                                                                       aPayload,
+                                                                                       aAttachments);
             Document aDoc = aMsg.getAsSoapDocument (aPayload);
             aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
                                                         eSoapVersion,
@@ -151,7 +158,9 @@ public final class MainOldAS4Client
                                                                                                       .mimeType (CMimeType.APPLICATION_GZIP)
                                                                                                       .build (),
                                                                               aResHelper));
-              final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion, null, aAttachments);
+              final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
+                                                                                         null,
+                                                                                         aAttachments);
               final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion,
                                                                                       AS4Signer.createSignedMessage (aCryptoFactory,
                                                                                                                      aMsg.getAsSoapDocument (null),
@@ -165,12 +174,15 @@ public final class MainOldAS4Client
 
               // Move all global mime headers to the POST request
               MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aMimeMsg, aPost::addHeader, true);
-              aPost.setEntity (new HttpMimeMessageEntity (aMimeMsg));
+              aPost.setEntity (HttpMimeMessageEntity.create (aMimeMsg));
             }
             else
               if (false)
               {
-                Document aDoc = MockClientMessages.createUserMessageSigned (eSoapVersion, aPayload, aAttachments, aResHelper);
+                Document aDoc = MockClientMessages.createUserMessageSigned (eSoapVersion,
+                                                                            aPayload,
+                                                                            aAttachments,
+                                                                            aResHelper);
                 aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
                                                             eSoapVersion,
                                                             aDoc,
@@ -186,7 +198,7 @@ public final class MainOldAS4Client
 
       final CloseableHttpResponse aHttpResponse = aClient.execute (aPost);
 
-      LOGGER.info ("GET Response Status:: " + aHttpResponse.getStatusLine ().getStatusCode ());
+      LOGGER.info ("GET Response Status: " + aHttpResponse.getCode ());
 
       // print result
       LOGGER.info (EntityUtils.toString (aHttpResponse.getEntity ()));

@@ -18,7 +18,8 @@ package com.helger.phase4.http;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.entity.StringEntity;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.w3c.dom.Node;
 
 import com.helger.commons.mime.IMimeType;
@@ -34,8 +35,8 @@ public class HttpXMLEntity extends StringEntity
 {
   public HttpXMLEntity (@Nonnull final Node aNode, @Nonnull final IMimeType aMimeType)
   {
-    super (AS4XMLHelper.serializeXML (aNode), AS4XMLHelper.XWS.getCharset ());
-    // Required for AS4.NET
-    setContentType (aMimeType.getAsString ());
+    // ContentType Required for AS4.NET
+    super (AS4XMLHelper.serializeXML (aNode),
+           ContentType.parse (aMimeType.getAsString ()).withCharset (AS4XMLHelper.XWS.getCharset ()));
   }
 }

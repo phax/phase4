@@ -26,12 +26,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.HttpEntityWrapper;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.HttpEntityWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,7 +150,7 @@ public class BasicHttpPoster implements IHttpPoster
   public <T> T sendGenericMessage (@Nonnull @Nonempty final String sURL,
                                    @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                    @Nonnull final HttpEntity aHttpEntity,
-                                   @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws IOException
+                                   @Nonnull final HttpClientResponseHandler <? extends T> aResponseHandler) throws IOException
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -182,7 +182,7 @@ public class BasicHttpPoster implements IHttpPoster
         final StringBuilder ret = new StringBuilder ("SEND-START to ").append (sURL).append ("\n");
         try
         {
-          for (final Header aHeader : aPost.getAllHeaders ())
+          for (final Header aHeader : aPost.getHeaders ())
             ret.append (aHeader.getName ()).append (": ").append (aHeader.getValue ()).append (CHttp.EOL);
           ret.append (CHttp.EOL);
           if (aHttpEntity.isRepeatable ())
@@ -278,7 +278,7 @@ public class BasicHttpPoster implements IHttpPoster
                                               @Nonnull final HttpEntity aHttpEntity,
                                               @Nonnull final String sMessageID,
                                               @Nonnull final HttpRetrySettings aRetrySettings,
-                                              @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                              @Nonnull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                               @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                               @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
   {

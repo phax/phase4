@@ -26,10 +26,10 @@ import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.mail.MessagingException;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ResponseHandler;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.wss4j.common.ext.WSSecurityException;
 
 import com.helger.commons.ValueEnforcer;
@@ -444,7 +444,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    */
   @Nonnull
   public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@Nonnull final String sURL,
-                                                                    @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                                                    @Nonnull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                                                     @Nullable final IAS4ClientBuildMessageCallback aCallback,
                                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                     @Nullable final IAS4RetryCallback aRetryCallback) throws IOException,
@@ -470,10 +470,10 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     // Keep the HTTP response headers for external evaluation
     final HttpHeaderMap aResponseHeaders = new HttpHeaderMap ();
 
-    final ResponseHandler <T> aRealResponseHandler = x -> {
+    final HttpClientResponseHandler <T> aRealResponseHandler = x -> {
       // Remember the HTTP response data
-      aStatusLineKeeper.set (x.getStatusLine ());
-      final Header [] aHeaders = x.getAllHeaders ();
+      aStatusLineKeeper.set (new StatusLine (x));
+      final Header [] aHeaders = x.getHeaders ();
       if (aHeaders != null)
         for (final Header aHeader : aHeaders)
           aResponseHeaders.addHeader (aHeader.getName (), aHeader.getValue ());

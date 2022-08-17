@@ -18,7 +18,7 @@ package com.helger.phase4.server.servlet;
 
 import static org.junit.Assert.assertTrue;
 
-import org.apache.http.HttpEntity;
+import org.apache.hc.core5.http.HttpEntity;
 import org.junit.Test;
 import org.w3c.dom.Document;
 

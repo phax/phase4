@@ -81,7 +81,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                                         .getAsSoapDocument (),
                                                                             aAttachments);
 
-    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
+    sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
   }
 
   @Test
@@ -106,7 +106,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                          AS4SigningParams.createDefault ());
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
 
-    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
+    sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
   }
 
   @Test
@@ -120,7 +120,8 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                                             .build (),
                                                                     s_aResMgr));
 
-    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments).getAsSoapDocument ();
+    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments)
+                                      .getAsSoapDocument ();
 
     final AS4MimeMessage aMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
                                                                  aDoc,
@@ -129,7 +130,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                  false,
                                                                  s_aResMgr,
                                                                  m_aCryptParams);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
   }
 
   @Test
@@ -160,7 +161,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                      false,
                                                                      s_aResMgr,
                                                                      m_aCryptParams);
-    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
+    sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
   }
 
   @Test
@@ -170,7 +171,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
     {
       final AS4MimeMessage aMsg = new AS4MimeMessage (null, aIS);
 
-      sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+      sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
     }
   }
 }

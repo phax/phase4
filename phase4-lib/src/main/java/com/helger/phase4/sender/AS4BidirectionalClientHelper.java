@@ -23,10 +23,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,7 +120,7 @@ public final class AS4BidirectionalClientHelper
     }
 
     final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
-    final ResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
+    final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
       // throws an ExtendedHttpResponseException on exception
       final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
       if (aEntity == null)
@@ -135,7 +135,11 @@ public final class AS4BidirectionalClientHelper
                                                                                                   aOutgoingDumper,
                                                                                                   aRetryCallback);
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Successfully transmitted AS4 UserMessage with message ID '" + aResponseEntity.getMessageID () + "' to '" + sURL + "'");
+      LOGGER.info ("Successfully transmitted AS4 UserMessage with message ID '" +
+                   aResponseEntity.getMessageID () +
+                   "' to '" +
+                   sURL +
+                   "'");
 
     if (aResponseConsumer != null)
       aResponseConsumer.handleResponse (aResponseEntity);
@@ -193,7 +197,7 @@ public final class AS4BidirectionalClientHelper
       LOGGER.debug ("  MPC = '" + aClientPullRequest.getMPC () + "'");
 
     final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
-    final ResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
+    final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
       // May throw an ExtendedHttpResponseException
       final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
       if (aEntity == null)
@@ -207,7 +211,11 @@ public final class AS4BidirectionalClientHelper
                                                                                                       aOutgoingDumper,
                                                                                                       aRetryCallback);
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" + aResponseEntity.getMessageID () + "' to '" + sURL + "'");
+      LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
+                   aResponseEntity.getMessageID () +
+                   "' to '" +
+                   sURL +
+                   "'");
 
     if (aResponseConsumer != null)
       aResponseConsumer.handleResponse (aResponseEntity);

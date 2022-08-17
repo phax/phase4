@@ -24,9 +24,10 @@ import javax.annotation.Nonnull;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.http.entity.AbstractHttpEntity;
+import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 
@@ -40,9 +41,16 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
 {
   private final AS4MimeMessage m_aMsg;
 
-  public HttpMimeMessageEntity (@Nonnull final AS4MimeMessage aMsg)
+  protected HttpMimeMessageEntity (@Nonnull @Nonempty final String sContentType, @Nonnull final AS4MimeMessage aMsg)
   {
-    m_aMsg = ValueEnforcer.notNull (aMsg, "Msg");
+    super (sContentType, null);
+    m_aMsg = aMsg;
+  }
+
+  @Override
+  public final void close () throws IOException
+  {
+    // nothing to do
   }
 
   /**
@@ -55,6 +63,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
     return m_aMsg;
   }
 
+  @Override
   public boolean isRepeatable ()
   {
     return m_aMsg.isRepeatable ();
@@ -84,6 +93,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
     }
   }
 
+  @Override
   public void writeTo (@Nonnull final OutputStream aOS) throws IOException
   {
     try
@@ -100,5 +110,19 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   public String toString ()
   {
     return ToStringGenerator.getDerived (super.toString ()).append ("MimeMsg", m_aMsg).getToString ();
+  }
+
+  @Nonnull
+  public static HttpMimeMessageEntity create (@Nonnull final AS4MimeMessage aMsg)
+  {
+    ValueEnforcer.notNull (aMsg, "Msg");
+    try
+    {
+      return new HttpMimeMessageEntity (aMsg.getContentType (), aMsg);
+    }
+    catch (final MessagingException ex)
+    {
+      throw new IllegalArgumentException ("Failed to get the Content-Type from " + aMsg, ex);
+    }
   }
 }

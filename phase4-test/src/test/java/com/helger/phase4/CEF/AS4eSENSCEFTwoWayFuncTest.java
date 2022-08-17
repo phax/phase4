@@ -100,7 +100,7 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
                                                                                                s_aResMgr),
                                                                         aAttachments);
 
-    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));

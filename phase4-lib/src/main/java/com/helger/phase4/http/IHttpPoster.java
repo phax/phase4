@@ -22,9 +22,9 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.http.HttpHeaderMap;
@@ -124,7 +124,7 @@ public interface IHttpPoster
   <T> T sendGenericMessage (@Nonnull @Nonempty String sURL,
                             @Nullable HttpHeaderMap aCustomHttpHeaders,
                             @Nonnull HttpEntity aHttpEntity,
-                            @Nonnull ResponseHandler <? extends T> aResponseHandler) throws IOException;
+                            @Nonnull HttpClientResponseHandler <? extends T> aResponseHandler) throws IOException;
 
   /**
    * Send an arbitrary HTTP POST message to the provided URL, using the
@@ -164,7 +164,7 @@ public interface IHttpPoster
                                        @Nonnull HttpEntity aHttpEntity,
                                        @Nonnull String sMessageID,
                                        @Nonnull HttpRetrySettings aRetrySettings,
-                                       @Nonnull ResponseHandler <? extends T> aResponseHandler,
+                                       @Nonnull HttpClientResponseHandler <? extends T> aResponseHandler,
                                        @Nullable IAS4OutgoingDumper aOutgoingDumper,
                                        @Nullable IAS4RetryCallback aRetryCallback) throws IOException;
 }

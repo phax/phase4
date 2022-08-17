@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.mail.MessagingException;
 
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

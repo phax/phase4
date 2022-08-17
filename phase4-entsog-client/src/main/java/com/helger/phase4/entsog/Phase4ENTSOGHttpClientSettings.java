@@ -24,6 +24,8 @@ import java.security.GeneralSecurityException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
+import org.apache.hc.core5.util.Timeout;
+
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.http.tls.ETLSVersion;
 import com.helger.httpclient.HttpClientSettings;
@@ -38,9 +40,9 @@ import com.helger.phase4.CAS4Version;
  */
 public class Phase4ENTSOGHttpClientSettings extends HttpClientSettings
 {
-  public static final int DEFAULT_ENTSOG_CONNECTION_REQUEST_TIMEOUT_MS = 1_000;
-  public static final int DEFAULT_ENTSOG_CONNECTION_TIMEOUT_MS = 5_000;
-  public static final int DEFAULT_ENTSOG_SOCKET_TIMEOUT_MS = 100_000;
+  public static final Timeout DEFAULT_ENTSOG_CONNECTION_REQUEST_TIMEOUT = Timeout.ofSeconds (1);
+  public static final Timeout DEFAULT_ENTSOG_CONNECT_TIMEOUT = Timeout.ofSeconds (5);
+  public static final Timeout DEFAULT_ENTSOG_RESPONSE_TIMEOUT = Timeout.ofSeconds (100);
 
   public Phase4ENTSOGHttpClientSettings () throws GeneralSecurityException
   {
@@ -51,9 +53,9 @@ public class Phase4ENTSOGHttpClientSettings extends HttpClientSettings
     aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
     setSSLContext (aSSLContext);
 
-    setConnectionRequestTimeoutMS (DEFAULT_ENTSOG_CONNECTION_REQUEST_TIMEOUT_MS);
-    setConnectionTimeoutMS (DEFAULT_ENTSOG_CONNECTION_TIMEOUT_MS);
-    setSocketTimeoutMS (DEFAULT_ENTSOG_SOCKET_TIMEOUT_MS);
+    setConnectionRequestTimeout (DEFAULT_ENTSOG_CONNECTION_REQUEST_TIMEOUT);
+    setConnectionTimeout (DEFAULT_ENTSOG_CONNECT_TIMEOUT);
+    setResponseTimeout (DEFAULT_ENTSOG_RESPONSE_TIMEOUT);
 
     // Set an explicit user agent
     setUserAgent (CAS4.LIB_NAME + "/" + CAS4Version.BUILD_VERSION + " " + CAS4.LIB_URL);

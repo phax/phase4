@@ -133,9 +133,12 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                AS4SigningParams.createDefault ());
 
     final NodeList aNL = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
-    assertEquals (aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), sTrackerIdentifier);
+    assertEquals (aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
+                  sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
+                                               true,
+                                               null);
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
@@ -205,7 +208,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                      aAttachments,
                                                                                                      s_aResMgr),
                                                                         aAttachments);
-    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
 
@@ -240,7 +243,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final NodeList aNL = aDoc.getElementsByTagName ("eb:PartProperties");
     assertNotNull (aNL);
     assertEquals (1, aNL.getLength ());
-    assertEquals ("CompressionType", aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent ());
+    assertEquals ("CompressionType",
+                  aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent ());
     assertEquals ("application/gzip", aNL.item (0).getLastChild ().getTextContent ());
   }
 
@@ -307,7 +311,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     aNL.item (0).removeChild (aNL.item (0).getFirstChild ());
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -454,7 +458,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
                                                                             aMsg.getAsSoapDocument (m_aPayload),
                                                                             aAttachments);
-    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), false, EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
+    sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg),
+                     false,
+                     EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
   }
 
   /**
@@ -501,7 +507,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
     // How to check message if it is decompressed hmm?
   }
 
@@ -543,7 +549,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
   }
 
   /**
@@ -572,7 +578,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
 
@@ -612,7 +618,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     s_aResMgr));
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -645,7 +651,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                      false,
                                                                      s_aResMgr,
                                                                      m_aCryptParams);
-    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
@@ -684,13 +690,15 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     // Compression
     final NonBlockingByteArrayOutputStream aCompressedOS = new NonBlockingByteArrayOutputStream ();
     try (final InputStream aIS = new NonBlockingByteArrayInputStream (aSrc);
-         final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
+        final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
     aNL.item (0).setTextContent (AS4XMLHelper.serializeXML (aDoc));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                      false,
+                      EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 
   /**
@@ -733,7 +741,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                      false,
                                                                      s_aResMgr,
                                                                      m_aCryptParams);
-    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -812,7 +820,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                                  aAttachments)
                                                                                     .getAsSoapDocument (),
                                                                         aAttachments);
-    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }

@@ -68,7 +68,8 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   public void testSendUnsignedMessageSuccess () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
+    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null)
+                                      .getAsSoapDocument (aPayload);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -99,7 +100,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
                                                                                                               null,
                                                                                                               s_aResMgr),
                                                                         null);
-    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -113,7 +114,8 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, aAttachments).getAsSoapDocument (aPayload);
+    Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, aAttachments)
+                                .getAsSoapDocument (aPayload);
     aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory, m_eSoapVersion, aDoc, false, m_aCryptParams);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);

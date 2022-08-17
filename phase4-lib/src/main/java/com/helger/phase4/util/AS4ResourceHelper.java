@@ -26,8 +26,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.FileEntity;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,11 +247,9 @@ public class AS4ResourceHelper implements Closeable
       aSrcEntity.writeTo (aOS);
     }
 
-    // Than use the FileEntity as the basis
-    final FileEntity aRepeatableEntity = new FileEntity (aTempFile);
-    aRepeatableEntity.setContentType (aSrcEntity.getContentType ());
-    aRepeatableEntity.setContentEncoding (aSrcEntity.getContentEncoding ());
-    aRepeatableEntity.setChunked (aSrcEntity.isChunked ());
-    return aRepeatableEntity;
+    // Than use the (repeatable) FileEntity as the basis
+    return new FileEntity (aTempFile,
+                           ContentType.parse (aSrcEntity.getContentType ()),
+                           aSrcEntity.getContentEncoding ());
   }
 }

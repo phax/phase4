@@ -30,7 +30,7 @@ import javax.annotation.WillClose;
 import javax.mail.MessagingException;
 import javax.servlet.ServletInputStream;
 
-import org.apache.http.HttpEntity;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,7 +235,7 @@ public class AS4RequestHandler implements AutoCloseable
     public HttpMimeMessageEntity getHttpEntityForSending (@Nonnull final IMimeType aMimType)
     {
       // Repeatable if the underlying Mime message is repeatable
-      return new HttpMimeMessageEntity (m_aMimeMsg);
+      return HttpMimeMessageEntity.create (m_aMimeMsg);
     }
 
     public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse,

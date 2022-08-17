@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 
 import javax.annotation.Nonnegative;
@@ -28,15 +29,15 @@ import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.HttpHostConnectException;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.util.Timeout;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -51,7 +52,7 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.StackTraceHelper;
 import com.helger.config.IConfig;
 import com.helger.httpclient.HttpClientFactory;
-import com.helger.httpclient.HttpClientRetryHandler.ERetryMode;
+import com.helger.httpclient.HttpClientHelper;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
@@ -114,9 +115,8 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   {
     final HttpClientSettings aHCS = new HttpClientSettings ();
     aHCS.setSSLContextTrustAll ();
-    aHCS.setSocketTimeoutMS (500_000);
+    aHCS.setResponseTimeout (Timeout.ofMinutes (5));
     aHCS.setRetryCount (m_nRetries);
-    aHCS.setRetryMode (ERetryMode.RETRY_ALWAYS);
     m_aHttpClient = new HttpClientFactory (aHCS).createHttpClient ();
   }
 
@@ -158,17 +158,17 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   {
     AS4HttpDebug.debug ( () -> {
       final StringBuilder aSB = new StringBuilder ();
-      aSB.append ("TEST-SEND-START to ").append (aPost.getURI ()).append ("\n");
+      aSB.append ("TEST-SEND-START to ").append (aPost.getRequestUri ()).append ("\n");
       try
       {
-        final Header [] aHeaders = aPost.getAllHeaders ();
+        final Header [] aHeaders = aPost.getHeaders ();
         if (ArrayHelper.isNotEmpty (aHeaders))
         {
           for (final Header aHeader : aHeaders)
             aSB.append (aHeader.getName ()).append ('=').append (aHeader.getValue ()).append ("\n");
           aSB.append ("\n");
         }
-        aSB.append (EntityUtils.toString (aHttpEntity));
+        aSB.append (HttpClientHelper.entityToString (aHttpEntity, StandardCharsets.UTF_8));
       }
       catch (final IOException ex)
       {
@@ -181,9 +181,9 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 
     try (final CloseableHttpResponse aHttpResponse = m_aHttpClient.execute (aPost))
     {
-      final int nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
+      final int nStatusCode = aHttpResponse.getCode ();
       final HttpEntity aEntity = aHttpResponse.getEntity ();
-      final String sResponse = aEntity == null ? "" : EntityUtils.toString (aEntity);
+      final String sResponse = aEntity == null ? "" : HttpClientHelper.entityToString (aEntity, StandardCharsets.UTF_8);
 
       AS4HttpDebug.debug ( () -> "TEST-SEND-RESPONSE received: " + sResponse);
 
@@ -225,7 +225,8 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   @Nonnull
   protected final String sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
                                           final boolean bExpectSuccess,
-                                          @Nullable final String sExpectedErrorCode) throws IOException, MessagingException
+                                          @Nullable final String sExpectedErrorCode) throws IOException,
+                                                                                     MessagingException
   {
     final HttpPost aPost = _createPost ();
     MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aHttpEntity.getMimeMessage (), aPost::addHeader, true);
