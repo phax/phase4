@@ -51,7 +51,7 @@ public class Phase4CEFHttpClientSettings extends HttpClientSettings
     setSSLContext (aSSLContext);
 
     setConnectionRequestTimeout (DEFAULT_CEF_CONNECTION_REQUEST_TIMEOUT);
-    setConnectionTimeout (DEFAULT_CEF_CONNECT_TIMEOUT);
+    setConnectTimeout (DEFAULT_CEF_CONNECT_TIMEOUT);
     setResponseTimeout (DEFAULT_CEF_RESPONSE_TIMEOUT);
 
     // Set an explicit user agent

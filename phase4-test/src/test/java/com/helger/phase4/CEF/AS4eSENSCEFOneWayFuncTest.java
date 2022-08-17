@@ -19,6 +19,7 @@ package com.helger.phase4.CEF;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.mail.Multipart;
 import javax.xml.parsers.DocumentBuilder;
@@ -394,7 +395,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   }
 
   @Nonnull
-  private static HttpProxyServer _startProxyServer (final int nProxyPort)
+  private static HttpProxyServer _startProxyServerInterceptingFirstCall (@Nonnegative final int nProxyPort)
   {
     // Using LittleProxy
     // https://github.com/adamfisk/LittleProxy
@@ -462,7 +463,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
     try (final ScopedConfig aSC = ScopedConfig.createTestConfig (aSettings))
     {
-      final HttpProxyServer aProxyServer = _startProxyServer (nProxyPort);
+      final HttpProxyServer aProxyServer = _startProxyServerInterceptingFirstCall (nProxyPort);
       try
       {
         // send message

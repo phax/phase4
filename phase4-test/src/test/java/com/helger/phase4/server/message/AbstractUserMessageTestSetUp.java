@@ -117,6 +117,8 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
     aHCS.setSSLContextTrustAll ();
     aHCS.setResponseTimeout (Timeout.ofMinutes (5));
     aHCS.setRetryCount (m_nRetries);
+    // Only required for "testEsens_TA10"
+    aHCS.setRetryAlways (true);
     m_aHttpClient = new HttpClientFactory (aHCS).createHttpClient ();
   }
 

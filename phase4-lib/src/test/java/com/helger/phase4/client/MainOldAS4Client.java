@@ -81,6 +81,7 @@ public final class MainOldAS4Client
    * @param args
    *        ignored
    */
+  @SuppressWarnings ("resource")
   public static void main (final String [] args)
   {
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())

@@ -119,14 +119,14 @@
       <dependency>
         <groupId>com.helger.web</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>9.7.0</version>
+        <version>9.7.1-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>8.4.0</version>
+        <version>8.4.1-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

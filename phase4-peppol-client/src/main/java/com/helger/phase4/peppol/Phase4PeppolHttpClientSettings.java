@@ -52,7 +52,7 @@ public class Phase4PeppolHttpClientSettings extends HttpClientSettings
     setSSLContext (aSSLContext);
 
     setConnectionRequestTimeout (DEFAULT_PEPPOL_CONNECTION_REQUEST_TIMEOUT);
-    setConnectionTimeout (DEFAULT_PEPPOL_CONNECT_TIMEOUT);
+    setConnectTimeout (DEFAULT_PEPPOL_CONNECT_TIMEOUT);
     setResponseTimeout (DEFAULT_PEPPOL_RESPONSE_TIMEOUT);
 
     // Set an explicit user agent

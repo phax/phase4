@@ -54,7 +54,7 @@ public class Phase4ENTSOGHttpClientSettings extends HttpClientSettings
     setSSLContext (aSSLContext);
 
     setConnectionRequestTimeout (DEFAULT_ENTSOG_CONNECTION_REQUEST_TIMEOUT);
-    setConnectionTimeout (DEFAULT_ENTSOG_CONNECT_TIMEOUT);
+    setConnectTimeout (DEFAULT_ENTSOG_CONNECT_TIMEOUT);
     setResponseTimeout (DEFAULT_ENTSOG_RESPONSE_TIMEOUT);
 
     // Set an explicit user agent
