@@ -29,8 +29,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.io.resource.IReadableResource;
-import com.helger.commons.io.resourceprovider.ClassPathResourceProvider;
-import com.helger.commons.io.resourceprovider.FileSystemResourceProvider;
 import com.helger.commons.io.resourceprovider.ReadableResourceProviderChain;
 import com.helger.commons.string.StringParser;
 import com.helger.config.Config;
@@ -88,20 +86,23 @@ public final class AS4Configuration
     final MultiConfigurationValueProvider ret = ConfigFactory.createDefaultValueProvider ();
 
     final int nResourceDefaultPrio = EConfigSourceType.RESOURCE.getDefaultPriority ();
-    final ReadableResourceProviderChain aResourceProvider = new ReadableResourceProviderChain (new FileSystemResourceProvider ().setCanReadRelativePaths (true),
-                                                                                               new ClassPathResourceProvider ());
+    final ReadableResourceProviderChain aResourceProvider = ConfigFactory.createDefaultResourceProviderChain ();
 
     // Phase4 files
     IReadableResource aRes = aResourceProvider.getReadableResourceIf ("private-phase4.properties",
                                                                       IReadableResource::exists);
     if (aRes != null)
+    {
       ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
                                   nResourceDefaultPrio + 4);
+    }
 
     aRes = aResourceProvider.getReadableResourceIf ("phase4.properties", IReadableResource::exists);
     if (aRes != null)
+    {
       ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
                                   nResourceDefaultPrio + 3);
+    }
 
     return ret;
   }
