@@ -10,6 +10,7 @@
 base-example-large-*.xml
 private-*.properties*
 release.properties
+Main*ReceiverProd.java
 zz
 
 .settings/ 
