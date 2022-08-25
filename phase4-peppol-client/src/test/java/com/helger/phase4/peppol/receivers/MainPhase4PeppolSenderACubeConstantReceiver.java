@@ -94,8 +94,7 @@ public final class MainPhase4PeppolSenderACubeConstantReceiver
                                                                                                          "82zmMF7idl0lsqdVl5Tn3nb48e9NWZ8DpK8D/GfTETgyqrBMI5AdnD0agnLvrSNz\r\n" +
                                                                                                          "RHHsMUhiz0aE3MoAOCo5aoH6hwbZsT2ptZGJ4fWfiCYIlRcAmQegNlWcDnrCPmI9\r\n" +
                                                                                                          "CIWVQ447eZ92vl7AjTe1+qAwdXgNoLplO6nVKgX4eBEj1fXTTqsIZPo=\r\n" +
-                                                                                                         "-----END CERTIFICATE-----\r\n" +
-                                                                                                         ""),
+                                                                                                         "-----END CERTIFICATE-----\r\n"),
                                                             "https://peppol-receiver-sandbox.acubeapi.com")
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .sendMessageAndCheckForReceipt ();
