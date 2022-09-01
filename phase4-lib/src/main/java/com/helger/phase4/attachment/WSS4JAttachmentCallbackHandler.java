@@ -80,24 +80,24 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   /**
    * Try to match the Attachment Id. Otherwise, add all Attachments.
    *
-   * @param sID
+   * @param sAttachmentID
    *        Attachment ID to search
    * @return Never <code>null</code>.
    */
   @Nonnull
   @ReturnsMutableCopy
-  private ICommonsList <Attachment> _getAttachmentsToAdd (@Nullable final String sID)
+  private ICommonsList <Attachment> _getAttachmentsToAdd (@Nullable final String sAttachmentID)
   {
     // Check for direct match
-    final WSS4JAttachment aAttachment = m_aAttachmentMap.get (sID);
+    final WSS4JAttachment aAttachment = m_aAttachmentMap.get (sAttachmentID);
     if (aAttachment != null)
       return new CommonsArrayList <> (aAttachment);
 
     // Use all (stripped from cid:Attachments)
-    if ("Attachments".equals (sID))
+    if ("Attachments".equals (sAttachmentID))
       return new CommonsArrayList <> (m_aAttachmentMap.values ());
 
-    throw new IllegalStateException ("Failed to resolve attachment with ID '" + sID + "'");
+    throw new IllegalStateException ("Failed to resolve attachment with ID '" + sAttachmentID + "'");
   }
 
   public void handle (@Nonnull final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
@@ -133,18 +133,26 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
             throw new IllegalStateException ("Failed to resolve source attachment with ID '" + sAttachmentID + "'");
 
           // Convert
-          final WSS4JAttachment aEffectiveDecryptedAttachment = new WSS4JAttachment (m_aResHelper, aResultAttachment.getMimeType ());
+          final WSS4JAttachment aEffectiveDecryptedAttachment = new WSS4JAttachment (m_aResHelper,
+                                                                                     aResultAttachment.getMimeType ());
           aEffectiveDecryptedAttachment.setId (sAttachmentID);
           aEffectiveDecryptedAttachment.addHeaders (aResultAttachment.getHeaders ());
           aEffectiveDecryptedAttachment.setCharset (aSrcAttachment.getCharsetOrDefault (null));
           // Use supplier to ensure stream is opened only when needed
           aEffectiveDecryptedAttachment.setSourceStreamProvider (HasInputStream.once (aResultAttachment::getSourceStream));
 
+          // Sanity check
+          if (m_aAttachmentMap.containsKey (sAttachmentID))
+            if (LOGGER.isWarnEnabled ())
+              LOGGER.warn ("Internal issue: overwriting the attachment with ID '" + sAttachmentID + "'!");
+
+          // Remember decrypted attachment
           m_aAttachmentMap.put (sAttachmentID, aEffectiveDecryptedAttachment);
         }
         else
         {
-          throw new UnsupportedCallbackException (aCallback, "Unrecognized Callback of class " + aCallback.getClass ().getName ());
+          throw new UnsupportedCallbackException (aCallback,
+                                                  "Unrecognized Callback of class " + aCallback.getClass ().getName ());
         }
     }
   }
