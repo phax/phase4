@@ -898,7 +898,7 @@ public class AS4RequestHandler implements AutoCloseable
         }
       }
       else
-        LOGGER.warn ("Response entity is not repeatable and therefore not read for SPIs");
+        LOGGER.warn ("AS4 Response entity is not repeatable and therefore not read for SPIs");
     }
     else
       LOGGER.info ("No response factory present");
@@ -909,9 +909,9 @@ public class AS4RequestHandler implements AutoCloseable
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Trying to invoke the following " +
                     aAllProcessors.size () +
-                    " SPIs on message ID '" +
+                    " SPIs on AS4 message ID '" +
                     aState.getMessageID () +
-                    "' and response message ID '" +
+                    "' and AS4 response message ID '" +
                     sResponseMessageID +
                     ": " +
                     aAllProcessors);
@@ -978,7 +978,6 @@ public class AS4RequestHandler implements AutoCloseable
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.getCollaborationInfo ();
 
     // Need to switch C1 and C4 around from the original usermessage
-    // TODO make customizable via profile
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     {
       Ebms3Property aFinalRecipient = null;
@@ -992,16 +991,26 @@ public class AS4RequestHandler implements AutoCloseable
             aFinalRecipient = aProp;
       }
 
-      if (aOriginalSender == null)
-        throw new IllegalStateException ("Failed to determine new OriginalSender");
-      if (aFinalRecipient == null)
-        throw new IllegalStateException ("Failed to determine new FinalRecipient");
+      if (aOriginalSender != null && aFinalRecipient != null)
+      {
+        aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
+        aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
 
-      aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
-      aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
-
-      aEbms3MessageProperties.addProperty (aFinalRecipient);
-      aEbms3MessageProperties.addProperty (aOriginalSender);
+        aEbms3MessageProperties.addProperty (aFinalRecipient);
+        aEbms3MessageProperties.addProperty (aOriginalSender);
+      }
+      else
+      {
+        // TODO make customizable via profile
+        // Disable for now
+        if (false)
+        {
+          if (aOriginalSender == null)
+            throw new IllegalStateException ("Failed to determine new OriginalSender");
+          if (aFinalRecipient == null)
+            throw new IllegalStateException ("Failed to determine new FinalRecipient");
+        }
+      }
     }
 
     return AS4UserMessage.create (aEbms3MessageInfo,
