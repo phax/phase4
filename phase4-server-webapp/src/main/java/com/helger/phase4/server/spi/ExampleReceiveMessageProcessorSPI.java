@@ -167,4 +167,14 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
     _dumpSoap (aMessageMetadata, aState);
     return AS4SignalMessageProcessorResult.createSuccess ();
   }
+
+  public void processAS4ResponseMessage (final IAS4IncomingMessageMetadata aMessageMetadata,
+                                         final IAS4MessageState aState,
+                                         final String sResponseMessageID,
+                                         final byte [] aResponseBytes,
+                                         final boolean bResponsePayloadIsAvailable)
+  {
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("Sending AS4 response with ID '" + sResponseMessageID + "'");
+  }
 }
