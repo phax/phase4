@@ -36,7 +36,8 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
- * Implement this SPI interface to handle incoming messages appropriate
+ * Implement this SPI interface to handle incoming messages appropriate.<br>
+ * TODO Major release: remove Serializable
  *
  * @author Philip Helger
  */
