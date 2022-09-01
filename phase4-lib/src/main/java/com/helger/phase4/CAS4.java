@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.xsds.xmldsig.CXMLDSig;
 
 /**
  * AS4 constants
@@ -37,13 +38,17 @@ public final class CAS4
 
   // XSD
   public static final String PATH_SCHEMATA = "/schemas/";
-  public static final ClassPathResource XSD_EBMS_HEADER = new ClassPathResource (PATH_SCHEMATA + "ebms-header-3_0-200704.xsd", _getCL ());
-  public static final ClassPathResource XSD_EBBP_SIGNALS = new ClassPathResource (PATH_SCHEMATA + "ebbp-signals-2.0.4.xsd", _getCL ());
+  public static final ClassPathResource XSD_EBMS_HEADER = new ClassPathResource (PATH_SCHEMATA +
+                                                                                 "ebms-header-3_0-200704.xsd",
+                                                                                 _getCL ());
+  public static final ClassPathResource XSD_EBBP_SIGNALS = new ClassPathResource (PATH_SCHEMATA +
+                                                                                  "ebbp-signals-2.0.4.xsd",
+                                                                                  _getCL ());
   public static final ClassPathResource XSD_SOAP11 = new ClassPathResource (PATH_SCHEMATA + "soap11.xsd", _getCL ());
   public static final ClassPathResource XSD_SOAP12 = new ClassPathResource (PATH_SCHEMATA + "soap12.xsd", _getCL ());
 
   // Namespaces
-  public static final String DS_NS = "http://www.w3.org/2000/09/xmldsig#";
+  public static final String DS_NS = CXMLDSig.NAMESPACE_URI;
   public static final String DSISG11_NS = "http://www.w3.org/2009/xmldsig11#";
   public static final String EBBP_NS = "http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0";
   public static final String EBMS_NS = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/";

@@ -97,6 +97,7 @@ import com.helger.phase4.model.MEPHelper;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.servlet.mgr.AS4ServletMessageProcessorManager;
@@ -1109,8 +1110,8 @@ public class AS4RequestHandler implements AutoCloseable
     if (aLeg.hasSecurity ())
       if (aLeg.getSecurity ().isSendReceiptNonRepudiationDefined ())
         return aLeg.getSecurity ().isSendReceiptNonRepudiation ();
-    // Default behavior
-    return false;
+    // Default behavior is "false"
+    return PModeLegSecurity.DEFAULT_SEND_RECEIPT_NON_REPUDIATION;
   }
 
   /**
