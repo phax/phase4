@@ -170,10 +170,10 @@ public final class AS4DumpReader
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
     try (final WebScoped w = new WebScoped ();
-         final AS4RequestHandler rh = new AS4RequestHandler (aCF,
-                                                             DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-                                                             IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
-                                                             new AS4IncomingMessageMetadata (EAS4MessageMode.REQUEST)))
+        final AS4RequestHandler rh = new AS4RequestHandler (aCF,
+                                                            DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
+                                                            IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
+                                                            new AS4IncomingMessageMetadata (EAS4MessageMode.REQUEST)))
     {
       final IAS4ServletMessageProcessorSPI aSPI = new IAS4ServletMessageProcessorSPI ()
       {
@@ -199,7 +199,8 @@ public final class AS4DumpReader
 
               // Invoke the consumer
               aDecryptedConsumer.accept (nIndex, aDecryptedBytes);
-              LOGGER.info ("Handled decrypted payload #" + nIndex + " with " + aDecryptedBytes.length + " bytes");
+              if (LOGGER.isInfoEnabled ())
+                LOGGER.info ("Handled decrypted payload #" + nIndex + " with " + aDecryptedBytes.length + " bytes");
 
               nIndex++;
             }
