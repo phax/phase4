@@ -204,6 +204,7 @@ public interface IAS4MessageState
    * @return <code>true</code> of a decrypted SOAP document is present,
    *         <code>false</code> if not.
    * @see #getDecryptedSoapDocument()
+   * @see #getOriginalSoapDocument()
    */
   default boolean hasDecryptedSoapDocument ()
   {
