@@ -40,6 +40,7 @@ import com.helger.phase4.marshaller.XMLDSigReaderBuilder;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
+import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.xmldsig.ReferenceType;
 
 /**
@@ -161,11 +162,26 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
       {
         // Read XMLDsig Reference
         final ReferenceType aRefObj = XMLDSigReaderBuilder.dsigReference ().read (aRef);
-
-        // Add to NR response
-        final MessagePartNRInformation aMessagePartNRInformation = new MessagePartNRInformation ();
-        aMessagePartNRInformation.setReference (aRefObj);
-        aNonRepudiationInformation.addMessagePartNRInformation (aMessagePartNRInformation);
+        if (aRefObj == null)
+        {
+          if (LOGGER.isErrorEnabled ())
+          {
+            LOGGER.error ("Failed to read the content of the 'Reference' node as an XMLDsig Reference object: " +
+                          aRef +
+                          " / " +
+                          XMLWriter.getNodeAsString (aRef));
+            LOGGER.error ("This will most likely end in invalid non-repudiation of receipt information for AS4 message ID '" +
+                          sMessageID +
+                          "'!");
+          }
+        }
+        else
+        {
+          // Add to NR response
+          final MessagePartNRInformation aMessagePartNRInformation = new MessagePartNRInformation ();
+          aMessagePartNRInformation.setReference (aRefObj);
+          aNonRepudiationInformation.addMessagePartNRInformation (aMessagePartNRInformation);
+        }
       }
 
       aEbms3Receipt.addAny (Ebms3WriterBuilder.nonRepudiationInformation ()
