@@ -73,12 +73,23 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     return m_aSignalMessage;
   }
 
+  /**
+   * Extract all "ds:Reference" nodes from the passed SOAP document. This method
+   * search ins
+   * "{soapDocument}/Envelop/Header/Security/Signature/SignedInfo".<br>
+   * Note: use <code> XMLDSigReaderBuilder.dsigReference ().read (aRef)</code>
+   * to read the content
+   *
+   * @param aSoapDocument
+   *        The SOAP document to search in. May be <code>null</code>.
+   * @return A non-<code>null</code> but maybe empty list of Reference nodes.
+   */
   @Nonnull
   @ReturnsMutableCopy
-  private static ICommonsList <Node> _getAllReferences (@Nullable final Node aUserMessage)
+  public static ICommonsList <Node> getAllDSigReferences (@Nullable final Node aSoapDocument)
   {
     final ICommonsList <Node> aDSRefs = new CommonsArrayList <> ();
-    Node aNext = XMLHelper.getFirstChildElementOfName (aUserMessage, "Envelope");
+    Node aNext = XMLHelper.getFirstChildElementOfName (aSoapDocument, "Envelope");
     if (aNext != null)
     {
       aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
@@ -93,7 +104,8 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
             aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "SignedInfo");
             if (aNext != null)
             {
-              new ChildElementIterator (aNext).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (CAS4.DS_NS, "Reference"),
+              new ChildElementIterator (aNext).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (CAS4.DS_NS,
+                                                                                                          "Reference"),
                                                         aDSRefs::add);
             }
           }
@@ -127,7 +139,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
                                           @Nonnull final boolean bShouldUseNonRepudiation)
   {
     // Only for signed messages
-    final ICommonsList <Node> aDSRefs = _getAllReferences (aSoapDocument);
+    final ICommonsList <Node> aDSRefs = getAllDSigReferences (aSoapDocument);
 
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
@@ -169,7 +181,9 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 
       // If the original usermessage is not signed, the receipt will contain the
       // original message part without wss4j security
-      aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessage).getAsSoapDocument ().getDocumentElement ());
+      aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessage)
+                                          .getAsSoapDocument ()
+                                          .getDocumentElement ());
     }
     aSignalMessage.setReceipt (aEbms3Receipt);
 
