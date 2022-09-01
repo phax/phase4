@@ -18,6 +18,7 @@ package com.helger.phase4.server.servlet;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
 import java.util.Locale;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.commons.debug.GlobalDebug;
+import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.mime.CMimeType;
 import com.helger.httpclient.HttpDebugger;
@@ -116,7 +118,8 @@ public final class AS4WebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+    if (CommandMap.getDefaultCommandMap ()
+                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -145,6 +148,17 @@ public final class AS4WebAppListener extends WebAppListener
   private static void _initAS4 ()
   {
     AS4ServerInitializer.initAS4Server ();
+
+    // Check if crypto properties are okay
+    final KeyStore aKS = AS4CryptoFactoryProperties.getDefaultInstance ().getKeyStore ();
+    if (aKS == null)
+      throw new InitializationException ("Failed to load configured AS4 Key store - fix the configuration");
+    LOGGER.info ("Successfully loaded configured AS4 key store from the crypto factory");
+
+    final KeyStore.PrivateKeyEntry aPKE = AS4CryptoFactoryProperties.getDefaultInstance ().getPrivateKeyEntry ();
+    if (aPKE == null)
+      throw new InitializationException ("Failed to load configured AS4 private key - fix the configuration");
+    LOGGER.info ("Successfully loaded configured AS4 private key from the crypto factory");
 
     // Store the incoming file as is
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ( (aMessageMetadata,
