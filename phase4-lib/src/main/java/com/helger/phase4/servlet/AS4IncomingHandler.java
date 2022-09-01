@@ -686,16 +686,16 @@ public class AS4IncomingHandler
           throw new Phase4Exception ("No AS4 P-Mode configuration found for pull-request!");
       }
 
-      final boolean bUseDecryptedSOAP = aState.hasDecryptedSoapDocument ();
-      final Document aRealSOAPDoc = bUseDecryptedSOAP ? aState.getDecryptedSoapDocument () : aSoapDocument;
-      assert aRealSOAPDoc != null;
+      final boolean bUseDecryptedSoap = aState.hasDecryptedSoapDocument ();
+      final Document aRealSoapDoc = bUseDecryptedSoap ? aState.getDecryptedSoapDocument () : aSoapDocument;
+      assert aRealSoapDoc != null;
 
       // Find SOAP body (mandatory according to SOAP XSD)
-      final Node aBodyNode = XMLHelper.getFirstChildElementOfName (aRealSOAPDoc.getDocumentElement (),
+      final Node aBodyNode = XMLHelper.getFirstChildElementOfName (aRealSoapDoc.getDocumentElement (),
                                                                    eSoapVersion.getNamespaceURI (),
                                                                    eSoapVersion.getBodyElementName ());
       if (aBodyNode == null)
-        throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
+        throw new Phase4Exception ((bUseDecryptedSoap ? "Decrypted" : "Original") +
                                    " SOAP document is missing a Body element");
 
       aState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
