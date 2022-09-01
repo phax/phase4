@@ -124,7 +124,7 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    *        Incoming message metadata. Never <code>null</code>.
    * @param aState
    *        The current message state. Can be used to determine all other things
-   *        potentially necessary for processing the incoming message. Never
+   *        potentially necessary for processing the response message. Never
    *        <code>null</code>.
    * @param sResponseMessageID
    *        The AS4 message ID of the response. Neither <code>null</code> nor
@@ -137,7 +137,9 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    *        <code>false</code> than the response bytes are <code>null</code>.
    *        Special case: if this is <code>true</code> and response bytes is
    *        <code>null</code> than most likely the response entity is not
-   *        repeatable and cannot be handled more than once.
+   *        repeatable and cannot be handled more than once - that's why it is
+   *        <code>null</code> here in this callback, but non-<code>null</code>
+   *        in the originally returned message.
    * @since v0.9.8
    */
   default void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
