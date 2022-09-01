@@ -84,10 +84,11 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
    * @param aSoapDocument
    *        The SOAP document to search in. May be <code>null</code>.
    * @return A non-<code>null</code> but maybe empty list of Reference nodes.
+   * @see #getAllDSigReferences(Node)
    */
   @Nonnull
   @ReturnsMutableCopy
-  public static ICommonsList <Node> getAllDSigReferences (@Nullable final Node aSoapDocument)
+  public static ICommonsList <Node> getAllDSigReferenceNodes (@Nullable final Node aSoapDocument)
   {
     final ICommonsList <Node> aDSRefs = new CommonsArrayList <> ();
     Node aNext = XMLHelper.getFirstChildElementOfName (aSoapDocument, "Envelope");
@@ -117,6 +118,43 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
   }
 
   /**
+   * This is the typed version of {@link #getAllDSigReferenceNodes(Node)}
+   *
+   * @param aSoapDocument
+   *        The SOAP document to search in. May be <code>null</code>.
+   * @return A non-<code>null</code> but maybe empty list of
+   *         {@link ReferenceType} object.
+   */
+  @Nonnull
+  @ReturnsMutableCopy
+  public static ICommonsList <ReferenceType> getAllDSigReferences (@Nullable final Node aSoapDocument)
+  {
+    final ICommonsList <ReferenceType> ret = new CommonsArrayList <> ();
+    for (final Node aRefNode : getAllDSigReferenceNodes (aSoapDocument))
+    {
+      // Read XMLDsig Reference
+      final ReferenceType aRefObj = XMLDSigReaderBuilder.dsigReference ().read (aRefNode);
+      if (aRefObj == null)
+      {
+        if (LOGGER.isErrorEnabled ())
+        {
+          LOGGER.error ("Failed to read the content of the 'Reference' node as an XMLDsig Reference object: " +
+                        aRefNode +
+                        " / " +
+                        XMLWriter.getNodeAsString (aRefNode));
+          LOGGER.error ("This will most likely end in invalid non-repudiation of receipt information!");
+        }
+      }
+      else
+      {
+        // Safe to remember
+        ret.add (aRefObj);
+      }
+    }
+    return ret;
+  }
+
+  /**
    * This method creates a receipt message.
    *
    * @param eSoapVersion
@@ -140,7 +178,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
                                           @Nonnull final boolean bShouldUseNonRepudiation)
   {
     // Only for signed messages
-    final ICommonsList <Node> aDSRefs = getAllDSigReferences (aSoapDocument);
+    final ICommonsList <ReferenceType> aDSRefs = getAllDSigReferences (aSoapDocument);
 
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
@@ -158,30 +196,12 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     if (aDSRefs.isNotEmpty () && bShouldUseNonRepudiation)
     {
       final NonRepudiationInformation aNonRepudiationInformation = new NonRepudiationInformation ();
-      for (final Node aRef : aDSRefs)
+      for (final ReferenceType aRef : aDSRefs)
       {
-        // Read XMLDsig Reference
-        final ReferenceType aRefObj = XMLDSigReaderBuilder.dsigReference ().read (aRef);
-        if (aRefObj == null)
-        {
-          if (LOGGER.isErrorEnabled ())
-          {
-            LOGGER.error ("Failed to read the content of the 'Reference' node as an XMLDsig Reference object: " +
-                          aRef +
-                          " / " +
-                          XMLWriter.getNodeAsString (aRef));
-            LOGGER.error ("This will most likely end in invalid non-repudiation of receipt information for AS4 message ID '" +
-                          sMessageID +
-                          "'!");
-          }
-        }
-        else
-        {
-          // Add to NR response
-          final MessagePartNRInformation aMessagePartNRInformation = new MessagePartNRInformation ();
-          aMessagePartNRInformation.setReference (aRefObj);
-          aNonRepudiationInformation.addMessagePartNRInformation (aMessagePartNRInformation);
-        }
+        // Add to NR response
+        final MessagePartNRInformation aMessagePartNRInformation = new MessagePartNRInformation ();
+        aMessagePartNRInformation.setReference (aRef);
+        aNonRepudiationInformation.addMessagePartNRInformation (aMessagePartNRInformation);
       }
 
       aEbms3Receipt.addAny (Ebms3WriterBuilder.nonRepudiationInformation ()
