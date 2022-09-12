@@ -84,11 +84,11 @@ public final class Phase4KeyStoreCallbackHandler implements CallbackHandler
       {
         final WSPasswordCallback aPasswordCallback = (WSPasswordCallback) aCallback;
 
-        // Use case insensitive compare, depends on the keystore type
-        if (m_aCryptoFactory.getKeyAlias ().equalsIgnoreCase (aPasswordCallback.getIdentifier ()))
+        // Obtain the password from the crypto factory
+        String aKeyPassword = m_aCryptoFactory.getKeyPassword (aPasswordCallback.getIdentifier ());
+        if (aKeyPassword != null)
         {
-          aPasswordCallback.setPassword (m_aCryptoFactory.getKeyPassword ());
-          if (LOGGER.isInfoEnabled ())
+        	aPasswordCallback.setPassword (m_aCryptoFactory.getKeyPassword ());
             LOGGER.info ("Found keystore password for alias '" +
                          aPasswordCallback.getIdentifier () +
                          "' and usage " +
@@ -96,11 +96,10 @@ public final class Phase4KeyStoreCallbackHandler implements CallbackHandler
         }
         else
         {
-          if (LOGGER.isWarnEnabled ())
-            LOGGER.warn ("Found unsupported keystore alias '" +
-                         aPasswordCallback.getIdentifier () +
-                         "' and usage " +
-                         _getUsage (aPasswordCallback.getUsage ()));
+        	LOGGER.warn ("Found unsupported keystore alias '" +
+                    aPasswordCallback.getIdentifier () +
+                    "' and usage " +
+                    _getUsage (aPasswordCallback.getUsage ()));
         }
       }
       else
