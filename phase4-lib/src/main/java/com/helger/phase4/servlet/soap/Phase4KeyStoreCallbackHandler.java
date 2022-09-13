@@ -89,17 +89,19 @@ public final class Phase4KeyStoreCallbackHandler implements CallbackHandler
         if (aKeyPassword != null)
         {
         	aPasswordCallback.setPassword (m_aCryptoFactory.getKeyPassword ());
-            LOGGER.info ("Found keystore password for alias '" +
-                         aPasswordCallback.getIdentifier () +
-                         "' and usage " +
-                         _getUsage (aPasswordCallback.getUsage ()));
+        	if (LOGGER.isInfoEnabled ())
+              LOGGER.info ("Found keystore password for alias '" +
+                           aPasswordCallback.getIdentifier () +
+                           "' and usage " +
+                           _getUsage (aPasswordCallback.getUsage ()));
         }
         else
         {
-        	LOGGER.warn ("Found unsupported keystore alias '" +
-                    aPasswordCallback.getIdentifier () +
-                    "' and usage " +
-                    _getUsage (aPasswordCallback.getUsage ()));
+        	if (LOGGER.isWarnEnabled ())
+        	  LOGGER.warn ("Found unsupported keystore alias '" +
+                           aPasswordCallback.getIdentifier () +
+                           "' and usage " +
+                           _getUsage (aPasswordCallback.getUsage ()));
         }
       }
       else
