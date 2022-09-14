@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +51,8 @@ import com.helger.phase4.util.Phase4Exception;
  *
  * @author Philip Helger
  */
-public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseConsumer <AS4RawResponseConsumerWriteToFile>
+public class AS4RawResponseConsumerWriteToFile extends
+                                               AbstractAS4RawResponseConsumer <AS4RawResponseConsumerWriteToFile>
 {
   /**
    * Callback interface to create a file based on the provided metadata.
@@ -96,6 +99,7 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4RawResponseConsumerWriteToFile.class);
 
   private final IFileProvider m_aFileProvider;
+  private Consumer <? super File> m_aFileOpenCallback;
 
   /**
    * Default constructor. Writes the files to the AS4 configured data path +
@@ -106,7 +110,8 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
   public AS4RawResponseConsumerWriteToFile ()
   {
     this (sMessageID -> new File (AS4Configuration.getDumpBasePathFile (),
-                                  AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID)));
+                                  AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH +
+                                                                           IFileProvider.getFilename (sMessageID)));
   }
 
   /**
@@ -120,6 +125,33 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
   {
     ValueEnforcer.notNull (aFileProvider, "FileProvider");
     m_aFileProvider = aFileProvider;
+  }
+
+  /**
+   * @return The optional callback that is invoked for every file that is
+   *         opened. This may be used to grab the effective filename. May be
+   *         <code>null</code>.
+   * @since 1.4.1
+   */
+  @Nullable
+  public final Consumer <? super File> getFileOpenCallback ()
+  {
+    return m_aFileOpenCallback;
+  }
+
+  /**
+   * Set the callback to be invoked every time a File is opened for writing.
+   *
+   * @param aFileOpenCallback
+   *        The callback to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 1.4.1
+   */
+  @Nonnull
+  public final AS4RawResponseConsumerWriteToFile setFileOpenCallback (@Nonnull final Consumer <? super File> aFileOpenCallback)
+  {
+    m_aFileOpenCallback = aFileOpenCallback;
+    return this;
   }
 
   public void handleResponse (@Nonnull final AS4ClientSentMessage <byte []> aResponseEntity) throws Phase4Exception
@@ -136,6 +168,9 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
       final File aResponseFile = m_aFileProvider.createFile (sSentMessageID);
       if (LOGGER.isInfoEnabled ())
         LOGGER.info ("Logging AS4 response to '" + aResponseFile.getAbsolutePath () + "'");
+
+      if (m_aFileOpenCallback != null)
+        m_aFileOpenCallback.accept (aResponseFile);
 
       try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aResponseFile))
       {
@@ -156,7 +191,10 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
               // By default quoting is disabled
               final boolean bQuoteIfNecessary = false;
               final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
-              aOS.write ((sHeader + HttpHeaderMap.SEPARATOR_KEY_VALUE + sUnifiedValue + CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+              aOS.write ((sHeader +
+                          HttpHeaderMap.SEPARATOR_KEY_VALUE +
+                          sUnifiedValue +
+                          CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
             }
           }
         }
@@ -192,6 +230,7 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
   public static AS4RawResponseConsumerWriteToFile createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4RawResponseConsumerWriteToFile (sMessageID -> new File (aBaseDirectory, IFileProvider.getFilename (sMessageID)));
+    return new AS4RawResponseConsumerWriteToFile (sMessageID -> new File (aBaseDirectory,
+                                                                          IFileProvider.getFilename (sMessageID)));
   }
 }
