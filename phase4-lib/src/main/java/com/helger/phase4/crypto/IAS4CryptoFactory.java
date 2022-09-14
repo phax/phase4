@@ -77,23 +77,25 @@ public interface IAS4CryptoFactory
    */
   @Nullable
   KeyStore getTrustStore ();
-  
+
   /**
    * Returns the password for the key represented by the provided alias.
-   * 
-   * @param keyAlias The alias of the key whose password is to be retrieved.
-   * @return The password for the key represented by the provided by the alias or
-   *         <code>null</code> if the factory doesn't have a password for the key.
+   *
+   * @param sSearchKeyAlias
+   *        The alias of the key whose password is to be retrieved.
+   * @return The password for the key represented by the provided by the alias
+   *         or <code>null</code> if the factory doesn't have a password for the
+   *         key.
+   * @since 1.4.1
    */
   @Nullable
-  default String getKeyPassword(String keyAlias)
+  default String getKeyPasswordPerAlias (@Nullable final String sSearchKeyAlias)
   {
-	// Use case insensitive compare, depends on the keystore type
-	if (this.getKeyAlias().equalsIgnoreCase(keyAlias))
-	{
-	  return this.getKeyPassword();
-	}
-	  
-	return null;
+    // Use case insensitive compare, depends on the keystore type
+    final String sMyKeyAlias = getKeyAlias ();
+    if (sMyKeyAlias != null && sSearchKeyAlias != null && sMyKeyAlias.equalsIgnoreCase (sSearchKeyAlias))
+      return getKeyPassword ();
+
+    return null;
   }
 }

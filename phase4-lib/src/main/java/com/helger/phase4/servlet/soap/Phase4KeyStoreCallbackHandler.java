@@ -73,7 +73,7 @@ public final class Phase4KeyStoreCallbackHandler implements CallbackHandler
       case WSPasswordCallback.PASSWORD_ENCRYPTOR_PASSWORD:
         return "PASSWORD_ENCRYPTOR_PASSWORD";
     }
-    return "Unknown usage value" + nUsage;
+    return "Unknown usage value " + nUsage;
   }
 
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
@@ -84,14 +84,16 @@ public final class Phase4KeyStoreCallbackHandler implements CallbackHandler
       {
         final WSPasswordCallback aPasswordCallback = (WSPasswordCallback) aCallback;
 
+        final String sKeyStoreAlias = aPasswordCallback.getIdentifier ();
+
         // Obtain the password from the crypto factory
-        String aKeyPassword = m_aCryptoFactory.getKeyPassword (aPasswordCallback.getIdentifier ());
-        if (aKeyPassword != null)
+        final String sKeyPassword = m_aCryptoFactory.getKeyPasswordPerAlias (sKeyStoreAlias);
+        if (sKeyPassword != null)
         {
-          aPasswordCallback.setPassword (aKeyPassword);
+          aPasswordCallback.setPassword (sKeyPassword);
           if (LOGGER.isInfoEnabled ())
             LOGGER.info ("Found keystore password for alias '" +
-                         aPasswordCallback.getIdentifier () +
+                         sKeyStoreAlias +
                          "' and usage " +
                          _getUsage (aPasswordCallback.getUsage ()));
         }
@@ -99,7 +101,7 @@ public final class Phase4KeyStoreCallbackHandler implements CallbackHandler
         {
           if (LOGGER.isWarnEnabled ())
             LOGGER.warn ("Found unsupported keystore alias '" +
-                         aPasswordCallback.getIdentifier () +
+                         sKeyStoreAlias +
                          "' and usage " +
                          _getUsage (aPasswordCallback.getUsage ()));
         }
