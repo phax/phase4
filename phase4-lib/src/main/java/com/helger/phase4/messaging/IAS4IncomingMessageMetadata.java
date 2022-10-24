@@ -45,6 +45,8 @@ public interface IAS4IncomingMessageMetadata
   /**
    * @return A unique ID created just for this message metadata. It can be used
    *         to reference to this message internally. Usually this is a UUID.
+   *         This is different from the AS4 message ID, because in case of a
+   *         corrupted message, the AS4 message ID may be missing or misplaced.
    *         Never <code>null</code> nor empty.
    */
   @Nonnull
