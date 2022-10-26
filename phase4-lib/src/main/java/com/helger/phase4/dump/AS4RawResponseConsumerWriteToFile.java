@@ -174,42 +174,48 @@ public class AS4RawResponseConsumerWriteToFile extends
 
       try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aResponseFile))
       {
-        if (bUseStatusLine)
+        // May fail to open the file
+        if (aOS != null)
         {
-          // Write the status line
-          aOS.write (aResponseEntity.getResponseStatusLine ().toString ().getBytes (CHttp.HTTP_CHARSET));
-        }
-
-        if (bUseHttpHeaders)
-        {
-          // Write the response headers
-          for (final Map.Entry <String, ICommonsList <String>> aEntry : aResponseEntity.getResponseHeaders ())
+          if (bUseStatusLine)
           {
-            final String sHeader = aEntry.getKey ();
-            for (final String sValue : aEntry.getValue ())
+            // Write the status line
+            aOS.write (aResponseEntity.getResponseStatusLine ().toString ().getBytes (CHttp.HTTP_CHARSET));
+          }
+
+          if (bUseHttpHeaders)
+          {
+            // Write the response headers
+            for (final Map.Entry <String, ICommonsList <String>> aEntry : aResponseEntity.getResponseHeaders ())
             {
-              // By default quoting is disabled
-              final boolean bQuoteIfNecessary = false;
-              final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
-              aOS.write ((sHeader +
-                          HttpHeaderMap.SEPARATOR_KEY_VALUE +
-                          sUnifiedValue +
-                          CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+              final String sHeader = aEntry.getKey ();
+              for (final String sValue : aEntry.getValue ())
+              {
+                // By default quoting is disabled
+                final boolean bQuoteIfNecessary = false;
+                final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
+                aOS.write ((sHeader +
+                            HttpHeaderMap.SEPARATOR_KEY_VALUE +
+                            sUnifiedValue +
+                            CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+              }
             }
           }
-        }
 
-        if ((bUseStatusLine || bUseHttpHeaders) && bUseBody)
-        {
-          // Separator line
-          aOS.write (CHttp.EOL.getBytes (CHttp.HTTP_CHARSET));
-        }
+          if ((bUseStatusLine || bUseHttpHeaders) && bUseBody)
+          {
+            // Separator line
+            aOS.write (CHttp.EOL.getBytes (CHttp.HTTP_CHARSET));
+          }
 
-        if (bUseBody)
-        {
-          // Write the main content
-          aOS.write (aResponseEntity.getResponse ());
+          if (bUseBody)
+          {
+            // Write the main content
+            aOS.write (aResponseEntity.getResponse ());
+          }
         }
+        else
+          LOGGER.error ("Failed to open the AS4 response file '" + aResponseFile.getAbsolutePath () + "' for writing!");
       }
       catch (final IOException ex)
       {
