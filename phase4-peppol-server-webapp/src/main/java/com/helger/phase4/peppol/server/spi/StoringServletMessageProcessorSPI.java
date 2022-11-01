@@ -17,7 +17,6 @@
 package com.helger.phase4.peppol.server.spi;
 
 import java.io.File;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 
@@ -69,12 +68,12 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
   {
     // Write formatted SOAP
     {
-      final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
       final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument ()
                                                                    : aState.getOriginalSoapDocument ();
       final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc,
                                                        new XMLWriterSettings ().setNamespaceContext (Ebms3NamespaceHandler.getInstance ())
                                                                                .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
+      final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
       {
         LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
@@ -115,12 +114,11 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".attachment" + nIndex);
     LOGGER.info ("Start writing incoming Attachment " + nIndex + " to '" + aFile.getAbsolutePath () + "'");
 
-    final OutputStream aFOS = FileHelper.getOutputStream (aFile);
     final MutableLong aCopyCount = new MutableLong (0);
     if (StreamHelper.copyByteStream ()
                     .from (aIncomingAttachment.getInputStreamProvider ().getInputStream ())
                     .closeFrom (true)
-                    .to (aFOS)
+                    .to (FileHelper.getOutputStream (aFile))
                     .closeTo (true)
                     .copyByteCount (aCopyCount)
                     .build ()
@@ -156,7 +154,8 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
                                                           @Nonnull final IAS4MessageState aState,
                                                           @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
-    LOGGER.info ("Received AS4 user message");
+    LOGGER.info ("Received AS4 UserMessage");
+
     _dumpSoap (aMessageMetadata, aState);
 
     // Dump all incoming attachments (but only if they are repeatable)
@@ -170,6 +169,8 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
         nAttachmentIndex++;
       }
     }
+
+    LOGGER.info ("Finished receiving AS4 user message");
     return AS4MessageProcessorResult.createSuccess ();
   }
 
@@ -181,11 +182,14 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
                                                                   @Nonnull final IAS4MessageState aState,
                                                                   @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
+    LOGGER.info ("Received AS4 SignalMessage");
+
     if (aSignalMessage.getReceipt () != null)
     {
       // Receipt - just acknowledge
       LOGGER.info ("Received AS4 Receipt");
       _dumpSoap (aMessageMetadata, aState);
+      LOGGER.info ("Finished receiving AS4 Receipt");
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
@@ -194,18 +198,20 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
       // Error - just acknowledge
       LOGGER.info ("Received AS4 Error");
       _dumpSoap (aMessageMetadata, aState);
+      LOGGER.info ("Finished receiving AS4 Error");
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
     if (aSignalMessage.getPullRequest () != null)
     {
       // Must be a pull-request
-      LOGGER.info ("Received AS4 Pull-Request");
+      LOGGER.info ("Received AS4 PullRequest");
       _dumpSoap (aMessageMetadata, aState);
+      LOGGER.info ("Finished receiving AS4 PullRequest");
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
-    LOGGER.warn ("Received an unexpected signal message - see file");
+    LOGGER.warn ("Received an unexpected AS4 SignalMessage - see file");
     _dumpSoap (aMessageMetadata, aState);
     return AS4SignalMessageProcessorResult.createSuccess ();
   }
@@ -217,6 +223,8 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {
+    LOGGER.info ("Processing AS4 response message");
+
     if (aResponseBytes != null)
     {
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".response");
