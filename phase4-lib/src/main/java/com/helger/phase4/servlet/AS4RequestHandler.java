@@ -721,10 +721,9 @@ public class AS4RequestHandler implements AutoCloseable
                               aProcessingErrorMessages);
 
               if (aResult.isSuccess ())
-                if (LOGGER.isWarnEnabled ())
-                  LOGGER.warn ("Processing errors are present but success was returned by a previous AS4 message processor " +
-                               aProcessor +
-                               " - considering the whole processing to be failed instead");
+                LOGGER.warn ("Processing errors are present but success was returned by a previous AS4 message processor " +
+                             aProcessor +
+                             " - considering the whole processing to be failed instead");
 
               aErrorMessagesTarget.addAll (aProcessingErrorMessages);
             }
@@ -767,12 +766,11 @@ public class AS4RequestHandler implements AutoCloseable
                 return;
               }
               aSPIResult.setAsyncResponseURL (sAsyncResultURL);
-              if (LOGGER.isInfoEnabled ())
-                LOGGER.info ("Using asynchronous response URL '" +
-                             sAsyncResultURL +
-                             "' for message ID '" +
-                             sMessageID +
-                             "'");
+              LOGGER.info ("Using asynchronous response URL '" +
+                           sAsyncResultURL +
+                           "' for message ID '" +
+                           sMessageID +
+                           "'");
             }
           }
 
@@ -1325,10 +1323,9 @@ public class AS4RequestHandler implements AutoCloseable
                                                  .isBreak ();
       if (bIsDuplicate)
       {
-        if (LOGGER.isErrorEnabled ())
-          LOGGER.error ("Not invoking SPIs, because message with Message ID '" +
-                        sMessageID +
-                        "' was already handled (this is a duplicate)");
+        LOGGER.error ("Not invoking SPIs, because message with Message ID '" +
+                      sMessageID +
+                      "' was already handled (this is a duplicate)");
         aErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
                                                                          sMessageID,
                                                                          "Another message with the same Message ID '" +

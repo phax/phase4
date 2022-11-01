@@ -136,14 +136,11 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
       final ReferenceType aRefObj = XMLDSigReaderBuilder.dsigReference ().read (aRefNode);
       if (aRefObj == null)
       {
-        if (LOGGER.isErrorEnabled ())
-        {
-          LOGGER.error ("Failed to read the content of the 'Reference' node as an XMLDsig Reference object: " +
-                        aRefNode +
-                        " / " +
-                        XMLWriter.getNodeAsString (aRefNode));
-          LOGGER.error ("This will most likely end in invalid non-repudiation of receipt information!");
-        }
+        LOGGER.error ("Failed to read the content of the 'Reference' node as an XMLDsig Reference object: " +
+                      aRefNode +
+                      " / " +
+                      XMLWriter.getNodeAsString (aRefNode));
+        LOGGER.error ("This will most likely end in invalid non-repudiation of receipt information!");
       }
       else
       {

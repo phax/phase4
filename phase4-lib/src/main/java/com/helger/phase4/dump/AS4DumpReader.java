@@ -165,8 +165,7 @@ public final class AS4DumpReader
     if (aHttpHeaderConsumer != null)
       aHttpHeaderConsumer.accept (hm);
 
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Now at byte " + nHttpEnd + " having " + hm.getCount () + " HTTP headers");
+    LOGGER.info ("Now at byte " + nHttpEnd + " having " + hm.getCount () + " HTTP headers");
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
     try (final WebScoped w = new WebScoped ();
@@ -199,8 +198,7 @@ public final class AS4DumpReader
 
               // Invoke the consumer
               aDecryptedConsumer.accept (nIndex, aDecryptedBytes);
-              if (LOGGER.isInfoEnabled ())
-                LOGGER.info ("Handled decrypted payload #" + nIndex + " with " + aDecryptedBytes.length + " bytes");
+              LOGGER.info ("Handled decrypted payload #" + nIndex + " with " + aDecryptedBytes.length + " bytes");
 
               nIndex++;
             }

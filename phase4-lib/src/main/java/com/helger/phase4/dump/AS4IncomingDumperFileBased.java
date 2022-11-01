@@ -105,8 +105,9 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    */
   public AS4IncomingDumperFileBased ()
   {
-    this ( (aMessageMetadata, aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
-                                                           DEFAULT_BASE_PATH + IFileProvider.getFilename (aMessageMetadata)));
+    this ( (aMessageMetadata,
+            aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
+                                         DEFAULT_BASE_PATH + IFileProvider.getFilename (aMessageMetadata)));
   }
 
   /**
@@ -128,8 +129,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
                                            @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     final File aResponseFile = m_aFileProvider.createFile (aMessageMetadata, aHttpHeaderMap);
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Logging incoming AS4 message to '" + aResponseFile.getAbsolutePath () + "'");
+    LOGGER.info ("Logging incoming AS4 message to '" + aResponseFile.getAbsolutePath () + "'");
     return FileHelper.getBufferedOutputStream (aResponseFile);
   }
 
@@ -145,7 +145,8 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   public static AS4IncomingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4IncomingDumperFileBased ( (aMessageMetadata, aHttpHeaderMap) -> new File (aBaseDirectory,
-                                                                                            IFileProvider.getFilename (aMessageMetadata)));
+    return new AS4IncomingDumperFileBased ( (aMessageMetadata,
+                                             aHttpHeaderMap) -> new File (aBaseDirectory,
+                                                                          IFileProvider.getFilename (aMessageMetadata)));
   }
 }

@@ -323,12 +323,11 @@ public class AS4IncomingHandler
         }
         catch (final Exception ex)
         {
-          if (LOGGER.isErrorEnabled ())
-            LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" +
-                          aRealIncomingDumper +
-                          "; MessageMetadata=" +
-                          aMessageMetadata,
-                          ex);
+          LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" +
+                        aRealIncomingDumper +
+                        "; MessageMetadata=" +
+                        aMessageMetadata,
+                        ex);
         }
     }
   }
@@ -405,13 +404,12 @@ public class AS4IncomingHandler
         {
           // upon failure, the element stays unprocessed and sends back a signal
           // message with the errors
-          if (LOGGER.isErrorEnabled ())
-            LOGGER.error ("Failed to process SOAP header element " +
-                          aQName.toString () +
-                          " with processor " +
-                          aProcessor +
-                          "; error details: " +
-                          aErrorList);
+          LOGGER.error ("Failed to process SOAP header element " +
+                        aQName.toString () +
+                        " with processor " +
+                        aProcessor +
+                        "; error details: " +
+                        aErrorList);
 
           final String sRefToMessageID = aState.getMessageID ();
           final Locale aLocale = aState.getLocale ();
@@ -440,9 +438,8 @@ public class AS4IncomingHandler
       {
         // upon failure, the element stays unprocessed and sends back a signal
         // message with the errors
-        if (LOGGER.isErrorEnabled ())
-          LOGGER.error ("Error processing SOAP header element " + aQName.toString () + " with processor " + aProcessor,
-                        ex);
+        LOGGER.error ("Error processing SOAP header element " + aQName.toString () + " with processor " + aProcessor,
+                      ex);
 
         aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
                                                                    aState.getMessageID (),
@@ -521,12 +518,11 @@ public class AS4IncomingHandler
           {
             final String sMimeType = aProperty.getValue ();
             if (MimeTypeParser.safeParseMimeType (sMimeType) == null)
-              if (LOGGER.isWarnEnabled ())
-                LOGGER.warn ("Value '" +
-                             sMimeType +
-                             "' of property '" +
-                             MessageHelperMethods.PART_PROPERTY_MIME_TYPE +
-                             "' is not a valid MIME type");
+              LOGGER.warn ("Value '" +
+                           sMimeType +
+                           "' of property '" +
+                           MessageHelperMethods.PART_PROPERTY_MIME_TYPE +
+                           "' is not a valid MIME type");
             aIncomingAttachment.overwriteMimeType (sMimeType);
           }
         }
@@ -594,16 +590,15 @@ public class AS4IncomingHandler
                              (aEbmsError != null ? 1 : 0);
       if (nCountData != 1)
       {
-        if (LOGGER.isErrorEnabled ())
-          LOGGER.error ("Expected a UserMessage(" +
-                        (aEbmsUserMessage != null ? 1 : 0) +
-                        "), a PullRequest(" +
-                        (aEbmsPullRequest != null ? 1 : 0) +
-                        "), a Receipt(" +
-                        (aEbmsReceipt != null ? 1 : 0) +
-                        ") or an Error(" +
-                        (aEbmsError != null ? 1 : 0) +
-                        ")");
+        LOGGER.error ("Expected a UserMessage(" +
+                      (aEbmsUserMessage != null ? 1 : 0) +
+                      "), a PullRequest(" +
+                      (aEbmsPullRequest != null ? 1 : 0) +
+                      "), a Receipt(" +
+                      (aEbmsReceipt != null ? 1 : 0) +
+                      ") or an Error(" +
+                      (aEbmsError != null ? 1 : 0) +
+                      ")");
 
         // send EBMS:0001 error back
         aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale,
@@ -656,10 +651,9 @@ public class AS4IncomingHandler
             }
             else
             {
-              if (LOGGER.isWarnEnabled ())
-                LOGGER.warn ("The AS4 profile '" +
-                             sProfileID +
-                             "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
+              LOGGER.warn ("The AS4 profile '" +
+                           sProfileID +
+                           "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
             }
           }
         }

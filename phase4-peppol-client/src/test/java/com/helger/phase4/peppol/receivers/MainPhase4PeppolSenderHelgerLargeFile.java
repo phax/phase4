@@ -18,10 +18,12 @@ package com.helger.phase4.peppol.receivers;
 
 import java.io.File;
 
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.helger.httpclient.HttpClientSettings;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
@@ -29,6 +31,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
+import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
@@ -55,7 +58,7 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
-      final boolean bNoValidate = false;
+      final boolean bNoValidate = true;
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
@@ -63,6 +66,9 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
                                                                                    .setHandleHttpHeaders (true);
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
+                                  .httpClientFactory (new HttpClientSettings ().setRetryCount (0)
+                                                                               .setResponseTimeout (Timeout.ofMinutes (5)))
+                                  .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))

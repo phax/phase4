@@ -66,8 +66,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   private static void _checkDataType (@Nonnull final String sDataType)
   {
     if (!DATA_TYPE_STRING.equals (sDataType))
-      if (LOGGER.isWarnEnabled ())
-        LOGGER.warn ("A non-standard data type (everything besides '" + DATA_TYPE_STRING + "') is used: " + sDataType);
+      LOGGER.warn ("A non-standard data type (everything besides '" + DATA_TYPE_STRING + "') is used: " + sDataType);
   }
 
   public PModeProperty ()
@@ -235,7 +234,11 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_sName).append (m_sDescription).append (m_sDataType).append (m_eMandatory).getHashCode ();
+    return new HashCodeGenerator (this).append (m_sName)
+                                       .append (m_sDescription)
+                                       .append (m_sDataType)
+                                       .append (m_eMandatory)
+                                       .getHashCode ();
   }
 
   @Override

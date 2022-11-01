@@ -440,8 +440,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
         if (a.m_aPayloadBytes == null)
         {
-          if (LOGGER.isErrorEnabled ())
-            LOGGER.error (sLogPrefix + "Failed to decompress the payload");
+          LOGGER.error (sLogPrefix + "Failed to decompress the payload");
           aProcessingErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aDisplayLocale,
                                                                                                aState.getMessageID ()));
           return AS4MessageProcessorResult.createFailure (null);
@@ -459,8 +458,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
           if (aSBDHErrors.isEmpty ())
           {
             final String sMsg = "Failed to read the provided SBDH document";
-            if (LOGGER.isErrorEnabled ())
-              LOGGER.error (sLogPrefix + sMsg);
+            LOGGER.error (sLogPrefix + sMsg);
             aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
                                                                                  aState.getMessageID (),
                                                                                  sMsg));
@@ -470,8 +468,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
             for (final IError aError : aSBDHErrors)
             {
               final String sMsg = "Peppol SBDH Issue: " + aError.getAsString (aDisplayLocale);
-              if (LOGGER.isErrorEnabled ())
-                LOGGER.error (sLogPrefix + sMsg);
+              LOGGER.error (sLogPrefix + sMsg);
               aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
                                                                                    aState.getMessageID (),
                                                                                    sMsg));
@@ -508,8 +505,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       final String sMsg = "In Peppol exactly one payload attachment is expected. This request has " +
                           aReadAttachments.size () +
                           " attachments";
-      if (LOGGER.isErrorEnabled ())
-        LOGGER.error (sLogPrefix + sMsg);
+      LOGGER.error (sLogPrefix + sMsg);
       return AS4MessageProcessorResult.createFailure (sMsg);
     }
 
@@ -538,15 +534,13 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                           ex.getClass ().getName () +
                           " - " +
                           ex.getMessage ();
-      if (LOGGER.isErrorEnabled ())
-        LOGGER.error (sLogPrefix + sMsg);
+      LOGGER.error (sLogPrefix + sMsg);
       return AS4MessageProcessorResult.createFailure (sMsg);
     }
 
     if (m_aHandlers.isEmpty ())
     {
-      if (LOGGER.isErrorEnabled ())
-        LOGGER.error (sLogPrefix + "No SPI handler is present - the message is unhandled and discarded");
+      LOGGER.error (sLogPrefix + "No SPI handler is present - the message is unhandled and discarded");
     }
     else
     {
@@ -555,8 +549,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                                                                             : Phase4PeppolServletConfiguration.getAsReceiverCheckData ();
       if (aReceiverCheckData != null)
       {
-        if (LOGGER.isInfoEnabled ())
-          LOGGER.info (sLogPrefix + "Performing checks if the received data is registered in our SMP");
+        LOGGER.info (sLogPrefix + "Performing checks if the received data is registered in our SMP");
 
         try
         {
@@ -581,8 +574,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                 ")/transport profile (" +
                                 m_aTransportProfile.getID () +
                                 ") - not handling incoming AS4 document";
-            if (LOGGER.isErrorEnabled ())
-              LOGGER.error (sLogPrefix + sMsg);
+            LOGGER.error (sLogPrefix + sMsg);
             return AS4MessageProcessorResult.createFailure (sMsg);
           }
 
@@ -604,8 +596,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       }
       else
       {
-        if (LOGGER.isInfoEnabled ())
-          LOGGER.info (sLogPrefix + "Endpoint checks for incoming AS4 messages are disabled");
+        LOGGER.info (sLogPrefix + "Endpoint checks for incoming AS4 messages are disabled");
       }
 
       for (final IPhase4PeppolIncomingSBDHandlerSPI aHandler : m_aHandlers)

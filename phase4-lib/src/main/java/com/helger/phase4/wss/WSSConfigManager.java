@@ -63,8 +63,7 @@ public class WSSConfigManager extends AbstractGlobalSingleton
         bContainsAttachmentContentSignatureTransform &&
         bContainsAttachmentCompleteSignatureTransform)
     {
-      if (LOGGER.isInfoEnabled ())
-        LOGGER.info ("All WSSConfig Security Providers are installed and therefore don't need to be installed again");
+      LOGGER.info ("All WSSConfig Security Providers are installed and therefore don't need to be installed again");
       bAddJCEProviders = false;
     }
     else
@@ -77,18 +76,16 @@ public class WSSConfigManager extends AbstractGlobalSingleton
       {
         // None of them is registered - that is understandable and we're
         // registering them now
-        if (LOGGER.isInfoEnabled ())
-          LOGGER.info ("None of the WSSConfig Security Providers is already installed - doing it now");
+        LOGGER.info ("None of the WSSConfig Security Providers is already installed - doing it now");
       }
       else
       {
-        if (LOGGER.isWarnEnabled ())
-          LOGGER.warn ("Some of the WSSConfig Security Providers are already installed - replacing them now. STRTransform=" +
-                       bContainsSTRTransform +
-                       "; AttachmentContentSignatureTransform=" +
-                       bContainsAttachmentContentSignatureTransform +
-                       "; AttachmentCompleteSignatureTransform=" +
-                       bContainsAttachmentCompleteSignatureTransform);
+        LOGGER.warn ("Some of the WSSConfig Security Providers are already installed - replacing them now. STRTransform=" +
+                     bContainsSTRTransform +
+                     "; AttachmentContentSignatureTransform=" +
+                     bContainsAttachmentContentSignatureTransform +
+                     "; AttachmentCompleteSignatureTransform=" +
+                     bContainsAttachmentCompleteSignatureTransform);
       }
     }
     WSSConfig.setAddJceProviders (bAddJCEProviders);
@@ -102,10 +99,9 @@ public class WSSConfigManager extends AbstractGlobalSingleton
   protected void onBeforeDestroy (final IScope aScopeToBeDestroyed) throws Exception
   {
     // Cleanup WSSConfig
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Cleaning up WSSConfig." +
-                   (WSSConfig.isAddJceProviders () ? " Security Providers will also be removed."
-                                                   : " Security Providers were not installed by us."));
+    LOGGER.info ("Cleaning up WSSConfig." +
+                 (WSSConfig.isAddJceProviders () ? " Security Providers will also be removed."
+                                                 : " Security Providers were not installed by us."));
     WSSConfig.cleanUp ();
 
     if (LOGGER.isDebugEnabled ())

@@ -76,17 +76,16 @@ public final class AS4Signer
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aSigningParams, "SigningParams");
 
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Now signing AS4 message. KeyIdentifierType=" +
-                   aSigningParams.getKeyIdentifierType ().name () +
-                   "; KeyAlias=" +
-                   aCryptoFactory.getKeyAlias () +
-                   "; SignAlgo=" +
-                   aSigningParams.getAlgorithmSign ().getAlgorithmURI () +
-                   "; DigestAlgo=" +
-                   aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI () +
-                   "; C14NAlgo=" +
-                   aSigningParams.getAlgorithmC14N ().getAlgorithmURI ());
+    LOGGER.info ("Now signing AS4 message. KeyIdentifierType=" +
+                 aSigningParams.getKeyIdentifierType ().name () +
+                 "; KeyAlias=" +
+                 aCryptoFactory.getKeyAlias () +
+                 "; SignAlgo=" +
+                 aSigningParams.getAlgorithmSign ().getAlgorithmURI () +
+                 "; DigestAlgo=" +
+                 aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI () +
+                 "; C14NAlgo=" +
+                 aSigningParams.getAlgorithmC14N ().getAlgorithmURI ());
 
     // Start signing the document
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);

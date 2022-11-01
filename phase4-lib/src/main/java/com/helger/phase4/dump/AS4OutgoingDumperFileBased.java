@@ -136,8 +136,7 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
                                            @Nonnegative final int nTry) throws IOException
   {
     final File aResponseFile = m_aFileProvider.getFile (eMsgMode, sMessageID, nTry);
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Logging outgoing AS4 message to '" + aResponseFile.getAbsolutePath () + "'");
+    LOGGER.info ("Logging outgoing AS4 message to '" + aResponseFile.getAbsolutePath () + "'");
     return FileHelper.getBufferedOutputStream (aResponseFile);
   }
 
@@ -153,7 +152,9 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   public static AS4OutgoingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> new File (aBaseDirectory,
-                                                                                      IFileProvider.getFilename (sMessageID, nTry)));
+    return new AS4OutgoingDumperFileBased ( (eMsgMode,
+                                             sMessageID,
+                                             nTry) -> new File (aBaseDirectory,
+                                                                IFileProvider.getFilename (sMessageID, nTry)));
   }
 }

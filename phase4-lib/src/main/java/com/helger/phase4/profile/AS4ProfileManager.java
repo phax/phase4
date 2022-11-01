@@ -65,11 +65,8 @@ public class AS4ProfileManager implements IAS4ProfileManager, Serializable
     for (final IAS4ProfileRegistrarSPI aSPI : ServiceLoaderHelper.getAllSPIImplementations (IAS4ProfileRegistrarSPI.class))
       aSPI.registerAS4Profile (this);
 
-    if (LOGGER.isInfoEnabled ())
-    {
-      final int nCount = getProfileCount ();
-      LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered"));
-    }
+    final int nCount = getProfileCount ();
+    LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered"));
   }
 
   public AS4ProfileManager ()
@@ -186,6 +183,8 @@ public class AS4ProfileManager implements IAS4ProfileManager, Serializable
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("Map", m_aMap).append ("DefaultProfile", m_aDefaultProfile).getToString ();
+    return new ToStringGenerator (this).append ("Map", m_aMap)
+                                       .append ("DefaultProfile", m_aDefaultProfile)
+                                       .getToString ();
   }
 }

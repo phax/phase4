@@ -156,8 +156,7 @@ public class BasicHttpPoster implements IHttpPoster
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
 
     final StopWatch aSW = StopWatch.createdStarted ();
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Starting to transmit AS4 Message to '" + sURL + "'");
+    LOGGER.info ("Starting to transmit AS4 Message to '" + sURL + "'");
 
     IOException aCaughtException = null;
     try (final HttpClientManager aClientMgr = new HttpClientManager (m_aHttpClientFactory))
@@ -209,13 +208,12 @@ public class BasicHttpPoster implements IHttpPoster
     finally
     {
       aSW.stop ();
-      if (LOGGER.isInfoEnabled ())
-        LOGGER.info ((aCaughtException != null ? "Failed" : "Finished") +
-                     " transmitting AS4 Message to '" +
-                     sURL +
-                     "' after " +
-                     aSW.getMillis () +
-                     " ms");
+      LOGGER.info ((aCaughtException != null ? "Failed" : "Finished") +
+                   " transmitting AS4 Message to '" +
+                   sURL +
+                   "' after " +
+                   aSW.getMillis () +
+                   " ms");
     }
   }
 
@@ -302,8 +300,7 @@ public class BasicHttpPoster implements IHttpPoster
         for (int nTry = 0; nTry < nMaxTries; nTry++)
         {
           if (nTry > 0)
-            if (LOGGER.isInfoEnabled ())
-              LOGGER.info ("Retry #" + nTry + "/" + nMaxRetries + " for sending message with ID '" + sMessageID + "'");
+            LOGGER.info ("Retry #" + nTry + "/" + nMaxRetries + " for sending message with ID '" + sMessageID + "'");
 
           try
           {
@@ -335,33 +332,31 @@ public class BasicHttpPoster implements IHttpPoster
                                 .isBreak ())
               {
                 // Explicitly interrupt retry
-                if (LOGGER.isWarnEnabled ())
-                  LOGGER.warn ("Error sending message '" +
-                               sMessageID +
-                               "' to '" +
-                               sURL +
-                               ": " +
-                               ex.getClass ().getSimpleName () +
-                               " - " +
-                               ex.getMessage () +
-                               " - retrying was explicitly stopped by the RetryCallback");
+                LOGGER.warn ("Error sending message '" +
+                             sMessageID +
+                             "' to '" +
+                             sURL +
+                             ": " +
+                             ex.getClass ().getSimpleName () +
+                             " - " +
+                             ex.getMessage () +
+                             " - retrying was explicitly stopped by the RetryCallback");
 
                 // Propagate Exception as if it would be the last retry
                 throw ex;
               }
 
-            if (LOGGER.isWarnEnabled ())
-              LOGGER.warn ("Error sending message '" +
-                           sMessageID +
-                           "' to '" +
-                           sURL +
-                           "': " +
-                           ex.getClass ().getSimpleName () +
-                           " - " +
-                           ex.getMessage () +
-                           " - waiting " +
-                           aDurationBeforeRetry.toMillis () +
-                           " ms, than retrying");
+            LOGGER.warn ("Error sending message '" +
+                         sMessageID +
+                         "' to '" +
+                         sURL +
+                         "': " +
+                         ex.getClass ().getSimpleName () +
+                         " - " +
+                         ex.getMessage () +
+                         " - waiting " +
+                         aDurationBeforeRetry.toMillis () +
+                         " ms, than retrying");
 
             // Sleep and try again afterwards
             ThreadHelper.sleep (aDurationBeforeRetry.toMillis ());
@@ -405,12 +400,11 @@ public class BasicHttpPoster implements IHttpPoster
         }
         catch (final Exception ex)
         {
-          if (LOGGER.isErrorEnabled ())
-            LOGGER.error ("OutgoingDumper.onEndRequest failed. Dumper=" +
-                          aRealOutgoingDumper +
-                          "; MessageID=" +
-                          sMessageID,
-                          ex);
+          LOGGER.error ("OutgoingDumper.onEndRequest failed. Dumper=" +
+                        aRealOutgoingDumper +
+                        "; MessageID=" +
+                        sMessageID,
+                        ex);
         }
     }
   }

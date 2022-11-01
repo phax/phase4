@@ -116,13 +116,11 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
                                                         FileHelper.getOutputStream (aFile))
                         .isFailure ())
         {
-          if (LOGGER.isErrorEnabled ())
-            LOGGER.error ("Failed to write incoming attachment [" + nIndex + "] to '" + aFile.getAbsolutePath () + "'");
+          LOGGER.error ("Failed to write incoming attachment [" + nIndex + "] to '" + aFile.getAbsolutePath () + "'");
         }
         else
         {
-          if (LOGGER.isInfoEnabled ())
-            LOGGER.info ("Wrote incoming attachment [" + nIndex + "] to '" + aFile.getAbsolutePath () + "'");
+          LOGGER.info ("Wrote incoming attachment [" + nIndex + "] to '" + aFile.getAbsolutePath () + "'");
         }
         ++nIndex;
       }
@@ -174,7 +172,6 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
                                          final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 response with ID '" + sResponseMessageID + "'");
+    LOGGER.info ("Sending AS4 response with ID '" + sResponseMessageID + "'");
   }
 }

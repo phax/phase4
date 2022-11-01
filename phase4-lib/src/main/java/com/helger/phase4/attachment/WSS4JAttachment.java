@@ -329,10 +329,9 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     if (StringHelper.hasText (sFilename))
     {
       if (sFilename.indexOf ('"') >= 0)
-        if (LOGGER.isWarnEnabled ())
-          LOGGER.warn ("The filename '" +
-                       sFilename +
-                       "' contains a double quote which will most likely break the Content-Disposition");
+        LOGGER.warn ("The filename '" +
+                     sFilename +
+                     "' contains a double quote which will most likely break the Content-Disposition");
       aAttachment.addHeader (CHttpHeader.CONTENT_DISPOSITION, "attachment; filename=\"" + sFilename + "\"");
     }
     aAttachment.addHeader (CHttpHeader.CONTENT_ID, CONTENT_ID_PREFIX + aAttachment.getId () + CONTENT_ID_SUFFIX);
@@ -560,8 +559,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
       else
       {
         // Can only be read once
-        if (LOGGER.isWarnEnabled ())
-          LOGGER.warn ("Having a DataHandler that can be read only once: " + aDH);
+        LOGGER.warn ("Having a DataHandler that can be read only once: " + aDH);
 
         ret.setSourceStreamProvider (HasInputStream.once ( () -> {
           try

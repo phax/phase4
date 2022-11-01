@@ -198,13 +198,12 @@ public class AS4ResourceHelper implements Closeable
 
           final FileIOError aError = AS4IOHelper.getFileOperationManager ().deleteFileIfExisting (aFile);
           if (aError.isFailure ())
-            if (LOGGER.isWarnEnabled ())
-              LOGGER.warn ("  Failed to delete temporary " +
-                           CAS4.LIB_NAME +
-                           " file " +
-                           aFile.getAbsolutePath () +
-                           ": " +
-                           aError.toString ());
+            LOGGER.warn ("  Failed to delete temporary " +
+                         CAS4.LIB_NAME +
+                         " file " +
+                         aFile.getAbsolutePath () +
+                         ": " +
+                         aError.toString ());
         }
       }
     }
@@ -236,11 +235,10 @@ public class AS4ResourceHelper implements Closeable
     // can be created
     final File aTempFile = createTempFile ();
 
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Converting " +
-                   aSrcEntity +
-                   " to a repeatable HTTP entity using file " +
-                   aTempFile.getAbsolutePath ());
+    LOGGER.info ("Converting " +
+                 aSrcEntity +
+                 " to a repeatable HTTP entity using file " +
+                 aTempFile.getAbsolutePath ());
 
     try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
     {

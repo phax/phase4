@@ -166,8 +166,7 @@ public class AS4RawResponseConsumerWriteToFile extends
 
       // Use the configured data path as the base
       final File aResponseFile = m_aFileProvider.createFile (sSentMessageID);
-      if (LOGGER.isInfoEnabled ())
-        LOGGER.info ("Logging AS4 response to '" + aResponseFile.getAbsolutePath () + "'");
+      LOGGER.info ("Logging AS4 response to '" + aResponseFile.getAbsolutePath () + "'");
 
       if (m_aFileOpenCallback != null)
         m_aFileOpenCallback.accept (aResponseFile);

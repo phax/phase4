@@ -86,12 +86,11 @@ public final class AS4BidirectionalClientHelper
                                                                                                                                  WSSecurityException,
                                                                                                                                  MessagingException
   {
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 UserMessage to '" +
-                   sURL +
-                   "' with max. " +
-                   aClientUserMsg.httpRetrySettings ().getMaxRetries () +
-                   " retries");
+    LOGGER.info ("Sending AS4 UserMessage to '" +
+                 sURL +
+                 "' with max. " +
+                 aClientUserMsg.httpRetrySettings ().getMaxRetries () +
+                 " retries");
 
     if (LOGGER.isDebugEnabled ())
     {
@@ -134,12 +133,11 @@ public final class AS4BidirectionalClientHelper
                                                                                                   aBuildMessageCallback,
                                                                                                   aOutgoingDumper,
                                                                                                   aRetryCallback);
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Successfully transmitted AS4 UserMessage with message ID '" +
-                   aResponseEntity.getMessageID () +
-                   "' to '" +
-                   sURL +
-                   "'");
+    LOGGER.info ("Successfully transmitted AS4 UserMessage with message ID '" +
+                 aResponseEntity.getMessageID () +
+                 "' to '" +
+                 sURL +
+                 "'");
 
     if (aResponseConsumer != null)
       aResponseConsumer.handleResponse (aResponseEntity);
@@ -186,12 +184,11 @@ public final class AS4BidirectionalClientHelper
                                                                                                                            WSSecurityException,
                                                                                                                            MessagingException
   {
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 PullRequest to '" +
-                   sURL +
-                   "' with max. " +
-                   aClientPullRequest.httpRetrySettings ().getMaxRetries () +
-                   " retries");
+    LOGGER.info ("Sending AS4 PullRequest to '" +
+                 sURL +
+                 "' with max. " +
+                 aClientPullRequest.httpRetrySettings ().getMaxRetries () +
+                 " retries");
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("  MPC = '" + aClientPullRequest.getMPC () + "'");
@@ -210,12 +207,11 @@ public final class AS4BidirectionalClientHelper
                                                                                                       aBuildMessageCallback,
                                                                                                       aOutgoingDumper,
                                                                                                       aRetryCallback);
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
-                   aResponseEntity.getMessageID () +
-                   "' to '" +
-                   sURL +
-                   "'");
+    LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
+                 aResponseEntity.getMessageID () +
+                 "' to '" +
+                 sURL +
+                 "'");
 
     if (aResponseConsumer != null)
       aResponseConsumer.handleResponse (aResponseEntity);

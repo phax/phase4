@@ -143,8 +143,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 
           // Sanity check
           if (m_aAttachmentMap.containsKey (sAttachmentID))
-            if (LOGGER.isWarnEnabled ())
-              LOGGER.warn ("Internal issue: overwriting the attachment with ID '" + sAttachmentID + "'!");
+            LOGGER.warn ("Internal issue: overwriting the attachment with ID '" + sAttachmentID + "'!");
 
           // Remember decrypted attachment
           m_aAttachmentMap.put (sAttachmentID, aEffectiveDecryptedAttachment);

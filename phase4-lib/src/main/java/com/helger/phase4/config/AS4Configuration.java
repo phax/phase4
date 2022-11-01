@@ -157,8 +157,7 @@ public final class AS4Configuration
     }
 
     if (!EqualsHelper.identityEqual (ret, aNewConfig))
-      if (LOGGER.isInfoEnabled ())
-        LOGGER.info ("The phase4 configuration provider was changed to " + aNewConfig);
+      LOGGER.info ("The phase4 configuration provider was changed to " + aNewConfig);
     return ret;
   }
 

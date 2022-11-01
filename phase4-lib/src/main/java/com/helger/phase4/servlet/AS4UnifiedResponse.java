@@ -55,8 +55,7 @@ public class AS4UnifiedResponse extends UnifiedResponse
                                 @Nonnull final String sMsg,
                                 @Nullable final Throwable t)
   {
-    if (LOGGER.isErrorEnabled ())
-      LOGGER.error ("HTTP " + nStatusCode + ": " + sMsg, t);
+    LOGGER.error ("HTTP " + nStatusCode + ": " + sMsg, t);
 
     String sBody = sMsg;
     if (t != null)

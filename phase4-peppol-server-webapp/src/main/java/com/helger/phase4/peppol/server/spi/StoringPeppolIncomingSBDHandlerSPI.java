@@ -60,7 +60,6 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
                                        aSBDBytes.length +
                                        " bytes)");
 
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Wrote SBD to '" + aFile.getAbsolutePath () + "' (" + aSBDBytes.length + " bytes)");
+    LOGGER.info ("Wrote SBD to '" + aFile.getAbsolutePath () + "' (" + aSBDBytes.length + " bytes)");
   }
 }

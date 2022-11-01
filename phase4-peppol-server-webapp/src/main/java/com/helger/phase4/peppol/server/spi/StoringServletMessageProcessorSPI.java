@@ -17,6 +17,7 @@
 package com.helger.phase4.peppol.server.spi;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 
@@ -32,8 +33,10 @@ import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.mutable.MutableLong;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
@@ -74,13 +77,11 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
                                                                                .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
       {
-        if (LOGGER.isErrorEnabled ())
-          LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+        LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
       }
       else
       {
-        if (LOGGER.isInfoEnabled ())
-          LOGGER.info ("Wrote SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+        LOGGER.info ("Wrote SOAP to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
       }
     }
 
@@ -94,17 +95,15 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
       final byte [] aBytes = sPEM.getBytes (StandardCharsets.US_ASCII);
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
       {
-        if (LOGGER.isErrorEnabled ())
-          LOGGER.error ("Failed to write certificate to '" +
-                        aFile.getAbsolutePath () +
-                        "' (" +
-                        aBytes.length +
-                        " bytes)");
+        LOGGER.error ("Failed to write certificate to '" +
+                      aFile.getAbsolutePath () +
+                      "' (" +
+                      aBytes.length +
+                      " bytes)");
       }
       else
       {
-        if (LOGGER.isInfoEnabled ())
-          LOGGER.info ("Wrote certificate to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
+        LOGGER.info ("Wrote certificate to '" + aFile.getAbsolutePath () + "' (" + aBytes.length + " bytes)");
       }
     }
   }
@@ -114,28 +113,36 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
                                                final int nIndex)
   {
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".attachment" + nIndex);
-    final byte [] aBytes = StreamHelper.getAllBytes (aIncomingAttachment.getInputStreamProvider ());
-    if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
+    LOGGER.info ("Start writing incoming Attachment " + nIndex + " to '" + aFile.getAbsolutePath () + "'");
+
+    final OutputStream aFOS = FileHelper.getOutputStream (aFile);
+    final MutableLong aCopyCount = new MutableLong (0);
+    if (StreamHelper.copyByteStream ()
+                    .from (aIncomingAttachment.getInputStreamProvider ().getInputStream ())
+                    .closeFrom (true)
+                    .to (aFOS)
+                    .closeTo (true)
+                    .copyByteCount (aCopyCount)
+                    .build ()
+                    .isFailure ())
     {
-      if (LOGGER.isErrorEnabled ())
-        LOGGER.error ("Failed to write Incoming Attachment " +
-                      nIndex +
-                      " to '" +
-                      aFile.getAbsolutePath () +
-                      "' (" +
-                      aBytes.length +
-                      " bytes)");
+      LOGGER.error ("Failed to write Incoming Attachment " +
+                    nIndex +
+                    " to '" +
+                    aFile.getAbsolutePath () +
+                    "' (" +
+                    aCopyCount.longValue () +
+                    " bytes)");
     }
     else
     {
-      if (LOGGER.isInfoEnabled ())
-        LOGGER.info ("Wrote Incoming Attachment " +
-                     nIndex +
-                     " to '" +
-                     aFile.getAbsolutePath () +
-                     "' (" +
-                     aBytes.length +
-                     " bytes)");
+      LOGGER.info ("Wrote Incoming Attachment " +
+                   nIndex +
+                   " to '" +
+                   aFile.getAbsolutePath () +
+                   "' (" +
+                   aCopyCount.longValue () +
+                   " bytes)");
     }
   }
 
@@ -215,23 +222,16 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".response");
       if (SimpleFileIO.writeFile (aFile, aResponseBytes).isFailure ())
       {
-        if (LOGGER.isErrorEnabled ())
-          LOGGER.error ("Failed to write response to '" +
-                        aFile.getAbsolutePath () +
-                        "' (" +
-                        aResponseBytes.length +
-                        " bytes)");
+        LOGGER.error ("Failed to write response to '" +
+                      aFile.getAbsolutePath () +
+                      "' (" +
+                      aResponseBytes.length +
+                      " bytes)");
       }
       else
-      {
-        if (LOGGER.isInfoEnabled ())
-          LOGGER.info ("Wrote response to '" + aFile.getAbsolutePath () + "' (" + aResponseBytes.length + " bytes)");
-      }
+        LOGGER.info ("Wrote response to '" + aFile.getAbsolutePath () + "' (" + aResponseBytes.length + " bytes)");
     }
     else
-    {
-      if (LOGGER.isWarnEnabled ())
-        LOGGER.warn ("No response bytes are available for writing");
-    }
+      LOGGER.warn ("No response bytes are available for writing");
   }
 }
