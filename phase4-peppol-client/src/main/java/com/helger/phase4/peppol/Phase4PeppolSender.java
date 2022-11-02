@@ -813,8 +813,8 @@ public final class Phase4PeppolSender
 
     /**
      * Set the payload element to be used, if it is available as a parsed DOM
-     * element. If this method is called, it overwrites any other explicitly set
-     * payload.
+     * element. Internally the DOM element will be cloned before sending it out.
+     * If this method is called, it overwrites any other explicitly set payload.
      *
      * @param aPayloadElement
      *        The payload element to be used. They payload element MUST have a
@@ -834,8 +834,10 @@ public final class Phase4PeppolSender
 
     /**
      * Set the payload to be used as a byte array. It will be parsed internally
-     * to a DOM element. If this method is called, it overwrites any other
-     * explicitly set payload.
+     * to a DOM element. Compared to {@link #payload(Element)} the read DOM
+     * element will not be cloned internally, so this option is less memory
+     * intensive. If this method is called, it overwrites any other explicitly
+     * set payload.
      *
      * @param aPayloadBytes
      *        The payload bytes to be used. May not be <code>null</code>.
@@ -853,8 +855,10 @@ public final class Phase4PeppolSender
 
     /**
      * Set the payload to be used as an InputStream provider. It will be parsed
-     * internally to a DOM element. If this method is called, it overwrites any
-     * other explicitly set payload.
+     * internally to a DOM element. Compared to {@link #payload(Element)} the
+     * read DOM element will not be cloned internally, so this option is less
+     * memory intensive. If this method is called, it overwrites any other
+     * explicitly set payload.
      *
      * @param aPayloadHasIS
      *        The payload input stream provider to be used. May not be
@@ -1047,8 +1051,10 @@ public final class Phase4PeppolSender
           if (aDoc == null)
             throw new Phase4PeppolException ("Failed to parse payload bytes to a DOM node");
           aPayloadElement = aDoc.getDocumentElement ();
-          if (aPayloadElement == null || aPayloadElement.getNamespaceURI () == null)
-            throw new Phase4PeppolException ("The parsed XML document must have a root element that has a namespace URI");
+          if (aPayloadElement == null)
+            throw new Phase4PeppolException ("The parsed XML document must have a root element");
+          if (aPayloadElement.getNamespaceURI () == null)
+            throw new Phase4PeppolException ("The root element of the parsed XML document does not have a namespace URI");
           bClonePayloadElement = false;
         }
         else
@@ -1062,12 +1068,14 @@ public final class Phase4PeppolSender
             if (aDoc == null)
               throw new Phase4PeppolException ("Failed to parse payload InputStream to a DOM node");
             aPayloadElement = aDoc.getDocumentElement ();
-            if (aPayloadElement == null || aPayloadElement.getNamespaceURI () == null)
-              throw new Phase4PeppolException ("The parsed XML document must have a root element that has a namespace URI");
+            if (aPayloadElement == null)
+              throw new Phase4PeppolException ("The parsed XML document must have a root element");
+            if (aPayloadElement.getNamespaceURI () == null)
+              throw new Phase4PeppolException ("The root element of the parsed XML document does not have a namespace URI");
             bClonePayloadElement = false;
           }
           else
-            throw new IllegalStateException ("Unexpected - neither element nor bytes are present");
+            throw new IllegalStateException ("Unexpected - neither element nor bytes nor InputStream provider are present");
 
       // Optional payload validation
       _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
