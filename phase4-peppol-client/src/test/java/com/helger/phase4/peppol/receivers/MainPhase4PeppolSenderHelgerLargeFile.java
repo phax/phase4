@@ -21,8 +21,8 @@ import java.io.File;
 import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
+import com.helger.commons.io.resource.FileSystemResource;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -39,7 +39,6 @@ import com.helger.phive.peppol.PeppolValidation3_14_0;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
-import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * Example for sending something to the my test endpoint [AT].
@@ -54,9 +53,8 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
   {
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/large-files/base-example-large-10m.xml"))
-                                               .getDocumentElement ();
-      if (aPayloadElement == null)
+      final FileSystemResource aRes = new FileSystemResource (new File ("src/test/resources/examples/large-files/base-example-large-30m.xml"));
+      if (!aRes.exists ())
         throw new IllegalStateException ("Failed to read XML file to be send");
       final boolean bNoValidate = true;
 
@@ -74,7 +72,7 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
-                                  .payload (aPayloadElement)
+                                  .payload (aRes)
                                   .compressPayload (false)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,

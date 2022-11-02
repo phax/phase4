@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.peppol;
 
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
@@ -37,6 +38,7 @@ import org.w3c.dom.Element;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.datetime.XMLOffsetDateTime;
+import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
@@ -95,34 +97,15 @@ public final class Phase4PeppolSender
   private Phase4PeppolSender ()
   {}
 
-  /**
-   * @param aSenderID
-   *        Sender participant ID. May not be <code>null</code>.
-   * @param aReceiverID
-   *        Receiver participant ID. May not be <code>null</code>.
-   * @param aDocTypeID
-   *        Document type ID. May not be <code>null</code>.
-   * @param aProcID
-   *        Process ID. May not be <code>null</code>.
-   * @param sInstanceIdentifier
-   *        SBDH instance identifier. May be <code>null</code> to create a
-   *        random ID.
-   * @param sTypeVersion
-   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be
-   *        <code>null</code> to use the default.
-   * @param aPayloadElement
-   *        Payload element to be wrapped. May not be <code>null</code>.
-   * @return The domain object representation of the created SBDH or
-   *         <code>null</code> if not all parameters are present.
-   */
   @Nullable
-  public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
-                                                     @Nonnull final IParticipantIdentifier aReceiverID,
-                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                     @Nonnull final IProcessIdentifier aProcID,
-                                                     @Nullable final String sInstanceIdentifier,
-                                                     @Nullable final String sTypeVersion,
-                                                     @Nonnull final Element aPayloadElement)
+  private static StandardBusinessDocument _createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
+                                                       @Nonnull final IParticipantIdentifier aReceiverID,
+                                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                       @Nonnull final IProcessIdentifier aProcID,
+                                                       @Nullable final String sInstanceIdentifier,
+                                                       @Nullable final String sTypeVersion,
+                                                       @Nonnull final Element aPayloadElement,
+                                                       final boolean bClonePayloadElement)
   {
     final PeppolSBDHDocument aData = new PeppolSBDHDocument (IF);
     aData.setSender (aSenderID.getScheme (), aSenderID.getValue ());
@@ -167,8 +150,52 @@ public final class Phase4PeppolSender
                                      aPayloadElement.getLocalName (),
                                      sRealInstanceIdentifier,
                                      XMLOffsetDateTime.of (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ()));
-    aData.setBusinessMessage (aPayloadElement);
+
+    // Not cloning the payload element is for saving memory only
+    if (bClonePayloadElement)
+      aData.setBusinessMessage (aPayloadElement);
+    else
+      aData.setBusinessMessageNoClone (aPayloadElement);
     return new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
+  }
+
+  /**
+   * @param aSenderID
+   *        Sender participant ID. May not be <code>null</code>.
+   * @param aReceiverID
+   *        Receiver participant ID. May not be <code>null</code>.
+   * @param aDocTypeID
+   *        Document type ID. May not be <code>null</code>.
+   * @param aProcID
+   *        Process ID. May not be <code>null</code>.
+   * @param sInstanceIdentifier
+   *        SBDH instance identifier. May be <code>null</code> to create a
+   *        random ID.
+   * @param sTypeVersion
+   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be
+   *        <code>null</code> to use the default.
+   * @param aPayloadElement
+   *        Payload element to be wrapped. May not be <code>null</code>.
+   * @return The domain object representation of the created SBDH or
+   *         <code>null</code> if not all parameters are present.
+   */
+  @Nullable
+  public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
+                                                     @Nonnull final IParticipantIdentifier aReceiverID,
+                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                     @Nonnull final IProcessIdentifier aProcID,
+                                                     @Nullable final String sInstanceIdentifier,
+                                                     @Nullable final String sTypeVersion,
+                                                     @Nonnull final Element aPayloadElement)
+  {
+    return _createSBDH (aSenderID,
+                        aReceiverID,
+                        aDocTypeID,
+                        aProcID,
+                        sInstanceIdentifier,
+                        sTypeVersion,
+                        aPayloadElement,
+                        true);
   }
 
   /**
@@ -737,6 +764,7 @@ public final class Phase4PeppolSender
     private String m_sSBDHTypeVersion;
     private Element m_aPayloadElement;
     private byte [] m_aPayloadBytes;
+    private IHasInputStream m_aPayloadHasIS;
     private Consumer <? super StandardBusinessDocument> m_aSBDDocumentConsumer;
     private Consumer <byte []> m_aSBDBytesConsumer;
 
@@ -800,6 +828,7 @@ public final class Phase4PeppolSender
       ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
       m_aPayloadElement = aPayloadElement;
       m_aPayloadBytes = null;
+      m_aPayloadHasIS = null;
       return this;
     }
 
@@ -816,8 +845,29 @@ public final class Phase4PeppolSender
     public Builder payload (@Nonnull final byte [] aPayloadBytes)
     {
       ValueEnforcer.notNull (aPayloadBytes, "PayloadBytes");
-      m_aPayloadBytes = aPayloadBytes;
       m_aPayloadElement = null;
+      m_aPayloadBytes = aPayloadBytes;
+      m_aPayloadHasIS = null;
+      return this;
+    }
+
+    /**
+     * Set the payload to be used as an InputStream provider. It will be parsed
+     * internally to a DOM element. If this method is called, it overwrites any
+     * other explicitly set payload.
+     *
+     * @param aPayloadHasIS
+     *        The payload input stream provider to be used. May not be
+     *        <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder payload (@Nonnull final IHasInputStream aPayloadHasIS)
+    {
+      ValueEnforcer.notNull (aPayloadHasIS, "PayloadHasIS");
+      m_aPayloadElement = null;
+      m_aPayloadBytes = null;
+      m_aPayloadHasIS = aPayloadHasIS;
       return this;
     }
 
@@ -982,8 +1032,13 @@ public final class Phase4PeppolSender
     {
       // Ensure a DOM element is present
       final Element aPayloadElement;
+      final boolean bClonePayloadElement;
       if (m_aPayloadElement != null)
+      {
+        // Already provided as a DOM element
         aPayloadElement = m_aPayloadElement;
+        bClonePayloadElement = true;
+      }
       else
         if (m_aPayloadBytes != null)
         {
@@ -994,9 +1049,25 @@ public final class Phase4PeppolSender
           aPayloadElement = aDoc.getDocumentElement ();
           if (aPayloadElement == null || aPayloadElement.getNamespaceURI () == null)
             throw new Phase4PeppolException ("The parsed XML document must have a root element that has a namespace URI");
+          bClonePayloadElement = false;
         }
         else
-          throw new IllegalStateException ("Unexpected - neither element nor bytes are present");
+          if (m_aPayloadHasIS != null)
+          {
+            // Parse it
+            final InputStream aIS = m_aPayloadHasIS.getBufferedInputStream ();
+            if (aIS == null)
+              throw new Phase4PeppolException ("Failed to create payload InputStream from provider");
+            final Document aDoc = DOMReader.readXMLDOM (aIS);
+            if (aDoc == null)
+              throw new Phase4PeppolException ("Failed to parse payload InputStream to a DOM node");
+            aPayloadElement = aDoc.getDocumentElement ();
+            if (aPayloadElement == null || aPayloadElement.getNamespaceURI () == null)
+              throw new Phase4PeppolException ("The parsed XML document must have a root element that has a namespace URI");
+            bClonePayloadElement = false;
+          }
+          else
+            throw new IllegalStateException ("Unexpected - neither element nor bytes are present");
 
       // Optional payload validation
       _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
@@ -1009,13 +1080,14 @@ public final class Phase4PeppolSender
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Start creating SBDH for AS4 message");
 
-      final StandardBusinessDocument aSBD = createSBDH (m_aSenderID,
-                                                        m_aReceiverID,
-                                                        m_aDocTypeID,
-                                                        m_aProcessID,
-                                                        m_sSBDHInstanceIdentifier,
-                                                        m_sSBDHTypeVersion,
-                                                        aPayloadElement);
+      final StandardBusinessDocument aSBD = _createSBDH (m_aSenderID,
+                                                         m_aReceiverID,
+                                                         m_aDocTypeID,
+                                                         m_aProcessID,
+                                                         m_sSBDHInstanceIdentifier,
+                                                         m_sSBDHTypeVersion,
+                                                         aPayloadElement,
+                                                         bClonePayloadElement);
       if (aSBD == null)
       {
         // A log message was already provided
