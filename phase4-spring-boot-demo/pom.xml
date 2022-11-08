@@ -104,6 +104,17 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring-boot.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>com.helger.phase4.springboot.Phase4SpringbootApplication</mainClass>
+          <layout>ZIP</layout>
+        </configuration>
       </plugin>
     </plugins>
   </build>
