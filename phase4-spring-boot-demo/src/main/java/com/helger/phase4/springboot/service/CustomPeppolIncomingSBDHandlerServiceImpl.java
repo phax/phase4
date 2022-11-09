@@ -18,6 +18,8 @@ package com.helger.phase4.springboot.service;
 
 import javax.annotation.Nonnull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ import com.helger.phase4.springboot.enumeration.ESBDHHandlerServiceSelector;
 @SuppressWarnings ("unused")
 public class CustomPeppolIncomingSBDHandlerServiceImpl implements ISBDHandlerService
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (CustomPeppolIncomingSBDHandlerServiceImpl.class);
+
   // Non-managed Spring fields
   private IAS4IncomingMessageMetadata m_aMessageMetadata;
   private HttpHeaderMap m_aHttpHeaders;
@@ -88,5 +92,6 @@ public class CustomPeppolIncomingSBDHandlerServiceImpl implements ISBDHandlerSer
   {
     // TODO
     // Very complex logic that leads to persisting the document in a database.
+    LOGGER.error ("The main 'handle' method needs to be implemented with something reasonable");
   }
 }
