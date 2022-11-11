@@ -160,7 +160,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   {
     AS4HttpDebug.debug ( () -> {
       final StringBuilder aSB = new StringBuilder ();
-      aSB.append ("TEST-SEND-START to ").append (aPost.getRequestUri ()).append ("\n");
+      aSB.append ("TEST-SEND-START to ").append (aPost.toString ()).append ("\n");
       try
       {
         final Header [] aHeaders = aPost.getHeaders ();
