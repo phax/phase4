@@ -118,8 +118,7 @@ public interface IAS4MessageState
   default Ebms3Error getEbmsError ()
   {
     final Ebms3SignalMessage aEbmsSignalMessage = getEbmsSignalMessage ();
-    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0)
-                                                                               : null;
+    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
   }
 
   /**
@@ -291,7 +290,8 @@ public interface IAS4MessageState
 
   /**
    * @return initiator set in the usermessage if the incoming message is a
-   *         usermessage. May be <code>null</code>.
+   *         UserMessage. This is the content of the FromParty/PartyId element
+   *         and in Peppol reflects the C2. May be <code>null</code>.
    */
   @Nullable
   String getInitiatorID ();
@@ -308,7 +308,8 @@ public interface IAS4MessageState
 
   /**
    * @return responder set in the usermessage if the incoming message is a
-   *         usermessage. May be <code>null</code>.
+   *         UserMessage. This is the content of the ToParty/PartyId element and
+   *         in Peppol reflects the C3. May be <code>null</code>.
    */
   @Nullable
   String getResponderID ();
