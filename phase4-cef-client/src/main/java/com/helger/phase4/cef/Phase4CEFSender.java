@@ -117,14 +117,14 @@ public final class Phase4CEFSender
      * provided prior to sending. This ends up in the "originalSender"
      * UserMessage property.
      *
-     * @param aSenderID
+     * @param a
      *        The sender participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE senderParticipantID (@Nullable final IParticipantIdentifier aSenderID)
+    public final IMPLTYPE senderParticipantID (@Nullable final IParticipantIdentifier a)
     {
-      m_aSenderID = aSenderID;
+      m_aSenderID = a;
       return thisAsT ();
     }
 
@@ -205,15 +205,16 @@ public final class Phase4CEFSender
      * lookup routine or in certain test cases a predefined certificate and
      * endpoint URL.
      *
-     * @param aEndpointDetailProvider
+     * @param a
      *        The endpoint detail provider to be used. May be <code>null</code>.
      * @return this for chaining
      * @see #smpClient(IBDXRServiceMetadataProvider)
+     * @see #smpClient(IBDXR2ServiceMetadataProvider)
      */
     @Nonnull
-    public final IMPLTYPE endpointDetailProvider (@Nullable final IAS4EndpointDetailProvider aEndpointDetailProvider)
+    public final IMPLTYPE endpointDetailProvider (@Nullable final IAS4EndpointDetailProvider a)
     {
-      m_aEndpointDetailProvider = aEndpointDetailProvider;
+      m_aEndpointDetailProvider = a;
       return thisAsT ();
     }
 
@@ -222,15 +223,15 @@ public final class Phase4CEFSender
      * differentiation between SMK and SML can be done. This must be set prior
      * to sending.
      *
-     * @param aSMPClient
+     * @param a
      *        The SMP v1 client to be used. May not be <code>null</code>.
      * @return this for chaining
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
     @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final IBDXRServiceMetadataProvider aSMPClient)
+    public final IMPLTYPE smpClient (@Nonnull final IBDXRServiceMetadataProvider a)
     {
-      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (aSMPClient));
+      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (a));
     }
 
     /**
@@ -238,16 +239,16 @@ public final class Phase4CEFSender
      * differentiation between SMK and SML can be done. This must be set prior
      * to sending.
      *
-     * @param aSMPClient
+     * @param a
      *        The SMP v2 client to be used. May not be <code>null</code>.
      * @return this for chaining
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      * @since 0.10.6
      */
     @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final IBDXR2ServiceMetadataProvider aSMPClient)
+    public final IMPLTYPE smpClient (@Nonnull final IBDXR2ServiceMetadataProvider a)
     {
-      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR2 (aSMPClient));
+      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR2 (a));
     }
 
     @Nonnull
@@ -260,14 +261,14 @@ public final class Phase4CEFSender
      * Set an optional Consumer for the retrieved certificate, independent of
      * its usability.
      *
-     * @param aCertificateConsumer
+     * @param a
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE certificateConsumer (@Nullable final Consumer <X509Certificate> aCertificateConsumer)
+    public final IMPLTYPE certificateConsumer (@Nullable final Consumer <X509Certificate> a)
     {
-      m_aCertificateConsumer = aCertificateConsumer;
+      m_aCertificateConsumer = a;
       return thisAsT ();
     }
 
@@ -275,14 +276,14 @@ public final class Phase4CEFSender
      * Set an optional Consumer for the destination AP address, independent of
      * its usability.
      *
-     * @param aAPEndointURLConsumer
+     * @param a
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE endointURLConsumer (@Nullable final Consumer <String> aAPEndointURLConsumer)
+    public final IMPLTYPE endointURLConsumer (@Nullable final Consumer <String> a)
     {
-      m_aAPEndointURLConsumer = aAPEndointURLConsumer;
+      m_aAPEndointURLConsumer = a;
       return thisAsT ();
     }
 

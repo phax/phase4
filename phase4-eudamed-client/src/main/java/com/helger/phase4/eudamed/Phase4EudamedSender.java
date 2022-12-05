@@ -37,15 +37,11 @@ import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.peppolid.simple.participant.SimpleParticipantIdentifier;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR;
-import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR2;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
-import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.IBDXLURLProvider;
 
@@ -136,9 +132,9 @@ public final class Phase4EudamedSender
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE receiverParticipantID (@Nullable final String a)
+    public final IMPLTYPE receiverParticipantID (@Nullable final String s)
     {
-      m_sReceiverID = a;
+      m_sReceiverID = s;
       return thisAsT ();
     }
 
@@ -203,48 +199,15 @@ public final class Phase4EudamedSender
      * lookup routine or in certain test cases a predefined certificate and
      * endpoint URL.
      *
-     * @param aEndpointDetailProvider
+     * @param a
      *        The endpoint detail provider to be used. May be <code>null</code>.
      * @return this for chaining
-     * @see #smpClient(IBDXRServiceMetadataProvider)
      */
     @Nonnull
-    public final IMPLTYPE endpointDetailProvider (@Nullable final IAS4EndpointDetailProvider aEndpointDetailProvider)
+    public final IMPLTYPE endpointDetailProvider (@Nullable final IAS4EndpointDetailProvider a)
     {
-      m_aEndpointDetailProvider = aEndpointDetailProvider;
+      m_aEndpointDetailProvider = a;
       return thisAsT ();
-    }
-
-    /**
-     * Set the SMP v1 client to be used. This is the point where e.g. the
-     * differentiation between SMK and SML can be done. This must be set prior
-     * to sending.
-     *
-     * @param aSMPClient
-     *        The SMP v1 client to be used. May not be <code>null</code>.
-     * @return this for chaining
-     * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
-     */
-    @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final IBDXRServiceMetadataProvider aSMPClient)
-    {
-      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (aSMPClient));
-    }
-
-    /**
-     * Set the SMP v2 client to be used. This is the point where e.g. the
-     * differentiation between SMK and SML can be done. This must be set prior
-     * to sending.
-     *
-     * @param aSMPClient
-     *        The SMP v2 client to be used. May not be <code>null</code>.
-     * @return this for chaining
-     * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
-     */
-    @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final IBDXR2ServiceMetadataProvider aSMPClient)
-    {
-      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR2 (aSMPClient));
     }
 
     @Nonnull
@@ -257,14 +220,14 @@ public final class Phase4EudamedSender
      * Set an optional Consumer for the retrieved certificate, independent of
      * its usability.
      *
-     * @param aCertificateConsumer
+     * @param a
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE certificateConsumer (@Nullable final Consumer <X509Certificate> aCertificateConsumer)
+    public final IMPLTYPE certificateConsumer (@Nullable final Consumer <X509Certificate> a)
     {
-      m_aCertificateConsumer = aCertificateConsumer;
+      m_aCertificateConsumer = a;
       return thisAsT ();
     }
 
@@ -272,14 +235,14 @@ public final class Phase4EudamedSender
      * Set an optional Consumer for the destination AP address, independent of
      * its usability.
      *
-     * @param aAPEndointURLConsumer
+     * @param a
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE endointURLConsumer (@Nullable final Consumer <String> aAPEndointURLConsumer)
+    public final IMPLTYPE endointURLConsumer (@Nullable final Consumer <String> a)
     {
-      m_aAPEndointURLConsumer = aAPEndointURLConsumer;
+      m_aAPEndointURLConsumer = a;
       return thisAsT ();
     }
 
