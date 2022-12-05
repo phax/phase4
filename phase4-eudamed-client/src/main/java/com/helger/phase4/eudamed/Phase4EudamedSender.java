@@ -35,6 +35,7 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
+import com.helger.peppolid.simple.participant.SimpleParticipantIdentifier;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR2;
@@ -88,8 +89,8 @@ public final class Phase4EudamedSender
   public abstract static class AbstractEudamedUserMessageBuilder <IMPLTYPE extends AbstractEudamedUserMessageBuilder <IMPLTYPE>> extends
                                                                  AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
-    protected IParticipantIdentifier m_aSenderID;
-    protected IParticipantIdentifier m_aReceiverID;
+    protected String m_sSenderID;
+    protected String m_sReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
     protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
@@ -114,14 +115,14 @@ public final class Phase4EudamedSender
      * provided prior to sending. This ends up in the "originalSender"
      * UserMessage property.
      *
-     * @param aSenderID
+     * @param s
      *        The sender participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE senderParticipantID (@Nullable final IParticipantIdentifier aSenderID)
+    public final IMPLTYPE senderParticipantID (@Nullable final String s)
     {
-      m_aSenderID = aSenderID;
+      m_sSenderID = s;
       return thisAsT ();
     }
 
@@ -130,14 +131,14 @@ public final class Phase4EudamedSender
      * be provided prior to sending. This ends up in the "finalRecipient"
      * UserMessage property.
      *
-     * @param a
+     * @param s
      *        The receiver participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE receiverParticipantID (@Nullable final IParticipantIdentifier a)
+    public final IMPLTYPE receiverParticipantID (@Nullable final String a)
     {
-      m_aReceiverID = a;
+      m_sReceiverID = a;
       return thisAsT ();
     }
 
@@ -288,7 +289,7 @@ public final class Phase4EudamedSender
         return true;
 
       // Sender ID doesn't matter here
-      if (m_aReceiverID == null)
+      if (StringHelper.hasNoText (m_sReceiverID))
         return false;
       if (m_aDocTypeID == null)
         return false;
@@ -311,7 +312,7 @@ public final class Phase4EudamedSender
       }
 
       // e.g. SMP lookup (may throw an exception)
-      m_aEndpointDetailProvider.init (m_aDocTypeID, m_aProcessID, m_aReceiverID);
+      m_aEndpointDetailProvider.init (m_aDocTypeID, m_aProcessID, new SimpleParticipantIdentifier (null, m_sReceiverID));
 
       // Certificate from e.g. SMP lookup (may throw an exception)
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
@@ -336,12 +337,12 @@ public final class Phase4EudamedSender
       if (!super.isEveryRequiredFieldSet ())
         return false;
 
-      if (m_aSenderID == null)
+      if (StringHelper.hasNoText (m_sSenderID))
       {
         LOGGER.warn ("The field 'senderID' is not set");
         return false;
       }
-      if (m_aReceiverID == null)
+      if (StringHelper.hasNoText (m_sReceiverID))
       {
         LOGGER.warn ("The field 'receiverID' is not set");
         return false;
@@ -371,8 +372,8 @@ public final class Phase4EudamedSender
     protected void customizeBeforeSending () throws Phase4Exception
     {
       // Add mandatory properties
-      addMessageProperty (MessageProperty.builder ().name (CAS4.ORIGINAL_SENDER).value (m_aSenderID.getURIEncoded ()));
-      addMessageProperty (MessageProperty.builder ().name (CAS4.FINAL_RECIPIENT).value (m_aReceiverID.getURIEncoded ()));
+      addMessageProperty (MessageProperty.builder ().name (CAS4.ORIGINAL_SENDER).value (m_sSenderID));
+      addMessageProperty (MessageProperty.builder ().name (CAS4.FINAL_RECIPIENT).value (m_sReceiverID));
     }
   }
 
