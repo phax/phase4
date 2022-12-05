@@ -199,6 +199,11 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
     return ret;
   }
 
+  public boolean isAllowRSA15KeyTransportAlgorithm ()
+  {
+    return m_aCryptoProps.isAllowRSA15KeyTransportAlgorithm ();
+  }
+
   /**
    * Read crypto properties from the specified file path.
    *

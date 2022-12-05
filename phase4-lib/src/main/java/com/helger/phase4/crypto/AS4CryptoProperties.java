@@ -73,7 +73,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   /** Truststore password */
   public static final String TRUSTSTORE_PASSWORD = "org.apache.wss4j.crypto.merlin.truststore.password";
 
-  /** Allow RSA15 Key Transport Algorithm*/
+  /** Allow RSA15 Key Transport Algorithm */
   public static final String ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM = "org.apache.wss4j.dom.handler.RequestData.allowRSA15KeyTransportAlgorithm";
 
   private NonBlockingProperties m_aProps;
@@ -85,8 +85,8 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   public AS4CryptoProperties ()
   {
     m_aProps = new NonBlockingProperties ();
-    setAllowRSA15KeyTransportAlgorithm(false);
     setCryptoProviderDefault ();
+    setAllowRSA15KeyTransportAlgorithm (IAS4CryptoFactory.DEFAULT_ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM);
   }
 
   /**
@@ -324,18 +324,17 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
     return this;
   }
 
+  public boolean isAllowRSA15KeyTransportAlgorithm ()
+  {
+    final String sProp = _getProperty (ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM);
+    return StringParser.parseBool (sProp, IAS4CryptoFactory.DEFAULT_ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM);
+  }
+
   @Nonnull
   public final AS4CryptoProperties setAllowRSA15KeyTransportAlgorithm (@Nullable final boolean sAllowRSA15KeyTransportAlgorithm)
   {
-    _setProperty (ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM, Boolean.toString(sAllowRSA15KeyTransportAlgorithm));
+    _setProperty (ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM, Boolean.toString (sAllowRSA15KeyTransportAlgorithm));
     return this;
-  }
-
-  @Nullable
-  public boolean getAllowRSA15KeyTransportAlgorithm ()
-  {
-    final String sProp = _getProperty (ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM);
-    return Boolean.parseBoolean(sProp);
   }
 
   @Nonnull
@@ -376,7 +375,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
                                              TRUSTSTORE_TYPE,
                                              TRUSTSTORE_FILE,
                                              TRUSTSTORE_PASSWORD,
-                                             ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM})
+                                             ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM })
     {
       final String sConfigValue = aConfig.getAsString (sKey);
       if (sConfigValue != null)

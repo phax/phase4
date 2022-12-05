@@ -35,6 +35,8 @@ import org.apache.wss4j.common.crypto.Crypto;
  */
 public interface IAS4CryptoFactory
 {
+  boolean DEFAULT_ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM = false;
+
   /**
    * @return A WSS4J {@link Crypto} instance and never <code>null</code>.
    */
@@ -97,5 +99,15 @@ public interface IAS4CryptoFactory
       return getKeyPassword ();
 
     return null;
+  }
+
+  /**
+   * @return Whether to allow the RSA v1.5 Key Transport Algorithm or not.
+   *         Default is <code>false</code>.
+   * @since 1.4.2
+   */
+  default boolean isAllowRSA15KeyTransportAlgorithm ()
+  {
+    return DEFAULT_ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM;
   }
 }

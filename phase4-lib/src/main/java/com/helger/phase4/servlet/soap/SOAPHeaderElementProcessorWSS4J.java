@@ -122,7 +122,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aRequestData.setSigVerCrypto (m_aCryptoFactory.getCrypto ());
       aRequestData.setDecCrypto (m_aCryptoFactory.getCrypto ());
       aRequestData.setWssConfig (aWSSConfig);
-      aRequestData.setAllowRSA15KeyTransportAlgorithm(AS4CryptoProperties.createFromConfig().getAllowRSA15KeyTransportAlgorithm());
+      aRequestData.setAllowRSA15KeyTransportAlgorithm(AS4CryptoProperties.createFromConfig().isAllowRSA15KeyTransportAlgorithm());
 
       // Upon success, the SOAP document contains the decrypted content
       // afterwards!
