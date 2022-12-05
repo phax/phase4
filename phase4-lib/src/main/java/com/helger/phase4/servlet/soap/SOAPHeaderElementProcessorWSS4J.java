@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import com.helger.phase4.crypto.AS4CryptoProperties;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.AttachmentUtils;
 import org.apache.wss4j.dom.WSConstants;
@@ -121,6 +122,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aRequestData.setSigVerCrypto (m_aCryptoFactory.getCrypto ());
       aRequestData.setDecCrypto (m_aCryptoFactory.getCrypto ());
       aRequestData.setWssConfig (aWSSConfig);
+      aRequestData.setAllowRSA15KeyTransportAlgorithm(AS4CryptoProperties.createFromConfig().getAllowRSA15KeyTransportAlgorithm());
 
       // Upon success, the SOAP document contains the decrypted content
       // afterwards!
