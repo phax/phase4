@@ -23,6 +23,7 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.builder.IBuilder;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.StringHelper;
@@ -41,7 +42,9 @@ public class MessageProperty
   private final String m_sType;
   private final String m_sValue;
 
-  public MessageProperty (@Nonnull @Nonempty final String sName, @Nullable final String sType, @Nonnull @Nonempty final String sValue)
+  public MessageProperty (@Nonnull @Nonempty final String sName,
+                          @Nullable final String sType,
+                          @Nonnull @Nonempty final String sValue)
   {
     ValueEnforcer.notEmpty (sName, "Name");
     ValueEnforcer.notEmpty (sValue, "Value");
@@ -124,7 +127,7 @@ public class MessageProperty
     return ret;
   }
 
-  public static class Builder
+  public static class Builder implements IBuilder <MessageProperty>
   {
     private String m_sName;
     private String m_sType;

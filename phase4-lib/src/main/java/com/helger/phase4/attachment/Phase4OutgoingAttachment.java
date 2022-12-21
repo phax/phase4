@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.builder.IBuilder;
 import com.helger.commons.io.ByteArrayWrapper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
@@ -56,7 +57,8 @@ public class Phase4OutgoingAttachment
                                       @Nullable final Charset aCharset)
   {
     ValueEnforcer.isTrue (aDataBytes != null || aDataFile != null, "SrcData or SrcFile must be present");
-    ValueEnforcer.isFalse (aDataBytes != null && aDataFile != null, "Either SrcData or SrcFile must be present but not both");
+    ValueEnforcer.isFalse (aDataBytes != null && aDataFile != null,
+                           "Either SrcData or SrcFile must be present but not both");
     ValueEnforcer.notNull (aMimeType, "MimeType");
     m_aDataBytes = aDataBytes;
     m_aDataFile = aDataFile;
@@ -185,7 +187,7 @@ public class Phase4OutgoingAttachment
    *
    * @author Philip Helger
    */
-  public static class Builder
+  public static class Builder implements IBuilder <Phase4OutgoingAttachment>
   {
     private ByteArrayWrapper m_aDataBytes;
     private File m_aDataFile;
