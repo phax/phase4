@@ -45,7 +45,6 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
@@ -172,7 +171,7 @@ public final class AS4DumpReader
         final AS4RequestHandler rh = new AS4RequestHandler (aCF,
                                                             DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
                                                             IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
-                                                            new AS4IncomingMessageMetadata (EAS4MessageMode.REQUEST)))
+                                                            AS4IncomingMessageMetadata.createForRequest ()))
     {
       final IAS4ServletMessageProcessorSPI aSPI = new IAS4ServletMessageProcessorSPI ()
       {

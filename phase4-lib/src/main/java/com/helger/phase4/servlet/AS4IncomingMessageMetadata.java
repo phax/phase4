@@ -51,6 +51,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private int m_nRemotePort = -1;
   private String m_sRemoteUser;
   private final ICommonsList <Cookie> m_aCookies = new CommonsArrayList <> ();
+  private String m_sRequestMessageID;
 
   /**
    * Default constructor using a UUID as the incoming unique ID and the current
@@ -58,7 +59,12 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    *
    * @param eMode
    *        The messaging mode. May not be <code>null</code>.
+   * @deprecated Since 1.4.2. Use the factory methods
+   *             {@link #createForRequest()} and
+   *             {@link #createForResponse(String)} instead. To be made
+   *             protected instead.
    */
+  @Deprecated
   public AS4IncomingMessageMetadata (@Nonnull final EAS4MessageMode eMode)
   {
     this (UUID.randomUUID ().toString (), MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), eMode);
@@ -208,6 +214,35 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return this;
   }
 
+  /**
+   * @return The AS4 message ID of the request message. This field is always
+   *         <code>null</code> for a request. This field is always
+   *         non-<code>null</code> for a response.
+   * @since 1.4.2
+   */
+  @Nullable
+  public String getRequestMessageID ()
+  {
+    return m_sRequestMessageID;
+  }
+
+  /**
+   * Set the request AS4 message ID to be used. This field should only be set by
+   * responses. Usually you don't have to call this setter, as this is done by
+   * the factory methods {@link #createForResponse(String)}.
+   *
+   * @param sRequestMessageID
+   *        The request message ID to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 1.4.2
+   */
+  @Nonnull
+  public AS4IncomingMessageMetadata setRequestMessageID (@Nullable final String sRequestMessageID)
+  {
+    m_sRequestMessageID = sRequestMessageID;
+    return this;
+  }
+
   @Override
   public String toString ()
   {
@@ -219,6 +254,20 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
                                        .append ("RemotePort", m_nRemotePort)
                                        .append ("RemoteUser", m_sRemoteUser)
                                        .append ("Cookies", m_aCookies)
+                                       .append ("RequestMessageID", m_sRequestMessageID)
                                        .getToString ();
+  }
+
+  @Nonnull
+  public static AS4IncomingMessageMetadata createForRequest ()
+  {
+    return new AS4IncomingMessageMetadata (EAS4MessageMode.REQUEST);
+  }
+
+  @Nonnull
+  public static AS4IncomingMessageMetadata createForResponse (@Nonnull @Nonempty final String sRequestMessageID)
+  {
+    ValueEnforcer.notEmpty (sRequestMessageID, "RequestMessageID");
+    return new AS4IncomingMessageMetadata (EAS4MessageMode.RESPONSE).setRequestMessageID (sRequestMessageID);
   }
 }

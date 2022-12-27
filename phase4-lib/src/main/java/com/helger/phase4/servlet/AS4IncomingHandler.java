@@ -280,17 +280,36 @@ public class AS4IncomingHandler
       if (aSoapDocument != null)
       {
         // Determine SOAP version from the read document
-        eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (XMLHelper.getNamespaceURI (aSoapDocument));
-        if (eSoapVersion != null && LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from XML root element namespace URI");
+        final String sNamespaceURI = XMLHelper.getNamespaceURI (aSoapDocument);
+        eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (sNamespaceURI);
+        if (eSoapVersion != null)
+        {
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Determined SOAP version " +
+                          eSoapVersion +
+                          " from XML root element namespace URI '" +
+                          sNamespaceURI +
+                          "'");
+        }
+        else
+          LOGGER.warn ("Failed to determine SOAP version from XML root element namespace URI '" + sNamespaceURI + "'");
       }
 
       if (eSoapVersion == null)
       {
         // Determine SOAP version from content type
         eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainContentType);
-        if (eSoapVersion != null && LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from Content-Type");
+        if (eSoapVersion != null)
+        {
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Determined SOAP version " +
+                          eSoapVersion +
+                          " from Content-Type '" +
+                          aPlainContentType.getAsString () +
+                          "'");
+        }
+        else
+          LOGGER.warn ("Failed to determine SOAP version from Content-Type '" + aPlainContentType.getAsString () + "'");
       }
     }
 

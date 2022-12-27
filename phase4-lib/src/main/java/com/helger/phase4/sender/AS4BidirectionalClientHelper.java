@@ -49,7 +49,6 @@ import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4IncomingHandler;
@@ -133,8 +132,9 @@ public final class AS4BidirectionalClientHelper
                                                                                                   aBuildMessageCallback,
                                                                                                   aOutgoingDumper,
                                                                                                   aRetryCallback);
+    final String sRequestMessageID = aResponseEntity.getMessageID ();
     LOGGER.info ("Successfully transmitted AS4 UserMessage with message ID '" +
-                 aResponseEntity.getMessageID () +
+                 sRequestMessageID +
                  "' to '" +
                  sURL +
                  "'");
@@ -145,7 +145,8 @@ public final class AS4BidirectionalClientHelper
     // Try interpret result as SignalMessage
     if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
     {
-      final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata (EAS4MessageMode.RESPONSE).setRemoteAddr (sURL);
+      final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+                                                                                     .setRemoteAddr (sURL);
 
       // Read response as EBMS3 Signal Message
       // Read it in any case to ensure signature validation etc. happens
@@ -207,8 +208,9 @@ public final class AS4BidirectionalClientHelper
                                                                                                       aBuildMessageCallback,
                                                                                                       aOutgoingDumper,
                                                                                                       aRetryCallback);
+    final String sRequestMessageID = aResponseEntity.getMessageID ();
     LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
-                 aResponseEntity.getMessageID () +
+                 sRequestMessageID +
                  "' to '" +
                  sURL +
                  "'");
@@ -219,7 +221,8 @@ public final class AS4BidirectionalClientHelper
     // Try interpret result as SignalMessage
     if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
     {
-      final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata (EAS4MessageMode.RESPONSE).setRemoteAddr (sURL);
+      final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+                                                                                     .setRemoteAddr (sURL);
 
       // Read response as EBMS3 User Message
       // Read it in any case to ensure signature validation etc. happens

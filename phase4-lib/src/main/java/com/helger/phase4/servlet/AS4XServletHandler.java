@@ -33,7 +33,6 @@ import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
@@ -247,11 +246,12 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   @OverrideOnDemand
   protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope)
   {
-    return new AS4IncomingMessageMetadata (EAS4MessageMode.REQUEST).setRemoteAddr (aRequestScope.getRemoteAddr ())
-                                                                   .setRemoteHost (aRequestScope.getRemoteHost ())
-                                                                   .setRemotePort (aRequestScope.getRemotePort ())
-                                                                   .setRemoteUser (aRequestScope.getRemoteUser ())
-                                                                   .setCookies (aRequestScope.getCookies ());
+    return AS4IncomingMessageMetadata.createForRequest ()
+                                     .setRemoteAddr (aRequestScope.getRemoteAddr ())
+                                     .setRemoteHost (aRequestScope.getRemoteHost ())
+                                     .setRemotePort (aRequestScope.getRemotePort ())
+                                     .setRemoteUser (aRequestScope.getRemoteUser ())
+                                     .setCookies (aRequestScope.getCookies ());
   }
 
   /**
@@ -340,6 +340,11 @@ public class AS4XServletHandler implements IXServletSimpleHandler
       throw new IllegalStateException ("Failed to get an AS4 CryptoFactory");
 
     // Created above in #createUnifiedResponse
-    handleRequest (aRequestScope, (AS4UnifiedResponse) aUnifiedResponse, aCF, m_aPModeResolver, m_aIAF, m_aHandlerCustomizer);
+    handleRequest (aRequestScope,
+                   (AS4UnifiedResponse) aUnifiedResponse,
+                   aCF,
+                   m_aPModeResolver,
+                   m_aIAF,
+                   m_aHandlerCustomizer);
   }
 }
