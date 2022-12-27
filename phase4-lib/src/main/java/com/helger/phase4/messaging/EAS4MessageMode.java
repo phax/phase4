@@ -51,6 +51,16 @@ public enum EAS4MessageMode implements IHasID <String>
     return m_sID;
   }
 
+  public boolean isRequest ()
+  {
+    return this == REQUEST;
+  }
+
+  public boolean isResponse ()
+  {
+    return this == RESPONSE;
+  }
+
   @Nullable
   public static EAS4MessageMode getFromIDOrNull (@Nullable final String sID)
   {
