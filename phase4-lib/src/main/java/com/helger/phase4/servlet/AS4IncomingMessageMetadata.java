@@ -214,12 +214,6 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return this;
   }
 
-  /**
-   * @return The AS4 message ID of the request message. This field is always
-   *         <code>null</code> for a request. This field is always
-   *         non-<code>null</code> for a response.
-   * @since 1.4.2
-   */
   @Nullable
   public String getRequestMessageID ()
   {

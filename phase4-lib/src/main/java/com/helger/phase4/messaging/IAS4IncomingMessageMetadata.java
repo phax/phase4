@@ -160,4 +160,14 @@ public interface IAS4IncomingMessageMetadata
   @Nonnull
   @ReturnsMutableObject
   ICommonsList <Cookie> cookies ();
+
+  /**
+   * @return The AS4 message ID of the request message. This field is always
+   *         <code>null</code> for a request. This field is always
+   *         non-<code>null</code> for a response.
+   * @see #getMode() to differentiate between request and response
+   * @since 1.4.2
+   */
+  @Nullable
+  String getRequestMessageID ();
 }
