@@ -80,7 +80,7 @@ public final class MainPhase4PeppolSenderMaxDebug
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_107,
+                                  .validationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_108,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
