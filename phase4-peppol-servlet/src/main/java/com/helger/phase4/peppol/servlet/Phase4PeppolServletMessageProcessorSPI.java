@@ -613,6 +613,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                       aPeppolSBD,
                                       aState);
         }
+        catch (final Phase4PeppolClientException ex)
+        {
+          final String sMsg = ex.getMessage ();
+          LOGGER.error (sLogPrefix + "Error invoking Peppol handler " + aHandler + ": " + sMsg);
+
+          // Returned AS4 Error without a custom prefix
+          return AS4MessageProcessorResult.createFailure (sMsg);
+        }
         catch (final Exception ex)
         {
           LOGGER.error (sLogPrefix + "Error invoking Peppol handler " + aHandler, ex);
