@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>com.helger.phase4</groupId>
 		<artifactId>phase4-parent-pom</artifactId>
-		<version>1.4.3-SNAPSHOT</version>
+		<version>1.4.3</version>
 	</parent>
 	<artifactId>phase4-profile-bpc</artifactId>
 	<packaging>bundle</packaging>
