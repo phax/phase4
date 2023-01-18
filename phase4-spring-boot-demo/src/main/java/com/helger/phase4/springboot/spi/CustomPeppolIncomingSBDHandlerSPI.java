@@ -33,6 +33,12 @@ import com.helger.phase4.springboot.enumeration.ESBDHHandlerServiceSelector;
 import com.helger.phase4.springboot.service.ISBDHandlerService;
 import com.helger.phase4.springboot.service.SDBHandlerServiceLocator;
 
+/**
+ * This is one way of handling incoming messages: creating a domain object and
+ * passing it to a Spring Service object
+ *
+ * @author Philip Helger
+ */
 @IsSPIImplementation
 public class CustomPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncomingSBDHandlerSPI
 {
