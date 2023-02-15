@@ -65,7 +65,8 @@ public final class MainPhase4PeppolSenderIBM
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0088:5050689000018");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme (true ? "0088:5050689000018"
+                                                                                                                          : "0088:0087944000006");
       final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
       {
         public void onAS4Message (final AbstractAS4Message <?> aMsg)
