@@ -138,7 +138,26 @@ public enum ECryptoKeyIdentifierType implements IHasID <String>
    * key, where token service can determine target service public key to encrypt
    * shared secret.
    */
-  ENDPOINT_KEY_IDENTIFIER ("endpoint-key-id", WSConstants.ENDPOINT_KEY_IDENTIFIER);
+  ENDPOINT_KEY_IDENTIFIER ("endpoint-key-id", WSConstants.ENDPOINT_KEY_IDENTIFIER),
+  /**
+   * Sets the
+   * <code>org.apache.wss4j.dom.message.WSSecSignature.build(Crypto)</code> or
+   * the
+   * <code>org.apache.wss4j.dom.message.WSSecEncrypt.build(Crypto, SecretKey)</code>
+   * method to send the issuer name and the serial number of a certificate to
+   * the receiver.<br>
+   * In contrast to {@link #BST_DIRECT_REFERENCE} only the issuer name and the
+   * serial number of the signing certificate are sent to the receiver. This
+   * reduces the amount of data being sent. The encryption method uses the
+   * public key associated with this certificate to encrypt the symmetric key
+   * used to encrypt data. The issuer name format will use a quote delimited Rfc
+   * 2253 format if necessary which is recognized by the Microsoft's WCF stack.
+   * It also places a space before each subsequent RDN also required for WCF
+   * interoperability. In addition, this format is know to be correctly
+   * interpreted by Java.<br>
+   * Please refer to WS Security specification X509 1.1 profile, chapter 3.3.3
+   */
+  ISSUER_SERIAL_QUOTE_FORMAT ("issuer-serial-quote-format", WSConstants.ISSUER_SERIAL_QUOTE_FORMAT);
 
   private final String m_sID;
   private final int m_nTypeID;
@@ -149,6 +168,9 @@ public enum ECryptoKeyIdentifierType implements IHasID <String>
     m_nTypeID = nTypeID;
   }
 
+  /**
+   * The String ID for usage in phase4.
+   */
   @Nonnull
   @Nonempty
   public String getID ()
@@ -156,6 +178,9 @@ public enum ECryptoKeyIdentifierType implements IHasID <String>
     return m_sID;
   }
 
+  /**
+   * @return The WSS4J internal type ID.
+   */
   public int getTypeID ()
   {
     return m_nTypeID;
@@ -174,7 +199,8 @@ public enum ECryptoKeyIdentifierType implements IHasID <String>
   }
 
   @Nullable
-  public static ECryptoKeyIdentifierType getFromIDOrDefault (@Nullable final String sID, @Nullable final ECryptoKeyIdentifierType eDefault)
+  public static ECryptoKeyIdentifierType getFromIDOrDefault (@Nullable final String sID,
+                                                             @Nullable final ECryptoKeyIdentifierType eDefault)
   {
     return EnumHelper.getFromIDOrDefault (ECryptoKeyIdentifierType.class, sID, eDefault);
   }

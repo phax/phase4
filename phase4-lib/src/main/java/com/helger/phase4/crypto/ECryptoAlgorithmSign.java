@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 import org.apache.xml.security.signature.XMLSignature;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.string.StringHelper;
 
@@ -31,11 +30,17 @@ import com.helger.commons.string.StringHelper;
  *
  * @author Philip Helger
  */
-public enum ECryptoAlgorithmSign implements IHasID <String>
+public enum ECryptoAlgorithmSign implements ICryptoAlgorithmSign
 {
   RSA_SHA_256 ("rsa-sha-256", XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256),
   RSA_SHA_384 ("rsa-sha-384", XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA384),
-  RSA_SHA_512 ("rsa-sha-512", XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512);
+  RSA_SHA_512 ("rsa-sha-512", XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512),
+  ECDSA_SHA_256 ("ecdsa-sha-256", XMLSignature.ALGO_ID_SIGNATURE_ECDSA_SHA256),
+  ECDSA_SHA_384 ("ecdsa-sha-384", XMLSignature.ALGO_ID_SIGNATURE_ECDSA_SHA384),
+  ECDSA_SHA_512 ("ecdsa-sha-512", XMLSignature.ALGO_ID_SIGNATURE_ECDSA_SHA512),
+  RSA_SHA3_256_MGF1 ("rsa-sha3-256-mgf1", XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA3_256_MGF1),
+  RSA_SHA3_384_MGF1 ("rsa-sha3-384-mgf1", XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA3_384_MGF1),
+  RSA_SHA3_512_MGF1 ("rsa-sha3-512-mgf1", XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA3_512_MGF1);
 
   public static final ECryptoAlgorithmSign SIGN_ALGORITHM_DEFAULT = RSA_SHA_256;
 
@@ -75,7 +80,8 @@ public enum ECryptoAlgorithmSign implements IHasID <String>
   }
 
   @Nullable
-  public static ECryptoAlgorithmSign getFromIDOrDefault (@Nullable final String sID, @Nullable final ECryptoAlgorithmSign eDefault)
+  public static ECryptoAlgorithmSign getFromIDOrDefault (@Nullable final String sID,
+                                                         @Nullable final ECryptoAlgorithmSign eDefault)
   {
     return EnumHelper.getFromIDOrDefault (ECryptoAlgorithmSign.class, sID, eDefault);
   }

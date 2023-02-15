@@ -24,7 +24,6 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.cms.CMSAlgorithm;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;
 
 /**
@@ -32,7 +31,7 @@ import com.helger.commons.lang.EnumHelper;
  *
  * @author Philip Helger
  */
-public enum ECryptoAlgorithmCrypt implements IHasID <String>
+public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
 {
   CRYPT_3DES ("3des", CMSAlgorithm.DES_EDE3_CBC, WSS4JConstants.TRIPLE_DES),
   AES_128_CBC ("aes128-cbc", CMSAlgorithm.AES128_CBC, WSS4JConstants.AES_128),
@@ -94,7 +93,8 @@ public enum ECryptoAlgorithmCrypt implements IHasID <String>
   }
 
   @Nullable
-  public static ECryptoAlgorithmCrypt getFromIDOrDefault (@Nullable final String sID, @Nullable final ECryptoAlgorithmCrypt eDefault)
+  public static ECryptoAlgorithmCrypt getFromIDOrDefault (@Nullable final String sID,
+                                                          @Nullable final ECryptoAlgorithmCrypt eDefault)
   {
     return EnumHelper.getFromIDOrDefault (ECryptoAlgorithmCrypt.class, sID, eDefault);
   }

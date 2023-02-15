@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 import org.apache.wss4j.common.WSS4JConstants;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.string.StringHelper;
 
@@ -31,7 +30,7 @@ import com.helger.commons.string.StringHelper;
  *
  * @author Philip Helger
  */
-public enum ECryptoAlgorithmSignDigest implements IHasID <String>
+public enum ECryptoAlgorithmSignDigest implements ICryptoAlgorithmSignDigest
 {
   DIGEST_SHA_256 ("sha-256", WSS4JConstants.SHA256),
   DIGEST_SHA_384 ("sha-384", WSS4JConstants.SHA384),

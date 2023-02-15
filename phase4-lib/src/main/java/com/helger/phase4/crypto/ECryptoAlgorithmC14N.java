@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 import org.apache.wss4j.common.WSS4JConstants;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.string.StringHelper;
 
@@ -33,7 +32,7 @@ import com.helger.commons.string.StringHelper;
  * @author Philip Helger
  * @since 0.10.6
  */
-public enum ECryptoAlgorithmC14N implements IHasID <String>
+public enum ECryptoAlgorithmC14N implements ICryptoAlgorithmC14N
 {
   C14N_OMIT_COMMENTS ("c14n-incl", WSS4JConstants.C14N_OMIT_COMMENTS),
   C14N_WITH_COMMENTS ("c14n-incl-comments", WSS4JConstants.C14N_WITH_COMMENTS),
@@ -78,7 +77,8 @@ public enum ECryptoAlgorithmC14N implements IHasID <String>
   }
 
   @Nullable
-  public static ECryptoAlgorithmC14N getFromIDOrDefault (@Nullable final String sID, @Nullable final ECryptoAlgorithmC14N eDefault)
+  public static ECryptoAlgorithmC14N getFromIDOrDefault (@Nullable final String sID,
+                                                         @Nullable final ECryptoAlgorithmC14N eDefault)
   {
     return EnumHelper.getFromIDOrDefault (ECryptoAlgorithmC14N.class, sID, eDefault);
   }
