@@ -43,7 +43,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.servlet.soap.Phase4KeyStoreCallbackHandler;
+import com.helger.phase4.servlet.soap.AS4KeyStoreCallbackHandler;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.servlet.mock.MockServletContext;
@@ -75,7 +75,7 @@ public class MainVerifySignature
     try
     {
       // Convert to WSS4J attachments
-      final Phase4KeyStoreCallbackHandler aKeyStoreCallback = new Phase4KeyStoreCallbackHandler (aCryptoFactory);
+      final AS4KeyStoreCallbackHandler aKeyStoreCallback = new AS4KeyStoreCallbackHandler (aCryptoFactory);
       final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments, aResHelper);
 
       // Resolve the WSS config here to ensure the context matches

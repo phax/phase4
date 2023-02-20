@@ -38,7 +38,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
  * @since 0.9.16
  */
 @Immutable
-public class Phase4OutgoingAttachment
+public class AS4OutgoingAttachment
 {
   private final ByteArrayWrapper m_aDataBytes;
   private final File m_aDataFile;
@@ -48,7 +48,7 @@ public class Phase4OutgoingAttachment
   private final EAS4CompressionMode m_eCompressionMode;
   private final Charset m_aCharset;
 
-  protected Phase4OutgoingAttachment (@Nullable final ByteArrayWrapper aDataBytes,
+  protected AS4OutgoingAttachment (@Nullable final ByteArrayWrapper aDataBytes,
                                       @Nullable final File aDataFile,
                                       @Nullable final String sContentID,
                                       @Nullable final String sFilename,
@@ -182,12 +182,12 @@ public class Phase4OutgoingAttachment
   }
 
   /**
-   * Builder class for class {@link Phase4OutgoingAttachment}. At least "data"
+   * Builder class for class {@link AS4OutgoingAttachment}. At least "data"
    * and "mimeType" must be set.
    *
    * @author Philip Helger
    */
-  public static class Builder implements IBuilder <Phase4OutgoingAttachment>
+  public static class Builder implements IBuilder <AS4OutgoingAttachment>
   {
     private ByteArrayWrapper m_aDataBytes;
     private File m_aDataFile;
@@ -294,13 +294,13 @@ public class Phase4OutgoingAttachment
     }
 
     @Nonnull
-    public Phase4OutgoingAttachment build ()
+    public AS4OutgoingAttachment build ()
     {
       if (m_aDataBytes == null && m_aDataFile == null)
         throw new IllegalStateException ("Phase4OutgoingAttachment has no 'data' element");
       if (m_aMimeType == null)
         throw new IllegalStateException ("Phase4OutgoingAttachment has no 'mimeType' element");
-      return new Phase4OutgoingAttachment (m_aDataBytes,
+      return new AS4OutgoingAttachment (m_aDataBytes,
                                            m_aDataFile,
                                            m_sContentID,
                                            m_sFilename,

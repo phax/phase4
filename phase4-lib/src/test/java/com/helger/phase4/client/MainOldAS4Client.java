@@ -40,7 +40,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
@@ -155,7 +155,7 @@ public final class MainOldAS4Client
             else
               if (true)
               {
-                aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+                aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                                         .data (ClassPathResource.getAsFile ("attachment/test.xml.gz"))
                                                                                                         .mimeType (CMimeType.APPLICATION_GZIP)
                                                                                                         .build (),

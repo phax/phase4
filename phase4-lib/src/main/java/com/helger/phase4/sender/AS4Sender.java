@@ -22,16 +22,18 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * This class contains all the settings necessary to send AS4 messages using the
- * builder pattern. See <code>Builder.sendMessage</code> as the main method to
- * trigger the sending, with all potential customization.
+ * builder pattern. See <code>Builder.sendMessage</code> and
+ * <code>Builder.sendMessage</code> as the main methods to trigger the sending,
+ * with all potential customization.<br>
+ * Please note that this sender DOES NOT apply any profile specific settings.
  *
  * @author Philip Helger
  * @since 0.10.0
  */
 @Immutable
-public final class Phase4Sender
+public final class AS4Sender
 {
-  private Phase4Sender ()
+  private AS4Sender ()
   {}
 
   /**

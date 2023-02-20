@@ -28,13 +28,13 @@ import com.helger.phase4.profile.AS4ProfileManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
 
 /**
- * Implementation of {@link IManagerFactory} creating managers that are
+ * Implementation of {@link IAS4ManagerFactory} creating managers that are
  * in-memory only.
  *
  * @author Philip Helger
  * @since 0.9.6
  */
-public class ManagerFactoryInMemory implements IManagerFactory
+public class AS4ManagerFactoryInMemory implements IAS4ManagerFactory
 {
   @Nonnull
   public IMPCManager createMPCManager ()

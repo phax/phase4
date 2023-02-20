@@ -24,7 +24,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -45,7 +45,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
                                                                AbstractAS4UserMessageBuilder <IMPLTYPE>
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4UserMessageBuilderMIMEPayload.class);
-  private Phase4OutgoingAttachment m_aPayload;
+  private AS4OutgoingAttachment m_aPayload;
 
   /**
    * Create a new builder, with the some fields already set as outlined in
@@ -62,7 +62,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE payload (@Nullable final Phase4OutgoingAttachment.Builder aBuilder)
+  public final IMPLTYPE payload (@Nullable final AS4OutgoingAttachment.Builder aBuilder)
   {
     return payload (aBuilder == null ? null : aBuilder.build ());
   }
@@ -75,7 +75,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE payload (@Nullable final Phase4OutgoingAttachment aPayload)
+  public final IMPLTYPE payload (@Nullable final AS4OutgoingAttachment aPayload)
   {
     m_aPayload = aPayload;
     return thisAsT ();
@@ -115,7 +115,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
       aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (m_aPayload, aResHelper));
 
       // Add other attachments
-      for (final Phase4OutgoingAttachment aAttachment : m_aAttachments)
+      for (final AS4OutgoingAttachment aAttachment : m_aAttachments)
         aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment, aResHelper));
 
       // Main sending

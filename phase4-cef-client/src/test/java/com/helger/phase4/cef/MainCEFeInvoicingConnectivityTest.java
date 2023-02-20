@@ -31,7 +31,7 @@ import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.mime.CMimeType;
 import com.helger.peppolid.simple.participant.SimpleParticipantIdentifier;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.dump.AS4DumpManager;
@@ -136,7 +136,7 @@ public class MainCEFeInvoicingConnectivityTest
                                                                .toPartyID ("domibus-gitb")
                                                                .toRole (CAS4.DEFAULT_RESPONDER_URL)
                                                                .messageID (sAS4MessageID)
-                                                               .payload (Phase4OutgoingAttachment.builder ()
+                                                               .payload (AS4OutgoingAttachment.builder ()
                                                                                                  .data (aPayloadBytes)
                                                                                                  .filename ("businessContentPayload")
                                                                                                  .compressionGZIP ()

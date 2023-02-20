@@ -35,7 +35,7 @@ import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.wrapper.Wrapper;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.ebms3header.Ebms3Property;
@@ -82,7 +82,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   protected X509Certificate m_aReceiverCertificate;
   protected String m_sEndpointURL;
 
-  protected final ICommonsList <Phase4OutgoingAttachment> m_aAttachments = new CommonsArrayList <> ();
+  protected final ICommonsList <AS4OutgoingAttachment> m_aAttachments = new CommonsArrayList <> ();
 
   protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
 
@@ -396,7 +396,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE addAttachment (@Nullable final Phase4OutgoingAttachment.Builder a)
+  public final IMPLTYPE addAttachment (@Nullable final AS4OutgoingAttachment.Builder a)
   {
     return addAttachment (a == null ? null : a.build ());
   }
@@ -409,7 +409,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE addAttachment (@Nullable final Phase4OutgoingAttachment a)
+  public final IMPLTYPE addAttachment (@Nullable final AS4OutgoingAttachment a)
   {
     if (a != null)
       m_aAttachments.add (a);
@@ -424,7 +424,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE attachment (@Nullable final Phase4OutgoingAttachment.Builder a)
+  public final IMPLTYPE attachment (@Nullable final AS4OutgoingAttachment.Builder a)
   {
     return attachment (a == null ? null : a.build ());
   }
@@ -437,7 +437,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE attachment (@Nullable final Phase4OutgoingAttachment a)
+  public final IMPLTYPE attachment (@Nullable final AS4OutgoingAttachment a)
   {
     if (a == null)
       m_aAttachments.clear ();
@@ -454,7 +454,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE attachments (@Nullable final Phase4OutgoingAttachment... a)
+  public final IMPLTYPE attachments (@Nullable final AS4OutgoingAttachment... a)
   {
     m_aAttachments.setAll (a);
     return thisAsT ();
@@ -468,7 +468,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE attachments (@Nullable final Iterable <? extends Phase4OutgoingAttachment> a)
+  public final IMPLTYPE attachments (@Nullable final Iterable <? extends AS4OutgoingAttachment> a)
   {
     m_aAttachments.setAll (a);
     return thisAsT ();

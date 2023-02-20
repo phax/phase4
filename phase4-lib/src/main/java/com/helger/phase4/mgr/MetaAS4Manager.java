@@ -42,19 +42,19 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (MetaAS4Manager.class);
 
-  private static IManagerFactory s_aFactory;
+  private static IAS4ManagerFactory s_aFactory;
   private static IAS4TimestampManager s_aTimestampMgr;
   static
   {
     if (AS4Configuration.isUseInMemoryManagers ())
     {
       LOGGER.info ("MetaAS4Manager is initialized with in-memory data structures");
-      s_aFactory = new ManagerFactoryInMemory ();
+      s_aFactory = new AS4ManagerFactoryInMemory ();
     }
     else
     {
       LOGGER.info ("MetaAS4Manager is initialized using file system persistence");
-      s_aFactory = new ManagerFactoryPersistingFileSystem ();
+      s_aFactory = new AS4ManagerFactoryPersistingFileSystem ();
     }
     s_aTimestampMgr = s_aFactory.createTimestampManager ();
   }
@@ -64,7 +64,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
    * @since 0.9.14
    */
   @Nonnull
-  public static IManagerFactory getFactory ()
+  public static IAS4ManagerFactory getFactory ()
   {
     return s_aFactory;
   }
@@ -77,7 +77,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
    *        The new factory. May not be <code>null</code>.
    * @since 0.9.14
    */
-  public static void setFactory (@Nonnull final IManagerFactory aFactory)
+  public static void setFactory (@Nonnull final IAS4ManagerFactory aFactory)
   {
     ValueEnforcer.notNull (aFactory, "Factory");
     s_aFactory = aFactory;

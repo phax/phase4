@@ -32,7 +32,7 @@ import com.helger.commons.version.Version;
  * @author Philip Helger
  */
 @IsSPIImplementation
-public final class ThirdPartyModuleProvider_ph_as4_lib implements IThirdPartyModuleProviderSPI
+public final class ThirdPartyModuleProvider_phase4_lib implements IThirdPartyModuleProviderSPI
 {
   private static final IThirdPartyModule WSS4J = new ThirdPartyModule ("Apache WSS4J",
                                                                        "Apache",

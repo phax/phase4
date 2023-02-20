@@ -32,7 +32,7 @@ import com.helger.phase4.util.Phase4Exception;
  * @author Philip Helger
  * @since 0.9.6
  */
-public interface IManagerFactory extends Serializable
+public interface IAS4ManagerFactory extends Serializable
 {
   /**
    * @return A new {@link IMPCManager} instance

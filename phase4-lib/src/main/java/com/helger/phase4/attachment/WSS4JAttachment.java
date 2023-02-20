@@ -340,7 +340,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   }
 
   @Nonnull
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final Phase4OutgoingAttachment aAttachment,
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final AS4OutgoingAttachment aAttachment,
                                                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
   {
     if (aAttachment.hasDataBytes ())

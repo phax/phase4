@@ -26,7 +26,7 @@ import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.sml.SMLInfo;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.simple.participant.SimpleParticipantIdentifier;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
@@ -94,7 +94,7 @@ public final class MainPhase4CEFSenderToop
                          .fromRole ("http://www.toop.eu/edelivery/gateway")
                          .toPartyID (new SimpleParticipantIdentifier ("type", "POP000306"))
                          .toRole ("http://www.toop.eu/edelivery/gateway")
-                         .payload (Phase4OutgoingAttachment.builder ().data (aPayloadBytes).mimeTypeXML ())
+                         .payload (AS4OutgoingAttachment.builder ().data (aPayloadBytes).mimeTypeXML ())
                          .smpClient (new BDXRClientReadOnly (Phase4CEFSender.URL_PROVIDER, aReceiverID, SML_TOOP))
                          .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                          .buildMessageCallback (aBuildMessageCallback)

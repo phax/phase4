@@ -30,13 +30,13 @@ import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
- * Implementation of {@link IManagerFactory} creating managers that are
+ * Implementation of {@link IAS4ManagerFactory} creating managers that are
  * persisting to disk.
  *
  * @author Philip Helger
  * @since 0.9.6
  */
-public class ManagerFactoryPersistingFileSystem implements IManagerFactory
+public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
 {
   private static final String MPC_XML = "as4-mpc.xml";
   private static final String PMODE_XML = "as4-pmode.xml";

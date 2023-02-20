@@ -41,7 +41,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.error.EEbmsError;
@@ -159,7 +159,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   {
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ))
                                                                                             .mimeType (CMimeType.APPLICATION_GZIP)
                                                                                             .build (),
@@ -197,7 +197,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .build (),
@@ -272,7 +272,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   public void testUserMessageWithAttachmentPartInfoOnly () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ))
                                                                                             .mimeTypeXML ()
                                                                                             .build (),
@@ -304,7 +304,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final Document aSoapDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments)
                                           .getAsSoapDocument ();
 
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ))
                                                                                             .mimeType (CMimeType.APPLICATION_GZIP)
                                                                                             .build (),
@@ -321,7 +321,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   public void testUserMessageWithMoreAttachmentsThenPartInfo () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ))
                                                                                             .mimeType (CMimeType.APPLICATION_GZIP)
                                                                                             .build (),
@@ -330,12 +330,12 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final Document aSoapDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments)
                                           .getAsSoapDocument ();
 
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
                                                                                             .mimeType (CMimeType.IMAGE_JPG)
                                                                                             .build (),
                                                                     s_aResMgr));
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG2_JPG))
                                                                                             .mimeType (CMimeType.IMAGE_JPG)
                                                                                             .build (),

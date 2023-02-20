@@ -28,7 +28,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
@@ -78,7 +78,7 @@ public final class Phase4ENTSOGSender
 
     private ECryptoKeyIdentifierType m_eSigningKeyIdentifierType;
     private ECryptoKeyIdentifierType m_eEncryptionKeyIdentifierType;
-    private Phase4OutgoingAttachment m_aPayload;
+    private AS4OutgoingAttachment m_aPayload;
     private ENTSOGPayloadParams m_aPayloadParams;
 
     protected AbstractENTSOGUserMessageBuilder ()
@@ -137,7 +137,7 @@ public final class Phase4ENTSOGSender
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE payload (@Nullable final Phase4OutgoingAttachment.Builder aBuilder,
+    public final IMPLTYPE payload (@Nullable final AS4OutgoingAttachment.Builder aBuilder,
                                    @Nullable final ENTSOGPayloadParams aPayloadParams)
     {
       m_aPayload = aBuilder != null ? aBuilder.compressionGZIP ().build () : null;
@@ -191,7 +191,7 @@ public final class Phase4ENTSOGSender
         aUserMsg.addAttachment (aPayloadAttachment);
 
         // Add other attachments
-        for (final Phase4OutgoingAttachment aAttachment : m_aAttachments)
+        for (final AS4OutgoingAttachment aAttachment : m_aAttachments)
           aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment, aResHelper));
 
         // Main sending

@@ -46,7 +46,7 @@ import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ScopedConfig;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
@@ -188,7 +188,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void testEsens_TA04 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .build (),
@@ -230,7 +230,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void testEsens_TA05 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .compressionGZIP ()
@@ -270,19 +270,19 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     // same stuff as TA05 only one step further
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .compressionGZIP ()
                                                                                             .build (),
                                                                     s_aResMgr));
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
                                                                                             .mimeType (CMimeType.IMAGE_JPG)
                                                                                             .compressionGZIP ()
                                                                                             .build (),
                                                                     s_aResMgr));
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .compressionGZIP ()
@@ -318,19 +318,19 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     // same stuff as TA05 only one step further
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .compressionGZIP ()
                                                                                             .build (),
                                                                     s_aResMgr));
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
                                                                                             .mimeType (CMimeType.IMAGE_JPG)
                                                                                             .compressionGZIP ()
                                                                                             .build (),
                                                                     s_aResMgr));
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .compressionGZIP ()

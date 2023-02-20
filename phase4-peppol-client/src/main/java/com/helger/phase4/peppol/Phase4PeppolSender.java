@@ -60,7 +60,7 @@ import com.helger.peppolid.peppol.doctype.IPeppolDocumentTypeIdentifierParts;
 import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifierParts;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
@@ -1093,7 +1093,7 @@ public final class Phase4PeppolSender
         m_aSBDBytesConsumer.accept (aSBDBytes);
 
       // Now we have the main payload
-      payload (Phase4OutgoingAttachment.builder ()
+      payload (AS4OutgoingAttachment.builder ()
                                        .data (aSBDBytes)
                                        .mimeType (m_aPayloadMimeType)
                                        .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null)
@@ -1190,7 +1190,7 @@ public final class Phase4PeppolSender
         return ESuccess.FAILURE;
 
       // Now we have the main payload
-      payload (Phase4OutgoingAttachment.builder ()
+      payload (AS4OutgoingAttachment.builder ()
                                        .data (m_aPayloadBytes)
                                        .mimeType (m_aPayloadMimeType)
                                        .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null));

@@ -29,7 +29,7 @@ import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
@@ -112,7 +112,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .build (),
@@ -143,7 +143,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void testReceiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .build (),

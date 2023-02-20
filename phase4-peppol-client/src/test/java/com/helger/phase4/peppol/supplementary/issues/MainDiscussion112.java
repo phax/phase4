@@ -23,7 +23,7 @@ import com.helger.commons.state.EChange;
 import com.helger.commons.state.EContinue;
 import com.helger.phase4.duplicate.IAS4DuplicateItem;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
-import com.helger.phase4.mgr.ManagerFactoryInMemory;
+import com.helger.phase4.mgr.AS4ManagerFactoryInMemory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
 public class MainDiscussion112
@@ -73,7 +73,7 @@ public class MainDiscussion112
     }
   }
 
-  public static class MyManagerFactory extends ManagerFactoryInMemory
+  public static class MyManagerFactory extends AS4ManagerFactoryInMemory
   {
     @Override
     public IAS4DuplicateManager createDuplicateManager ()

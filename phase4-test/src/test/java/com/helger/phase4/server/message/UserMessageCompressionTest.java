@@ -33,7 +33,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.error.EEbmsError;
@@ -67,7 +67,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   public void testUserMessageWithCompressedAttachmentSuccessful () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .compressionGZIP ()
@@ -88,7 +88,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   public void testUserMessageWithCompressedSignedSuccessful () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .compressionGZIP ()
@@ -113,7 +113,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   public void testUserMessageCompressedEncrpytedSuccessful () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .compressionGZIP ()
@@ -137,7 +137,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   public void testUserMessageCompressedSignedEncrpytedSuccessful () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                             .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                             .mimeTypeXML ()
                                                                                             .compressionGZIP ()
