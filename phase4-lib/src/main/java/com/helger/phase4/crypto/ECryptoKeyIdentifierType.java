@@ -81,16 +81,6 @@ public enum ECryptoKeyIdentifierType implements IHasID <String>
    */
   SKI_KEY_IDENTIFIER ("ski-key-id", WSConstants.SKI_KEY_IDENTIFIER),
   /**
-   * Embeds a keyinfo/key name into the EncryptedData element.
-   */
-  @Deprecated
-  EMBEDDED_KEYNAME ("embedded-keyname", WSConstants.EMBEDDED_KEYNAME),
-  /**
-   * Embeds a keyinfo/wsse:SecurityTokenReference into EncryptedData element.
-   */
-  @Deprecated
-  EMBED_SECURITY_TOKEN_REF ("embedded-security-token-ref", WSConstants.EMBED_SECURITY_TOKEN_REF),
-  /**
    * <code>UT_SIGNING</code> is used internally only to set a specific Signature
    * behavior. The signing token is constructed from values in the UsernameToken
    * according to WS-Trust specification.

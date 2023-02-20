@@ -19,10 +19,11 @@ package com.helger.phase4.attachment;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeBodyPart;
 
 import com.helger.phase4.util.AS4ResourceHelper;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeBodyPart;
 
 /**
  * Factory interface for {@link WSS4JAttachment} objects for handling incoming

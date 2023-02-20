@@ -26,7 +26,6 @@ import java.security.GeneralSecurityException;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.hc.client5.http.HttpHostConnectException;
@@ -66,6 +65,8 @@ import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.util.AS4ResourceHelper;
+
+import jakarta.mail.MessagingException;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 {

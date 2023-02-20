@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.mail.MessagingException;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
@@ -65,6 +64,8 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.write.XMLWriter;
+
+import jakarta.mail.MessagingException;
 
 /**
  * AS4 client for {@link AS4UserMessage} objects.

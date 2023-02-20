@@ -21,8 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.annotation.Nonnull;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
 
@@ -30,6 +28,9 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * Special HTTP entity that reads and writes to a {@link MimeMessage}.

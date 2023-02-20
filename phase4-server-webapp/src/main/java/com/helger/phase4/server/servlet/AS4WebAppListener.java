@@ -22,7 +22,6 @@ import java.security.KeyStore;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.activation.CommandMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
@@ -53,6 +52,8 @@ import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.IUserManager;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
+
+import jakarta.activation.CommandMap;
 
 @WebListener
 public final class AS4WebAppListener extends WebAppListener

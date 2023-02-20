@@ -30,10 +30,10 @@ import com.helger.commons.string.StringHelper;
  */
 public enum EWSSVersion
 {
-  @Deprecated
-  WSS_10 ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.0"),
-  @Deprecated
-  WSS_11 ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.1"),
+  @Deprecated (forRemoval = false)
+  WSS_10("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.0"),
+  @Deprecated (forRemoval = false)
+  WSS_11("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.1"),
   WSS_111 ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.1.1");
 
   private final String m_sNamespaceURI;
@@ -89,7 +89,8 @@ public enum EWSSVersion
   }
 
   @Nullable
-  public static EWSSVersion getFromVersionOrDefault (@Nullable final String sVersion, @Nullable final EWSSVersion eDefault)
+  public static EWSSVersion getFromVersionOrDefault (@Nullable final String sVersion,
+                                                     @Nullable final EWSSVersion eDefault)
   {
     if (StringHelper.hasNoText (sVersion))
       return eDefault;

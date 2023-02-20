@@ -27,8 +27,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillClose;
 import javax.annotation.WillNotClose;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeBodyPart;
 import javax.xml.namespace.QName;
 
 import org.apache.hc.core5.http.Header;
@@ -93,6 +91,9 @@ import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeBodyPart;
 
 /**
  * Utility methods for incoming AS4 messages.

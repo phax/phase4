@@ -28,9 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.RegEx;
 import javax.annotation.concurrent.Immutable;
-import javax.mail.Header;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -61,6 +58,10 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3Service;
 import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.mgr.MetaAS4Manager;
+
+import jakarta.mail.Header;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * This class contains every method, static variables which are used by more
@@ -143,7 +144,9 @@ public final class MessageHelperMethods
   @Nonempty
   public static String createRandomMessageID ()
   {
-    return UUID.randomUUID ().toString () + "@" + StringHelper.getConcatenatedOnDemand (CAS4.LIB_NAME, '.', s_sCustomMessageIDSuffix);
+    return UUID.randomUUID ().toString () +
+           "@" +
+           StringHelper.getConcatenatedOnDemand (CAS4.LIB_NAME, '.', s_sCustomMessageIDSuffix);
   }
 
   /**
@@ -166,18 +169,6 @@ public final class MessageHelperMethods
     // Data type is "xs:ID", derived from "xs:NCName"
     // --> cannot start with a number
     return CAS4.LIB_NAME + "-msg-" + UUID.randomUUID ().toString ();
-  }
-
-  /**
-   * @return A random Content-ID. Neither <code>null</code> nor empty.
-   * @deprecated Since v1.3.1. Use {@link #createRandomContentID()} instead.
-   */
-  @Nonnull
-  @Nonempty
-  @Deprecated
-  public static String createRandomAttachmentID ()
-  {
-    return createRandomContentID ();
   }
 
   @Nonnull
@@ -223,9 +214,12 @@ public final class MessageHelperMethods
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID, @Nullable final String sRefToMessageID)
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
+                                                         @Nullable final String sRefToMessageID)
   {
-    return createEbms3MessageInfo (sMessageID, sRefToMessageID, MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
+    return createEbms3MessageInfo (sMessageID,
+                                   sRefToMessageID,
+                                   MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
   }
 
   /**
@@ -410,12 +404,14 @@ public final class MessageHelperMethods
     final ICommonsSet <String> aUsedPropertyNames = new CommonsHashSet <> ();
 
     final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE, aAttachment.getUncompressedMimeType ()));
+    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE,
+                                                           aAttachment.getUncompressedMimeType ()));
     aUsedPropertyNames.add (PART_PROPERTY_MIME_TYPE);
 
     if (aAttachment.hasCharset ())
     {
-      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET, aAttachment.getCharset ().name ()));
+      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET,
+                                                             aAttachment.getCharset ().name ()));
       aUsedPropertyNames.add (PART_PROPERTY_CHARACTER_SET);
     }
     if (aAttachment.hasCompressionMode ())
@@ -480,7 +476,8 @@ public final class MessageHelperMethods
     for (final Header aHeader : aHeaders)
     {
       // Make a single-line HTTP header value!
-      aConsumer.accept (aHeader.getName (), bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
+      aConsumer.accept (aHeader.getName (),
+                        bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
     }
 
     // Remove all headers from MIME message

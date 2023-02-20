@@ -89,7 +89,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   private IAS4DuplicateManager m_aIncomingDuplicateMgr;
   private IAS4ProfileManager m_aProfileMgr;
 
-  @Deprecated
+  @Deprecated (forRemoval = false)
   @UsedViaReflection
   public MetaAS4Manager ()
   {}

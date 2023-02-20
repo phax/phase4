@@ -24,7 +24,6 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
-import javax.mail.MessagingException;
 
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.wss4j.common.ext.WSSecurityException;
@@ -60,6 +59,8 @@ import com.helger.security.keystore.EKeyStoreType;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.mail.MessagingException;
 
 /**
  * Test class for class {@link AS4ClientUserMessage}

@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.mail.MessagingException;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.junit.Test;
@@ -49,6 +48,8 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.soap.ESoapVersion;
+
+import jakarta.mail.MessagingException;
 
 /**
  * Run with many attachments. <br>

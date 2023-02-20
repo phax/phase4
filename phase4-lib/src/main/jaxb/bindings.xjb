@@ -17,12 +17,12 @@
     limitations under the License.
 
 -->
-<bindings version="2.1" 
-          xmlns="http://java.sun.com/xml/ns/jaxb"
-          xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" 
-          xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+<bindings version="3.0" 
+          xmlns="https://jakarta.ee/xml/ns/jaxb"
+          xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-          xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd" 
+          xsi:schemaLocation="https://jakarta.ee/xml/ns/jaxb https://jakarta.ee/xml/ns/jaxb/bindingschema_3_0.xsd"
           xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
           xmlns:S12="http://www.w3.org/2003/05/soap-envelope">
   <globalBindings typesafeEnumMaxMembers="2000" typesafeEnumMemberName="generateError">

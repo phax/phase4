@@ -18,15 +18,8 @@ package com.helger.phase4.messaging.mime;
 
 import java.nio.charset.Charset;
 
-import javax.activation.CommandInfo;
-import javax.activation.CommandMap;
-import javax.activation.DataHandler;
-import javax.activation.MailcapCommandMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeBodyPart;
 import javax.xml.transform.dom.DOMSource;
 
 import org.slf4j.LoggerFactory;
@@ -39,6 +32,14 @@ import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4XMLHelper;
+
+import jakarta.activation.CommandInfo;
+import jakarta.activation.CommandMap;
+import jakarta.activation.DataHandler;
+import jakarta.activation.MailcapCommandMap;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeBodyPart;
 
 public final class MimeMessageCreator
 {

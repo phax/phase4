@@ -19,8 +19,6 @@ package com.helger.phase4.messaging.mime;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.activation.ActivationDataFlavor;
-import javax.activation.DataSource;
 import javax.annotation.Nonnull;
 import javax.annotation.WillNotClose;
 import javax.xml.transform.Source;
@@ -33,6 +31,9 @@ import javax.xml.transform.stream.StreamSource;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.phase4.soap.ESoapVersion;
 import com.sun.mail.handlers.text_plain;
+
+import jakarta.activation.ActivationDataFlavor;
+import jakarta.activation.DataSource;
 
 /**
  * Special DataContentHandler for SOAP 1.2 messages with the special MIME type.
@@ -56,7 +57,8 @@ public class DataContentHandlerSoap12 extends text_plain
 
   @Override
   @Nonnull
-  protected Object getData (@Nonnull final ActivationDataFlavor aFlavor, @Nonnull final DataSource ds) throws IOException
+  protected Object getData (@Nonnull final ActivationDataFlavor aFlavor,
+                            @Nonnull final DataSource ds) throws IOException
   {
     if (aFlavor.getRepresentationClass () == StreamSource.class)
       return new StreamSource (ds.getInputStream ());

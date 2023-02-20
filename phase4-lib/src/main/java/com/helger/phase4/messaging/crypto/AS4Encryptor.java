@@ -22,7 +22,6 @@ import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.mail.MessagingException;
 
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.WSS4JConstants;
@@ -53,6 +52,8 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.phase4.wss.WSSSynchronizer;
+
+import jakarta.mail.MessagingException;
 
 /**
  * Encryption helper

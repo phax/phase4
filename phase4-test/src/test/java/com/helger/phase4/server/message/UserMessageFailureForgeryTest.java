@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.mail.internet.MimeBodyPart;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -58,6 +57,8 @@ import com.helger.phase4.messaging.mime.SoapMimeMultipart;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.mail.internet.MimeBodyPart;
 
 /**
  * Tests the basic functionality of sending UserMessages with SOAP Version 1.1.

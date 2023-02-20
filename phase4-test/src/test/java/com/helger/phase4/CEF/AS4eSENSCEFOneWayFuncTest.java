@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
-import javax.mail.Multipart;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -76,6 +75,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import jakarta.mail.Multipart;
 
 public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 {

@@ -27,7 +27,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillClose;
-import javax.mail.MessagingException;
 import javax.servlet.ServletInputStream;
 
 import org.apache.hc.core5.http.HttpEntity;
@@ -112,6 +111,8 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.app.PhotonWorkerPool;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
+
+import jakarta.mail.MessagingException;
 
 /**
  * Process incoming AS4 transmissions. This class is instantiated per request.

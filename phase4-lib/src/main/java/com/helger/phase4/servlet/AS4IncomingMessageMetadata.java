@@ -59,13 +59,8 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    *
    * @param eMode
    *        The messaging mode. May not be <code>null</code>.
-   * @deprecated Since 1.4.2. Use the factory methods
-   *             {@link #createForRequest()} and
-   *             {@link #createForResponse(String)} instead. To be made
-   *             protected instead.
    */
-  @Deprecated
-  public AS4IncomingMessageMetadata (@Nonnull final EAS4MessageMode eMode)
+  protected AS4IncomingMessageMetadata (@Nonnull final EAS4MessageMode eMode)
   {
     this (UUID.randomUUID ().toString (), MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), eMode);
   }

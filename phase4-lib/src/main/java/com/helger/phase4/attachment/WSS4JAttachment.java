@@ -25,16 +25,10 @@ import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.mail.Header;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
 
 import org.apache.wss4j.common.ext.Attachment;
 import org.slf4j.Logger;
@@ -59,6 +53,13 @@ import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.mail.datasource.InputStreamProviderDataSource;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
+
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.mail.Header;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMultipart;
 
 /**
  * Special WSS4J attachment with an InputStream provider instead of a fixed
@@ -114,7 +115,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    * @deprecated Do not use this.
    */
   @Override
-  @Deprecated
+  @Deprecated (forRemoval = false)
   @UnsupportedOperation
   public final void setMimeType (@Nullable final String sMimeType)
   {
@@ -168,7 +169,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    *             {@link #setSourceStreamProvider(IHasInputStream)} instead.
    */
   @Override
-  @Deprecated
+  @Deprecated (forRemoval = false)
   @UnsupportedOperation
   public void setSourceStream (final InputStream sourceStream)
   {

@@ -19,11 +19,12 @@ package com.helger.phase4.messaging.mime;
 import java.nio.charset.Charset;
 
 import javax.annotation.Nonnull;
-import javax.mail.internet.ContentType;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.ParseException;
 
 import com.helger.phase4.soap.ESoapVersion;
+
+import jakarta.mail.internet.ContentType;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.ParseException;
 
 /**
  * Special {@link MimeMultipart} that modifies the Content-Type to add the
@@ -33,7 +34,8 @@ import com.helger.phase4.soap.ESoapVersion;
  */
 public class SoapMimeMultipart extends MimeMultipart
 {
-  public SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Charset aCharset) throws ParseException
+  public SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion,
+                            @Nonnull final Charset aCharset) throws ParseException
   {
     super ("related");
 

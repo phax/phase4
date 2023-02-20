@@ -18,7 +18,6 @@ package com.helger.phase4.client;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.MessagingException;
 
 import org.apache.hc.core5.http.HttpEntity;
 
@@ -30,6 +29,8 @@ import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
+
+import jakarta.mail.MessagingException;
 
 /**
  * The client HTTP message and some metadata

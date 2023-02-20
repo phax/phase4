@@ -38,7 +38,7 @@ public class WSSConfigManager extends AbstractGlobalSingleton
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (WSSConfigManager.class);
 
-  @Deprecated
+  @Deprecated (forRemoval = false)
   @UsedViaReflection
   public WSSConfigManager ()
   {}

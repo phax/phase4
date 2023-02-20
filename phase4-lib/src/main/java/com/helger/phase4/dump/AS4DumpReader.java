@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.MessagingException;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
@@ -59,6 +58,8 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
+
+import jakarta.mail.MessagingException;
 
 /**
  * Utility method to read dump files later.

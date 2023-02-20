@@ -21,7 +21,6 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.MessagingException;
 
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpResponse;
@@ -55,6 +54,8 @@ import com.helger.phase4.servlet.AS4IncomingHandler;
 import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.IAS4IncomingProfileSelector;
 import com.helger.phase4.util.Phase4Exception;
+
+import jakarta.mail.MessagingException;
 
 /**
  * Helper class to send and AS4 message and handle an incoming AS4 response.

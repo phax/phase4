@@ -586,23 +586,6 @@ public final class Phase4PeppolSender
      * @param aAPEndpointURLConsumer
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
-     * @deprecated Since 1.3.3. Due to a typo. Use
-     *             {@link #endpointURLConsumer(Consumer)} instead.
-     */
-    @Nonnull
-    @Deprecated
-    public final IMPLTYPE endointURLConsumer (@Nullable final Consumer <String> aAPEndpointURLConsumer)
-    {
-      return endpointURLConsumer (aAPEndpointURLConsumer);
-    }
-
-    /**
-     * Set an optional Consumer for the destination AP address retrieved from
-     * the endpoint details provider, independent of its usability.
-     *
-     * @param aAPEndpointURLConsumer
-     *        The consumer to be used. May be <code>null</code>.
-     * @return this for chaining
      * @since 1.3.3
      */
     @Nonnull
