@@ -122,7 +122,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aRequestData.setSigVerCrypto (m_aCryptoFactory.getCrypto ());
       aRequestData.setDecCrypto (m_aCryptoFactory.getCrypto ());
       aRequestData.setWssConfig (aWSSConfig);
-      aRequestData.setAllowRSA15KeyTransportAlgorithm(AS4CryptoProperties.createFromConfig().isAllowRSA15KeyTransportAlgorithm());
+      aRequestData.setAllowRSA15KeyTransportAlgorithm (AS4CryptoProperties.createFromConfig ()
+                                                                          .isAllowRSA15KeyTransportAlgorithm ());
 
       // Upon success, the SOAP document contains the decrypted content
       // afterwards!
@@ -191,8 +192,16 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // read more than once. By default the stream can only be read once
         // Not nice, but working :)
         final File aTempFile = aState.getResourceHelper ().createTempFile ();
-        StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aResponseAttachment.getSourceStream (),
-                                                              FileHelper.getBufferedOutputStream (aTempFile));
+        if (StreamHelper.copyByteStream ()
+                        .from (aResponseAttachment.getSourceStream ())
+                        .closeFrom (true)
+                        .to (FileHelper.getBufferedOutputStream (aTempFile))
+                        .closeTo (true)
+                        .build ()
+                        .isFailure ())
+        {
+          LOGGER.error ("Failed to write response attachment to temporary file '" + aTempFile.getAbsolutePath () + "'");
+        }
         aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
       }
 

@@ -112,7 +112,11 @@ public class AS4ResourceHelper implements Closeable
     // Create
     final File ret = File.createTempFile ("phase4-res-", ".tmp", s_aTempDir);
     // And remember
-    m_aRWLock.writeLockedBoolean ( () -> m_aTempFiles.add (ret));
+    m_aRWLock.writeLocked ( () -> m_aTempFiles.add (ret));
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("AS4ResourceHelper.created temporary file '" + ret.getAbsolutePath () + "'");
+
     return ret;
   }
 

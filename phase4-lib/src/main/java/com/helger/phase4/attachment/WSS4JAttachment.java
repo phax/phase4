@@ -112,7 +112,8 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   }
 
   /**
-   * @deprecated Do not use this.
+   * @deprecated Do not use this. If you need to use this, use
+   *             {@link #overwriteMimeType(String)}
    */
   @Override
   @Deprecated (forRemoval = false)
@@ -367,6 +368,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                            aResHelper);
     }
 
+    // Must be one of the 2 variants
     throw new IllegalStateException ("Unsupported outgoing attachment data provider: " + aAttachment);
   }
 
@@ -472,6 +474,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   {
     ValueEnforcer.notNull (aSrcData, "Data");
     ValueEnforcer.notNull (aMimeType, "MimeType");
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aMimeType.getAsString ());
     ret.setId (sContentID);
@@ -553,7 +556,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
           }
           catch (final IOException ex)
           {
-            throw new UncheckedIOException (ex);
+            throw new UncheckedIOException ("Failed to get InputStream from DataSource", ex);
           }
         }));
       }
@@ -569,7 +572,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
           }
           catch (final IOException ex)
           {
-            throw new UncheckedIOException (ex);
+            throw new UncheckedIOException ("Failed to get InputStream from DataHandler", ex);
           }
         }));
       }

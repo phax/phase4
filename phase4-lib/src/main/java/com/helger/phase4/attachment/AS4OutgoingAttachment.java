@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
@@ -49,12 +50,12 @@ public class AS4OutgoingAttachment
   private final Charset m_aCharset;
 
   protected AS4OutgoingAttachment (@Nullable final ByteArrayWrapper aDataBytes,
-                                      @Nullable final File aDataFile,
-                                      @Nullable final String sContentID,
-                                      @Nullable final String sFilename,
-                                      @Nonnull final IMimeType aMimeType,
-                                      @Nullable final EAS4CompressionMode eCompressionMode,
-                                      @Nullable final Charset aCharset)
+                                   @Nullable final File aDataFile,
+                                   @Nullable final String sContentID,
+                                   @Nullable final String sFilename,
+                                   @Nonnull final IMimeType aMimeType,
+                                   @Nullable final EAS4CompressionMode eCompressionMode,
+                                   @Nullable final Charset aCharset)
   {
     ValueEnforcer.isTrue (aDataBytes != null || aDataFile != null, "SrcData or SrcFile must be present");
     ValueEnforcer.isFalse (aDataBytes != null && aDataFile != null,
@@ -84,6 +85,7 @@ public class AS4OutgoingAttachment
   /**
    * @return <code>true</code> if the data is available as a byte array,
    *         <code>false</code> if it is a file.
+   * @see #hasDataFile()
    */
   public final boolean hasDataBytes ()
   {
@@ -105,6 +107,7 @@ public class AS4OutgoingAttachment
   /**
    * @return <code>true</code> if the data is available as a File,
    *         <code>false</code> if it is a byte array.
+   * @see #hasDataBytes()
    */
   public final boolean hasDataFile ()
   {
@@ -182,8 +185,8 @@ public class AS4OutgoingAttachment
   }
 
   /**
-   * Builder class for class {@link AS4OutgoingAttachment}. At least "data"
-   * and "mimeType" must be set.
+   * Builder class for class {@link AS4OutgoingAttachment}. At least "data" and
+   * "mimeType" must be set.
    *
    * @author Philip Helger
    */
@@ -293,20 +296,26 @@ public class AS4OutgoingAttachment
       return this;
     }
 
-    @Nonnull
-    public AS4OutgoingAttachment build ()
+    @OverridingMethodsMustInvokeSuper
+    protected void checkConsistency ()
     {
       if (m_aDataBytes == null && m_aDataFile == null)
         throw new IllegalStateException ("Phase4OutgoingAttachment has no 'data' element");
       if (m_aMimeType == null)
         throw new IllegalStateException ("Phase4OutgoingAttachment has no 'mimeType' element");
+    }
+
+    @Nonnull
+    public AS4OutgoingAttachment build ()
+    {
+      checkConsistency ();
       return new AS4OutgoingAttachment (m_aDataBytes,
-                                           m_aDataFile,
-                                           m_sContentID,
-                                           m_sFilename,
-                                           m_aMimeType,
-                                           m_eCompressionMode,
-                                           m_aCharset);
+                                        m_aDataFile,
+                                        m_sContentID,
+                                        m_sFilename,
+                                        m_aMimeType,
+                                        m_eCompressionMode,
+                                        m_aCharset);
     }
   }
 }

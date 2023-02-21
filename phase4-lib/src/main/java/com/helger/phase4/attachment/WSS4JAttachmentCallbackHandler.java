@@ -39,31 +39,44 @@ import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.io.stream.HasInputStream;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
  * A Callback Handler implementation for the case of signing/encrypting
  * Attachments via the SwA (SOAP with Attachments) specification or when using
- * xop:Include in the case of MTOM.
+ * xop:Include in the case of MTOM. This class is used both in
+ * signing/encryption and in verification/decryption
  *
  * @author Apache WSS4J
  * @author Philip Helger
  */
 public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 {
+  public static final String ATTACHMENT_ID_ATTACHMENTS = "Attachments";
+
   private static final Logger LOGGER = LoggerFactory.getLogger (WSS4JAttachmentCallbackHandler.class);
 
   private final ICommonsOrderedMap <String, WSS4JAttachment> m_aAttachmentMap = new CommonsLinkedHashMap <> ();
   private final AS4ResourceHelper m_aResHelper;
 
-  public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <? extends WSS4JAttachment> aAttachments,
+  public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <? extends WSS4JAttachment> aSrcAttachments,
                                          @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     ValueEnforcer.notNull (aResHelper, "ResHelper");
 
-    if (aAttachments != null)
-      for (final WSS4JAttachment aAttachment : aAttachments)
-        m_aAttachmentMap.put (aAttachment.getId (), aAttachment);
+    if (aSrcAttachments != null)
+      for (final WSS4JAttachment aAttachment : aSrcAttachments)
+      {
+        final String sID = aAttachment.getId ();
+        if (m_aAttachmentMap.containsKey (sID))
+        {
+          LOGGER.error ("Another attachment with ID '" +
+                        sID +
+                        "' is already contained in the Map. The latter one will override the previous object");
+        }
+        m_aAttachmentMap.put (sID, aAttachment);
+      }
     m_aResHelper = aResHelper;
   }
 
@@ -78,7 +91,8 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   }
 
   /**
-   * Try to match the Attachment Id. Otherwise, add all Attachments.
+   * Try to match the Attachment Id. Otherwise, add all Attachments if the ID
+   * "Attachments" is used.
    *
    * @param sAttachmentID
    *        Attachment ID to search
@@ -94,10 +108,13 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
       return new CommonsArrayList <> (aAttachment);
 
     // Use all (stripped from cid:Attachments)
-    if ("Attachments".equals (sAttachmentID))
+    if (ATTACHMENT_ID_ATTACHMENTS.equals (sAttachmentID))
       return new CommonsArrayList <> (m_aAttachmentMap.values ());
 
-    throw new IllegalStateException ("Failed to resolve attachment with ID '" + sAttachmentID + "'");
+    throw new IllegalStateException ("Failed to resolve attachment with ID '" +
+                                     sAttachmentID +
+                                     "' in " +
+                                     m_aAttachmentMap.keySet ());
   }
 
   public void handle (@Nonnull final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
@@ -108,46 +125,56 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
       {
         final AttachmentRequestCallback aAttachmentRequestCallback = (AttachmentRequestCallback) aCallback;
 
+        // Get attachment ID
         final String sAttachmentID = aAttachmentRequestCallback.getAttachmentId ();
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("Requesting attachment ID '" + sAttachmentID + "'");
 
+        // Get attachments
         final ICommonsList <Attachment> aAttachments = _getAttachmentsToAdd (sAttachmentID);
         if (aAttachments.isEmpty ())
-          throw new IllegalStateException ("No attachments present for ID '" + sAttachmentID + "'");
+          throw new IllegalStateException ("No attachments present for ID '" +
+                                           sAttachmentID +
+                                           "' in " +
+                                           m_aAttachmentMap.keySet ());
 
+        // Invoke callback
         aAttachmentRequestCallback.setAttachments (aAttachments);
       }
       else
         if (aCallback instanceof AttachmentResultCallback)
         {
           final AttachmentResultCallback aAttachmentResultCallback = (AttachmentResultCallback) aCallback;
-          final Attachment aResultAttachment = aAttachmentResultCallback.getAttachment ();
 
+          // Attachment ID
           final String sAttachmentID = aAttachmentResultCallback.getAttachmentId ();
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Resulting attachment ID '" + sAttachmentID + "'");
 
+          // Source attachment
           final WSS4JAttachment aSrcAttachment = m_aAttachmentMap.get (sAttachmentID);
           if (aSrcAttachment == null)
-            throw new IllegalStateException ("Failed to resolve source attachment with ID '" + sAttachmentID + "'");
+            throw new IllegalStateException ("Failed to resolve source attachment with ID '" +
+                                             sAttachmentID +
+                                             "' in " +
+                                             m_aAttachmentMap.keySet ());
+
+          // Decrypted attachment
+          final Attachment aAttachmentResult = aAttachmentResultCallback.getAttachment ();
 
           // Convert
-          final WSS4JAttachment aEffectiveDecryptedAttachment = new WSS4JAttachment (m_aResHelper,
-                                                                                     aResultAttachment.getMimeType ());
-          aEffectiveDecryptedAttachment.setId (sAttachmentID);
-          aEffectiveDecryptedAttachment.addHeaders (aResultAttachment.getHeaders ());
-          aEffectiveDecryptedAttachment.setCharset (aSrcAttachment.getCharsetOrDefault (null));
+          final WSS4JAttachment aEffectiveResultAttachment = new WSS4JAttachment (m_aResHelper,
+                                                                                  aAttachmentResult.getMimeType ());
+          aEffectiveResultAttachment.setId (sAttachmentID);
+          aEffectiveResultAttachment.addHeaders (aAttachmentResult.getHeaders ());
+          // This property is only in WSS4JAttachment so we need to copy it
+          // separately
+          aEffectiveResultAttachment.setCharset (aSrcAttachment.getCharsetOrDefault (null));
           // Use supplier to ensure stream is opened only when needed
-          aEffectiveDecryptedAttachment.setSourceStreamProvider (HasInputStream.once (aResultAttachment::getSourceStream));
+          aEffectiveResultAttachment.setSourceStreamProvider (HasInputStream.once (aAttachmentResult::getSourceStream));
 
-          // Sanity check
-          if (m_aAttachmentMap.containsKey (sAttachmentID))
-            if (LOGGER.isDebugEnabled ())
-              LOGGER.debug ("Overwriting the attachment with ID '" + sAttachmentID + "'!");
-
-          // Remember decrypted attachment
-          m_aAttachmentMap.put (sAttachmentID, aEffectiveDecryptedAttachment);
+          // Overwrite decrypted attachment in the Map
+          m_aAttachmentMap.put (sAttachmentID, aEffectiveResultAttachment);
         }
         else
         {
@@ -169,5 +196,13 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   public ICommonsOrderedMap <String, WSS4JAttachment> responseAttachments ()
   {
     return m_aAttachmentMap;
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("AttachmentMap", m_aAttachmentMap)
+                                       .append ("ResHelper", m_aResHelper)
+                                       .getToString ();
   }
 }
