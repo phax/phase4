@@ -40,11 +40,11 @@ public class PModeReceptionAwareness implements Serializable
   public static final long DEFAULT_RETRY_INTERVAL_MS = 10 * CGlobal.MILLISECONDS_PER_SECOND;
   public static final boolean DEFAULT_DUPLICATE_DETECTION = true;
 
-  private ETriState m_eReceptionAwareness;
-  private ETriState m_eRetry;
+  private ETriState m_eReceptionAwareness = ETriState.UNDEFINED;
+  private ETriState m_eRetry = ETriState.UNDEFINED;
   private int m_nMaxRetries;
   private long m_nRetryIntervalMS;
-  private ETriState m_eDuplicateDetection;
+  private ETriState m_eDuplicateDetection = ETriState.UNDEFINED;
 
   public PModeReceptionAwareness (@Nonnull final ETriState eReceptionAwareness,
                                   @Nonnull final ETriState eRetry,
