@@ -66,7 +66,7 @@ public class PModeLegErrorHandling implements Serializable
    * receiving a message in error are sent over the back-channel of the
    * underlying protocol associated with the message in error, or not.
    */
-  private ETriState m_eReportAsResponse;
+  private ETriState m_eReportAsResponse = ETriState.UNDEFINED;
 
   /**
    * This Boolean parameter indicates whether (if "true") the Consumer
@@ -74,7 +74,7 @@ public class PModeLegErrorHandling implements Serializable
    * notified when an error occurs in the Receiving MSH, during processing of
    * the received User message.
    */
-  private ETriState m_eReportProcessErrorNotifyConsumer;
+  private ETriState m_eReportProcessErrorNotifyConsumer = ETriState.UNDEFINED;
 
   /**
    * This Boolean parameter indicates whether (if "true") the Producer
@@ -82,7 +82,7 @@ public class PModeLegErrorHandling implements Serializable
    * notified when an error occurs in the Sending MSH, during processing of the
    * User Message to be sent.
    */
-  private ETriState m_eReportProcessErrorNotifyProducer;
+  private ETriState m_eReportProcessErrorNotifyProducer = ETriState.UNDEFINED;
 
   /**
    * This Boolean parameter indicates whether (if "true") the Producer
@@ -95,7 +95,7 @@ public class PModeLegErrorHandling implements Serializable
    * of all cases of non-delivery that occur after the message has been received
    * by the Receiving MSH.
    */
-  private ETriState m_eReportDeliveryFailuresNotifyProducer;
+  private ETriState m_eReportDeliveryFailuresNotifyProducer = ETriState.UNDEFINED;
 
   public PModeLegErrorHandling ()
   {}
