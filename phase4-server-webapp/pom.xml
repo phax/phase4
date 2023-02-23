@@ -44,6 +44,17 @@
     <m2e.jpa.activation>false</m2e.jpa.activation>
     <m2e.jsf.activation>false</m2e.jsf.activation>
   </properties>
+  
+  <dependencyManagement>
+    <dependencies>
+      <!-- Required for Jetty 10 to downgrade from 2.0.1 (jakarta) to 1.3.5 (javax) -->
+      <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>1.3.5</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
