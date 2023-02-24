@@ -344,7 +344,6 @@
         <module>phase4-peppol-client</module>
         <module>phase4-peppol-servlet</module>
         <module>phase4-peppol-server-webapp</module>
-        <module>phase4-spring-boot-demo</module>
         <!-- phase4-spring-boot-demo requires Java 17+ -->
       </modules>
     </profile>
