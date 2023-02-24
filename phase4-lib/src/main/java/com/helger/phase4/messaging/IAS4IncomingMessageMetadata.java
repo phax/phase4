@@ -21,12 +21,13 @@ import java.time.OffsetDateTime;
 import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.Cookie;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.string.StringHelper;
+
+import jakarta.servlet.http.Cookie;
 
 /**
  * This interface lets you access optional metadata for a single incoming

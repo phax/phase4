@@ -18,7 +18,6 @@ package com.helger.phase4.messaging;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
-import javax.servlet.http.Cookie;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.datetime.PDTWebDateHelper;
@@ -27,6 +26,8 @@ import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
+
+import jakarta.servlet.http.Cookie;
 
 /**
  * Messaging helper methods.
@@ -77,10 +78,7 @@ public final class AS4MessagingHelper
         aCookieObj.add ("HttpOnly", aCookie.isHttpOnly ());
         aCookieObj.add ("Name", aCookie.getName ());
         aCookieObj.add ("Value", aCookie.getValue ());
-        aCookieObj.add ("Version", aCookie.getVersion ());
         aCookieObj.add ("MaxAge", aCookie.getMaxAge ());
-        if (StringHelper.hasText (aCookie.getComment ()))
-          aCookieObj.add ("Comment", aCookie.getComment ());
         aArray.add (aCookieObj);
       }
       if (aArray.isNotEmpty ())

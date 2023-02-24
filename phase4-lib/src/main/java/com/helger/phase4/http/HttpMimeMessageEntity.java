@@ -97,6 +97,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   @Override
   public void writeTo (@Nonnull final OutputStream aOS) throws IOException
   {
+    ValueEnforcer.notNull (aOS, "OutputStream");
     try
     {
       m_aMsg.writeTo (aOS);

@@ -27,9 +27,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
-import javax.servlet.annotation.WebListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +68,9 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
 import jakarta.activation.CommandMap;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
+import jakarta.servlet.annotation.WebListener;
 
 @WebListener
 public final class Phase4PeppolWebAppListener extends WebAppListener

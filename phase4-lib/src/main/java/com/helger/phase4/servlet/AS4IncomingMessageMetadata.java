@@ -22,7 +22,6 @@ import java.util.UUID;
 import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.Cookie;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -33,6 +32,8 @@ import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
+
+import jakarta.servlet.http.Cookie;
 
 /**
  * This class holds optional metadata for a single incoming request. This is the

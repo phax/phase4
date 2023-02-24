@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +30,8 @@ import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.http.EHttpVersion;
 import com.helger.servlet.response.UnifiedResponse;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Special {@link UnifiedResponse} class with some sanity methods.

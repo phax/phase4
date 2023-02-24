@@ -26,7 +26,6 @@ import java.security.GeneralSecurityException;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -67,6 +66,7 @@ import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletResponse;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 {

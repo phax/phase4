@@ -20,10 +20,7 @@ import java.io.File;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
-import javax.activation.CommandMap;
 import javax.annotation.Nonnull;
-import javax.annotation.PreDestroy;
-import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +51,10 @@ import com.helger.servlet.ServletHelper;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
+
+import jakarta.activation.CommandMap;
+import jakarta.annotation.PreDestroy;
+import jakarta.servlet.ServletContext;
 
 @Configuration
 public class ServletConfig

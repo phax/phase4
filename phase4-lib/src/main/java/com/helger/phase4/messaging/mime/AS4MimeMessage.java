@@ -30,22 +30,28 @@ import jakarta.mail.internet.MimeMessage;
 /**
  * Special wrapper around a {@link MimeMessage} with an indicator if the message
  * can be written more than once.
- * 
+ *
  * @author Philip Helger
  */
 public class AS4MimeMessage extends MimeMessage
 {
   private final boolean m_bIsRepeatable;
 
+  @Nonnull
+  private static Session _getSafeSession (@Nullable final Session aSession)
+  {
+    return aSession != null ? aSession : Session.getDefaultInstance (System.getProperties (), null);
+  }
+
   public AS4MimeMessage (@Nullable final Session aSession, final boolean bIsRepeatable)
   {
-    super (aSession);
+    super (_getSafeSession (aSession));
     m_bIsRepeatable = bIsRepeatable;
   }
 
   public AS4MimeMessage (@Nullable final Session aSession, @Nonnull final InputStream aIS) throws MessagingException
   {
-    super (aSession, aIS);
+    super (_getSafeSession (aSession), aIS);
     m_bIsRepeatable = false;
   }
 

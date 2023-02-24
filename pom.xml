@@ -76,10 +76,10 @@
     <!-- wss4j 2.4.0 requires xmlsec 2.3.0 -->
     <xmlsec.version>3.0.1</xmlsec.version>
     <wss4j.version>3.0.0</wss4j.version>
-    <log4j.version>2.19.0</log4j.version>
+    <log4j.version>2.20.0</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <peppol-commons.version>9.0.0</peppol-commons.version>
-    <spring-boot.version>2.7.8</spring-boot.version>
+    <spring-boot.version>3.0.3</spring-boot.version>
   </properties>
   
   <dependencyManagement>
@@ -122,14 +122,14 @@
       <dependency>
         <groupId>com.helger.web</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>10.0.1</version>
+        <version>10.0.2-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>9.0.0</version>
+        <version>9.0.1-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -150,7 +150,7 @@
       <dependency>
         <groupId>com.helger.schematron</groupId>
         <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>7.0.0</version>
+        <version>7.0.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -179,28 +179,6 @@
             <artifactId>dnsjava</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-impl</artifactId>
-        <version>4.0.2</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.eclipse.angus</groupId>
-            <artifactId>angus-activation</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.activation</groupId>
-        <artifactId>jakarta.activation-api</artifactId>
-        <version>2.0.1</version>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.mail</groupId>
-        <artifactId>jakarta.mail-api</artifactId>
-        <version>2.0.1</version>
       </dependency>
 
       <dependency>
@@ -248,10 +226,6 @@
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
           </exclusion>
-          <exclusion>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -266,7 +240,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-slf4j-impl</artifactId>
+        <artifactId>log4j-slf4j2-impl</artifactId>
         <version>${log4j.version}</version>
       </dependency>
       <dependency>

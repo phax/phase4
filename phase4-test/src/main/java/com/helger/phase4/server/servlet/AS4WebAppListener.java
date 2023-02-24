@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.ServletContext;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -32,6 +31,8 @@ import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.IUserManager;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
+
+import jakarta.servlet.ServletContext;
 
 /**
  * Internal web app listener to get the test requirements up and running
