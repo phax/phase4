@@ -175,13 +175,23 @@ public class ServletConfig
     }
   }
 
-  @PreDestroy
-  public void destroy ()
+  private static final class Destroyer
   {
-    if (WebScopeManager.isGlobalScopePresent ())
+    @PreDestroy
+    public void destroy ()
     {
-      AS4ServerInitializer.shutdownAS4Server ();
-      WebScopeManager.onGlobalEnd ();
+      if (WebScopeManager.isGlobalScopePresent ())
+      {
+        AS4ServerInitializer.shutdownAS4Server ();
+        WebFileIO.resetPaths ();
+        WebScopeManager.onGlobalEnd ();
+      }
     }
+  }
+
+  @Bean
+  public Destroyer destroyer ()
+  {
+    return new Destroyer ();
   }
 }
