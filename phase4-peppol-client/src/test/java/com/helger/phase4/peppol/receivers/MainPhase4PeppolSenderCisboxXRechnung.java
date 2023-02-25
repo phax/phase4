@@ -85,7 +85,7 @@ public final class MainPhase4PeppolSenderCisboxXRechnung
                                                                      ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .validationRegistry (aVESRegistry)
-                                  .validationConfiguration (XRechnungValidation.VID_XRECHNUNG_UBL_INVOICE_211,
+                                  .validationConfiguration (XRechnungValidation.VID_XRECHNUNG_UBL_INVOICE_220,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
