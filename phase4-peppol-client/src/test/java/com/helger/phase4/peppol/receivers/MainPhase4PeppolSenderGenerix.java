@@ -62,7 +62,7 @@ public final class MainPhase4PeppolSenderGenerix
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:generixtest");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:generixtst");
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
