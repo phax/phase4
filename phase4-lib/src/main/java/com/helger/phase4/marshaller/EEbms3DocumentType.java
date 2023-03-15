@@ -38,7 +38,7 @@ import com.helger.xsds.xml.CXML_XSD;
 import com.helger.xsds.xmldsig.CXMLDSig;
 
 /**
- * Enumeration wizh all known EBMS document types.
+ * Enumeration with all known EBMS document types.
  *
  * @author Philip Helger
  */

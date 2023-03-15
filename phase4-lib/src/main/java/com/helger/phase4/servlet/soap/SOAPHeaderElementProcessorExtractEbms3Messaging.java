@@ -210,7 +210,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                                         .setValidationEventHandler (aCVEH)
                                                         .read (aElement);
 
-    // If the ebms3reader above fails aMessageing will be null => invalid/not
+    // If the ebms3reader above fails aMessaging will be null => invalid/not
     // wellformed
     if (aMessaging == null)
     {
