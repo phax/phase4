@@ -27,10 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.soap11.Soap11Envelope;
+import com.helger.phase4.soap12.Soap12Envelope;
 
 /**
  * Test class for class {@link Ebms3ReaderBuilder}.
@@ -133,5 +135,25 @@ public final class Ebms3ReaderBuilderTest
 
     assertNull (aEnv);
     assertFalse (aCVEH.getErrorList ().isEmpty ());
+  }
+
+  @Test
+  public void testIssue20230315 ()
+  {
+    final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
+    final Soap12Envelope aEnv = Ebms3ReaderBuilder.soap12 ()
+                                                  .setValidationEventHandler (aCVEH)
+                                                  .read (new ClassPathResource ("/soap12test/test-2023-03-15.xml"));
+    assertNotNull (aEnv);
+    assertTrue ("Soap Errors: " + aCVEH.getErrorList (), aCVEH.getErrorList ().isEmpty ());
+
+    final Ebms3Messaging aUserMsg = Ebms3ReaderBuilder.ebms3Messaging ()
+                                                      .setValidationEventHandler (aCVEH)
+                                                      .read ((Element) CollectionHelper.findFirst (aEnv.getHeader ()
+                                                                                                       .getAny (),
+                                                                                                   x -> x instanceof Element &&
+                                                                                                        "Messaging".equals (((Element) x).getLocalName ())));
+    assertNotNull (aUserMsg);
+    assertTrue ("Ebms Errors: " + aCVEH.getErrorList (), aCVEH.getErrorList ().isEmpty ());
   }
 }

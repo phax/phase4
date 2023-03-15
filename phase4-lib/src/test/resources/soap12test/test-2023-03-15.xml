@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+  xmlns:ebbpsig="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+  xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+  <env:Header>
+    <ns2:Messaging xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
+      xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+      xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+      wsu:Id="mid_b2ee9d4b-13b1-43c2-9e39-7aa28c3397c8" env:mustUnderstand="true"
+      xmlns:ns2="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+      <ns2:UserMessage>
+        <ns2:MessageInfo>
+          <ns2:Timestamp>2023-03-09T10:23:26.8542515+01:00</ns2:Timestamp>
+          <ns2:MessageId>49267c79-d822-45d9-aa91-c57b3ca508db</ns2:MessageId>
+          <!-- 
+          <ns2:RefToMessageId />
+           -->
+        </ns2:MessageInfo>
+        <ns2:PartyInfo>
+          <ns2:From>
+            <ns2:PartyId type="urn:fdc:peppol.eu:2017:identifiers:ap">PDE000556</ns2:PartyId>
+            <ns2:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</ns2:Role>
+          </ns2:From>
+          <ns2:To>
+            <ns2:PartyId type="urn:fdc:peppol.eu:2017:identifiers:ap">PDE000556</ns2:PartyId>
+            <ns2:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</ns2:Role>
+          </ns2:To>
+        </ns2:PartyInfo>
+        <ns2:CollaborationInfo>
+          <ns2:AgreementRef>urn:fdc:peppol.eu:2017:agreements:tia:ap_provider</ns2:AgreementRef>
+          <ns2:Service type="cenbii-procid-ubl">urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</ns2:Service>
+          <ns2:Action>busdox-docid-qns::urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1
+          </ns2:Action>
+          <ns2:ConversationId>testid</ns2:ConversationId>
+        </ns2:CollaborationInfo>
+        <ns2:MessageProperties>
+          <ns2:Property name="originalSender" type="iso6523-actorid-upis">9930:de322532962</ns2:Property>
+          <ns2:Property name="finalRecipient" type="iso6523-actorid-upis">9930:de322532962</ns2:Property>
+        </ns2:MessageProperties>
+        <ns2:PayloadInfo>
+          <ns2:PartInfo href="cid:sbdhID">
+            <ns2:PartProperties>
+              <ns2:Property name="MimeType">application/xml</ns2:Property>
+              <!-- 
+              <ns2:Property name="CharacterSet"></ns2:Property>
+               -->
+              <ns2:Property name="CompressionType">application/gzip</ns2:Property>
+            </ns2:PartProperties>
+          </ns2:PartInfo>
+        </ns2:PayloadInfo>
+      </ns2:UserMessage>
+    </ns2:Messaging>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+    wsu:Id="id_ef09b6bf-4f59-42b6-9b7d-d513433a83f0" />
+</env:Envelope>
