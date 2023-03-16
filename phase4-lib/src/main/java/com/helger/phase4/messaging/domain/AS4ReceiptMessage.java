@@ -35,8 +35,8 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.ebms3header.MessagePartNRInformation;
 import com.helger.phase4.ebms3header.NonRepudiationInformation;
-import com.helger.phase4.marshaller.Ebms3WriterBuilder;
-import com.helger.phase4.marshaller.XMLDSigReaderBuilder;
+import com.helger.phase4.marshaller.DSigReferenceMarshaller;
+import com.helger.phase4.marshaller.NonRepudiationInformationMarshaller;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
@@ -133,7 +133,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     for (final Node aRefNode : getAllDSigReferenceNodes (aSoapDocument))
     {
       // Read XMLDsig Reference
-      final ReferenceType aRefObj = XMLDSigReaderBuilder.dsigReference ().read (aRefNode);
+      final ReferenceType aRefObj = new DSigReferenceMarshaller ().read (aRefNode);
       if (aRefObj == null)
       {
         LOGGER.error ("Failed to read the content of the 'Reference' node as an XMLDsig Reference object: " +
@@ -201,9 +201,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
         aNonRepudiationInformation.addMessagePartNRInformation (aMessagePartNRInformation);
       }
 
-      aEbms3Receipt.addAny (Ebms3WriterBuilder.nonRepudiationInformation ()
-                                              .getAsDocument (aNonRepudiationInformation)
-                                              .getDocumentElement ());
+      aEbms3Receipt.addAny (new NonRepudiationInformationMarshaller ().getAsElement (aNonRepudiationInformation));
     }
     else
     {

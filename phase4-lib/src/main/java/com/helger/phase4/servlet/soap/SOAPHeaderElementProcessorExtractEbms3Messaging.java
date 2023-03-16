@@ -58,7 +58,7 @@ import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
-import com.helger.phase4.marshaller.Ebms3ReaderBuilder;
+import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.mpc.IMPC;
@@ -206,9 +206,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Ebms3Messaging aMessaging = Ebms3ReaderBuilder.ebms3Messaging ()
-                                                        .setValidationEventHandler (aCVEH)
-                                                        .read (aElement);
+    final Ebms3Messaging aMessaging = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH).read (aElement);
 
     // If the ebms3reader above fails aMessaging will be null => invalid/not
     // wellformed

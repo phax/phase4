@@ -31,6 +31,7 @@ import com.helger.jaxb.builder.JAXBWriterBuilder;
  *        The XMLDSig implementation class to be written
  */
 @NotThreadSafe
+@Deprecated (since = "2.0.0", forRemoval = true)
 public class XMLDSigWriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE, XMLDSigWriterBuilder <JAXBTYPE>>
 {
   public XMLDSigWriterBuilder (@Nonnull final EXMLDSigDocumentType eDocType)

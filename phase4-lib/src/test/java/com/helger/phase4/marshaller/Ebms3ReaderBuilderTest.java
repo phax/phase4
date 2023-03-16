@@ -47,39 +47,36 @@ public final class Ebms3ReaderBuilderTest
   public void testSoap ()
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Soap11Envelope aEnv = Ebms3ReaderBuilder.soap11 ()
-                                                  .setValidationEventHandler (aCVEH)
-                                                  .read (new ClassPathResource ("/soap11test/UserMessage.xml"));
+    final Soap11Envelope aEnv = new Soap11EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
+                                                               .read (new ClassPathResource ("/soap11test/UserMessage.xml"));
     assertNotNull (aEnv);
     assertTrue (aCVEH.getErrorList ().isEmpty ());
     assertNotNull (aEnv.getHeader ());
     assertEquals (1, aEnv.getHeader ().getAnyCount ());
     assertTrue (aEnv.getHeader ().getAnyAtIndex (0) instanceof Element);
 
-    final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
-                                                      .setValidationEventHandler (aCVEH)
-                                                      .read ((Element) aEnv.getHeader ().getAnyAtIndex (0));
+    final Ebms3Messaging aMessage = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH)
+                                                                   .read ((Element) aEnv.getHeader ()
+                                                                                        .getAnyAtIndex (0));
     assertNotNull (aMessage);
 
-    final String sReRead = Ebms3WriterBuilder.soap11 ().getAsString (aEnv);
+    final String sReRead = new Soap11EnvelopeMarshaller ().getAsString (aEnv);
+    LOGGER.info ("Just to recheck what was read: " + sReRead);
     assertNotNull (sReRead);
-    if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Just to recheck what was read: " + sReRead);
   }
 
   @Test
   public void testNoSoap ()
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
-                                                      .setValidationEventHandler (aCVEH)
-                                                      .read (new ClassPathResource ("/soap11test/UserMessage-no-soap.xml"));
+    final Ebms3Messaging aMessage = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH)
+                                                                   .read (new ClassPathResource ("/soap11test/UserMessage-no-soap.xml"));
     assertNotNull (aMessage);
     assertTrue (aCVEH.getErrorList ().isEmpty ());
 
     aMessage.getUserMessageAtIndex (0).getMessageInfo ().setMessageId ("blaFoo");
 
-    final String sReRead = Ebms3WriterBuilder.ebms3Messaging ().getAsString (aMessage);
+    final String sReRead = new Ebms3MessagingMarshaller ().getAsString (aMessage);
     assertNotNull (sReRead);
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Just to recheck what was read: " + sReRead);
@@ -89,18 +86,17 @@ public final class Ebms3ReaderBuilderTest
   public void testUserMessageMessageInfoMissing ()
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Soap11Envelope aEnv = Ebms3ReaderBuilder.soap11 ()
-                                                  .setValidationEventHandler (aCVEH)
-                                                  .read (new ClassPathResource ("/soap11test/MessageInfoMissing.xml"));
+    final Soap11Envelope aEnv = new Soap11EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
+                                                               .read (new ClassPathResource ("/soap11test/MessageInfoMissing.xml"));
     assertNotNull (aEnv);
     assertTrue (aCVEH.getErrorList ().isEmpty ());
     assertNotNull (aEnv.getHeader ());
     assertEquals (1, aEnv.getHeader ().getAnyCount ());
     assertTrue (aEnv.getHeader ().getAnyAtIndex (0) instanceof Element);
 
-    final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
-                                                      .setValidationEventHandler (aCVEH)
-                                                      .read ((Element) aEnv.getHeader ().getAnyAtIndex (0));
+    final Ebms3Messaging aMessage = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH)
+                                                                   .read ((Element) aEnv.getHeader ()
+                                                                                        .getAnyAtIndex (0));
     assertTrue (aCVEH.getErrorList ().containsAtLeastOneError ());
     assertNull (aMessage);
   }
@@ -109,18 +105,17 @@ public final class Ebms3ReaderBuilderTest
   public void testUserMessageMessageInfoIDMissing ()
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Soap11Envelope aEnv = Ebms3ReaderBuilder.soap11 ()
-                                                  .setValidationEventHandler (aCVEH)
-                                                  .read (new ClassPathResource ("/soap11test/MessageInfoIDMissing.xml"));
+    final Soap11Envelope aEnv = new Soap11EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
+                                                               .read (new ClassPathResource ("/soap11test/MessageInfoIDMissing.xml"));
     assertNotNull (aEnv);
     assertTrue (aCVEH.getErrorList ().isEmpty ());
     assertNotNull (aEnv.getHeader ());
     assertEquals (1, aEnv.getHeader ().getAnyCount ());
     assertTrue (aEnv.getHeader ().getAnyAtIndex (0) instanceof Element);
 
-    final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
-                                                      .setValidationEventHandler (aCVEH)
-                                                      .read ((Element) aEnv.getHeader ().getAnyAtIndex (0));
+    final Ebms3Messaging aMessage = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH)
+                                                                   .read ((Element) aEnv.getHeader ()
+                                                                                        .getAnyAtIndex (0));
     assertTrue (aCVEH.getErrorList ().containsAtLeastOneError ());
     assertNull (aMessage);
   }
@@ -129,9 +124,8 @@ public final class Ebms3ReaderBuilderTest
   public void testExpectSoap11ButFileIsSoap12 ()
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Soap11Envelope aEnv = Ebms3ReaderBuilder.soap11 ()
-                                                  .setValidationEventHandler (aCVEH)
-                                                  .read (new ClassPathResource ("/soap12test/UserMessage12.xml"));
+    final Soap11Envelope aEnv = new Soap11EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
+                                                               .read (new ClassPathResource ("/soap12test/UserMessage12.xml"));
 
     assertNull (aEnv);
     assertFalse (aCVEH.getErrorList ().isEmpty ());
@@ -141,18 +135,16 @@ public final class Ebms3ReaderBuilderTest
   public void testIssue20230315 ()
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Soap12Envelope aEnv = Ebms3ReaderBuilder.soap12 ()
-                                                  .setValidationEventHandler (aCVEH)
-                                                  .read (new ClassPathResource ("/soap12test/test-2023-03-15.xml"));
+    final Soap12Envelope aEnv = new Soap12EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
+                                                               .read (new ClassPathResource ("/soap12test/test-2023-03-15.xml"));
     assertNotNull (aEnv);
     assertTrue ("Soap Errors: " + aCVEH.getErrorList (), aCVEH.getErrorList ().isEmpty ());
 
-    final Ebms3Messaging aUserMsg = Ebms3ReaderBuilder.ebms3Messaging ()
-                                                      .setValidationEventHandler (aCVEH)
-                                                      .read ((Element) CollectionHelper.findFirst (aEnv.getHeader ()
-                                                                                                       .getAny (),
-                                                                                                   x -> x instanceof Element &&
-                                                                                                        "Messaging".equals (((Element) x).getLocalName ())));
+    final Ebms3Messaging aUserMsg = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH)
+                                                                   .read ((Element) CollectionHelper.findFirst (aEnv.getHeader ()
+                                                                                                                    .getAny (),
+                                                                                                                x -> x instanceof Element &&
+                                                                                                                     "Messaging".equals (((Element) x).getLocalName ())));
     assertNotNull (aUserMsg);
     assertTrue ("Ebms Errors: " + aCVEH.getErrorList (), aCVEH.getErrorList ().isEmpty ());
   }

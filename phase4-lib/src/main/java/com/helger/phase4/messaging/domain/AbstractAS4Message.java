@@ -29,7 +29,9 @@ import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
-import com.helger.phase4.marshaller.Ebms3WriterBuilder;
+import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
+import com.helger.phase4.marshaller.Soap11EnvelopeMarshaller;
+import com.helger.phase4.marshaller.Soap12EnvelopeMarshaller;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.soap11.Soap11Body;
 import com.helger.phase4.soap11.Soap11Envelope;
@@ -104,7 +106,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   public final Document getAsSoapDocument (@Nullable final Node aPayload)
   {
     // Convert to DOM Node
-    final Document aEbms3Document = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (m_aMessaging);
+    final Document aEbms3Document = new Ebms3MessagingMarshaller ().getAsDocument (m_aMessaging);
     if (aEbms3Document == null)
       throw new IllegalStateException ("Failed to write EBMS3 Messaging to XML");
 
@@ -121,7 +123,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         aSoapEnv.getHeader ().addAny (aEbms3Document.getDocumentElement ());
         if (aRealPayload != null)
           aSoapEnv.getBody ().addAny (aRealPayload);
-        return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
+        return new Soap11EnvelopeMarshaller ().getAsDocument (aSoapEnv);
       }
       case SOAP_12:
       {
@@ -132,7 +134,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         aSoapEnv.getHeader ().addAny (aEbms3Document.getDocumentElement ());
         if (aRealPayload != null)
           aSoapEnv.getBody ().addAny (aRealPayload);
-        return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
+        return new Soap12EnvelopeMarshaller ().getAsDocument (aSoapEnv);
       }
       default:
         throw new IllegalStateException ("Unsupported SOAP version " + m_eSoapVersion);

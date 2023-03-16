@@ -17,7 +17,6 @@
 package com.helger.phase4.marshaller;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.jaxb.builder.JAXBReaderBuilder;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
@@ -31,7 +30,7 @@ import com.helger.phase4.soap12.Soap12Envelope;
  * @param <JAXBTYPE>
  *        The Ebms implementation class to be read
  */
-@NotThreadSafe
+@Deprecated (since = "2.0.0", forRemoval = true)
 public class Ebms3ReaderBuilder <JAXBTYPE> extends JAXBReaderBuilder <JAXBTYPE, Ebms3ReaderBuilder <JAXBTYPE>>
 {
   public Ebms3ReaderBuilder (@Nonnull final EEbms3DocumentType eDocType, @Nonnull final Class <JAXBTYPE> aImplClass)

@@ -33,6 +33,7 @@ import com.helger.phase4.soap12.Soap12Envelope;
  *        The Ebms implementation class to be written
  */
 @NotThreadSafe
+@Deprecated (since = "2.0.0", forRemoval = true)
 public class Ebms3WriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE, Ebms3WriterBuilder <JAXBTYPE>>
 {
   public Ebms3WriterBuilder (@Nonnull final EEbms3DocumentType eDocType)

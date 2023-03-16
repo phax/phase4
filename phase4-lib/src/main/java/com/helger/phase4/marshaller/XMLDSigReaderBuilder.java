@@ -17,7 +17,6 @@
 package com.helger.phase4.marshaller;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.jaxb.builder.JAXBReaderBuilder;
 import com.helger.xsds.xmldsig.ReferenceType;
@@ -29,7 +28,7 @@ import com.helger.xsds.xmldsig.ReferenceType;
  * @param <JAXBTYPE>
  *        The XMLDSig implementation class to be read
  */
-@NotThreadSafe
+@Deprecated (since = "2.0.0", forRemoval = true)
 public class XMLDSigReaderBuilder <JAXBTYPE> extends JAXBReaderBuilder <JAXBTYPE, XMLDSigReaderBuilder <JAXBTYPE>>
 {
   public XMLDSigReaderBuilder (@Nonnull final EXMLDSigDocumentType eDocType, @Nonnull final Class <JAXBTYPE> aImplClass)

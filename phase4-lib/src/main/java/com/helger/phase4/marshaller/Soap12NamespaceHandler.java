@@ -18,47 +18,34 @@ package com.helger.phase4.marshaller;
 
 import javax.annotation.Nonnull;
 
-import com.helger.phase4.CAS4;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
-import com.helger.xsds.xlink.CXLink;
 
 /**
- * A special XML namespace context that contains all default Ebms3 mappings.
+ * A special XML namespace context that contains all default SOAP 1.2 mappings.
  *
  * @author Philip Helger
+ * @since 2.0.0
  */
-public class Ebms3NamespaceHandler extends MapBasedNamespaceContext
+public class Soap12NamespaceHandler extends MapBasedNamespaceContext
 {
   private static final class SingletonHolder
   {
-    static final Ebms3NamespaceHandler INSTANCE = new Ebms3NamespaceHandler ();
+    static final Soap12NamespaceHandler INSTANCE = new Soap12NamespaceHandler ();
   }
 
-  public Ebms3NamespaceHandler ()
+  public Soap12NamespaceHandler ()
   {
-    addMapping ("ds", CAS4.DS_NS);
-    addMapping ("dsig11", CAS4.DSISG11_NS);
-    addMapping ("eb", CAS4.EBMS_NS);
-    addMapping ("ebbp", CAS4.EBBP_NS);
-    addMapping ("wsse", CAS4.WSSE_NS);
-    addMapping ("wsu", CAS4.WSU_NS);
-    addMapping ("xenc", CAS4.XENC_NS);
-    addMapping ("xenc11", CAS4.XENC11_NS);
-    // UBL
-    addMapping ("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
-    addMapping ("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
-    addMapping ("ec", "http://www.w3.org/2001/10/xml-exc-c14n#");
-    addMapping (CXLink.DEFAULT_PREFIX, CXLink.NAMESPACE_URI);
+    addMapping (ESoapVersion.SOAP_12.getNamespacePrefix (), ESoapVersion.SOAP_12.getNamespaceURI ());
   }
 
   /**
    * @return The global instance of the namespace handler. Never
    *         <code>null</code>. Don't modify it! To modify it, please clone it
    *         and go from there.
-   * @since 1.3.3
    */
   @Nonnull
-  public static Ebms3NamespaceHandler getInstance ()
+  public static Soap12NamespaceHandler getInstance ()
   {
     return SingletonHolder.INSTANCE;
   }

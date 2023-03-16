@@ -17,15 +17,17 @@
 package com.helger.phase4.client;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
@@ -40,6 +42,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
+import com.helger.httpclient.response.ResponseHandlerString;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4CryptParams;
@@ -65,12 +68,14 @@ public final class MainOldAS4Client
   private MainOldAS4Client ()
   {}
 
+  @Nullable
   public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
                                                                                 IOException,
                                                                                 ParserConfigurationException
   {
     final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    domFactory.setNamespaceAware (true); // never forget this!
+    // never forget this!
+    domFactory.setNamespaceAware (true);
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     return builder.parse (new ClassPathResource (sPath).getInputStream ());
   }
@@ -156,9 +161,9 @@ public final class MainOldAS4Client
               if (true)
               {
                 aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                                        .data (ClassPathResource.getAsFile ("attachment/test.xml.gz"))
-                                                                                                        .mimeType (CMimeType.APPLICATION_GZIP)
-                                                                                                        .build (),
+                                                                                                     .data (ClassPathResource.getAsFile ("attachment/test.xml.gz"))
+                                                                                                     .mimeType (CMimeType.APPLICATION_GZIP)
+                                                                                                     .build (),
                                                                                 aResHelper));
                 final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
                                                                                            null,
@@ -198,13 +203,11 @@ public final class MainOldAS4Client
         // re-instantiate if you want to see the request that is getting sent
         LOGGER.info (EntityUtils.toString (aPost.getEntity ()));
 
-        try (final CloseableHttpResponse aHttpResponse = aClient.execute (aPost))
-        {
-          LOGGER.info ("GET Response Status: " + aHttpResponse.getCode ());
+        final String sResponse = aClient.execute (aPost,
+                                                  new ResponseHandlerString (ContentType.APPLICATION_XML.withCharset (StandardCharsets.UTF_8)));
 
-          // print result
-          LOGGER.info (EntityUtils.toString (aHttpResponse.getEntity ()));
-        }
+        // print result
+        LOGGER.info ("AS4 response:\n" + sResponse);
       }
     }
     catch (final Exception e)
