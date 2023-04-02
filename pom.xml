@@ -71,10 +71,7 @@
     <jaxb-plugin.group>com.helger.maven</jaxb-plugin.group>
     <jaxb-plugin.artifact>jaxb40-maven-plugin</jaxb-plugin.artifact>
     <jaxb-plugin.version>0.16.1</jaxb-plugin.version>
-    <!-- wss4j 2.2.5 requires xmlsec 2.1.5 -->
-    <!-- wss4j 2.3.0 requires xmlsec 2.2.0 -->
-    <!-- wss4j 2.4.0 requires xmlsec 2.3.0 -->
-    <xmlsec.version>3.0.1</xmlsec.version>
+    <xmlsec.version>3.0.2</xmlsec.version>
     <wss4j.version>3.0.0</wss4j.version>
     <log4j.version>2.20.0</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
