@@ -35,7 +35,7 @@ import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation3_14_0;
+import com.helger.phive.peppol.PeppolValidation3_15_0;
 import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -106,7 +106,7 @@ public final class MainPhase4PeppolSenderHelger
                                                              .setFormattedOutput (true)
                                                              .getAsString (x));
                                   })
-                                  .validationConfiguration (PeppolValidation3_14_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
+                                  .validationConfiguration (PeppolValidation3_15_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .rawResponseConsumer (aRRC)

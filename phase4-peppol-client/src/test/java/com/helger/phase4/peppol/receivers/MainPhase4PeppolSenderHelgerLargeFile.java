@@ -35,7 +35,7 @@ import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation3_14_0;
+import com.helger.phive.peppol.PeppolValidation3_15_0;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -78,7 +78,7 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
                                   .validationConfiguration (bNoValidate ? null
-                                                                        : PeppolValidation3_14_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
+                                                                        : PeppolValidation3_15_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                             bNoValidate ? null
                                                                         : new Phase4PeppolValidatonResultHandler ())
                                   .rawResponseConsumer (aRRC)
