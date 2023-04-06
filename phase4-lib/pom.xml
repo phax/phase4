@@ -223,7 +223,7 @@ osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTyp
         </executions>
         <configuration>
           <bindingDirectory>${basedir}/src/main/jaxb</bindingDirectory>
-          <schemaDirectory>${basedir}/src/main/resources/schemas</schemaDirectory>
+          <schemaDirectory>${basedir}/src/main/resources/external/schemas</schemaDirectory>
           <extension>true</extension>
           <strict>false</strict>
           <catalog>${basedir}/src/main/jaxb/catalog.txt</catalog>

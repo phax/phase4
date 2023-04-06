@@ -30,7 +30,7 @@
     <xjc:javaType name="com.helger.commons.datetime.XMLOffsetDate"     xmlType="xsd:date"     adapter="com.helger.jaxb.adapter.AdapterXMLOffsetDate" />
     <xjc:javaType name="com.helger.commons.datetime.XMLOffsetTime"     xmlType="xsd:time"     adapter="com.helger.jaxb.adapter.AdapterXMLOffsetTime" />
   </globalBindings>
-  <bindings schemaLocation="../resources/schemas/ebms-header-3_0-200704.xsd">
+  <bindings schemaLocation="../resources/external/schemas/ebms-header-3_0-200704.xsd">
     <schemaBindings>
       <package name="com.helger.phase4.ebms3header" />
       <nameXmlTransform>
@@ -46,7 +46,7 @@
       </bindings>
     </bindings>
   </bindings>
-  <bindings schemaLocation="../resources/schemas/soap11.xsd">
+  <bindings schemaLocation="../resources/external/schemas/soap11.xsd">
     <schemaBindings>
       <package name="com.helger.phase4.soap11" />
       <nameXmlTransform>
@@ -54,7 +54,7 @@
       </nameXmlTransform>
     </schemaBindings>
   </bindings>
-  <bindings schemaLocation="../resources/schemas/soap12.xsd">
+  <bindings schemaLocation="../resources/external/schemas/soap12.xsd">
     <schemaBindings>
       <package name="com.helger.phase4.soap12" />
       <nameXmlTransform>
@@ -62,7 +62,7 @@
       </nameXmlTransform>
     </schemaBindings>
   </bindings>
-  <bindings schemaLocation="../resources/schemas/ebbp-signals-2.0.4.xsd">
+  <bindings schemaLocation="../resources/external/schemas/ebbp-signals-2.0.4.xsd">
     <schemaBindings>
       <package name="com.helger.phase4.ebms3header" />
       <nameXmlTransform>

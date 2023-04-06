@@ -37,7 +37,7 @@ public final class CAS4
   }
 
   // XSD
-  public static final String PATH_SCHEMATA = "/schemas/";
+  public static final String PATH_SCHEMATA = "/external/schemas/";
   public static final ClassPathResource XSD_EBMS_HEADER = new ClassPathResource (PATH_SCHEMATA +
                                                                                  "ebms-header-3_0-200704.xsd",
                                                                                  _getCL ());
