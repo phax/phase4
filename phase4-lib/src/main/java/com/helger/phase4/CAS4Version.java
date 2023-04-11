@@ -54,13 +54,13 @@ public final class CAS4Version
     if (sProjectVersion == null)
     {
       sProjectVersion = "undefined";
-      LOGGER.warn ("Failed to load version number");
+      LOGGER.warn ("Failed to load phase4 version number");
     }
     BUILD_VERSION = sProjectVersion;
     if (sProjectTimestamp == null)
     {
       sProjectTimestamp = "undefined";
-      LOGGER.warn ("Failed to load timestamp");
+      LOGGER.warn ("Failed to load phase4 timestamp");
     }
     BUILD_TIMESTAMP = sProjectTimestamp;
   }
