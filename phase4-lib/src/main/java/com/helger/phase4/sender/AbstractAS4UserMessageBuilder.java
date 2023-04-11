@@ -123,6 +123,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   @Nonnull
   public final IMPLTYPE pmode (@Nullable final IPMode aPMode)
   {
+    if (aPMode == null)
+      LOGGER.warn ("A null PMode was supplied");
     m_aPMode = aPMode;
     return thisAsT ();
   }
