@@ -19,6 +19,7 @@ package com.helger.phase4.servlet.soap;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -86,11 +87,14 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorExtractEbms3Messaging.class);
 
   private final IPModeResolver m_aPModeResolver;
+  private final Consumer<IPMode> m_pModeConsumer;
 
-  public SOAPHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IPModeResolver aPModeResolver)
+  public SOAPHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IPModeResolver aPModeResolver,
+          @Nullable final Consumer<IPMode> pModeConsumer)
   {
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     m_aPModeResolver = aPModeResolver;
+    m_pModeConsumer = pModeConsumer;
   }
 
   /**
@@ -313,6 +317,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           LOGGER.error ("Failed to resolve PMode '" + sPModeID + "' using resolver " + m_aPModeResolver);
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
+        } else {
+          notifyPModeResolved(aPMode);
         }
       }
 
@@ -570,6 +576,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                          sMPC +
                          "' in SignalMessage " +
                          aSignalMessage);
+
+            notifyPModeResolved(aPMode);
             break;
           }
         }
@@ -627,5 +635,11 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     aState.setResponderID (sResponderID);
 
     return ESuccess.SUCCESS;
+  }
+
+  private void notifyPModeResolved(@Nonnull IPMode aPMode) {
+    if (m_pModeConsumer != null) {
+      m_pModeConsumer.accept(aPMode);
+    }
   }
 }

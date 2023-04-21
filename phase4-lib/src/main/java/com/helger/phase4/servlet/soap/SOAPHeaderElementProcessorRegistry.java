@@ -29,8 +29,11 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+
+import java.util.function.Consumer;
 
 /**
  * This class manages the SOAP header element processors. This is used to
@@ -89,8 +92,16 @@ public class SOAPHeaderElementProcessorRegistry
     // Register all SOAP header element processors
     // Registration order matches execution order!
     final SOAPHeaderElementProcessorRegistry ret = new SOAPHeaderElementProcessorRegistry ();
+
+    // callback notifying a IAS4PModeAwareCryptoFactory about a successful PMode resolution
+    final Consumer<IPMode> pModeConsumer = ipMode -> {
+      if (aCryptoFactory instanceof IAS4PModeAwareCryptoFactory) {
+        ((IAS4PModeAwareCryptoFactory) aCryptoFactory).setContextPMode (ipMode);
+      }
+    };
+
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING,
-                                        new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver));
+                                        new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver, pModeConsumer));
 
     // WSS4J must be after Ebms3Messaging handler!
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,
