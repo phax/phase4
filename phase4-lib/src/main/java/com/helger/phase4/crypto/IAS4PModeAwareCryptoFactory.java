@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Philip Helger (www.helger.com)
+ * Copyright (C) 2015-2023 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,24 +16,27 @@
  */
 package com.helger.phase4.crypto;
 
-import com.helger.phase4.model.pmode.IPMode;
-
 import javax.annotation.Nonnull;
 
+import com.helger.phase4.model.pmode.IPMode;
+
 /**
- * An extended {@link IAS4CryptoFactory} with the capability to receive a P-Mode that was successfully resolved during
- * reception phase. This information can be used to provide P-Mode specific crypto information for decryption.
+ * An extended {@link IAS4CryptoFactory} with the capability to receive a P-Mode
+ * that was successfully resolved during reception phase. This information can
+ * be used to provide P-Mode specific crypto information for decryption.
  *
  * @author Gregor Scholtysik
+ * @since 2.1.0
  */
-public interface IAS4PModeAwareCryptoFactory extends IAS4CryptoFactory {
-
-    /**
-     * <p>Set the P-Mode in context</p>
-     *
-     * <p>This method is only called on reception side after successful resolving of the P-Mode from the incoming
-     * ebms information.</p>
-     * @param pMode the P-Mode resolved during reception
-     */
-    void setContextPMode (@Nonnull IPMode pMode);
+public interface IAS4PModeAwareCryptoFactory extends IAS4CryptoFactory
+{
+  /**
+   * Set the P-Mode in context.<br>
+   * This method is only called on reception side after successful resolving of
+   * the P-Mode from the incoming ebms information.
+   *
+   * @param pMode
+   *        the P-Mode resolved during reception
+   */
+  void setContextPMode (@Nonnull IPMode pMode);
 }
