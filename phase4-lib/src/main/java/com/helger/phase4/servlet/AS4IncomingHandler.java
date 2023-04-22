@@ -264,6 +264,7 @@ public class AS4IncomingHandler
 
       // Expect plain SOAP - read whole request to DOM
       // Note: this may require a huge amount of memory for large requests
+      // Note: This closes the outgoing dump stream, when InputStream is closed
       aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                             aPayloadIS,
                                                                                             aMessageMetadata,

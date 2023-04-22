@@ -106,7 +106,8 @@ public final class AS4DumpManager
    * @param aDumpOSHolder
    *        A wrapper that holds the debug output stream. This can be used to
    *        determine if the message should be dumped or not. Parameter was
-   *        added in v1.3.0.
+   *        added in v1.3.0. Do not close the received OutputStream, that is
+   *        done internally automatically.
    * @return the InputStream to be used. The caller is responsible for closing
    *         the stream. Never <code>null</code>.
    * @throws IOException
@@ -139,6 +140,8 @@ public final class AS4DumpManager
     // Read and write at once
     return new WrappedInputStream (aRequestInputStream)
     {
+      private boolean m_bClosed = false;
+
       @Override
       public int read () throws IOException
       {
@@ -164,15 +167,20 @@ public final class AS4DumpManager
       @Override
       public void close () throws IOException
       {
-        try
+        // Make sure to close only once (see #120)
+        if (!m_bClosed)
         {
-          // Flush and close output stream as well
-          StreamHelper.flush (aOS);
-          StreamHelper.close (aOS);
-        }
-        finally
-        {
-          super.close ();
+          try
+          {
+            // Flush and close output stream as well
+            StreamHelper.flush (aOS);
+            StreamHelper.close (aOS);
+            m_bClosed = true;
+          }
+          finally
+          {
+            super.close ();
+          }
         }
       }
     };
