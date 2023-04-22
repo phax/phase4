@@ -36,6 +36,7 @@ import com.helger.xsds.xmldsig.ReferenceType;
  *
  * @author Philip Helger
  */
+@Deprecated (since = "2.1.0", forRemoval = true)
 public enum EXMLDSigDocumentType implements IJAXBDocumentType
 {
   REFERENCE (ReferenceType.class, new CommonsArrayList <> (CXMLDSig.getXSDResource ()));
