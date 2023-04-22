@@ -94,7 +94,7 @@ public class MainCEFeInvoicingConnectivityTest
     try (final WebScoped w = new WebScoped ())
     {
       // Read a UBL Invoice
-      final byte [] aPayloadBytes = SimpleFileIO.getAllFileBytes (new File ("src/test/resources/examples/base-example.xml"));
+      final byte [] aPayloadBytes = SimpleFileIO.getAllFileBytes (new File ("src/test/resources/external/examples/base-example.xml"));
       if (aPayloadBytes == null)
         throw new IllegalStateException ();
 
@@ -115,7 +115,8 @@ public class MainCEFeInvoicingConnectivityTest
         {
           if (false)
             LOGGER.info ("SOAP Document:\n" +
-                         XMLWriter.getNodeAsString (aDoc, new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)));
+                         XMLWriter.getNodeAsString (aDoc,
+                                                    new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)));
         }
       };
       // TODO The message ID to use in the UI
@@ -137,12 +138,12 @@ public class MainCEFeInvoicingConnectivityTest
                                                                .toRole (CAS4.DEFAULT_RESPONDER_URL)
                                                                .messageID (sAS4MessageID)
                                                                .payload (AS4OutgoingAttachment.builder ()
-                                                                                                 .data (aPayloadBytes)
-                                                                                                 .filename ("businessContentPayload")
-                                                                                                 .compressionGZIP ()
-                                                                                                 .mimeType (CMimeType.TEXT_XML)
-                                                                                                 .contentID ("message")
-                                                                                                 .build ())
+                                                                                              .data (aPayloadBytes)
+                                                                                              .filename ("businessContentPayload")
+                                                                                              .compressionGZIP ()
+                                                                                              .mimeType (CMimeType.TEXT_XML)
+                                                                                              .contentID ("message")
+                                                                                              .build ())
                                                                .buildMessageCallback (x1)
                                                                .endpointDetailProvider (new AS4EndpointDetailProviderConstant (CertificateHelper.convertStringToCertficateOrNull ("-----BEGIN CERTIFICATE-----\r\n" +
                                                                                                                                                                                   "MIIDOzCCAiOgAwIBAgIJAKbwaKpEwNTKMA0GCSqGSIb3DQEBCwUAMDQxDTALBgNV\r\n" +

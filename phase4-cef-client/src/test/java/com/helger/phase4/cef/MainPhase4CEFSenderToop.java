@@ -63,12 +63,13 @@ public final class MainPhase4CEFSenderToop
 
     try (final WebScoped w = new WebScoped ())
     {
-      final byte [] aPayloadBytes = SimpleFileIO.getAllFileBytes (new File ("src/test/resources/examples/base-example.xml"));
+      final byte [] aPayloadBytes = SimpleFileIO.getAllFileBytes (new File ("src/test/resources/external/examples/base-example.xml"));
       if (aPayloadBytes == null)
         throw new IllegalStateException ();
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4CEFSender.IF.createParticipantIdentifier ("iso6523-actorid-upis", "9915:tooptest");
+      final IParticipantIdentifier aReceiverID = Phase4CEFSender.IF.createParticipantIdentifier ("iso6523-actorid-upis",
+                                                                                                 "9915:tooptest");
       final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
       {
         public void onAS4Message (final AbstractAS4Message <?> aMsg)
