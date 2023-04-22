@@ -269,6 +269,11 @@
       </dependency>
       <dependency>
         <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-profile-bdew</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-profile-cef</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -304,6 +309,11 @@
       </dependency>
       <dependency>
         <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-bdew-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-entsog-client</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -333,6 +343,7 @@
       </activation>
       <modules>
         <module>phase4-lib</module>
+        <module>phase4-profile-bdew</module>
         <module>phase4-profile-bpc</module>
         <module>phase4-profile-cef</module>
         <module>phase4-profile-eespa</module>
@@ -342,6 +353,7 @@
         <module>phase4-server-webapp</module>
         <module>phase4-dynamic-discovery</module>
         <module>phase4-cef-client</module>
+        <module>phase4-bdew-client</module>
         <module>phase4-entsog-client</module>
         <module>phase4-eudamed-client</module>
         <module>phase4-peppol-client</module>
@@ -357,6 +369,7 @@
       </activation>
       <modules>
         <module>phase4-lib</module>
+        <module>phase4-profile-bdew</module>
         <module>phase4-profile-bpc</module>
         <module>phase4-profile-cef</module>
         <module>phase4-profile-eespa</module>
@@ -366,6 +379,7 @@
         <module>phase4-server-webapp</module>
         <module>phase4-dynamic-discovery</module>
         <module>phase4-cef-client</module>
+        <module>phase4-bdew-client</module>
         <module>phase4-entsog-client</module>
         <module>phase4-eudamed-client</module>
         <module>phase4-peppol-client</module>

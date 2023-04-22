@@ -78,7 +78,7 @@ public final class AS4Encryptor
     // signing certificate.
     aBuilder.setKeyIdentifierType (aCryptParams.getKeyIdentifierType ().getTypeID ());
     aBuilder.setSymmetricEncAlgorithm (aCryptParams.getAlgorithmCrypt ().getAlgorithmURI ());
-    aBuilder.setKeyEncAlgo (aCryptParams.getKeyEncAlgorithm ());
+    aBuilder.setKeyEncAlgo (aCryptParams.getKeyEncAlgorithm ().getID ());
     aBuilder.setMGFAlgorithm (aCryptParams.getMGFAlgorithm ());
     aBuilder.setDigestAlgorithm (aCryptParams.getDigestAlgorithm ());
     // Encrypted key must be contained
