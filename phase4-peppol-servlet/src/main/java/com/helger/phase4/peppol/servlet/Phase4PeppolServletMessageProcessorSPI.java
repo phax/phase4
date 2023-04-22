@@ -73,7 +73,7 @@ import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.sbdh.builder.SBDHReader;
+import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -450,9 +450,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         // Hint for production systems: this may take a huge amount of memory,
         // if the payload is large
         final ErrorList aSBDHErrors = new ErrorList ();
-        a.m_aSBDH = SBDHReader.standardBusinessDocument ()
-                              .setValidationEventHandler (new WrappedCollectingValidationEventHandler (aSBDHErrors))
-                              .read (a.m_aPayloadBytes);
+        a.m_aSBDH = new SBDMarshaller ().setValidationEventHandler (new WrappedCollectingValidationEventHandler (aSBDHErrors))
+                                        .read (a.m_aPayloadBytes);
         if (a.m_aSBDH == null)
         {
           if (aSBDHErrors.isEmpty ())
