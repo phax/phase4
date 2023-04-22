@@ -102,8 +102,8 @@ public interface IAS4CryptoFactory
   }
 
   /**
-   * @return Whether to allow the RSA v1.5 Key Transport Algorithm or not.
-   *         Default is <code>false</code>.
+   * @return Whether to allow the RSA v1.5 Key Transport Algorithm in WSS4J or
+   *         not. Default is <code>false</code>.
    * @since 1.4.2
    */
   default boolean isAllowRSA15KeyTransportAlgorithm ()
