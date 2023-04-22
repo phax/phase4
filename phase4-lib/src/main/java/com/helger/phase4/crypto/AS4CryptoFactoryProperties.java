@@ -37,7 +37,7 @@ import com.helger.security.keystore.KeyStoreHelper;
 /**
  * phase4 crypto factory settings based on {@link AS4CryptoProperties}
  *
- * @author Philip Helger+
+ * @author Philip Helger
  * @since 0.11.0
  */
 @Immutable
@@ -154,7 +154,8 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
         ret = m_aPK = KeyStoreHelper.loadPrivateKey (aKeyStore,
                                                      m_aCryptoProps.getKeyStorePath (),
                                                      m_aCryptoProps.getKeyAlias (),
-                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY : sKeyPassword.toCharArray ())
+                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY
+                                                                          : sKeyPassword.toCharArray ())
                                     .getKeyEntry ();
       }
     }
