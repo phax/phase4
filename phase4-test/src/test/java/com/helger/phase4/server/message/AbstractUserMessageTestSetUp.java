@@ -17,7 +17,6 @@
 package com.helger.phase4.server.message;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,18 +26,13 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.util.Timeout;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +40,9 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.concurrent.ThreadHelper;
-import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.http.CHttp;
 import com.helger.commons.lang.StackTraceHelper;
+import com.helger.commons.mutable.MutableInt;
 import com.helger.config.IConfig;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientHelper;
@@ -66,7 +61,6 @@ import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletResponse;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 {
@@ -82,7 +76,6 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 
   protected final IAS4CryptoFactory m_aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
   protected final AS4CryptParams m_aCryptParams = AS4CryptParams.createDefault ().setAlias ("ph-as4");
-  private CloseableHttpClient m_aHttpClient;
   private final int m_nRetries;
 
   protected AbstractUserMessageTestSetUp ()
@@ -111,46 +104,13 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
     MockJettySetup.shutDownServer ();
   }
 
-  @Before
-  public void setUpHttpClient () throws GeneralSecurityException
-  {
-    final HttpClientSettings aHCS = new HttpClientSettings ();
-    aHCS.setSSLContextTrustAll ();
-    aHCS.setResponseTimeout (Timeout.ofMinutes (5));
-    aHCS.setRetryCount (m_nRetries);
-    // Only required for "testEsens_TA10"
-    aHCS.setRetryAlways (true);
-    m_aHttpClient = new HttpClientFactory (aHCS).createHttpClient ();
-  }
-
-  @After
-  public void destroyHttpClient ()
-  {
-    if (m_aHttpClient != null)
-    {
-      StreamHelper.close (m_aHttpClient);
-      m_aHttpClient = null;
-    }
-  }
-
   @Nonnull
   private HttpPost _createPost ()
   {
-    final IConfig aConfig = AS4Configuration.getConfig ();
     final String sURL = MockJettySetup.getServerAddressFromSettings ();
 
     LOGGER.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
-    final HttpPost aPost = new HttpPost (sURL);
-
-    if (aConfig.getAsBoolean (SETTINGS_SERVER_PROXY_ENABLED, false))
-    {
-      // E.g. using little proxy for faking "no response"
-      final HttpHost aProxyHost = new HttpHost (aConfig.getAsString (SETTINGS_SERVER_PROXY_ADDRESS),
-                                                aConfig.getAsInt (SETTINGS_SERVER_PROXY_PORT));
-      LOGGER.info ("Using proxy host " + aProxyHost.toString ());
-      aPost.setConfig (RequestConfig.custom ().setProxy (aProxyHost).build ());
-    }
-    return aPost;
+    return new HttpPost (sURL);
   }
 
   @Nonnull
@@ -182,19 +142,52 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 
     aPost.setEntity (aHttpEntity);
 
-    try (final CloseableHttpResponse aHttpResponse = m_aHttpClient.execute (aPost))
-    {
-      final int nStatusCode = aHttpResponse.getCode ();
-      final HttpEntity aEntity = aHttpResponse.getEntity ();
-      final String sResponse = aEntity == null ? "" : HttpClientHelper.entityToString (aEntity, StandardCharsets.UTF_8);
+    final IConfig aConfig = AS4Configuration.getConfig ();
 
-      AS4HttpDebug.debug ( () -> "TEST-SEND-RESPONSE received: " + sResponse);
+    final HttpClientSettings aHCS = new HttpClientSettings ();
+    try
+    {
+      aHCS.setSSLContextTrustAll ();
+    }
+    catch (final GeneralSecurityException ex)
+    {
+      throw new IllegalStateException (ex);
+    }
+    aHCS.setResponseTimeout (Timeout.ofMinutes (5));
+    aHCS.setRetryCount (m_nRetries);
+    // Only required for "testEsens_TA10"
+    aHCS.setRetryAlways (true);
+
+    if (aConfig.getAsBoolean (SETTINGS_SERVER_PROXY_ENABLED, false))
+    {
+      // E.g. using little proxy for faking "no response"
+      final HttpHost aProxyHost = new HttpHost (aConfig.getAsString (SETTINGS_SERVER_PROXY_ADDRESS),
+                                                aConfig.getAsInt (SETTINGS_SERVER_PROXY_PORT));
+      LOGGER.info ("Using proxy host " + aProxyHost.toString ());
+      aHCS.setProxyHost (aProxyHost);
+    }
+
+    try (final CloseableHttpClient aHttpClient = new HttpClientFactory (aHCS).createHttpClient ())
+    {
+      final MutableInt aSC = new MutableInt (-1);
+      final String sResponse = aHttpClient.execute (aPost, aHttpResponse -> {
+        aSC.set (aHttpResponse.getCode ());
+
+        final HttpEntity aEntity = aHttpResponse.getEntity ();
+        if (aEntity == null)
+          return "";
+
+        // Consume independent of status code
+        return HttpClientHelper.entityToString (aEntity, StandardCharsets.UTF_8);
+      });
+
+      final int nStatusCode = aSC.intValue ();
 
       if (bExpectSuccess)
       {
         assertTrue ("Server responded with an error.\nResponse: " + sResponse, !sResponse.contains ("Error"));
         assertTrue ("Server responded with an error code (" + nStatusCode + "). Content:\n" + sResponse,
-                    nStatusCode == HttpServletResponse.SC_OK || nStatusCode == HttpServletResponse.SC_NO_CONTENT);
+                    nStatusCode == CHttp.HTTP_OK || nStatusCode == CHttp.HTTP_NO_CONTENT);
       }
       else
       {
@@ -203,25 +196,20 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
                     nStatusCode +
                     ". Response:\n" +
                     sResponse,
-                    nStatusCode == HttpServletResponse.SC_OK ||
-                               nStatusCode == HttpServletResponse.SC_BAD_REQUEST ||
-                               nStatusCode == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    nStatusCode == CHttp.HTTP_OK ||
+                               nStatusCode == CHttp.HTTP_BAD_REQUEST ||
+                               nStatusCode == CHttp.HTTP_INTERNAL_SERVER_ERROR);
         assertTrue ("Server responded with different error message than expected (" +
                     sExecptedErrorCode +
                     ")." +
                     " StatusCode=" +
                     nStatusCode +
-                    "\nResponse: " +
-                    sResponse,
+                    "\nResponse: '" +
+                    sResponse +
+                    "'",
                     sResponse.contains (sExecptedErrorCode));
       }
       return sResponse;
-    }
-    catch (final HttpHostConnectException ex)
-    {
-      // No such server running
-      fail ("No target AS4 server reachable: " + ex.getMessage () + " \n Check your properties!");
-      throw new IllegalStateException ("Never reached!");
     }
   }
 
