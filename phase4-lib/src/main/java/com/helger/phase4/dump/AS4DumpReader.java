@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -30,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -37,6 +39,7 @@ import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.IMimeType;
+import com.helger.commons.mutable.MutableInt;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -89,38 +92,23 @@ public final class AS4DumpReader
   {}
 
   /**
-   * Utility method to decrypt dumped .as4in message late.<br>
-   * Note: this method was mainly created for internal use and does not win the
-   * prize for the most sexy piece of software in the world ;-)
+   * Utility method to just read and consume the leading HTTP headers from a
+   * dump. Usually this method is not called explicitly but invoked directly by
+   * {@link #decryptAS4In(byte[], IAS4CryptoFactory, Consumer, IDecryptedPayloadConsumer)}
    *
    * @param aAS4InData
-   *        The byte array with the dumped data.
-   * @param aCF
-   *        The Crypto factory to be used. This crypto factory must use use the
-   *        private key that can be used to decrypt this particular message. May
-   *        not be <code>null</code>.
+   *        The byte array with the dump. May not be <code>null</code>.
    * @param aHttpHeaderConsumer
-   *        An optional HTTP Header map consumer. May be <code>null</code>.
-   * @param aDecryptedConsumer
-   *        The consumer for the decrypted payload - whatever that is :). May
-   *        not be <code>null</code>.
-   * @throws WSSecurityException
-   *         In case of error
-   * @throws Phase4Exception
-   *         In case of error
-   * @throws IOException
-   *         In case of error
-   * @throws MessagingException
-   *         In case of error
+   *        The optional consumer for the read HTTP headers. May be
+   *        <code>null</code>.
+   * @since 2.1.0
    */
-  public static void decryptAS4In (@Nonnull final byte [] aAS4InData,
-                                   @Nonnull final IAS4CryptoFactory aCF,
-                                   @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
-                                   @Nonnull final IDecryptedPayloadConsumer aDecryptedConsumer) throws WSSecurityException,
-                                                                                                Phase4Exception,
-                                                                                                IOException,
-                                                                                                MessagingException
+  public static void readAndSkipInitialHttpHeaders (@Nonnull final byte [] aAS4InData,
+                                                    @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
+                                                    @Nullable final IntConsumer aHttpEndIndexConsumer)
   {
+    ValueEnforcer.notNull (aAS4InData, "AS4InData");
+
     final HttpHeaderMap hm = new HttpHeaderMap ();
     int nHttpStart = 0;
     int nHttpEnd = -1;
@@ -160,6 +148,52 @@ public final class AS4DumpReader
           bLastWasCR = false;
       }
     }
+
+    // Invoke consumers
+    if (aHttpHeaderConsumer != null)
+      aHttpHeaderConsumer.accept (hm);
+
+    if (aHttpEndIndexConsumer != null)
+      aHttpEndIndexConsumer.accept (nHttpEnd);
+  }
+
+  /**
+   * Utility method to decrypt dumped .as4in message late.<br>
+   * Note: this method was mainly created for internal use and does not win the
+   * prize for the most sexy piece of software in the world ;-)
+   *
+   * @param aAS4InData
+   *        The byte array with the dumped data.
+   * @param aCF
+   *        The Crypto factory to be used. This crypto factory must use use the
+   *        private key that can be used to decrypt this particular message. May
+   *        not be <code>null</code>.
+   * @param aHttpHeaderConsumer
+   *        An optional HTTP Header map consumer. May be <code>null</code>.
+   * @param aDecryptedConsumer
+   *        The consumer for the decrypted payload - whatever that is :). May
+   *        not be <code>null</code>.
+   * @throws WSSecurityException
+   *         In case of error
+   * @throws Phase4Exception
+   *         In case of error
+   * @throws IOException
+   *         In case of error
+   * @throws MessagingException
+   *         In case of error
+   */
+  public static void decryptAS4In (@Nonnull final byte [] aAS4InData,
+                                   @Nonnull final IAS4CryptoFactory aCF,
+                                   @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
+                                   @Nonnull final IDecryptedPayloadConsumer aDecryptedConsumer) throws WSSecurityException,
+                                                                                                Phase4Exception,
+                                                                                                IOException,
+                                                                                                MessagingException
+  {
+    final HttpHeaderMap hm = new HttpHeaderMap ();
+    final MutableInt aHttpEndIndex = new MutableInt (-1);
+    readAndSkipInitialHttpHeaders (aAS4InData, hm::setAllHeaders, aHttpEndIndex::set);
+    final int nHttpEnd = aHttpEndIndex.intValue ();
 
     // In case somebody cares about the HTTP headers
     if (aHttpHeaderConsumer != null)
