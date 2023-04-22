@@ -44,7 +44,8 @@ import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
-import com.helger.phase4.marshaller.Ebms3WriterBuilder;
+import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
+import com.helger.phase4.marshaller.Soap12EnvelopeMarshaller;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.soap12.Soap12Body;
@@ -66,7 +67,7 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
   @Nullable
   private Document _getMessagingAsSoapDocument (@Nonnull final Ebms3Messaging aEbms3Messaging)
   {
-    final Document aEbms3Document = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (aEbms3Messaging);
+    final Document aEbms3Document = new Ebms3MessagingMarshaller ().getAsDocument (aEbms3Messaging);
     if (aEbms3Document == null)
       throw new IllegalStateException ("Failed to write EBMS3 Messaging to XML");
 
@@ -75,7 +76,7 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     aSoapEnv.setHeader (new Soap12Header ());
     aSoapEnv.setBody (new Soap12Body ());
     aSoapEnv.getHeader ().addAny (aEbms3Document.getDocumentElement ());
-    return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
+    return new Soap12EnvelopeMarshaller ().getAsDocument (aSoapEnv);
   }
 
   @Test
@@ -101,7 +102,8 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     aSignalMsgList.add (aSignalMessage);
     aSignalMsgList.add (aSignalMessage);
 
-    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging), SOAP_VERSION.getMimeType ());
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging),
+                                                  SOAP_VERSION.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -110,7 +112,8 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
   {
     final Ebms3Messaging aEbms3Messaging = new Ebms3Messaging ();
 
-    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging), SOAP_VERSION.getMimeType ());
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging),
+                                                  SOAP_VERSION.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -161,7 +164,8 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 
     aEbms3Messaging.addUserMessage (aEbms3UserMessage);
 
-    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging), SOAP_VERSION.getMimeType ());
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging),
+                                                  SOAP_VERSION.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -208,7 +212,8 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 
     aEbms3Messaging.addUserMessage (aEbms3UserMessage);
 
-    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging), SOAP_VERSION.getMimeType ());
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging),
+                                                  SOAP_VERSION.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -243,7 +248,8 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
 
     // Now send receipt
-    final Document aDoc = MockMessages.createReceiptMessage (ESoapVersion.AS4_DEFAULT, aEbms3UserMessage, null).getAsSoapDocument ();
+    final Document aDoc = MockMessages.createReceiptMessage (ESoapVersion.AS4_DEFAULT, aEbms3UserMessage, null)
+                                      .getAsSoapDocument ();
 
     // We've got our response
     sendPlainMessage (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()), true, null);
