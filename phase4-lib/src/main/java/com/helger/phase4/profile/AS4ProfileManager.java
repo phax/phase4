@@ -66,7 +66,10 @@ public class AS4ProfileManager implements IAS4ProfileManager, Serializable
       aSPI.registerAS4Profile (this);
 
     final int nCount = getProfileCount ();
-    LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered"));
+    if (nCount == 0)
+      LOGGER.warn ("No AS4 profile is registered. This is most likely a configuration problem. Please make sure that at least one of the 'phase4-profile-*' modules is on the classpath.");
+    else
+      LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered"));
   }
 
   public AS4ProfileManager ()
