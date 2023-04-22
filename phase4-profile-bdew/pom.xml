@@ -4,9 +4,6 @@
     Copyright (C) 2023 Gregor Scholtysik (www.soptim.de)
     gregor[dot]scholtysik[at]soptim[dot]de
 
-    Copyright (C) 2021-2023 Philip Helger (www.helger.com)
-    philip[at]helger[dot]com
-
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -21,73 +18,73 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.helger.phase4</groupId>
-        <artifactId>phase4-parent-pom</artifactId>
-        <version>2.0.1-SNAPSHOT</version>
-    </parent>
-    <artifactId>phase4-profile-bdew</artifactId>
-    <inceptionYear>2023</inceptionYear>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.helger.phase4</groupId>
+    <artifactId>phase4-parent-pom</artifactId>
+    <version>2.1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>phase4-profile-bdew</artifactId>
+  <inceptionYear>2023</inceptionYear>
 
-    <licenses>
-        <license>
-            <name>Apache 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
-    <developers>
-        <developer>
-            <id>gregorscholtysik</id>
-            <name>Gregor Scholtysik</name>
-            <email>gregor.scholtysik@soptim.de</email>
-        </developer>
-    </developers>
+  <developers>
+    <developer>
+      <id>gregorscholtysik</id>
+      <name>Gregor Scholtysik</name>
+      <email>gregor.scholtysik@soptim.de</email>
+    </developer>
+  </developers>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.helger.phase4</groupId>
-            <artifactId>phase4-lib</artifactId>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>com.helger.phase4</groupId>
+      <artifactId>phase4-lib</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Automatic-Module-Name>com.helger.phase4.profile.bdew</Automatic-Module-Name>
-                        <Export-Package>com.helger.phase4.profile.bdew.*</Export-Package>
-                        <Import-Package>!javax.annotation.*,*</Import-Package>
-                        <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
-                        <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI</Provide-Capability>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Automatic-Module-Name>com.helger.phase4.profile.bdew</Automatic-Module-Name>
+            <Export-Package>com.helger.phase4.profile.bdew.*</Export-Package>
+            <Import-Package>!javax.annotation.*,*</Import-Package>
+            <Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
+            <Provide-Capability>osgi.serviceloader;osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI</Provide-Capability>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
