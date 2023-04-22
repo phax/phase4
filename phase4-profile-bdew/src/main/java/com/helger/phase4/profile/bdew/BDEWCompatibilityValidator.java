@@ -2,9 +2,6 @@
  * Copyright (C) 2023 Gregor Scholtysik (www.soptim.de)
  * gregor[dot]scholtysik[at]soptim[dot]de
  *
- * Copyright (C) 2021-2023 Philip Helger (www.helger.com)
- * philip[at]helger[dot]com
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +15,8 @@
  * limitations under the License.
  */
 package com.helger.phase4.profile.bdew;
+
+import javax.annotation.Nonnull;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -49,17 +48,16 @@ import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 
-import javax.annotation.Nonnull;
-
 /**
  * Validate certain requirements imposed by the BDEW project.
  *
  * @author Gregor Scholtysik
+ * @since 2.1.0
  */
 public class BDEWCompatibilityValidator implements IAS4ProfileValidator
 {
 
-  public BDEWCompatibilityValidator()
+  public BDEWCompatibilityValidator ()
   {}
 
   @Nonnull
@@ -386,13 +384,17 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
     else
     {
       final Ebms3AgreementRef aAgreementRef = aUserMsg.getCollaborationInfo ().getAgreementRef ();
-      if (aAgreementRef == null) {
-        aErrorList.add( _createError ("CollaborationInfo/AgreementRef must be set!"));
-      } else {
+      if (aAgreementRef == null)
+      {
+        aErrorList.add (_createError ("CollaborationInfo/AgreementRef must be set!"));
+      }
+      else
+      {
         if (StringHelper.hasNoText (aAgreementRef.getValue ()))
           aErrorList.add (_createError ("CollaborationInfo/AgreementRef value is missing"));
         if (!BDEWPMode.DEFAULT_AGREEMENT_ID.equals (aAgreementRef.getValue ()))
-          aErrorList.add (_createError ("CollaborationInfo/AgreementRef value must equal " + BDEWPMode.DEFAULT_AGREEMENT_ID));
+          aErrorList.add (_createError ("CollaborationInfo/AgreementRef value must equal " +
+                                        BDEWPMode.DEFAULT_AGREEMENT_ID));
         if (aAgreementRef.getPmode () != null)
           aErrorList.add (_createError ("CollaborationInfo/PMode must not be set!"));
         if (aAgreementRef.getType () != null)

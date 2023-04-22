@@ -2,9 +2,6 @@
  * Copyright (C) 2023 Gregor Scholtysik (www.soptim.de)
  * gregor[dot]scholtysik[at]soptim[dot]de
  *
- * Copyright (C) 2021-2023 Philip Helger (www.helger.com)
- * philip[at]helger[dot]com
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +15,16 @@
  * limitations under the License.
  */
 package com.helger.phase4.profile.bdew;
+
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Locale;
+
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ETriState;
@@ -46,16 +53,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.util.Locale;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
 
 /**
  * All essentials need to be set and need to be not null since they are getting
@@ -80,12 +77,12 @@ public final class BDEWCompatibilityValidatorTest
   {
     m_aErrorList = new ErrorList ();
     m_aPMode = BDEWPMode.createBDEWPMode ("TestInitiator",
-                                              BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW,
-                                              "TestResponder",
-                                              BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW,
-                                              "http://localhost:8080",
-                                              IPModeIDProvider.DEFAULT_DYNAMIC,
-                                              true);
+                                          BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW,
+                                          "TestResponder",
+                                          BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW,
+                                          "http://localhost:8080",
+                                          IPModeIDProvider.DEFAULT_DYNAMIC,
+                                          true);
   }
 
   @Test
@@ -137,15 +134,25 @@ public final class BDEWCompatibilityValidatorTest
   @Test
   public void testValidatePModeProtocolAddressIsNotHttp ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"), null, null, null, null));
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol 'ftp' is unsupported")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("AddressProtocol 'ftp' is unsupported")));
   }
 
   @Test
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11), null, null, null, null));
+    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com",
+                                                          ESoapVersion.SOAP_11),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("SoapVersion '1.1' is unsupported")));
   }
@@ -176,7 +183,8 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmSign.ECDSA_SHA_256.getID ())));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains (ECryptoAlgorithmSign.ECDSA_SHA_256.getID ())));
   }
 
   @Test
@@ -190,7 +198,8 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509SignatureHashFunction is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("X509SignatureHashFunction is missing")));
   }
 
   @Test
@@ -204,7 +213,8 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
   }
 
   @Test
@@ -218,7 +228,8 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509EncryptionAlgorithm is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("X509EncryptionAlgorithm is missing")));
   }
 
   @Test
@@ -232,7 +243,8 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
   }
 
   @SuppressWarnings ("deprecation")
@@ -257,7 +269,8 @@ public final class BDEWCompatibilityValidatorTest
     m_aPMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue ("Errors: " + m_aErrorList.toString (),
-                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Security.PModeAuthorize is missing")));
+                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Security.PModeAuthorize is missing")));
   }
 
   @Test
@@ -295,10 +308,15 @@ public final class BDEWCompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingMandatory ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"), null, null, null, null));
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
 
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[1].ErrorHandling is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("PMode.Leg[1].ErrorHandling is missing")));
   }
 
   @Test
@@ -311,7 +329,8 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.Report.AsResponse is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ErrorHandling.Report.AsResponse is missing")));
   }
 
   @Test
@@ -325,7 +344,8 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.Report.AsResponse must be 'true'")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ErrorHandling.Report.AsResponse must be 'true'")));
   }
 
   @Test
@@ -409,9 +429,10 @@ public final class BDEWCompatibilityValidatorTest
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
-    aUserMessage.getMessageInfo().setRefToMessageId("RefToMessageId");
+    aUserMessage.getMessageInfo ().setRefToMessageId ("RefToMessageId");
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageInfo/RefToMessageId must not be set")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("MessageInfo/RefToMessageId must not be set")));
   }
 
   @Test
@@ -439,7 +460,8 @@ public final class BDEWCompatibilityValidatorTest
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
     aUserMessage.setCollaborationInfo (new Ebms3CollaborationInfo ());
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("CollaborationInfo/AgreementRef must be set!")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("CollaborationInfo/AgreementRef must be set!")));
   }
 
   @Test
@@ -447,11 +469,12 @@ public final class BDEWCompatibilityValidatorTest
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
-    Ebms3CollaborationInfo collaborationInfo = new Ebms3CollaborationInfo ();
+    final Ebms3CollaborationInfo collaborationInfo = new Ebms3CollaborationInfo ();
     collaborationInfo.setAgreementRef ("");
     aUserMessage.setCollaborationInfo (collaborationInfo);
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("CollaborationInfo/AgreementRef value is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("CollaborationInfo/AgreementRef value is missing")));
   }
 
   @Test
@@ -459,11 +482,13 @@ public final class BDEWCompatibilityValidatorTest
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
-    Ebms3CollaborationInfo collaborationInfo = new Ebms3CollaborationInfo ();
+    final Ebms3CollaborationInfo collaborationInfo = new Ebms3CollaborationInfo ();
     collaborationInfo.setAgreementRef ("AgreementRef");
     aUserMessage.setCollaborationInfo (collaborationInfo);
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("CollaborationInfo/AgreementRef value must equal " + BDEWPMode.DEFAULT_AGREEMENT_ID)));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("CollaborationInfo/AgreementRef value must equal " +
+                                                           BDEWPMode.DEFAULT_AGREEMENT_ID)));
   }
 
   @Test
@@ -471,13 +496,14 @@ public final class BDEWCompatibilityValidatorTest
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
-    Ebms3CollaborationInfo collaborationInfo = new Ebms3CollaborationInfo ();
-    Ebms3AgreementRef agreementRef = new Ebms3AgreementRef ();
-    agreementRef.setPmode("PModeId");
-    collaborationInfo.setAgreementRef(agreementRef);
+    final Ebms3CollaborationInfo collaborationInfo = new Ebms3CollaborationInfo ();
+    final Ebms3AgreementRef agreementRef = new Ebms3AgreementRef ();
+    agreementRef.setPmode ("PModeId");
+    collaborationInfo.setAgreementRef (agreementRef);
     aUserMessage.setCollaborationInfo (collaborationInfo);
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("CollaborationInfo/PMode must not be set!")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("CollaborationInfo/PMode must not be set!")));
   }
 
   @Test
@@ -485,13 +511,14 @@ public final class BDEWCompatibilityValidatorTest
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
-    Ebms3CollaborationInfo collaborationInfo = new Ebms3CollaborationInfo ();
-    Ebms3AgreementRef agreementRef = new Ebms3AgreementRef ();
-    agreementRef.setType("Type");
-    collaborationInfo.setAgreementRef(agreementRef);
+    final Ebms3CollaborationInfo collaborationInfo = new Ebms3CollaborationInfo ();
+    final Ebms3AgreementRef agreementRef = new Ebms3AgreementRef ();
+    agreementRef.setType ("Type");
+    collaborationInfo.setAgreementRef (agreementRef);
     aUserMessage.setCollaborationInfo (collaborationInfo);
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("CollaborationInfo/Type must not be set!")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("CollaborationInfo/Type must not be set!")));
   }
 
   @Test
@@ -514,7 +541,8 @@ public final class BDEWCompatibilityValidatorTest
     aUserMessage.setPartyInfo (aPartyInfo);
 
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("must contain no more than one PartyID")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("must contain no more than one PartyID")));
   }
 
   @Test

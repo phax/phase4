@@ -2,9 +2,6 @@
  * Copyright (C) 2023 Gregor Scholtysik (www.soptim.de)
  * gregor[dot]scholtysik[at]soptim[dot]de
  *
- * Copyright (C) 2021-2023 Philip Helger (www.helger.com)
- * philip[at]helger[dot]com
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +15,10 @@
  * limitations under the License.
  */
 package com.helger.phase4.profile.bdew;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.state.ETriState;
@@ -43,14 +44,11 @@ import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-
 /**
  * PMode creation code.
  *
  * @author Gregor Scholtysik
+ * @since 2.1.0
  */
 @Immutable
 public final class BDEWPMode
@@ -74,7 +72,7 @@ public final class BDEWPMode
   public static final String ACTION_REQUEST_SWITCH = "https://www.bdew.de/as4/communication/actions/requestSwitch";
   public static final String ACTION_CONFIRM_SWITCH = "https://www.bdew.de/as4/communication/actions/confirmSwitch";
 
-  private BDEWPMode()
+  private BDEWPMode ()
   {}
 
   @Nonnull
@@ -119,7 +117,7 @@ public final class BDEWPMode
     aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.ECDSA_SHA_256);
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
-    aPModeLegSecurity.setX509EncryptionMinimumStrength (128);
+    aPModeLegSecurity.setX509EncryptionMinimumStrength (Integer.valueOf (128));
     aPModeLegSecurity.setPModeAuthorize (false);
     aPModeLegSecurity.setSendReceipt (true);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
@@ -163,8 +161,12 @@ public final class BDEWPMode
    *
    * @param sInitiatorID
    *        Initiator ID
+   * @param sInitiatorType
+   *        Initiator type ID
    * @param sResponderID
    *        Responder ID
+   * @param sResponderType
+   *        Responder type ID
    * @param sResponderAddress
    *        Responder URL
    * @param aPModeIDProvider
@@ -175,7 +177,7 @@ public final class BDEWPMode
    * @return New PMode
    */
   @Nonnull
-  public static PMode createBDEWPMode(@Nonnull @Nonempty final String sInitiatorID,
+  public static PMode createBDEWPMode (@Nonnull @Nonempty final String sInitiatorID,
                                        @Nonnull @Nonempty final String sInitiatorType,
                                        @Nonnull @Nonempty final String sResponderID,
                                        @Nonnull @Nonempty final String sResponderType,
@@ -183,16 +185,8 @@ public final class BDEWPMode
                                        @Nonnull final IPModeIDProvider aPModeIDProvider,
                                        final boolean bPersist)
   {
-    final PModeParty aInitiator = new PModeParty (sInitiatorType,
-                                                  sInitiatorID,
-                                                  CAS4.DEFAULT_INITIATOR_URL,
-                                                  null,
-                                                  null);
-    final PModeParty aResponder = new PModeParty (sResponderType,
-                                                  sResponderID,
-                                                  CAS4.DEFAULT_RESPONDER_URL,
-                                                  null,
-                                                  null);
+    final PModeParty aInitiator = new PModeParty (sInitiatorType, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, null, null);
+    final PModeParty aResponder = new PModeParty (sResponderType, sResponderID, CAS4.DEFAULT_RESPONDER_URL, null, null);
 
     final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (sInitiatorID, sResponderID),
                                     aInitiator,
@@ -214,5 +208,4 @@ public final class BDEWPMode
     }
     return aPMode;
   }
-
 }
