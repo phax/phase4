@@ -1,8 +1,5 @@
 /*
- * Copyright (C) 2023 Gregor Scholtysik (www.soptim.de)
- * gregor[dot]scholtysik[at]soptim[dot]de
- *
- * * Copyright (C) 2015-2023 Philip Helger (www.helger.com)
+ * Copyright (C) 2015-2023 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,12 +43,14 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
  * AS4 encrypt/decrypt parameters
  *
  * @author Philip Helger
+ * @author Gregor Scholtysik
  * @since 0.9.0
  */
 @NotThreadSafe
 public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
 {
   public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
+  public static final ECryptoKeyEncryptionAlgorithm DEFAULT_KEY_ENCRYPTION_ALGORITHM = ECryptoKeyEncryptionAlgorithm.RSA_OAEP_XENC11;
   public static final String DEFAULT_MGF_ALGORITHM = WSS4JConstants.MGF_SHA256;
   public static final String DEFAULT_DIGEST_ALGORITHM = WSS4JConstants.SHA256;
 
@@ -62,7 +61,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   // The algorithm to use
   private ECryptoAlgorithmCrypt m_eAlgorithmCrypt;
   // The key encryption algorithm
-  private ECryptoKeyEncryptionAlgorithm m_eKeyEncAlgorithm = ECryptoKeyEncryptionAlgorithm.RSA_OAEP_XENC11;
+  private ECryptoKeyEncryptionAlgorithm m_eKeyEncAlgorithm = DEFAULT_KEY_ENCRYPTION_ALGORITHM;
   // The MGF algorithm to use with the RSA-OAEP key transport algorithm
   private String m_sMGFAlgorithm = DEFAULT_MGF_ALGORITHM;
   // The digest algorithm to use with the RSA-OAEP key transport algorithm
@@ -76,8 +75,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
    * Default constructor using default
    * {@link #setKeyIdentifierType(ECryptoKeyIdentifierType)},
    * {@link #setKeyEncAlgorithm(ECryptoKeyEncryptionAlgorithm)},
-   * {@link #setMGFAlgorithm(String)} and
-   * {@link #setDigestAlgorithm(String)}
+   * {@link #setMGFAlgorithm(String)} and {@link #setDigestAlgorithm(String)}
    */
   public AS4CryptParams ()
   {}
@@ -150,14 +148,13 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   }
 
   @Nonnull
-  @Nonempty
   public final ECryptoKeyEncryptionAlgorithm getKeyEncAlgorithm ()
   {
     return m_eKeyEncAlgorithm;
   }
 
   @Nonnull
-  public final AS4CryptParams setKeyEncAlgorithm (@Nonnull @Nonempty final ECryptoKeyEncryptionAlgorithm eKeyEncAlgorithm)
+  public final AS4CryptParams setKeyEncAlgorithm (@Nonnull final ECryptoKeyEncryptionAlgorithm eKeyEncAlgorithm)
   {
     m_eKeyEncAlgorithm = eKeyEncAlgorithm;
     return this;
