@@ -135,9 +135,9 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
                                            @Nullable final HttpHeaderMap aCustomHeaders,
                                            @Nonnegative final int nTry) throws IOException
   {
-    final File aResponseFile = m_aFileProvider.getFile (eMsgMode, sMessageID, nTry);
-    LOGGER.info ("Logging outgoing AS4 message to '" + aResponseFile.getAbsolutePath () + "'");
-    return FileHelper.getBufferedOutputStream (aResponseFile);
+    final File aDumpFile = m_aFileProvider.getFile (eMsgMode, sMessageID, nTry);
+    LOGGER.info ("Logging outgoing AS4 message to '" + aDumpFile.getAbsolutePath () + "'");
+    return FileHelper.getBufferedOutputStream (aDumpFile);
   }
 
   /**
