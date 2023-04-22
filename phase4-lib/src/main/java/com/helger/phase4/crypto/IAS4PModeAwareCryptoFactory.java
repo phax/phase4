@@ -23,7 +23,8 @@ import com.helger.phase4.model.pmode.IPMode;
 /**
  * An extended {@link IAS4CryptoFactory} with the capability to receive a P-Mode
  * that was successfully resolved during reception phase. This information can
- * be used to provide P-Mode specific crypto information for decryption.
+ * be used to provide P-Mode specific crypto information for decryption.<br>
+ * Source: https://github.com/phax/phase4/pull/121
  *
  * @author Gregor Scholtysik
  * @since 2.1.0
