@@ -38,11 +38,13 @@ import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.io.file.SimpleFileIO;
+import com.helger.commons.mutable.MutableInt;
 import com.helger.commons.state.ESuccess;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.dump.AS4DumpReader;
 import com.helger.phase4.servlet.soap.AS4KeyStoreCallbackHandler;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
@@ -76,7 +78,8 @@ public class MainVerifySignature
     {
       // Convert to WSS4J attachments
       final AS4KeyStoreCallbackHandler aKeyStoreCallback = new AS4KeyStoreCallbackHandler (aCryptoFactory);
-      final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments, aResHelper);
+      final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
+                                                                                                            aResHelper);
 
       // Resolve the WSS config here to ensure the context matches
       final WSSConfig aWSSConfig = aWSSConfigSupplier.get ();
@@ -146,35 +149,16 @@ public class MainVerifySignature
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
       // The file to read
-      final File aFile = new File ("src/test/resources/verify/dataport1-mustunderstand.as4in");
+      final File aFile = new File ("src/test/resources/external/verify/dataport1-mustunderstand.as4in");
       if (!aFile.exists ())
         throw new IllegalStateException ("The file " + aFile.getAbsolutePath () + " does not exist");
 
       final byte [] aBytes = SimpleFileIO.getAllFileBytes (aFile);
 
       // Skip all the HTTP headers etc.
-      int nHttpEnd = -1;
-      boolean bLastWasCR = false;
-      for (int i = 0; i < aBytes.length; ++i)
-      {
-        final byte b = aBytes[i];
-        if (b == '\n')
-        {
-          // 2 consecutive newlines?
-          if (bLastWasCR)
-          {
-            // Remember offset
-            nHttpEnd = i + 1;
-            break;
-          }
-          bLastWasCR = true;
-        }
-        else
-        {
-          if (b != '\r')
-            bLastWasCR = false;
-        }
-      }
+      final MutableInt aHttpEnd = new MutableInt (-1);
+      AS4DumpReader.readAndSkipInitialHttpHeaders (aBytes, null, aHttpEnd::set);
+      final int nHttpEnd = aHttpEnd.intValue ();
 
       // Remember the index until we skipped
       LOGGER.info ("Now at byte " + nHttpEnd);
@@ -187,7 +171,11 @@ public class MainVerifySignature
       // Main action
       final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
       final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-      _verifyAndDecrypt (aResHelper, aCryptoFactory, aSOAPDoc, aAttachments, WSSConfigManager.getInstance ()::createWSSConfig);
+      _verifyAndDecrypt (aResHelper,
+                         aCryptoFactory,
+                         aSOAPDoc,
+                         aAttachments,
+                         WSSConfigManager.getInstance ()::createWSSConfig);
     }
     WebScopeManager.onGlobalEnd ();
   }

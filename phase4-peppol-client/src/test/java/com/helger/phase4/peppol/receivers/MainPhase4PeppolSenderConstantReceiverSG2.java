@@ -55,7 +55,7 @@ public final class MainPhase4PeppolSenderConstantReceiverSG2
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/Singapore invoice valid 1.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/Singapore invoice valid 1.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");

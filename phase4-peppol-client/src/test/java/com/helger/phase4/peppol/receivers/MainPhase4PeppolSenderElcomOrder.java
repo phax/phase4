@@ -56,7 +56,7 @@ public final class MainPhase4PeppolSenderElcomOrder
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/test-order.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/test-order.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");

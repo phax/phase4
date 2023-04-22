@@ -53,7 +53,7 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
   {
     try
     {
-      final FileSystemResource aRes = new FileSystemResource (new File ("src/test/resources/examples/large-files/base-example-large-30m.xml"));
+      final FileSystemResource aRes = new FileSystemResource (new File ("src/test/resources/external/examples/large-files/base-example-large-30m.xml"));
       if (!aRes.exists ())
         throw new IllegalStateException ("Failed to read XML file to be send");
       final boolean bNoValidate = true;

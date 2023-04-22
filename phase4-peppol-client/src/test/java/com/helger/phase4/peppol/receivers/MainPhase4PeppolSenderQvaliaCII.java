@@ -60,7 +60,7 @@ public final class MainPhase4PeppolSenderQvaliaCII
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/cii/cii-en-qvalia.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/cii/cii-en-qvalia.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");

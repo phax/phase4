@@ -61,7 +61,7 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
   {
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/xrechnung-1.2-cii-example1.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/xrechnung-1.2-cii-example1.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");

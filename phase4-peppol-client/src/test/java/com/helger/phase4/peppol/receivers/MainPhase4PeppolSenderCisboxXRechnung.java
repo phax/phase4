@@ -60,7 +60,7 @@ public final class MainPhase4PeppolSenderCisboxXRechnung
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/xrechnung-2.0.0-ubl-inv.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/xrechnung-2.0.0-ubl-inv.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");

@@ -60,7 +60,7 @@ public final class MainPhase4PeppolSenderZRE
     try
     {
       final boolean bVerify = true;
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/" +
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/" +
                                                                       (bVerify ? "zre/Verifizierungs_Rechnung_PEPPOL.xml"
                                                                                : "examples/base-example.xml")))
                                                .getDocumentElement ();

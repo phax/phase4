@@ -52,7 +52,7 @@ public final class MainPhase4PeppolSenderLocalHost8080
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/" +
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/" +
                                                                       (true ? "base-example.xml"
                                                                             : "large-files/base-example-large-100m.xml")))
                                                .getDocumentElement ();

@@ -51,7 +51,7 @@ public final class MainPhase4PeppolSenderACube
   {
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/base-example.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/base-example.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
@@ -66,7 +66,9 @@ public final class MainPhase4PeppolSenderACube
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadElement)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
+                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                     aReceiverID,
+                                                                     ESML.DIGIT_TEST))
                                   .sbdBytesConsumer (x -> SimpleFileIO.writeFile (new File (AS4Configuration.getDumpBasePathFile (),
                                                                                             com.helger.phase4.dump.AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH +
                                                                                                                                      IFileProvider.getFilename ("",

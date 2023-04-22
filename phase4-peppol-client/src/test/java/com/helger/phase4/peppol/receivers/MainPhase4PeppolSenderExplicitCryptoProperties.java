@@ -51,7 +51,7 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
 
     try
     {
-      final byte [] aPayloadBytes = SimpleFileIO.getAllFileBytes (new File ("src/test/resources/examples/base-example.xml"));
+      final byte [] aPayloadBytes = SimpleFileIO.getAllFileBytes (new File ("src/test/resources/external/examples/base-example.xml"));
       if (aPayloadBytes == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
 
