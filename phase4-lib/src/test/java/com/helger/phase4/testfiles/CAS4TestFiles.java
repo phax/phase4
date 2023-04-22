@@ -29,8 +29,8 @@ import com.helger.commons.collection.impl.ICommonsList;
  */
 public final class CAS4TestFiles
 {
-  public static final String TEST_FILE_PATH_SOAP_11 = "/soap11test/";
-  public static final String TEST_FILE_PATH_SOAP_12 = "/soap12test/";
+  public static final String TEST_FILE_PATH_SOAP_11 = "external/soap11test/";
+  public static final String TEST_FILE_PATH_SOAP_12 = "external/soap12test/";
 
   private static final String [] SOAP_11_VALID_XML = new String [] { "BundledMessage.xml",
                                                                      "ErrorMessage.xml",

@@ -42,13 +42,16 @@ import com.helger.phase4.soap12.Soap12Envelope;
 public final class Ebms3ReaderBuilderTest
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (Ebms3ReaderBuilderTest.class);
+  private static final String PATH11 = "external/soap11test/";
+  private static final String PATH12 = "external/soap12test/";
 
   @Test
   public void testSoap ()
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final Soap11Envelope aEnv = new Soap11EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
-                                                               .read (new ClassPathResource ("/soap11test/UserMessage.xml"));
+                                                               .read (new ClassPathResource (PATH11 +
+                                                                                             "UserMessage.xml"));
     assertNotNull (aEnv);
     assertTrue (aCVEH.getErrorList ().isEmpty ());
     assertNotNull (aEnv.getHeader ());
@@ -70,7 +73,8 @@ public final class Ebms3ReaderBuilderTest
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final Ebms3Messaging aMessage = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH)
-                                                                   .read (new ClassPathResource ("/soap11test/UserMessage-no-soap.xml"));
+                                                                   .read (new ClassPathResource (PATH11 +
+                                                                                                 "UserMessage-no-soap.xml"));
     assertNotNull (aMessage);
     assertTrue (aCVEH.getErrorList ().isEmpty ());
 
@@ -87,7 +91,8 @@ public final class Ebms3ReaderBuilderTest
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final Soap11Envelope aEnv = new Soap11EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
-                                                               .read (new ClassPathResource ("/soap11test/MessageInfoMissing.xml"));
+                                                               .read (new ClassPathResource (PATH11 +
+                                                                                             "MessageInfoMissing.xml"));
     assertNotNull (aEnv);
     assertTrue (aCVEH.getErrorList ().isEmpty ());
     assertNotNull (aEnv.getHeader ());
@@ -106,7 +111,8 @@ public final class Ebms3ReaderBuilderTest
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final Soap11Envelope aEnv = new Soap11EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
-                                                               .read (new ClassPathResource ("/soap11test/MessageInfoIDMissing.xml"));
+                                                               .read (new ClassPathResource (PATH11 +
+                                                                                             "MessageInfoIDMissing.xml"));
     assertNotNull (aEnv);
     assertTrue (aCVEH.getErrorList ().isEmpty ());
     assertNotNull (aEnv.getHeader ());
@@ -125,7 +131,8 @@ public final class Ebms3ReaderBuilderTest
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final Soap11Envelope aEnv = new Soap11EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
-                                                               .read (new ClassPathResource ("/soap12test/UserMessage12.xml"));
+                                                               .read (new ClassPathResource (PATH12 +
+                                                                                             "UserMessage12.xml"));
 
     assertNull (aEnv);
     assertFalse (aCVEH.getErrorList ().isEmpty ());
@@ -136,7 +143,8 @@ public final class Ebms3ReaderBuilderTest
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final Soap12Envelope aEnv = new Soap12EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
-                                                               .read (new ClassPathResource ("/soap12test/test-2023-03-15.xml"));
+                                                               .read (new ClassPathResource (PATH12 +
+                                                                                             "test-2023-03-15.xml"));
     assertNotNull (aEnv);
     assertTrue ("Soap Errors: " + aCVEH.getErrorList (), aCVEH.getErrorList ().isEmpty ());
 

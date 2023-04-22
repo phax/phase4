@@ -161,7 +161,7 @@ public final class MainOldAS4Client
               if (true)
               {
                 aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                                     .data (ClassPathResource.getAsFile ("attachment/test.xml.gz"))
+                                                                                                     .data (ClassPathResource.getAsFile ("external/attachment/test.xml.gz"))
                                                                                                      .mimeType (CMimeType.APPLICATION_GZIP)
                                                                                                      .build (),
                                                                                 aResHelper));
