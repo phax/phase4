@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.servlet.soap;
 
+import java.util.function.Consumer;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -33,14 +35,13 @@ import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 
-import java.util.function.Consumer;
-
 /**
  * This class manages the SOAP header element processors. This is used to
  * validate the "must understand" SOAP requirement. It manages all instances of
  * {@link ISOAPHeaderElementProcessor}.
  *
  * @author Philip Helger
+ * @author Gregor Scholtysik
  */
 @NotThreadSafe
 public class SOAPHeaderElementProcessorRegistry
@@ -51,7 +52,8 @@ public class SOAPHeaderElementProcessorRegistry
   public SOAPHeaderElementProcessorRegistry ()
   {}
 
-  public void registerHeaderElementProcessor (@Nonnull final QName aQName, @Nonnull final ISOAPHeaderElementProcessor aProcessor)
+  public void registerHeaderElementProcessor (@Nonnull final QName aQName,
+                                              @Nonnull final ISOAPHeaderElementProcessor aProcessor)
   {
     ValueEnforcer.notNull (aQName, "QName");
     ValueEnforcer.notNull (aProcessor, "Processor");
@@ -93,15 +95,18 @@ public class SOAPHeaderElementProcessorRegistry
     // Registration order matches execution order!
     final SOAPHeaderElementProcessorRegistry ret = new SOAPHeaderElementProcessorRegistry ();
 
-    // callback notifying a IAS4PModeAwareCryptoFactory about a successful PMode resolution
-    final Consumer<IPMode> pModeConsumer = ipMode -> {
-      if (aCryptoFactory instanceof IAS4PModeAwareCryptoFactory) {
-        ((IAS4PModeAwareCryptoFactory) aCryptoFactory).setContextPMode (ipMode);
+    // callback notifying a IAS4PModeAwareCryptoFactory about a successful PMode
+    // resolution
+    final Consumer <IPMode> aPModeConsumer = aPMode -> {
+      if (aCryptoFactory instanceof IAS4PModeAwareCryptoFactory)
+      {
+        ((IAS4PModeAwareCryptoFactory) aCryptoFactory).setContextPMode (aPMode);
       }
     };
 
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING,
-                                        new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver, pModeConsumer));
+                                        new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver,
+                                                                                             aPModeConsumer));
 
     // WSS4J must be after Ebms3Messaging handler!
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,

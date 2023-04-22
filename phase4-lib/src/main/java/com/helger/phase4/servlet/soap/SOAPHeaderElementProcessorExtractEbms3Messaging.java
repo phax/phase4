@@ -77,6 +77,7 @@ import com.helger.xml.XMLHelper;
  *
  * @author Philip Helger
  * @author bayerlma
+ * @author Gregor Scholtysik
  */
 public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
@@ -87,14 +88,23 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorExtractEbms3Messaging.class);
 
   private final IPModeResolver m_aPModeResolver;
-  private final Consumer<IPMode> m_pModeConsumer;
+  private final Consumer <? super IPMode> m_aPModeConsumer;
 
+  /**
+   * Ctor
+   *
+   * @param aPModeResolver
+   *        The PMode resolver to be used. May not be <code>null</code>.
+   * @param aPModeConsumer
+   *        An optional consumer that is invoked every time a PMode was
+   *        successfully resolved. May be <code>null</code>.
+   */
   public SOAPHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IPModeResolver aPModeResolver,
-          @Nullable final Consumer<IPMode> pModeConsumer)
+                                                          @Nullable final Consumer <? super IPMode> aPModeConsumer)
   {
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     m_aPModeResolver = aPModeResolver;
-    m_pModeConsumer = pModeConsumer;
+    m_aPModeConsumer = aPModeConsumer;
   }
 
   /**
@@ -193,6 +203,12 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     return aBody != null && aBody.hasChildNodes ();
   }
 
+  private void _notifyPModeResolved (@Nonnull final IPMode aPMode)
+  {
+    if (m_aPModeConsumer != null)
+      m_aPModeConsumer.accept (aPMode);
+  }
+
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
                                         @Nonnull final Element aElement,
@@ -222,6 +238,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       for (final IError aError : aCVEH.getErrorList ())
       {
         LOGGER.error ("Header error: " + aError.getAsString (aLocale));
+        // Clone the error and add an error ID
         aErrorList.add (SingleError.builder (aError).errorID (EEbmsError.EBMS_INVALID_HEADER.getErrorCode ()).build ());
       }
       return ESuccess.FAILURE;
@@ -317,8 +334,10 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           LOGGER.error ("Failed to resolve PMode '" + sPModeID + "' using resolver " + m_aPModeResolver);
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
-        } else {
-          notifyPModeResolved(aPMode);
+        }
+        else
+        {
+          _notifyPModeResolved (aPMode);
         }
       }
 
@@ -577,7 +596,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                          "' in SignalMessage " +
                          aSignalMessage);
 
-            notifyPModeResolved(aPMode);
+            _notifyPModeResolved (aPMode);
             break;
           }
         }
@@ -635,11 +654,5 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     aState.setResponderID (sResponderID);
 
     return ESuccess.SUCCESS;
-  }
-
-  private void notifyPModeResolved(@Nonnull IPMode aPMode) {
-    if (m_pModeConsumer != null) {
-      m_pModeConsumer.accept(aPMode);
-    }
   }
 }
