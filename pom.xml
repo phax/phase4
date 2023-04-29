@@ -77,7 +77,7 @@
     <log4j.version>2.20.0</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <peppol-commons.version>9.0.3</peppol-commons.version>
-    <spring-boot.version>3.0.5</spring-boot.version>
+    <spring-boot.version>3.0.6</spring-boot.version>
   </properties>
   
   <dependencyManagement>
@@ -134,7 +134,7 @@
       <dependency>
         <groupId>com.helger.ubl</groupId>
         <artifactId>ph-ubl-parent-pom</artifactId>
-        <version>7.0.0</version>
+        <version>8.0.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

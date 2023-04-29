@@ -59,8 +59,8 @@ import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.peppol.doctype.IPeppolDocumentTypeIdentifierParts;
 import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifierParts;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
+import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
@@ -73,7 +73,6 @@ import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.api.executorset.VESID;
 import com.helger.phive.engine.source.IValidationSourceXML;
 import com.helger.sbdh.SBDMarshaller;
-import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
@@ -134,7 +133,6 @@ public final class Phase4PeppolSender
                    "'");
       return null;
     }
-
     String sRealInstanceIdentifier = sInstanceIdentifier;
     if (StringHelper.hasNoText (sRealInstanceIdentifier))
     {
@@ -144,7 +142,6 @@ public final class Phase4PeppolSender
                       sRealInstanceIdentifier +
                       "'");
     }
-
     aData.setDocumentIdentification (aPayloadElement.getNamespaceURI (),
                                      sRealTypeVersion,
                                      aPayloadElement.getLocalName (),
@@ -633,7 +630,6 @@ public final class Phase4PeppolSender
         LOGGER.warn ("The field 'endpointDetailProvider' is not set");
         return false;
       }
-
       return true;
     }
 
@@ -646,7 +642,6 @@ public final class Phase4PeppolSender
         LOGGER.error ("At least one mandatory field for endpoint discovery is not set and therefore the AS4 message cannot be send.");
         return ESuccess.FAILURE;
       }
-
       // e.g. SMP lookup (may throw an exception)
       m_aEndpointDetailProvider.init (m_aDocTypeID, m_aProcessID, m_aReceiverID);
 
@@ -698,7 +693,6 @@ public final class Phase4PeppolSender
         LOGGER.warn ("The field 'processID' is not set");
         return false;
       }
-
       // m_aPayloadMimeType may be null
       // m_bCompressPayload may be null
       // m_sPayloadContentID may be null
@@ -1059,7 +1053,6 @@ public final class Phase4PeppolSender
           }
           else
             throw new IllegalStateException ("Unexpected - neither element nor bytes nor InputStream provider are present");
-
       // Optional payload validation
       _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
 
@@ -1084,20 +1077,19 @@ public final class Phase4PeppolSender
         // A log message was already provided
         return ESuccess.FAILURE;
       }
-
       if (m_aSBDDocumentConsumer != null)
         m_aSBDDocumentConsumer.accept (aSBD);
 
-      final byte [] aSBDBytes = SBDHWriter.standardBusinessDocument ().getAsBytes (aSBD);
+      final byte [] aSBDBytes = new SBDMarshaller ().getAsBytes (aSBD);
       if (m_aSBDBytesConsumer != null)
         m_aSBDBytesConsumer.accept (aSBDBytes);
 
       // Now we have the main payload
       payload (AS4OutgoingAttachment.builder ()
-                                       .data (aSBDBytes)
-                                       .mimeType (m_aPayloadMimeType)
-                                       .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null)
-                                       .contentID (m_sPayloadContentID));
+                                    .data (aSBDBytes)
+                                    .mimeType (m_aPayloadMimeType)
+                                    .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null)
+                                    .contentID (m_sPayloadContentID));
 
       return ESuccess.SUCCESS;
     }
@@ -1176,7 +1168,6 @@ public final class Phase4PeppolSender
         LOGGER.warn ("The field 'payloadBytes' is not set");
         return false;
       }
-
       // All valid
       return true;
     }
@@ -1191,9 +1182,9 @@ public final class Phase4PeppolSender
 
       // Now we have the main payload
       payload (AS4OutgoingAttachment.builder ()
-                                       .data (m_aPayloadBytes)
-                                       .mimeType (m_aPayloadMimeType)
-                                       .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null));
+                                    .data (m_aPayloadBytes)
+                                    .mimeType (m_aPayloadMimeType)
+                                    .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null));
 
       return ESuccess.SUCCESS;
     }

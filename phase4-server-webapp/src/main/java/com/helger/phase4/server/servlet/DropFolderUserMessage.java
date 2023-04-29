@@ -61,8 +61,7 @@ import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
-import com.helger.sbdh.builder.SBDHReader;
-import com.helger.sbdh.builder.SBDHWriter;
+import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClient;
@@ -91,7 +90,7 @@ public final class DropFolderUserMessage
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
       // Read generic SBD
-      final StandardBusinessDocument aSBD = SBDHReader.standardBusinessDocument ().read (Files.newInputStream (aSendFile));
+      final StandardBusinessDocument aSBD = new SBDMarshaller ().read (Files.newInputStream (aSendFile));
       if (aSBD == null)
       {
         LOGGER.error ("Failed to read " + aSendFile.toString () + " as SBDH document!");
@@ -100,7 +99,9 @@ public final class DropFolderUserMessage
       {
         // Extract Peppol specific data
         final PeppolSBDHDocument aSBDH = new PeppolSBDHDocumentReader (IF).extractData (aSBD);
-        final ISMPServiceMetadataProvider aSMPClient = new SMPClient (UP, aSBDH.getReceiverAsIdentifier (), ESML.DIGIT_TEST);
+        final ISMPServiceMetadataProvider aSMPClient = new SMPClient (UP,
+                                                                      aSBDH.getReceiverAsIdentifier (),
+                                                                      ESML.DIGIT_TEST);
         final EndpointType aEndpoint = aSMPClient.getEndpoint (aSBDH.getReceiverAsIdentifier (),
                                                                aSBDH.getDocumentTypeAsIdentifier (),
                                                                aSBDH.getProcessAsIdentifier (),
@@ -146,7 +147,7 @@ public final class DropFolderUserMessage
                           MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
                                                                     aSBDH.getReceiverScheme (),
                                                                     aSBDH.getReceiverValue ()));
-          aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
+          aClient.setPayload (new SBDMarshaller ().getAsElement (aSBD));
 
           final IAS4ClientBuildMessageCallback aCallback = null;
           final IAS4OutgoingDumper aOutgoingDumper = null;
@@ -176,7 +177,6 @@ public final class DropFolderUserMessage
             else
               LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
           }
-
           bSuccess = true;
         }
       }
@@ -185,11 +185,11 @@ public final class DropFolderUserMessage
     {
       LOGGER.error ("Error sending " + aSendFile.toString (), ex);
     }
-
     // After the exception handler!
     {
       // Move to done or error directory?
-      final Path aDest = aSendFile.resolveSibling (bSuccess ? PATH_DONE : PATH_ERROR).resolve (aSendFile.getFileName ());
+      final Path aDest = aSendFile.resolveSibling (bSuccess ? PATH_DONE : PATH_ERROR)
+                                  .resolve (aSendFile.getFileName ());
       try
       {
         Files.move (aSendFile, aDest);
@@ -235,7 +235,9 @@ public final class DropFolderUserMessage
       try (final DirectoryStream <Path> aStream = Files.newDirectoryStream (aOutgoingDir,
                                                                             x -> x.toFile ().isFile () &&
                                                                                  x.getFileName () != null &&
-                                                                                 x.getFileName ().toString ().endsWith (".xml")))
+                                                                                 x.getFileName ()
+                                                                                  .toString ()
+                                                                                  .endsWith (".xml")))
       {
         for (final Path aCur : aStream)
           _send (aCryptoFactory, aCur, aIncomingDir);

@@ -27,6 +27,10 @@
     <version>2.1.0-SNAPSHOT</version>
   </parent>
   <artifactId>phase4-profile-bdew</artifactId>
+  <packaging>bundle</packaging>
+  <name>phase4-profile-bdew</name>
+  <description>BDEW AS4 profile</description>
+  <url>https://github.com/phax/phase4/phase4-profile-bdew</url>
   <inceptionYear>2023</inceptionYear>
 
   <licenses>
