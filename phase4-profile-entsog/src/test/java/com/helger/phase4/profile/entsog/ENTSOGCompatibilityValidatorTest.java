@@ -65,7 +65,7 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
 public final class ENTSOGCompatibilityValidatorTest
 {
   @ClassRule
-  public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
+  public static final PhotonAppWebTestRule RULE = new PhotonAppWebTestRule ();
 
   private static final Locale LOCALE = Locale.US;
   private static final ENTSOGCompatibilityValidator VALIDATOR = new ENTSOGCompatibilityValidator ();

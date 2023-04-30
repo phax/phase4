@@ -36,7 +36,7 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
 public final class ENTSOGPModeTest
 {
   @ClassRule
-  public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
+  public static final PhotonAppWebTestRule RULE = new PhotonAppWebTestRule ();
 
   @Test
   public void testENTSOGPMode ()

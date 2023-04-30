@@ -43,9 +43,9 @@ public final class AS4HttpDebug
   public static final boolean DEFAULT_DEBUG = false;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4HttpDebug.class);
-  private static final AtomicBoolean s_aEnabled = new AtomicBoolean (DEFAULT_DEBUG);
-  private static final XMLWriterSettings s_aXWS = new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)
-                                                                          .setNamespaceContext (Ebms3NamespaceHandler.getInstance ());
+  private static final AtomicBoolean ENABLED = new AtomicBoolean (DEFAULT_DEBUG);
+  private static final XMLWriterSettings XWS = new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)
+                                                                       .setNamespaceContext (Ebms3NamespaceHandler.getInstance ());
 
   private AS4HttpDebug ()
   {}
@@ -58,7 +58,7 @@ public final class AS4HttpDebug
    */
   public static void setEnabled (final boolean bEnabled)
   {
-    s_aEnabled.set (bEnabled);
+    ENABLED.set (bEnabled);
   }
 
   /**
@@ -66,7 +66,7 @@ public final class AS4HttpDebug
    */
   public static boolean isEnabled ()
   {
-    return s_aEnabled.get ();
+    return ENABLED.get ();
   }
 
   /**
@@ -80,7 +80,10 @@ public final class AS4HttpDebug
   public static void debug (@Nonnull final Supplier <? super String> aMsg)
   {
     if (isEnabled ())
-      LOGGER.info ("$$$ AS4 HTTP [" + MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().toString () + "] " + aMsg.get ());
+      LOGGER.info ("$$$ AS4 HTTP [" +
+                   MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().toString () +
+                   "] " +
+                   aMsg.get ());
   }
 
   /**
@@ -90,6 +93,6 @@ public final class AS4HttpDebug
   @Nonnull
   public static IXMLWriterSettings getDebugXMLWriterSettings ()
   {
-    return s_aXWS;
+    return XWS;
   }
 }

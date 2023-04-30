@@ -16,13 +16,14 @@
  */
 package com.helger.phase4.profile.bdew;
 
-import com.helger.phase4.model.pmode.IPModeIDProvider;
-import com.helger.phase4.model.pmode.PMode;
-import com.helger.photon.app.mock.PhotonAppWebTestRule;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
+import com.helger.phase4.model.pmode.IPModeIDProvider;
+import com.helger.phase4.model.pmode.PMode;
+import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
 /**
  * Test class for class {@link BDEWPMode}.
@@ -32,18 +33,18 @@ import static org.junit.Assert.assertNotNull;
 public final class BDEWPModeTest
 {
   @ClassRule
-  public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
+  public static final PhotonAppWebTestRule RULE = new PhotonAppWebTestRule ();
 
   @Test
   public void testBDEWPMode ()
   {
-    final PMode aPMode = BDEWPMode.createBDEWPMode("TestInitiator",
-                                                        BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW,
-                                                        "TestResponder",
-                                                        BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW,
-                                                        "https://test.example.org",
-                                                        IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                        false);
+    final PMode aPMode = BDEWPMode.createBDEWPMode ("TestInitiator",
+                                                    BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW,
+                                                    "TestResponder",
+                                                    BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW,
+                                                    "https://test.example.org",
+                                                    IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                    false);
     assertNotNull (aPMode);
   }
 }

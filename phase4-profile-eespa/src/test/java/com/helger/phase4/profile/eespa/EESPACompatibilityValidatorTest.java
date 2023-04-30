@@ -63,7 +63,7 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
 public final class EESPACompatibilityValidatorTest
 {
   @ClassRule
-  public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
+  public static final PhotonAppWebTestRule RULE = new PhotonAppWebTestRule ();
 
   private static final Locale LOCALE = Locale.US;
   private static final EESPACompatibilityValidator VALIDATOR = new EESPACompatibilityValidator ();
@@ -132,15 +132,24 @@ public final class EESPACompatibilityValidatorTest
   @Test
   public void testValidatePModeProtocolAddressIsNotHttp ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"), null, null, null, null));
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol 'ftp' is unsupported")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("AddressProtocol 'ftp' is unsupported")));
   }
 
   @Test
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11), null, null, null, null));
+    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("SoapVersion '1.1' is unsupported")));
   }
@@ -171,7 +180,8 @@ public final class EESPACompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmSign.RSA_SHA_256.getID ())));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains (ECryptoAlgorithmSign.RSA_SHA_256.getID ())));
   }
 
   @Test
@@ -185,7 +195,8 @@ public final class EESPACompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509SignatureHashFunction is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("X509SignatureHashFunction is missing")));
   }
 
   @Test
@@ -199,7 +210,8 @@ public final class EESPACompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
   }
 
   @Test
@@ -213,7 +225,8 @@ public final class EESPACompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509EncryptionAlgorithm is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("X509EncryptionAlgorithm is missing")));
   }
 
   @Test
@@ -227,7 +240,8 @@ public final class EESPACompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmCrypt.AES_256_GCM.getID ())));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains (ECryptoAlgorithmCrypt.AES_256_GCM.getID ())));
   }
 
   @SuppressWarnings ("deprecation")
@@ -252,7 +266,8 @@ public final class EESPACompatibilityValidatorTest
     m_aPMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue ("Errors: " + m_aErrorList.toString (),
-                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Security.PModeAuthorize is missing")));
+                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Security.PModeAuthorize is missing")));
   }
 
   @Test
@@ -290,10 +305,15 @@ public final class EESPACompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingMandatory ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"), null, null, null, null));
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
 
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[1].ErrorHandling is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("PMode.Leg[1].ErrorHandling is missing")));
   }
 
   @Test
@@ -306,7 +326,8 @@ public final class EESPACompatibilityValidatorTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.Report.AsResponse is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ErrorHandling.Report.AsResponse is missing")));
   }
 
   @Test
@@ -320,7 +341,8 @@ public final class EESPACompatibilityValidatorTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.Report.AsResponse must be 'true'")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ErrorHandling.Report.AsResponse must be 'true'")));
   }
 
   @Test
@@ -410,7 +432,8 @@ public final class EESPACompatibilityValidatorTest
     aUserMessage.setPartyInfo (aPartyInfo);
 
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("must contain no more than one PartyID")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("must contain no more than one PartyID")));
   }
 
   @Test

@@ -42,7 +42,7 @@ import com.helger.phase4.config.AS4Configuration;
 @ThreadSafe
 public final class WSSSynchronizer
 {
-  private static final Lock s_aLock = new ReentrantLock ();
+  private static final Lock LOCK = new ReentrantLock ();
 
   private WSSSynchronizer ()
   {}
@@ -69,7 +69,7 @@ public final class WSSSynchronizer
     ValueEnforcer.notNull (aSupplier, "Supplier");
 
     // Lock
-    s_aLock.lock ();
+    LOCK.lock ();
     try
     {
       // Register
@@ -87,7 +87,7 @@ public final class WSSSynchronizer
     finally
     {
       // Unlock
-      s_aLock.unlock ();
+      LOCK.unlock ();
     }
   }
 }
