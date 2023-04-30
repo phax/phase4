@@ -45,7 +45,8 @@ import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
-import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadWriter;
+import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadBinaryMarshaller;
+import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
 import com.helger.peppol.sbdh.spec12.BinaryContentType;
 import com.helger.peppol.sbdh.spec12.TextContentType;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
@@ -879,10 +880,10 @@ public final class Phase4PeppolSender
       aBC.setValue (aBinaryPayload);
       aBC.setMimeType (aMimeType.getAsString ());
       aBC.setEncoding (aCharset == null ? null : aCharset.name ());
-      final Document aDoc = PeppolSBDHPayloadWriter.binaryContent ().getAsDocument (aBC);
-      if (aDoc == null)
+      final Element aElement = new PeppolSBDHPayloadBinaryMarshaller ().getAsElement (aBC);
+      if (aElement == null)
         throw new IllegalStateException ("Failed to create 'BinaryContent' element.");
-      return payload (aDoc.getDocumentElement ());
+      return payload (aElement);
     }
 
     /**
@@ -906,10 +907,10 @@ public final class Phase4PeppolSender
       final TextContentType aTC = new TextContentType ();
       aTC.setValue (sTextPayload);
       aTC.setMimeType (aMimeType.getAsString ());
-      final Document aDoc = PeppolSBDHPayloadWriter.textContent ().getAsDocument (aTC);
-      if (aDoc == null)
+      final Element aElement = new PeppolSBDHPayloadTextMarshaller ().getAsElement (aTC);
+      if (aElement == null)
         throw new IllegalStateException ("Failed to create 'TextContent' element.");
-      return payload (aDoc.getDocumentElement ());
+      return payload (aElement);
     }
 
     /**
