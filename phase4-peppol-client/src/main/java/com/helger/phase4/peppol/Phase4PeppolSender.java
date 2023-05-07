@@ -50,7 +50,9 @@ import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
 import com.helger.peppol.sbdh.spec12.BinaryContentType;
 import com.helger.peppol.sbdh.spec12.TextContentType;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
+import com.helger.peppol.utils.CertificateRevocationChecker;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
+import com.helger.peppol.utils.ERevocationCheckMode;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
@@ -253,11 +255,21 @@ public final class Phase4PeppolSender
    *        An optional consumer that is invoked with the received AP
    *        certificate to be used for the transmission. The certification check
    *        result must be considered when used. May be <code>null</code>.
+   * @param eCacheOSCResult
+   *        Possibility to override the usage of OSCP caching flag on a per
+   *        query basis. Use {@link ETriState#UNDEFINED} to solely use the
+   *        global flag.
+   * @param eCheckMode
+   *        Possibility to override the OSCP checking flag on a per query basis.
+   *        May be <code>null</code> to use the global flag from
+   *        {@link CertificateRevocationChecker#getRevocationCheckMode()}.
    * @throws Phase4PeppolException
    *         in case of error
    */
   private static void _checkReceiverAPCert (@Nullable final X509Certificate aReceiverCert,
-                                            @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer) throws Phase4PeppolException
+                                            @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
+                                            @Nonnull final ETriState eCacheOSCResult,
+                                            @Nullable final ERevocationCheckMode eCheckMode) throws Phase4PeppolException
   {
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Using the following receiver AP certificate from the SMP: " + aReceiverCert);
@@ -265,8 +277,8 @@ public final class Phase4PeppolSender
     final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
     final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
                                                                                                               aNow,
-                                                                                                              ETriState.UNDEFINED,
-                                                                                                              null);
+                                                                                                              eCacheOSCResult,
+                                                                                                              eCheckMode);
 
     // Interested in the certificate?
     if (aCertificateConsumer != null)
@@ -649,7 +661,7 @@ public final class Phase4PeppolSender
       // Certificate from e.g. SMP lookup (may throw an exception)
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
       if (m_bCheckReceiverAPCertificate)
-        _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer);
+        _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer, ETriState.UNDEFINED, null);
       else
         LOGGER.warn ("The check of the receiver's Peppol AP certificate was explicitly disabled.");
       receiverCertificate (aReceiverCert);
