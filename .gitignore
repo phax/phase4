@@ -19,3 +19,8 @@ phase4-data/
 phase4-dumps/
 phase4-test-data/
 incoming/
+
+# phase4 2.0 changes
+generated/
+phase4-bdew-client/
+phase4-profile-bdew/

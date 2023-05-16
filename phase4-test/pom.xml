@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger.phase4</groupId>
     <artifactId>phase4-parent-pom</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4-SNAPSHOT</version>
   </parent>
   <artifactId>phase4-test</artifactId>
   <packaging>war</packaging>
