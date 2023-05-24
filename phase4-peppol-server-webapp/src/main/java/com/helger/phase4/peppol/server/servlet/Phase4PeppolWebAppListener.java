@@ -44,6 +44,7 @@ import com.helger.commons.url.URLHelper;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
+import com.helger.peppol.utils.ERevocationCheckMode;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
@@ -136,8 +137,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ()
-                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
+        null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -184,8 +185,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
         if (SimpleFileIO.writeFile (aFile,
                                     AS4MessagingHelper.getIncomingMetadataAsJson (aMessageMetadata)
                                                       .getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
-                                    StandardCharsets.UTF_8)
-                        .isFailure ())
+                                    StandardCharsets.UTF_8).isFailure ())
           LOGGER.error ("Failed to write metadata to '" + aFile.getAbsolutePath () + "'");
         else
           LOGGER.info ("Wrote metadata to '" + aFile.getAbsolutePath () + "'");
@@ -193,11 +193,10 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     });
 
     // Store the outgoings file as well
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode,
-                                                                        sMessageID,
-                                                                        nTry) -> StorageHelper.getStorageFile (sMessageID,
-                                                                                                               nTry,
-                                                                                                               ".as4out")));
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> StorageHelper
+                                                                                                                    .getStorageFile (sMessageID,
+                                                                                                                                     nTry,
+                                                                                                                                     ".as4out")));
   }
 
   private static void _initPeppolAS4 ()
@@ -283,11 +282,13 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // Check if the certificate is really a Peppol AP certificate - fail early
     // if something is misconfigured
     // No CRL/OCSP check for performance
+    final boolean bPerformOCSP = true;
     final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
                                                                                                           MetaAS4Manager.getTimestampMgr ()
                                                                                                                         .getCurrentDateTime (),
                                                                                                           ETriState.FALSE,
-                                                                                                          null);
+                                                                                                          bPerformOCSP ? null
+                                                                                                                       : ERevocationCheckMode.NONE);
     if (eCheckResult.isInvalid ())
       throw new InitializationException ("The provided certificate is not a valid Peppol AP certificate. Check result: " +
                                          eCheckResult);
