@@ -104,6 +104,7 @@ public final class Phase4PeppolSender
                                                        @Nonnull final IParticipantIdentifier aReceiverID,
                                                        @Nonnull final IDocumentTypeIdentifier aDocTypeID,
                                                        @Nonnull final IProcessIdentifier aProcID,
+                                                       @Nullable final String sCountryC1,
                                                        @Nullable final String sInstanceIdentifier,
                                                        @Nullable final String sTypeVersion,
                                                        @Nonnull final Element aPayloadElement,
@@ -114,6 +115,7 @@ public final class Phase4PeppolSender
     aData.setReceiver (aReceiverID.getScheme (), aReceiverID.getValue ());
     aData.setDocumentType (aDocTypeID.getScheme (), aDocTypeID.getValue ());
     aData.setProcess (aProcID.getScheme (), aProcID.getValue ());
+    aData.setCountryC1 (sCountryC1);
 
     String sRealTypeVersion = sTypeVersion;
     if (StringHelper.hasNoText (sRealTypeVersion))
@@ -178,8 +180,11 @@ public final class Phase4PeppolSender
    *        Payload element to be wrapped. May not be <code>null</code>.
    * @return The domain object representation of the created SBDH or
    *         <code>null</code> if not all parameters are present.
+   * @deprecated Use the version with the additional CountryC1 parameter
+   *             instead.
    */
   @Nullable
+  @Deprecated (forRemoval = true, since = "2.1.1")
   public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
                                                      @Nonnull final IParticipantIdentifier aReceiverID,
                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
@@ -192,6 +197,51 @@ public final class Phase4PeppolSender
                         aReceiverID,
                         aDocTypeID,
                         aProcID,
+                        null,
+                        sInstanceIdentifier,
+                        sTypeVersion,
+                        aPayloadElement,
+                        true);
+  }
+
+  /**
+   * @param aSenderID
+   *        Sender participant ID. May not be <code>null</code>.
+   * @param aReceiverID
+   *        Receiver participant ID. May not be <code>null</code>.
+   * @param aDocTypeID
+   *        Document type ID. May not be <code>null</code>.
+   * @param aProcID
+   *        Process ID. May not be <code>null</code>.
+   * @param sCountryC1
+   *        Country code of C1. May be <code>null</code>.
+   * @param sInstanceIdentifier
+   *        SBDH instance identifier. May be <code>null</code> to create a
+   *        random ID.
+   * @param sTypeVersion
+   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be
+   *        <code>null</code> to use the default.
+   * @param aPayloadElement
+   *        Payload element to be wrapped. May not be <code>null</code>.
+   * @return The domain object representation of the created SBDH or
+   *         <code>null</code> if not all parameters are present.
+   * @since 2.1.1
+   */
+  @Nullable
+  public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
+                                                     @Nonnull final IParticipantIdentifier aReceiverID,
+                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                     @Nonnull final IProcessIdentifier aProcID,
+                                                     @Nullable final String sCountryC1,
+                                                     @Nullable final String sInstanceIdentifier,
+                                                     @Nullable final String sTypeVersion,
+                                                     @Nonnull final Element aPayloadElement)
+  {
+    return _createSBDH (aSenderID,
+                        aReceiverID,
+                        aDocTypeID,
+                        aProcID,
+                        sCountryC1,
                         sInstanceIdentifier,
                         sTypeVersion,
                         aPayloadElement,
@@ -750,6 +800,7 @@ public final class Phase4PeppolSender
   @NotThreadSafe
   public static class Builder extends AbstractPeppolUserMessageBuilder <Builder>
   {
+    private String m_sCountryC1;
     private String m_sSBDHInstanceIdentifier;
     private String m_sSBDHTypeVersion;
     private Element m_aPayloadElement;
@@ -770,8 +821,28 @@ public final class Phase4PeppolSender
     {}
 
     /**
+     * Set the country code of C1 to be used in the SBDH. This field was
+     * introduced in the Peppol Business Message Envelope specification 2.0.
+     * <br>
+     * Note: There is no date yet, when it becomes mandatory.
+     *
+     * @param sCountryC1
+     *        The country code of C1 to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since 2.1.1
+     */
+    @Nonnull
+    public Builder countryC1 (@Nullable final String sCountryC1)
+    {
+      m_sCountryC1 = sCountryC1;
+      return this;
+    }
+
+    /**
      * Set the SBDH instance identifier. If none is provided, a random ID is
-     * used. Usually this must NOT be set.
+     * used. Usually this must NOT be set. In case of a retry, the same Instance
+     * Identifier should be used. Also an MLR should always refer to the
+     * Instance Identifier of the original transmission.
      *
      * @param sSBDHInstanceIdentifier
      *        The SBDH instance identifier to be used. May be <code>null</code>.
@@ -983,8 +1054,8 @@ public final class Phase4PeppolSender
      *
      * @param aVESID
      *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3</code>. May be
-     *        <code>null</code>.
+     *        <code>PeppolValidation3_15_0.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
+     *        May be <code>null</code>.
      * @return this for chaining
      * @see #validationConfiguration(VESID,
      *      IPhase4PeppolValidationResultHandler)
@@ -1005,8 +1076,8 @@ public final class Phase4PeppolSender
      *
      * @param aVESID
      *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3</code>. May be
-     *        <code>null</code>.
+     *        <code>PeppolValidation3_15_0.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
+     *        May be <code>null</code>.
      * @param aValidationResultHandler
      *        The validation result handler for positive and negative response
      *        handling. May be <code>null</code>.
@@ -1019,6 +1090,18 @@ public final class Phase4PeppolSender
       m_aVESID = aVESID;
       m_aValidationResultHandler = aValidationResultHandler;
       return this;
+    }
+
+    /**
+     * Disable the validation for the outbound call.
+     *
+     * @return this for chaining
+     * @since 2.1.1
+     */
+    @Nonnull
+    public Builder disableValidation ()
+    {
+      return validationConfiguration (null, null);
     }
 
     @Override
@@ -1066,6 +1149,7 @@ public final class Phase4PeppolSender
           }
           else
             throw new IllegalStateException ("Unexpected - neither element nor bytes nor InputStream provider are present");
+
       // Optional payload validation
       _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
 
@@ -1081,6 +1165,7 @@ public final class Phase4PeppolSender
                                                          m_aReceiverID,
                                                          m_aDocTypeID,
                                                          m_aProcessID,
+                                                         m_sCountryC1,
                                                          m_sSBDHInstanceIdentifier,
                                                          m_sSBDHTypeVersion,
                                                          aPayloadElement,
