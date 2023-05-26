@@ -31,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.exception.InitializationException;
+import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
@@ -40,16 +41,18 @@ import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.servlet.AS4ServerInitializer;
-import com.helger.phase4.servlet.AS4Servlet;
+import com.helger.phase4.servlet.AS4XServletHandler;
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
 import com.helger.photon.app.io.WebFileIO;
 import com.helger.servlet.ServletHelper;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
+import com.helger.xservlet.AbstractXServlet;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
 import jakarta.activation.CommandMap;
@@ -61,12 +64,41 @@ public class ServletConfig
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (ServletConfig.class);
 
+  /**
+   * This method is a placeholder for retrieving a custom
+   * {@link IAS4CryptoFactory}.
+   *
+   * @return the {@link IAS4CryptoFactory} to use. May not be <code>null</code>.
+   */
+  @Nonnull
+  public static IAS4CryptoFactory getCryptoFactoryToUse ()
+  {
+    // If you have a custom crypto factory, build/return it here
+    return AS4CryptoFactoryProperties.getDefaultInstance ();
+  }
+
+  public static class MyAS4Servlet extends AbstractXServlet
+  {
+    public MyAS4Servlet ()
+    {
+      // Multipart is handled specifically inside
+      settings ().setMultipartEnabled (false);
+      // HTTP POST only
+      final AS4XServletHandler hdl = new AS4XServletHandler ();
+      // This method refers to the outer static methid
+      hdl.setCryptoFactorySupplier (ServletConfig::getCryptoFactoryToUse);
+      handlerRegistry ().registerHandler (EHttpMethod.POST, hdl);
+    }
+  }
+
   @Bean
-  public ServletRegistrationBean <AS4Servlet> servletRegistrationBean (final ServletContext ctx)
+  public ServletRegistrationBean <MyAS4Servlet> servletRegistrationBean (final ServletContext ctx)
   {
     // Must be called BEFORE the servlet is instantiated
     _init (ctx);
-    final ServletRegistrationBean <AS4Servlet> bean = new ServletRegistrationBean <> (new AS4Servlet (), true, "/as4");
+    final ServletRegistrationBean <MyAS4Servlet> bean = new ServletRegistrationBean <> (new MyAS4Servlet (),
+                                                                                        true,
+                                                                                        "/as4");
     bean.setLoadOnStartup (1);
     return bean;
   }
@@ -98,8 +130,8 @@ public class ServletConfig
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ()
-                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
+        null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
