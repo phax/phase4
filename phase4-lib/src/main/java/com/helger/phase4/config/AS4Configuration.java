@@ -108,7 +108,7 @@ public final class AS4Configuration
   }
 
   private static final MultiConfigurationValueProvider VP = createPhase4ValueProvider ();
-  private static final IConfig DEFAULT_INSTANCE = Config.create (VP);
+  private static final IConfig DEFAULT_INSTANCE = Config.create (VP).setReplaceVariables (true);
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   private static IConfig s_aConfig = DEFAULT_INSTANCE;
 
