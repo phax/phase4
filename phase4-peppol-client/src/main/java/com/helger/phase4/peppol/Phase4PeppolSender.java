@@ -180,11 +180,11 @@ public final class Phase4PeppolSender
    *        Payload element to be wrapped. May not be <code>null</code>.
    * @return The domain object representation of the created SBDH or
    *         <code>null</code> if not all parameters are present.
-   * @deprecated Use the version with the additional CountryC1 parameter
-   *             instead.
+   * @deprecated Since 1.4.4. Use the version with the additional CountryC1
+   *             parameter instead.
    */
   @Nullable
-  @Deprecated (forRemoval = true, since = "2.1.1")
+  @Deprecated
   public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
                                                      @Nonnull final IParticipantIdentifier aReceiverID,
                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
