@@ -637,8 +637,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                            aEbms3CollaborationInfo,
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
-                                                           getSoapVersion ())
-                                                  .setMustUnderstand (true);
+                                                           getSoapVersion ()).setMustUnderstand (true);
 
     if (aCallback != null)
       aCallback.onAS4Message (aUserMsg);
