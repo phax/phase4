@@ -217,7 +217,7 @@ public final class Phase4BDEWSender
                                                     .toString ());
           if (m_aPayloadParams.getDocumentNumber () != null)
             aPayloadAttachment.customPartProperties ()
-                              .put ("BDEWDocumentNo", String.valueOf (m_aPayloadParams.getDocumentNumber ()));
+                              .put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ().toString ());
           if (m_aPayloadParams.getFulfillmentDate () != null)
             aPayloadAttachment.customPartProperties ()
                               .put ("BDEWFulfillmentDate",
