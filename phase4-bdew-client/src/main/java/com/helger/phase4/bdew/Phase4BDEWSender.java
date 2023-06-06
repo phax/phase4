@@ -31,6 +31,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
@@ -307,10 +308,13 @@ public final class Phase4BDEWSender
      *
      * @param sDocumentType
      *        Document type to use. May be <code>null</code>.
+     * @return this for chaining
      */
-    public void setDocumentType (@Nullable final String sDocumentType)
+    @Nonnull
+    public BDEWPayloadParams setDocumentType (@Nullable final String sDocumentType)
     {
       m_sDocumentType = sDocumentType;
+      return this;
     }
 
     /**
@@ -328,10 +332,13 @@ public final class Phase4BDEWSender
      *
      * @param sDocumentDate
      *        Document date to use. May be <code>null</code>.
+     * @return this for chaining
      */
-    public void setDocumentDate (@Nullable final ZonedDateTime sDocumentDate)
+    @Nonnull
+    public BDEWPayloadParams setDocumentDate (@Nullable final ZonedDateTime sDocumentDate)
     {
       m_aDocumentDate = sDocumentDate;
+      return this;
     }
 
     /**
@@ -349,11 +356,13 @@ public final class Phase4BDEWSender
      *
      * @param nDocumentNumber
      *        Document number to use. May be <code>null</code>.
+     * @return this for chaining
      * @since 2.1.2
      */
-    public void setDocumentNumber (final int nDocumentNumber)
+    @Nonnull
+    public BDEWPayloadParams setDocumentNumber (final int nDocumentNumber)
     {
-      setDocumentNumber (Integer.valueOf (nDocumentNumber));
+      return setDocumentNumber (Integer.valueOf (nDocumentNumber));
     }
 
     /**
@@ -361,10 +370,13 @@ public final class Phase4BDEWSender
      *
      * @param aDocumentNumber
      *        Document number to use. May be <code>null</code>.
+     * @return this for chaining
      */
-    public void setDocumentNumber (@Nullable final Integer aDocumentNumber)
+    @Nonnull
+    public BDEWPayloadParams setDocumentNumber (@Nullable final Integer aDocumentNumber)
     {
       m_aDocumentNumber = aDocumentNumber;
+      return this;
     }
 
     /**
@@ -382,10 +394,13 @@ public final class Phase4BDEWSender
      *
      * @param sFulfillmenttDate
      *        Fulfillment date to use. May be <code>null</code>.
+     * @return this for chaining
      */
-    public void setFulfillmentDate (@Nullable final ZonedDateTime sFulfillmenttDate)
+    @Nonnull
+    public BDEWPayloadParams setFulfillmentDate (@Nullable final ZonedDateTime sFulfillmenttDate)
     {
       m_aFulfillmentDate = sFulfillmenttDate;
+      return this;
     }
 
     /**
@@ -403,10 +418,13 @@ public final class Phase4BDEWSender
      *
      * @param sSubjectPartyId
      *        Subject party ID to use. May be <code>null</code>.
+     * @return this for chaining
      */
-    public void setSubjectPartyId (@Nullable final String sSubjectPartyId)
+    @Nonnull
+    public BDEWPayloadParams setSubjectPartyId (@Nullable final String sSubjectPartyId)
     {
       m_sSubjectPartyID = sSubjectPartyId;
+      return this;
     }
 
     /**
@@ -424,10 +442,25 @@ public final class Phase4BDEWSender
      *
      * @param sSubjectPartyRole
      *        Subject party role to use. May be <code>null</code>.
+     * @return this for chaining
      */
-    public void setSubjectPartyRole (@Nullable final String sSubjectPartyRole)
+    @Nonnull
+    public BDEWPayloadParams setSubjectPartyRole (@Nullable final String sSubjectPartyRole)
     {
       m_sSubjectPartyRole = sSubjectPartyRole;
+      return this;
+    }
+
+    @Override
+    public String toString ()
+    {
+      return new ToStringGenerator (this).append ("DocumentType", m_sDocumentType)
+                                         .append ("DocumentDate", m_aDocumentDate)
+                                         .append ("DocumentNumber", m_aDocumentNumber)
+                                         .append ("FulfillmentDate", m_aFulfillmentDate)
+                                         .append ("SubjectPartyID", m_sSubjectPartyID)
+                                         .append ("SubjectPartyRole", m_sSubjectPartyRole)
+                                         .getToString ();
     }
   }
 }
