@@ -19,6 +19,18 @@
  */
 package com.helger.phase4.bdew;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
@@ -28,16 +40,6 @@ import com.helger.phase4.sender.AS4BidirectionalClientHelper;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.NotThreadSafe;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 /**
  * This class contains all the specifics to send AS4 messages with the BDEW
@@ -51,7 +53,7 @@ public final class Phase4BDEWSender
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4BDEWSender.class);
 
-  private Phase4BDEWSender()
+  private Phase4BDEWSender ()
   {}
 
   /**
@@ -61,7 +63,7 @@ public final class Phase4BDEWSender
   @Nonnull
   public static BDEWUserMessageBuilder builder ()
   {
-    return new BDEWUserMessageBuilder();
+    return new BDEWUserMessageBuilder ();
   }
 
   /**
@@ -71,9 +73,9 @@ public final class Phase4BDEWSender
    * @param <IMPLTYPE>
    *        The implementation type
    */
-  public abstract static class AbstractBDEWUserMessageBuilder<IMPLTYPE extends AbstractBDEWUserMessageBuilder<IMPLTYPE>>
-                                                                extends
-                                                                AbstractAS4UserMessageBuilder <IMPLTYPE>
+  public abstract static class AbstractBDEWUserMessageBuilder <IMPLTYPE extends AbstractBDEWUserMessageBuilder <IMPLTYPE>>
+                                                              extends
+                                                              AbstractAS4UserMessageBuilder <IMPLTYPE>
   {
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
 
@@ -82,13 +84,13 @@ public final class Phase4BDEWSender
     private AS4OutgoingAttachment m_aPayload;
     private BDEWPayloadParams m_aPayloadParams;
 
-    protected AbstractBDEWUserMessageBuilder()
+    protected AbstractBDEWUserMessageBuilder ()
     {
       // Override default values
       try
       {
         httpClientFactory (new Phase4BDEWHttpClientSettings ());
-        setSigningKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+        signingKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
         encryptionKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
       }
       catch (final Exception ex)
@@ -101,8 +103,8 @@ public final class Phase4BDEWSender
      * Encryption Key Identifier Type.
      *
      * @param eEncryptionKeyIdentifierType
-     *        {@link ECryptoKeyIdentifierType}. Defaults to BST_DIRECT_REFERENCE. May
-     *        be <code>null</code>.
+     *        {@link ECryptoKeyIdentifierType}. Defaults to
+     *        BST_DIRECT_REFERENCE. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
@@ -116,12 +118,30 @@ public final class Phase4BDEWSender
      * Signing Key Identifier Type.
      *
      * @param eSigningKeyIdentifierType
-     *        {@link ECryptoKeyIdentifierType}. Defaults to BST_DIRECT_REFERENCE. May
-     *        be <code>null</code>.
+     *        {@link ECryptoKeyIdentifierType}. Defaults to
+     *        BST_DIRECT_REFERENCE. May be <code>null</code>.
+     * @return this for chaining
+     * @deprecated Use
+     *             {@link #signingKeyIdentifierType(ECryptoKeyIdentifierType)}
+     *             instead
+     */
+    @Nonnull
+    @Deprecated (since = "2.1.2", forRemoval = true)
+    public final IMPLTYPE setSigningKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
+    {
+      return signingKeyIdentifierType (eSigningKeyIdentifierType);
+    }
+
+    /**
+     * Signing Key Identifier Type.
+     *
+     * @param eSigningKeyIdentifierType
+     *        {@link ECryptoKeyIdentifierType}. Defaults to
+     *        BST_DIRECT_REFERENCE. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE setSigningKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
+    public final IMPLTYPE signingKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
     {
       m_eSigningKeyIdentifierType = eSigningKeyIdentifierType;
       return thisAsT ();
@@ -190,17 +210,26 @@ public final class Phase4BDEWSender
           if (m_aPayloadParams.getDocumentType () != null)
             aPayloadAttachment.customPartProperties ().put ("BDEWDocumentType", m_aPayloadParams.getDocumentType ());
           if (m_aPayloadParams.getDocumentDate () != null)
-            aPayloadAttachment.customPartProperties ().put ("BDEWDocumentDate",
-                    m_aPayloadParams.getDocumentDate ().withZoneSameInstant (ZoneOffset.UTC).toString ());
+            aPayloadAttachment.customPartProperties ()
+                              .put ("BDEWDocumentDate",
+                                    m_aPayloadParams.getDocumentDate ()
+                                                    .withZoneSameInstant (ZoneOffset.UTC)
+                                                    .toString ());
           if (m_aPayloadParams.getDocumentNumber () != null)
-            aPayloadAttachment.customPartProperties ().put ("BDEWDocumentNo", String.valueOf (m_aPayloadParams.getDocumentNumber ()));
+            aPayloadAttachment.customPartProperties ()
+                              .put ("BDEWDocumentNo", String.valueOf (m_aPayloadParams.getDocumentNumber ()));
           if (m_aPayloadParams.getFulfillmentDate () != null)
-            aPayloadAttachment.customPartProperties ().put ("BDEWFulfillmentDate",
-                    m_aPayloadParams.getFulfillmentDate ().withZoneSameInstant (ZoneOffset.UTC).toString ());
+            aPayloadAttachment.customPartProperties ()
+                              .put ("BDEWFulfillmentDate",
+                                    m_aPayloadParams.getFulfillmentDate ()
+                                                    .withZoneSameInstant (ZoneOffset.UTC)
+                                                    .toString ());
           if (m_aPayloadParams.getSubjectPartyId () != null)
-            aPayloadAttachment.customPartProperties ().put ("BDEWSubjectPartyID", m_aPayloadParams.getSubjectPartyId ());
+            aPayloadAttachment.customPartProperties ()
+                              .put ("BDEWSubjectPartyID", m_aPayloadParams.getSubjectPartyId ());
           if (m_aPayloadParams.getSubjectPartyRole () != null)
-            aPayloadAttachment.customPartProperties ().put ("BDEWSubjectPartyRole", m_aPayloadParams.getSubjectPartyRole ());
+            aPayloadAttachment.customPartProperties ()
+                              .put ("BDEWSubjectPartyRole", m_aPayloadParams.getSubjectPartyRole ());
         }
         aUserMsg.addAttachment (aPayloadAttachment);
 
@@ -242,9 +271,9 @@ public final class Phase4BDEWSender
    *
    * @author Philip Helger
    */
-  public static class BDEWUserMessageBuilder extends AbstractBDEWUserMessageBuilder<BDEWUserMessageBuilder>
+  public static class BDEWUserMessageBuilder extends AbstractBDEWUserMessageBuilder <BDEWUserMessageBuilder>
   {
-    public BDEWUserMessageBuilder()
+    public BDEWUserMessageBuilder ()
     {}
   }
 
@@ -257,14 +286,15 @@ public final class Phase4BDEWSender
   public static class BDEWPayloadParams
   {
     private String m_sDocumentType;
-    private ZonedDateTime m_sDocumentDate;
-    private Integer m_sDocumentNumber;
-    private ZonedDateTime m_sFulfillmentDate;
+    private ZonedDateTime m_aDocumentDate;
+    private Integer m_aDocumentNumber;
+    private ZonedDateTime m_aFulfillmentDate;
     private String m_sSubjectPartyID;
     private String m_sSubjectPartyRole;
 
     /**
-     * @return BDEW payload document type for payload identifier <code>BDEWDocumentType</code>
+     * @return BDEW payload document type for payload identifier
+     *         <code>BDEWDocumentType</code>
      */
     @Nullable
     public String getDocumentType ()
@@ -284,12 +314,13 @@ public final class Phase4BDEWSender
     }
 
     /**
-     * @return BDEW payload document date for payload identifier <code>BDEWDocumentDate</code>
+     * @return BDEW payload document date for payload identifier
+     *         <code>BDEWDocumentDate</code>
      */
     @Nullable
     public ZonedDateTime getDocumentDate ()
     {
-      return m_sDocumentDate;
+      return m_aDocumentDate;
     }
 
     /**
@@ -300,37 +331,50 @@ public final class Phase4BDEWSender
      */
     public void setDocumentDate (@Nullable final ZonedDateTime sDocumentDate)
     {
-      m_sDocumentDate = sDocumentDate;
+      m_aDocumentDate = sDocumentDate;
     }
 
     /**
-     * @return BDEW payload document number for payload identifier <code>BDEWDocumentNo</code>
+     * @return BDEW payload document number for payload identifier
+     *         <code>BDEWDocumentNo</code>
      */
     @Nullable
     public Integer getDocumentNumber ()
     {
-      return m_sDocumentNumber;
+      return m_aDocumentNumber;
     }
 
     /**
      * BDEW payload document number
      *
-     * @param sDocumentNumber
+     * @param nDocumentNumber
      *        Document number to use. May be <code>null</code>.
+     * @since 2.1.2
      */
-    public void setDocumentNumber (@Nullable final Integer sDocumentNumber)
+    public void setDocumentNumber (final int nDocumentNumber)
     {
-      m_sDocumentNumber = sDocumentNumber;
+      setDocumentNumber (Integer.valueOf (nDocumentNumber));
     }
 
+    /**
+     * BDEW payload document number
+     *
+     * @param aDocumentNumber
+     *        Document number to use. May be <code>null</code>.
+     */
+    public void setDocumentNumber (@Nullable final Integer aDocumentNumber)
+    {
+      m_aDocumentNumber = aDocumentNumber;
+    }
 
     /**
-     * @return BDEW payload fulfillment date for payload identifier <code>BDEWFulfillmentDate</code>
+     * @return BDEW payload fulfillment date for payload identifier
+     *         <code>BDEWFulfillmentDate</code>
      */
     @Nullable
     public ZonedDateTime getFulfillmentDate ()
     {
-      return m_sFulfillmentDate;
+      return m_aFulfillmentDate;
     }
 
     /**
@@ -341,11 +385,12 @@ public final class Phase4BDEWSender
      */
     public void setFulfillmentDate (@Nullable final ZonedDateTime sFulfillmenttDate)
     {
-      m_sFulfillmentDate = sFulfillmenttDate;
+      m_aFulfillmentDate = sFulfillmenttDate;
     }
 
     /**
-     * @return BDEW payload subject party ID for payload identifier <code>BDEWSubjectPartyID</code>
+     * @return BDEW payload subject party ID for payload identifier
+     *         <code>BDEWSubjectPartyID</code>
      */
     @Nullable
     public String getSubjectPartyId ()
@@ -365,7 +410,8 @@ public final class Phase4BDEWSender
     }
 
     /**
-     * @return BDEW payload subject party ID for payload identifier <code>BDEWSubjectPartyRole</code>
+     * @return BDEW payload subject party ID for payload identifier
+     *         <code>BDEWSubjectPartyRole</code>
      */
     @Nullable
     public String getSubjectPartyRole ()
