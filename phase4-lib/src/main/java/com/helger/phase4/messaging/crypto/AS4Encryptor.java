@@ -116,8 +116,7 @@ public final class AS4Encryptor
                  aCryptParams.getDigestAlgorithm () +
                  (aCryptParams.hasAlias () ? "; KeyAlias=" + aCryptParams.getAlias () : "") +
                  (aCryptParams.hasCertificate () ? "; CertificateSubjectCN=" +
-                                                   aCryptParams.getCertificate ().getSubjectDN ().getName ()
-                                                 : ""));
+                                                   aCryptParams.getCertificate ().getSubjectDN ().getName () : ""));
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
@@ -133,8 +132,10 @@ public final class AS4Encryptor
       aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
 
     // Generate a session key
-    final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_128);
-    final SecretKey aSymmetricKey = aKeyGen.generateKey ();
+    final SecretKey aSymmetricKey = aCryptParams.getSessionKeyProvider ().getSessionKey ();
+    if (aSymmetricKey == null)
+      throw new IllegalStateException ("Failed to create a symmetric session key from " +
+                                       aCryptParams.getSessionKeyProvider ());
 
     return aBuilder.build (aCryptoFactory.getCrypto (), aSymmetricKey);
   }
@@ -205,8 +206,7 @@ public final class AS4Encryptor
                  aCryptParams.getDigestAlgorithm () +
                  (aCryptParams.hasAlias () ? "; KeyAlias=" + aCryptParams.getAlias () : "") +
                  (aCryptParams.hasCertificate () ? "; CertificateSubjectCN=" +
-                                                   aCryptParams.getCertificate ().getSubjectDN ().getName ()
-                                                 : ""));
+                                                   aCryptParams.getCertificate ().getSubjectDN ().getName () : ""));
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();

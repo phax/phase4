@@ -53,6 +53,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   public static final ECryptoKeyEncryptionAlgorithm DEFAULT_KEY_ENCRYPTION_ALGORITHM = ECryptoKeyEncryptionAlgorithm.RSA_OAEP_XENC11;
   public static final String DEFAULT_MGF_ALGORITHM = WSS4JConstants.MGF_SHA256;
   public static final String DEFAULT_DIGEST_ALGORITHM = WSS4JConstants.SHA256;
+  public static final ICryptoSessionKeyProvider DEFAULT_SESSION_KEY_PROVIDER = ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_128;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptParams.class);
 
@@ -70,6 +71,8 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   private X509Certificate m_aCert;
   // The alias into the WSS4J crypto config
   private String m_sAlias;
+  // The session key provider
+  private ICryptoSessionKeyProvider m_aSessionKeyProvider = DEFAULT_SESSION_KEY_PROVIDER;
 
   /**
    * Default constructor using default
@@ -284,6 +287,33 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   }
 
   /**
+   * @return The session key provider to be used. Never <code>null</code>.
+   * @since 2.1.2
+   */
+  @Nonnull
+  public final ICryptoSessionKeyProvider getSessionKeyProvider ()
+  {
+    return m_aSessionKeyProvider;
+  }
+
+  /**
+   * Set the session key provider to be used for encryption. The provided
+   * provider must never return a <code>null</code> key.
+   *
+   * @param aSessionKeyProvider
+   *        The session key provider to be used. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 2.1.2
+   */
+  @Nonnull
+  public final AS4CryptParams setSessionKeyProvider (@Nonnull final ICryptoSessionKeyProvider aSessionKeyProvider)
+  {
+    ValueEnforcer.notNull (aSessionKeyProvider, "SessionKeyProvider");
+    m_aSessionKeyProvider = aSessionKeyProvider;
+    return this;
+  }
+
+  /**
    * This method calls {@link #setAlgorithmCrypt(ECryptoAlgorithmCrypt)} based
    * on the PMode parameters. If the PMode parameter is <code>null</code> the
    * value will be set to <code>null</code>.
@@ -316,7 +346,8 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
                                 .setMGFAlgorithm (m_sMGFAlgorithm)
                                 .setDigestAlgorithm (m_sDigestAlgorithm)
                                 .setCertificate (m_aCert)
-                                .setAlias (m_sAlias);
+                                .setAlias (m_sAlias)
+                                .setSessionKeyProvider (m_aSessionKeyProvider);
   }
 
   @Override
@@ -329,6 +360,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
                                        .append ("DigestAlgorithm", m_sDigestAlgorithm)
                                        .append ("Certificate", m_aCert)
                                        .append ("Alias", m_sAlias)
+                                       .append ("SessionKeyProvider", m_aSessionKeyProvider)
                                        .getToString ();
   }
 
