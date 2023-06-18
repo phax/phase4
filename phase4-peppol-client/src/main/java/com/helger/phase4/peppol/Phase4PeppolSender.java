@@ -75,6 +75,7 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.api.executorset.VESID;
 import com.helger.phive.engine.source.IValidationSourceXML;
+import com.helger.sbdh.CSBDH;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.url.IPeppolURLProvider;
@@ -100,15 +101,15 @@ public final class Phase4PeppolSender
   {}
 
   @Nullable
-  private static StandardBusinessDocument _createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
-                                                       @Nonnull final IParticipantIdentifier aReceiverID,
-                                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                       @Nonnull final IProcessIdentifier aProcID,
-                                                       @Nullable final String sCountryC1,
-                                                       @Nullable final String sInstanceIdentifier,
-                                                       @Nullable final String sTypeVersion,
-                                                       @Nonnull final Element aPayloadElement,
-                                                       final boolean bClonePayloadElement)
+  private static StandardBusinessDocument _createSBD (@Nonnull final IParticipantIdentifier aSenderID,
+                                                      @Nonnull final IParticipantIdentifier aReceiverID,
+                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                      @Nonnull final IProcessIdentifier aProcID,
+                                                      @Nullable final String sCountryC1,
+                                                      @Nullable final String sInstanceIdentifier,
+                                                      @Nullable final String sTypeVersion,
+                                                      @Nonnull final Element aPayloadElement,
+                                                      final boolean bClonePayloadElement)
   {
     final PeppolSBDHDocument aData = new PeppolSBDHDocument (IF);
     aData.setSender (aSenderID.getScheme (), aSenderID.getValue ());
@@ -193,15 +194,15 @@ public final class Phase4PeppolSender
                                                      @Nullable final String sTypeVersion,
                                                      @Nonnull final Element aPayloadElement)
   {
-    return _createSBDH (aSenderID,
-                        aReceiverID,
-                        aDocTypeID,
-                        aProcID,
-                        null,
-                        sInstanceIdentifier,
-                        sTypeVersion,
-                        aPayloadElement,
-                        true);
+    return _createSBD (aSenderID,
+                       aReceiverID,
+                       aDocTypeID,
+                       aProcID,
+                       null,
+                       sInstanceIdentifier,
+                       sTypeVersion,
+                       aPayloadElement,
+                       true);
   }
 
   /**
@@ -237,15 +238,15 @@ public final class Phase4PeppolSender
                                                      @Nullable final String sTypeVersion,
                                                      @Nonnull final Element aPayloadElement)
   {
-    return _createSBDH (aSenderID,
-                        aReceiverID,
-                        aDocTypeID,
-                        aProcID,
-                        sCountryC1,
-                        sInstanceIdentifier,
-                        sTypeVersion,
-                        aPayloadElement,
-                        true);
+    return _createSBD (aSenderID,
+                       aReceiverID,
+                       aDocTypeID,
+                       aProcID,
+                       sCountryC1,
+                       sInstanceIdentifier,
+                       sTypeVersion,
+                       aPayloadElement,
+                       true);
   }
 
   /**
@@ -345,7 +346,8 @@ public final class Phase4PeppolSender
 
   /**
    * @return Create a new Builder for AS4 messages if the payload is present and
-   *         the SBDH should be created internally. Never <code>null</code>.
+   *         the SBDH is always created internally. Never <code>null</code>.
+   * @see #sbdhBuilder() if you already have a ready Standard Business Document
    * @since 0.9.4
    */
   @Nonnull
@@ -357,6 +359,7 @@ public final class Phase4PeppolSender
   /**
    * @return Create a new Builder for AS4 messages if the SBDH payload is
    *         already present. Never <code>null</code>.
+   * @see #builder() if you want phase4 to create the Standard Business Document
    * @since 0.9.6
    */
   @Nonnull
@@ -385,6 +388,7 @@ public final class Phase4PeppolSender
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
+    protected String m_sCountryC1;
 
     protected IMimeType m_aPayloadMimeType;
     protected boolean m_bCompressPayload;
@@ -493,6 +497,24 @@ public final class Phase4PeppolSender
         LOGGER.warn ("An existing ProcessID is overridden");
       m_aProcessID = aProcessID;
       return service (aProcessID.getScheme (), aProcessID.getValue ());
+    }
+
+    /**
+     * Set the country code of C1 to be used in the SBDH. This field was
+     * introduced in the Peppol Business Message Envelope specification 2.0.
+     * <br>
+     * Note: There is no date yet, when it becomes mandatory.
+     *
+     * @param sCountryC1
+     *        The country code of C1 to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since 2.1.3
+     */
+    @Nonnull
+    public final IMPLTYPE countryC1 (@Nullable final String sCountryC1)
+    {
+      m_sCountryC1 = sCountryC1;
+      return thisAsT ();
     }
 
     /**
@@ -800,7 +822,6 @@ public final class Phase4PeppolSender
   @NotThreadSafe
   public static class Builder extends AbstractPeppolUserMessageBuilder <Builder>
   {
-    private String m_sCountryC1;
     private String m_sSBDHInstanceIdentifier;
     private String m_sSBDHTypeVersion;
     private Element m_aPayloadElement;
@@ -819,24 +840,6 @@ public final class Phase4PeppolSender
      */
     public Builder ()
     {}
-
-    /**
-     * Set the country code of C1 to be used in the SBDH. This field was
-     * introduced in the Peppol Business Message Envelope specification 2.0.
-     * <br>
-     * Note: There is no date yet, when it becomes mandatory.
-     *
-     * @param sCountryC1
-     *        The country code of C1 to be used. May be <code>null</code>.
-     * @return this for chaining
-     * @since 2.1.1
-     */
-    @Nonnull
-    public Builder countryC1 (@Nullable final String sCountryC1)
-    {
-      m_sCountryC1 = sCountryC1;
-      return this;
-    }
 
     /**
      * Set the SBDH instance identifier. If none is provided, a random ID is
@@ -1150,6 +1153,10 @@ public final class Phase4PeppolSender
           else
             throw new IllegalStateException ("Unexpected - neither element nor bytes nor InputStream provider are present");
 
+      // Consistency check
+      if (CSBDH.SBDH_NS.equals (aPayloadElement.getNamespaceURI ()))
+        throw new Phase4PeppolException ("You cannot set a Standard Business Document as the payload for the regular builder. The SBD is created automatically inside of this builder. Use Phase4PeppolSender.sbdhBuilder() if you have a pre-build SBD.");
+
       // Optional payload validation
       _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
 
@@ -1161,15 +1168,15 @@ public final class Phase4PeppolSender
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Start creating SBDH for AS4 message");
 
-      final StandardBusinessDocument aSBD = _createSBDH (m_aSenderID,
-                                                         m_aReceiverID,
-                                                         m_aDocTypeID,
-                                                         m_aProcessID,
-                                                         m_sCountryC1,
-                                                         m_sSBDHInstanceIdentifier,
-                                                         m_sSBDHTypeVersion,
-                                                         aPayloadElement,
-                                                         bClonePayloadElement);
+      final StandardBusinessDocument aSBD = _createSBD (m_aSenderID,
+                                                        m_aReceiverID,
+                                                        m_aDocTypeID,
+                                                        m_aProcessID,
+                                                        m_sCountryC1,
+                                                        m_sSBDHInstanceIdentifier,
+                                                        m_sSBDHTypeVersion,
+                                                        aPayloadElement,
+                                                        bClonePayloadElement);
       if (aSBD == null)
       {
         // A log message was already provided
@@ -1243,6 +1250,7 @@ public final class Phase4PeppolSender
      * @see #receiverParticipantID(IParticipantIdentifier)
      * @see #documentTypeID(IDocumentTypeIdentifier)
      * @see #processID(IProcessIdentifier)
+     * @see #countryC1(String)
      */
     @Nonnull
     public SBDHBuilder payloadAndMetadata (@Nonnull final PeppolSBDHDocument aSBDH)
@@ -1251,6 +1259,7 @@ public final class Phase4PeppolSender
       return senderParticipantID (aSBDH.getSenderAsIdentifier ()).receiverParticipantID (aSBDH.getReceiverAsIdentifier ())
                                                                  .documentTypeID (aSBDH.getDocumentTypeAsIdentifier ())
                                                                  .processID (aSBDH.getProcessAsIdentifier ())
+                                                                 .countryC1 (aSBDH.getCountryC1 ())
                                                                  .payload (new SBDMarshaller ().getAsBytes (new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aSBDH)));
     }
 
