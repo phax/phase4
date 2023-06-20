@@ -25,6 +25,9 @@
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
+  
+  <!-- com.helger.phase4.server.servlet.AS4WebAppListener is configured via annotations -->
+  
   <servlet>
     <servlet-name>AS4Servlet</servlet-name>
     <servlet-class>com.helger.phase4.servlet.AS4Servlet</servlet-class>

@@ -28,9 +28,9 @@
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
   
-   <listener>
-     <listener-class>com.helger.phase4.peppol.server.servlet.Phase4PeppolWebAppListener</listener-class>
-   </listener>
+  <listener>
+    <listener-class>com.helger.phase4.peppol.server.servlet.Phase4PeppolWebAppListener</listener-class>
+  </listener>
   
   <servlet>
     <servlet-name>Phase4PeppolServlet</servlet-name>
