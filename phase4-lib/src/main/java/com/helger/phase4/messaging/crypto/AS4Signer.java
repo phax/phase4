@@ -100,6 +100,10 @@ public final class AS4Signer
     aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());
     aBuilder.setSigCanonicalization (aSigningParams.getAlgorithmC14N ().getAlgorithmURI ());
 
+    // true: BST ValueType "#X509v3" (the default)
+    // false: BST ValueType "#X509PKIPathv1" (e.g. for BDEW)
+    aBuilder.setUseSingleCertificate (false);
+
     // Sign the Ebms3 Messaging element itself
     aBuilder.getParts ().add (new WSEncryptionPart (sMessagingID, ENCRYPTION_MODE_CONTENT));
 
