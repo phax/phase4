@@ -35,6 +35,7 @@ import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
+import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.sender.AS4BidirectionalClientHelper;
@@ -78,6 +79,7 @@ public final class Phase4BDEWSender
                                                               extends
                                                               AbstractAS4UserMessageBuilder <IMPLTYPE>
   {
+    // Default per section 2.2.6.2.1
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
 
     private ECryptoKeyIdentifierType m_eSigningKeyIdentifierType;
@@ -193,9 +195,20 @@ public final class Phase4BDEWSender
         final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
         applyToUserMessage (aUserMsg);
 
+        // Other crypt parameters are located in the PMode security part
         aUserMsg.cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
         aUserMsg.cryptParams ().setKeyIdentifierType (m_eEncryptionKeyIdentifierType);
+
+        // See BDEW specs 2.2.6.2
+        // Other signing parameters are located in the PMode security part
+        aUserMsg.signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
         aUserMsg.signingParams ().setKeyIdentifierType (m_eSigningKeyIdentifierType);
+        /**
+         * Assumption: the BST "ValueType" attribute is set to
+         * "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509PKIPathv1"
+         * by WSS4J automatically (see WSSecSignature#addBST)
+         */
+
         // Empty string by purpose
         aUserMsg.setConversationID ("");
 
