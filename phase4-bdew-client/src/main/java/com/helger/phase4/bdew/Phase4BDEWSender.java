@@ -231,7 +231,7 @@ public final class Phase4BDEWSender
                                                     .toString ());
           if (m_aPayloadParams.getDocumentNumber () != null)
             aPayloadAttachment.customPartProperties ()
-                              .put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ().toString ());
+                              .put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ());
           if (m_aPayloadParams.getFulfillmentDate () != null)
             aPayloadAttachment.customPartProperties ()
                               .put ("BDEWFulfillmentDate",
@@ -301,7 +301,7 @@ public final class Phase4BDEWSender
   {
     private String m_sDocumentType;
     private ZonedDateTime m_aDocumentDate;
-    private Integer m_aDocumentNumber;
+    private String m_aDocumentNumber;
     private ZonedDateTime m_aFulfillmentDate;
     private String m_sSubjectPartyID;
     private String m_sSubjectPartyRole;
@@ -359,7 +359,7 @@ public final class Phase4BDEWSender
      *         <code>BDEWDocumentNo</code>
      */
     @Nullable
-    public Integer getDocumentNumber ()
+    public String getDocumentNumber ()
     {
       return m_aDocumentNumber;
     }
@@ -386,7 +386,7 @@ public final class Phase4BDEWSender
      * @return this for chaining
      */
     @Nonnull
-    public BDEWPayloadParams setDocumentNumber (@Nullable final Integer aDocumentNumber)
+    public BDEWPayloadParams setDocumentNumber (@Nullable final String aDocumentNumber)
     {
       m_aDocumentNumber = aDocumentNumber;
       return this;
