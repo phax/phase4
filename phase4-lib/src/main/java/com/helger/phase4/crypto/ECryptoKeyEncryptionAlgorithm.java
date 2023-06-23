@@ -38,7 +38,7 @@ public enum ECryptoKeyEncryptionAlgorithm implements IHasID <String>
   RSA_OAEP (WSS4JConstants.KEYTRANSPORT_RSAOAEP),
   RSA_OAEP_XENC11 (WSS4JConstants.KEYTRANSPORT_RSAOAEP_XENC11),
 
-  // ECDH-ES KEYWRAP are currently not yet supported by WSS4J 3.0.0
+  // TODO ECDH-ES KEYWRAP are currently not yet supported by WSS4J 3.0.0
   ECDH_ES_KEYWRAP_AES_128 ("http://www.w3.org/2001/04/xmlenc#kw-aes128"),
   ECDH_ES_KEYWRAP_AES_192 ("http://www.w3.org/2001/04/xmlenc#kw-aes192"),
   ECDH_ES_KEYWRAP_AES_256 ("http://www.w3.org/2001/04/xmlenc#kw-aes256");

@@ -115,6 +115,9 @@ public final class BDEWPMode
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
     aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
     aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.ECDSA_SHA_256);
+    // Curve to use: "brainpoolP256r1"
+    // Source: BSI TR03116-3, section 9.1
+    // Required by: BDEW AS4 profile section 2.2.6.2.1
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
     aPModeLegSecurity.setX509EncryptionMinimumStrength (Integer.valueOf (128));

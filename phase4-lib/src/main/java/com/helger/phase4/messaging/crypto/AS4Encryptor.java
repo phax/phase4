@@ -83,6 +83,7 @@ public final class AS4Encryptor
     aBuilder.setDigestAlgorithm (aCryptParams.getDigestAlgorithm ());
     // Encrypted key must be contained
     aBuilder.setEncryptSymmKey (true);
+
     if (aCryptParams.hasCertificate ())
     {
       // Certificate was provided externally
