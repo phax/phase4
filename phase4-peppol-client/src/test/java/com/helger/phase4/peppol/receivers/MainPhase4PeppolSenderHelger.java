@@ -100,6 +100,7 @@ public final class MainPhase4PeppolSenderHelger
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
+                                  .checkReceiverAPCertificate (true)
                                   .sbdDocumentConsumer (x -> {
                                     if (false)
                                       LOGGER.info (new SBDMarshaller ().setFormattedOutput (true).getAsString (x));
