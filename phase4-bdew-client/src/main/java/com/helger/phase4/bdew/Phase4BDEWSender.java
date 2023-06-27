@@ -230,8 +230,7 @@ public final class Phase4BDEWSender
                                                     .withZoneSameInstant (ZoneOffset.UTC)
                                                     .toString ());
           if (m_aPayloadParams.getDocumentNumber () != null)
-            aPayloadAttachment.customPartProperties ()
-                              .put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ());
+            aPayloadAttachment.customPartProperties ().put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ());
           if (m_aPayloadParams.getFulfillmentDate () != null)
             aPayloadAttachment.customPartProperties ()
                               .put ("BDEWFulfillmentDate",
@@ -301,7 +300,7 @@ public final class Phase4BDEWSender
   {
     private String m_sDocumentType;
     private ZonedDateTime m_aDocumentDate;
-    private String m_aDocumentNumber;
+    private String m_sDocumentNumber;
     private ZonedDateTime m_aFulfillmentDate;
     private String m_sSubjectPartyID;
     private String m_sSubjectPartyRole;
@@ -355,13 +354,16 @@ public final class Phase4BDEWSender
     }
 
     /**
+     * Note: type change in 2.1.3 from <code>Integer</code> to
+     * <code>String</code>
+     *
      * @return BDEW payload document number for payload identifier
      *         <code>BDEWDocumentNo</code>
      */
     @Nullable
     public String getDocumentNumber ()
     {
-      return m_aDocumentNumber;
+      return m_sDocumentNumber;
     }
 
     /**
@@ -375,20 +377,22 @@ public final class Phase4BDEWSender
     @Nonnull
     public BDEWPayloadParams setDocumentNumber (final int nDocumentNumber)
     {
-      return setDocumentNumber (Integer.valueOf (nDocumentNumber));
+      return setDocumentNumber (Integer.toString (nDocumentNumber));
     }
 
     /**
-     * BDEW payload document number
+     * BDEW payload document number.<br>
+     * Note: type change in 2.1.3 from <code>Integer</code> to
+     * <code>String</code>
      *
-     * @param aDocumentNumber
+     * @param sDocumentNumber
      *        Document number to use. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public BDEWPayloadParams setDocumentNumber (@Nullable final String aDocumentNumber)
+    public BDEWPayloadParams setDocumentNumber (@Nullable final String sDocumentNumber)
     {
-      m_aDocumentNumber = aDocumentNumber;
+      m_sDocumentNumber = sDocumentNumber;
       return this;
     }
 
@@ -469,7 +473,7 @@ public final class Phase4BDEWSender
     {
       return new ToStringGenerator (this).append ("DocumentType", m_sDocumentType)
                                          .append ("DocumentDate", m_aDocumentDate)
-                                         .append ("DocumentNumber", m_aDocumentNumber)
+                                         .append ("DocumentNumber", m_sDocumentNumber)
                                          .append ("FulfillmentDate", m_aFulfillmentDate)
                                          .append ("SubjectPartyID", m_sSubjectPartyID)
                                          .append ("SubjectPartyRole", m_sSubjectPartyRole)
