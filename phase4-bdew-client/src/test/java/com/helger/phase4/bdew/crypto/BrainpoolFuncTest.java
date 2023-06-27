@@ -17,7 +17,6 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
@@ -35,7 +34,7 @@ import com.helger.http.tls.ETLSVersion;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ExtendedHttpResponseException;
-import com.helger.httpclient.response.ResponseHandlerString;
+import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.httpclient.security.TrustStrategyTrustAll;
 import com.helger.security.keystore.EKeyStoreType;
 
@@ -76,7 +75,7 @@ public class BrainpoolFuncTest
                          "MAoGCCqGSM49BAMCA0cAMEQCIAd8OK/Q+5DDlO2d28jVrQSnwHnv7fpuCPars1tJ\r\n" +
                          "gDRsAiAKl82ZaKrU8x58GvooJ1VnwKdqdhK1Opu50bLgiRVCyg==\r\n" +
                          "-----END CERTIFICATE-----\r\n";
-    final CertificateFactory aCertificateFactory = CertificateFactory.getInstance ("X.509", PBCProvider.getProvider ());
+    final CertificateFactory aCertificateFactory = CertificateFactory.getInstance ("X.509", provider);
 
     final X509Certificate cert;
     try (final StringInputStream aIS = new StringInputStream (sCert, StandardCharsets.ISO_8859_1))
@@ -114,14 +113,14 @@ public class BrainpoolFuncTest
     assertTrue (privKey.getParameters () instanceof ECNamedCurveParameterSpec);
     assertEquals ("brainpoolP256r1", ((ECNamedCurveParameterSpec) privKey.getParameters ()).getName ());
 
-    // Create Key Manager
-    final KeyStore aKeyStore = EKeyStoreType.PKCS12.getKeyStore (PBCProvider.getProvider ());
+    // Create in-memory Key Manager
+    final KeyStore aKeyStore = EKeyStoreType.PKCS12.getKeyStore (provider);
     aKeyStore.load (null, null);
     final String sKeyPassword = "password";
     aKeyStore.setKeyEntry ("key1", privKey, sKeyPassword.toCharArray (), new Certificate [] { cert });
 
-    // Create TrustManager
-    final KeyStore aTrustStore = EKeyStoreType.PKCS12.getKeyStore (PBCProvider.getProvider ());
+    // Create in-memory TrustManager
+    final KeyStore aTrustStore = EKeyStoreType.PKCS12.getKeyStore (provider);
     // null stream means: create new key store
     aTrustStore.load (null, null);
     aTrustStore.setCertificateEntry ("trusted1", cert);
@@ -129,7 +128,7 @@ public class BrainpoolFuncTest
     // Build connection
     final HttpClientSettings aHCS = new HttpClientSettings ();
     aHCS.setSSLContext (SSLContexts.custom ()
-                                   .setProvider (PBCProvider.getProvider ())
+                                   .setProvider (provider)
                                    .setProtocol (ETLSVersion.TLS_13.getID ())
                                    .loadKeyMaterial (aKeyStore, sKeyPassword.toCharArray ())
                                    .loadTrustMaterial (aTrustStore, new TrustStrategyTrustAll ())
@@ -138,7 +137,8 @@ public class BrainpoolFuncTest
     {
       System.out.println ("Starting GET request");
       final HttpGet aGet = new HttpGet ("https://159.69.113.243:8443/");
-      final String ret = aHCM.execute (aGet, new ResponseHandlerString (ContentType.TEXT_PLAIN));
+      // Ignore result, we expect 404
+      aHCM.execute (aGet, new ResponseHandlerByteArray ());
     }
     catch (final ExtendedHttpResponseException ex)
     {
