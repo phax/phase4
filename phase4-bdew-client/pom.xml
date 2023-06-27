@@ -86,6 +86,12 @@ governing permissions and
       <artifactId>jaxb-impl</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bctls-jdk18on</artifactId>
+      <version>1.73</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
