@@ -16,6 +16,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -23,6 +25,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -30,6 +33,8 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import com.helger.bc.PBCProvider;
 import com.helger.commons.io.stream.StringInputStream;
 import com.helger.http.tls.ETLSVersion;
+import com.helger.http.tls.TLSConfigurationMode;
+import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ExtendedHttpResponseException;
@@ -44,7 +49,8 @@ public class BrainpoolFuncTest
     final Provider provider = PBCProvider.getProvider ();
     assertNotNull (provider);
 
-    final ECNamedCurveParameterSpec brainpoolp256r1Spec = ECNamedCurveTable.getParameterSpec ("brainpoolp256r1");
+    final ECNamedCurveParameterSpec brainpoolp256r1Spec = ECNamedCurveTable.getParameterSpec (true ? "secp384r1"
+                                                                                                   : "brainpoolp256r1");
     assertNotNull (brainpoolp256r1Spec);
 
     final SecureRandom secureRandom = null;
@@ -125,13 +131,29 @@ public class BrainpoolFuncTest
 
     // Build connection
     final HttpClientSettings aHCS = new HttpClientSettings ();
-    aHCS.setSSLContext (SSLContexts.custom ()
-                                   .setProvider (provider)
-                                   .setProtocol (ETLSVersion.TLS_13.getID ())
-                                   .loadKeyMaterial (aKeyStore, sKeyPassword.toCharArray ())
-                                   .loadTrustMaterial (aTrustStore, new TrustStrategyTrustAll ())
-                                   .build ());
-    try (HttpClientManager aHCM = HttpClientManager.create (aHCS))
+    // KeyStoreProvider stays default
+    // TrustStoreProvider stays default
+    // KeyManagerFactoryAlgorithm stays default
+    final SSLContext aSSLCtx = SSLContexts.custom ()
+                                          .setProvider (new BouncyCastleJsseProvider (provider))
+                                          .setProtocol (ETLSVersion.TLS_12.getID ())
+                                          .loadKeyMaterial (aKeyStore, sKeyPassword.toCharArray ())
+                                          .loadTrustMaterial (aTrustStore, new TrustStrategyTrustAll ())
+                                          .build ();
+    aHCS.setSSLContext (aSSLCtx);
+    aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12 },
+                                                            new String [] { "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+                                                                            "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+                                                                            "TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8",
+                                                                            "TLS_ECDHE_ECDSA_WITH_AES_256_CCM",
+                                                                            "TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
+                                                                            "TLS_ECDHE_ECDSA_WITH_AES_128_CCM",
+                                                                            "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+                                                                            "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" }));
+    // Because we connect to an IP address
+    aHCS.setHostnameVerifierVerifyAll ();
+    final HttpClientFactory aHCF = new HttpClientFactory (aHCS);
+    try (final HttpClientManager aHCM = new HttpClientManager (aHCF))
     {
       System.out.println ("Starting GET request");
       final HttpGet aGet = new HttpGet ("https://159.69.113.243:8443/");
