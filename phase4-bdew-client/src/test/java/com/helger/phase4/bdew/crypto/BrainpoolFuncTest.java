@@ -26,7 +26,6 @@ import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.junit.Test;
 
 import com.helger.bc.PBCProvider;
 import com.helger.commons.io.stream.StringInputStream;
@@ -40,8 +39,7 @@ import com.helger.security.keystore.EKeyStoreType;
 
 public class BrainpoolFuncTest
 {
-  @Test
-  public void testCreateCert () throws Exception
+  public static void main (final String [] args) throws Exception
   {
     final Provider provider = PBCProvider.getProvider ();
     assertNotNull (provider);
