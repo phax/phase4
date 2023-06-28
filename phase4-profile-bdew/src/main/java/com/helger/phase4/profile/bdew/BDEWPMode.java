@@ -64,8 +64,8 @@ public final class BDEWPMode
   public static final String SERVICE_MARKTPROZESSE = "https://www.bdew.de/as4/communication/services/MP";
   public static final String SERVICE_FAHRPLAN = "https://www.bdew.de/as4/communication/services/FP";
   public static final String SERVICE_REDISPATCH_2_0 = "https://www.bdew.de/as4/communication/services/RD";
-  public static final String SERVICE_REDISPATCH_KWEP = "https://www.bdew.de/as4/communication/services/KW";
-  public static final String SERVICE_REDISPATCH_SOGL = "https://www.bdew.de/as4/communication/services/SO";
+  public static final String SERVICE_KWEP = "https://www.bdew.de/as4/communication/services/KW";
+  public static final String SERVICE_SOGL = "https://www.bdew.de/as4/communication/services/SO";
 
   public static final String ACTION_DEFAULT = "http://docs.oasis-open.org/ebxml-msg/as4/200902/action";
   public static final String ACTION_TEST_SERVICE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test";
