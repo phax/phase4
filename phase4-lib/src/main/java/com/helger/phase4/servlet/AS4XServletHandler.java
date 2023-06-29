@@ -87,6 +87,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4XServletHandler.class);
 
   private Supplier <? extends IAS4CryptoFactory> m_aCryptoFactorySupplier;
+  private Supplier <? extends IAS4CryptoFactory> m_aResponseCryptoFactorySupplier;
   private IPModeResolver m_aPModeResolver;
   private IAS4IncomingAttachmentFactory m_aIAF;
   private IHandlerCustomizer m_aHandlerCustomizer;
@@ -119,7 +120,30 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                              @Nonnull final IPModeResolver aPModeResolver,
                              @Nonnull final IAS4IncomingAttachmentFactory aIAF)
   {
+    this(aCryptoFactorySupplier, aCryptoFactorySupplier, aPModeResolver, aIAF);
+  }
+
+  /**
+   * Constructor
+   *
+   * @param aCryptoFactorySupplier
+   *        Crypto factory supplier. May not be <code>null</code>.
+   * @param aResponseCryptoFactorySupplier
+   *        Crypto factory supplier for response messages. May not be <code>null</code>.
+   * @param aPModeResolver
+   *        PMode resolved to be used. May not be <code>null</code>.
+   * @param aIAF
+   *        The attachment factory for incoming attachments. May not be
+   *        <code>null</code>.
+   * @since v0.9.8
+   */
+  public AS4XServletHandler (@Nonnull final Supplier <? extends IAS4CryptoFactory> aCryptoFactorySupplier,
+                             @Nonnull final Supplier <? extends IAS4CryptoFactory> aResponseCryptoFactorySupplier,
+                             @Nonnull final IPModeResolver aPModeResolver,
+                             @Nonnull final IAS4IncomingAttachmentFactory aIAF)
+  {
     setCryptoFactorySupplier (aCryptoFactorySupplier);
+    setResponseCryptoFactorySupplier (aResponseCryptoFactorySupplier);
     setPModeResolver (aPModeResolver);
     setIncomingAttachmentFactory (aIAF);
   }
@@ -146,6 +170,31 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   {
     ValueEnforcer.notNull (aCryptoFactorySupplier, "CryptoFactorySupplier");
     m_aCryptoFactorySupplier = aCryptoFactorySupplier;
+    return this;
+  }
+
+  /**
+   * @return The supplier for the {@link IAS4CryptoFactory} for response messages. May not be
+   *         <code>null</code>.
+   * @since x.x.x
+   */
+  @Nonnull
+  public final Supplier <? extends IAS4CryptoFactory> getResponseCryptoFactorySupplier ()
+  {
+    return m_aResponseCryptoFactorySupplier;
+  }
+
+  /**
+   * @param aResponseCryptoFactorySupplier
+   *        Crypto factory supplier for response messages. May not be <code>null</code>.
+   * @return this for chaining
+   * @since x.x.x
+   */
+  @Nonnull
+  public final AS4XServletHandler setResponseCryptoFactorySupplier (@Nonnull final Supplier <? extends IAS4CryptoFactory> aResponseCryptoFactorySupplier)
+  {
+    ValueEnforcer.notNull (aResponseCryptoFactorySupplier, "ResponseCryptoFactorySupplier");
+    m_aResponseCryptoFactorySupplier = aResponseCryptoFactorySupplier;
     return this;
   }
 
@@ -287,6 +336,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   protected void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                                 @Nonnull final AS4UnifiedResponse aHttpResponse,
                                 @Nonnull final IAS4CryptoFactory aCF,
+                                @Nonnull final IAS4CryptoFactory aResponseCF,
                                 @Nonnull final IPModeResolver aPModeResolver,
                                 @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                 @Nullable final IHandlerCustomizer aHandlerCustomizer) throws Exception
@@ -294,7 +344,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     // Start metadata
     final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope);
 
-    try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCF, aPModeResolver, aIAF, aMessageMetadata))
+    try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCF, aResponseCF, aPModeResolver, aIAF, aMessageMetadata))
     {
       // Customize before handling
       if (aHandlerCustomizer != null)
@@ -337,13 +387,18 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   {
     // Resolved once per request
     final IAS4CryptoFactory aCF = m_aCryptoFactorySupplier.get ();
+    // Fallback to regular CryptoFactory if no specific CryptoFactory for response messages was provided
+    final IAS4CryptoFactory aResponseCF = (m_aResponseCryptoFactorySupplier != null) ? m_aResponseCryptoFactorySupplier.get () : aCF;
     if (aCF == null)
       throw new IllegalStateException ("Failed to get an AS4 CryptoFactory");
+    if (aResponseCF == null)
+      throw new IllegalStateException ("Failed to get an AS4 response CryptoFactory");
 
     // Created above in #createUnifiedResponse
     handleRequest (aRequestScope,
                    (AS4UnifiedResponse) aUnifiedResponse,
                    aCF,
+                   aResponseCF,
                    m_aPModeResolver,
                    m_aIAF,
                    m_aHandlerCustomizer);

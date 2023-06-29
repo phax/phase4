@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillClose;
 
+import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
@@ -360,6 +361,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   private final AS4ResourceHelper m_aResHelper;
   private final IAS4CryptoFactory m_aCryptoFactory;
+  private final IAS4CryptoFactory m_aResponseCryptoFactory;
   private final IPModeResolver m_aPModeResolver;
   private final IAS4IncomingAttachmentFactory m_aIAF;
   private IAS4IncomingProfileSelector m_aIncomingProfileSelector = AS4IncomingProfileSelectorFromGlobal.INSTANCE;
@@ -379,13 +381,24 @@ public class AS4RequestHandler implements AutoCloseable
                             @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                             @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
+    this(aCryptoFactory, aCryptoFactory, aPModeResolver, aIAF, aMessageMetadata);
+  }
+
+  public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                            @Nonnull final IAS4CryptoFactory aResponseCryptoFactory,
+                            @Nonnull final IPModeResolver aPModeResolver,
+                            @Nonnull final IAS4IncomingAttachmentFactory aIAF,
+                            @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+  {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aResponseCryptoFactory, "ResponseCryptoFactory");
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     ValueEnforcer.notNull (aIAF, "IAF");
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
     // Create dynamically here, to avoid leaving too many streams open
     m_aResHelper = new AS4ResourceHelper ();
     m_aCryptoFactory = aCryptoFactory;
+    m_aResponseCryptoFactory = aResponseCryptoFactory;
     m_aPModeResolver = aPModeResolver;
     m_aIAF = aIAF;
     m_aMessageMetadata = aMessageMetadata;
@@ -1090,7 +1103,7 @@ public class AS4RequestHandler implements AutoCloseable
     {
       // Sign
       final boolean bMustUnderstand = true;
-      ret = AS4Signer.createSignedMessage (m_aCryptoFactory,
+      ret = AS4Signer.createSignedMessage (m_aResponseCryptoFactory,
                                            aDocToBeSigned,
                                            eSoapVersion,
                                            sMessagingID,
@@ -1202,7 +1215,7 @@ public class AS4RequestHandler implements AutoCloseable
       aMimeMsg = AS4Encryptor.encryptMimeMessage (eSoapVersion,
                                                   aResponseDoc,
                                                   aResponseAttachments,
-                                                  m_aCryptoFactory,
+                                                  m_aResponseCryptoFactory,
                                                   bMustUnderstand,
                                                   m_aResHelper,
                                                   aCryptParms);
@@ -1304,6 +1317,13 @@ public class AS4RequestHandler implements AutoCloseable
 
     // Evaluate the results of processing
     final IPMode aPMode = aState.getPMode ();
+
+    // response CryptoFactory might also be dependent on the detected PMode, assign it
+    if (aPMode != null && m_aResponseCryptoFactory instanceof IAS4PModeAwareCryptoFactory)
+    {
+      ((IAS4PModeAwareCryptoFactory) m_aResponseCryptoFactory).setContextPMode (aPMode);
+    }
+
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
     final String sMessageID = aState.getMessageID ();
     final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()

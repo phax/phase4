@@ -85,8 +85,9 @@ public class ServletConfig
       settings ().setMultipartEnabled (false);
       // HTTP POST only
       final AS4XServletHandler hdl = new AS4XServletHandler ();
-      // This method refers to the outer static methid
+      // This method refers to the outer static method
       hdl.setCryptoFactorySupplier (ServletConfig::getCryptoFactoryToUse);
+      hdl.setResponseCryptoFactorySupplier (ServletConfig::getCryptoFactoryToUse);
       handlerRegistry ().registerHandler (EHttpMethod.POST, hdl);
     }
   }
