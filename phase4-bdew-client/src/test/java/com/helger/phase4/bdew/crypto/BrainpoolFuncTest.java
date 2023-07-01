@@ -32,6 +32,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 
 import com.helger.bc.PBCProvider;
 import com.helger.commons.io.stream.StringInputStream;
+import com.helger.commons.system.SystemProperties;
 import com.helger.http.tls.ETLSVersion;
 import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientFactory;
@@ -46,14 +47,17 @@ public class BrainpoolFuncTest
 {
   public static void main (final String [] args) throws Exception
   {
+    SystemProperties.setPropertyValue ("javax.net.debug", false ? "all" : "ssl,handshake");
+
+    // Ensure BC Security Provider is installed
     final Provider provider = PBCProvider.getProvider ();
     assertNotNull (provider);
 
-    final ECNamedCurveParameterSpec brainpoolp256r1Spec = ECNamedCurveTable.getParameterSpec (true ? "secp384r1"
-                                                                                                   : "brainpoolp256r1");
+    // Make sure the curve is supported
+    final ECNamedCurveParameterSpec brainpoolp256r1Spec = ECNamedCurveTable.getParameterSpec ("brainpoolp256r1");
     assertNotNull (brainpoolp256r1Spec);
 
-    final SecureRandom secureRandom = null;
+    final SecureRandom secureRandom = new SecureRandom ();
     if (false)
     {
       // Create a new pair
@@ -141,22 +145,22 @@ public class BrainpoolFuncTest
                                           .loadTrustMaterial (aTrustStore, new TrustStrategyTrustAll ())
                                           .build ();
     aHCS.setSSLContext (aSSLCtx);
-    aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12 },
-                                                            new String [] { "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
-                                                                            "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
-                                                                            "TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8",
-                                                                            "TLS_ECDHE_ECDSA_WITH_AES_256_CCM",
-                                                                            "TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
-                                                                            "TLS_ECDHE_ECDSA_WITH_AES_128_CCM",
-                                                                            "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
-                                                                            "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" }));
+    // Details for TLS
+    final String [] cipherSuites = { "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+                                     "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+                                     "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+                                     "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" };
+    aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12,
+                                                                                 ETLSVersion.TLS_13 }, cipherSuites));
+
     // Because we connect to an IP address
     aHCS.setHostnameVerifierVerifyAll ();
+
     final HttpClientFactory aHCF = new HttpClientFactory (aHCS);
     try (final HttpClientManager aHCM = new HttpClientManager (aHCF))
     {
       System.out.println ("Starting GET request");
-      final HttpGet aGet = new HttpGet ("https://159.69.113.243:8443/");
+      final HttpGet aGet = new HttpGet (true ? "https://localhost:8443/" : "https://159.69.113.243:8443/");
       // Ignore result, we expect 404
       aHCM.execute (aGet, new ResponseHandlerByteArray ());
     }
