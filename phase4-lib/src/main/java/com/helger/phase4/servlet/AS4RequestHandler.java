@@ -299,11 +299,11 @@ public class AS4RequestHandler implements AutoCloseable
     /**
      * Indicate that processing has finished.
      *
-     * @param bWasSync
+     * @param bWasSynchronous
      *        <code>true</code> if it was synchronous, <code>false</code> if it
      *        was asynchronous.
      */
-    void onProcessingFinalized (boolean bWasSync);
+    void onProcessingFinalized (boolean bWasSynchronous);
   }
 
   private static final class SPIInvocationResult implements ISuccessIndicator
@@ -656,8 +656,9 @@ public class AS4RequestHandler implements AutoCloseable
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
-    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
-                                             : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
+    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId () : aEbmsSignalMessage
+                                                                                                                      .getMessageInfo ()
+                                                                                                                      .getMessageId ();
 
     // Get all processors
     final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
@@ -878,8 +879,8 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
-                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (
+                                                                                                                       aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -995,12 +996,12 @@ public class AS4RequestHandler implements AutoCloseable
         aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
         aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
 
-        aEbms3MessageProperties.addProperty (aFinalRecipient);
-        aEbms3MessageProperties.addProperty (aOriginalSender);
+        aEbms3MessageProperties.addProperty (aFinalRecipient.clone ());
+        aEbms3MessageProperties.addProperty (aOriginalSender.clone ());
       }
       else
       {
-        // TODO make customizable via profile
+        // TODO make check customizable via profile
         // Disable for now
         if (false)
         {
@@ -1285,9 +1286,12 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                                                  MessagingException,
                                                                                                                  Phase4Exception
   {
+    // Create the SOAP header element processor list
     final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (m_aPModeResolver,
                                                                                                            m_aCryptoFactory,
                                                                                                            (IPMode) null);
+
+    // Decompose the SOAP message
     final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
                                                                            m_aLocale,
                                                                            aRegistry,
@@ -1297,6 +1301,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                                            aIncomingAttachments,
                                                                            m_aIncomingProfileSelector,
                                                                            aErrorMessagesTarget);
+
+    // Evaluate the results of processing
     final IPMode aPMode = aState.getPMode ();
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
     final String sMessageID = aState.getMessageID ();
@@ -1317,6 +1323,7 @@ public class AS4RequestHandler implements AutoCloseable
                       sProfileID +
                       "'");
 
+      // Run duplicate message check
       final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
                                                  .registerAndCheck (sMessageID,
                                                                     sProfileID,
@@ -1381,18 +1388,22 @@ public class AS4RequestHandler implements AutoCloseable
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Successfully invoked synchronous SPIs");
 
+        // Notify outside world about the end of the incoming processing
         if (m_aSoapProcessingFinalizedCB != null)
           m_aSoapProcessingFinalizedCB.onProcessingFinalized (true);
       }
       else
       {
         // Call asynchronous
+        // this should only apply to MEP binding PUSH_PUSH Leg 1
+
         // Only leg1 can be async!
         final IThrowingRunnable <Exception> r = () -> {
-          // Start async
+          // Start async processing
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
 
+          // Invoke SPI callbacks
           final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
           _invokeSPIsForIncoming (aHttpHeaders,
                                   aEbmsUserMessage,
@@ -1501,8 +1512,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                          new ResponseHandlerXml ());
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                AS4HttpDebug.getDebugXMLWriterSettings ()));
+                                     (aAsyncResponse == null ? "null" : XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                                                   AS4HttpDebug.getDebugXMLWriterSettings ())));
         };
 
         final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
@@ -1719,8 +1730,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
-                                                                                 : AS4DumpManager.getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager
+                                                                                                                     .getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else

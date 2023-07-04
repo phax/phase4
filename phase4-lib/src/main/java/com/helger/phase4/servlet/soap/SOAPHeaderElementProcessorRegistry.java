@@ -16,7 +16,9 @@
  */
 package com.helger.phase4.servlet.soap;
 
+import java.security.Provider;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -109,8 +111,12 @@ public class SOAPHeaderElementProcessorRegistry
                                                                                              aPModeConsumer));
 
     // WSS4J must be after Ebms3Messaging handler!
+    final Provider aSecurityProvider = null;
+    final Supplier <? extends IPMode> aFallbackPModeProvider = () -> aFallbackPMode;
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,
-                                        new SOAPHeaderElementProcessorWSS4J (aCryptoFactory, aFallbackPMode));
+                                        new SOAPHeaderElementProcessorWSS4J (aCryptoFactory,
+                                                                             aSecurityProvider,
+                                                                             aFallbackPModeProvider));
     return ret;
   }
 }

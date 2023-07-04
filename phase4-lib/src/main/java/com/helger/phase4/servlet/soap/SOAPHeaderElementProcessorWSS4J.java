@@ -18,6 +18,7 @@ package com.helger.phase4.servlet.soap;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +56,6 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -82,14 +82,18 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
 
   private final IAS4CryptoFactory m_aCryptoFactory;
-  private final IPMode m_aFallbackPMode;
+  private final Provider m_aSecurityProvider;
+  private final Supplier <? extends IPMode> m_aFallbackPModeProvider;
 
   public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                          @Nullable final IPMode aFallbackPMode)
+                                          @Nullable final Provider aSecurityProvider,
+                                          @Nonnull final Supplier <? extends IPMode> aFallbackPModeProvider)
   {
     ValueEnforcer.notNull (aCryptoFactory, "aCryptoFactory");
+    ValueEnforcer.notNull (aFallbackPModeProvider, "FallbackPModeProvider");
     m_aCryptoFactory = aCryptoFactory;
-    m_aFallbackPMode = aFallbackPMode;
+    m_aSecurityProvider = aSecurityProvider;
+    m_aFallbackPModeProvider = aFallbackPModeProvider;
   }
 
   @Nonnull
@@ -122,8 +126,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aRequestData.setSigVerCrypto (m_aCryptoFactory.getCrypto ());
       aRequestData.setDecCrypto (m_aCryptoFactory.getCrypto ());
       aRequestData.setWssConfig (aWSSConfig);
-      aRequestData.setAllowRSA15KeyTransportAlgorithm (AS4CryptoProperties.createFromConfig ()
-                                                                          .isAllowRSA15KeyTransportAlgorithm ());
+      aRequestData.setAllowRSA15KeyTransportAlgorithm (m_aCryptoFactory.isAllowRSA15KeyTransportAlgorithm ());
+      aRequestData.setSignatureProvider (m_aSecurityProvider);
 
       // Upon success, the SOAP document contains the decrypted content
       // afterwards!
@@ -293,7 +297,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   {
     IPMode aPMode = aState.getPMode ();
     if (aPMode == null)
-      aPMode = m_aFallbackPMode;
+      aPMode = m_aFallbackPModeProvider.get ();
 
     // Safety Check
     if (aPMode == null)
