@@ -72,6 +72,7 @@ public final class AS4Encryptor
   private static WSSecEncrypt _createEncrypt (@Nonnull final WSSecHeader aSecHeader,
                                               @Nonnull final AS4CryptParams aCryptParams)
   {
+    // See WSS-700 for request to add Provider parameter
     final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
     // As the receiver MAY not have pre-configured the signing leaf certificate,
     // a BinarySecurityToken token reference MUST be used to reference the

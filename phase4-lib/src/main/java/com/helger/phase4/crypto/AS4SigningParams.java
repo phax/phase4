@@ -17,6 +17,7 @@
 package com.helger.phase4.crypto;
 
 import java.io.Serializable;
+import java.security.Provider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,6 +46,7 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   private ECryptoAlgorithmSign m_eAlgorithmSign;
   private ECryptoAlgorithmSignDigest m_eAlgorithmSignDigest;
   private ECryptoAlgorithmC14N m_eAlgorithmC14N = ECryptoAlgorithmC14N.C14N_ALGORITHM_DEFAULT;
+  private Provider m_aSecurityProvider;
 
   public AS4SigningParams ()
   {}
@@ -166,6 +168,31 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   }
 
   /**
+   * @return The security provider to be used. May be <code>null</code>.
+   * @since 2.1.3
+   */
+  @Nullable
+  public final Provider getSecurityProvider ()
+  {
+    return m_aSecurityProvider;
+  }
+
+  /**
+   * Set the security provider to be used for signing.
+   *
+   * @param aSecurityProvider
+   *        The security provider to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.1.3
+   */
+  @Nonnull
+  public final AS4SigningParams setSecurityProvider (@Nullable final Provider aSecurityProvider)
+  {
+    m_aSecurityProvider = aSecurityProvider;
+    return this;
+  }
+
+  /**
    * This method calls {@link #setAlgorithmSign(ECryptoAlgorithmSign)} and
    * {@link #setAlgorithmSignDigest(ECryptoAlgorithmSignDigest)} based on the
    * PMode parameters. If the PMode parameter is <code>null</code> both values
@@ -199,7 +226,8 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
     return new AS4SigningParams ().setKeyIdentifierType (m_eKeyIdentifierType)
                                   .setAlgorithmSign (m_eAlgorithmSign)
                                   .setAlgorithmSignDigest (m_eAlgorithmSignDigest)
-                                  .setAlgorithmC14N (m_eAlgorithmC14N);
+                                  .setAlgorithmC14N (m_eAlgorithmC14N)
+                                  .setSecurityProvider (m_aSecurityProvider);
   }
 
   @Override
@@ -209,6 +237,7 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
                                        .append ("AlgorithmSign", m_eAlgorithmSign)
                                        .append ("AlgorithmSignDigest", m_eAlgorithmSignDigest)
                                        .append ("AlgorithmC14N", m_eAlgorithmC14N)
+                                       .append ("SecurityProvider", m_aSecurityProvider)
                                        .getToString ();
   }
 

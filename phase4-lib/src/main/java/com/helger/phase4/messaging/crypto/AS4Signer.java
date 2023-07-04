@@ -99,6 +99,7 @@ public final class AS4Signer
     // PMode indicates the DigestAlgorithm as Hash Function
     aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());
     aBuilder.setSigCanonicalization (aSigningParams.getAlgorithmC14N ().getAlgorithmURI ());
+    aBuilder.setSignatureProvider (aSigningParams.getSecurityProvider ());
 
     // true: BST ValueType "#X509v3" (the default)
     // false: BST ValueType "#X509PKIPathv1" (e.g. for BDEW)
