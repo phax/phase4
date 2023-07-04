@@ -1026,7 +1026,7 @@ public class AS4RequestHandler implements AutoCloseable
    *
    * @param aLeg
    *        The PMode leg to check. May be <code>null</code>.
-   * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
+   * @return Returns the value if set, else DEFAULT <code>true</code>.
    */
   private static boolean _isSendErrorAsResponse (@Nullable final PModeLeg aLeg)
   {
@@ -1531,10 +1531,18 @@ public class AS4RequestHandler implements AutoCloseable
     // Try building error message
     final String sResponseMessageID;
     final IAS4ResponseFactory ret;
-    if (!aState.isSoapHeaderElementProcessingSuccessful () || aState.getEbmsError () == null)
+    if (aState.isSoapHeaderElementProcessingSuccessful () && aState.getEbmsError () != null)
+    {
+      // Processing was successful, and it is an incoming Ebms Error Message
+      sResponseMessageID = null;
+      ret = null;
+    }
+    else
     {
       // Either error in header processing or
-      // Not an incoming Ebms Error Message
+      // Not an incoming Ebms Error Message (either UserMessage or a different
+      // SignalMessage)
+
       if (aErrorMessagesTarget.isNotEmpty ())
       {
         if (LOGGER.isDebugEnabled ())
@@ -1543,6 +1551,7 @@ public class AS4RequestHandler implements AutoCloseable
                         " errors: " +
                         aErrorMessagesTarget.getAllMapped (Ebms3Error::getDescriptionValue));
 
+        // Start building response error message
         final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                                           aState.getMessageID (),
                                                                           aErrorMessagesTarget);
@@ -1565,6 +1574,7 @@ public class AS4RequestHandler implements AutoCloseable
         }
         else
         {
+          // Too bad - the error message gets dismissed
           LOGGER.warn ("Not sending back the error, because sending error response is prohibited in PMode");
           sResponseMessageID = null;
           ret = null;
@@ -1574,8 +1584,13 @@ public class AS4RequestHandler implements AutoCloseable
       {
         // No errors occurred
 
-        // Do not respond to receipt (except with error message - see above)
-        if (aEbmsSignalMessage == null || aEbmsSignalMessage.getReceipt () == null)
+        if (aEbmsSignalMessage != null && aEbmsSignalMessage.getReceipt () != null)
+        {
+          // Do not respond to receipt (except with error message - see above)
+          sResponseMessageID = null;
+          ret = null;
+        }
+        else
         {
           // So now the incoming message is a user message or a pull request
           if (aPMode.getMEP ().isOneWay () || aPMode.getMEPBinding ().isAsynchronous ())
@@ -1665,22 +1680,13 @@ public class AS4RequestHandler implements AutoCloseable
             }
             else
             {
+              // Leg2 configuration does not allow to respond with a UserMessage
               sResponseMessageID = null;
               ret = null;
             }
           }
         }
-        else
-        {
-          sResponseMessageID = null;
-          ret = null;
-        }
       }
-    }
-    else
-    {
-      sResponseMessageID = null;
-      ret = null;
     }
 
     // Create the HttpEntity on demand
