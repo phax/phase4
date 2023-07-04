@@ -75,7 +75,9 @@ public interface IAS4DuplicateManager
    *        be <code>null</code>.
    * @param sPModeID
    *        Active AS4 PMode ID. May be <code>null</code>.
-   * @return {@link EContinue#CONTINUE} to continue
+   * @return {@link EContinue#CONTINUE} to continue processing a message,
+   *         because it is no duplicate. {@link EContinue#BREAK} if it was
+   *         determined as a duplicate.
    */
   @Nonnull
   EContinue registerAndCheck (@Nullable String sMessageID, @Nullable String sProfileID, @Nullable String sPModeID);
