@@ -6,11 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.Provider;
-import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -42,11 +39,25 @@ import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.httpclient.security.TrustStrategyTrustAll;
 import com.helger.security.keystore.EKeyStoreType;
 
-public class BrainpoolFuncTest
+/**
+ * Server-seitige TLS-Zertifikate generieren:
+ *
+ * <pre>
+ * # Create Key
+ * openssl ecparam -genkey -name prime256v1 -out man2.key -param_enc named_curve
+ * # Create Certificate from key
+ * openssl req -new -x509 -key man2.key -out man2.cer -days 99999
+ * </pre>
+ *
+ * @author Philip Helger
+ */
+public class SecP256R1FuncTest
 {
   public static void main (final String [] args) throws Exception
   {
-    SystemProperties.setPropertyValue ("javax.net.debug", false ? "all" : "ssl,handshake");
+    // Enable deep debug messages
+    if (false)
+      SystemProperties.setPropertyValue ("javax.net.debug", false ? "all" : "ssl,handshake");
 
     // Ensure BC Security Provider is installed
     final Provider provider = PBCProvider.getProvider ();
@@ -55,17 +66,6 @@ public class BrainpoolFuncTest
     // Make sure the curve is supported
     final ECNamedCurveParameterSpec brainpoolp256r1Spec = ECNamedCurveTable.getParameterSpec ("brainpoolp256r1");
     assertNotNull (brainpoolp256r1Spec);
-
-    final SecureRandom secureRandom = new SecureRandom ();
-    if (false)
-    {
-      // Create a new pair
-      final KeyPairGenerator brainpoolp256r1Generator = KeyPairGenerator.getInstance ("ECDSA", provider);
-      brainpoolp256r1Generator.initialize (brainpoolp256r1Spec, secureRandom);
-
-      final KeyPair keyPair = brainpoolp256r1Generator.genKeyPair ();
-      assertNotNull (keyPair);
-    }
 
     // Cert from Valentin Brandl
     final String sCert = "-----BEGIN CERTIFICATE-----\r\n" +
@@ -137,6 +137,7 @@ public class BrainpoolFuncTest
     // KeyStoreProvider stays default
     // TrustStoreProvider stays default
     // KeyManagerFactoryAlgorithm stays default
+    // BouncyCastle JSSE Provider has issues
     final SSLContext aSSLCtx = SSLContexts.custom ()
                                           // .setProvider (new
                                           // BouncyCastleJsseProvider
@@ -147,15 +148,12 @@ public class BrainpoolFuncTest
                                           .build ();
     aHCS.setSSLContext (aSSLCtx);
     // Details for TLS
-    if (false)
-    {
-      final String [] cipherSuites = { "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
-                                       "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
-                                       "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
-                                       "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" };
-      aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12,
-                                                                                   ETLSVersion.TLS_13 }, cipherSuites));
-    }
+    final String [] cipherSuites = { "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+                                     "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+                                     "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+                                     "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" };
+    aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12,
+                                                                                 ETLSVersion.TLS_13 }, cipherSuites));
 
     // Because we connect to an IP address
     aHCS.setHostnameVerifierVerifyAll ();
@@ -164,8 +162,7 @@ public class BrainpoolFuncTest
     try (final HttpClientManager aHCM = new HttpClientManager (aHCF))
     {
       System.out.println ("Starting GET request");
-      final HttpGet aGet = new HttpGet (true ? "https://www.helger.com/as4/phase4" : true ? "https://localhost:8443/"
-                                                                                          : "https://159.69.113.243:8443/");
+      final HttpGet aGet = new HttpGet ("https://localhost:8443/");
       // Ignore result, we expect 404
       aHCM.execute (aGet, new ResponseHandlerByteArray ());
     }
