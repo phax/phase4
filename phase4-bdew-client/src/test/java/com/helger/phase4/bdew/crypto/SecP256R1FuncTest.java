@@ -142,18 +142,35 @@ public class SecP256R1FuncTest
                                           // .setProvider (new
                                           // BouncyCastleJsseProvider
                                           // (provider))
-                                          .setProtocol (ETLSVersion.TLS_12.getID ())
                                           .loadKeyMaterial (aKeyStore, sKeyPassword.toCharArray ())
                                           .loadTrustMaterial (aTrustStore, new TrustStrategyTrustAll ())
                                           .build ();
     aHCS.setSSLContext (aSSLCtx);
-    // Details for TLS
-    final String [] cipherSuites = { "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
-                                     "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
-                                     "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
-                                     "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" };
-    aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12,
-                                                                                 ETLSVersion.TLS_13 }, cipherSuites));
+    if (false)
+    {
+      // Details for TLS 1.2
+
+      // Tested with nginx 1.25.1 and openssl 3.0.9
+      // - Works with native JSSE 11.0.16
+      // - Works with native JSSE 17.0.4
+      // - Doe NOT works with BouncyCastle 1.73 JSSE (TLS error 47)
+      final String [] cipherSuites = { "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+                                       "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+                                       "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+                                       "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" };
+      aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12 }, cipherSuites));
+    }
+    else
+    {
+      // Details for TLS 1.3
+
+      // Tested with nginx 1.25.1 and openssl 3.0.9
+      // - Works with native JSSE 11.0.16
+      // - Works with native JSSE 17.0.4
+      // - Works with BouncyCastle 1.73 JSSE
+      final String [] cipherSuites = { "TLS_AES_256_GCM_SHA384", "TLS_AES_128_GCM_SHA256", "TLS_AES_128_CCM_SHA256" };
+      aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13 }, cipherSuites));
+    }
 
     // Because we connect to an IP address
     aHCS.setHostnameVerifierVerifyAll ();

@@ -11,6 +11,7 @@ import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.Provider;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -46,6 +47,7 @@ public class BrainpoolFuncTest
 {
   public static void main (final String [] args) throws Exception
   {
+    Security.setProperty ("jdk.disabled.namedCurves", "");
     SystemProperties.setPropertyValue ("javax.net.debug", false ? "all" : "ssl,handshake");
 
     // Ensure BC Security Provider is installed
@@ -141,20 +143,33 @@ public class BrainpoolFuncTest
                                           // .setProvider (new
                                           // BouncyCastleJsseProvider
                                           // (provider))
-                                          .setProtocol (ETLSVersion.TLS_12.getID ())
                                           .loadKeyMaterial (aKeyStore, sKeyPassword.toCharArray ())
                                           .loadTrustMaterial (aTrustStore, new TrustStrategyTrustAll ())
                                           .build ();
     aHCS.setSSLContext (aSSLCtx);
+
     // Details for TLS
     if (false)
     {
+      // Details for TLS 1.2
+
+      // Tested with nginx 1.25.1 and openssl 3.0.9
+      // - Does not work with native JSSE 11.0.16: handshake_failure
       final String [] cipherSuites = { "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
                                        "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
                                        "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
                                        "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" };
-      aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12,
-                                                                                   ETLSVersion.TLS_13 }, cipherSuites));
+      aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12 }, cipherSuites));
+    }
+    else
+    {
+      // Details for TLS 1.3
+
+      // Tested with nginx 1.25.1 and openssl 3.0.9
+      // - Does not work with native JSSE 17.0.4: handshake_failure
+      // - Does not work with native JSSE 11.0.16: handshake_failure
+      final String [] cipherSuites = { "TLS_AES_256_GCM_SHA384", "TLS_AES_128_GCM_SHA256", "TLS_AES_128_CCM_SHA256" };
+      aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13 }, cipherSuites));
     }
 
     // Because we connect to an IP address
@@ -164,8 +179,7 @@ public class BrainpoolFuncTest
     try (final HttpClientManager aHCM = new HttpClientManager (aHCF))
     {
       System.out.println ("Starting GET request");
-      final HttpGet aGet = new HttpGet (true ? "https://www.helger.com/as4/phase4" : true ? "https://localhost:8443/"
-                                                                                          : "https://159.69.113.243:8443/");
+      final HttpGet aGet = new HttpGet (true ? "https://localhost:8443/" : "https://159.69.113.243:8443/");
       // Ignore result, we expect 404
       aHCM.execute (aGet, new ResponseHandlerByteArray ());
     }
