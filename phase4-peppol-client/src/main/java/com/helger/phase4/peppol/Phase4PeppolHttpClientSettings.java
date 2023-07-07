@@ -39,8 +39,8 @@ public class Phase4PeppolHttpClientSettings extends HttpClientSettings
 {
   public static final Timeout DEFAULT_PEPPOL_CONNECTION_REQUEST_TIMEOUT = Timeout.ofSeconds (1);
   public static final Timeout DEFAULT_PEPPOL_CONNECT_TIMEOUT = Timeout.ofSeconds (5);
-  // 5 minutes according to the TIA
-  public static final Timeout DEFAULT_PEPPOL_RESPONSE_TIMEOUT = Timeout.ofMinutes (5);
+  // 2 minutes according new Peppol SLAs
+  public static final Timeout DEFAULT_PEPPOL_RESPONSE_TIMEOUT = Timeout.ofMinutes (2);
 
   public Phase4PeppolHttpClientSettings () throws GeneralSecurityException
   {
