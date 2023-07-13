@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
-import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -17,20 +16,23 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 
-import com.helger.bc.PBCProvider;
 import com.helger.commons.io.stream.StringInputStream;
 import com.helger.commons.system.SystemProperties;
 import com.helger.http.tls.ETLSVersion;
@@ -47,12 +49,10 @@ public class BrainpoolFuncTest
 {
   public static void main (final String [] args) throws Exception
   {
-    Security.setProperty ("jdk.disabled.namedCurves", "");
-    SystemProperties.setPropertyValue ("javax.net.debug", false ? "all" : "ssl,handshake");
+    Security.insertProviderAt (new BouncyCastleProvider (), 2);
+    Security.insertProviderAt (new BouncyCastleJsseProvider (), 3);
 
-    // Ensure BC Security Provider is installed
-    final Provider provider = PBCProvider.getProvider ();
-    assertNotNull (provider);
+    SystemProperties.setPropertyValue ("javax.net.debug", false ? "all" : "ssl,handshake");
 
     // Make sure the curve is supported
     final ECNamedCurveParameterSpec brainpoolp256r1Spec = ECNamedCurveTable.getParameterSpec ("brainpoolp256r1");
@@ -62,7 +62,7 @@ public class BrainpoolFuncTest
     if (false)
     {
       // Create a new pair
-      final KeyPairGenerator brainpoolp256r1Generator = KeyPairGenerator.getInstance ("ECDSA", provider);
+      final KeyPairGenerator brainpoolp256r1Generator = KeyPairGenerator.getInstance ("ECDSA", "BC");
       brainpoolp256r1Generator.initialize (brainpoolp256r1Spec, secureRandom);
 
       final KeyPair keyPair = brainpoolp256r1Generator.genKeyPair ();
@@ -84,7 +84,7 @@ public class BrainpoolFuncTest
                          "MAoGCCqGSM49BAMCA0cAMEQCIAd8OK/Q+5DDlO2d28jVrQSnwHnv7fpuCPars1tJ\r\n" +
                          "gDRsAiAKl82ZaKrU8x58GvooJ1VnwKdqdhK1Opu50bLgiRVCyg==\r\n" +
                          "-----END CERTIFICATE-----\r\n";
-    final CertificateFactory aCertificateFactory = CertificateFactory.getInstance ("X.509", provider);
+    final CertificateFactory aCertificateFactory = CertificateFactory.getInstance ("X.509", "BC");
 
     final X509Certificate cert;
     try (final StringInputStream aIS = new StringInputStream (sCert, StandardCharsets.ISO_8859_1))
@@ -123,53 +123,83 @@ public class BrainpoolFuncTest
     assertEquals ("brainpoolP256r1", ((ECNamedCurveParameterSpec) privKey.getParameters ()).getName ());
 
     // Create in-memory Key Manager
-    final KeyStore aKeyStore = EKeyStoreType.PKCS12.getKeyStore (provider);
+    final KeyStore aKeyStore = EKeyStoreType.PKCS12.getKeyStore ("BC");
     aKeyStore.load (null, null);
     final String sKeyPassword = "password";
     aKeyStore.setKeyEntry ("key1", privKey, sKeyPassword.toCharArray (), new Certificate [] { cert });
 
     // Create in-memory TrustManager
-    final KeyStore aTrustStore = EKeyStoreType.PKCS12.getKeyStore (provider);
+    final KeyStore aTrustStore = EKeyStoreType.PKCS12.getKeyStore ("BC");
     // null stream means: create new key store
     aTrustStore.load (null, null);
     aTrustStore.setCertificateEntry ("trusted1", cert);
 
     // Build connection
     final HttpClientSettings aHCS = new HttpClientSettings ();
-    // KeyStoreProvider stays default
-    // TrustStoreProvider stays default
-    // KeyManagerFactoryAlgorithm stays default
-    final SSLContext aSSLCtx = SSLContexts.custom ()
-                                          // .setProvider (new
-                                          // BouncyCastleJsseProvider
-                                          // (provider))
-                                          .loadKeyMaterial (aKeyStore, sKeyPassword.toCharArray ())
-                                          .loadTrustMaterial (aTrustStore, new TrustStrategyTrustAll ())
-                                          .build ();
-    aHCS.setSSLContext (aSSLCtx);
-
-    // Details for TLS
-    if (false)
+    // Works with Java 11
+    final SSLContext aSSLCtx;
+    if (true)
     {
-      // Details for TLS 1.2
+      // the "PKIX" algorithm and "BCJSSE" provider are required for the
+      // KeyManagerFactory
+      // to work with BC TLS and brainpool
+      final KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance ("PKIX", "BCJSSE");
+      keyManagerFactory.init (aKeyStore, sKeyPassword.toCharArray ());
 
-      // Tested with nginx 1.25.1 and openssl 3.0.9
-      // - Does not work with native JSSE 11.0.16: handshake_failure
-      final String [] cipherSuites = { "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
-                                       "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
-                                       "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
-                                       "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" };
-      aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12 }, cipherSuites));
+      // the "BCJSSE" provider is required for the SSLContext to work with BC
+      // TLS and brainpool
+      aSSLCtx = SSLContext.getInstance ("TLSv1.2", "BCJSSE");
+
+      // the "PKIX" algorithm and "BCJSSE" provider are required for the
+      // TrustManagerFactory to work with BC TLS and brainpool
+      final TrustManagerFactory tmf = TrustManagerFactory.getInstance ("PKIX", "BCJSSE");
+      tmf.init ((KeyStore) null);
+
+      // Null means using default implementations for SecureRandom
+      aSSLCtx.init (keyManagerFactory.getKeyManagers (), tmf.getTrustManagers (), null);
     }
     else
     {
-      // Details for TLS 1.3
+      aSSLCtx = SSLContexts.custom ()
+                           .setProvider ("BCJSSE")
+                           .setProtocol ("TLSv1.2")
+                           .setKeyManagerFactoryAlgorithm ("PKIX")
+                           .setKeyStoreProvider ("BCJSSE")
+                           .loadKeyMaterial (aKeyStore, sKeyPassword.toCharArray ())
+                           .setTrustManagerFactoryAlgorithm ("PKIX")
+                           .setTrustStoreProvider ("BCJSSE")
+                           .loadTrustMaterial (aTrustStore, new TrustStrategyTrustAll ())
+                           .build ();
+      aHCS.setSSLContext (aSSLCtx);
 
-      // Tested with nginx 1.25.1 and openssl 3.0.9
-      // - Does not work with native JSSE 17.0.4: handshake_failure
-      // - Does not work with native JSSE 11.0.16: handshake_failure
-      final String [] cipherSuites = { "TLS_AES_256_GCM_SHA384", "TLS_AES_128_GCM_SHA256", "TLS_AES_128_CCM_SHA256" };
-      aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13 }, cipherSuites));
+      // Details for TLS
+      if (false)
+        if (false)
+        {
+          // Details for TLS 1.2
+
+          // Tested with nginx 1.25.1 and openssl 3.0.9
+          // - Does not work with native JSSE 11.0.16: handshake_failure
+          final String [] cipherSuites = { "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+                                           "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+                                           "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+                                           "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" };
+          aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12 },
+                                                                  cipherSuites));
+        }
+        else
+        {
+          // Details for TLS 1.3
+
+          // Tested with nginx 1.25.1 and openssl 3.0.9
+          // - Does not work with native JSSE 17.0.4: handshake_failure
+          // - Does not work with native JSSE 11.0.16: handshake_failure
+          final String [] cipherSuites = { "TLS_AES_256_GCM_SHA384",
+                                           "TLS_AES_128_GCM_SHA256",
+                                           "TLS_AES_128_CCM_SHA256" };
+          aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13 },
+                                                                  cipherSuites));
+        }
     }
 
     // Because we connect to an IP address
