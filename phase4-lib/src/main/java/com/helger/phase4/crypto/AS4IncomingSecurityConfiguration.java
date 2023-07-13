@@ -43,7 +43,7 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
   }
 
   @Nonnull
-  public AS4IncomingSecurityConfiguration getSecurityProvider (@Nullable final Provider a)
+  public AS4IncomingSecurityConfiguration setSecurityProvider (@Nullable final Provider a)
   {
     m_aSecurityProvider = a;
     return this;
