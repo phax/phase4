@@ -43,6 +43,7 @@ import com.helger.commons.mutable.MutableInt;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
@@ -203,10 +204,11 @@ public final class AS4DumpReader
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
     try (final WebScoped w = new WebScoped ();
-        final AS4RequestHandler rh = new AS4RequestHandler (aCF,
-                                                            DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-                                                            IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
-                                                            AS4IncomingMessageMetadata.createForRequest ()))
+         final AS4RequestHandler rh = new AS4RequestHandler (aCF,
+                                                             DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
+                                                             IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
+                                                             AS4IncomingSecurityConfiguration.createDefaultInstance (),
+                                                             AS4IncomingMessageMetadata.createForRequest ()))
     {
       final IAS4ServletMessageProcessorSPI aSPI = new IAS4ServletMessageProcessorSPI ()
       {

@@ -31,7 +31,9 @@ import com.helger.commons.http.EHttpMethod;
 import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
@@ -89,6 +91,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   private Supplier <? extends IAS4CryptoFactory> m_aCryptoFactorySupplier;
   private IPModeResolver m_aPModeResolver;
   private IAS4IncomingAttachmentFactory m_aIAF;
+  private IAS4IncomingSecurityConfiguration m_aICS = AS4IncomingSecurityConfiguration.createDefaultInstance ();
   private IHandlerCustomizer m_aHandlerCustomizer;
 
   /**
@@ -98,9 +101,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    */
   public AS4XServletHandler ()
   {
-    this (AS4CryptoFactoryProperties::getDefaultInstance,
-          DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-          IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
+    setCryptoFactorySupplier (AS4CryptoFactoryProperties::getDefaultInstance);
+    setPModeResolver (DefaultPModeResolver.DEFAULT_PMODE_RESOLVER);
+    setIncomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
   }
 
   /**
@@ -114,7 +117,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    *        The attachment factory for incoming attachments. May not be
    *        <code>null</code>.
    * @since v0.9.8
+   * @deprecated Please use the default constructors and setters
    */
+  @Deprecated (forRemoval = true, since = "2.1.3")
   public AS4XServletHandler (@Nonnull final Supplier <? extends IAS4CryptoFactory> aCryptoFactorySupplier,
                              @Nonnull final IPModeResolver aPModeResolver,
                              @Nonnull final IAS4IncomingAttachmentFactory aIAF)
@@ -196,6 +201,31 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   {
     ValueEnforcer.notNull (aIAF, "IAF");
     m_aIAF = aIAF;
+    return this;
+  }
+
+  /**
+   * @return The {@link IAS4IncomingSecurityConfiguration} to be used. Never
+   *         <code>null</code>.
+   * @since 2.1.3
+   */
+  @Nonnull
+  public final IAS4IncomingSecurityConfiguration getIncomingSecurityConfiguration ()
+  {
+    return m_aICS;
+  }
+
+  /**
+   * @param aICS
+   *        The incoming security configuration. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 2.1.3
+   */
+  @Nonnull
+  public final AS4XServletHandler setIncomingSecurityConfiguration (@Nonnull final IAS4IncomingSecurityConfiguration aICS)
+  {
+    ValueEnforcer.notNull (aICS, "ICS");
+    m_aICS = aICS;
     return this;
   }
 
@@ -289,12 +319,13 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                 @Nonnull final IAS4CryptoFactory aCF,
                                 @Nonnull final IPModeResolver aPModeResolver,
                                 @Nonnull final IAS4IncomingAttachmentFactory aIAF,
+                                @Nonnull final IAS4IncomingSecurityConfiguration aISC,
                                 @Nullable final IHandlerCustomizer aHandlerCustomizer) throws Exception
   {
     // Start metadata
     final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope);
 
-    try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCF, aPModeResolver, aIAF, aMessageMetadata))
+    try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCF, aPModeResolver, aIAF, aISC, aMessageMetadata))
     {
       // Customize before handling
       if (aHandlerCustomizer != null)
@@ -346,6 +377,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                    aCF,
                    m_aPModeResolver,
                    m_aIAF,
+                   m_aICS,
                    m_aHandlerCustomizer);
   }
 }
