@@ -89,10 +89,15 @@ public final class AS4Encryptor
         {
           field.setAccessible (true);
           field.set (aBuilder, aCryptParams.getSecurityProvider ());
+          LOGGER.info ("Successfully set 'provider' field in WSSecEncrypt");
         }
+        else
+          LOGGER.warn ("Failed to find 'provider' field in WSSecEncrypt");
       }
       catch (final Throwable t)
-      {}
+      {
+        LOGGER.error ("Failed to set 'provider' field in WSSecEncrypt: " + t.getMessage ());
+      }
     }
 
     // As the receiver MAY not have pre-configured the signing leaf certificate,

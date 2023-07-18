@@ -637,6 +637,10 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     aUserMsg.setSendingDateTimeOrNow (m_aSendingDateTime);
     // Set the keystore/truststore parameters
     aUserMsg.setAS4CryptoFactory (m_aCryptoFactory);
+
+    aUserMsg.cryptParams ().setSecurityProvider (m_aSecurityProviderCrypt);
+    aUserMsg.signingParams ().setSecurityProvider (m_aSecurityProviderSigning);
+
     aUserMsg.setPMode (m_aPMode, true);
 
     // Set after PMode
