@@ -82,6 +82,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
   protected ICryptoSessionKeyProvider m_aSessionKeyProvider;
   protected X509Certificate m_aReceiverCertificate;
+  protected String m_sReceiverCertificateAlias;
   protected String m_sEndpointURL;
 
   protected final ICommonsList <AS4OutgoingAttachment> m_aAttachments = new CommonsArrayList <> ();
@@ -381,17 +382,48 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set the receiver certificate used to encrypt the message with.
+   * Set the receiver certificate used to encrypt the message with. This is the
+   * full certificate. This method overwrites any receiver certificate alias
+   * configuration (the later call "wins").
    *
    * @param aCertificate
    *        The certificate of the receiver to be used. May be
    *        <code>null</code>.
    * @return this for chaining
+   * @see #receiverCertificateAlias(String)
    */
   @Nonnull
   public final IMPLTYPE receiverCertificate (@Nullable final X509Certificate aCertificate)
   {
+    if (StringHelper.hasText (m_sReceiverCertificateAlias))
+      LOGGER.warn ("Overwriting Receiver Certificate Alias with an actual Receiver Certificate");
+
     m_aReceiverCertificate = aCertificate;
+    m_sReceiverCertificateAlias = null;
+    return thisAsT ();
+  }
+
+  /**
+   * Set the receiver certificate alias into the CryptoFactory keystore used to
+   * encrypt the message with. This is only the alias or name of the entry. This
+   * method overwrites any receiver certificate configuration (the later call
+   * "wins").
+   *
+   * @param aCertificate
+   *        The certificate of the receiver to be used. May be
+   *        <code>null</code>.
+   * @return this for chaining
+   * @see #receiverCertificate(X509Certificate)
+   * @since 2.1.4
+   */
+  @Nonnull
+  public final IMPLTYPE receiverCertificateAlias (@Nullable final String sAlias)
+  {
+    if (m_aReceiverCertificate != null)
+      LOGGER.warn ("Overwriting actual Receiver Certificate with a Receiver Certificate Alias");
+
+    m_aReceiverCertificate = null;
+    m_sReceiverCertificateAlias = sAlias;
     return thisAsT ();
   }
 
@@ -560,6 +592,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
     // m_aSessionKeyProvider is optional
     // m_aReceiverCertificate is optional
+    // m_sReceiverCertificateAlias is optional
     if (StringHelper.hasNoText (m_sEndpointURL))
     {
       LOGGER.warn ("The field 'endpointURL' is not set");
@@ -616,6 +649,9 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
     if (m_aReceiverCertificate != null)
       aUserMsg.cryptParams ().setCertificate (m_aReceiverCertificate);
+    else
+      if (m_sReceiverCertificateAlias != null)
+        aUserMsg.cryptParams ().setAlias (m_sReceiverCertificateAlias);
 
     aUserMsg.setAgreementRefValue (m_sAgreementRef);
     if (StringHelper.hasText (m_sPModeID))
