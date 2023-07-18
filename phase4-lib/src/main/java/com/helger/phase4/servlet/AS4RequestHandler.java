@@ -61,6 +61,7 @@ import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
@@ -364,6 +365,7 @@ public class AS4RequestHandler implements AutoCloseable
   private final IAS4CryptoFactory m_aResponseCryptoFactory;
   private final IPModeResolver m_aPModeResolver;
   private final IAS4IncomingAttachmentFactory m_aIAF;
+  private final IAS4IncomingSecurityConfiguration m_aISC;
   private IAS4IncomingProfileSelector m_aIncomingProfileSelector = AS4IncomingProfileSelectorFromGlobal.INSTANCE;
   private final IAS4IncomingMessageMetadata m_aMessageMetadata;
   private Locale m_aLocale = Locale.US;
@@ -379,21 +381,24 @@ public class AS4RequestHandler implements AutoCloseable
   public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                             @Nonnull final IPModeResolver aPModeResolver,
                             @Nonnull final IAS4IncomingAttachmentFactory aIAF,
+                            @Nonnull final IAS4IncomingSecurityConfiguration aISC,
                             @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
-    this(aCryptoFactory, aCryptoFactory, aPModeResolver, aIAF, aMessageMetadata);
+    this(aCryptoFactory, aCryptoFactory, aPModeResolver, aIAF, aISC, aMessageMetadata);
   }
 
   public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                             @Nonnull final IAS4CryptoFactory aResponseCryptoFactory,
                             @Nonnull final IPModeResolver aPModeResolver,
                             @Nonnull final IAS4IncomingAttachmentFactory aIAF,
+                            @Nonnull final IAS4IncomingSecurityConfiguration aISC,
                             @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aResponseCryptoFactory, "ResponseCryptoFactory");
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     ValueEnforcer.notNull (aIAF, "IAF");
+    ValueEnforcer.notNull (aISC, "ISC");
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
     // Create dynamically here, to avoid leaving too many streams open
     m_aResHelper = new AS4ResourceHelper ();
@@ -401,6 +406,7 @@ public class AS4RequestHandler implements AutoCloseable
     m_aResponseCryptoFactory = aResponseCryptoFactory;
     m_aPModeResolver = aPModeResolver;
     m_aIAF = aIAF;
+    m_aISC = aISC;
     m_aMessageMetadata = aMessageMetadata;
   }
 
@@ -1172,7 +1178,8 @@ public class AS4RequestHandler implements AutoCloseable
 
     // We've got our response
     final Document aResponseDoc = aReceiptMessage.getAsSoapDocument ();
-    final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
+    final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ())
+                                                                   .setSecurityProvider (m_aISC.getSecurityProvider ());
     final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
                                                        aSigningParams,
                                                        aResponseDoc,
@@ -1452,7 +1459,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                 aLocalResponseAttachments);
 
             // Send UserMessage
-            final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
+            final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ())
+                                                                           .setSecurityProvider (m_aISC.getSecurityProvider ());
             // Use the original receiver ID as the alias into the keystore for
             // encrypting the response message
             final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
@@ -1684,7 +1692,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                   aEbmsUserMessage,
                                                                                   aResponseAttachments);
 
-              final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aLeg2.getSecurity ());
+              final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aLeg2.getSecurity ())
+                                                                             .setSecurityProvider (m_aISC.getSecurityProvider ());
               final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ()
                                                               .getTo ()
                                                               .getPartyIdAtIndex (0)
