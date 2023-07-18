@@ -17,6 +17,7 @@
 package com.helger.phase4.crypto;
 
 import java.io.Serializable;
+import java.security.Provider;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
@@ -73,6 +74,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   private String m_sAlias;
   // The session key provider
   private ICryptoSessionKeyProvider m_aSessionKeyProvider = DEFAULT_SESSION_KEY_PROVIDER;
+  private Provider m_aSecurityProvider;
 
   /**
    * Default constructor using default
@@ -314,6 +316,31 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   }
 
   /**
+   * @return The security provider to be used. May be <code>null</code>.
+   * @since 2.1.4
+   */
+  @Nullable
+  public final Provider getSecurityProvider ()
+  {
+    return m_aSecurityProvider;
+  }
+
+  /**
+   * Set the security provider to be used for encryption and decryption.
+   *
+   * @param aSecurityProvider
+   *        The security provider to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.1.4
+   */
+  @Nonnull
+  public final AS4CryptParams setSecurityProvider (@Nullable final Provider aSecurityProvider)
+  {
+    m_aSecurityProvider = aSecurityProvider;
+    return this;
+  }
+
+  /**
    * This method calls {@link #setAlgorithmCrypt(ECryptoAlgorithmCrypt)} based
    * on the PMode parameters. If the PMode parameter is <code>null</code> the
    * value will be set to <code>null</code>.
@@ -347,7 +374,8 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
                                 .setDigestAlgorithm (m_sDigestAlgorithm)
                                 .setCertificate (m_aCert)
                                 .setAlias (m_sAlias)
-                                .setSessionKeyProvider (m_aSessionKeyProvider);
+                                .setSessionKeyProvider (m_aSessionKeyProvider)
+                                .setSecurityProvider (m_aSecurityProvider);
   }
 
   @Override
@@ -361,6 +389,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
                                        .append ("Certificate", m_aCert)
                                        .append ("Alias", m_sAlias)
                                        .append ("SessionKeyProvider", m_aSessionKeyProvider)
+                                       .append ("SecurityProvider", m_aSecurityProvider)
                                        .getToString ();
   }
 

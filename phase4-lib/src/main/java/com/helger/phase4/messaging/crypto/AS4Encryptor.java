@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.messaging.crypto;
 
+import java.lang.reflect.Field;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
@@ -74,6 +76,25 @@ public final class AS4Encryptor
   {
     // See WSS-700 for request to add Provider parameter
     final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
+
+    if (aCryptParams.getSecurityProvider () != null)
+    {
+      // XXX Reflection alert!
+      // Set "provider" field in "WSSecEncrypt" to the custom security provider
+      // Requires the new constructor as requested in WSS-700, not part of 3.0.1
+      try
+      {
+        final Field field = aBuilder.getClass ().getDeclaredField ("provider");
+        if (field != null)
+        {
+          field.setAccessible (true);
+          field.set (aBuilder, aCryptParams.getSecurityProvider ());
+        }
+      }
+      catch (final Throwable t)
+      {}
+    }
+
     // As the receiver MAY not have pre-configured the signing leaf certificate,
     // a BinarySecurityToken token reference MUST be used to reference the
     // signing certificate.
