@@ -31,6 +31,7 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.ext.WSSecurityException.ErrorCode;
 import org.apache.wss4j.common.util.KeyUtils;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
+import org.apache.wss4j.dom.message.WSSecEncryptedKey;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,19 +85,19 @@ public final class AS4Encryptor
       // Requires the new constructor as requested in WSS-700, not part of 3.0.1
       try
       {
-        final Field field = aBuilder.getClass ().getDeclaredField ("provider");
+        final Field field = WSSecEncryptedKey.class.getDeclaredField ("provider");
         if (field != null)
         {
           field.setAccessible (true);
           field.set (aBuilder, aCryptParams.getSecurityProvider ());
-          LOGGER.info ("Successfully set 'provider' field in WSSecEncrypt");
+          LOGGER.info ("Successfully set 'provider' field in WSSecEncryptedKey");
         }
         else
-          LOGGER.warn ("Failed to find 'provider' field in WSSecEncrypt");
+          LOGGER.warn ("Failed to find 'provider' field in WSSecEncryptedKey");
       }
       catch (final Throwable t)
       {
-        LOGGER.error ("Failed to set 'provider' field in WSSecEncrypt: " + t.getMessage ());
+        LOGGER.error ("Failed to set 'provider' field in WSSecEncryptedKey", t);
       }
     }
 
