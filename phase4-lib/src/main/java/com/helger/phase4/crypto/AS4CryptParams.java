@@ -55,6 +55,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   public static final String DEFAULT_MGF_ALGORITHM = WSS4JConstants.MGF_SHA256;
   public static final String DEFAULT_DIGEST_ALGORITHM = WSS4JConstants.SHA256;
   public static final ICryptoSessionKeyProvider DEFAULT_SESSION_KEY_PROVIDER = ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_128;
+  public static final boolean DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY = true;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptParams.class);
 
@@ -75,6 +76,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   // The session key provider
   private ICryptoSessionKeyProvider m_aSessionKeyProvider = DEFAULT_SESSION_KEY_PROVIDER;
   private Provider m_aSecurityProvider;
+  private boolean m_bEncryptSymmetricSessionKey = DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY;
 
   /**
    * Default constructor using default
@@ -341,6 +343,34 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   }
 
   /**
+   * @return <code>true</code> if the symmetric session key should be part of
+   *         the transmission (e.g. in Peppol), or <code>false</code> if not
+   *         (e.g. BDEW). Default is
+   *         {@link #DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY}
+   * @since 2.1.4
+   */
+  public final boolean isEncryptSymmetricSessionKey ()
+  {
+    return m_bEncryptSymmetricSessionKey;
+  }
+
+  /**
+   * Enable or disable the inclusion of the symmetric session key into the
+   * transmission or not.
+   *
+   * @param b
+   *        <code>true</code> to enabled, <code>false</code> to disable it.
+   * @return this for chaining
+   * @since 2.1.4
+   */
+  @Nonnull
+  public final AS4CryptParams setEncryptSymmetricSessionKey (final boolean b)
+  {
+    m_bEncryptSymmetricSessionKey = b;
+    return this;
+  }
+
+  /**
    * This method calls {@link #setAlgorithmCrypt(ECryptoAlgorithmCrypt)} based
    * on the PMode parameters. If the PMode parameter is <code>null</code> the
    * value will be set to <code>null</code>.
@@ -375,7 +405,8 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
                                 .setCertificate (m_aCert)
                                 .setAlias (m_sAlias)
                                 .setSessionKeyProvider (m_aSessionKeyProvider)
-                                .setSecurityProvider (m_aSecurityProvider);
+                                .setSecurityProvider (m_aSecurityProvider)
+                                .setEncryptSymmetricSessionKey (m_bEncryptSymmetricSessionKey);
   }
 
   @Override
@@ -390,6 +421,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
                                        .append ("Alias", m_sAlias)
                                        .append ("SessionKeyProvider", m_aSessionKeyProvider)
                                        .append ("SecurityProvider", m_aSecurityProvider)
+                                       .append ("EncryptSymmetricSessionKey", m_bEncryptSymmetricSessionKey)
                                        .getToString ();
   }
 

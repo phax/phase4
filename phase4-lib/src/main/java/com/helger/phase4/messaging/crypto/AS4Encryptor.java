@@ -16,22 +16,16 @@
  */
 package com.helger.phase4.messaging.crypto;
 
-import java.lang.reflect.Field;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.apache.wss4j.common.WSEncryptionPart;
-import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.ext.WSSecurityException.ErrorCode;
-import org.apache.wss4j.common.util.KeyUtils;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
-import org.apache.wss4j.dom.message.WSSecEncryptedKey;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,29 +72,6 @@ public final class AS4Encryptor
     // See WSS-700 for request to add Provider parameter
     final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
 
-    if (aCryptParams.getSecurityProvider () != null)
-    {
-      // XXX Reflection alert!
-      // Set "provider" field in "WSSecEncrypt" to the custom security provider
-      // Requires the new constructor as requested in WSS-700, not part of 3.0.1
-      try
-      {
-        final Field field = WSSecEncryptedKey.class.getDeclaredField ("provider");
-        if (field != null)
-        {
-          field.setAccessible (true);
-          field.set (aBuilder, aCryptParams.getSecurityProvider ());
-          LOGGER.info ("Successfully set 'provider' field in WSSecEncryptedKey");
-        }
-        else
-          LOGGER.warn ("Failed to find 'provider' field in WSSecEncryptedKey");
-      }
-      catch (final Throwable t)
-      {
-        LOGGER.error ("Failed to set 'provider' field in WSSecEncryptedKey", t);
-      }
-    }
-
     // As the receiver MAY not have pre-configured the signing leaf certificate,
     // a BinarySecurityToken token reference MUST be used to reference the
     // signing certificate.
@@ -109,8 +80,8 @@ public final class AS4Encryptor
     aBuilder.setKeyEncAlgo (aCryptParams.getKeyEncAlgorithm ().getID ());
     aBuilder.setMGFAlgorithm (aCryptParams.getMGFAlgorithm ());
     aBuilder.setDigestAlgorithm (aCryptParams.getDigestAlgorithm ());
-    // Encrypted key must be contained
-    aBuilder.setEncryptSymmKey (true);
+    aBuilder.setEncryptSymmKey (aCryptParams.isEncryptSymmetricSessionKey ());
+    aBuilder.setSecurityProviderKey (aCryptParams.getSecurityProvider ());
 
     if (aCryptParams.hasCertificate ())
     {
@@ -261,8 +232,10 @@ public final class AS4Encryptor
       aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
 
     // Generate a session key
-    final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_128);
-    final SecretKey aSymmetricKey = aKeyGen.generateKey ();
+    final SecretKey aSymmetricKey = aCryptParams.getSessionKeyProvider ().getSessionKey ();
+    if (aSymmetricKey == null)
+      throw new IllegalStateException ("Failed to create a symmetric session key from " +
+                                       aCryptParams.getSessionKeyProvider ());
 
     // Main sign and/or encrypt
     final Document aEncryptedDoc = aBuilder.build (aCryptoFactory.getCrypto (), aSymmetricKey);

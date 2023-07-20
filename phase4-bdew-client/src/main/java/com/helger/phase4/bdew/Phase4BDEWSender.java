@@ -198,6 +198,8 @@ public final class Phase4BDEWSender
         // Other crypt parameters are located in the PMode security part
         aUserMsg.cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
         aUserMsg.cryptParams ().setKeyIdentifierType (m_eEncryptionKeyIdentifierType);
+        // Do not add the session key into the transmission
+        aUserMsg.cryptParams ().setEncryptSymmetricSessionKey (false);
 
         // See BDEW specs 2.2.6.2
         // Other signing parameters are located in the PMode security part
