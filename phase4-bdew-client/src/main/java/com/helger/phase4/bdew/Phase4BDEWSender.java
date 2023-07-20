@@ -95,8 +95,6 @@ public final class Phase4BDEWSender
         // Other crypt parameters are located in the PMode security part
         cryptParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
         cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
-        // Do not add the session key into the transmission
-        cryptParams ().setEncryptSymmetricSessionKey (false);
 
         /**
          * Assumption: the BST "ValueType" attribute is set to
