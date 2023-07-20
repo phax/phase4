@@ -69,8 +69,11 @@ public final class AS4Encryptor
   private static WSSecEncrypt _createEncrypt (@Nonnull final WSSecHeader aSecHeader,
                                               @Nonnull final AS4CryptParams aCryptParams)
   {
-    // See WSS-700 for request to add Provider parameter
-    final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
+    final WSSecEncrypt aBuilder = aCryptParams.hasWSSecEncryptCustomizer () ? aCryptParams.getWSSecEncryptCustomizer ()
+                                                                                          .createWSSecEncrypt (aSecHeader)
+                                                                            : new WSSecEncrypt (aSecHeader);
+    if (aBuilder == null)
+      throw new IllegalStateException ("Failed to create WSSecEncrypt for " + aSecHeader);
 
     // As the receiver MAY not have pre-configured the signing leaf certificate,
     // a BinarySecurityToken token reference MUST be used to reference the
@@ -81,6 +84,7 @@ public final class AS4Encryptor
     aBuilder.setMGFAlgorithm (aCryptParams.getMGFAlgorithm ());
     aBuilder.setDigestAlgorithm (aCryptParams.getDigestAlgorithm ());
     aBuilder.setEncryptSymmKey (aCryptParams.isEncryptSymmetricSessionKey ());
+
     if (aCryptParams.hasCertificate ())
     {
       // Certificate was provided externally
