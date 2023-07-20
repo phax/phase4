@@ -38,7 +38,6 @@ import com.helger.commons.wrapper.Wrapper;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
-import com.helger.phase4.crypto.ICryptoSessionKeyProvider;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -80,7 +79,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
   protected final ICommonsList <MessageProperty> m_aMessageProperties = new CommonsArrayList <> ();
 
-  protected ICryptoSessionKeyProvider m_aSessionKeyProvider;
   protected X509Certificate m_aReceiverCertificate;
   protected String m_sReceiverCertificateAlias;
   protected String m_sEndpointURL;
@@ -365,23 +363,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set the session key provider, that is used to create the symmetric key.
-   * This provider is only used when non-<code>null</code>. It was initially
-   * introduced for the BDEW profile and is usually not needed.
-   *
-   * @param aSessionKeyProvider
-   *        The key provider to be used. May be <code>null</code>.
-   * @return this for chaining
-   * @since 2.1.4
-   */
-  @Nonnull
-  public final IMPLTYPE sessionKeyProvider (@Nullable final ICryptoSessionKeyProvider aSessionKeyProvider)
-  {
-    m_aSessionKeyProvider = aSessionKeyProvider;
-    return thisAsT ();
-  }
-
-  /**
    * Set the receiver certificate used to encrypt the message with. This is the
    * full certificate. This method overwrites any receiver certificate alias
    * configuration (the later call "wins").
@@ -638,18 +619,15 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // Set the keystore/truststore parameters
     aUserMsg.setAS4CryptoFactory (m_aCryptoFactory);
 
-    aUserMsg.cryptParams ().setSecurityProvider (m_aSecurityProviderCrypt);
-    aUserMsg.signingParams ().setSecurityProvider (m_aSecurityProviderSigning);
+    // Copy all values
+    m_aCryptParams.cloneTo (aUserMsg.cryptParams ());
+    m_aSigningParams.cloneTo (aUserMsg.signingParams ());
 
     aUserMsg.setPMode (m_aPMode, true);
 
     // Set after PMode
     if (m_aHttpRetrySettings != null)
       aUserMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
-
-    // Set after PMode
-    if (m_aSessionKeyProvider != null)
-      aUserMsg.cryptParams ().setSessionKeyProvider (m_aSessionKeyProvider);
 
     if (m_aReceiverCertificate != null)
       aUserMsg.cryptParams ().setCertificate (m_aReceiverCertificate);

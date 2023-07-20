@@ -150,8 +150,9 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     // Set the keystore/truststore parameters
     aPullRequestMsg.setAS4CryptoFactory (m_aCryptoFactory);
 
-    aPullRequestMsg.cryptParams ().setSecurityProvider (m_aSecurityProviderCrypt);
-    aPullRequestMsg.signingParams ().setSecurityProvider (m_aSecurityProviderSigning);
+    // Copy all values
+    m_aCryptParams.cloneTo (aPullRequestMsg.cryptParams ());
+    m_aSigningParams.cloneTo (aPullRequestMsg.signingParams ());
 
     if (m_aHttpRetrySettings != null)
       aPullRequestMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);

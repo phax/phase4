@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.sender;
 
-import java.security.Provider;
 import java.time.OffsetDateTime;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.OverrideOnDemand;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.httpclient.HttpClientFactory;
@@ -38,7 +39,9 @@ import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
@@ -70,8 +73,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected IHttpPoster m_aCustomHttpPoster;
   protected HttpClientFactory m_aHttpClientFactory;
   protected IAS4CryptoFactory m_aCryptoFactory;
-  protected Provider m_aSecurityProviderSigning;
-  protected Provider m_aSecurityProviderCrypt;
+  protected final AS4SigningParams m_aSigningParams = new AS4SigningParams ();
+  protected final AS4CryptParams m_aCryptParams = new AS4CryptParams ();
   protected String m_sMessageID;
   protected String m_sRefToMessageID;
   protected OffsetDateTime m_aSendingDateTime;
@@ -213,70 +216,34 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     return thisAsT ();
   }
 
-  /**
-   * @return The security provider to be used for signing. <code>null</code>
-   *         means "default".
-   * @since 2.1.4
-   */
-  @Nullable
-  public final Provider securityProviderSigning ()
+  @Nonnull
+  @ReturnsMutableObject
+  public final AS4SigningParams signingParams ()
   {
-    return m_aSecurityProviderSigning;
+    return m_aSigningParams;
   }
 
-  /**
-   * Set the security provider to be used for signing only.
-   *
-   * @param aSecurityProviderSigning
-   *        The provider to use. May be <code>null</code> meaning "default".
-   * @return this for chaining
-   * @since 2.1.4
-   */
   @Nonnull
-  public final IMPLTYPE securityProviderSigning (@Nullable final Provider aSecurityProviderSigning)
+  @ReturnsMutableObject
+  public final IMPLTYPE withSigningParams (@Nonnull final Consumer <AS4SigningParams> aConsumer)
   {
-    m_aSecurityProviderSigning = aSecurityProviderSigning;
+    aConsumer.accept (m_aSigningParams);
     return thisAsT ();
   }
 
-  /**
-   * @return The security provider to be used for crypting. <code>null</code>
-   *         means "default".
-   * @since 2.1.4
-   */
-  @Nullable
-  public final Provider securityProviderCrypt ()
+  @Nonnull
+  @ReturnsMutableObject
+  public final AS4CryptParams cryptParams ()
   {
-    return m_aSecurityProviderCrypt;
+    return m_aCryptParams;
   }
 
-  /**
-   * Set the security provider to be used for crypting only.
-   *
-   * @param aSecurityProviderCrypt
-   *        The provider to use. May be <code>null</code> meaning "default".
-   * @return this for chaining
-   * @since 2.1.4
-   */
   @Nonnull
-  public final IMPLTYPE securityProviderCrypt (@Nullable final Provider aSecurityProviderCrypt)
+  @ReturnsMutableObject
+  public final IMPLTYPE withCryptParams (@Nonnull final Consumer <AS4CryptParams> aConsumer)
   {
-    m_aSecurityProviderCrypt = aSecurityProviderCrypt;
+    aConsumer.accept (m_aCryptParams);
     return thisAsT ();
-  }
-
-  /**
-   * Set the security provider to be used for signing and crypting.
-   *
-   * @param aSecurityProvider
-   *        The provider to use. May be <code>null</code>.
-   * @return this for chaining
-   * @since 2.1.4
-   */
-  @Nonnull
-  public final IMPLTYPE securityProvider (@Nullable final Provider aSecurityProvider)
-  {
-    return securityProviderSigning (aSecurityProvider).securityProviderCrypt (aSecurityProvider);
   }
 
   /**
