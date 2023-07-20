@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.wss4j.common.WSS4JConstants;
@@ -77,6 +78,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   private ICryptoSessionKeyProvider m_aSessionKeyProvider = DEFAULT_SESSION_KEY_PROVIDER;
   private Provider m_aSecurityProvider;
   private boolean m_bEncryptSymmetricSessionKey = DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY;
+  private IWSSecEncryptCustomizer m_aWSSecEncryptCustomizer;
 
   /**
    * Default constructor using default
@@ -370,6 +372,24 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
     return this;
   }
 
+  @Nullable
+  public final IWSSecEncryptCustomizer getWSSecEncryptCustomizer ()
+  {
+    return m_aWSSecEncryptCustomizer;
+  }
+
+  public final boolean hasWSSecEncryptCustomizer ()
+  {
+    return m_aWSSecEncryptCustomizer != null;
+  }
+
+  @Nonnull
+  public final AS4CryptParams setWSSecEncryptCustomizer (@Nullable final IWSSecEncryptCustomizer a)
+  {
+    m_aWSSecEncryptCustomizer = a;
+    return this;
+  }
+
   /**
    * This method calls {@link #setAlgorithmCrypt(ECryptoAlgorithmCrypt)} based
    * on the PMode parameters. If the PMode parameter is <code>null</code> the
@@ -393,20 +413,30 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
     return this;
   }
 
+  @OverridingMethodsMustInvokeSuper
+  public void cloneTo (@Nonnull final AS4CryptParams aTarget)
+  {
+    ValueEnforcer.notNull (aTarget, "Target");
+    aTarget.setKeyIdentifierType (m_eKeyIdentifierType)
+           .setAlgorithmCrypt (m_eAlgorithmCrypt)
+           .setKeyEncAlgorithm (m_eKeyEncAlgorithm)
+           .setMGFAlgorithm (m_sMGFAlgorithm)
+           .setDigestAlgorithm (m_sDigestAlgorithm)
+           .setCertificate (m_aCert)
+           .setAlias (m_sAlias)
+           .setSessionKeyProvider (m_aSessionKeyProvider)
+           .setSecurityProvider (m_aSecurityProvider)
+           .setEncryptSymmetricSessionKey (m_bEncryptSymmetricSessionKey)
+           .setWSSecEncryptCustomizer (m_aWSSecEncryptCustomizer);
+  }
+
   @Nonnull
   @ReturnsMutableCopy
   public AS4CryptParams getClone ()
   {
-    return new AS4CryptParams ().setKeyIdentifierType (m_eKeyIdentifierType)
-                                .setAlgorithmCrypt (m_eAlgorithmCrypt)
-                                .setKeyEncAlgorithm (m_eKeyEncAlgorithm)
-                                .setMGFAlgorithm (m_sMGFAlgorithm)
-                                .setDigestAlgorithm (m_sDigestAlgorithm)
-                                .setCertificate (m_aCert)
-                                .setAlias (m_sAlias)
-                                .setSessionKeyProvider (m_aSessionKeyProvider)
-                                .setSecurityProvider (m_aSecurityProvider)
-                                .setEncryptSymmetricSessionKey (m_bEncryptSymmetricSessionKey);
+    final AS4CryptParams ret = new AS4CryptParams ();
+    cloneTo (ret);
+    return ret;
   }
 
   @Override
@@ -422,6 +452,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
                                        .append ("SessionKeyProvider", m_aSessionKeyProvider)
                                        .append ("SecurityProvider", m_aSecurityProvider)
                                        .append ("EncryptSymmetricSessionKey", m_bEncryptSymmetricSessionKey)
+                                       .append ("WSSecEncryptCustomizer", m_aWSSecEncryptCustomizer)
                                        .getToString ();
   }
 

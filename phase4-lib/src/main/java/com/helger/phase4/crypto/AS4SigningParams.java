@@ -21,6 +21,7 @@ import java.security.Provider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
@@ -219,15 +220,24 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
     return this;
   }
 
+  @OverridingMethodsMustInvokeSuper
+  public void cloneTo (@Nonnull final AS4SigningParams aTarget)
+  {
+    ValueEnforcer.notNull (aTarget, "Target");
+    aTarget.setKeyIdentifierType (m_eKeyIdentifierType)
+           .setAlgorithmSign (m_eAlgorithmSign)
+           .setAlgorithmSignDigest (m_eAlgorithmSignDigest)
+           .setAlgorithmC14N (m_eAlgorithmC14N)
+           .setSecurityProvider (m_aSecurityProvider);
+  }
+
   @Nonnull
   @ReturnsMutableCopy
   public AS4SigningParams getClone ()
   {
-    return new AS4SigningParams ().setKeyIdentifierType (m_eKeyIdentifierType)
-                                  .setAlgorithmSign (m_eAlgorithmSign)
-                                  .setAlgorithmSignDigest (m_eAlgorithmSignDigest)
-                                  .setAlgorithmC14N (m_eAlgorithmC14N)
-                                  .setSecurityProvider (m_aSecurityProvider);
+    final AS4SigningParams ret = new AS4SigningParams ();
+    cloneTo (ret);
+    return ret;
   }
 
   @Override

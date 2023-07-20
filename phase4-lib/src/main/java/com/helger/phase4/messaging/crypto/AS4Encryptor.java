@@ -80,9 +80,8 @@ public final class AS4Encryptor
     aBuilder.setKeyEncAlgo (aCryptParams.getKeyEncAlgorithm ().getID ());
     aBuilder.setMGFAlgorithm (aCryptParams.getMGFAlgorithm ());
     aBuilder.setDigestAlgorithm (aCryptParams.getDigestAlgorithm ());
-    aBuilder.setEncryptSymmKey (aCryptParams.isEncryptSymmetricSessionKey ());
     aBuilder.setSecurityProviderKey (aCryptParams.getSecurityProvider ());
-
+    aBuilder.setEncryptSymmKey (aCryptParams.isEncryptSymmetricSessionKey ());
     if (aCryptParams.hasCertificate ())
     {
       // Certificate was provided externally
@@ -94,6 +93,15 @@ public final class AS4Encryptor
         // No PW needed here, because we encrypt with the public key
         aBuilder.setUserInfo (aCryptParams.getAlias ());
       }
+
+    // Customizer to be invoked as the last action
+    if (aCryptParams.hasWSSecEncryptCustomizer ())
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Running WSSecEncryptCustomizer.customize");
+      aCryptParams.getWSSecEncryptCustomizer ().customize (aBuilder);
+    }
+
     return aBuilder;
   }
 
