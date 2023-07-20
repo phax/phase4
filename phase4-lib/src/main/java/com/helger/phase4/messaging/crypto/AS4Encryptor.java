@@ -80,7 +80,6 @@ public final class AS4Encryptor
     aBuilder.setKeyEncAlgo (aCryptParams.getKeyEncAlgorithm ().getID ());
     aBuilder.setMGFAlgorithm (aCryptParams.getMGFAlgorithm ());
     aBuilder.setDigestAlgorithm (aCryptParams.getDigestAlgorithm ());
-    aBuilder.setSecurityProviderKey (aCryptParams.getSecurityProvider ());
     aBuilder.setEncryptSymmKey (aCryptParams.isEncryptSymmetricSessionKey ());
     if (aCryptParams.hasCertificate ())
     {
