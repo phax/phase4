@@ -346,8 +346,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
 
   /**
    * @return <code>true</code> if the symmetric session key should be part of
-   *         the transmission (e.g. in Peppol), or <code>false</code> if not
-   *         (e.g. BDEW). Default is
+   *         the transmission or <code>false</code> if not. Default is
    *         {@link #DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY}
    * @since 2.1.4
    */
