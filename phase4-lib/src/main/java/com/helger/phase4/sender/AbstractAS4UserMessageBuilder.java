@@ -38,6 +38,7 @@ import com.helger.commons.wrapper.Wrapper;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
+import com.helger.phase4.crypto.ICryptoSessionKeyProvider;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -79,7 +80,9 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
   protected final ICommonsList <MessageProperty> m_aMessageProperties = new CommonsArrayList <> ();
 
+  protected ICryptoSessionKeyProvider m_aSessionKeyProvider;
   protected X509Certificate m_aReceiverCertificate;
+  protected String m_sReceiverCertificateAlias;
   protected String m_sEndpointURL;
 
   protected final ICommonsList <AS4OutgoingAttachment> m_aAttachments = new CommonsArrayList <> ();
@@ -362,17 +365,65 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set the receiver certificate.
+   * Set the session key provider, that is used to create the symmetric key.
+   * This provider is only used when non-<code>null</code>. It was initially
+   * introduced for the BDEW profile and is usually not needed.
+   *
+   * @param aSessionKeyProvider
+   *        The key provider to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.1.4
+   */
+  @Nonnull
+  public final IMPLTYPE sessionKeyProvider (@Nullable final ICryptoSessionKeyProvider aSessionKeyProvider)
+  {
+    m_aSessionKeyProvider = aSessionKeyProvider;
+    return thisAsT ();
+  }
+
+  /**
+   * Set the receiver certificate used to encrypt the message with. This is the
+   * full certificate. This method overwrites any receiver certificate alias
+   * configuration (the later call "wins").
    *
    * @param aCertificate
    *        The certificate of the receiver to be used. May be
    *        <code>null</code>.
    * @return this for chaining
+   * @see #receiverCertificateAlias(String)
    */
   @Nonnull
   public final IMPLTYPE receiverCertificate (@Nullable final X509Certificate aCertificate)
   {
+    if (StringHelper.hasText (m_sReceiverCertificateAlias))
+      LOGGER.warn ("Overwriting Receiver Certificate Alias with an actual Receiver Certificate");
+
     m_aReceiverCertificate = aCertificate;
+    m_sReceiverCertificateAlias = null;
+    return thisAsT ();
+  }
+
+  /**
+   * Set the receiver certificate alias into the CryptoFactory keystore used to
+   * encrypt the message with. This is only the alias or name of the entry. This
+   * method overwrites any receiver certificate configuration (the later call
+   * "wins").
+   *
+   * @param aCertificate
+   *        The certificate of the receiver to be used. May be
+   *        <code>null</code>.
+   * @return this for chaining
+   * @see #receiverCertificate(X509Certificate)
+   * @since 2.1.4
+   */
+  @Nonnull
+  public final IMPLTYPE receiverCertificateAlias (@Nullable final String sAlias)
+  {
+    if (m_aReceiverCertificate != null)
+      LOGGER.warn ("Overwriting actual Receiver Certificate with a Receiver Certificate Alias");
+
+    m_aReceiverCertificate = null;
+    m_sReceiverCertificateAlias = sAlias;
     return thisAsT ();
   }
 
@@ -539,7 +590,9 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
     // m_aMessageProperties is final
 
+    // m_aSessionKeyProvider is optional
     // m_aReceiverCertificate is optional
+    // m_sReceiverCertificateAlias is optional
     if (StringHelper.hasNoText (m_sEndpointURL))
     {
       LOGGER.warn ("The field 'endpointURL' is not set");
@@ -584,6 +637,10 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     aUserMsg.setSendingDateTimeOrNow (m_aSendingDateTime);
     // Set the keystore/truststore parameters
     aUserMsg.setAS4CryptoFactory (m_aCryptoFactory);
+
+    aUserMsg.cryptParams ().setSecurityProvider (m_aSecurityProviderCrypt);
+    aUserMsg.signingParams ().setSecurityProvider (m_aSecurityProviderSigning);
+
     aUserMsg.setPMode (m_aPMode, true);
 
     // Set after PMode
@@ -591,8 +648,14 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       aUserMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
 
     // Set after PMode
+    if (m_aSessionKeyProvider != null)
+      aUserMsg.cryptParams ().setSessionKeyProvider (m_aSessionKeyProvider);
+
     if (m_aReceiverCertificate != null)
       aUserMsg.cryptParams ().setCertificate (m_aReceiverCertificate);
+    else
+      if (m_sReceiverCertificateAlias != null)
+        aUserMsg.cryptParams ().setAlias (m_sReceiverCertificateAlias);
 
     aUserMsg.setAgreementRefValue (m_sAgreementRef);
     if (StringHelper.hasText (m_sPModeID))
@@ -607,8 +670,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     if (StringHelper.hasText (m_sRefToMessageID))
       aUserMsg.setRefToMessageID (m_sRefToMessageID);
     // Empty conversation ID is okay
-    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID
-                                                          : MessageHelperMethods.createRandomConversationID ());
+    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID : MessageHelperMethods
+                                                                                                    .createRandomConversationID ());
 
     aUserMsg.setFromPartyIDType (m_sFromPartyIDType);
     aUserMsg.setFromPartyID (m_sFromPartyID);

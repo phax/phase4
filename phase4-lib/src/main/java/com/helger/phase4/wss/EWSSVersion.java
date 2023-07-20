@@ -33,8 +33,8 @@ public enum EWSSVersion
   @Deprecated (forRemoval = false)
   WSS_10("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.0"),
   @Deprecated (forRemoval = false)
-  WSS_11("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.1"),
-  WSS_111 ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.1.1");
+  WSS_11("http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd", "wsse11", "1.1"),
+  WSS_111 ("http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd", "wsse11", "1.1.1");
 
   private final String m_sNamespaceURI;
   private final String m_sNamespacePrefix;

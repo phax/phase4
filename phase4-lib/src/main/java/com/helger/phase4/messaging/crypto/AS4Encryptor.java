@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.messaging.crypto;
 
+import java.lang.reflect.Field;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
@@ -29,6 +31,7 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.ext.WSSecurityException.ErrorCode;
 import org.apache.wss4j.common.util.KeyUtils;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
+import org.apache.wss4j.dom.message.WSSecEncryptedKey;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +77,30 @@ public final class AS4Encryptor
   {
     // See WSS-700 for request to add Provider parameter
     final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
+
+    if (aCryptParams.getSecurityProvider () != null)
+    {
+      // XXX Reflection alert!
+      // Set "provider" field in "WSSecEncrypt" to the custom security provider
+      // Requires the new constructor as requested in WSS-700, not part of 3.0.1
+      try
+      {
+        final Field field = WSSecEncryptedKey.class.getDeclaredField ("provider");
+        if (field != null)
+        {
+          field.setAccessible (true);
+          field.set (aBuilder, aCryptParams.getSecurityProvider ());
+          LOGGER.info ("Successfully set 'provider' field in WSSecEncryptedKey");
+        }
+        else
+          LOGGER.warn ("Failed to find 'provider' field in WSSecEncryptedKey");
+      }
+      catch (final Throwable t)
+      {
+        LOGGER.error ("Failed to set 'provider' field in WSSecEncryptedKey", t);
+      }
+    }
+
     // As the receiver MAY not have pre-configured the signing leaf certificate,
     // a BinarySecurityToken token reference MUST be used to reference the
     // signing certificate.

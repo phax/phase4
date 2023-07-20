@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.sender;
 
+import java.security.Provider;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 
@@ -69,6 +70,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected IHttpPoster m_aCustomHttpPoster;
   protected HttpClientFactory m_aHttpClientFactory;
   protected IAS4CryptoFactory m_aCryptoFactory;
+  protected Provider m_aSecurityProviderSigning;
+  protected Provider m_aSecurityProviderCrypt;
   protected String m_sMessageID;
   protected String m_sRefToMessageID;
   protected OffsetDateTime m_aSendingDateTime;
@@ -208,6 +211,72 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {
     m_aCryptoFactory = aCryptoFactory;
     return thisAsT ();
+  }
+
+  /**
+   * @return The security provider to be used for signing. <code>null</code>
+   *         means "default".
+   * @since 2.1.4
+   */
+  @Nullable
+  public final Provider securityProviderSigning ()
+  {
+    return m_aSecurityProviderSigning;
+  }
+
+  /**
+   * Set the security provider to be used for signing only.
+   *
+   * @param aSecurityProviderSigning
+   *        The provider to use. May be <code>null</code> meaning "default".
+   * @return this for chaining
+   * @since 2.1.4
+   */
+  @Nonnull
+  public final IMPLTYPE securityProviderSigning (@Nullable final Provider aSecurityProviderSigning)
+  {
+    m_aSecurityProviderSigning = aSecurityProviderSigning;
+    return thisAsT ();
+  }
+
+  /**
+   * @return The security provider to be used for crypting. <code>null</code>
+   *         means "default".
+   * @since 2.1.4
+   */
+  @Nullable
+  public final Provider securityProviderCrypt ()
+  {
+    return m_aSecurityProviderCrypt;
+  }
+
+  /**
+   * Set the security provider to be used for crypting only.
+   *
+   * @param aSecurityProviderCrypt
+   *        The provider to use. May be <code>null</code> meaning "default".
+   * @return this for chaining
+   * @since 2.1.4
+   */
+  @Nonnull
+  public final IMPLTYPE securityProviderCrypt (@Nullable final Provider aSecurityProviderCrypt)
+  {
+    m_aSecurityProviderCrypt = aSecurityProviderCrypt;
+    return thisAsT ();
+  }
+
+  /**
+   * Set the security provider to be used for signing and crypting.
+   *
+   * @param aSecurityProvider
+   *        The provider to use. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.1.4
+   */
+  @Nonnull
+  public final IMPLTYPE securityProvider (@Nullable final Provider aSecurityProvider)
+  {
+    return securityProviderSigning (aSecurityProvider).securityProviderCrypt (aSecurityProvider);
   }
 
   /**
