@@ -14,8 +14,15 @@ import org.apache.wss4j.dom.message.WSSecHeader;
  */
 public interface IWSSecEncryptCustomizer
 {
+  /**
+   * Create an overloaded version of WSSecEncrypt
+   *
+   * @param aSecHeader
+   *        The security header to start with.
+   * @return Never <code>null</code>.
+   */
   @Nonnull
-  default WSSecEncrypt createWSSecEncrypt (final WSSecHeader aSecHeader)
+  default WSSecEncrypt createWSSecEncrypt (@Nonnull final WSSecHeader aSecHeader)
   {
     return new WSSecEncrypt (aSecHeader);
   }
@@ -27,5 +34,6 @@ public interface IWSSecEncryptCustomizer
    * @param aWSSecEncrypt
    *        The object to modify. May not be <code>null</code>.
    */
-  void customize (@Nonnull WSSecEncrypt aWSSecEncrypt);
+  default void customize (@Nonnull final WSSecEncrypt aWSSecEncrypt)
+  {}
 }
