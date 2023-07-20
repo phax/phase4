@@ -82,8 +82,6 @@ public final class Phase4BDEWSender
     // Default per section 2.2.6.2.1
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
 
-    private ECryptoKeyIdentifierType m_eSigningKeyIdentifierType;
-    private ECryptoKeyIdentifierType m_eEncryptionKeyIdentifierType;
     private AS4OutgoingAttachment m_aPayload;
     private BDEWPayloadParams m_aPayloadParams;
 
@@ -93,8 +91,23 @@ public final class Phase4BDEWSender
       try
       {
         httpClientFactory (new Phase4BDEWHttpClientSettings ());
-        signingKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
-        encryptionKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+
+        // Other crypt parameters are located in the PMode security part
+        cryptParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+        cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
+        // Do not add the session key into the transmission
+        cryptParams ().setEncryptSymmetricSessionKey (false);
+
+        /**
+         * Assumption: the BST "ValueType" attribute is set to
+         * "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509PKIPathv1"
+         * by WSS4J automatically (see WSSecSignature#addBST)
+         */
+
+        // See BDEW specs 2.2.6.2
+        // Other signing parameters are located in the PMode security part
+        signingParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+        signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
       }
       catch (final Exception ex)
       {
@@ -113,7 +126,7 @@ public final class Phase4BDEWSender
     @Nonnull
     public final IMPLTYPE encryptionKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eEncryptionKeyIdentifierType)
     {
-      m_eEncryptionKeyIdentifierType = eEncryptionKeyIdentifierType;
+      cryptParams ().setKeyIdentifierType (eEncryptionKeyIdentifierType);
       return thisAsT ();
     }
 
@@ -146,7 +159,7 @@ public final class Phase4BDEWSender
     @Nonnull
     public final IMPLTYPE signingKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
     {
-      m_eSigningKeyIdentifierType = eSigningKeyIdentifierType;
+      signingParams ().setKeyIdentifierType (eSigningKeyIdentifierType);
       return thisAsT ();
     }
 
@@ -194,22 +207,6 @@ public final class Phase4BDEWSender
         // Start building AS4 User Message
         final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
         applyToUserMessage (aUserMsg);
-
-        // Other crypt parameters are located in the PMode security part
-        aUserMsg.cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
-        aUserMsg.cryptParams ().setKeyIdentifierType (m_eEncryptionKeyIdentifierType);
-        // Do not add the session key into the transmission
-        aUserMsg.cryptParams ().setEncryptSymmetricSessionKey (false);
-
-        // See BDEW specs 2.2.6.2
-        // Other signing parameters are located in the PMode security part
-        aUserMsg.signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
-        aUserMsg.signingParams ().setKeyIdentifierType (m_eSigningKeyIdentifierType);
-        /**
-         * Assumption: the BST "ValueType" attribute is set to
-         * "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509PKIPathv1"
-         * by WSS4J automatically (see WSSecSignature#addBST)
-         */
 
         // Empty string by purpose
         aUserMsg.setConversationID ("");

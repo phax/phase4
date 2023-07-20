@@ -79,8 +79,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
   protected final ICommonsList <MessageProperty> m_aMessageProperties = new CommonsArrayList <> ();
 
-  protected X509Certificate m_aReceiverCertificate;
-  protected String m_sReceiverCertificateAlias;
   protected String m_sEndpointURL;
 
   protected final ICommonsList <AS4OutgoingAttachment> m_aAttachments = new CommonsArrayList <> ();
@@ -376,11 +374,10 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   @Nonnull
   public final IMPLTYPE receiverCertificate (@Nullable final X509Certificate aCertificate)
   {
-    if (StringHelper.hasText (m_sReceiverCertificateAlias))
+    if (StringHelper.hasText (cryptParams ().getAlias ()))
       LOGGER.warn ("Overwriting Receiver Certificate Alias with an actual Receiver Certificate");
 
-    m_aReceiverCertificate = aCertificate;
-    m_sReceiverCertificateAlias = null;
+    cryptParams ().setCertificate (aCertificate).setAlias (null);
     return thisAsT ();
   }
 
@@ -400,11 +397,10 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   @Nonnull
   public final IMPLTYPE receiverCertificateAlias (@Nullable final String sAlias)
   {
-    if (m_aReceiverCertificate != null)
+    if (cryptParams ().getCertificate () != null)
       LOGGER.warn ("Overwriting actual Receiver Certificate with a Receiver Certificate Alias");
 
-    m_aReceiverCertificate = null;
-    m_sReceiverCertificateAlias = sAlias;
+    cryptParams ().setCertificate (null).setAlias (sAlias);
     return thisAsT ();
   }
 
@@ -628,12 +624,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // Set after PMode
     if (m_aHttpRetrySettings != null)
       aUserMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
-
-    if (m_aReceiverCertificate != null)
-      aUserMsg.cryptParams ().setCertificate (m_aReceiverCertificate);
-    else
-      if (m_sReceiverCertificateAlias != null)
-        aUserMsg.cryptParams ().setAlias (m_sReceiverCertificateAlias);
 
     aUserMsg.setAgreementRefValue (m_sAgreementRef);
     if (StringHelper.hasText (m_sPModeID))

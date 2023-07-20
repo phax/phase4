@@ -76,8 +76,6 @@ public final class Phase4ENTSOGSender
   {
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.ISSUER_SERIAL;
 
-    private ECryptoKeyIdentifierType m_eSigningKeyIdentifierType;
-    private ECryptoKeyIdentifierType m_eEncryptionKeyIdentifierType;
     private AS4OutgoingAttachment m_aPayload;
     private ENTSOGPayloadParams m_aPayloadParams;
 
@@ -87,8 +85,8 @@ public final class Phase4ENTSOGSender
       try
       {
         httpClientFactory (new Phase4ENTSOGHttpClientSettings ());
-        setSigningKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
-        encryptionKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+        signingParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+        cryptParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
       }
       catch (final Exception ex)
       {
@@ -107,7 +105,7 @@ public final class Phase4ENTSOGSender
     @Nonnull
     public final IMPLTYPE encryptionKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eEncryptionKeyIdentifierType)
     {
-      m_eEncryptionKeyIdentifierType = eEncryptionKeyIdentifierType;
+      cryptParams ().setKeyIdentifierType (eEncryptionKeyIdentifierType);
       return thisAsT ();
     }
 
@@ -122,7 +120,7 @@ public final class Phase4ENTSOGSender
     @Nonnull
     public final IMPLTYPE setSigningKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
     {
-      m_eSigningKeyIdentifierType = eSigningKeyIdentifierType;
+      signingParams ().setKeyIdentifierType (eSigningKeyIdentifierType);
       return thisAsT ();
     }
 
@@ -171,8 +169,6 @@ public final class Phase4ENTSOGSender
         final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
         applyToUserMessage (aUserMsg);
 
-        aUserMsg.cryptParams ().setKeyIdentifierType (m_eEncryptionKeyIdentifierType);
-        aUserMsg.signingParams ().setKeyIdentifierType (m_eSigningKeyIdentifierType);
         // Empty string by purpose
         aUserMsg.setConversationID ("");
 
