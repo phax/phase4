@@ -57,6 +57,8 @@ public final class WSSSynchronizer
   public static void run (@Nonnull final Runnable aRunnable)
   {
     ValueEnforcer.notNull (aRunnable, "Runnable");
+
+    // Wrap Runnable in Supplier
     call ( () -> {
       aRunnable.run ();
       return null;
@@ -76,6 +78,7 @@ public final class WSSSynchronizer
       WSSConfig.init ();
       try
       {
+        // Perform
         return aSupplier.get ();
       }
       finally
