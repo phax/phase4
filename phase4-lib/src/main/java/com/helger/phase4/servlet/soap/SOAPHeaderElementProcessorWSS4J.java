@@ -43,6 +43,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
@@ -50,6 +51,7 @@ import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.regex.RegExCache;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.CAS4;
@@ -129,12 +131,22 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aRequestData.setAllowRSA15KeyTransportAlgorithm (m_aCryptoFactory.isAllowRSA15KeyTransportAlgorithm ());
       aRequestData.setSignatureProvider (m_aSecurityProvider);
 
+      // Enable CRL checking
+      if (false)
+        aRequestData.setEnableRevocation (true);
+
+      // TODO workaround to avoid the warning (if CRL checking is enabled)
+      // No Subject DN Certificate Constraints were defined. This could be a
+      // security issue
+      if (false)
+        aRequestData.setSubjectCertConstraints (new CommonsArrayList <> (RegExCache.getPattern (".*")));
+
       // Upon success, the SOAP document contains the decrypted content
       // afterwards!
       final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
       aSecurityEngine.setWssConfig (aWSSConfig);
 
-      // Main security action
+      // This starts the main verification - throws an exception
       final WSHandlerResult aHdlRes = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
       final List <WSSecurityEngineResult> aResults = aHdlRes.getResults ();
 
@@ -439,6 +451,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       }
       if (eSuccess.isFailure ())
         return ESuccess.FAILURE;
+    }
+    else
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("PMode leg has no security defined - skipping Verification and Decryption step");
     }
 
     return ESuccess.SUCCESS;
