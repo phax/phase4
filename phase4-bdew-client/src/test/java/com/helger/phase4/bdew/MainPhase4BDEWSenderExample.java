@@ -62,9 +62,9 @@ public class MainPhase4BDEWSenderExample
 
       final BDEWPayloadParams aBDEWPayloadParams = new BDEWPayloadParams ();
       aBDEWPayloadParams.setDocumentType ("DT1");
-      aBDEWPayloadParams.setDocumentDate (PDTFactory.getCurrentZonedDateTimeUTC ());
+      aBDEWPayloadParams.setDocumentDate (PDTFactory.getCurrentLocalDate ());
       aBDEWPayloadParams.setDocumentNumber (1234);
-      aBDEWPayloadParams.setFulfillmentDate (PDTFactory.getCurrentZonedDateTimeUTC ().minusMonths (2));
+      aBDEWPayloadParams.setFulfillmentDate (PDTFactory.getCurrentLocalDate ().minusMonths (2));
       aBDEWPayloadParams.setSubjectPartyId ("Party1");
       aBDEWPayloadParams.setSubjectPartyRole ("Role1");
 
