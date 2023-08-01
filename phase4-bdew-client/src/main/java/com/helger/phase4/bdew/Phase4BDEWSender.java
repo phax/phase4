@@ -19,6 +19,7 @@
  */
 package com.helger.phase4.bdew;
 
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -224,7 +225,6 @@ public final class Phase4BDEWSender
             aPayloadAttachment.customPartProperties ()
                               .put ("BDEWDocumentDate",
                                     m_aPayloadParams.getDocumentDate ()
-                                                    .withZoneSameInstant (ZoneOffset.UTC)
                                                     .toString ());
           if (m_aPayloadParams.getDocumentNumber () != null)
             aPayloadAttachment.customPartProperties ().put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ());
@@ -232,7 +232,6 @@ public final class Phase4BDEWSender
             aPayloadAttachment.customPartProperties ()
                               .put ("BDEWFulfillmentDate",
                                     m_aPayloadParams.getFulfillmentDate ()
-                                                    .withZoneSameInstant (ZoneOffset.UTC)
                                                     .toString ());
           if (m_aPayloadParams.getSubjectPartyId () != null)
             aPayloadAttachment.customPartProperties ()
@@ -296,9 +295,9 @@ public final class Phase4BDEWSender
   public static class BDEWPayloadParams
   {
     private String m_sDocumentType;
-    private ZonedDateTime m_aDocumentDate;
+    private LocalDate m_aDocumentDate;
     private String m_sDocumentNumber;
-    private ZonedDateTime m_aFulfillmentDate;
+    private LocalDate m_aFulfillmentDate;
     private String m_sSubjectPartyID;
     private String m_sSubjectPartyRole;
 
@@ -331,7 +330,7 @@ public final class Phase4BDEWSender
      *         <code>BDEWDocumentDate</code>
      */
     @Nullable
-    public ZonedDateTime getDocumentDate ()
+    public LocalDate getDocumentDate ()
     {
       return m_aDocumentDate;
     }
@@ -344,7 +343,7 @@ public final class Phase4BDEWSender
      * @return this for chaining
      */
     @Nonnull
-    public BDEWPayloadParams setDocumentDate (@Nullable final ZonedDateTime sDocumentDate)
+    public BDEWPayloadParams setDocumentDate (@Nullable final LocalDate sDocumentDate)
     {
       m_aDocumentDate = sDocumentDate;
       return this;
@@ -398,7 +397,7 @@ public final class Phase4BDEWSender
      *         <code>BDEWFulfillmentDate</code>
      */
     @Nullable
-    public ZonedDateTime getFulfillmentDate ()
+    public LocalDate getFulfillmentDate ()
     {
       return m_aFulfillmentDate;
     }
@@ -411,7 +410,7 @@ public final class Phase4BDEWSender
      * @return this for chaining
      */
     @Nonnull
-    public BDEWPayloadParams setFulfillmentDate (@Nullable final ZonedDateTime sFulfillmenttDate)
+    public BDEWPayloadParams setFulfillmentDate (@Nullable final LocalDate sFulfillmenttDate)
     {
       m_aFulfillmentDate = sFulfillmenttDate;
       return this;
