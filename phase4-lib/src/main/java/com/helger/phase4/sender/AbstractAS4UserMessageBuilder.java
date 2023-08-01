@@ -567,9 +567,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
     // m_aMessageProperties is final
 
-    // m_aSessionKeyProvider is optional
-    // m_aReceiverCertificate is optional
-    // m_sReceiverCertificateAlias is optional
     if (StringHelper.hasNoText (m_sEndpointURL))
     {
       LOGGER.warn ("The field 'endpointURL' is not set");

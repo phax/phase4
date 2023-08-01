@@ -216,6 +216,16 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     return thisAsT ();
   }
 
+  /**
+   * Get the mutable AS4 signing parameters.
+   *
+   * @return The AS4 signing parameters to use for this message. Never
+   *         <code>null</code>.
+   * @see #withSigningParams(Consumer)
+   * @see #cryptParams()
+   * @see #withCryptParams(Consumer)
+   * @since 2.1.4
+   */
   @Nonnull
   @ReturnsMutableObject
   public final AS4SigningParams signingParams ()
@@ -223,14 +233,39 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     return m_aSigningParams;
   }
 
+  /**
+   * Modify the AS4 signing parameters for this message. This is a version that
+   * maintains chainability of the API.
+   *
+   * @param aConsumer
+   *        Consumer for the AS4 signing parameters to use for this message.
+   *        Must not be <code>null</code>.
+   * @return this for chaining
+   * @see #signingParams()
+   * @see #cryptParams()
+   * @see #withCryptParams(Consumer)
+   * @since 2.1.4
+   */
   @Nonnull
   @ReturnsMutableObject
-  public final IMPLTYPE withSigningParams (@Nonnull final Consumer <AS4SigningParams> aConsumer)
+  public final IMPLTYPE withSigningParams (@Nonnull final Consumer <? super AS4SigningParams> aConsumer)
   {
+    ValueEnforcer.notNull (aConsumer, "Consumer");
+
     aConsumer.accept (m_aSigningParams);
     return thisAsT ();
   }
 
+  /**
+   * Get the mutable AS4 crypt parameters.
+   *
+   * @return The AS4 crypt parameters to use for this message. Never
+   *         <code>null</code>.
+   * @see #signingParams()
+   * @see #withSigningParams(Consumer)
+   * @see #withCryptParams(Consumer)
+   * @since 2.1.4
+   */
   @Nonnull
   @ReturnsMutableObject
   public final AS4CryptParams cryptParams ()
@@ -238,10 +273,25 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     return m_aCryptParams;
   }
 
+  /**
+   * Modify the AS4 crypt parameters for this message. This is a version that
+   * maintains chainability of the API.
+   *
+   * @param aConsumer
+   *        Consumer for the AS4 crypt parameters to use for this message. Must
+   *        not be <code>null</code>.
+   * @return this for chaining
+   * @see #signingParams()
+   * @see #withSigningParams(Consumer)
+   * @see #cryptParams()
+   * @since 2.1.4
+   */
   @Nonnull
   @ReturnsMutableObject
-  public final IMPLTYPE withCryptParams (@Nonnull final Consumer <AS4CryptParams> aConsumer)
+  public final IMPLTYPE withCryptParams (@Nonnull final Consumer <? super AS4CryptParams> aConsumer)
   {
+    ValueEnforcer.notNull (aConsumer, "Consumer");
+
     aConsumer.accept (m_aCryptParams);
     return thisAsT ();
   }
