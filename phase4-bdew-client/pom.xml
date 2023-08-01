@@ -89,7 +89,7 @@ governing permissions and
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bctls-jdk18on</artifactId>
-      <version>1.75</version>
+      <version>1.76</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
