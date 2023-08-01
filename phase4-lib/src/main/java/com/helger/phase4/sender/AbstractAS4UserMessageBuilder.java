@@ -387,8 +387,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * method overwrites any receiver certificate configuration (the later call
    * "wins").
    *
-   * @param aCertificate
-   *        The certificate of the receiver to be used. May be
+   * @param sAlias
+   *        The certificate alias of the receiver to be used. May be
    *        <code>null</code>.
    * @return this for chaining
    * @see #receiverCertificate(X509Certificate)
