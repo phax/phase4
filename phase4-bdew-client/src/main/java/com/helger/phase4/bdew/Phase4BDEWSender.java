@@ -20,8 +20,6 @@
 package com.helger.phase4.bdew;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,6 +48,7 @@ import com.helger.phase4.util.Phase4Exception;
  * sending, with all potential customization.
  *
  * @author Gregor Scholtysik
+ * @author Philip Helger
  */
 @Immutable
 public final class Phase4BDEWSender
@@ -107,6 +106,8 @@ public final class Phase4BDEWSender
         // Other signing parameters are located in the PMode security part
         signingParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
         signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
+        // Use the BST value type "#X509PKIPathv1"
+        signingParams ().setUseSingleCertificate (false);
       }
       catch (final Exception ex)
       {
@@ -223,16 +224,12 @@ public final class Phase4BDEWSender
             aPayloadAttachment.customPartProperties ().put ("BDEWDocumentType", m_aPayloadParams.getDocumentType ());
           if (m_aPayloadParams.getDocumentDate () != null)
             aPayloadAttachment.customPartProperties ()
-                              .put ("BDEWDocumentDate",
-                                    m_aPayloadParams.getDocumentDate ()
-                                                    .toString ());
+                              .put ("BDEWDocumentDate", m_aPayloadParams.getDocumentDate ().toString ());
           if (m_aPayloadParams.getDocumentNumber () != null)
             aPayloadAttachment.customPartProperties ().put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ());
           if (m_aPayloadParams.getFulfillmentDate () != null)
             aPayloadAttachment.customPartProperties ()
-                              .put ("BDEWFulfillmentDate",
-                                    m_aPayloadParams.getFulfillmentDate ()
-                                                    .toString ());
+                              .put ("BDEWFulfillmentDate", m_aPayloadParams.getFulfillmentDate ().toString ());
           if (m_aPayloadParams.getSubjectPartyId () != null)
             aPayloadAttachment.customPartProperties ()
                               .put ("BDEWSubjectPartyID", m_aPayloadParams.getSubjectPartyId ());

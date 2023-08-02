@@ -41,6 +41,7 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 public class AS4SigningParams implements Serializable, ICloneable <AS4SigningParams>
 {
   public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
+  public static final boolean DEFAULT_USE_SINGLE_CERTIFICATE = true;
 
   // The key identifier type to use
   private ECryptoKeyIdentifierType m_eKeyIdentifierType = DEFAULT_KEY_IDENTIFIER_TYPE;
@@ -48,6 +49,7 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   private ECryptoAlgorithmSignDigest m_eAlgorithmSignDigest;
   private ECryptoAlgorithmC14N m_eAlgorithmC14N = ECryptoAlgorithmC14N.C14N_ALGORITHM_DEFAULT;
   private Provider m_aSecurityProvider;
+  private boolean m_bUseSingleCertificate = DEFAULT_USE_SINGLE_CERTIFICATE;
 
   public AS4SigningParams ()
   {}
@@ -194,6 +196,33 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   }
 
   /**
+   * @return <code>true</code> to use the BST ValueType "#X509v3",
+   *         <code>false</code> to use the BST value type "#X509PKIPathv1".
+   * @since 2.1.5
+   */
+  public final boolean isUseSingleCertificate ()
+  {
+    return m_bUseSingleCertificate;
+  }
+
+  /**
+   * Set the Binary Security Token value type. The default is
+   * {@value #DEFAULT_USE_SINGLE_CERTIFICATE}.
+   *
+   * @param bUseSingleCertificate
+   *        <code>true</code> maps to "#X509v3" (e.g. for Peppol) and
+   *        <code>false</code> maps to "#X509PKIPathv1".
+   * @return this for chaining
+   * @since 2.1.5
+   */
+  @Nonnull
+  public final AS4SigningParams setUseSingleCertificate (final boolean bUseSingleCertificate)
+  {
+    m_bUseSingleCertificate = bUseSingleCertificate;
+    return this;
+  }
+
+  /**
    * This method calls {@link #setAlgorithmSign(ECryptoAlgorithmSign)} and
    * {@link #setAlgorithmSignDigest(ECryptoAlgorithmSignDigest)} based on the
    * PMode parameters. If the PMode parameter is <code>null</code> both values
@@ -228,7 +257,8 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
            .setAlgorithmSign (m_eAlgorithmSign)
            .setAlgorithmSignDigest (m_eAlgorithmSignDigest)
            .setAlgorithmC14N (m_eAlgorithmC14N)
-           .setSecurityProvider (m_aSecurityProvider);
+           .setSecurityProvider (m_aSecurityProvider)
+           .setUseSingleCertificate (m_bUseSingleCertificate);
   }
 
   @Nonnull
@@ -248,6 +278,7 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
                                        .append ("AlgorithmSignDigest", m_eAlgorithmSignDigest)
                                        .append ("AlgorithmC14N", m_eAlgorithmC14N)
                                        .append ("SecurityProvider", m_aSecurityProvider)
+                                       .append ("UseSingleCertificate", m_bUseSingleCertificate)
                                        .getToString ();
   }
 
