@@ -68,11 +68,10 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
                                                                             MockMessages.createUserMessageNotSigned (m_eSOAPVersion,
@@ -89,11 +88,10 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
@@ -114,11 +112,10 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments)
                                       .getAsSoapDocument ();
@@ -138,11 +135,10 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,

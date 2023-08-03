@@ -55,7 +55,10 @@ public final class DefaultPMode
   @Nonnull
   private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
-    return PModeLegBusinessInformation.create (CAS4.DEFAULT_SERVICE_URL, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
+    return PModeLegBusinessInformation.create (CAS4.DEFAULT_SERVICE_URL,
+                                               CAS4.DEFAULT_ACTION_URL,
+                                               null,
+                                               CAS4.DEFAULT_MPC_ID);
   }
 
   @Nonnull
@@ -83,11 +86,17 @@ public final class DefaultPMode
                                                 @Nullable final String sAddress,
                                                 final boolean bPersist)
   {
-    // Add "default-" prefix to easily identify "default" PModes
+    // The "default" type is important to differentiate it from other PModes for
+    // the same mock entities
+    final PModeParty aInitiator = new PModeParty ("default", sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, null, null);
+    final PModeParty aResponder = new PModeParty ("default", sResponderID, CAS4.DEFAULT_RESPONDER_URL, null, null);
+
+    // ID: Add "default-" prefix to easily identify "default" PModes
     // Leg 2 stays null, because we only use one-way
-    final PMode aDefaultPMode = new PMode ("default-" + sInitiatorID + "-" + sResponderID,
-                                           PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL),
-                                           PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL),
+    final PMode aDefaultPMode = new PMode ("default-" +
+                                           IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (aInitiator, aResponder),
+                                           aInitiator,
+                                           aResponder,
                                            "urn:as4:agreement",
                                            EMEP.ONE_WAY,
                                            EMEPBinding.PUSH,

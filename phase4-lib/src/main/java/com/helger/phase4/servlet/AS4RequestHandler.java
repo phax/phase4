@@ -1170,10 +1170,16 @@ public class AS4RequestHandler implements AutoCloseable
     final Document aResponseDoc = aReceiptMessage.getAsSoapDocument ();
     final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ())
                                                                    .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderSign ());
+    final ESoapVersion eResponseSoapVersion = aEffectiveLeg.getProtocol ().getSoapVersion ();
+    if (eResponseSoapVersion != eSoapVersion)
+      LOGGER.warn ("Received message with " +
+                   eSoapVersion +
+                   " but the Response PMode leg requires " +
+                   eResponseSoapVersion);
     final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
                                                        aSigningParams,
                                                        aResponseDoc,
-                                                       aEffectiveLeg.getProtocol ().getSoapVersion (),
+                                                       eResponseSoapVersion,
                                                        aReceiptMessage.getMessagingID ());
     return new AS4ResponseFactoryXML (m_aMessageMetadata,
                                       aState,

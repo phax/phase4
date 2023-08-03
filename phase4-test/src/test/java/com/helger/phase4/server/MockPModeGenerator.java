@@ -52,6 +52,47 @@ public final class MockPModeGenerator
   {}
 
   @Nonnull
+  private static PModeParty _createInitiatorOrResponder (final boolean bInitiator,
+                                                         @Nonnull final ESoapVersion eSOAPVersion)
+  {
+    final String sPartyID = eSOAPVersion.equals (ESoapVersion.SOAP_11) ? SOAP_11_PARTY_ID : SOAP_12_PARTY_ID;
+    return PModeParty.createSimple (sPartyID, bInitiator ? CAS4.DEFAULT_INITIATOR_URL : CAS4.DEFAULT_RESPONDER_URL);
+  }
+
+  @Nonnull
+  private static PModeLegProtocol _createPModeLegProtocol (@Nonnull final ESoapVersion eSOAPVersion)
+  {
+    return new PModeLegProtocol ("http://localhost:8080", eSOAPVersion);
+  }
+
+  @Nonnull
+  private static PModeLegBusinessInformation _createPModeLegBusinessInformation (@Nonnull final ESoapVersion eSOAPVersion)
+  {
+    return PModeLegBusinessInformation.create (eSOAPVersion.equals (ESoapVersion.SOAP_11) ? SOAP11_SERVICE : null,
+                                               CAS4.DEFAULT_ACTION_URL,
+                                               null,
+                                               CAS4.DEFAULT_MPC_ID);
+  }
+
+  @Nonnull
+  private static PModeLegErrorHandling _createPModeLegErrorHandling ()
+  {
+    return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.TRUE, ETriState.TRUE);
+  }
+
+  @Nonnull
+  private static PModeLeg _createPModeLeg (@Nonnull final ESoapVersion eSOAPVersion)
+  {
+    final PModeLegReliability aPModeLegReliability = null;
+    final PModeLegSecurity aPModeLegSecurity = null;
+    return new PModeLeg (_createPModeLegProtocol (eSOAPVersion),
+                         _createPModeLegBusinessInformation (eSOAPVersion),
+                         _createPModeLegErrorHandling (),
+                         aPModeLegReliability,
+                         aPModeLegSecurity);
+  }
+
+  @Nonnull
   public static PMode getTestPMode (@Nonnull final ESoapVersion eSOAPVersion)
   {
     final PModeParty aInitiator = _createInitiatorOrResponder (true, eSOAPVersion);
@@ -93,52 +134,6 @@ public final class MockPModeGenerator
     return aPMode;
   }
 
-  @Nonnull
-  private static PModeLeg _createPModeLeg (@Nonnull final ESoapVersion eSOAPVersion)
-  {
-    final PModeLegReliability aPModeLegReliability = null;
-    final PModeLegSecurity aPModeLegSecurity = null;
-    return new PModeLeg (_createPModeLegProtocol (eSOAPVersion),
-                         _createPModeLegBusinessInformation (eSOAPVersion),
-                         _createPModeLegErrorHandling (),
-                         aPModeLegReliability,
-                         aPModeLegSecurity);
-  }
-
-  private static PModeLegErrorHandling _createPModeLegErrorHandling ()
-  {
-    return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.TRUE, ETriState.TRUE);
-  }
-
-  @Nonnull
-  private static PModeLegBusinessInformation _createPModeLegBusinessInformation (@Nonnull final ESoapVersion eSOAPVersion)
-  {
-    if (eSOAPVersion.equals (ESoapVersion.SOAP_11))
-      return PModeLegBusinessInformation.create (SOAP11_SERVICE, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
-    return PModeLegBusinessInformation.create (null, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
-  }
-
-  @Nonnull
-  private static PModeLegProtocol _createPModeLegProtocol (@Nonnull final ESoapVersion eSOAPVersion)
-  {
-    return new PModeLegProtocol ("http://localhost:8080", eSOAPVersion);
-  }
-
-  @Nonnull
-  private static PModeParty _createInitiatorOrResponder (final boolean bInitiator,
-                                                         @Nonnull final ESoapVersion eSOAPVersion)
-  {
-    String sPartyID;
-    if (eSOAPVersion.equals (ESoapVersion.SOAP_11))
-      sPartyID = SOAP_11_PARTY_ID;
-    else
-      sPartyID = SOAP_12_PARTY_ID;
-
-    if (bInitiator)
-      return PModeParty.createSimple (sPartyID, CAS4.DEFAULT_INITIATOR_URL);
-    return PModeParty.createSimple (sPartyID, CAS4.DEFAULT_RESPONDER_URL);
-  }
-
   public static void ensureMockPModesArePresent ()
   {
     // Delete all in the correct order
@@ -146,9 +141,10 @@ public final class MockPModeGenerator
     for (final String sID : aPModeMgr.getAllIDs ())
       aPModeMgr.deletePMode (sID);
 
-    // Create new one
+    // Create default ones
     DefaultPMode.getOrCreateDefaultPMode (SOAP_11_PARTY_ID, SOAP_11_PARTY_ID, "http://test.mock11.org", true);
     DefaultPMode.getOrCreateDefaultPMode (SOAP_12_PARTY_ID, SOAP_12_PARTY_ID, "http://test.mock12.org", true);
+
     for (final ESoapVersion e : ESoapVersion.values ())
       aPModeMgr.createOrUpdatePMode (MockPModeGenerator.getTestPModeWithSecurity (e));
   }

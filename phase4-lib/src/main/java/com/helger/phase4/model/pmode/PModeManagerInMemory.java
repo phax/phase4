@@ -161,7 +161,12 @@ public class PModeManagerInMemory implements IPModeManager
     }
 
     if (aExisting != null)
+    {
       updatePMode (aExisting);
+
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Updated PMode with ID '" + aPMode.getID () + "'");
+    }
   }
 
   @Nonnull

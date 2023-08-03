@@ -142,8 +142,6 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 
     aPost.setEntity (aHttpEntity);
 
-    final IConfig aConfig = AS4Configuration.getConfig ();
-
     final HttpClientSettings aHCS = new HttpClientSettings ();
     try
     {
@@ -158,6 +156,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
     // Only required for "testEsens_TA10"
     aHCS.setRetryAlways (true);
 
+    final IConfig aConfig = AS4Configuration.getConfig ();
     if (aConfig.getAsBoolean (SETTINGS_SERVER_PROXY_ENABLED, false))
     {
       // E.g. using little proxy for faking "no response"
@@ -192,13 +191,12 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
       else
       {
         // 200, 400 or 500
-        assertTrue ("Server responded with StatusCode=" +
-                    nStatusCode +
-                    ". Response:\n" +
-                    sResponse,
+        assertTrue ("Server responded with StatusCode=" + nStatusCode + ". Response:\n" + sResponse,
                     nStatusCode == CHttp.HTTP_OK ||
-                               nStatusCode == CHttp.HTTP_BAD_REQUEST ||
-                               nStatusCode == CHttp.HTTP_INTERNAL_SERVER_ERROR);
+                                                                                                     nStatusCode ==
+                                                    CHttp.HTTP_BAD_REQUEST ||
+                                                                                                     nStatusCode ==
+                                                                              CHttp.HTTP_INTERNAL_SERVER_ERROR);
         assertTrue ("Server responded with different error message than expected (" +
                     sExecptedErrorCode +
                     ")." +
