@@ -171,7 +171,7 @@ public final class BPCPMode
     final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
     final PModeParty aResponder = createParty (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
-    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (sInitiatorID, sResponderID),
+    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (aInitiator, aResponder),
                                     aInitiator,
                                     aResponder,
                                     DEFAULT_AGREEMENT_ID,

@@ -54,11 +54,10 @@ public final class MockPModeGenerator
   @Nonnull
   public static PMode getTestPMode (@Nonnull final ESoapVersion eSOAPVersion)
   {
-
     final PModeParty aInitiator = _createInitiatorOrResponder (true, eSOAPVersion);
     final PModeParty aResponder = _createInitiatorOrResponder (false, eSOAPVersion);
 
-    final PMode aConfig = new PMode (IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (aInitiator.getID (), aResponder.getID ()),
+    final PMode aConfig = new PMode (IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (aInitiator, aResponder),
                                      aInitiator,
                                      aResponder,
                                      DEFAULT_AGREEMENT,
@@ -126,7 +125,8 @@ public final class MockPModeGenerator
   }
 
   @Nonnull
-  private static PModeParty _createInitiatorOrResponder (final boolean bInitiator, @Nonnull final ESoapVersion eSOAPVersion)
+  private static PModeParty _createInitiatorOrResponder (final boolean bInitiator,
+                                                         @Nonnull final ESoapVersion eSOAPVersion)
   {
     String sPartyID;
     if (eSOAPVersion.equals (ESoapVersion.SOAP_11))

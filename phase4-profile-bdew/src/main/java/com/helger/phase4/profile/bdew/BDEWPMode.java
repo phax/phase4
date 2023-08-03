@@ -191,7 +191,7 @@ public final class BDEWPMode
     final PModeParty aInitiator = new PModeParty (sInitiatorType, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, null, null);
     final PModeParty aResponder = new PModeParty (sResponderType, sResponderID, CAS4.DEFAULT_RESPONDER_URL, null, null);
 
-    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (sInitiatorID, sResponderID),
+    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (aInitiator, aResponder),
                                     aInitiator,
                                     aResponder,
                                     DEFAULT_AGREEMENT_ID,

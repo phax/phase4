@@ -128,7 +128,11 @@ public final class EESPAPMode
     final int nMaxRetries = 1;
     final long nRetryIntervalMS = 10_000;
     final ETriState eDuplicateDetection = ETriState.TRUE;
-    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness,
+                                        eRetry,
+                                        nMaxRetries,
+                                        nRetryIntervalMS,
+                                        eDuplicateDetection);
   }
 
   @Nonnull
@@ -168,7 +172,7 @@ public final class EESPAPMode
     final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
     final PModeParty aResponder = createParty (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
-    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (sInitiatorID, sResponderID),
+    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (aInitiator, aResponder),
                                     aInitiator,
                                     aResponder,
                                     bUseAcceptanceNetwork ? DEFAULT_AGREEMENT_ID_ACCEPTANCE : DEFAULT_AGREEMENT_ID_PROD,

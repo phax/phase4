@@ -177,7 +177,7 @@ public final class ENTSOGPMode
                                                   null,
                                                   null);
 
-    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (sInitiatorID, sResponderID),
+    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (aInitiator, aResponder),
                                     aInitiator,
                                     aResponder,
                                     DEFAULT_AGREEMENT_ID,
