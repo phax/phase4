@@ -136,7 +136,9 @@ public class PModeManagerInMemory implements IPModeManager
     _validatePMode (aPMode);
 
     // Try in read-lock
-    final Predicate <IPMode> aFilter = IPModeManager.getPModeFilter (aPMode.getID (), aPMode.getInitiatorID (), aPMode.getResponderID ());
+    final Predicate <IPMode> aFilter = IPModeManager.getPModeFilter (aPMode.getID (),
+                                                                     aPMode.getInitiator (),
+                                                                     aPMode.getResponder ());
     IPMode aExisting = findFirst (aFilter);
     if (aExisting == null)
     {

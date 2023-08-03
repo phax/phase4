@@ -121,22 +121,26 @@ public interface IPModeManager
   }
 
   /**
-   * Get a predicate that matches a PMode by ID, initiator ID and responder ID?
+   * Get a predicate that matches a PMode by ID, initiator and responder.
    *
    * @param sID
    *        PMode ID to search. May be <code>null</code>.
-   * @param sInitiatorID
-   *        Initiator ID to search. May be <code>null</code>.
-   * @param sResponderID
-   *        Responder ID to search. May be <code>null</code>.
+   * @param aInitiator
+   *        Initiator to search. May be <code>null</code>.
+   * @param aResponder
+   *        Responder to search. May be <code>null</code>.
    * @return Never <code>null</code>.
    */
   @Nonnull
   static Predicate <IPMode> getPModeFilter (@Nonnull final String sID,
-                                            @Nullable final String sInitiatorID,
-                                            @Nullable final String sResponderID)
+                                            @Nullable final PModeParty aInitiator,
+                                            @Nullable final PModeParty aResponder)
   {
-    return x -> x.getID ().equals (sID) && x.hasInitiatorID (sInitiatorID) && x.hasResponderID (sResponderID);
+    // The same PMode exists either if the ID is identical or if Initiator and
+    // Responder are identical
+    return x -> x.getID ().equals (sID) ||
+                (EqualsHelper.equals (x.getInitiator (), aInitiator) &&
+                 EqualsHelper.equals (x.getResponder (), aResponder));
   }
 
   /**
