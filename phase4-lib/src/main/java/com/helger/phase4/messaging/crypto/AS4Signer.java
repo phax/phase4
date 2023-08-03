@@ -76,7 +76,9 @@ public final class AS4Signer
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aSigningParams, "SigningParams");
 
-    LOGGER.info ("Now signing AS4 message. KeyIdentifierType=" +
+    LOGGER.info ("Now signing AS4 message [" +
+                 eSoapVersion +
+                 "]. KeyIdentifierType=" +
                  aSigningParams.getKeyIdentifierType ().name () +
                  "; KeyAlias=" +
                  aCryptoFactorySign.getKeyAlias () +
@@ -167,7 +169,7 @@ public final class AS4Signer
                                               final boolean bMustUnderstand,
                                               @Nonnull final AS4SigningParams aSigningParams) throws WSSecurityException
   {
-    ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactory");
+    ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
     ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
