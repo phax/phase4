@@ -50,14 +50,14 @@ public final class MainDecipherAS4In
 
     final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
     // What to do with the decrypted payload
-    final IDecryptedPayloadConsumer aDecryptedConsumer = (idx,
-                                                          aDecryptedBytes) -> SimpleFileIO.writeFile (new File (aFile.getParentFile (),
-                                                                                                                "payload-" +
-                                                                                                                                        idx +
-                                                                                                                                        ".decrypted"),
-                                                                                                      aDecryptedBytes);
+    final IDecryptedPayloadConsumer aDecryptedConsumer = (idx, aDecryptedBytes) -> SimpleFileIO.writeFile (new File (
+                                                                                                                     aFile.getParentFile (),
+                                                                                                                     "payload-" +
+                                                                                                                                             idx +
+                                                                                                                                             ".decrypted"),
+                                                                                                           aDecryptedBytes);
 
     // Do it
-    AS4DumpReader.decryptAS4In (aBytes, aCryptoFactory, null, aDecryptedConsumer);
+    AS4DumpReader.decryptAS4In (aBytes, aCryptoFactory, aCryptoFactory, null, aDecryptedConsumer);
   }
 }

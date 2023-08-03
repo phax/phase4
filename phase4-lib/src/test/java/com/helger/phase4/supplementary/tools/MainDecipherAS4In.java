@@ -53,10 +53,15 @@ public final class MainDecipherAS4In
     LOGGER.info ("Reading " + f.getName ());
     final byte [] aBytes = SimpleFileIO.getAllFileBytes (f);
 
+    final AS4CryptoFactoryProperties aCryptoFactory = new AS4CryptoFactoryProperties (aCP);
     AS4DumpReader.decryptAS4In (aBytes,
-                                new AS4CryptoFactoryProperties (aCP),
+                                aCryptoFactory,
+                                aCryptoFactory,
                                 null,
-                                (nIndex, aDecryptedBytes) -> SimpleFileIO.writeFile (new File (folder, "payload-" + nIndex + ".decrypted"),
+                                (nIndex, aDecryptedBytes) -> SimpleFileIO.writeFile (new File (folder,
+                                                                                               "payload-" +
+                                                                                                       nIndex +
+                                                                                                       ".decrypted"),
                                                                                      aDecryptedBytes));
   }
 }
