@@ -61,6 +61,7 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4DecryptRequestDataModifier;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
@@ -83,19 +84,26 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                                         "Security");
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
 
-  private final IAS4CryptoFactory m_aCryptoFactory;
+  private final IAS4CryptoFactory m_aCryptoFactorySign;
+  private final IAS4CryptoFactory m_aCryptoFactoryCrypt;
   private final Provider m_aSecurityProvider;
   private final Supplier <? extends IPMode> m_aFallbackPModeProvider;
+  private final IAS4DecryptRequestDataModifier m_aDecryptRequestDataModifier;
 
-  public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                          @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                           @Nullable final Provider aSecurityProvider,
-                                          @Nonnull final Supplier <? extends IPMode> aFallbackPModeProvider)
+                                          @Nonnull final Supplier <? extends IPMode> aFallbackPModeProvider,
+                                          @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier)
   {
-    ValueEnforcer.notNull (aCryptoFactory, "aCryptoFactory");
+    ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
+    ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
     ValueEnforcer.notNull (aFallbackPModeProvider, "FallbackPModeProvider");
-    m_aCryptoFactory = aCryptoFactory;
+    m_aCryptoFactorySign = aCryptoFactorySign;
+    m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
     m_aSecurityProvider = aSecurityProvider;
     m_aFallbackPModeProvider = aFallbackPModeProvider;
+    m_aDecryptRequestDataModifier = aDecryptRequestDataModifier;
   }
 
   @Nonnull
@@ -113,7 +121,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     try
     {
       // Convert to WSS4J attachments
-      final AS4KeyStoreCallbackHandler aKeyStoreCallback = new AS4KeyStoreCallbackHandler (m_aCryptoFactory);
+      final AS4KeyStoreCallbackHandler aKeyStoreCallback = new AS4KeyStoreCallbackHandler (m_aCryptoFactoryCrypt);
       final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                             aState.getResourceHelper ());
 
@@ -125,10 +133,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aRequestData.setCallbackHandler (aKeyStoreCallback);
       if (aAttachments.isNotEmpty ())
         aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
-      aRequestData.setSigVerCrypto (m_aCryptoFactory.getCrypto ());
-      aRequestData.setDecCrypto (m_aCryptoFactory.getCrypto ());
+      aRequestData.setSigVerCrypto (m_aCryptoFactorySign.getCrypto ());
+      aRequestData.setDecCrypto (m_aCryptoFactoryCrypt.getCrypto ());
       aRequestData.setWssConfig (aWSSConfig);
-      aRequestData.setAllowRSA15KeyTransportAlgorithm (m_aCryptoFactory.isAllowRSA15KeyTransportAlgorithm ());
       aRequestData.setSignatureProvider (m_aSecurityProvider);
 
       // Enable CRL checking
@@ -140,6 +147,16 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       // security issue
       if (false)
         aRequestData.setSubjectCertConstraints (new CommonsArrayList <> (RegExCache.getPattern (".*")));
+
+      if (m_aDecryptRequestDataModifier != null)
+      {
+        // Make any custom modifications necessary
+        if (LOGGER.isTraceEnabled ())
+          LOGGER.trace ("Before modifyForDecrypt");
+        m_aDecryptRequestDataModifier.modifyForDecrypt (aRequestData);
+        if (LOGGER.isTraceEnabled ())
+          LOGGER.trace ("After modifyForDecrypt");
+      }
 
       // Upon success, the SOAP document contains the decrypted content
       // afterwards!

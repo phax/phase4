@@ -95,7 +95,7 @@ public final class AS4DumpReader
   /**
    * Utility method to just read and consume the leading HTTP headers from a
    * dump. Usually this method is not called explicitly but invoked directly by
-   * {@link #decryptAS4In(byte[], IAS4CryptoFactory, Consumer, IDecryptedPayloadConsumer)}
+   * {@link #decryptAS4In(byte[], IAS4CryptoFactory, IAS4CryptoFactory, Consumer, IDecryptedPayloadConsumer)}
    *
    * @param aAS4InData
    *        The byte array with the dump. May not be <code>null</code>.
@@ -158,6 +158,19 @@ public final class AS4DumpReader
       aHttpEndIndexConsumer.accept (nHttpEnd);
   }
 
+  @Deprecated (forRemoval = true, since = "2.2.0")
+  public static void decryptAS4In (@Nonnull final byte [] aAS4InData,
+                                   @Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                   @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
+                                   @Nonnull final IDecryptedPayloadConsumer aDecryptedConsumer) throws WSSecurityException,
+                                                                                                Phase4Exception,
+                                                                                                IOException,
+                                                                                                MessagingException
+  {
+    // Use the same crypto factory for signing and crypting
+    decryptAS4In (aAS4InData, aCryptoFactory, aCryptoFactory, aHttpHeaderConsumer, aDecryptedConsumer);
+  }
+
   /**
    * Utility method to decrypt dumped .as4in message late.<br>
    * Note: this method was mainly created for internal use and does not win the
@@ -165,10 +178,12 @@ public final class AS4DumpReader
    *
    * @param aAS4InData
    *        The byte array with the dumped data.
-   * @param aCF
-   *        The Crypto factory to be used. This crypto factory must use use the
-   *        private key that can be used to decrypt this particular message. May
-   *        not be <code>null</code>.
+   * @param aCryptoFactorySign
+   *        The Crypto factory to be used. May not be <code>null</code>.
+   * @param aCryptoFactoryCrypt
+   *        The Crypto factory to be used for decrypting. This crypto factory
+   *        must use the private key that can be used to decrypt this particular
+   *        message. May not be <code>null</code>.
    * @param aHttpHeaderConsumer
    *        An optional HTTP Header map consumer. May be <code>null</code>.
    * @param aDecryptedConsumer
@@ -184,7 +199,8 @@ public final class AS4DumpReader
    *         In case of error
    */
   public static void decryptAS4In (@Nonnull final byte [] aAS4InData,
-                                   @Nonnull final IAS4CryptoFactory aCF,
+                                   @Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                    @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
                                    @Nonnull final IDecryptedPayloadConsumer aDecryptedConsumer) throws WSSecurityException,
                                                                                                 Phase4Exception,
@@ -204,7 +220,8 @@ public final class AS4DumpReader
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
     try (final WebScoped w = new WebScoped ();
-         final AS4RequestHandler rh = new AS4RequestHandler (aCF,
+         final AS4RequestHandler rh = new AS4RequestHandler (aCryptoFactorySign,
+                                                             aCryptoFactoryCrypt,
                                                              DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
                                                              IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
                                                              AS4IncomingSecurityConfiguration.createDefaultInstance (),

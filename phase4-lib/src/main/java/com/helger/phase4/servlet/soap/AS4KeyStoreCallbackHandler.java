@@ -42,12 +42,12 @@ public final class AS4KeyStoreCallbackHandler implements CallbackHandler
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4KeyStoreCallbackHandler.class);
 
-  private final IAS4CryptoFactory m_aCryptoFactory;
+  private final IAS4CryptoFactory m_aCryptoFactoryCrypt;
 
-  public AS4KeyStoreCallbackHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory)
+  public AS4KeyStoreCallbackHandler (@Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt)
   {
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
-    m_aCryptoFactory = aCryptoFactory;
+    ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
+    m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
   }
 
   @Nonnull
@@ -87,7 +87,7 @@ public final class AS4KeyStoreCallbackHandler implements CallbackHandler
         final String sKeyStoreAlias = aPasswordCallback.getIdentifier ();
 
         // Obtain the password from the crypto factory
-        final String sKeyPassword = m_aCryptoFactory.getKeyPasswordPerAlias (sKeyStoreAlias);
+        final String sKeyPassword = m_aCryptoFactoryCrypt.getKeyPasswordPerAlias (sKeyStoreAlias);
         if (sKeyPassword != null)
         {
           aPasswordCallback.setPassword (sKeyPassword);

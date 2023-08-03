@@ -80,7 +80,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   private final EAS4MessageType m_eMessageType;
   private final AS4ResourceHelper m_aResHelper;
 
-  private IAS4CryptoFactory m_aCryptoFactory;
+  private IAS4CryptoFactory m_aCryptoFactorySign;
+  private IAS4CryptoFactory m_aCryptoFactoryCrypt;
   private final AS4SigningParams m_aSigningParams = new AS4SigningParams ();
   private final AS4CryptParams m_aCryptParams = new AS4CryptParams ();
 
@@ -125,12 +126,39 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
+   * This API is no longer usable, because the crypto factories for sign and
+   * crypt are separated. Use {@link #getAS4CryptoFactorySign()} or
+   * {@link #getAS4CryptoFactoryCrypt()} instead.
+   *
    * @return The currently set crypto factory. <code>null</code> by default.
    */
   @Nullable
+  @Deprecated (forRemoval = true, since = "2.2.0")
   public final IAS4CryptoFactory getAS4CryptoFactory ()
   {
-    return m_aCryptoFactory;
+    return getAS4CryptoFactorySign ();
+  }
+
+  /**
+   * @return The currently set crypto factory for signing. <code>null</code> by
+   *         default.
+   * @since 2.2.0
+   */
+  @Nullable
+  public final IAS4CryptoFactory getAS4CryptoFactorySign ()
+  {
+    return m_aCryptoFactorySign;
+  }
+
+  /**
+   * @return The currently set crypto factory for crypting. <code>null</code> by
+   *         default.
+   * @since 2.2.0
+   */
+  @Nullable
+  public final IAS4CryptoFactory getAS4CryptoFactoryCrypt ()
+  {
+    return m_aCryptoFactoryCrypt;
   }
 
   /**
@@ -143,7 +171,38 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   @Nonnull
   public final IMPLTYPE setAS4CryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
   {
-    m_aCryptoFactory = aCryptoFactory;
+    return setAS4CryptoFactorySign (aCryptoFactory).setAS4CryptoFactoryCrypt (aCryptoFactory);
+  }
+
+  /**
+   * Set the crypto factory to be used for signing.
+   *
+   * @param aCryptoFactorySign
+   *        The crypto factory to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @see #setAS4CryptoFactoryCrypt(IAS4CryptoFactory)
+   * @since 2.2.0
+   */
+  @Nonnull
+  public final IMPLTYPE setAS4CryptoFactorySign (@Nullable final IAS4CryptoFactory aCryptoFactorySign)
+  {
+    m_aCryptoFactorySign = aCryptoFactorySign;
+    return thisAsT ();
+  }
+
+  /**
+   * Set the crypto factory to be used for crypting.
+   *
+   * @param aCryptoFactoryCrypt
+   *        The crypto factory to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @see #setAS4CryptoFactorySign(IAS4CryptoFactory)
+   * @since 2.2.0
+   */
+  @Nonnull
+  public final IMPLTYPE setAS4CryptoFactoryCrypt (@Nullable final IAS4CryptoFactory aCryptoFactoryCrypt)
+  {
+    m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
     return thisAsT ();
   }
 
@@ -357,12 +416,21 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   @Nonnull
-  protected IAS4CryptoFactory internalCreateCryptoFactory ()
+  protected IAS4CryptoFactory internalGetCryptoFactorySign ()
   {
-    if (m_aCryptoFactory == null)
-      throw new IllegalStateException ("No CryptoFactory is configured.");
+    if (m_aCryptoFactorySign == null)
+      throw new IllegalStateException ("No CryptoFactory for signing is configured.");
 
-    return m_aCryptoFactory;
+    return m_aCryptoFactorySign;
+  }
+
+  @Nonnull
+  protected IAS4CryptoFactory internalGetCryptoFactoryCrypt ()
+  {
+    if (m_aCryptoFactoryCrypt == null)
+      throw new IllegalStateException ("No CryptoFactory for crypting is configured.");
+
+    return m_aCryptoFactoryCrypt;
   }
 
   public final void setValuesFromPMode (@Nullable final IPMode aPMode, @Nullable final PModeLeg aLeg)

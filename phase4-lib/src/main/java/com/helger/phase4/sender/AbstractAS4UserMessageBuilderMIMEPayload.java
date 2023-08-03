@@ -119,7 +119,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
         aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment, aResHelper));
 
       // Main sending
-      AS4BidirectionalClientHelper.sendAS4UserMessageAndReceiveAS4SignalMessage (m_aCryptoFactory,
+      AS4BidirectionalClientHelper.sendAS4UserMessageAndReceiveAS4SignalMessage (m_aCryptoFactorySign,
+                                                                                 m_aCryptoFactoryCrypt,
                                                                                  pmodeResolver (),
                                                                                  incomingAttachmentFactory (),
                                                                                  incomingProfileSelector (),
@@ -129,6 +130,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
                                                                                  m_aBuildMessageCallback,
                                                                                  m_aOutgoingDumper,
                                                                                  m_aIncomingDumper,
+                                                                                 m_aDecryptRequestDataModifier,
                                                                                  m_aRetryCallback,
                                                                                  m_aResponseConsumer,
                                                                                  m_aSignalMsgConsumer);

@@ -43,6 +43,7 @@ import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4DecryptRequestDataModifier;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.http.HttpRetrySettings;
@@ -72,7 +73,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   protected IHttpPoster m_aCustomHttpPoster;
   protected HttpClientFactory m_aHttpClientFactory;
-  protected IAS4CryptoFactory m_aCryptoFactory;
+  protected IAS4CryptoFactory m_aCryptoFactorySign;
+  protected IAS4CryptoFactory m_aCryptoFactoryCrypt;
   protected final AS4SigningParams m_aSigningParams = new AS4SigningParams ();
   protected final AS4CryptParams m_aCryptParams = new AS4CryptParams ();
   protected String m_sMessageID;
@@ -90,6 +92,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
   protected IAS4OutgoingDumper m_aOutgoingDumper;
   protected IAS4IncomingDumper m_aIncomingDumper;
+  protected IAS4DecryptRequestDataModifier m_aDecryptRequestDataModifier;
   protected IAS4RetryCallback m_aRetryCallback;
   protected IAS4RawResponseConsumer m_aResponseConsumer;
 
@@ -108,6 +111,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     try
     {
       httpClientFactory (new HttpClientFactory ());
+      // By default set the same for sign and crypt
       cryptoFactory (AS4CryptoFactoryProperties.getDefaultInstance ());
       soapVersion (ESoapVersion.SOAP_12);
       pmodeResolver (DefaultPModeResolver.DEFAULT_PMODE_RESOLVER);
@@ -192,27 +196,92 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * Due to the fact, that the crypto factory was split for signing and
+   * crypting, this API is no longer feasible. It returns the crypto factory
+   * used for signing.
+   *
    * @return The currently set {@link IAS4CryptoFactory}. May be
    *         <code>null</code>.
    */
   @Nullable
+  @Deprecated (forRemoval = true, since = "2.2.0")
   public final IAS4CryptoFactory cryptoFactory ()
   {
-    return m_aCryptoFactory;
+    return cryptoFactorySign ();
   }
 
   /**
-   * Set the crypto factory to be used. The default crypto factory is set in the
-   * constructor to {@link AS4CryptoFactoryProperties#getDefaultInstance()}.
+   * @return The currently set {@link IAS4CryptoFactory} for signing. May be
+   *         <code>null</code>.
+   * @see #cryptoFactoryCrypt()
+   * @since 2.2.0
+   */
+  @Nullable
+  public final IAS4CryptoFactory cryptoFactorySign ()
+  {
+    return m_aCryptoFactorySign;
+  }
+
+  /**
+   * @return The currently set {@link IAS4CryptoFactory} for crypting. May be
+   *         <code>null</code>.
+   * @see #cryptoFactorySign()
+   * @since 2.2.0
+   */
+  @Nullable
+  public final IAS4CryptoFactory cryptoFactoryCrypt ()
+  {
+    return m_aCryptoFactoryCrypt;
+  }
+
+  /**
+   * Set the crypto factory to be used for signing and crypting. The default
+   * crypto factory is set in the constructor to
+   * {@link AS4CryptoFactoryProperties#getDefaultInstance()}.
    *
    * @param aCryptoFactory
    *        The crypto factory to be used. May be <code>null</code>.
    * @return this for chaining
+   * @see #cryptoFactorySign(IAS4CryptoFactory)
+   * @see #cryptoFactoryCrypt(IAS4CryptoFactory)
    */
   @Nonnull
   public final IMPLTYPE cryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
   {
-    m_aCryptoFactory = aCryptoFactory;
+    return cryptoFactorySign (aCryptoFactory).cryptoFactoryCrypt (aCryptoFactory);
+  }
+
+  /**
+   * Set the crypto factory to be used for signing. The default crypto factory
+   * is set in the constructor to
+   * {@link AS4CryptoFactoryProperties#getDefaultInstance()}.
+   *
+   * @param aCryptoFactorySign
+   *        The crypto factory to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.2.0
+   */
+  @Nonnull
+  public final IMPLTYPE cryptoFactorySign (@Nullable final IAS4CryptoFactory aCryptoFactorySign)
+  {
+    m_aCryptoFactorySign = aCryptoFactorySign;
+    return thisAsT ();
+  }
+
+  /**
+   * Set the crypto factory to be used for crypting. The default crypto factory
+   * is set in the constructor to
+   * {@link AS4CryptoFactoryProperties#getDefaultInstance()}.
+   *
+   * @param aCryptoFactoryCrypt
+   *        The crypto factory to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.2.0
+   */
+  @Nonnull
+  public final IMPLTYPE cryptoFactoryCrypt (@Nullable final IAS4CryptoFactory aCryptoFactoryCrypt)
+  {
+    m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
     return thisAsT ();
   }
 
@@ -552,6 +621,23 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * Set an optional customizing callback that is invoked when decrypting a
+   * message, to be able to modify the decryption configuration. This is an edge
+   * case e.g. to allow RSA 1.5 algorithm names.
+   *
+   * @param aDecryptRequestDataModifier
+   *        The modifier callback. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.2.0
+   */
+  @Nonnull
+  public final IMPLTYPE decryptRequestDataModifier (@Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier)
+  {
+    m_aDecryptRequestDataModifier = aDecryptRequestDataModifier;
+    return thisAsT ();
+  }
+
+  /**
    * Set an optional handler that is notified if an http sending will be
    * retried. This method is optional and must not be called prior to sending.
    *
@@ -590,7 +676,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       LOGGER.warn ("The field 'httpClientFactory' is not set");
       return false;
     }
-    // m_aCryptoFactory may be null
+    // m_aCryptoFactorySign may be null
+    // m_aCryptoFactoryCrypt may be null
     // m_sMessageID is optional
     // m_sRefToMessageID is optional
     // m_aSendingDateTime may be null
@@ -613,6 +700,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     // m_aBuildMessageCallback may be null
     // m_aOutgoingDumper may be null
     // m_aIncomingDumper may be null
+    // m_aDecryptRequestDataModifier may be null
     // m_aRetryCallback may be null
     // m_aResponseConsumer may be null
 

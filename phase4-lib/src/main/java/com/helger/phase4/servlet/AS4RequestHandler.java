@@ -360,9 +360,10 @@ public class AS4RequestHandler implements AutoCloseable
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4RequestHandler.class);
 
   private final AS4ResourceHelper m_aResHelper;
-  private final IAS4CryptoFactory m_aCryptoFactory;
+  private final IAS4CryptoFactory m_aCryptoFactorySign;
+  private final IAS4CryptoFactory m_aCryptoFactoryCrypt;
   private final IPModeResolver m_aPModeResolver;
-  private final IAS4IncomingAttachmentFactory m_aIAF;
+  private final IAS4IncomingAttachmentFactory m_aIncomingAttachmentFactory;
   private final IAS4IncomingSecurityConfiguration m_aIncomingSecurityConfig;
   private IAS4IncomingProfileSelector m_aIncomingProfileSelector = AS4IncomingProfileSelectorFromGlobal.INSTANCE;
   private final IAS4IncomingMessageMetadata m_aMessageMetadata;
@@ -376,23 +377,26 @@ public class AS4RequestHandler implements AutoCloseable
   private Supplier <? extends ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
   private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
 
-  public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                            @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                             @Nonnull final IPModeResolver aPModeResolver,
-                            @Nonnull final IAS4IncomingAttachmentFactory aIAF,
-                            @Nonnull final IAS4IncomingSecurityConfiguration aISC,
+                            @Nonnull final IAS4IncomingAttachmentFactory aIncomingAttachmentFactory,
+                            @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfig,
                             @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
+    ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
-    ValueEnforcer.notNull (aIAF, "IAF");
-    ValueEnforcer.notNull (aISC, "ISC");
+    ValueEnforcer.notNull (aIncomingAttachmentFactory, "IncomingAttachmentFactory");
+    ValueEnforcer.notNull (aIncomingSecurityConfig, "IncomingSecurityConfig");
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
     // Create dynamically here, to avoid leaving too many streams open
     m_aResHelper = new AS4ResourceHelper ();
-    m_aCryptoFactory = aCryptoFactory;
+    m_aCryptoFactorySign = aCryptoFactorySign;
+    m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
     m_aPModeResolver = aPModeResolver;
-    m_aIAF = aIAF;
-    m_aIncomingSecurityConfig = aISC;
+    m_aIncomingAttachmentFactory = aIncomingAttachmentFactory;
+    m_aIncomingSecurityConfig = aIncomingSecurityConfig;
     m_aMessageMetadata = aMessageMetadata;
   }
 
@@ -1095,7 +1099,7 @@ public class AS4RequestHandler implements AutoCloseable
     {
       // Sign
       final boolean bMustUnderstand = true;
-      ret = AS4Signer.createSignedMessage (m_aCryptoFactory,
+      ret = AS4Signer.createSignedMessage (m_aCryptoFactorySign,
                                            aDocToBeSigned,
                                            eSoapVersion,
                                            sMessagingID,
@@ -1165,7 +1169,7 @@ public class AS4RequestHandler implements AutoCloseable
     // We've got our response
     final Document aResponseDoc = aReceiptMessage.getAsSoapDocument ();
     final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ())
-                                                                   .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProvider ());
+                                                                   .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderSign ());
     final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
                                                        aSigningParams,
                                                        aResponseDoc,
@@ -1208,7 +1212,7 @@ public class AS4RequestHandler implements AutoCloseable
       aMimeMsg = AS4Encryptor.encryptMimeMessage (eSoapVersion,
                                                   aResponseDoc,
                                                   aResponseAttachments,
-                                                  m_aCryptoFactory,
+                                                  m_aCryptoFactoryCrypt,
                                                   bMustUnderstand,
                                                   m_aResHelper,
                                                   aCryptParms);
@@ -1294,8 +1298,10 @@ public class AS4RequestHandler implements AutoCloseable
   {
     // Create the SOAP header element processor list
     final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (m_aPModeResolver,
-                                                                                                           m_aCryptoFactory,
-                                                                                                           (IPMode) null);
+                                                                                                           m_aCryptoFactorySign,
+                                                                                                           m_aCryptoFactoryCrypt,
+                                                                                                           (IPMode) null,
+                                                                                                           m_aIncomingSecurityConfig.getDecryptRequestDataModifier ());
 
     // Decompose the SOAP message
     final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
@@ -1439,13 +1445,13 @@ public class AS4RequestHandler implements AutoCloseable
 
             // Send UserMessage
             final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ())
-                                                                           .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProvider ());
+                                                                           .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderSign ());
             // Use the original receiver ID as the alias into the keystore for
             // encrypting the response message
             final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
             final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aEffectiveLeg.getSecurity ())
                                                                      .setAlias (sEncryptionAlias)
-                                                                     .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProvider ());
+                                                                     .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderCrypt ());
 
             aAsyncResponseFactory = _createResponseUserMessage (aState,
                                                                 aEffectiveLeg.getProtocol ().getSoapVersion (),
@@ -1673,14 +1679,14 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                   aResponseAttachments);
 
               final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aLeg2.getSecurity ())
-                                                                             .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProvider ());
+                                                                             .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderSign ());
               final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ()
                                                               .getTo ()
                                                               .getPartyIdAtIndex (0)
                                                               .getValue ();
               final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aLeg2.getSecurity ())
                                                                        .setAlias (sEncryptionAlias)
-                                                                       .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProvider ());
+                                                                       .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderCrypt ());
               ret = _createResponseUserMessage (aState,
                                                 aLeg2.getProtocol ().getSoapVersion (),
                                                 aResponseUserMsg,
@@ -1757,7 +1763,7 @@ public class AS4RequestHandler implements AutoCloseable
       }
       AS4HttpDebug.debug ( () -> "RECEIVE-END with " + (aResponder != null ? "EBMS message" : "no content"));
     };
-    AS4IncomingHandler.parseAS4Message (m_aIAF,
+    AS4IncomingHandler.parseAS4Message (m_aIncomingAttachmentFactory,
                                         m_aResHelper,
                                         m_aMessageMetadata,
                                         aServletRequestIS,

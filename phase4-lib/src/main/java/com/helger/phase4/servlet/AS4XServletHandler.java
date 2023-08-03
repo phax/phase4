@@ -88,7 +88,8 @@ public class AS4XServletHandler implements IXServletSimpleHandler
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4XServletHandler.class);
 
-  private Supplier <? extends IAS4CryptoFactory> m_aCryptoFactorySupplier;
+  private Supplier <? extends IAS4CryptoFactory> m_aCryptoFactorySignSupplier;
+  private Supplier <? extends IAS4CryptoFactory> m_aCryptoFactoryCryptSupplier;
   private IPModeResolver m_aPModeResolver;
   private IAS4IncomingAttachmentFactory m_aIAF;
   private IAS4IncomingSecurityConfiguration m_aICS = AS4IncomingSecurityConfiguration.createDefaultInstance ();
@@ -130,27 +131,90 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   /**
+   * As the crypto factories for sign and crypt may be different, this general
+   * purpose API may not be used anymore. Use
+   * {@link #getCryptoFactorySignSupplier()} or
+   * {@link #getCryptoFactoryCryptSupplier()} instead.
+   *
    * @return The supplier for the {@link IAS4CryptoFactory}. May not be
    *         <code>null</code>.
    * @since 0.9.15
    */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.2.0")
   public final Supplier <? extends IAS4CryptoFactory> getCryptoFactorySupplier ()
   {
-    return m_aCryptoFactorySupplier;
+    return getCryptoFactorySignSupplier ();
   }
 
   /**
+   * @return The supplier for the {@link IAS4CryptoFactory} for signing. May not
+   *         be <code>null</code>.
+   * @see #getCryptoFactoryCryptSupplier()
+   * @since 2.2.0
+   */
+  @Nonnull
+  public final Supplier <? extends IAS4CryptoFactory> getCryptoFactorySignSupplier ()
+  {
+    return m_aCryptoFactorySignSupplier;
+  }
+
+  /**
+   * @return The supplier for the {@link IAS4CryptoFactory} for crypting. May
+   *         not be <code>null</code>.
+   * @see #getCryptoFactorySignSupplier()
+   * @since 2.2.0
+   */
+  @Nonnull
+  public final Supplier <? extends IAS4CryptoFactory> getCryptoFactoryCryptSupplier ()
+  {
+    return m_aCryptoFactoryCryptSupplier;
+  }
+
+  /**
+   * Set the same crypto factory supplier for signing and crypting.
+   *
    * @param aCryptoFactorySupplier
    *        Crypto factory supplier. May not be <code>null</code>.
    * @return this for chaining
+   * @see #setCryptoFactorySignSupplier(Supplier)
+   * @see #setCryptoFactoryCryptSupplier(Supplier)
    * @since 0.9.15
    */
   @Nonnull
   public final AS4XServletHandler setCryptoFactorySupplier (@Nonnull final Supplier <? extends IAS4CryptoFactory> aCryptoFactorySupplier)
   {
     ValueEnforcer.notNull (aCryptoFactorySupplier, "CryptoFactorySupplier");
-    m_aCryptoFactorySupplier = aCryptoFactorySupplier;
+    return setCryptoFactorySignSupplier (aCryptoFactorySupplier).setCryptoFactoryCryptSupplier (aCryptoFactorySupplier);
+  }
+
+  /**
+   * @param aCryptoFactorySignSupplier
+   *        Crypto factory supplier for signing. May not be <code>null</code>.
+   * @return this for chaining
+   * @see #setCryptoFactoryCryptSupplier(Supplier)
+   * @since 2.2.0
+   */
+  @Nonnull
+  public final AS4XServletHandler setCryptoFactorySignSupplier (@Nonnull final Supplier <? extends IAS4CryptoFactory> aCryptoFactorySignSupplier)
+  {
+    ValueEnforcer.notNull (aCryptoFactorySignSupplier, "CryptoFactorySignSupplier");
+    m_aCryptoFactorySignSupplier = aCryptoFactorySignSupplier;
+    return this;
+  }
+
+  /**
+   * @param aCryptoFactoryCryptSupplier
+   *        Crypto factory supplier for signing. May not be <code>null</code>.
+   * @return this for chaining
+   * @see #setCryptoFactorySignSupplier(Supplier)
+   * @since 2.2.0
+   */
+  @Nonnull
+  public final AS4XServletHandler setCryptoFactoryCryptSupplier (@Nonnull final Supplier <? extends IAS4CryptoFactory> aCryptoFactoryCryptSupplier)
+  {
+    ValueEnforcer.notNull (aCryptoFactoryCryptSupplier, "CryptoFactoryCryptSupplier");
+    m_aCryptoFactoryCryptSupplier = aCryptoFactoryCryptSupplier;
     return this;
   }
 
@@ -296,9 +360,14 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    *        The request scope. May not be <code>null</code>.
    * @param aHttpResponse
    *        The HTTP response to be filled. May not be <code>null</code>.
-   * @param aCF
-   *        The AS4 crypto factory to be used. May not be <code>null</code>.
-   *        Defaults to {@link #getCryptoFactorySupplier()}<code>.get()</code>
+   * @param aCryptoFactorySign
+   *        The AS4 crypto factory to be used for signing. May not be
+   *        <code>null</code>. Defaults to
+   *        {@link #getCryptoFactorySupplier()}<code>.get()</code>
+   * @param aCryptoFactoryCrypt
+   *        The AS4 crypto factory to be used for crypting. May not be
+   *        <code>null</code>. Defaults to
+   *        {@link #getCryptoFactorySupplier()}<code>.get()</code>
    * @param aPModeResolver
    *        The PMode resolver to be used. May not be <code>null</code>.
    *        Defaults to {@link #getPModeResolver()}.
@@ -316,7 +385,8 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    */
   protected void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                                 @Nonnull final AS4UnifiedResponse aHttpResponse,
-                                @Nonnull final IAS4CryptoFactory aCF,
+                                @Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                 @Nonnull final IPModeResolver aPModeResolver,
                                 @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                 @Nonnull final IAS4IncomingSecurityConfiguration aISC,
@@ -325,7 +395,12 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     // Start metadata
     final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope);
 
-    try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCF, aPModeResolver, aIAF, aISC, aMessageMetadata))
+    try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCryptoFactorySign,
+                                                                   aCryptoFactoryCrypt,
+                                                                   aPModeResolver,
+                                                                   aIAF,
+                                                                   aISC,
+                                                                   aMessageMetadata))
     {
       // Customize before handling
       if (aHandlerCustomizer != null)
@@ -367,14 +442,19 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                              @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     // Resolved once per request
-    final IAS4CryptoFactory aCF = m_aCryptoFactorySupplier.get ();
-    if (aCF == null)
-      throw new IllegalStateException ("Failed to get an AS4 CryptoFactory");
+    final IAS4CryptoFactory aCryptoFactorySign = m_aCryptoFactorySignSupplier.get ();
+    if (aCryptoFactorySign == null)
+      throw new IllegalStateException ("Failed to get an AS4 CryptoFactory for signing");
+
+    final IAS4CryptoFactory aCryptoFactoryCrypt = m_aCryptoFactoryCryptSupplier.get ();
+    if (aCryptoFactoryCrypt == null)
+      throw new IllegalStateException ("Failed to get an AS4 CryptoFactory for crypting");
 
     // Created above in #createUnifiedResponse
     handleRequest (aRequestScope,
                    (AS4UnifiedResponse) aUnifiedResponse,
-                   aCF,
+                   aCryptoFactorySign,
+                   aCryptoFactoryCrypt,
                    m_aPModeResolver,
                    m_aIAF,
                    m_aICS,

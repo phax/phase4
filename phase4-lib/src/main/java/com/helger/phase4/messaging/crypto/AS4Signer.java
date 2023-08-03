@@ -60,7 +60,7 @@ public final class AS4Signer
   {}
 
   @Nonnull
-  private static Document _createSignedMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  private static Document _createSignedMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                 @Nonnull final Document aPreSigningMessage,
                                                 @Nonnull final ESoapVersion eSoapVersion,
                                                 @Nonnull @Nonempty final String sMessagingID,
@@ -69,7 +69,7 @@ public final class AS4Signer
                                                 final boolean bMustUnderstand,
                                                 @Nonnull final AS4SigningParams aSigningParams) throws WSSecurityException
   {
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
     ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
@@ -79,7 +79,7 @@ public final class AS4Signer
     LOGGER.info ("Now signing AS4 message. KeyIdentifierType=" +
                  aSigningParams.getKeyIdentifierType ().name () +
                  "; KeyAlias=" +
-                 aCryptoFactory.getKeyAlias () +
+                 aCryptoFactorySign.getKeyAlias () +
                  "; SignAlgo=" +
                  aSigningParams.getAlgorithmSign ().getAlgorithmURI () +
                  "; DigestAlgo=" +
@@ -94,7 +94,7 @@ public final class AS4Signer
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
     aBuilder.setKeyIdentifierType (aSigningParams.getKeyIdentifierType ().getTypeID ());
     // Set keystore alias and key password
-    aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoFactorySign.getKeyAlias (), aCryptoFactorySign.getKeyPassword ());
     aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
     aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());
@@ -130,14 +130,14 @@ public final class AS4Signer
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
 
-    return aBuilder.build (aCryptoFactory.getCrypto ());
+    return aBuilder.build (aCryptoFactorySign.getCrypto ());
   }
 
   /**
    * This method must be used if the message does not contain attachments, that
    * should be in a additional mime message part.
    *
-   * @param aCryptoFactory
+   * @param aCryptoFactorySign
    *        CryptoFactory to use. May not be <code>null</code>.
    * @param aPreSigningMessage
    *        SOAP Document before signing
@@ -158,7 +158,7 @@ public final class AS4Signer
    *         If an error occurs during signing
    */
   @Nonnull
-  public static Document createSignedMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  public static Document createSignedMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                               @Nonnull final Document aPreSigningMessage,
                                               @Nonnull final ESoapVersion eSoapVersion,
                                               @Nonnull @Nonempty final String sMessagingID,
@@ -167,7 +167,7 @@ public final class AS4Signer
                                               final boolean bMustUnderstand,
                                               @Nonnull final AS4SigningParams aSigningParams) throws WSSecurityException
   {
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactory");
     ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
@@ -177,7 +177,7 @@ public final class AS4Signer
     if (AS4Configuration.isWSS4JSynchronizedSecurity ())
     {
       // Synchronize
-      return WSSSynchronizer.call ( () -> _createSignedMessage (aCryptoFactory,
+      return WSSSynchronizer.call ( () -> _createSignedMessage (aCryptoFactorySign,
                                                                 aPreSigningMessage,
                                                                 eSoapVersion,
                                                                 sMessagingID,
@@ -190,7 +190,7 @@ public final class AS4Signer
     // Ensure WSSConfig is initialized
     WSSConfigManager.getInstance ();
 
-    return _createSignedMessage (aCryptoFactory,
+    return _createSignedMessage (aCryptoFactorySign,
                                  aPreSigningMessage,
                                  eSoapVersion,
                                  sMessagingID,

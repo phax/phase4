@@ -33,6 +33,7 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4DecryptRequestDataModifier;
 import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
@@ -90,8 +91,10 @@ public class SOAPHeaderElementProcessorRegistry
 
   @Nonnull
   public static SOAPHeaderElementProcessorRegistry createDefault (@Nonnull final IPModeResolver aPModeResolver,
-                                                                  @Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                                                  @Nullable final IPMode aFallbackPMode)
+                                                                  @Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                  @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                                  @Nullable final IPMode aFallbackPMode,
+                                                                  @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier)
   {
     // Register all SOAP header element processors
     // Registration order matches execution order!
@@ -100,9 +103,13 @@ public class SOAPHeaderElementProcessorRegistry
     // callback notifying a IAS4PModeAwareCryptoFactory about a successful PMode
     // resolution
     final Consumer <IPMode> aPModeConsumer = aPMode -> {
-      if (aCryptoFactory instanceof IAS4PModeAwareCryptoFactory)
+      if (aCryptoFactorySign instanceof IAS4PModeAwareCryptoFactory)
       {
-        ((IAS4PModeAwareCryptoFactory) aCryptoFactory).setContextPMode (aPMode);
+        ((IAS4PModeAwareCryptoFactory) aCryptoFactorySign).setContextPMode (aPMode);
+      }
+      if (aCryptoFactoryCrypt instanceof IAS4PModeAwareCryptoFactory)
+      {
+        ((IAS4PModeAwareCryptoFactory) aCryptoFactoryCrypt).setContextPMode (aPMode);
       }
     };
 
@@ -114,9 +121,11 @@ public class SOAPHeaderElementProcessorRegistry
     final Provider aSecurityProvider = null;
     final Supplier <? extends IPMode> aFallbackPModeProvider = () -> aFallbackPMode;
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,
-                                        new SOAPHeaderElementProcessorWSS4J (aCryptoFactory,
+                                        new SOAPHeaderElementProcessorWSS4J (aCryptoFactorySign,
+                                                                             aCryptoFactoryCrypt,
                                                                              aSecurityProvider,
-                                                                             aFallbackPModeProvider));
+                                                                             aFallbackPModeProvider,
+                                                                             aDecryptRequestDataModifier));
     return ret;
   }
 }

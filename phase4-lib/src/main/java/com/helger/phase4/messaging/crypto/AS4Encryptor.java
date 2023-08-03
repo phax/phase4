@@ -109,7 +109,7 @@ public final class AS4Encryptor
   }
 
   @Nonnull
-  private static Document _encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  private static Document _encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                    @Nonnull final ESoapVersion eSoapVersion,
                                                    @Nonnull final Document aDoc,
                                                    final boolean bMustUnderstand,
@@ -148,13 +148,13 @@ public final class AS4Encryptor
       throw new IllegalStateException ("Failed to create a symmetric session key from " +
                                        aCryptParams.getSessionKeyProvider ());
 
-    return aBuilder.build (aCryptoFactory.getCrypto (), aSymmetricKey);
+    return aBuilder.build (aCryptoFactoryCrypt.getCrypto (), aSymmetricKey);
   }
 
   /**
    * Encrypt the SOAP "Body" content.
    *
-   * @param aCryptoFactory
+   * @param aCryptoFactoryCrypt
    *        Crypto factory to use. May not be <code>null</code>.
    * @param eSoapVersion
    *        The SOAP version to use. May not be <code>null</code>.
@@ -169,13 +169,13 @@ public final class AS4Encryptor
    *         in case of error
    */
   @Nonnull
-  public static Document encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  public static Document encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                  @Nonnull final ESoapVersion eSoapVersion,
                                                  @Nonnull final Document aDoc,
                                                  final boolean bMustUnderstand,
                                                  @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (aCryptParams, "CryptParams");
@@ -183,7 +183,7 @@ public final class AS4Encryptor
     if (AS4Configuration.isWSS4JSynchronizedSecurity ())
     {
       // Synchronize
-      return WSSSynchronizer.call ( () -> _encryptSoapBodyPayload (aCryptoFactory,
+      return WSSSynchronizer.call ( () -> _encryptSoapBodyPayload (aCryptoFactoryCrypt,
                                                                    eSoapVersion,
                                                                    aDoc,
                                                                    bMustUnderstand,
@@ -193,14 +193,14 @@ public final class AS4Encryptor
     // Ensure WSSConfig is initialized
     WSSConfigManager.getInstance ();
 
-    return _encryptSoapBodyPayload (aCryptoFactory, eSoapVersion, aDoc, bMustUnderstand, aCryptParams);
+    return _encryptSoapBodyPayload (aCryptoFactoryCrypt, eSoapVersion, aDoc, bMustUnderstand, aCryptParams);
   }
 
   @Nonnull
   private static AS4MimeMessage _encryptMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                      @Nonnull final Document aDoc,
                                                      @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                     @Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                     @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                      final boolean bMustUnderstand,
                                                      @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                      @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
@@ -249,7 +249,7 @@ public final class AS4Encryptor
                                        aCryptParams.getSessionKeyProvider ());
 
     // Main sign and/or encrypt
-    final Document aEncryptedDoc = aBuilder.build (aCryptoFactory.getCrypto (), aSymmetricKey);
+    final Document aEncryptedDoc = aBuilder.build (aCryptoFactoryCrypt.getCrypto (), aSymmetricKey);
 
     // The attachment callback handler contains the encrypted attachments
     // Important: read the attachment stream only once!
@@ -280,12 +280,12 @@ public final class AS4Encryptor
   public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                    @Nonnull final Document aDoc,
                                                    @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                   @Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                    final boolean bMustUnderstand,
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                    @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
@@ -297,7 +297,7 @@ public final class AS4Encryptor
       return WSSSynchronizer.call ( () -> _encryptMimeMessage (eSoapVersion,
                                                                aDoc,
                                                                aAttachments,
-                                                               aCryptoFactory,
+                                                               aCryptoFactoryCrypt,
                                                                bMustUnderstand,
                                                                aResHelper,
                                                                aCryptParams));
@@ -309,7 +309,7 @@ public final class AS4Encryptor
     return _encryptMimeMessage (eSoapVersion,
                                 aDoc,
                                 aAttachments,
-                                aCryptoFactory,
+                                aCryptoFactoryCrypt,
                                 bMustUnderstand,
                                 aResHelper,
                                 aCryptParams);

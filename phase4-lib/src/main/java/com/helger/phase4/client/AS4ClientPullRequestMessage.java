@@ -95,10 +95,10 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
     Document aDoc = aPureDoc;
     if (signingParams ().isSigningEnabled ())
     {
-      final IAS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
+      final IAS4CryptoFactory aCryptoFactorySign = internalGetCryptoFactorySign ();
 
       final boolean bMustUnderstand = true;
-      final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactory,
+      final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
                                                                  aDoc,
                                                                  getSoapVersion (),
                                                                  aPullRequest.getMessagingID (),

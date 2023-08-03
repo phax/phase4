@@ -43,6 +43,7 @@ import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4DecryptRequestDataModifier;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
@@ -69,7 +70,8 @@ public final class AS4BidirectionalClientHelper
   private AS4BidirectionalClientHelper ()
   {}
 
-  public static void sendAS4UserMessageAndReceiveAS4SignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  public static void sendAS4UserMessageAndReceiveAS4SignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                                    @Nonnull final IPModeResolver aPModeResolver,
                                                                    @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                                    @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
@@ -79,6 +81,7 @@ public final class AS4BidirectionalClientHelper
                                                                    @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                                   @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier,
                                                                    @Nullable final IAS4RetryCallback aRetryCallback,
                                                                    @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws IOException,
@@ -151,7 +154,8 @@ public final class AS4BidirectionalClientHelper
 
       // Read response as EBMS3 Signal Message
       // Read it in any case to ensure signature validation etc. happens
-      final Ebms3SignalMessage aSignalMessage = AS4IncomingHandler.parseSignalMessage (aCryptoFactory,
+      final Ebms3SignalMessage aSignalMessage = AS4IncomingHandler.parseSignalMessage (aCryptoFactorySign,
+                                                                                       aCryptoFactoryCrypt,
                                                                                        aPModeResolver,
                                                                                        aIAF,
                                                                                        aIncomingProfileSelector,
@@ -161,7 +165,8 @@ public final class AS4BidirectionalClientHelper
                                                                                        aMessageMetadata,
                                                                                        aWrappedResponse.get (),
                                                                                        aResponseEntity.getResponse (),
-                                                                                       aIncomingDumper);
+                                                                                       aIncomingDumper,
+                                                                                       aDecryptRequestDataModifier);
       if (aSignalMessage != null && aSignalMsgConsumer != null)
         aSignalMsgConsumer.handleSignalMessage (aSignalMessage);
     }
@@ -169,7 +174,8 @@ public final class AS4BidirectionalClientHelper
       LOGGER.info ("AS4 ResponseEntity is empty");
   }
 
-  public static void sendAS4PullRequestAndReceiveAS4UserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  public static void sendAS4PullRequestAndReceiveAS4UserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                 @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                                  @Nonnull final IPModeResolver aPModeResolver,
                                                                  @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                                  @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
@@ -179,6 +185,7 @@ public final class AS4BidirectionalClientHelper
                                                                  @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                  @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                                 @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier,
                                                                  @Nullable final IAS4RetryCallback aRetryCallback,
                                                                  @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                  @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws IOException,
@@ -201,6 +208,8 @@ public final class AS4BidirectionalClientHelper
       final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
       if (aEntity == null)
         return null;
+
+      // Remember HTTP Response
       aWrappedResponse.set (aHttpResponse);
       return EntityUtils.toByteArray (aEntity);
     };
@@ -227,7 +236,8 @@ public final class AS4BidirectionalClientHelper
 
       // Read response as EBMS3 User Message
       // Read it in any case to ensure signature validation etc. happens
-      final Ebms3UserMessage aUserMessage = AS4IncomingHandler.parseUserMessage (aCryptoFactory,
+      final Ebms3UserMessage aUserMessage = AS4IncomingHandler.parseUserMessage (aCryptoFactorySign,
+                                                                                 aCryptoFactoryCrypt,
                                                                                  aPModeResolver,
                                                                                  aIAF,
                                                                                  aIncomingProfileSelector,
@@ -237,7 +247,8 @@ public final class AS4BidirectionalClientHelper
                                                                                  aMessageMetadata,
                                                                                  aWrappedResponse.get (),
                                                                                  aResponseEntity.getResponse (),
-                                                                                 aIncomingDumper);
+                                                                                 aIncomingDumper,
+                                                                                 aDecryptRequestDataModifier);
       if (aUserMessage != null && aUserMsgConsumer != null)
         aUserMsgConsumer.handleUserMessage (aUserMessage);
     }

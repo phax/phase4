@@ -22,6 +22,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import com.helger.commons.string.ToStringGenerator;
+
 /**
  * Default implementation of {@link IAS4IncomingSecurityConfiguration}.
  *
@@ -31,27 +33,67 @@ import javax.annotation.concurrent.NotThreadSafe;
 @NotThreadSafe
 public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityConfiguration
 {
-  private Provider m_aSecurityProvider;
+  private Provider m_aSecurityProviderSign;
+  private Provider m_aSecurityProviderCrypt;
+  private IAS4DecryptRequestDataModifier m_aDecryptRequestDataModifier;
 
   public AS4IncomingSecurityConfiguration ()
   {}
 
   @Nullable
-  public Provider getSecurityProvider ()
+  public Provider getSecurityProviderSign ()
   {
-    return m_aSecurityProvider;
+    return m_aSecurityProviderSign;
   }
 
   @Nonnull
-  public AS4IncomingSecurityConfiguration setSecurityProvider (@Nullable final Provider a)
+  public AS4IncomingSecurityConfiguration setSecurityProviderSign (@Nullable final Provider a)
   {
-    m_aSecurityProvider = a;
+    m_aSecurityProviderSign = a;
     return this;
   }
 
-  @Nonnull
-  public static IAS4IncomingSecurityConfiguration createDefaultInstance ()
+  @Nullable
+  public Provider getSecurityProviderCrypt ()
   {
+    return m_aSecurityProviderCrypt;
+  }
+
+  @Nonnull
+  public AS4IncomingSecurityConfiguration setSecurityProviderCrypt (@Nullable final Provider a)
+  {
+    m_aSecurityProviderCrypt = a;
+    return this;
+  }
+
+  @Nullable
+  public IAS4DecryptRequestDataModifier getDecryptRequestDataModifier ()
+  {
+    return m_aDecryptRequestDataModifier;
+  }
+
+  @Nonnull
+  public AS4IncomingSecurityConfiguration setDecryptRequestDataModifier (@Nullable final IAS4DecryptRequestDataModifier a)
+  {
+    m_aDecryptRequestDataModifier = a;
+    return this;
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (null).append ("SecurityProviderSign", m_aSecurityProviderSign)
+                                       .append ("SecurityProviderCrypt", m_aSecurityProviderCrypt)
+                                       .append ("DecryptRequestDataModifier", m_aDecryptRequestDataModifier)
+                                       .getToString ();
+  }
+
+  @Nonnull
+  public static AS4IncomingSecurityConfiguration createDefaultInstance ()
+  {
+    // No SecurityProviderSign
+    // No SecurityProviderCrypt
+    // No RequestDataModifier
     return new AS4IncomingSecurityConfiguration ();
   }
 }

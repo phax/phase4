@@ -135,8 +135,7 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
     {
       ret = m_aKeyStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getKeyStoreType (),
                                                        m_aCryptoProps.getKeyStorePath (),
-                                                       m_aCryptoProps.getKeyStorePassword ())
-                                        .getKeyStore ();
+                                                       m_aCryptoProps.getKeyStorePassword ()).getKeyStore ();
     }
     return ret;
   }
@@ -154,8 +153,8 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
         ret = m_aPK = KeyStoreHelper.loadPrivateKey (aKeyStore,
                                                      m_aCryptoProps.getKeyStorePath (),
                                                      m_aCryptoProps.getKeyAlias (),
-                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY
-                                                                          : sKeyPassword.toCharArray ())
+                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY : sKeyPassword
+                                                                                                                       .toCharArray ())
                                     .getKeyEntry ();
       }
     }
@@ -194,15 +193,9 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
     {
       ret = m_aTrustStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getTrustStoreType (),
                                                          m_aCryptoProps.getTrustStorePath (),
-                                                         m_aCryptoProps.getTrustStorePassword ())
-                                          .getKeyStore ();
+                                                         m_aCryptoProps.getTrustStorePassword ()).getKeyStore ();
     }
     return ret;
-  }
-
-  public boolean isAllowRSA15KeyTransportAlgorithm ()
-  {
-    return m_aCryptoProps.isAllowRSA15KeyTransportAlgorithm ();
   }
 
   /**

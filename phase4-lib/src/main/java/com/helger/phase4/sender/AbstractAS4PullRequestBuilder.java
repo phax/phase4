@@ -148,7 +148,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     aPullRequestMsg.setSoapVersion (m_eSoapVersion);
     aPullRequestMsg.setSendingDateTimeOrNow (m_aSendingDateTime);
     // Set the keystore/truststore parameters
-    aPullRequestMsg.setAS4CryptoFactory (m_aCryptoFactory);
+    aPullRequestMsg.setAS4CryptoFactorySign (m_aCryptoFactorySign);
+    aPullRequestMsg.setAS4CryptoFactoryCrypt (m_aCryptoFactoryCrypt);
 
     // Copy all values
     m_aCryptParams.cloneTo (aPullRequestMsg.cryptParams ());
@@ -176,7 +177,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
       applyToPullRequest (aPullRequestMsg);
 
       // Main sending
-      AS4BidirectionalClientHelper.sendAS4PullRequestAndReceiveAS4UserMessage (m_aCryptoFactory,
+      AS4BidirectionalClientHelper.sendAS4PullRequestAndReceiveAS4UserMessage (m_aCryptoFactorySign,
+                                                                               m_aCryptoFactoryCrypt,
                                                                                pmodeResolver (),
                                                                                incomingAttachmentFactory (),
                                                                                incomingProfileSelector (),
@@ -186,6 +188,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
                                                                                m_aBuildMessageCallback,
                                                                                m_aOutgoingDumper,
                                                                                m_aIncomingDumper,
+                                                                               m_aDecryptRequestDataModifier,
                                                                                m_aRetryCallback,
                                                                                m_aResponseConsumer,
                                                                                m_aUserMsgConsumer);

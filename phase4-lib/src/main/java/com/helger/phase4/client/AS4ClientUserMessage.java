@@ -637,8 +637,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                            aEbms3CollaborationInfo,
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
-                                                           getSoapVersion ())
-                                                  .setMustUnderstand (true);
+                                                           getSoapVersion ()).setMustUnderstand (true);
 
     if (aCallback != null)
       aCallback.onAS4Message (aUserMsg);
@@ -659,13 +658,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
       AS4HttpDebug.debug ( () -> "Unsigned/unencrypted UserMessage:\n" +
                                  XMLWriter.getNodeAsString (aPureDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
 
-      final IAS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
-
       // 2a. sign
       if (bSign)
       {
+        final IAS4CryptoFactory aCryptoFactorySign = internalGetCryptoFactorySign ();
+
         final boolean bMustUnderstand = true;
-        final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactory,
+        final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
                                                                    aDoc,
                                                                    getSoapVersion (),
                                                                    aUserMsg.getMessagingID (),
@@ -685,6 +684,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
       // 2b. encrypt
       if (bEncrypt)
       {
+        final IAS4CryptoFactory aCryptoFactoryCrypt = internalGetCryptoFactoryCrypt ();
+
         // MustUnderstand always set to true
         final boolean bMustUnderstand = true;
         if (bAttachmentsPresent)
@@ -692,7 +693,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
           aMimeMsg = AS4Encryptor.encryptMimeMessage (getSoapVersion (),
                                                       aDoc,
                                                       m_aAttachments,
-                                                      aCryptoFactory,
+                                                      aCryptoFactoryCrypt,
                                                       bMustUnderstand,
                                                       getAS4ResourceHelper (),
                                                       cryptParams ().getClone ());
@@ -702,7 +703,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         }
         else
         {
-          final Document aEncryptedDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
+          final Document aEncryptedDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactoryCrypt,
                                                                               getSoapVersion (),
                                                                               aDoc,
                                                                               bMustUnderstand,

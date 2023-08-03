@@ -34,5 +34,22 @@ public interface IAS4IncomingSecurityConfiguration
    *         provider.
    */
   @Nullable
-  Provider getSecurityProvider ();
+  Provider getSecurityProviderSign ();
+
+  /**
+   * @return The Java Security provider to be used for incoming messages. May be
+   *         <code>null</code> to indicate the usage of the default JDK security
+   *         provider.
+   */
+  @Nullable
+  Provider getSecurityProviderCrypt ();
+
+  /**
+   * @return An optional modifier to customize WSS4J
+   *         {@link org.apache.wss4j.dom.handler.RequestData} objects for
+   *         decrypting. This may e.g. be used to allow RSA 1.5 algorithms.
+   * @since 2.2.0
+   */
+  @Nullable
+  IAS4DecryptRequestDataModifier getDecryptRequestDataModifier ();
 }

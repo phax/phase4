@@ -59,6 +59,7 @@ import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4DecryptRequestDataModifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -101,13 +102,8 @@ import jakarta.mail.internet.MimeBodyPart;
  * @author Philip Helger
  * @since v0.9.7
  */
-public class AS4IncomingHandler
+public final class AS4IncomingHandler
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingHandler.class);
-
-  private AS4IncomingHandler ()
-  {}
-
   /**
    * Callback interface for handling the parsing result.
    *
@@ -141,6 +137,11 @@ public class AS4IncomingHandler
                                                                                Phase4Exception;
   }
 
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingHandler.class);
+
+  private AS4IncomingHandler ()
+  {}
+
   public static void parseAS4Message (@Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                       @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
@@ -167,8 +168,8 @@ public class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
+                                                                                                             .getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -415,8 +416,7 @@ public class AS4IncomingHandler
                                              aHeader.getNode (),
                                              aIncomingAttachments,
                                              aState,
-                                             aErrorList)
-                      .isSuccess ())
+                                             aErrorList).isSuccess ())
         {
           // Mark header as processed (for mustUnderstand check)
           aHeader.setProcessed (true);
@@ -725,7 +725,8 @@ public class AS4IncomingHandler
   }
 
   @Nullable
-  private static IAS4MessageState _parseMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  private static IAS4MessageState _parseMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                                 @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                  @Nonnull final IPModeResolver aPModeResolver,
                                                  @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                  @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
@@ -735,7 +736,8 @@ public class AS4IncomingHandler
                                                  @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                  @Nonnull final HttpResponse aHttpResponse,
                                                  @Nonnull final byte [] aResponsePayload,
-                                                 @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception
+                                                 @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                 @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier) throws Phase4Exception
   {
     // This wrapper will take the result
     final Wrapper <IAS4MessageState> aRetWrapper = new Wrapper <> ();
@@ -747,8 +749,10 @@ public class AS4IncomingHandler
       // Use the sending PMode as fallback, because from the incoming
       // receipt/error it is impossible to detect a PMode
       final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (aPModeResolver,
-                                                                                                             aCryptoFactory,
-                                                                                                             aSendingPMode);
+                                                                                                             aCryptoFactorySign,
+                                                                                                             aCryptoFactoryCrypt,
+                                                                                                             aSendingPMode,
+                                                                                                             aDecryptRequestDataModifier);
 
       // Parse AS4, verify signature etc
       final IAS4MessageState aState = processEbmsMessage (aResHelper,
@@ -795,8 +799,11 @@ public class AS4IncomingHandler
     return aRetWrapper.get ();
   }
 
+  // Parse an AS4 SignalMessage that was received as the response to a
+  // UserMessage
   @Nullable
-  public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                                       @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                        @Nonnull final IPModeResolver aPModeResolver,
                                                        @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                        @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
@@ -806,9 +813,11 @@ public class AS4IncomingHandler
                                                        @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                        @Nonnull final HttpResponse aHttpResponse,
                                                        @Nonnull final byte [] aResponsePayload,
-                                                       @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception
+                                                       @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                       @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier) throws Phase4Exception
   {
-    final IAS4MessageState aState = _parseMessage (aCryptoFactory,
+    final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
+                                                   aCryptoFactoryCrypt,
                                                    aPModeResolver,
                                                    aIAF,
                                                    aAS4ProfileSelector,
@@ -818,7 +827,8 @@ public class AS4IncomingHandler
                                                    aMessageMetadata,
                                                    aHttpResponse,
                                                    aResponsePayload,
-                                                   aIncomingDumper);
+                                                   aIncomingDumper,
+                                                   aDecryptRequestDataModifier);
     if (aState == null)
     {
       // Error message was already logged
@@ -836,8 +846,10 @@ public class AS4IncomingHandler
     return ret;
   }
 
+  // Parse an AS4 UserMessage that was received as the response to a PullRequest
   @Nullable
-  public static Ebms3UserMessage parseUserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+  public static Ebms3UserMessage parseUserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                    @Nonnull final IPModeResolver aPModeResolver,
                                                    @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                    @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
@@ -847,9 +859,11 @@ public class AS4IncomingHandler
                                                    @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                    @Nonnull final HttpResponse aHttpResponse,
                                                    @Nonnull final byte [] aResponsePayload,
-                                                   @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception
+                                                   @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                   @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier) throws Phase4Exception
   {
-    final IAS4MessageState aState = _parseMessage (aCryptoFactory,
+    final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
+                                                   aCryptoFactoryCrypt,
                                                    aPModeResolver,
                                                    aIAF,
                                                    aAS4ProfileSelector,
@@ -859,7 +873,8 @@ public class AS4IncomingHandler
                                                    aMessageMetadata,
                                                    aHttpResponse,
                                                    aResponsePayload,
-                                                   aIncomingDumper);
+                                                   aIncomingDumper,
+                                                   aDecryptRequestDataModifier);
     if (aState == null)
     {
       // Error message was already logged
