@@ -51,5 +51,5 @@ public interface IAS4IncomingSecurityConfiguration
    * @since 2.2.0
    */
   @Nullable
-  IAS4DecryptRequestDataModifier getDecryptRequestDataModifier ();
+  IAS4DecryptParameterModifier getDecryptParameterModifier ();
 }

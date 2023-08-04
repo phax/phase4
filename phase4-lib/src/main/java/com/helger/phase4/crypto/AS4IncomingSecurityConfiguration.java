@@ -35,7 +35,7 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
 {
   private Provider m_aSecurityProviderSign;
   private Provider m_aSecurityProviderCrypt;
-  private IAS4DecryptRequestDataModifier m_aDecryptRequestDataModifier;
+  private IAS4DecryptParameterModifier m_aDecryptParameterModifier;
 
   public AS4IncomingSecurityConfiguration ()
   {}
@@ -67,15 +67,15 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
   }
 
   @Nullable
-  public IAS4DecryptRequestDataModifier getDecryptRequestDataModifier ()
+  public IAS4DecryptParameterModifier getDecryptParameterModifier ()
   {
-    return m_aDecryptRequestDataModifier;
+    return m_aDecryptParameterModifier;
   }
 
   @Nonnull
-  public AS4IncomingSecurityConfiguration setDecryptRequestDataModifier (@Nullable final IAS4DecryptRequestDataModifier a)
+  public AS4IncomingSecurityConfiguration setDecryptParameterModifier (@Nullable final IAS4DecryptParameterModifier a)
   {
-    m_aDecryptRequestDataModifier = a;
+    m_aDecryptParameterModifier = a;
     return this;
   }
 
@@ -84,7 +84,7 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
   {
     return new ToStringGenerator (null).append ("SecurityProviderSign", m_aSecurityProviderSign)
                                        .append ("SecurityProviderCrypt", m_aSecurityProviderCrypt)
-                                       .append ("DecryptRequestDataModifier", m_aDecryptRequestDataModifier)
+                                       .append ("DecryptParameterModifier", m_aDecryptParameterModifier)
                                        .getToString ();
   }
 

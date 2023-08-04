@@ -202,7 +202,7 @@ public final class Phase4ENTSOGSender
                                                                                    m_aBuildMessageCallback,
                                                                                    m_aOutgoingDumper,
                                                                                    m_aIncomingDumper,
-                                                                                   m_aDecryptRequestDataModifier,
+                                                                                   m_aDecryptParameterModifier,
                                                                                    m_aRetryCallback,
                                                                                    m_aResponseConsumer,
                                                                                    m_aSignalMsgConsumer);

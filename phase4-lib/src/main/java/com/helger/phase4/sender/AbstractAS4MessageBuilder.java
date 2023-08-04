@@ -43,7 +43,7 @@ import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.crypto.IAS4DecryptRequestDataModifier;
+import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.http.HttpRetrySettings;
@@ -92,7 +92,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
   protected IAS4OutgoingDumper m_aOutgoingDumper;
   protected IAS4IncomingDumper m_aIncomingDumper;
-  protected IAS4DecryptRequestDataModifier m_aDecryptRequestDataModifier;
+  protected IAS4DecryptParameterModifier m_aDecryptParameterModifier;
   protected IAS4RetryCallback m_aRetryCallback;
   protected IAS4RawResponseConsumer m_aResponseConsumer;
 
@@ -625,15 +625,15 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * message, to be able to modify the decryption configuration. This is an edge
    * case e.g. to allow RSA 1.5 algorithm names.
    *
-   * @param aDecryptRequestDataModifier
+   * @param aDecryptParameterModifier
    *        The modifier callback. May be <code>null</code>.
    * @return this for chaining
    * @since 2.2.0
    */
   @Nonnull
-  public final IMPLTYPE decryptRequestDataModifier (@Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier)
+  public final IMPLTYPE decryptRequestDataModifier (@Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier)
   {
-    m_aDecryptRequestDataModifier = aDecryptRequestDataModifier;
+    m_aDecryptParameterModifier = aDecryptParameterModifier;
     return thisAsT ();
   }
 

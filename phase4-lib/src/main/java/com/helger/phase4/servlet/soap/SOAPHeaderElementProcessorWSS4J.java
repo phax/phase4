@@ -61,7 +61,7 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.crypto.IAS4DecryptRequestDataModifier;
+import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
@@ -88,13 +88,13 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   private final IAS4CryptoFactory m_aCryptoFactoryCrypt;
   private final Provider m_aSecurityProvider;
   private final Supplier <? extends IPMode> m_aFallbackPModeProvider;
-  private final IAS4DecryptRequestDataModifier m_aDecryptRequestDataModifier;
+  private final IAS4DecryptParameterModifier m_aDecryptParameterModifier;
 
   public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                           @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                           @Nullable final Provider aSecurityProvider,
                                           @Nonnull final Supplier <? extends IPMode> aFallbackPModeProvider,
-                                          @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier)
+                                          @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier)
   {
     ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
     ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
@@ -103,7 +103,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
     m_aSecurityProvider = aSecurityProvider;
     m_aFallbackPModeProvider = aFallbackPModeProvider;
-    m_aDecryptRequestDataModifier = aDecryptRequestDataModifier;
+    m_aDecryptParameterModifier = aDecryptParameterModifier;
   }
 
   @Nonnull
@@ -128,6 +128,16 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       // Resolve the WSS config here to ensure the context matches
       final WSSConfig aWSSConfig = aWSSConfigSupplier.get ();
 
+      if (m_aDecryptParameterModifier != null)
+      {
+        // Make any custom modifications necessary
+        if (LOGGER.isTraceEnabled ())
+          LOGGER.trace ("Before modifyWSSConfig");
+        m_aDecryptParameterModifier.modifyWSSConfig (aWSSConfig);
+        if (LOGGER.isTraceEnabled ())
+          LOGGER.trace ("After modifyWSSConfig");
+      }
+
       // Configure RequestData needed for the check / decrypt process!
       final RequestData aRequestData = new RequestData ();
       aRequestData.setCallbackHandler (aKeyStoreCallback);
@@ -148,14 +158,14 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       if (false)
         aRequestData.setSubjectCertConstraints (new CommonsArrayList <> (RegExCache.getPattern (".*")));
 
-      if (m_aDecryptRequestDataModifier != null)
+      if (m_aDecryptParameterModifier != null)
       {
         // Make any custom modifications necessary
         if (LOGGER.isTraceEnabled ())
-          LOGGER.trace ("Before modifyForDecrypt");
-        m_aDecryptRequestDataModifier.modifyForDecrypt (aRequestData);
+          LOGGER.trace ("Before modifyRequestData");
+        m_aDecryptParameterModifier.modifyRequestData (aRequestData);
         if (LOGGER.isTraceEnabled ())
-          LOGGER.trace ("After modifyForDecrypt");
+          LOGGER.trace ("After modifyRequestData");
       }
 
       // Upon success, the SOAP document contains the decrypted content

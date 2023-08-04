@@ -33,7 +33,7 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.crypto.IAS4DecryptRequestDataModifier;
+import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
@@ -94,7 +94,7 @@ public class SOAPHeaderElementProcessorRegistry
                                                                   @Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                                   @Nullable final IPMode aFallbackPMode,
-                                                                  @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier)
+                                                                  @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier)
   {
     // Register all SOAP header element processors
     // Registration order matches execution order!
@@ -125,7 +125,7 @@ public class SOAPHeaderElementProcessorRegistry
                                                                              aCryptoFactoryCrypt,
                                                                              aSecurityProvider,
                                                                              aFallbackPModeProvider,
-                                                                             aDecryptRequestDataModifier));
+                                                                             aDecryptParameterModifier));
     return ret;
   }
 }

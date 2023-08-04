@@ -188,7 +188,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
                                                                                m_aBuildMessageCallback,
                                                                                m_aOutgoingDumper,
                                                                                m_aIncomingDumper,
-                                                                               m_aDecryptRequestDataModifier,
+                                                                               m_aDecryptParameterModifier,
                                                                                m_aRetryCallback,
                                                                                m_aResponseConsumer,
                                                                                m_aUserMsgConsumer);

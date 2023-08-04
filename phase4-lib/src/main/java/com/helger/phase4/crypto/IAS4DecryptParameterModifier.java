@@ -18,6 +18,7 @@ package com.helger.phase4.crypto;
 
 import javax.annotation.Nonnull;
 
+import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.handler.RequestData;
 
 /**
@@ -27,8 +28,18 @@ import org.apache.wss4j.dom.handler.RequestData;
  * @author Philip Helger
  * @since 2.2.0
  */
-public interface IAS4DecryptRequestDataModifier
+public interface IAS4DecryptParameterModifier
 {
+  /**
+   * Modify the provided {@link WSSConfig} to add additional handlers. This was
+   * created based on issue #150.
+   *
+   * @param aWSSConfig
+   *        The {@link WSSConfig} to be modified.
+   */
+  default void modifyWSSConfig (@Nonnull final WSSConfig aWSSConfig)
+  {}
+
   /**
    * Modify the provided {@link RequestData} object, e.g. by allowing RSA 1.5
    * algorithms. This method is called after all the default setters, so be
@@ -38,5 +49,6 @@ public interface IAS4DecryptRequestDataModifier
    * @param aRequestData
    *        The object to be modified. Never <code>null</code>.
    */
-  void modifyForDecrypt (@Nonnull RequestData aRequestData);
+  default void modifyRequestData (@Nonnull final RequestData aRequestData)
+  {}
 }

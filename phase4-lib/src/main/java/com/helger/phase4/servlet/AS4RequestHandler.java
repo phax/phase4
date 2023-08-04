@@ -1307,7 +1307,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                                            m_aCryptoFactorySign,
                                                                                                            m_aCryptoFactoryCrypt,
                                                                                                            (IPMode) null,
-                                                                                                           m_aIncomingSecurityConfig.getDecryptRequestDataModifier ());
+                                                                                                           m_aIncomingSecurityConfig.getDecryptParameterModifier ());
 
     // Decompose the SOAP message
     final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,

@@ -59,7 +59,7 @@ import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.crypto.IAS4DecryptRequestDataModifier;
+import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -737,7 +737,7 @@ public final class AS4IncomingHandler
                                                  @Nonnull final HttpResponse aHttpResponse,
                                                  @Nonnull final byte [] aResponsePayload,
                                                  @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                 @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier) throws Phase4Exception
+                                                 @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier) throws Phase4Exception
   {
     // This wrapper will take the result
     final Wrapper <IAS4MessageState> aRetWrapper = new Wrapper <> ();
@@ -752,7 +752,7 @@ public final class AS4IncomingHandler
                                                                                                              aCryptoFactorySign,
                                                                                                              aCryptoFactoryCrypt,
                                                                                                              aSendingPMode,
-                                                                                                             aDecryptRequestDataModifier);
+                                                                                                             aDecryptParameterModifier);
 
       // Parse AS4, verify signature etc
       final IAS4MessageState aState = processEbmsMessage (aResHelper,
@@ -814,7 +814,7 @@ public final class AS4IncomingHandler
                                                        @Nonnull final HttpResponse aHttpResponse,
                                                        @Nonnull final byte [] aResponsePayload,
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                       @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier) throws Phase4Exception
+                                                       @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier) throws Phase4Exception
   {
     final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
                                                    aCryptoFactoryCrypt,
@@ -828,7 +828,7 @@ public final class AS4IncomingHandler
                                                    aHttpResponse,
                                                    aResponsePayload,
                                                    aIncomingDumper,
-                                                   aDecryptRequestDataModifier);
+                                                   aDecryptParameterModifier);
     if (aState == null)
     {
       // Error message was already logged
@@ -860,7 +860,7 @@ public final class AS4IncomingHandler
                                                    @Nonnull final HttpResponse aHttpResponse,
                                                    @Nonnull final byte [] aResponsePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                   @Nullable final IAS4DecryptRequestDataModifier aDecryptRequestDataModifier) throws Phase4Exception
+                                                   @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier) throws Phase4Exception
   {
     final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
                                                    aCryptoFactoryCrypt,
@@ -874,7 +874,7 @@ public final class AS4IncomingHandler
                                                    aHttpResponse,
                                                    aResponsePayload,
                                                    aIncomingDumper,
-                                                   aDecryptRequestDataModifier);
+                                                   aDecryptParameterModifier);
     if (aState == null)
     {
       // Error message was already logged
