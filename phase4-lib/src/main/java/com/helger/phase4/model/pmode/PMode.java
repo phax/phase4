@@ -38,7 +38,6 @@ import com.helger.tenancy.AbstractBusinessObject;
  *
  * @author Philip Helger
  */
-@Nonnull
 @MustImplementEqualsAndHashcode
 public class PMode extends AbstractBusinessObject implements IPMode
 {

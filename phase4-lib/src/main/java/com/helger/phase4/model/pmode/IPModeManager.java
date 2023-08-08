@@ -62,7 +62,6 @@ public interface IPModeManager
    * @param aPMode
    *        The PMode to be created or updated.
    */
-  @Nonnull
   void createOrUpdatePMode (@Nonnull PMode aPMode);
 
   /**

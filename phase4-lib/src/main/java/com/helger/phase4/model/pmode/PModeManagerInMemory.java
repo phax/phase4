@@ -129,7 +129,6 @@ public class PModeManagerInMemory implements IPModeManager
     return EChange.CHANGED;
   }
 
-  @Nonnull
   public void createOrUpdatePMode (@Nonnull final PMode aPMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");

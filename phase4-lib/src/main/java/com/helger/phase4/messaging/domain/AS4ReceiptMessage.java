@@ -172,7 +172,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
                                           @Nonnull @Nonempty final String sMessageID,
                                           @Nullable final Ebms3UserMessage aEbms3UserMessage,
                                           @Nullable final Node aSoapDocument,
-                                          @Nonnull final boolean bShouldUseNonRepudiation)
+                                          final boolean bShouldUseNonRepudiation)
   {
     // Only for signed messages
     final ICommonsList <ReferenceType> aDSRefs = getAllDSigReferences (aSoapDocument);
