@@ -17,3 +17,5 @@ zz
 .settings/ 
 target/
 generated/
+
+*.code-workspace
