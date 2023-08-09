@@ -66,6 +66,12 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
     return this;
   }
 
+  @Nonnull
+  public AS4IncomingSecurityConfiguration setSecurityProvider (@Nullable final Provider a)
+  {
+    return setSecurityProviderSign (a).setSecurityProviderCrypt (a);
+  }
+
   @Nullable
   public IAS4DecryptParameterModifier getDecryptParameterModifier ()
   {
