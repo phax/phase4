@@ -209,7 +209,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
    * @since 0.12.0
    */
   @Nonnull
-  public final EChange setMaxSizeKB (@Nullable final int nMaxSizeKB)
+  public final EChange setMaxSizeKB (final int nMaxSizeKB)
   {
     return setMaxSizeKB (Integer.valueOf (nMaxSizeKB));
   }

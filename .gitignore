@@ -12,8 +12,11 @@ private-*.properties*
 release.properties
 Main*ReceiverProd.java
 zz
+pom.xml.versionsBackup
 
 .idea/
 .settings/ 
 target/
 generated/
+
+*.code-workspace

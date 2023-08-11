@@ -128,7 +128,6 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
     return EChange.CHANGED;
   }
 
-  @Nonnull
   public void createOrUpdatePMode (@Nonnull final PMode aPMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
