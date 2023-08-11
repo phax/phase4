@@ -382,7 +382,12 @@ public final class Phase4PeppolSender
                                                                 AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     public static final boolean DEFAULT_COMPRESS_PAYLOAD = true;
-    public static final boolean DEFAULT_BOOLEAN_CHECK_AP_CERTIFICATE = true;
+    public static final boolean DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE = true;
+    /**
+     * @deprecated Use {@link #DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE} instead
+     */
+    @Deprecated (forRemoval = true, since = "2.2.0")
+    public static final boolean DEFAULT_BOOLEAN_CHECK_AP_CERTIFICATE = DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE;
 
     protected IParticipantIdentifier m_aSenderID;
     protected IParticipantIdentifier m_aReceiverID;
@@ -417,7 +422,7 @@ public final class Phase4PeppolSender
         toRole (CAS4.DEFAULT_RESPONDER_URL);
         payloadMimeType (CMimeType.APPLICATION_XML);
         compressPayload (DEFAULT_COMPRESS_PAYLOAD);
-        checkReceiverAPCertificate (DEFAULT_BOOLEAN_CHECK_AP_CERTIFICATE);
+        checkReceiverAPCertificate (DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE);
       }
       catch (final Exception ex)
       {
