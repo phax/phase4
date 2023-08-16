@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.servlet.soap;
 
-import java.security.Provider;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -32,6 +31,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
+import com.helger.commons.equals.EqualsHelper;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
@@ -107,10 +107,13 @@ public class SOAPHeaderElementProcessorRegistry
       {
         ((IAS4PModeAwareCryptoFactory) aCryptoFactorySign).setContextPMode (aPMode);
       }
-      if (aCryptoFactoryCrypt instanceof IAS4PModeAwareCryptoFactory)
-      {
-        ((IAS4PModeAwareCryptoFactory) aCryptoFactoryCrypt).setContextPMode (aPMode);
-      }
+
+      // Avoid setting it twice on the same object
+      if (!EqualsHelper.identityEqual (aCryptoFactorySign, aCryptoFactoryCrypt))
+        if (aCryptoFactoryCrypt instanceof IAS4PModeAwareCryptoFactory)
+        {
+          ((IAS4PModeAwareCryptoFactory) aCryptoFactoryCrypt).setContextPMode (aPMode);
+        }
     };
 
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING,
@@ -118,12 +121,10 @@ public class SOAPHeaderElementProcessorRegistry
                                                                                              aPModeConsumer));
 
     // WSS4J must be after Ebms3Messaging handler!
-    final Provider aSecurityProvider = null;
     final Supplier <? extends IPMode> aFallbackPModeProvider = () -> aFallbackPMode;
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,
                                         new SOAPHeaderElementProcessorWSS4J (aCryptoFactorySign,
                                                                              aCryptoFactoryCrypt,
-                                                                             aSecurityProvider,
                                                                              aFallbackPModeProvider,
                                                                              aDecryptParameterModifier));
     return ret;

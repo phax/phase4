@@ -18,7 +18,6 @@ package com.helger.phase4.servlet.soap;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
@@ -86,13 +85,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
   private final IAS4CryptoFactory m_aCryptoFactorySign;
   private final IAS4CryptoFactory m_aCryptoFactoryCrypt;
-  private final Provider m_aSecurityProvider;
   private final Supplier <? extends IPMode> m_aFallbackPModeProvider;
   private final IAS4DecryptParameterModifier m_aDecryptParameterModifier;
 
   public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                           @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                          @Nullable final Provider aSecurityProvider,
                                           @Nonnull final Supplier <? extends IPMode> aFallbackPModeProvider,
                                           @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier)
   {
@@ -101,7 +98,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     ValueEnforcer.notNull (aFallbackPModeProvider, "FallbackPModeProvider");
     m_aCryptoFactorySign = aCryptoFactorySign;
     m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
-    m_aSecurityProvider = aSecurityProvider;
     m_aFallbackPModeProvider = aFallbackPModeProvider;
     m_aDecryptParameterModifier = aDecryptParameterModifier;
   }
@@ -146,7 +142,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aRequestData.setSigVerCrypto (m_aCryptoFactorySign.getCrypto ());
       aRequestData.setDecCrypto (m_aCryptoFactoryCrypt.getCrypto ());
       aRequestData.setWssConfig (aWSSConfig);
-      aRequestData.setSignatureProvider (m_aSecurityProvider);
 
       // Enable CRL checking
       if (false)
