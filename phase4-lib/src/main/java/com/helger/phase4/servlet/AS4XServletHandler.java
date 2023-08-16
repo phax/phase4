@@ -92,7 +92,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   private Supplier <? extends IAS4CryptoFactory> m_aCryptoFactoryCryptSupplier;
   private IPModeResolver m_aPModeResolver;
   private IAS4IncomingAttachmentFactory m_aIAF;
-  private IAS4IncomingSecurityConfiguration m_aICS = AS4IncomingSecurityConfiguration.createDefaultInstance ();
+  private IAS4IncomingSecurityConfiguration m_aISC = AS4IncomingSecurityConfiguration.createDefaultInstance ();
   private IHandlerCustomizer m_aHandlerCustomizer;
 
   /**
@@ -276,7 +276,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   @Nonnull
   public final IAS4IncomingSecurityConfiguration getIncomingSecurityConfiguration ()
   {
-    return m_aICS;
+    return m_aISC;
   }
 
   /**
@@ -289,7 +289,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   public final AS4XServletHandler setIncomingSecurityConfiguration (@Nonnull final IAS4IncomingSecurityConfiguration aICS)
   {
     ValueEnforcer.notNull (aICS, "ICS");
-    m_aICS = aICS;
+    m_aISC = aICS;
     return this;
   }
 
@@ -457,7 +457,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                    aCryptoFactoryCrypt,
                    m_aPModeResolver,
                    m_aIAF,
-                   m_aICS,
+                   m_aISC,
                    m_aHandlerCustomizer);
   }
 }
