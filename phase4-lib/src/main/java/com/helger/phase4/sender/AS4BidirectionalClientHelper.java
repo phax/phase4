@@ -43,7 +43,7 @@ import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
+import com.helger.phase4.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
@@ -81,7 +81,7 @@ public final class AS4BidirectionalClientHelper
                                                                    @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                                   @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier,
+                                                                   @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                                    @Nullable final IAS4RetryCallback aRetryCallback,
                                                                    @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws IOException,
@@ -166,7 +166,7 @@ public final class AS4BidirectionalClientHelper
                                                                                        aWrappedResponse.get (),
                                                                                        aResponseEntity.getResponse (),
                                                                                        aIncomingDumper,
-                                                                                       aDecryptParameterModifier);
+                                                                                       aIncomingSecurityConfiguration);
       if (aSignalMessage != null && aSignalMsgConsumer != null)
         aSignalMsgConsumer.handleSignalMessage (aSignalMessage);
     }
@@ -185,7 +185,7 @@ public final class AS4BidirectionalClientHelper
                                                                  @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                  @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                                 @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier,
+                                                                 @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                                  @Nullable final IAS4RetryCallback aRetryCallback,
                                                                  @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                  @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws IOException,
@@ -248,7 +248,7 @@ public final class AS4BidirectionalClientHelper
                                                                                  aWrappedResponse.get (),
                                                                                  aResponseEntity.getResponse (),
                                                                                  aIncomingDumper,
-                                                                                 aDecryptParameterModifier);
+                                                                                 aIncomingSecurityConfiguration);
       if (aUserMessage != null && aUserMsgConsumer != null)
         aUserMsgConsumer.handleUserMessage (aUserMessage);
     }

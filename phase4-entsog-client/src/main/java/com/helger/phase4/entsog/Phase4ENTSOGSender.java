@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
+import com.helger.phase4.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.sender.AS4BidirectionalClientHelper;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder;
@@ -190,6 +191,11 @@ public final class Phase4ENTSOGSender
         for (final AS4OutgoingAttachment aAttachment : m_aAttachments)
           aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment, aResHelper));
 
+        // Create on demand with all necessary parameters
+        final AS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSecurityProviderSign (m_aSigningParams.getSecurityProvider ())
+                                                                                                                       .setSecurityProviderCrypt (m_aCryptParams.getSecurityProvider ())
+                                                                                                                       .setDecryptParameterModifier (m_aDecryptParameterModifier);
+
         // Main sending
         AS4BidirectionalClientHelper.sendAS4UserMessageAndReceiveAS4SignalMessage (m_aCryptoFactorySign,
                                                                                    m_aCryptoFactoryCrypt,
@@ -202,7 +208,7 @@ public final class Phase4ENTSOGSender
                                                                                    m_aBuildMessageCallback,
                                                                                    m_aOutgoingDumper,
                                                                                    m_aIncomingDumper,
-                                                                                   m_aDecryptParameterModifier,
+                                                                                   aIncomingSecurityConfiguration,
                                                                                    m_aRetryCallback,
                                                                                    m_aResponseConsumer,
                                                                                    m_aSignalMsgConsumer);

@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
+import com.helger.phase4.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 
@@ -176,6 +177,11 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
       final AS4ClientPullRequestMessage aPullRequestMsg = new AS4ClientPullRequestMessage (aResHelper);
       applyToPullRequest (aPullRequestMsg);
 
+      // Create on demand with all necessary parameters
+      final AS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSecurityProviderSign (m_aSigningParams.getSecurityProvider ())
+                                                                                                                     .setSecurityProviderCrypt (m_aCryptParams.getSecurityProvider ())
+                                                                                                                     .setDecryptParameterModifier (m_aDecryptParameterModifier);
+
       // Main sending
       AS4BidirectionalClientHelper.sendAS4PullRequestAndReceiveAS4UserMessage (m_aCryptoFactorySign,
                                                                                m_aCryptoFactoryCrypt,
@@ -188,7 +194,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
                                                                                m_aBuildMessageCallback,
                                                                                m_aOutgoingDumper,
                                                                                m_aIncomingDumper,
-                                                                               m_aDecryptParameterModifier,
+                                                                               aIncomingSecurityConfiguration,
                                                                                m_aRetryCallback,
                                                                                m_aResponseConsumer,
                                                                                m_aUserMsgConsumer);
