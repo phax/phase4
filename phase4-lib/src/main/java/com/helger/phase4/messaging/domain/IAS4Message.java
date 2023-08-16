@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.messaging.domain;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -32,7 +30,7 @@ import com.helger.phase4.soap.ESoapVersion;
  *
  * @author Philip Helger
  */
-public interface IAS4Message extends Serializable
+public interface IAS4Message
 {
   /**
    * @return The SOAP version to use. May not be <code>null</code>.

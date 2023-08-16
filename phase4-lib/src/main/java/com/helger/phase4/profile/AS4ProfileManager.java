@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.profile;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,7 +44,7 @@ import com.helger.commons.string.ToStringGenerator;
  * @author Philip Helger
  */
 @ThreadSafe
-public class AS4ProfileManager implements IAS4ProfileManager, Serializable
+public class AS4ProfileManager implements IAS4ProfileManager
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ProfileManager.class);
 

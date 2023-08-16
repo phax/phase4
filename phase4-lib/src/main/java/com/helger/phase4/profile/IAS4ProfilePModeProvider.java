@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.profile;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,11 +24,11 @@ import com.helger.phase4.model.pmode.PMode;
 
 /**
  * PMode provider interface
- * 
+ *
  * @author Philip Helger
  */
 @FunctionalInterface
-public interface IAS4ProfilePModeProvider extends Serializable
+public interface IAS4ProfilePModeProvider
 {
   /**
    * Get an existing or create a new PMode.

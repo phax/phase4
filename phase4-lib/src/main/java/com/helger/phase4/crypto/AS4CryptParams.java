@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.crypto;
 
-import java.io.Serializable;
 import java.security.Provider;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
@@ -49,7 +48,7 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
  * @since 0.9.0
  */
 @NotThreadSafe
-public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
+public class AS4CryptParams implements ICloneable <AS4CryptParams>
 {
   public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
   public static final ECryptoKeyEncryptionAlgorithm DEFAULT_KEY_ENCRYPTION_ALGORITHM = ECryptoKeyEncryptionAlgorithm.RSA_OAEP_XENC11;

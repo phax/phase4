@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.mgr;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
@@ -32,7 +30,7 @@ import com.helger.phase4.util.Phase4Exception;
  * @author Philip Helger
  * @since 0.9.6
  */
-public interface IAS4ManagerFactory extends Serializable
+public interface IAS4ManagerFactory
 {
   /**
    * @return A new {@link IMPCManager} instance

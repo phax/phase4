@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.crypto;
 
-import java.io.Serializable;
 import java.security.Provider;
 
 import javax.annotation.Nonnull;
@@ -38,7 +37,7 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
  * @since 0.9.0
  */
 @NotThreadSafe
-public class AS4SigningParams implements Serializable, ICloneable <AS4SigningParams>
+public class AS4SigningParams implements ICloneable <AS4SigningParams>
 {
   public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
   public static final boolean DEFAULT_USE_SINGLE_CERTIFICATE = true;

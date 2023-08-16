@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.profile;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 
 import com.helger.commons.error.list.ErrorList;
@@ -30,7 +28,7 @@ import com.helger.phase4.model.pmode.IPMode;
  *
  * @author bayerlma
  */
-public interface IAS4ProfileValidator extends Serializable
+public interface IAS4ProfileValidator
 {
   /**
    * Validation method

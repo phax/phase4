@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.peppol;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 
 import com.helger.phive.api.result.ValidationResultList;
@@ -27,7 +25,7 @@ import com.helger.phive.api.result.ValidationResultList;
  *
  * @author Philip Helger
  */
-public interface IPhase4PeppolValidationResultHandler extends Serializable
+public interface IPhase4PeppolValidationResultHandler
 {
   /**
    * Invoked, if no validation error is present. This method is invoked if only

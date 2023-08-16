@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.peppol;
 
-import java.io.Serializable;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 
@@ -30,7 +29,7 @@ import com.helger.peppol.utils.EPeppolCertificateCheckResult;
  * @author Philip Helger
  * @since 0.9.5
  */
-public interface IPhase4PeppolCertificateCheckResultHandler extends Serializable
+public interface IPhase4PeppolCertificateCheckResultHandler
 {
   /**
    * Invoked after certificate check.

@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.servlet.spi;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -42,7 +40,7 @@ import com.helger.phase4.servlet.IAS4MessageState;
  * @author Philip Helger
  */
 @IsSPIInterface
-public interface IAS4ServletMessageProcessorSPI extends Serializable
+public interface IAS4ServletMessageProcessorSPI
 {
   /**
    * Process incoming AS4 user message
