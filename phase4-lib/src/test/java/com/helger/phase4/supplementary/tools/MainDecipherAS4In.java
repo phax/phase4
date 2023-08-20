@@ -52,6 +52,8 @@ public final class MainDecipherAS4In
 
     LOGGER.info ("Reading " + f.getName ());
     final byte [] aBytes = SimpleFileIO.getAllFileBytes (f);
+    if (aBytes == null)
+      throw new IllegalStateException ("Failed to read file content as byte array");
 
     final AS4CryptoFactoryProperties aCryptoFactory = new AS4CryptoFactoryProperties (aCP);
     AS4DumpReader.decryptAS4In (aBytes,

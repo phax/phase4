@@ -98,7 +98,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
             {
               LOGGER.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
               final String sContent = StreamHelper.getAllBytesAsString (x.getSourceStream (), x.getCharset ());
-              LOGGER.info ("    Attachment Content: " + sContent.length () + " chars");
+              LOGGER.info ("    Attachment Content: " + (sContent == null ? "null" : sContent.length () + " chars"));
             }
             catch (final IllegalStateException | IOException ex)
             {

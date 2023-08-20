@@ -44,6 +44,7 @@ import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.HasInputStream;
+import com.helger.commons.io.stream.NonBlockingBufferedOutputStream;
 import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.IMimeType;
@@ -213,16 +214,10 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   {
     ValueEnforcer.notNull (eCompressionMode, "CompressionMode");
     m_eCompressionMode = eCompressionMode;
-    if (eCompressionMode != null)
-    {
-      // Main MIME type is now the compression type MIME type
-      super.setMimeType (eCompressionMode.getMimeType ().getAsString ());
-    }
-    else
-    {
-      // Main MIME type is the uncompressed one (which may be null)
-      super.setMimeType (m_sUncompressedMimeType);
-    }
+
+    // Main MIME type is now the compression type MIME type
+    super.setMimeType (eCompressionMode.getMimeType ().getAsString ());
+
     return this;
   }
 
@@ -422,9 +417,13 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
       // Create temporary file with compressed content to avoid that the
       // original is compressed more than once
       aRealFile = aResHelper.createTempFile ();
-      try (final OutputStream aOS = eCompressionMode.getCompressStream (FileHelper.getBufferedOutputStream (aRealFile)))
+      try (final NonBlockingBufferedOutputStream aFOS = FileHelper.getBufferedOutputStream (aRealFile))
       {
-        StreamHelper.copyInputStreamToOutputStream (FileHelper.getBufferedInputStream (aSrcFile), aOS);
+        if (aFOS != null)
+          try (final OutputStream aOS = eCompressionMode.getCompressStream (aFOS))
+          {
+            StreamHelper.copyInputStreamToOutputStream (FileHelper.getBufferedInputStream (aSrcFile), aOS);
+          }
       }
     }
     else
@@ -489,9 +488,13 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
       // Create temporary file with compressed content
       final File aRealFile = aResHelper.createTempFile ();
-      try (final OutputStream aOS = eCompressionMode.getCompressStream (FileHelper.getBufferedOutputStream (aRealFile)))
+      try (final NonBlockingBufferedOutputStream aFOS = FileHelper.getBufferedOutputStream (aRealFile))
       {
-        aOS.write (aSrcData);
+        if (aFOS != null)
+          try (final OutputStream aOS = eCompressionMode.getCompressStream (aFOS))
+          {
+            aOS.write (aSrcData);
+          }
       }
       ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
     }

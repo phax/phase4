@@ -123,8 +123,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
 
   private void _checkMandatoryAttributes ()
   {
-    if (getSoapVersion () == null)
-      throw new IllegalStateException ("A SOAP version must be set.");
+    // SoapVersion can never be null
 
     if (m_aSoapDocument == null && m_aEbms3UserMessage == null)
       throw new IllegalStateException ("A SOAP document or a Ebms3UserMessage has to be set.");

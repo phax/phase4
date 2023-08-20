@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.helger.commons.ValueEnforcer;
@@ -183,7 +184,8 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     {
       // Always use "now" as date time
       final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
-                                                                                              aEbms3UserMessage != null ? aEbms3UserMessage.getMessageInfo ()
+                                                                                              aEbms3UserMessage != null
+                                                                                                                        ? aEbms3UserMessage.getMessageInfo ()
                                                                                                                                            .getMessageId ()
                                                                                                                         : null);
       aSignalMessage.setMessageInfo (aEbms3MessageInfo);
@@ -201,7 +203,11 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
         aNonRepudiationInformation.addMessagePartNRInformation (aMessagePartNRInformation);
       }
 
-      aEbms3Receipt.addAny (new NonRepudiationInformationMarshaller ().getAsElement (aNonRepudiationInformation));
+      final Element aElement = new NonRepudiationInformationMarshaller ().getAsElement (aNonRepudiationInformation);
+      if (aElement == null)
+        LOGGER.error ("Failed to serialize NonRepudiationInformation object");
+      else
+        aEbms3Receipt.addAny (aElement);
     }
     else
     {

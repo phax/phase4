@@ -68,11 +68,17 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
   {
     // Write formatted SOAP
     {
-      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument ()
-                                                                   : aState.getOriginalSoapDocument ();
+      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument () : aState
+                                                                                                                .getOriginalSoapDocument ();
+      if (aSoapDoc == null)
+        throw new IllegalStateException ("No SOAP Document present");
+
       final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc,
                                                        new XMLWriterSettings ().setNamespaceContext (Ebms3NamespaceHandler.getInstance ())
                                                                                .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
+      if (aBytes == null)
+        throw new IllegalStateException ("Failed to serialize XML");
+
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
       {

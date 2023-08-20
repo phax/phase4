@@ -71,8 +71,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
 
   private void _checkMandatoryAttributes ()
   {
-    if (getSoapVersion () == null)
-      throw new IllegalStateException ("A SOAP version must be set.");
+    // Soap version can never be null
 
     if (m_aErrorMessages.isEmpty ())
       throw new IllegalStateException ("No Errors specified!");

@@ -73,6 +73,9 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   /** Truststore password */
   public static final String TRUSTSTORE_PASSWORD = "org.apache.wss4j.crypto.merlin.truststore.password";
 
+  public static final EKeyStoreType DEFAULT_KEYSTORE_TYPE = EKeyStoreType.JKS;
+  public static final EKeyStoreType DEFAULT_TRUSTSTORE_TYPE = EKeyStoreType.JKS;
+
   private NonBlockingProperties m_aProps;
 
   /**
@@ -180,11 +183,11 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
     return setCryptoProvider (org.apache.wss4j.common.crypto.Merlin.class.getName ());
   }
 
-  @Nullable
+  @Nonnull
   public EKeyStoreType getKeyStoreType ()
   {
     final String sProp = _getProperty (KEYSTORE_TYPE);
-    return EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sProp, EKeyStoreType.JKS);
+    return EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sProp, DEFAULT_KEYSTORE_TYPE);
   }
 
   @Nonnull
@@ -280,11 +283,11 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
     return this;
   }
 
-  @Nullable
+  @Nonnull
   public EKeyStoreType getTrustStoreType ()
   {
     final String sProp = _getProperty (TRUSTSTORE_TYPE);
-    return EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sProp, EKeyStoreType.JKS);
+    return EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sProp, DEFAULT_TRUSTSTORE_TYPE);
   }
 
   @Nonnull

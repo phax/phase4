@@ -248,10 +248,16 @@ public final class AS4DumpReader
             {
               // Read current
               final byte [] aDecryptedBytes = StreamHelper.getAllBytes (aAttachment.getInputStreamProvider ());
-
-              // Invoke the consumer
-              aDecryptedConsumer.accept (nIndex, aDecryptedBytes);
-              LOGGER.info ("Handled decrypted payload #" + nIndex + " with " + aDecryptedBytes.length + " bytes");
+              if (aDecryptedBytes == null)
+              {
+                LOGGER.error ("Failed to read decrypted payload of attachment #" + nIndex);
+              }
+              else
+              {
+                // Invoke the consumer
+                aDecryptedConsumer.accept (nIndex, aDecryptedBytes);
+                LOGGER.info ("Handled decrypted payload #" + nIndex + " with " + aDecryptedBytes.length + " bytes");
+              }
 
               nIndex++;
             }

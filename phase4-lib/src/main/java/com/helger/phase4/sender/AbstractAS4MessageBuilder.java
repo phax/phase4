@@ -469,9 +469,10 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link IPModeResolver}. May be <code>null</code>.
+   * @return The currently set {@link IPModeResolver}. May not be
+   *         <code>null</code>.
    */
-  @Nullable
+  @Nonnull
   public final IPModeResolver pmodeResolver ()
   {
     return m_aPModeResolver;
@@ -482,12 +483,13 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * of an eventually received synchronous response message.
    *
    * @param aPModeResolver
-   *        The PMode resolver to be used. May be <code>null</code>.
+   *        The PMode resolver to be used. May not be <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE pmodeResolver (@Nullable final IPModeResolver aPModeResolver)
+  public final IMPLTYPE pmodeResolver (@Nonnull final IPModeResolver aPModeResolver)
   {
+    ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     m_aPModeResolver = aPModeResolver;
     return thisAsT ();
   }
@@ -496,7 +498,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return The currently set {@link IAS4IncomingAttachmentFactory}. Never
    *         <code>null</code>.
    */
-  @Nullable
+  @Nonnull
   public final IAS4IncomingAttachmentFactory incomingAttachmentFactory ()
   {
     return m_aIAF;
@@ -694,8 +696,16 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       LOGGER.warn ("The field 'locale' is not set");
       return false;
     }
-    // m_aPModeResolver may be null
-    // IIncomingAttachmentFactory may be null
+    if (m_aPModeResolver == null)
+    {
+      LOGGER.warn ("The field 'pmodeResolver' is not set");
+      return false;
+    }
+    if (m_aIAF == null)
+    {
+      LOGGER.warn ("The field 'incomingAttachmentFactory' is not set");
+      return false;
+    }
 
     // m_aBuildMessageCallback may be null
     // m_aOutgoingDumper may be null

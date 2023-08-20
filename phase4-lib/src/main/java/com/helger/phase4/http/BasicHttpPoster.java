@@ -270,7 +270,7 @@ public class BasicHttpPoster implements IHttpPoster
     };
   }
 
-  @Nonnull
+  @Nullable
   public <T> T sendGenericMessageWithRetries (@Nonnull final String sURL,
                                               @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                               @Nonnull final HttpEntity aHttpEntity,
@@ -281,8 +281,8 @@ public class BasicHttpPoster implements IHttpPoster
                                               @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
   {
     // Parameter or global one - may still be null
-    final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper
-                                                                           : AS4DumpManager.getOutgoingDumper ();
+    final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper : AS4DumpManager
+                                                                                                             .getOutgoingDumper ();
 
     // This class holds the effective OutputStream to which the dump is written
     final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();

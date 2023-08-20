@@ -123,7 +123,10 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         aSoapEnv.getHeader ().addAny (aEbms3Document.getDocumentElement ());
         if (aRealPayload != null)
           aSoapEnv.getBody ().addAny (aRealPayload);
-        return new Soap11EnvelopeMarshaller ().getAsDocument (aSoapEnv);
+        final Document ret = new Soap11EnvelopeMarshaller ().getAsDocument (aSoapEnv);
+        if (ret == null)
+          throw new IllegalStateException ("Failed to serialize SOAP 1.1 document");
+        return ret;
       }
       case SOAP_12:
       {
@@ -134,7 +137,10 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         aSoapEnv.getHeader ().addAny (aEbms3Document.getDocumentElement ());
         if (aRealPayload != null)
           aSoapEnv.getBody ().addAny (aRealPayload);
-        return new Soap12EnvelopeMarshaller ().getAsDocument (aSoapEnv);
+        final Document ret = new Soap12EnvelopeMarshaller ().getAsDocument (aSoapEnv);
+        if (ret == null)
+          throw new IllegalStateException ("Failed to serialize SOAP 1.2 document");
+        return ret;
       }
       default:
         throw new IllegalStateException ("Unsupported SOAP version " + m_eSoapVersion);

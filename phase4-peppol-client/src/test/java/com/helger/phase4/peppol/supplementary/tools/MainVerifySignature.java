@@ -154,6 +154,8 @@ public class MainVerifySignature
         throw new IllegalStateException ("The file " + aFile.getAbsolutePath () + " does not exist");
 
       final byte [] aBytes = SimpleFileIO.getAllFileBytes (aFile);
+      if (aBytes == null)
+        throw new IllegalStateException ("Failed to read file content as byte array");
 
       // Skip all the HTTP headers etc.
       final MutableInt aHttpEnd = new MutableInt (-1);

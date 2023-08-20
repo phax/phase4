@@ -106,7 +106,8 @@ public final class Phase4ENTSOGSender
     @Nonnull
     public final IMPLTYPE encryptionKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eEncryptionKeyIdentifierType)
     {
-      cryptParams ().setKeyIdentifierType (eEncryptionKeyIdentifierType);
+      if (eEncryptionKeyIdentifierType != null)
+        cryptParams ().setKeyIdentifierType (eEncryptionKeyIdentifierType);
       return thisAsT ();
     }
 
@@ -121,7 +122,8 @@ public final class Phase4ENTSOGSender
     @Nonnull
     public final IMPLTYPE setSigningKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
     {
-      signingParams ().setKeyIdentifierType (eSigningKeyIdentifierType);
+      if (eSigningKeyIdentifierType != null)
+        signingParams ().setKeyIdentifierType (eSigningKeyIdentifierType);
       return thisAsT ();
     }
 

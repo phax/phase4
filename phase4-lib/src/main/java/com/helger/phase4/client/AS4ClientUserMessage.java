@@ -160,6 +160,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                    @Nonnull final IMimeType aMimeType,
                                                    @Nullable final EAS4CompressionMode eAS4CompressionMode) throws IOException
   {
+    ValueEnforcer.notNull (aAttachment, "Attachment");
+    ValueEnforcer.notNull (aMimeType, "MimeType");
     return addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment,
                                                                         FilenameHelper.getWithoutPath (aAttachment),
                                                                         (String) null,

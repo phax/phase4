@@ -323,7 +323,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   public void testSendOneAttachmentSignedMessageSuccessful () throws Exception
   {
     final TestClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
 
@@ -343,7 +343,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   public void testSendOneAttachmentEncryptedMessageSuccessful () throws Exception
   {
     final TestClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
 
@@ -361,7 +361,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   public void testSendOneAttachmentSignedEncryptedMessageSuccessful () throws Exception
   {
     final TestClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
 
@@ -384,13 +384,13 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   public void testSendManyAttachmentSignedMessageSuccessful () throws Exception
   {
     final TestClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                            CMimeType.IMAGE_JPG,
                            (EAS4CompressionMode) null);
 
@@ -410,13 +410,13 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   public void testSendManyAttachmentEncryptedMessageSuccessful () throws Exception
   {
     final TestClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                            CMimeType.IMAGE_JPG,
                            (EAS4CompressionMode) null);
 
@@ -434,13 +434,13 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   public void testSendManyAttachmentSignedEncryptedMessageSuccessful () throws Exception
   {
     final TestClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                            CMimeType.IMAGE_JPG,
                            (EAS4CompressionMode) null);
 
@@ -463,13 +463,13 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   public void testSendOneAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
   {
     final TestClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                            CMimeType.IMAGE_JPG,
                            EAS4CompressionMode.GZIP);
 
@@ -492,13 +492,13 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   public void testSendManyAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
   {
     final TestClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
-    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
+    aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                            CMimeType.IMAGE_JPG,
                            EAS4CompressionMode.GZIP);
 
