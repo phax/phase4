@@ -78,7 +78,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
->
+
   <dependencies>
     <dependency>
       <groupId>com.helger.phase4</groupId>
