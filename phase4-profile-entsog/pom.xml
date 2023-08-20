@@ -72,6 +72,11 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-app</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

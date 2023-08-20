@@ -30,8 +30,8 @@ import com.helger.commons.annotation.ELockType;
 import com.helger.commons.annotation.MustBeLocked;
 import com.helger.commons.state.EChange;
 import com.helger.dao.DAOException;
-import com.helger.photon.app.dao.AbstractPhotonMapBasedWALDAO;
 import com.helger.photon.audit.AuditHelper;
+import com.helger.photon.io.dao.AbstractPhotonMapBasedWALDAO;
 import com.helger.photon.security.object.BusinessObjectHelper;
 
 /**

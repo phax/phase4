@@ -27,7 +27,7 @@ import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.photon.app.io.WebFileIO;
+import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;

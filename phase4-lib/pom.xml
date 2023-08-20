@@ -124,7 +124,7 @@
     
     <dependency>
       <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-app</artifactId>
+      <artifactId>ph-oton-io</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger.photon</groupId>
@@ -166,6 +166,11 @@
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-app</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

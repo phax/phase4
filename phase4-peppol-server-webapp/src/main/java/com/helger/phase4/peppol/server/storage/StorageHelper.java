@@ -31,7 +31,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.photon.app.io.WebFileIO;
+import com.helger.photon.io.WebFileIO;
 
 /**
  * Central storage helper
@@ -62,7 +62,8 @@ public final class StorageHelper
   }
 
   @Nonnull
-  public static File getStorageFile (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata, @Nonnull final String sExt)
+  public static File getStorageFile (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                     @Nonnull final String sExt)
   {
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
     ValueEnforcer.notEmpty (sExt, "Ext");
@@ -72,7 +73,9 @@ public final class StorageHelper
   }
 
   @Nonnull
-  public static File getStorageFile (@Nonnull @Nonempty final String sMessageID, @Nonnegative final int nTry, @Nonnull final String sExt)
+  public static File getStorageFile (@Nonnull @Nonempty final String sMessageID,
+                                     @Nonnegative final int nTry,
+                                     @Nonnull final String sExt)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
     ValueEnforcer.notEmpty (sExt, "Ext");

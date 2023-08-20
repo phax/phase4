@@ -33,7 +33,7 @@ import com.helger.commons.url.URLHelper;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.util.AS4ResourceHelper;
-import com.helger.photon.app.io.WebFileIO;
+import com.helger.photon.io.WebFileIO;
 import com.helger.photon.jetty.JettyRunner;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -61,7 +61,9 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
   @Nonempty
   public static String getServerAddressFromSettings ()
   {
-    return AS4Configuration.getConfig ().getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS, AS4TestConstants.DEFAULT_SERVER_ADDRESS);
+    return AS4Configuration.getConfig ()
+                           .getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS,
+                                         AS4TestConstants.DEFAULT_SERVER_ADDRESS);
   }
 
   private static boolean _isRunJetty ()
@@ -90,7 +92,9 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
       s_aJetty = null;
       WebScopeManager.onGlobalBegin (MockServletContext.create ());
       final File aSCPath = new File ("target/junittest").getAbsoluteFile ();
-      WebFileIO.initPaths (new File (AS4Configuration.getDataPath ()).getAbsoluteFile (), aSCPath.getAbsolutePath (), false);
+      WebFileIO.initPaths (new File (AS4Configuration.getDataPath ()).getAbsoluteFile (),
+                           aSCPath.getAbsolutePath (),
+                           false);
       GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
     }
 

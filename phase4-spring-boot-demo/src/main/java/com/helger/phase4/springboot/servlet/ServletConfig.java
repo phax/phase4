@@ -48,7 +48,7 @@ import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.AS4XServletHandler;
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
-import com.helger.photon.app.io.WebFileIO;
+import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.ServletHelper;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
