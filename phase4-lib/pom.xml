@@ -108,18 +108,7 @@
       <groupId>com.helger.commons</groupId>
       <artifactId>ph-config</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-app</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-audit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.photon</groupId>
-      <artifactId>ph-oton-security</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>com.helger.schedule</groupId>
       <artifactId>ph-schedule</artifactId>
@@ -131,6 +120,19 @@
     <dependency>
       <groupId>com.helger.web</groupId>
       <artifactId>ph-xservlet</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-app</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-audit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.photon</groupId>
+      <artifactId>ph-oton-security</artifactId>
     </dependency>
 
     <dependency>
