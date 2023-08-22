@@ -82,7 +82,8 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
         }
       };
       final Wrapper <Ebms3SignalMessage> aSignalMsgWrapper = new Wrapper <> ();
-      final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true).setHandleHttpHeaders (true);
+      final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true)
+                                                                                   .setHandleHttpHeaders (true);
 
       // Add XRechnung rulesets
       final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry = Phase4PeppolValidation.createDefaultRegistry ();
@@ -96,8 +97,11 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
+                                  .countryC1 ("AT")
                                   .payload (aPayloadElement)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
+                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                     aReceiverID,
+                                                                     ESML.DIGIT_TEST))
                                   .validationRegistry (aVESRegistry)
                                   .validationConfiguration (XRechnungValidation.VID_XRECHNUNG_CII_122,
                                                             new Phase4PeppolValidatonResultHandler ())

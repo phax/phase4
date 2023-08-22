@@ -80,23 +80,25 @@ public final class MainPhase4PeppolSenderZRE
                        "'");
         }
       };
-      final ESimpleUserMessageSendResult eResult = Phase4PeppolSender.builder ()
-                                                                     .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme (bVerify ? "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.0::2.1"
-                                                                                                                                                                   : "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
-                                                                     .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                                                                     .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender2"))
-                                                                     .receiverParticipantID (aReceiverID)
-                                                                     .senderPartyID ("POP000306")
-                                                                     .payload (aPayloadElement)
-                                                                     .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                                                        aReceiverID,
-                                                                                                        ESML.DIGIT_TEST))
-                                                                     .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                                                     .validationConfiguration (bVerify ? null
-                                                                                                       : PeppolValidation3_15_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
-                                                                                               new Phase4PeppolValidatonResultHandler ())
-                                                                     .buildMessageCallback (aBuildMessageCallback)
-                                                                     .sendMessageAndCheckForReceipt ();
+      final ESimpleUserMessageSendResult eResult;
+      eResult = Phase4PeppolSender.builder ()
+                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme (bVerify ? "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.0::2.1"
+                                                                                                                                : "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
+                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
+                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender2"))
+                                  .receiverParticipantID (aReceiverID)
+                                  .senderPartyID ("POP000306")
+                                  .countryC1 ("AT")
+                                  .payload (aPayloadElement)
+                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                     aReceiverID,
+                                                                     ESML.DIGIT_TEST))
+                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
+                                  .validationConfiguration (bVerify ? null
+                                                                    : PeppolValidation3_15_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
+                                                            new Phase4PeppolValidatonResultHandler ())
+                                  .buildMessageCallback (aBuildMessageCallback)
+                                  .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
     catch (final Exception ex)

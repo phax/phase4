@@ -86,6 +86,7 @@ public final class MainPhase4PeppolSenderTradeshift
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
+                                  .countryC1 ("AT")
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,

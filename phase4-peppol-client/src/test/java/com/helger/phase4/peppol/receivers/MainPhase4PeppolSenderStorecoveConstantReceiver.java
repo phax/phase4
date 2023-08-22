@@ -62,6 +62,7 @@ public final class MainPhase4PeppolSenderStorecoveConstantReceiver
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
+                                  .countryC1 ("AT")
                                   .payload (aPayloadElement)
                                   .receiverEndpointDetails (CertificateHelper.convertStringToCertficate ("-----BEGIN CERTIFICATE-----\r\n" +
                                                                                                          "MIIF0TCCA7mgAwIBAgIQbXAEkESKryKJazdxZUo39zANBgkqhkiG9w0BAQsFADBr\r\n" +

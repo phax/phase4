@@ -29,31 +29,23 @@ import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation3_15_0;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Example for sending something to the Elcom [UK] Test endpoint.
+ * Example for sending something to the acube.io [IT] Test endpoint.
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderElcom
+public final class MainPhase4PeppolSenderAPRO
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderElcom.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderAPRO.class);
 
-  public static void main (final String [] args)
+  public static void send ()
   {
-    WebScopeManager.onGlobalBegin (MockServletContext.create ());
-
-    // Dump (for debugging purpose only)
-    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ());
-
     try
     {
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/base-example.xml"))
@@ -62,7 +54,7 @@ public final class MainPhase4PeppolSenderElcom
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0088:elcom-test");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0106:24286995");
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
@@ -76,14 +68,26 @@ public final class MainPhase4PeppolSenderElcom
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidation3_15_0.VID_OPENPEPPOL_INVOICE_UBL_V3,
-                                                            new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
     catch (final Exception ex)
     {
       LOGGER.error ("Error sending Peppol message via AS4", ex);
+    }
+  }
+
+  public static void main (final String [] args)
+  {
+    WebScopeManager.onGlobalBegin (MockServletContext.create ());
+
+    // Dump (for debugging purpose only)
+    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ());
+
+    try
+    {
+      send ();
     }
     finally
     {
