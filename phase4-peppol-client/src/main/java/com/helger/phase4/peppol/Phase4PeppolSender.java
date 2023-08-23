@@ -740,7 +740,18 @@ public final class Phase4PeppolSender
       if (m_bCheckReceiverAPCertificate)
         _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer, ETriState.UNDEFINED, null);
       else
+      {
         LOGGER.warn ("The check of the receiver's Peppol AP certificate was explicitly disabled.");
+
+        // Interested in the certificate?
+        if (m_aCertificateConsumer != null)
+        {
+          final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
+          m_aCertificateConsumer.onCertificateCheckResult (aReceiverCert,
+                                                           aNow,
+                                                           EPeppolCertificateCheckResult.NOT_CHECKED);
+        }
+      }
       receiverCertificate (aReceiverCert);
 
       // URL from e.g. SMP lookup (may throw an exception)
