@@ -42,6 +42,9 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName
   IAS4ProfileValidator getValidator ();
 
   /**
+   * Create a PMode for the provided parameters.<br>
+   * TODO the naming is bad. Should be called <code>createPMode</code>
+   *
    * @param sInitiatorID
    *        Initiator ID
    * @param sResponderID
