@@ -30,7 +30,6 @@
   <description>BDEW AS4 profile</description>
   <url>https://github.com/phax/phase4/phase4-profile-bdew</url>
   <inceptionYear>2023</inceptionYear>
-
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -38,7 +37,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
   <developers>
     <developer>
       <id>gregorscholtysik</id>
@@ -46,19 +44,16 @@
       <email>gregor.scholtysik@soptim.de</email>
     </developer>
   </developers>
-
   <dependencies>
     <dependency>
       <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-lib</artifactId>
     </dependency>
-
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -75,7 +70,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -87,8 +81,8 @@
             <Automatic-Module-Name>com.helger.phase4.profile.bdew</Automatic-Module-Name>
             <Export-Package>com.helger.phase4.profile.bdew.*</Export-Package>
             <Import-Package>!javax.annotation.*,*</Import-Package>
-            <Require-Capability>osgi.extender;filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
-            <Provide-Capability>osgi.serviceloader;osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI</Provide-Capability>
+            <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
+            <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI</Provide-Capability>
           </instructions>
         </configuration>
       </plugin>
