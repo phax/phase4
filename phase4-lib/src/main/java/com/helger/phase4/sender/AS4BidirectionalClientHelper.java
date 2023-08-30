@@ -121,18 +121,18 @@ public final class AS4BidirectionalClientHelper
       }
     }
 
-    final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
-    final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
+    final Wrapper <HttpResponse> aWrappedHttpResponse = new Wrapper <> ();
+    final HttpClientResponseHandler <byte []> aHttpResponseHdl = aHttpResponse -> {
       // throws an ExtendedHttpResponseException on exception
       final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
       if (aEntity == null)
         return null;
-      aWrappedResponse.set (aHttpResponse);
+      aWrappedHttpResponse.set (aHttpResponse);
       return EntityUtils.toByteArray (aEntity);
     };
 
     final AS4ClientSentMessage <byte []> aResponseEntity = aClientUserMsg.sendMessageWithRetries (sURL,
-                                                                                                  aResponseHdl,
+                                                                                                  aHttpResponseHdl,
                                                                                                   aBuildMessageCallback,
                                                                                                   aOutgoingDumper,
                                                                                                   aRetryCallback);
@@ -163,7 +163,7 @@ public final class AS4BidirectionalClientHelper
                                                                                        aClientUserMsg.getPMode (),
                                                                                        aLocale,
                                                                                        aMessageMetadata,
-                                                                                       aWrappedResponse.get (),
+                                                                                       aWrappedHttpResponse.get (),
                                                                                        aResponseEntity.getResponse (),
                                                                                        aIncomingDumper,
                                                                                        aIncomingSecurityConfiguration);
