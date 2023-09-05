@@ -89,6 +89,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   private IAS4IncomingProfileSelector m_aIncomingProfileSelector;
   private IAS4SenderInterrupt m_aSenderInterrupt;
 
+  protected IAS4SendingDateTimeConsumer m_aSendingDTConsumer;
   protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
   protected IAS4OutgoingDumper m_aOutgoingDumper;
   protected IAS4IncomingDumper m_aIncomingDumper;
@@ -577,6 +578,33 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * @return The currently set {@link IAS4SendingDateTimeConsumer}. May be
+   *         <code>null</code>.
+   * @since 2.2.2
+   */
+  @Nullable
+  public final IAS4SendingDateTimeConsumer sendingDateTimeConsumer ()
+  {
+    return m_aSendingDTConsumer;
+  }
+
+  /**
+   * Set the sending date time consumer to be used. This may e.g. be needed to
+   * get the effective sending date time for Peppol reporting.
+   *
+   * @param aSendingDTConsumer
+   *        The sender date time consumer to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.2.2
+   */
+  @Nonnull
+  public final IMPLTYPE sendingDateTimeConsumer (@Nullable final IAS4SendingDateTimeConsumer aSendingDTConsumer)
+  {
+    m_aSendingDTConsumer = aSendingDTConsumer;
+    return thisAsT ();
+  }
+
+  /**
    * Set a internal message callback. Usually this method is NOT needed. Use
    * only when you know what you are doing.
    *
@@ -688,14 +716,13 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       LOGGER.warn ("The field 'soapVersion' is not set");
       return false;
     }
-
-    // m_nMaxRetries doesn't matter
-    // m_nRetryIntervalMS doesn't matter
+    // m_aHttpRetrySettings may be null
     if (m_aLocale == null)
     {
       LOGGER.warn ("The field 'locale' is not set");
       return false;
     }
+
     if (m_aPModeResolver == null)
     {
       LOGGER.warn ("The field 'pmodeResolver' is not set");
@@ -706,7 +733,10 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       LOGGER.warn ("The field 'incomingAttachmentFactory' is not set");
       return false;
     }
+    // m_aIncomingProfileSelector may be null
+    // m_aSenderInterrupt may be null
 
+    // m_aSendingDTConsumer may be null
     // m_aBuildMessageCallback may be null
     // m_aOutgoingDumper may be null
     // m_aIncomingDumper may be null
@@ -745,6 +775,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @throws Phase4Exception
    *         if something goes wrong
    */
+  @OverrideOnDemand
   protected void customizeBeforeSending () throws Phase4Exception
   {}
 
@@ -756,6 +787,17 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *         In case of any error
    */
   protected abstract void mainSendMessage () throws Phase4Exception;
+
+  /**
+   * Internal method that is invoked after successful sending took place. This
+   * can e.g. be used to fulfill reporting requirements etc. This method must
+   * not throw an exception!
+   *
+   * @since 2.2.2
+   */
+  @OverrideOnDemand
+  protected void afterSuccessfulSending ()
+  {}
 
   /**
    * Synchronously send the AS4 message. First the internal "finishFields"
@@ -815,6 +857,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Finished main AS4 message sending without exception");
+
+    // Post sending callback
+    afterSuccessfulSending ();
 
     return ESuccess.SUCCESS;
   }

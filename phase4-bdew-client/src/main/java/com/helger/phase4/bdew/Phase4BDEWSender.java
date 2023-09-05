@@ -19,6 +19,7 @@
  */
 package com.helger.phase4.bdew;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 import javax.annotation.Nonnull;
@@ -33,15 +34,11 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.client.AS4ClientUserMessage;
-import com.helger.phase4.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
-import com.helger.phase4.sender.AS4BidirectionalClientHelper;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder;
+import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
-import com.helger.phase4.util.Phase4Exception;
 
 /**
  * This class contains all the specifics to send AS4 messages with the BDEW
@@ -78,12 +75,11 @@ public final class Phase4BDEWSender
    */
   public abstract static class AbstractBDEWUserMessageBuilder <IMPLTYPE extends AbstractBDEWUserMessageBuilder <IMPLTYPE>>
                                                               extends
-                                                              AbstractAS4UserMessageBuilder <IMPLTYPE>
+                                                              AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     // Default per section 2.2.6.2.1
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
 
-    private AS4OutgoingAttachment m_aPayload;
     private BDEWPayloadParams m_aPayloadParams;
 
     protected AbstractBDEWUserMessageBuilder ()
@@ -110,6 +106,9 @@ public final class Phase4BDEWSender
         signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
         // Use the BST value type "#X509PKIPathv1"
         signingParams ().setUseSingleCertificate (false);
+
+        // Must be empty
+        conversationID ("");
       }
       catch (final Exception ex)
       {
@@ -181,7 +180,7 @@ public final class Phase4BDEWSender
     public final IMPLTYPE payload (@Nullable final AS4OutgoingAttachment.Builder aBuilder,
                                    @Nullable final BDEWPayloadParams aPayloadParams)
     {
-      m_aPayload = aBuilder != null ? aBuilder.compressionGZIP ().build () : null;
+      payload (aBuilder != null ? aBuilder.compressionGZIP ().build () : null);
       m_aPayloadParams = aPayloadParams;
       return thisAsT ();
     }
@@ -193,92 +192,42 @@ public final class Phase4BDEWSender
       if (!super.isEveryRequiredFieldSet ())
         return false;
 
-      if (m_aPayload == null)
+      if (!"".equals (m_sConversationID))
       {
-        LOGGER.warn ("The field 'payload' is not set");
+        LOGGER.warn ("The field 'conversationID' must not be changed");
         return false;
       }
 
+      // All valid
       return true;
     }
 
     @Override
-    protected final void mainSendMessage () throws Phase4Exception
+    @Nullable
+    protected WSS4JAttachment createMainAttachment (@Nonnull final AS4OutgoingAttachment aPayload,
+                                                    @Nonnull final AS4ResourceHelper aResHelper) throws IOException
     {
-      // Temporary file manager
-      try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+      final WSS4JAttachment aPayloadAttachment = WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);
+
+      if (m_aPayloadParams != null)
       {
-        // Start building AS4 User Message
-        final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
-        applyToUserMessage (aUserMsg);
-
-        // Empty string by purpose
-        aUserMsg.setConversationID ("");
-
-        // No payload - only one attachment
-        aUserMsg.setPayload (null);
-
-        // Add main attachment
-        final WSS4JAttachment aPayloadAttachment = WSS4JAttachment.createOutgoingFileAttachment (m_aPayload,
-                                                                                                 aResHelper);
-
-        if (m_aPayloadParams != null)
-        {
-          if (m_aPayloadParams.getDocumentType () != null)
-            aPayloadAttachment.customPartProperties ().put ("BDEWDocumentType", m_aPayloadParams.getDocumentType ());
-          if (m_aPayloadParams.getDocumentDate () != null)
-            aPayloadAttachment.customPartProperties ()
-                              .put ("BDEWDocumentDate", m_aPayloadParams.getDocumentDate ().toString ());
-          if (m_aPayloadParams.getDocumentNumber () != null)
-            aPayloadAttachment.customPartProperties ().put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ());
-          if (m_aPayloadParams.getFulfillmentDate () != null)
-            aPayloadAttachment.customPartProperties ()
-                              .put ("BDEWFulfillmentDate", m_aPayloadParams.getFulfillmentDate ().toString ());
-          if (m_aPayloadParams.getSubjectPartyId () != null)
-            aPayloadAttachment.customPartProperties ()
-                              .put ("BDEWSubjectPartyID", m_aPayloadParams.getSubjectPartyId ());
-          if (m_aPayloadParams.getSubjectPartyRole () != null)
-            aPayloadAttachment.customPartProperties ()
-                              .put ("BDEWSubjectPartyRole", m_aPayloadParams.getSubjectPartyRole ());
-        }
-        aUserMsg.addAttachment (aPayloadAttachment);
-
-        // Add other attachments
-        for (final AS4OutgoingAttachment aAttachment : m_aAttachments)
-          aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment, aResHelper));
-
-        // Create on demand with all necessary parameters
-        final AS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSecurityProviderSign (m_aSigningParams.getSecurityProvider ())
-                                                                                                                       .setSecurityProviderCrypt (m_aCryptParams.getSecurityProvider ())
-                                                                                                                       .setDecryptParameterModifier (m_aDecryptParameterModifier);
-
-        // Main sending
-        AS4BidirectionalClientHelper.sendAS4UserMessageAndReceiveAS4SignalMessage (m_aCryptoFactorySign,
-                                                                                   m_aCryptoFactoryCrypt,
-                                                                                   pmodeResolver (),
-                                                                                   incomingAttachmentFactory (),
-                                                                                   incomingProfileSelector (),
-                                                                                   aUserMsg,
-                                                                                   m_aLocale,
-                                                                                   m_sEndpointURL,
-                                                                                   m_aBuildMessageCallback,
-                                                                                   m_aOutgoingDumper,
-                                                                                   m_aIncomingDumper,
-                                                                                   aIncomingSecurityConfiguration,
-                                                                                   m_aRetryCallback,
-                                                                                   m_aResponseConsumer,
-                                                                                   m_aSignalMsgConsumer);
+        if (m_aPayloadParams.getDocumentType () != null)
+          aPayloadAttachment.customPartProperties ().put ("BDEWDocumentType", m_aPayloadParams.getDocumentType ());
+        if (m_aPayloadParams.getDocumentDate () != null)
+          aPayloadAttachment.customPartProperties ()
+                            .put ("BDEWDocumentDate", m_aPayloadParams.getDocumentDate ().toString ());
+        if (m_aPayloadParams.getDocumentNumber () != null)
+          aPayloadAttachment.customPartProperties ().put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ());
+        if (m_aPayloadParams.getFulfillmentDate () != null)
+          aPayloadAttachment.customPartProperties ()
+                            .put ("BDEWFulfillmentDate", m_aPayloadParams.getFulfillmentDate ().toString ());
+        if (m_aPayloadParams.getSubjectPartyId () != null)
+          aPayloadAttachment.customPartProperties ().put ("BDEWSubjectPartyID", m_aPayloadParams.getSubjectPartyId ());
+        if (m_aPayloadParams.getSubjectPartyRole () != null)
+          aPayloadAttachment.customPartProperties ()
+                            .put ("BDEWSubjectPartyRole", m_aPayloadParams.getSubjectPartyRole ());
       }
-      catch (final Phase4Exception ex)
-      {
-        // Re-throw
-        throw ex;
-      }
-      catch (final Exception ex)
-      {
-        // wrap
-        throw new Phase4Exception ("Wrapped Phase4Exception", ex);
-      }
+      return aPayloadAttachment;
     }
   }
 

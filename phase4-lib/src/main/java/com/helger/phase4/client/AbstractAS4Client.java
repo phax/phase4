@@ -353,11 +353,27 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
+   * Ensure the sending date time is set. If it is already set, nothing happens,
+   * else it is set to the current point in time.
+   *
+   * @return this for chaining Never <code>null</code>.
+   * @since 2.2.2
+   */
+  @Nonnull
+  public final IMPLTYPE ensureSendingDateTime ()
+  {
+    if (m_aSendingDateTime == null)
+      m_aSendingDateTime = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
+    return thisAsT ();
+  }
+
+  /**
    * @return The sending date time if configured, or the current timestamp.
    *         Never <code>null</code>.
    * @since 0.12.0
    */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.2.2")
   public final OffsetDateTime getSendingDateTimeOrNow ()
   {
     return m_aSendingDateTime != null ? m_aSendingDateTime : MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
@@ -370,9 +386,25 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param aSendingDateTime
    *        The sending date time to be used. May be <code>null</code>.
    * @return this for chaining
+   * @deprecated Use {@link #setSendingDateTime(OffsetDateTime)} instead
    */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.2.2")
   public final IMPLTYPE setSendingDateTimeOrNow (@Nullable final OffsetDateTime aSendingDateTime)
+  {
+    return setSendingDateTime (aSendingDateTime);
+  }
+
+  /**
+   * Set the sending date time of the AS4 message. If not set, the current point
+   * in time will be used onwards.
+   *
+   * @param aSendingDateTime
+   *        The sending date time to be used. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE setSendingDateTime (@Nullable final OffsetDateTime aSendingDateTime)
   {
     m_aSendingDateTime = aSendingDateTime;
     return thisAsT ();

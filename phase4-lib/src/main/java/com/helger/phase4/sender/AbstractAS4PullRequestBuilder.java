@@ -147,7 +147,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     }
 
     aPullRequestMsg.setSoapVersion (m_eSoapVersion);
-    aPullRequestMsg.setSendingDateTimeOrNow (m_aSendingDateTime);
+    aPullRequestMsg.setSendingDateTime (m_aSendingDateTime);
     // Set the keystore/truststore parameters
     aPullRequestMsg.setAS4CryptoFactorySign (m_aCryptoFactorySign);
     aPullRequestMsg.setAS4CryptoFactoryCrypt (m_aCryptoFactoryCrypt);
@@ -176,6 +176,21 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
       // Start building AS4 User Message
       final AS4ClientPullRequestMessage aPullRequestMsg = new AS4ClientPullRequestMessage (aResHelper);
       applyToPullRequest (aPullRequestMsg);
+
+      if (m_aSendingDTConsumer != null)
+      {
+        try
+        {
+          // Eventually this call will determine the sendingDateTime if none is
+          // set yet
+          m_aSendingDTConsumer.onEffectiveSendingDateTime (aPullRequestMsg.ensureSendingDateTime ()
+                                                                          .getSendingDateTime ());
+        }
+        catch (final Exception ex)
+        {
+          LOGGER.error ("Failed to invoke IAS4SendingDateTimeConsumer", ex);
+        }
+      }
 
       // Create on demand with all necessary parameters
       final AS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSecurityProviderSign (m_aSigningParams.getSecurityProvider ())

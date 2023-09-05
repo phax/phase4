@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.sender;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
@@ -24,6 +26,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
@@ -46,6 +49,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
                                                                AbstractAS4UserMessageBuilder <IMPLTYPE>
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4UserMessageBuilderMIMEPayload.class);
+
   private AS4OutgoingAttachment m_aPayload;
 
   /**
@@ -99,6 +103,28 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
     return true;
   }
 
+  /**
+   * Create the main attachment. This is mainly intended for ENTSOG to add some
+   * custom properties.
+   *
+   * @param aPayload
+   *        The outgoing main attachment as provided to the builder. Never
+   *        <code>null</code>.s
+   * @param aResHelper
+   *        The resource helper to use for temporary files etc. Never
+   *        <code>null</code>.
+   * @return May be <code>null</code> to indicate not to use the main payload
+   * @throws IOException
+   *         in case of error
+   */
+  @Nullable
+  @OverrideOnDemand
+  protected WSS4JAttachment createMainAttachment (@Nonnull final AS4OutgoingAttachment aPayload,
+                                                  @Nonnull final AS4ResourceHelper aResHelper) throws IOException
+  {
+    return WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);
+  }
+
   @Override
   protected final void mainSendMessage () throws Phase4Exception
   {
@@ -109,11 +135,29 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
       final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
       applyToUserMessage (aUserMsg);
 
+      if (m_aSendingDTConsumer != null)
+      {
+        try
+        {
+          // Eventually this call will determine the sendingDateTime if none is
+          // set yet
+          m_aSendingDTConsumer.onEffectiveSendingDateTime (aUserMsg.ensureSendingDateTime ().getSendingDateTime ());
+        }
+        catch (final Exception ex)
+        {
+          LOGGER.error ("Failed to invoke IAS4SendingDateTimeConsumer", ex);
+        }
+      }
+
       // No payload - only one attachment
       aUserMsg.setPayload (null);
 
       // Add main attachment
-      aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (m_aPayload, aResHelper));
+      {
+        final WSS4JAttachment aMainAttachment = WSS4JAttachment.createOutgoingFileAttachment (m_aPayload, aResHelper);
+        if (aMainAttachment != null)
+          aUserMsg.addAttachment (aMainAttachment);
+      }
 
       // Add other attachments
       for (final AS4OutgoingAttachment aAttachment : m_aAttachments)

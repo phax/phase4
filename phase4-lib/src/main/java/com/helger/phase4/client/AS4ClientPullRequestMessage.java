@@ -76,7 +76,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             getRefToMessageID (),
-                                                                                            getSendingDateTimeOrNow ());
+                                                                                            ensureSendingDateTime ().getSendingDateTime ());
 
     final AS4PullRequestMessage aPullRequest = AS4PullRequestMessage.create (getSoapVersion (),
                                                                              aEbms3MessageInfo,

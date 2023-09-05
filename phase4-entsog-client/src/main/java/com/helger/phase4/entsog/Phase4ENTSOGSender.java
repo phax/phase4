@@ -19,6 +19,8 @@
  */
 package com.helger.phase4.entsog;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
@@ -30,13 +32,9 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.client.AS4ClientUserMessage;
-import com.helger.phase4.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
-import com.helger.phase4.sender.AS4BidirectionalClientHelper;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder;
+import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
-import com.helger.phase4.util.Phase4Exception;
 
 /**
  * This class contains all the specifics to send AS4 messages with the ENTSOG
@@ -73,11 +71,10 @@ public final class Phase4ENTSOGSender
    */
   public abstract static class AbstractENTSOGUserMessageBuilder <IMPLTYPE extends AbstractENTSOGUserMessageBuilder <IMPLTYPE>>
                                                                 extends
-                                                                AbstractAS4UserMessageBuilder <IMPLTYPE>
+                                                                AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.ISSUER_SERIAL;
 
-    private AS4OutgoingAttachment m_aPayload;
     private ENTSOGPayloadParams m_aPayloadParams;
 
     protected AbstractENTSOGUserMessageBuilder ()
@@ -88,6 +85,7 @@ public final class Phase4ENTSOGSender
         httpClientFactory (new Phase4ENTSOGHttpClientSettings ());
         signingParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
         cryptParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+        conversationID ("");
       }
       catch (final Exception ex)
       {
@@ -118,9 +116,28 @@ public final class Phase4ENTSOGSender
      *        {@link ECryptoKeyIdentifierType}. Defaults to ISSUER_SERIAL. May
      *        be <code>null</code>.
      * @return this for chaining
+     * @deprecated Use
+     *             {@link #signingKeyIdentifierType(ECryptoKeyIdentifierType)}
+     *             instead
      */
+    @Deprecated (forRemoval = true, since = "2.2.2")
     @Nonnull
     public final IMPLTYPE setSigningKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
+    {
+      return signingKeyIdentifierType (eSigningKeyIdentifierType);
+    }
+
+    /**
+     * Signing Key Identifier Type.
+     *
+     * @param eSigningKeyIdentifierType
+     *        {@link ECryptoKeyIdentifierType}. Defaults to ISSUER_SERIAL. May
+     *        be <code>null</code>.
+     * @return this for chaining
+     * @since 2.2.2
+     */
+    @Nonnull
+    public final IMPLTYPE signingKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
     {
       if (eSigningKeyIdentifierType != null)
         signingParams ().setKeyIdentifierType (eSigningKeyIdentifierType);
@@ -141,7 +158,7 @@ public final class Phase4ENTSOGSender
     public final IMPLTYPE payload (@Nullable final AS4OutgoingAttachment.Builder aBuilder,
                                    @Nullable final ENTSOGPayloadParams aPayloadParams)
     {
-      m_aPayload = aBuilder != null ? aBuilder.compressionGZIP ().build () : null;
+      payload (aBuilder != null ? aBuilder.compressionGZIP ().build () : null);
       m_aPayloadParams = aPayloadParams;
       return thisAsT ();
     }
@@ -153,78 +170,27 @@ public final class Phase4ENTSOGSender
       if (!super.isEveryRequiredFieldSet ())
         return false;
 
-      if (m_aPayload == null)
+      if (!"".equals (m_sConversationID))
       {
-        LOGGER.warn ("The field 'payload' is not set");
+        LOGGER.warn ("The field 'conversationID' must not be changed");
         return false;
       }
 
+      // All valid
       return true;
     }
 
     @Override
-    protected final void mainSendMessage () throws Phase4Exception
+    protected WSS4JAttachment createMainAttachment (@Nonnull final AS4OutgoingAttachment aPayload,
+                                                    @Nonnull final AS4ResourceHelper aResHelper) throws IOException
     {
-      // Temporary file manager
-      try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+      final WSS4JAttachment aPayloadAttachment = WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);
+      if (m_aPayloadParams != null)
       {
-        // Start building AS4 User Message
-        final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
-        applyToUserMessage (aUserMsg);
-
-        // Empty string by purpose
-        aUserMsg.setConversationID ("");
-
-        // No payload - only one attachment
-        aUserMsg.setPayload (null);
-
-        // Add main attachment
-        final WSS4JAttachment aPayloadAttachment = WSS4JAttachment.createOutgoingFileAttachment (m_aPayload,
-                                                                                                 aResHelper);
-
-        if (m_aPayloadParams != null)
-        {
-          if (m_aPayloadParams.getDocumentType () != null)
-            aPayloadAttachment.customPartProperties ().put ("EDIGASDocumentType", m_aPayloadParams.getDocumentType ());
-        }
-        aUserMsg.addAttachment (aPayloadAttachment);
-
-        // Add other attachments
-        for (final AS4OutgoingAttachment aAttachment : m_aAttachments)
-          aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment, aResHelper));
-
-        // Create on demand with all necessary parameters
-        final AS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSecurityProviderSign (m_aSigningParams.getSecurityProvider ())
-                                                                                                                       .setSecurityProviderCrypt (m_aCryptParams.getSecurityProvider ())
-                                                                                                                       .setDecryptParameterModifier (m_aDecryptParameterModifier);
-
-        // Main sending
-        AS4BidirectionalClientHelper.sendAS4UserMessageAndReceiveAS4SignalMessage (m_aCryptoFactorySign,
-                                                                                   m_aCryptoFactoryCrypt,
-                                                                                   pmodeResolver (),
-                                                                                   incomingAttachmentFactory (),
-                                                                                   incomingProfileSelector (),
-                                                                                   aUserMsg,
-                                                                                   m_aLocale,
-                                                                                   m_sEndpointURL,
-                                                                                   m_aBuildMessageCallback,
-                                                                                   m_aOutgoingDumper,
-                                                                                   m_aIncomingDumper,
-                                                                                   aIncomingSecurityConfiguration,
-                                                                                   m_aRetryCallback,
-                                                                                   m_aResponseConsumer,
-                                                                                   m_aSignalMsgConsumer);
+        if (m_aPayloadParams.getDocumentType () != null)
+          aPayloadAttachment.customPartProperties ().put ("EDIGASDocumentType", m_aPayloadParams.getDocumentType ());
       }
-      catch (final Phase4Exception ex)
-      {
-        // Re-throw
-        throw ex;
-      }
-      catch (final Exception ex)
-      {
-        // wrap
-        throw new Phase4Exception ("Wrapped Phase4Exception", ex);
-      }
+      return aPayloadAttachment;
     }
   }
 
