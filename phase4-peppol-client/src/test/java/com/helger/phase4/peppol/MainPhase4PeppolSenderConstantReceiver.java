@@ -27,6 +27,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
+import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
 import com.helger.phive.peppol.PeppolValidation2023_05;
 import com.helger.security.certificate.CertificateHelper;
@@ -69,6 +70,8 @@ public final class MainPhase4PeppolSenderConstantReceiver
                                   .senderPartyID ("POP000306")
                                   .countryC1 ("AT")
                                   .payload (aPayloadElement)
+                                  .checkReceiverAPCertificate (false)
+                                  .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
                                   .receiverEndpointDetails (CertificateHelper.convertStringToCertficate ("-----BEGIN CERTIFICATE-----\r\n" +
                                                                                                          "MIIFzzCCA7egAwIBAgIQE9UWdJAj7xeapgMq0uA0nTANBgkqhkiG9w0BAQsFADBr\r\n" +
                                                                                                          "MQswCQYDVQQGEwJCRTEZMBcGA1UEChMQT3BlblBFUFBPTCBBSVNCTDEWMBQGA1UE\r\n" +
