@@ -19,6 +19,8 @@ package com.helger.phase4.peppol;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
+import java.time.LocalDate;
+import java.time.Month;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -37,6 +39,7 @@ import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.mime.CMimeType;
@@ -50,6 +53,7 @@ import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
 import com.helger.peppol.sbdh.spec12.BinaryContentType;
 import com.helger.peppol.sbdh.spec12.TextContentType;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
+import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.utils.CertificateRevocationChecker;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.ERevocationCheckMode;
@@ -70,7 +74,9 @@ import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.profile.peppol.PeppolPMode;
+import com.helger.phase4.profile.peppol.reporting.Phase4PeppolReportingHelper;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
+import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.api.executorset.VESID;
@@ -81,6 +87,8 @@ import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
+import com.helper.peppol.reporting.api.EReportingDirection;
+import com.helper.peppol.reporting.api.PeppolReportingItem;
 
 /**
  * This class contains all the specifics to send AS4 messages to PEPPOL. See
@@ -96,6 +104,9 @@ public final class Phase4PeppolSender
   public static final IPeppolURLProvider URL_PROVIDER = PeppolURLProvider.INSTANCE;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolSender.class);
+  private static final LocalDate DATE_COUNTRY_C1_BECOMES_MANDATORY = PDTFactory.createLocalDate (2024,
+                                                                                                 Month.JANUARY,
+                                                                                                 1);
 
   private Phase4PeppolSender ()
   {}
@@ -389,7 +400,9 @@ public final class Phase4PeppolSender
     @Deprecated (forRemoval = true, since = "2.2.0")
     public static final boolean DEFAULT_BOOLEAN_CHECK_AP_CERTIFICATE = DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE;
 
+    // C1
     protected IParticipantIdentifier m_aSenderID;
+    // C4
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
@@ -403,6 +416,9 @@ public final class Phase4PeppolSender
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private Consumer <String> m_aAPEndpointURLConsumer;
     private boolean m_bCheckReceiverAPCertificate;
+
+    // Status var
+    private OffsetDateTime m_aEffectiveSendingDT;
 
     /**
      * Create a new builder, with the defaults from
@@ -467,6 +483,16 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * @return The currently set Document Type ID. May be <code>null</code>.
+     * @since 2.2.2
+     */
+    @Nullable
+    public final IDocumentTypeIdentifier documentTypeID ()
+    {
+      return m_aDocTypeID;
+    }
+
+    /**
      * Set the document type ID to be send. The document type must be provided
      * prior to sending. This is a shortcut to the {@link #action(String)}
      * method.
@@ -483,6 +509,16 @@ public final class Phase4PeppolSender
         LOGGER.warn ("An existing DocumentTypeID is overridden");
       m_aDocTypeID = aDocTypeID;
       return action (aDocTypeID.getURIEncoded ());
+    }
+
+    /**
+     * @return The currently set Process ID. May be <code>null</code>.
+     * @since 2.2.2
+     */
+    @Nullable
+    public final IProcessIdentifier processID ()
+    {
+      return m_aProcessID;
     }
 
     /**
@@ -697,6 +733,20 @@ public final class Phase4PeppolSender
       return thisAsT ();
     }
 
+    /**
+     * The effective sending date time of the message. That is set only if
+     * message sending takes place.
+     *
+     * @return The effective sending date time or <code>null</code> if the
+     *         messages was not sent yet.
+     * @since 2.2.2
+     */
+    @Nullable
+    public final OffsetDateTime effectiveSendingDateTime ()
+    {
+      return m_aEffectiveSendingDT;
+    }
+
     protected final boolean isEndpointDetailProviderUsable ()
     {
       // Sender ID doesn't matter here
@@ -794,6 +844,17 @@ public final class Phase4PeppolSender
         LOGGER.warn ("The field 'processID' is not set");
         return false;
       }
+
+      // m_sCountryC1 may be null, before 1.1.2024
+      if (PDTFactory.getCurrentLocalDateUTC ().compareTo (DATE_COUNTRY_C1_BECOMES_MANDATORY) >= 0)
+      {
+        if (StringHelper.hasNoText (m_sCountryC1))
+        {
+          LOGGER.warn ("The field 'countryC1' is not set");
+          return false;
+        }
+      }
+
       // m_aPayloadMimeType may be null
       // m_bCompressPayload may be null
       // m_sPayloadContentID may be null
@@ -822,6 +883,75 @@ public final class Phase4PeppolSender
                                          .name (CAS4.FINAL_RECIPIENT)
                                          .type (m_aReceiverID.getScheme ())
                                          .value (m_aReceiverID.getValue ()));
+
+      // Explicitly remember the old handler
+      // Try to do this as close to sending as possible, to avoid that another
+      // sendingDateTimConsumer is used
+      final IAS4SendingDateTimeConsumer aExisting = m_aSendingDTConsumer;
+      sendingDateTimeConsumer (aSendingDT -> {
+        // Store in this instance
+        m_aEffectiveSendingDT = aSendingDT;
+
+        // Call the original handler
+        if (aExisting != null)
+          aExisting.onEffectiveSendingDateTime (aSendingDT);
+      });
+    }
+
+    /**
+     * Create a Peppol Reporting Item in case sending was successful. This The
+     * end user ID needs to be provided from the outside, because it cannot be
+     * used from the sending data. The end user ID is only needed for grouping
+     * the reporting data later on, and is NOT part of the transmission (neither
+     * in TSR nor in EUSR).<br>
+     * The item is simply created but not stored.
+     *
+     * @param sEndUserID
+     *        The local end user ID, required to group all reporting items. May
+     *        neither be <code>null</code> nor empty.
+     * @return The created reporting item. Never <code>null</code>.
+     * @throws Phase4PeppolException
+     *         in case something goes wrong
+     * @see #createAndStorePeppolReportingItemAfterSending(String)
+     * @since 2.2.2
+     */
+    @Nonnull
+    public final PeppolReportingItem createPeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4PeppolException
+    {
+      ValueEnforcer.notEmpty (sEndUserID, "EndUserID");
+      if (m_aEffectiveSendingDT == null)
+        throw new Phase4PeppolException ("A Peppol Reporting item can only be created AFTER sending");
+
+      // No Country C4 necessary for sending
+      return new PeppolReportingItem (m_aEffectiveSendingDT,
+                                      EReportingDirection.SENDING,
+                                      m_sFromPartyID,
+                                      m_sToPartyID,
+                                      m_aDocTypeID.getScheme (),
+                                      m_aDocTypeID.getValue (),
+                                      m_aProcessID.getScheme (),
+                                      m_aProcessID.getValue (),
+                                      ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2.getID (),
+                                      m_sCountryC1,
+                                      null,
+                                      sEndUserID);
+    }
+
+    /**
+     * This is a shortcut for creating and storing a Peppol reporting item in a
+     * shot. See the creation method for the extended documentation.
+     *
+     * @param sEndUserID
+     *        The local end user ID, required to group all reporting items. May
+     *        neither be <code>null</code> nor empty.
+     * @throws Phase4PeppolException
+     *         in case something goes wrong
+     * @see #createPeppolReportingItemAfterSending(String)
+     * @since 2.2.2
+     */
+    public final void createAndStorePeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4PeppolException
+    {
+      Phase4PeppolReportingHelper.storeReportingItem (createPeppolReportingItemAfterSending (sEndUserID));
     }
   }
 
@@ -1073,7 +1203,7 @@ public final class Phase4PeppolSender
      *
      * @param aVESID
      *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation3_15_0.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
+     *        <code>PeppolValidation2023_05.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
      *        May be <code>null</code>.
      * @return this for chaining
      * @see #validationConfiguration(VESID,
@@ -1095,7 +1225,7 @@ public final class Phase4PeppolSender
      *
      * @param aVESID
      *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation3_15_0.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
+     *        <code>PeppolValidation2023_05.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
      *        May be <code>null</code>.
      * @param aValidationResultHandler
      *        The validation result handler for positive and negative response
