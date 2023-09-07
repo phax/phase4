@@ -263,11 +263,11 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
       }
       catch (final CertificateExpiredException ex)
       {
-        LOGGER.warn ("The provided certificate is already expired. Please use a different one.");
+        LOGGER.warn ("The provided certificate is already expired. Please use a different one: " + ex.getMessage ());
       }
       catch (final CertificateNotYetValidException ex)
       {
-        LOGGER.warn ("The provided certificate is not yet valid. Please use a different one.");
+        LOGGER.warn ("The provided certificate is not yet valid. Please use a different one: " + ex.getMessage ());
       }
     }
     return this;
