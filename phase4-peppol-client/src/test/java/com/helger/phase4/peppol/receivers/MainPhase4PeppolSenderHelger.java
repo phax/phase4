@@ -35,7 +35,6 @@ import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolSender.Builder;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
-import com.helger.phase4.profile.peppol.reporting.Phase4PeppolReportingHelper;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
 import com.helger.phive.peppol.PeppolValidation2023_05;
 import com.helger.servlet.mock.MockServletContext;
@@ -113,7 +112,7 @@ public final class MainPhase4PeppolSenderHelger
       if (eResult.isSuccess ())
       {
         // Remember item for reporting
-        Phase4PeppolReportingHelper.storeReportingItem (aBuilder.createPeppolReportingItemAfterSending ("your-c1-end-user-id"));
+        aBuilder.createAndStorePeppolReportingItemAfterSending ("your-c1-end-user-id");
       }
 
     }

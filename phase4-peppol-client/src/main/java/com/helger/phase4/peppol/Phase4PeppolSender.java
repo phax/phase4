@@ -68,13 +68,13 @@ import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifierParts;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.EAS4CompressionMode;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.profile.peppol.PeppolPMode;
-import com.helger.phase4.profile.peppol.reporting.Phase4PeppolReportingHelper;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
 import com.helger.phase4.util.Phase4Exception;
@@ -89,6 +89,8 @@ import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helper.peppol.reporting.api.EReportingDirection;
 import com.helper.peppol.reporting.api.PeppolReportingItem;
+import com.helper.peppol.reporting.api.backend.PeppolReportingBackend;
+import com.helper.peppol.reporting.api.backend.PeppolReportingBackendException;
 
 /**
  * This class contains all the specifics to send AS4 messages to PEPPOL. See
@@ -951,7 +953,23 @@ public final class Phase4PeppolSender
      */
     public final void createAndStorePeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4PeppolException
     {
-      Phase4PeppolReportingHelper.storeReportingItem (createPeppolReportingItemAfterSending (sEndUserID));
+      // Consistency check
+      if (PeppolReportingBackend.getBackendService () == null)
+        throw new Phase4PeppolException ("No Peppol Reporting Backend is available. Cannot store Reporting Items");
+
+      try
+      {
+        // Create reporting item
+        final PeppolReportingItem aReportingItem = createPeppolReportingItemAfterSending (sEndUserID);
+
+        // Store it in configured backend
+        PeppolReportingBackend.withBackendDo (AS4Configuration.getConfig (),
+                                              aBackend -> aBackend.storeReportingItem (aReportingItem));
+      }
+      catch (final PeppolReportingBackendException ex)
+      {
+        throw new Phase4PeppolException ("Failed to store Peppol Reporting Item", ex);
+      }
     }
   }
 
