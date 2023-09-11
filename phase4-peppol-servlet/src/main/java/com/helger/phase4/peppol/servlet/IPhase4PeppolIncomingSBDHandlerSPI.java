@@ -59,8 +59,13 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    *        The message state. Can e.g. be used to retrieve information about
    *        the certificate found in the message. Never <code>null</code>. Since
    *        v0.9.8
+   * @throws Phase4PeppolClientException
+   *         if this specific exception is thrown, it translates into a
+   *         synchronous AS4 error message.
    * @throws Exception
-   *         In case it cannot be processed.
+   *         In case it cannot be processed. If
+   *         {@link #exceptionTranslatesToAS4Error()} returns <code>true</code>
+   *         each Exception is converted into a synchronous AS4 error message.
    */
   void handleIncomingSBD (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
                           @Nonnull HttpHeaderMap aHeaders,
