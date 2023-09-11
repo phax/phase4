@@ -93,7 +93,12 @@ public final class AS4Signer
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
     aSecHeader.insertSecurityHeader ();
 
-    final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
+    final WSSecSignature aBuilder = aSigningParams.hasWSSecSignatureCustomizer () ? aSigningParams.getWSSecSignatureCustomizer ()
+                                                                                                  .createWSSecSignature (aSecHeader)
+                                                                                  : new WSSecSignature (aSecHeader);
+    if (aBuilder == null)
+      throw new IllegalStateException ("Failed to create WSSecSignature for " + aSecHeader);
+
     aBuilder.setKeyIdentifierType (aSigningParams.getKeyIdentifierType ().getTypeID ());
     // Set keystore alias and key password
     aBuilder.setUserInfo (aCryptoFactorySign.getKeyAlias (), aCryptoFactorySign.getKeyPassword ());
@@ -131,6 +136,14 @@ public final class AS4Signer
                                            .getAttributeNodeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
+
+    // Customizer to be invoked as the last action
+    if (aSigningParams.hasWSSecSignatureCustomizer ())
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Running WSSecSignatureCustomizer.customize");
+      aSigningParams.getWSSecSignatureCustomizer ().customize (aBuilder);
+    }
 
     return aBuilder.build (aCryptoFactorySign.getCrypto ());
   }

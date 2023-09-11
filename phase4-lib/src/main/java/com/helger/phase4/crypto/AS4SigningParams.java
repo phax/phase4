@@ -49,6 +49,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   private ECryptoAlgorithmC14N m_eAlgorithmC14N = ECryptoAlgorithmC14N.C14N_ALGORITHM_DEFAULT;
   private Provider m_aSecurityProvider;
   private boolean m_bUseSingleCertificate = DEFAULT_USE_SINGLE_CERTIFICATE;
+  private IWSSecSignatureCustomizer m_aWSSecSignatureCustomizer;
 
   public AS4SigningParams ()
   {}
@@ -221,6 +222,24 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
     return this;
   }
 
+  @Nullable
+  public final IWSSecSignatureCustomizer getWSSecSignatureCustomizer ()
+  {
+    return m_aWSSecSignatureCustomizer;
+  }
+
+  public final boolean hasWSSecSignatureCustomizer ()
+  {
+    return m_aWSSecSignatureCustomizer != null;
+  }
+
+  @Nonnull
+  public final AS4SigningParams setWSSecSignatureCustomizer (@Nullable final IWSSecSignatureCustomizer a)
+  {
+    m_aWSSecSignatureCustomizer = a;
+    return this;
+  }
+
   /**
    * This method calls {@link #setAlgorithmSign(ECryptoAlgorithmSign)} and
    * {@link #setAlgorithmSignDigest(ECryptoAlgorithmSignDigest)} based on the
@@ -257,7 +276,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
            .setAlgorithmSignDigest (m_eAlgorithmSignDigest)
            .setAlgorithmC14N (m_eAlgorithmC14N)
            .setSecurityProvider (m_aSecurityProvider)
-           .setUseSingleCertificate (m_bUseSingleCertificate);
+           .setUseSingleCertificate (m_bUseSingleCertificate)
+           .setWSSecSignatureCustomizer (m_aWSSecSignatureCustomizer);
   }
 
   @Nonnull
@@ -278,6 +298,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
                                        .append ("AlgorithmC14N", m_eAlgorithmC14N)
                                        .append ("SecurityProvider", m_aSecurityProvider)
                                        .append ("UseSingleCertificate", m_bUseSingleCertificate)
+                                       .append ("WSSecSignatureCustomizer", m_aWSSecSignatureCustomizer)
                                        .getToString ();
   }
 
