@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -40,6 +42,8 @@ import com.helger.commons.annotation.UnsupportedOperation;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.datetime.PDTFactory;
+import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -79,6 +83,7 @@ import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.peppol.smp1.EndpointType;
+import com.helper.peppol.reporting.api.PeppolReportingItem;
 
 /**
  * This is the SPI implementation to handle incoming AS4 requests from
@@ -382,8 +387,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     final String sService = aUserMessage.getCollaborationInfo ().getServiceValue ();
     final String sAction = aUserMessage.getCollaborationInfo ().getAction ();
     final String sConversationID = aUserMessage.getCollaborationInfo ().getConversationId ();
-    final String sLogPrefix = "[" + sMessageID + "] ";
     final Locale aDisplayLocale = aState.getLocale ();
+    final String sLogPrefix = "[" + sMessageID + "] ";
 
     // Debug log
     if (LOGGER.isDebugEnabled ())
@@ -440,7 +445,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
         if (a.m_aPayloadBytes == null)
         {
-          LOGGER.error (sLogPrefix + "Failed to decompress the payload");
+          LOGGER.error (sLogPrefix + "Failed to decompress the payload of attachment #" + nAttachmentIndex);
           aProcessingErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aDisplayLocale,
                                                                                                aState.getMessageID ()));
           return AS4MessageProcessorResult.createFailure (null);
@@ -452,7 +457,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         final ErrorList aSBDHErrors = new ErrorList ();
         a.m_aSBDH = new SBDMarshaller ().setValidationEventHandler (new WrappedCollectingValidationEventHandler (aSBDHErrors))
                                         .read (a.m_aPayloadBytes);
-        if (a.m_aSBDH == null)
+
+        // Only fail if the first attachment is not an SBDH. The check for
+        // exactly 1 attachment comes below
+        if (nAttachmentIndex == 0 && a.m_aSBDH == null)
         {
           if (aSBDHErrors.isEmpty ())
           {
@@ -518,6 +526,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug (sLogPrefix + "Now evaluating the SBDH against Peppol rules");
 
+      // Interpret as Peppol SBDH and eventually perform consistency checks
       final boolean bPerformValueChecks = Phase4PeppolServletConfiguration.isPerformSBDHValueChecks ();
       aPeppolSBD = new PeppolSBDHDocumentReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerformValueChecks)
                                                                                   .extractData (aReadAttachment.standardBusinessDocument ());
@@ -539,11 +548,12 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
 
     if (m_aHandlers.isEmpty ())
     {
+      // Oops - programming error
       LOGGER.error (sLogPrefix + "No SPI handler is present - the message is unhandled and discarded");
     }
     else
     {
-      // Start consistency checks?
+      // Start consistency checks if the receiver is supported or not
       final Phase4PeppolReceiverCheckData aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
                                                                                             : Phase4PeppolServletConfiguration.getAsReceiverCheckData ();
       if (aReceiverCheckData != null)
@@ -598,6 +608,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         LOGGER.info (sLogPrefix + "Endpoint checks for incoming AS4 messages are disabled");
       }
 
+      // Receiving checks are positively done
+
+      // Now start invoking SPI handlers
       for (final IPhase4PeppolIncomingSBDHandlerSPI aHandler : m_aHandlers)
       {
         try
@@ -632,6 +645,56 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
             LOGGER.error (sLogPrefix + sMsg);
             return AS4MessageProcessorResult.createFailure (sMsg);
           }
+        }
+      }
+
+      // TODO work in progress
+      if (false)
+      {
+        // In case of success start building reporting item
+        final XMLOffsetDateTime aUserMsgDT = aUserMessage.getMessageInfo ().getTimestamp ();
+        final OffsetDateTime aExchangeDT;
+        if (aUserMsgDT != null)
+        {
+          // Take AS4 sending date time
+          if (aUserMsgDT.getOffset () != null)
+            aExchangeDT = aUserMsgDT.toOffsetDateTime ();
+          else
+            aExchangeDT = OffsetDateTime.of (aUserMsgDT.toLocalDateTime (), ZoneOffset.UTC);
+        }
+        else
+        {
+          LOGGER.warn ("Incoming messages does not contain a UserMessage/MessageInfo/Timestamp value. Using current date time");
+          aExchangeDT = PDTFactory.getCurrentOffsetDateTime ();
+        }
+
+        // TODO
+        final String sC2ID = "";
+        // TODO
+        final String sC3ID = "";
+        // TODO
+        final String sC4CountryCode = "";
+        // TODO
+        final String sEndUserID = "";
+
+        try
+        {
+          final PeppolReportingItem aReportingItem = PeppolReportingItem.builder ()
+                                                                        .exchangeDateTime (aExchangeDT)
+                                                                        .directionReceiving ()
+                                                                        .c2ID (sC2ID)
+                                                                        .c3ID (sC3ID)
+                                                                        .docTypeID (aPeppolSBD.getDocumentTypeAsIdentifier ())
+                                                                        .processID (aPeppolSBD.getProcessAsIdentifier ())
+                                                                        .transportProtocolPeppolAS4v2 ()
+                                                                        .c1CountryCode (aPeppolSBD.getCountryC1 ())
+                                                                        .c4CountryCode (sC4CountryCode)
+                                                                        .endUserID (sEndUserID)
+                                                                        .build ();
+        }
+        catch (final IllegalStateException ex)
+        {
+          LOGGER.error ("Not all mandatory fields are set. Cannot create Peppol Reporting Item", ex);
         }
       }
     }
