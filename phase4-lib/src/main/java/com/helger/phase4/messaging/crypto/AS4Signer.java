@@ -141,8 +141,10 @@ public final class AS4Signer
     if (aSigningParams.hasWSSecSignatureCustomizer ())
     {
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Running WSSecSignatureCustomizer.customize");
+        LOGGER.debug ("Before running WSSecSignatureCustomizer.customize");
       aSigningParams.getWSSecSignatureCustomizer ().customize (aBuilder);
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("After running WSSecSignatureCustomizer.customize");
     }
 
     return aBuilder.build (aCryptoFactorySign.getCrypto ());

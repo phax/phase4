@@ -101,8 +101,10 @@ public final class AS4Encryptor
     if (aCryptParams.hasWSSecEncryptCustomizer ())
     {
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Running WSSecEncryptCustomizer.customize");
+        LOGGER.debug ("Before running WSSecEncryptCustomizer.customize");
       aCryptParams.getWSSecEncryptCustomizer ().customize (aBuilder);
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("After running WSSecEncryptCustomizer.customize");
     }
 
     return aBuilder;
