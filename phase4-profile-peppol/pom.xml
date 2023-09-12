@@ -44,7 +44,7 @@
       <dependency>
         <groupId>com.helger.peppol</groupId>
         <artifactId>peppol-reporting-parent-pom</artifactId>
-        <version>2.1.1</version>
+        <version>${peppol-reporting.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

@@ -144,6 +144,11 @@
       <artifactId>jaxb-impl</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.helger.peppol</groupId>
+      <artifactId>peppol-reporting-backend-inmemory</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
