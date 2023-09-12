@@ -36,6 +36,7 @@ import org.w3c.dom.Node;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.annotation.UnsupportedOperation;
@@ -57,6 +58,7 @@ import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ISMPTransportProfile;
+import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -370,6 +372,111 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       LOGGER.debug (sLogPrefix + "The certificate of the SMP lookup matches our certificate");
   }
 
+  /**
+   * Method to create a new {@link PeppolReportingItem} for a received message.
+   *
+   * @param aUserMessage
+   *        The current AS4 UserMessage. May not be <code>null</code>.
+   * @param aPeppolSBD
+   *        The parsed Peppol SBDH object. May not be <code>null</code>.
+   * @param aState
+   *        The processing state of the incoming message. May not be
+   *        <code>null</code>.
+   * @param sC3ID
+   *        The Peppol Service Provider Seat ID (in the format PXX000000). May
+   *        neither be <code>null</code> nor empty.
+   * @param sC4CountryCode
+   *        The country code of the End User that is the business receiver of
+   *        the document. Must neither be <code>null</code> nor empty.
+   * @param sEndUserID
+   *        The internal (local) ID of the End User that is the business
+   *        receiver of the document. This ID is NOT part of the reporting
+   *        towards OpenPeppol, it is just for created aggregating counts. Must
+   *        neither be <code>null</code> nor empty.
+   * @return <code>null</code> if not all necessary elements are present. Check
+   *         logs for details.
+   * @since 2.2.2
+   */
+  @Nullable
+  public static PeppolReportingItem createPeppolReportingItemForReceivedMessage (@Nonnull final Ebms3UserMessage aUserMessage,
+                                                                                 @Nonnull final PeppolSBDHDocument aPeppolSBD,
+                                                                                 @Nonnull final IAS4MessageState aState,
+                                                                                 @Nonnull @Nonempty final String sC3ID,
+                                                                                 @Nonnull @Nonempty final String sC4CountryCode,
+                                                                                 @Nonnull @Nonempty final String sEndUserID)
+  {
+    ValueEnforcer.notNull (aUserMessage, "UserMessage");
+    ValueEnforcer.notNull (aPeppolSBD, "PeppolSBD");
+    ValueEnforcer.notNull (aState, "State");
+    ValueEnforcer.notEmpty (sC3ID, "C3ID");
+    ValueEnforcer.notEmpty (sC4CountryCode, "C4CountryCode");
+    ValueEnforcer.notEmpty (sEndUserID, "EndUserID");
+
+    // In case of success start building reporting item
+    final XMLOffsetDateTime aUserMsgDT = aUserMessage.getMessageInfo ().getTimestamp ();
+    final OffsetDateTime aExchangeDT;
+    if (aUserMsgDT != null)
+    {
+      // Take AS4 sending date time
+      if (aUserMsgDT.getOffset () != null)
+        aExchangeDT = aUserMsgDT.toOffsetDateTime ();
+      else
+        aExchangeDT = OffsetDateTime.of (aUserMsgDT.toLocalDateTime (), ZoneOffset.UTC);
+    }
+    else
+    {
+      LOGGER.warn ("Incoming messages does not contain a UserMessage/MessageInfo/Timestamp value. Using current date time");
+      aExchangeDT = PDTFactory.getCurrentOffsetDateTime ();
+    }
+
+    // Incoming message signed by C2
+    final String sC2ID = PeppolCertificateHelper.getSubjectCN (aState.getUsedCertificate ());
+
+    try
+    {
+      return PeppolReportingItem.builder ()
+                                .exchangeDateTime (aExchangeDT)
+                                .directionReceiving ()
+                                .c2ID (sC2ID)
+                                .c3ID (sC3ID)
+                                .docTypeID (aPeppolSBD.getDocumentTypeAsIdentifier ())
+                                .processID (aPeppolSBD.getProcessAsIdentifier ())
+                                .transportProtocolPeppolAS4v2 ()
+                                .c1CountryCode (aPeppolSBD.getCountryC1 ())
+                                .c4CountryCode (sC4CountryCode)
+                                .endUserID (sEndUserID)
+                                .build ();
+    }
+    catch (final IllegalStateException ex)
+    {
+      LOGGER.error ("Not all mandatory fields are set. Cannot create Peppol Reporting Item", ex);
+      return null;
+    }
+  }
+
+  /**
+   * Method that is invoked after the message was successfully processed with at
+   * least one handler, and before a Receipt is returned. By default this method
+   * does nothing. The idea was to override this method to allow for remembering
+   * the created transaction for Peppol Reporting.
+   *
+   * @param aUserMessage
+   *        The current AS4 UserMessage. Never <code>null</code>.
+   * @param aPeppolSBD
+   *        The parsed Peppol SBDH object. Never <code>null</code>.
+   * @param aState
+   *        The processing state of the incoming message. Never
+   *        <code>null</code>.
+   * @since 2.2.2
+   * @see #createPeppolReportingItemForReceivedMessage(Ebms3UserMessage,
+   *      PeppolSBDHDocument, IAS4MessageState, String, String, String)
+   */
+  @OverrideOnDemand
+  protected void afterSuccessfulPeppolProcessing (@Nonnull final Ebms3UserMessage aUserMessage,
+                                                  @Nonnull final PeppolSBDHDocument aPeppolSBD,
+                                                  @Nonnull final IAS4MessageState aState)
+  {}
+
   @Nonnull
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                           @Nonnull final HttpHeaderMap aHttpHeaders,
@@ -546,12 +653,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       return AS4MessageProcessorResult.createFailure (sMsg);
     }
 
-    if (m_aHandlers.isEmpty ())
-    {
-      // Oops - programming error
-      LOGGER.error (sLogPrefix + "No SPI handler is present - the message is unhandled and discarded");
-    }
-    else
     {
       // Start consistency checks if the receiver is supported or not
       final Phase4PeppolReceiverCheckData aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
@@ -609,7 +710,15 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       }
 
       // Receiving checks are positively done
+    }
 
+    if (m_aHandlers.isEmpty ())
+    {
+      // Oops - programming error
+      LOGGER.error (sLogPrefix + "No SPI handler is present - the message is unhandled and discarded!");
+    }
+    else
+    {
       // Now start invoking SPI handlers
       for (final IPhase4PeppolIncomingSBDHandlerSPI aHandler : m_aHandlers)
       {
@@ -648,55 +757,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
       }
 
-      // TODO work in progress
-      if (false)
-      {
-        // In case of success start building reporting item
-        final XMLOffsetDateTime aUserMsgDT = aUserMessage.getMessageInfo ().getTimestamp ();
-        final OffsetDateTime aExchangeDT;
-        if (aUserMsgDT != null)
-        {
-          // Take AS4 sending date time
-          if (aUserMsgDT.getOffset () != null)
-            aExchangeDT = aUserMsgDT.toOffsetDateTime ();
-          else
-            aExchangeDT = OffsetDateTime.of (aUserMsgDT.toLocalDateTime (), ZoneOffset.UTC);
-        }
-        else
-        {
-          LOGGER.warn ("Incoming messages does not contain a UserMessage/MessageInfo/Timestamp value. Using current date time");
-          aExchangeDT = PDTFactory.getCurrentOffsetDateTime ();
-        }
-
-        // TODO
-        final String sC2ID = "";
-        // TODO
-        final String sC3ID = "";
-        // TODO
-        final String sC4CountryCode = "";
-        // TODO
-        final String sEndUserID = "";
-
-        try
-        {
-          final PeppolReportingItem aReportingItem = PeppolReportingItem.builder ()
-                                                                        .exchangeDateTime (aExchangeDT)
-                                                                        .directionReceiving ()
-                                                                        .c2ID (sC2ID)
-                                                                        .c3ID (sC3ID)
-                                                                        .docTypeID (aPeppolSBD.getDocumentTypeAsIdentifier ())
-                                                                        .processID (aPeppolSBD.getProcessAsIdentifier ())
-                                                                        .transportProtocolPeppolAS4v2 ()
-                                                                        .c1CountryCode (aPeppolSBD.getCountryC1 ())
-                                                                        .c4CountryCode (sC4CountryCode)
-                                                                        .endUserID (sEndUserID)
-                                                                        .build ();
-        }
-        catch (final IllegalStateException ex)
-        {
-          LOGGER.error ("Not all mandatory fields are set. Cannot create Peppol Reporting Item", ex);
-        }
-      }
+      // Trigger post-processing, e.g. for reporting
+      afterSuccessfulPeppolProcessing (aUserMessage, aPeppolSBD, aState);
     }
 
     return AS4MessageProcessorResult.createSuccess ();
