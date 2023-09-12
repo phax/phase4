@@ -32,7 +32,9 @@ import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 /**
  * This class contains the references values against which incoming values are
  * compared. These are the static default values that can be overridden in
- * {@link Phase4PeppolServletMessageProcessorSPI}.
+ * {@link Phase4PeppolServletMessageProcessorSPI}. Please note that this class
+ * is not thread safe, as the default values are not meant to be modified during
+ * runtime.
  *
  * @author Philip Helger
  */
@@ -102,8 +104,8 @@ public final class Phase4PeppolServletConfiguration
   }
 
   /**
-   * @return The URL of this AP to compare to against the SMP lookup result upon
-   *         retrieval. Is <code>null</code> by default.
+   * @return The URL of this (my) AP to compare to against the SMP lookup result
+   *         upon retrieval. Is <code>null</code> by default.
    */
   @Nullable
   public static String getAS4EndpointURL ()
@@ -112,7 +114,8 @@ public final class Phase4PeppolServletConfiguration
   }
 
   /**
-   * Set the expected endpoint URL to be used.
+   * Set the expected endpoint URL to be used for comparing against the SMP
+   * lookup result.
    *
    * @param sAS4EndpointURL
    *        The endpoint URL to check against. May be <code>null</code>.
@@ -123,8 +126,8 @@ public final class Phase4PeppolServletConfiguration
   }
 
   /**
-   * @return The certificate of this AP to compare to against the SMP lookup
-   *         result upon retrieval. Is <code>null</code> by default.
+   * @return The certificate of this (my) AP to compare to against the SMP
+   *         lookup result upon retrieval. Is <code>null</code> by default.
    */
   @Nullable
   public static X509Certificate getAPCertificate ()
@@ -192,10 +195,9 @@ public final class Phase4PeppolServletConfiguration
     s_bPerformSBDHValueChecks = bPerformSBDHValueChecks;
     if (bChange)
     {
-      if (bPerformSBDHValueChecks)
-        LOGGER.info (CAS4.LIB_NAME + " Peppol SBDH value checks are now enabled");
-      else
-        LOGGER.warn (CAS4.LIB_NAME + " Peppol SBDH value checks are now disabled");
+      LOGGER.info (CAS4.LIB_NAME +
+                   " Peppol SBDH value checks are now " +
+                   (bPerformSBDHValueChecks ? "enabled" : "disabled"));
     }
   }
 }
