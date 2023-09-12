@@ -53,7 +53,6 @@ import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
 import com.helger.peppol.sbdh.spec12.BinaryContentType;
 import com.helger.peppol.sbdh.spec12.TextContentType;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
-import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.utils.CertificateRevocationChecker;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.ERevocationCheckMode;
@@ -87,7 +86,6 @@ import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
-import com.helper.peppol.reporting.api.EReportingDirection;
 import com.helper.peppol.reporting.api.PeppolReportingItem;
 import com.helper.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helper.peppol.reporting.api.backend.PeppolReportingBackendException;
@@ -925,18 +923,18 @@ public final class Phase4PeppolSender
         throw new Phase4PeppolException ("A Peppol Reporting item can only be created AFTER sending");
 
       // No Country C4 necessary for sending
-      return new PeppolReportingItem (m_aEffectiveSendingDT,
-                                      EReportingDirection.SENDING,
-                                      m_sFromPartyID,
-                                      m_sToPartyID,
-                                      m_aDocTypeID.getScheme (),
-                                      m_aDocTypeID.getValue (),
-                                      m_aProcessID.getScheme (),
-                                      m_aProcessID.getValue (),
-                                      ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2.getID (),
-                                      m_sCountryC1,
-                                      null,
-                                      sEndUserID);
+      return PeppolReportingItem.builder ()
+                                .exchangeDateTime (m_aEffectiveSendingDT)
+                                .directionSending ()
+                                .c2ID (m_sFromPartyID)
+                                .c3ID (m_sToPartyID)
+                                .docTypeID (m_aDocTypeID)
+                                .processID (m_aProcessID)
+                                .transportProtocolPeppolAS4v2 ()
+                                .c1CountryCode (m_sCountryC1)
+                                .c4CountryCode (null)
+                                .endUserID (sEndUserID)
+                                .build ();
     }
 
     /**
