@@ -86,6 +86,7 @@ import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
+import com.helper.peppol.reporting.api.PeppolReportingHelper;
 import com.helper.peppol.reporting.api.PeppolReportingItem;
 import com.helper.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helper.peppol.reporting.api.backend.PeppolReportingBackendException;
@@ -955,20 +956,30 @@ public final class Phase4PeppolSender
       if (PeppolReportingBackend.getBackendService () == null)
         throw new Phase4PeppolException ("No Peppol Reporting Backend is available. Cannot store Reporting Items");
 
-      try
+      // Filter out document types on Reporting
+      if (PeppolReportingHelper.isDocumentTypeEligableForReporting (m_aDocTypeID))
       {
-        LOGGER.info ("Creating Peppol Reporting Item and storing it");
+        try
+        {
+          LOGGER.info ("Creating Peppol Reporting Item and storing it");
 
-        // Create reporting item
-        final PeppolReportingItem aReportingItem = createPeppolReportingItemAfterSending (sEndUserID);
+          // Create reporting item
+          final PeppolReportingItem aReportingItem = createPeppolReportingItemAfterSending (sEndUserID);
 
-        // Store it in configured backend
-        PeppolReportingBackend.withBackendDo (AS4Configuration.getConfig (),
-                                              aBackend -> aBackend.storeReportingItem (aReportingItem));
+          // Store it in configured backend
+          PeppolReportingBackend.withBackendDo (AS4Configuration.getConfig (),
+                                                aBackend -> aBackend.storeReportingItem (aReportingItem));
+        }
+        catch (final PeppolReportingBackendException ex)
+        {
+          throw new Phase4PeppolException ("Failed to store Peppol Reporting Item", ex);
+        }
       }
-      catch (final PeppolReportingBackendException ex)
+      else
       {
-        throw new Phase4PeppolException ("Failed to store Peppol Reporting Item", ex);
+        LOGGER.info ("The Document Type ID is not eligible for Peppol Reporting: '" +
+                     m_aDocTypeID.getURIEncoded () +
+                     "'");
       }
     }
   }
