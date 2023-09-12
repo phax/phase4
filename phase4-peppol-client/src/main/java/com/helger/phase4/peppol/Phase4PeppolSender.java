@@ -957,6 +957,8 @@ public final class Phase4PeppolSender
 
       try
       {
+        LOGGER.info ("Creating Peppol Reporting Item and storing it");
+
         // Create reporting item
         final PeppolReportingItem aReportingItem = createPeppolReportingItemAfterSending (sEndUserID);
 
