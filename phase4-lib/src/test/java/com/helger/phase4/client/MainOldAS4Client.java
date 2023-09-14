@@ -92,10 +92,12 @@ public final class MainOldAS4Client
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
       String sURL = "http://127.0.0.1:8080/as4";
+
+      // External holodeck
       if (false)
         sURL = "http://msh.holodeck-b2b.org:8080/msh";
 
-      // Deactivate if not sending to local holodeck
+      // Local holodeck
       if (false)
         sURL = "http://localhost:8080/msh/";
 
@@ -104,6 +106,7 @@ public final class MainOldAS4Client
         aHCS.setSSLContextTrustAll ();
       if (false)
       {
+        // BRZ internal
         aHCS.setProxyHost (new HttpHost ("172.30.9.6", 8080));
         aHCS.addNonProxyHostsFromPipeString ("localhost|127.0.0.1");
       }
@@ -117,22 +120,19 @@ public final class MainOldAS4Client
         final ESoapVersion eSoapVersion = ESoapVersion.SOAP_12;
         final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
 
-        if (true)
+        switch (4)
         {
-          // No Mime Message Not signed or encrypted, just SOAP + Payload in
-          // SOAP
-          // -
-          // Body
-          // final Document aDoc = TestMessages.testSignedUserMessage
-          // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
-          final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
-                                                                                     aPayload,
-                                                                                     aAttachments);
-          final Document aDoc = aMsg.getAsSoapDocument (aPayload);
-          aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
-        }
-        else
-          if (false)
+          case 1:
+          {
+            // BodyPayload NOT SIGNED and NOT ENCRYPTED
+            final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
+                                                                                       aPayload,
+                                                                                       aAttachments);
+            final Document aDoc = aMsg.getAsSoapDocument (aPayload);
+            aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
+            break;
+          }
+          case 2:
           {
             // BodyPayload SIGNED
             final Document aDoc = MockClientMessages.createUserMessageSigned (eSoapVersion,
@@ -140,65 +140,71 @@ public final class MainOldAS4Client
                                                                               aAttachments,
                                                                               aResHelper);
             aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
+            break;
           }
-          else
-            if (false)
-            {
-              // BodyPayload ENCRYPTED
-              final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
-                                                                                         aPayload,
-                                                                                         aAttachments);
-              Document aDoc = aMsg.getAsSoapDocument (aPayload);
-              aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
-                                                          eSoapVersion,
-                                                          aDoc,
-                                                          false,
-                                                          AS4CryptParams.createDefault ().setAlias ("dummy"));
+          case 3:
+          {
+            // BodyPayload ENCRYPTED
+            final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
+                                                                                       aPayload,
+                                                                                       aAttachments);
+            Document aDoc = aMsg.getAsSoapDocument (aPayload);
+            aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
+                                                        eSoapVersion,
+                                                        aDoc,
+                                                        false,
+                                                        AS4CryptParams.createDefault ()
+                                                                      .setAlias (aCryptoFactory.getKeyAlias ()));
 
-              aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
-            }
-            else
-              if (true)
-              {
-                aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                                     .data (ClassPathResource.getAsFile ("external/attachment/test.xml.gz"))
-                                                                                                     .mimeType (CMimeType.APPLICATION_GZIP)
-                                                                                                     .build (),
-                                                                                aResHelper));
-                final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
-                                                                                           null,
-                                                                                           aAttachments);
-                final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion,
-                                                                                        AS4Signer.createSignedMessage (aCryptoFactory,
-                                                                                                                       aMsg.getAsSoapDocument (null),
-                                                                                                                       eSoapVersion,
-                                                                                                                       aMsg.getMessagingID (),
-                                                                                                                       aAttachments,
-                                                                                                                       aResHelper,
-                                                                                                                       false,
-                                                                                                                       AS4SigningParams.createDefault ()),
-                                                                                        aAttachments);
+            aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
+            break;
+          }
+          case 4:
+          {
+            // BodyPayload SIGNED and ENCRYPTED
+            Document aDoc = MockClientMessages.createUserMessageSigned (eSoapVersion,
+                                                                        aPayload,
+                                                                        aAttachments,
+                                                                        aResHelper);
+            aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
+                                                        eSoapVersion,
+                                                        aDoc,
+                                                        false,
+                                                        AS4CryptParams.createDefault ()
+                                                                      .setAlias (aCryptoFactory.getKeyAlias ()));
+            aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
+            break;
+          }
+          case 5:
+          {
+            // MIME Message SIGNED
+            aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
+                                                                                                 .data (ClassPathResource.getAsFile ("external/attachment/test.xml.gz"))
+                                                                                                 .mimeType (CMimeType.APPLICATION_GZIP)
+                                                                                                 .build (),
+                                                                            aResHelper));
+            final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
+                                                                                       null,
+                                                                                       aAttachments);
+            final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion,
+                                                                                    AS4Signer.createSignedMessage (aCryptoFactory,
+                                                                                                                   aMsg.getAsSoapDocument (null),
+                                                                                                                   eSoapVersion,
+                                                                                                                   aMsg.getMessagingID (),
+                                                                                                                   aAttachments,
+                                                                                                                   aResHelper,
+                                                                                                                   false,
+                                                                                                                   AS4SigningParams.createDefault ()),
+                                                                                    aAttachments);
 
-                // Move all global mime headers to the POST request
-                MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aMimeMsg, aPost::addHeader, true);
-                aPost.setEntity (HttpMimeMessageEntity.create (aMimeMsg));
-              }
-              else
-                if (false)
-                {
-                  Document aDoc = MockClientMessages.createUserMessageSigned (eSoapVersion,
-                                                                              aPayload,
-                                                                              aAttachments,
-                                                                              aResHelper);
-                  aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
-                                                              eSoapVersion,
-                                                              aDoc,
-                                                              false,
-                                                              AS4CryptParams.createDefault ().setAlias ("dummy"));
-                  aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
-                }
-                else
-                  throw new IllegalStateException ("Some test message should be selected :)");
+            // Move all global mime headers to the POST request
+            MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aMimeMsg, aPost::addHeader, true);
+            aPost.setEntity (HttpMimeMessageEntity.create (aMimeMsg));
+            break;
+          }
+          default:
+            throw new IllegalStateException ("Some test message should be selected :)");
+        }
 
         // re-instantiate if you want to see the request that is getting sent
         LOGGER.info (EntityUtils.toString (aPost.getEntity ()));
