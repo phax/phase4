@@ -317,6 +317,12 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
     return getAsString (KEY_PHASE4_PROFILE_ID);
   }
 
+  /**
+   * Set the ID of the AS4 profile of the message.
+   *
+   * @param sProfileID
+   *        The internal AS4 profile ID. May be <code>null</code>.
+   */
   public void setProfileID (@Nullable final String sProfileID)
   {
     putIn (KEY_PHASE4_PROFILE_ID, sProfileID);
