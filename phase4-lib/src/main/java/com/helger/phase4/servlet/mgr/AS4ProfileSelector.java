@@ -22,6 +22,8 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.profile.IAS4Profile;
 
 /**
  * Static helper class to make the AS4 profile selection more deterministic and
@@ -69,6 +71,13 @@ public final class AS4ProfileSelector
       // Fall back to the configuration file
       // The profile ID from the configuration file is optional
       ret = AS4Configuration.getAS4ProfileID ();
+      if (ret == null)
+      {
+        // Fall back to the default profile ID
+        final IAS4Profile aDefProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfileOrNull ();
+        if (aDefProfile != null)
+          ret = aDefProfile.getID ();
+      }
     }
     return ret;
   }
