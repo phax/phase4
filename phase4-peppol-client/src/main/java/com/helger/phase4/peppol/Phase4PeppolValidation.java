@@ -25,15 +25,15 @@ import org.w3c.dom.Element;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
+import com.helger.diver.api.version.VESID;
 import com.helger.phive.api.execute.ValidationExecutionManager;
 import com.helger.phive.api.executorset.IValidationExecutorSet;
 import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
-import com.helger.phive.api.executorset.VESID;
 import com.helger.phive.api.executorset.ValidationExecutorSetRegistry;
 import com.helger.phive.api.result.ValidationResultList;
-import com.helger.phive.engine.source.IValidationSourceXML;
-import com.helger.phive.engine.source.ValidationSourceXML;
 import com.helger.phive.peppol.PeppolValidation;
+import com.helger.phive.xml.source.IValidationSourceXML;
+import com.helger.phive.xml.source.ValidationSourceXML;
 
 /**
  * This class contains the client side validation required for outgoing Peppol
