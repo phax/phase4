@@ -361,7 +361,7 @@ public final class AS4IncomingHandler
                                                   @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws Phase4Exception
   {
     final ESoapVersion eSoapVersion = aState.getSoapVersion ();
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeadersInMessage = new CommonsArrayList <> ();
     {
       // Find SOAP header
       final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSoapDocument.getDocumentElement (),
@@ -379,21 +379,21 @@ public final class AS4IncomingHandler
         final QName aQName = XMLHelper.getQName (aHeaderChild);
         final String sMustUnderstand = aHeaderChild.getAttributeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
         final boolean bIsMustUnderstand = eSoapVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
-        aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
+        aHeadersInMessage.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
       }
     }
 
-    final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> aAllProcessors = aRegistry.getAllElementProcessors ();
-    if (aAllProcessors.isEmpty ())
+    final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> aAllRegisteredProcessors = aRegistry.getAllElementProcessors ();
+    if (aAllRegisteredProcessors.isEmpty ())
       LOGGER.error ("No SOAP Header element processor is registered");
 
     // handle all headers in the order of the registered handlers!
-    for (final Map.Entry <QName, ISOAPHeaderElementProcessor> aEntry : aAllProcessors.entrySet ())
+    for (final Map.Entry <QName, ISOAPHeaderElementProcessor> aEntry : aAllRegisteredProcessors.entrySet ())
     {
       final QName aQName = aEntry.getKey ();
 
       // Check if this message contains a header for the current handler
-      final AS4SingleSOAPHeader aHeader = aHeaders.findFirst (x -> aQName.equals (x.getQName ()));
+      final AS4SingleSOAPHeader aHeader = aHeadersInMessage.findFirst (x -> aQName.equals (x.getQName ()));
       if (aHeader == null)
       {
         // no header element for current processor
@@ -478,7 +478,7 @@ public final class AS4IncomingHandler
     {
       // Now check if all must understand headers were processed
       // Are all must-understand headers processed?
-      for (final AS4SingleSOAPHeader aHeader : aHeaders)
+      for (final AS4SingleSOAPHeader aHeader : aHeadersInMessage)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
           throw new Phase4Exception ("Required SOAP header element " +
                                      aHeader.getQName ().toString () +
