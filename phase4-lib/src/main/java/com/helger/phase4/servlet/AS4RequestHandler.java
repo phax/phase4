@@ -1015,6 +1015,7 @@ public class AS4RequestHandler implements AutoCloseable
                                   aEbms3CollaborationInfo,
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
+                                  null,
                                   eSoapVersion);
   }
 

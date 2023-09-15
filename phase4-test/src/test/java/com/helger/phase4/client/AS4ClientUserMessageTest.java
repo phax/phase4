@@ -82,7 +82,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   {
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
-    MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_FOUR_CORNER);
+    MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT);
   }
 
   @AfterClass

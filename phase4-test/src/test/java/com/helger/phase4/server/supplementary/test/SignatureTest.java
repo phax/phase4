@@ -95,9 +95,14 @@ public final class SignatureTest
 
     final WSSecurityEngine aSecEngine = new WSSecurityEngine ();
     aSecEngine.setWssConfig (WSSConfigManager.getInstance ().createWSSConfig ());
-    final WSHandlerResult aResults = aSecEngine.processSecurityHeader (signedDoc, null, null, aCryptoFactory.getCrypto ());
+    final WSHandlerResult aResults = aSecEngine.processSecurityHeader (signedDoc,
+                                                                       null,
+                                                                       null,
+                                                                       aCryptoFactory.getCrypto ());
 
-    final WSSecurityEngineResult actionResult = aResults.getActionResults ().get (Integer.valueOf (WSConstants.SIGN)).get (0);
+    final WSSecurityEngineResult actionResult = aResults.getActionResults ()
+                                                        .get (Integer.valueOf (WSConstants.SIGN))
+                                                        .get (0);
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
     final STRParser.REFERENCE_TYPE referenceType = (STRParser.REFERENCE_TYPE) actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);

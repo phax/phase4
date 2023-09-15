@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
-import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.mutable.MutableInt;
@@ -93,7 +92,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   {
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
-    MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_FOUR_CORNER);
+    MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT);
   }
 
   @AfterClass
@@ -242,32 +241,5 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   {
     final HttpPost aPost = _createPost ();
     return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExpectedErrorCode);
-  }
-
-  /**
-   * @param aHttpEntity
-   *        the entity to send to the server
-   * @param bExpectSuccess
-   *        specifies if the test case expects a positive or negative response
-   *        from the server
-   * @param sExpectedErrorCode
-   *        if you expect a negative response, you must give the expected error
-   *        code as it will get searched for in the response.
-   * @return Response as String
-   * @throws IOException
-   *         In case HTTP sending fails
-   */
-  @Nonnull
-  protected final String sendPlainMessageAndWait (@Nonnull final HttpEntity aHttpEntity,
-                                                  final boolean bExpectSuccess,
-                                                  @Nullable final String sExpectedErrorCode) throws IOException
-  {
-    final String ret = sendPlainMessage (aHttpEntity, bExpectSuccess, sExpectedErrorCode);
-    if (false)
-    {
-      LOGGER.info ("Waiting for 0.5 seconds");
-      ThreadHelper.sleep (500);
-    }
-    return ret;
   }
 }

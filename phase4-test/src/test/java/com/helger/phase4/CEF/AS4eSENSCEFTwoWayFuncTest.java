@@ -87,11 +87,10 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
                                                                         testSignedUserMessage (m_eSoapVersion,

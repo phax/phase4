@@ -41,7 +41,7 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
 @IsSPIImplementation
 public final class AS4TestProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
-  public static final String AS4_PROFILE_ID_FOUR_CORNER = "test";
+  public static final String AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT = "test";
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4TestProfileRegistarSPI.class);
 
@@ -56,8 +56,8 @@ public final class AS4TestProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                                                                    false);
 
     if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_FOUR_CORNER + "'");
-    final AS4Profile aTestProfile = new AS4Profile (AS4_PROFILE_ID_FOUR_CORNER,
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT + "'");
+    final AS4Profile aTestProfile = new AS4Profile (AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT,
                                                     "Unit Testing Profile",
                                                     TestProfileCompatibilityValidator::new,
                                                     aDefaultPModeProvider,

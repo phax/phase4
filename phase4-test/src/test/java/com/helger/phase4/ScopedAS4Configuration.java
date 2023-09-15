@@ -59,7 +59,8 @@ public final class ScopedAS4Configuration implements AutoCloseable
   public static ScopedAS4Configuration create (@Nonnull final IStringMap aMap)
   {
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
-    aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString), EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
+    aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString),
+                                EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
     return new ScopedAS4Configuration (new Config (aVP));
   }
 
@@ -71,7 +72,8 @@ public final class ScopedAS4Configuration implements AutoCloseable
 
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
     // By default priority must be higher than the default
-    aVP.addConfigurationSource (new ConfigurationSourceProperties (aRes), EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
+    aVP.addConfigurationSource (new ConfigurationSourceProperties (aRes),
+                                EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
     return new ScopedAS4Configuration (new Config (aVP));
   }
 
@@ -85,7 +87,8 @@ public final class ScopedAS4Configuration implements AutoCloseable
   public static ScopedAS4Configuration createTestConfig (@Nonnull final IStringMap aMap)
   {
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
-    aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString), EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
+    aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString),
+                                EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
     aVP.addConfigurationSource (new ConfigurationSourceProperties (new FileSystemResource (TEST_CONFIG_FILE)),
                                 EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
     return new ScopedAS4Configuration (new Config (aVP));

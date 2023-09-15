@@ -48,15 +48,16 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void testSendDuplicateMessageOnlyGetOneReceipt () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
+    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null)
+                                      .getAsSoapDocument (aPayload);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
 
     // Send once
-    sendPlainMessageAndWait (aEntity, true, null);
+    sendPlainMessage (aEntity, true, null);
 
     // Send again
-    sendPlainMessageAndWait (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
+    sendPlainMessage (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
 
   @Test
@@ -64,11 +65,12 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void testSendDuplicateMessageTestDisposalFeature () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
+    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null)
+                                      .getAsSoapDocument (aPayload);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
 
-    sendPlainMessageAndWait (aEntity, true, null);
+    sendPlainMessage (aEntity, true, null);
 
     // Making sure the message gets disposed off
     // 60 000 = 1 minute, *2 and + 10000 are a buffer
@@ -77,7 +79,7 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
     ThreadHelper.sleep (AS4Configuration.getIncomingDuplicateDisposalMinutes () * CGlobal.MILLISECONDS_PER_MINUTE * 2 +
                         10 * CGlobal.MILLISECONDS_PER_SECOND);
 
-    sendPlainMessageAndWait (aEntity, true, null);
+    sendPlainMessage (aEntity, true, null);
   }
 
   @Test

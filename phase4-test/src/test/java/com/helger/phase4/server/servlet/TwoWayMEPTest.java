@@ -60,10 +60,10 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void before ()
   {
     final PMode aPMode = TestPMode.createTestPMode (AS4TestConstants.TEST_INITIATOR,
-                                                  AS4TestConstants.TEST_RESPONDER,
-                                                  MockJettySetup.getServerAddressFromSettings (),
-                                                  (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
-                                                  false);
+                                                    AS4TestConstants.TEST_RESPONDER,
+                                                    MockJettySetup.getServerAddressFromSettings (),
+                                                    (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
+                                                    false);
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
 
@@ -94,9 +94,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                              null,
                                              null,
                                              null);
-    final String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                                                      true,
-                                                      null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
@@ -113,10 +111,9 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = modifyUserMessage (m_aPMode.getID (),
                                              null,
@@ -144,10 +141,9 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = modifyUserMessage (m_aPMode.getID (),
                                              (String) null,
@@ -209,9 +205,9 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                               .setMustUnderstand (true)
                                               .getAsSoapDocument (aPayload);
 
-    sendPlainMessageAndWait (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
-                             false,
-                             EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -228,9 +224,9 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                              null,
                                              null,
                                              null);
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                             false,
-                             EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -246,8 +242,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                              null,
                                              null,
                                              null);
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                             false,
-                             EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 }

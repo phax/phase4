@@ -25,7 +25,7 @@ import com.helger.photon.jetty.JettyStopper;
  *
  * @author Philip Helger
  */
-public final class JettyStopAS4TEST
+public final class JettyStopAS4TEST8080
 {
   public static void main (final String [] args) throws IOException
   {

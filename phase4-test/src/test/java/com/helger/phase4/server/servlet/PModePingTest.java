@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.server.servlet;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -30,6 +32,7 @@ public final class PModePingTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = modifyUserMessage (null, null, null, createDefaultProperties (), null, null, null);
 
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, ESoapVersion.AS4_DEFAULT.getMimeType ()), true, null);
+    final String ret = sendPlainMessage (new HttpXMLEntity (aDoc, ESoapVersion.AS4_DEFAULT.getMimeType ()), true, null);
+    assertNotNull (ret);
   }
 }

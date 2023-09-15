@@ -60,10 +60,10 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
   public void setUpCEF ()
   {
     m_aESENSOneWayPMode = TestPMode.createTestPMode (AS4TestConstants.CEF_INITIATOR_ID,
-                                                   AS4TestConstants.CEF_RESPONDER_ID,
-                                                   AS4TestConstants.DEFAULT_SERVER_ADDRESS,
-                                                   IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                   true);
+                                                     AS4TestConstants.CEF_RESPONDER_ID,
+                                                     AS4TestConstants.DEFAULT_SERVER_ADDRESS,
+                                                     IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                     true);
 
     m_eSoapVersion = m_aESENSOneWayPMode.getLeg1 ().getProtocol ().getSoapVersion ();
     m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
@@ -95,7 +95,8 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
+                                                                                            aAttachments);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (m_aESENSOneWayPMode.getID (),
@@ -117,7 +118,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
                                   aEbms3CollaborationInfo,
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
-                                  m_eSoapVersion)
-                         .setMustUnderstand (true);
+                                  null,
+                                  m_eSoapVersion).setMustUnderstand (true);
   }
 }

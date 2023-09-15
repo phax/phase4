@@ -80,10 +80,10 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
   public void before ()
   {
     final PMode aPMode = TestPMode.createTestPMode (AS4TestConstants.TEST_INITIATOR,
-                                                  AS4TestConstants.TEST_RESPONDER,
-                                                  MockJettySetup.getServerAddressFromSettings (),
-                                                  (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
-                                                  false);
+                                                    AS4TestConstants.TEST_RESPONDER,
+                                                    MockJettySetup.getServerAddressFromSettings (),
+                                                    (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
+                                                    false);
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
 
@@ -113,7 +113,7 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
     aIncomingDuplicateMgr.clearCache ();
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
     Document aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), null, null, null);
-    String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     // Avoid stopping server to receive async response
     LOGGER.info ("Waiting for 1 second");
@@ -142,10 +142,9 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
     aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                          MessageHelperMethods.createEbms3MessageInfo (sID),
                                          AS4TestConstants.DEFAULT_MPC,
-                                         aAny)
-                                .getAsSoapDocument ();
+                                         aAny).getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
-    sResponse = sendPlainMessageAndWait (aEntity, true, null);
+    sResponse = sendPlainMessage (aEntity, true, null);
 
     final NodeList nUserList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once

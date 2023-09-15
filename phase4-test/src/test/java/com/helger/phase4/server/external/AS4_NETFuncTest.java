@@ -84,10 +84,9 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
 
     // New message ID
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
@@ -118,8 +117,8 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
                                                            aEbms3CollaborationInfo,
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
-                                                           m_eSoapVersion)
-                                                  .setMustUnderstand (true);
+                                                           null,
+                                                           m_eSoapVersion).setMustUnderstand (true);
 
     // Sign payload document
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,

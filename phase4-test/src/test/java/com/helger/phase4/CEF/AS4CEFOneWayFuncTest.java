@@ -120,8 +120,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
-                                                       m_eSoapVersion)
-                                              .setMustUnderstand (true);
+                                                       null,
+                                                       m_eSoapVersion).setMustUnderstand (true);
 
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                aMsg.getAsSoapDocument (m_aPayload),
@@ -197,11 +197,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeType (CMimeType.APPLICATION_XML)
-                                                                                            .compression (EAS4CompressionMode.GZIP)
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeType (CMimeType.APPLICATION_XML)
+                                                                                         .compression (EAS4CompressionMode.GZIP)
+                                                                                         .build (), s_aResMgr));
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
                                                                         createTestSignedUserMessage (m_eSoapVersion,
                                                                                                      m_aPayload,
@@ -211,7 +210,6 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
-
   }
 
   /**
@@ -232,11 +230,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeType (CMimeType.APPLICATION_XML)
-                                                                                            .compression (EAS4CompressionMode.GZIP)
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeType (CMimeType.APPLICATION_XML)
+                                                                                         .compression (EAS4CompressionMode.GZIP)
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
@@ -267,11 +264,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
@@ -299,11 +295,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
@@ -333,10 +328,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                                              .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                                              .mimeTypeXML ()
-                                                                                                              .compressionGZIP ()
-                                                                                                              .build (),
+                                                                                                           .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                                           .mimeTypeXML ()
+                                                                                                           .compressionGZIP ()
+                                                                                                           .build (),
                                                                                       s_aResMgr);
     aAttachment.setCharset (StandardCharsets.UTF_16);
     aAttachments.add (aAttachment);
@@ -376,10 +371,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                                              .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                                              .mimeTypeXML ()
-                                                                                                              .compressionGZIP ()
-                                                                                                              .build (),
+                                                                                                           .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                                           .mimeTypeXML ()
+                                                                                                           .compressionGZIP ()
+                                                                                                           .build (),
                                                                                       s_aResMgr);
     aAttachment.setCharset (StandardCharsets.UTF_8);
     aAttachments.add (aAttachment);
@@ -443,10 +438,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                                              .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                                              .mimeTypeXML ()
-                                                                                                              .compressionGZIP ()
-                                                                                                              .build (),
+                                                                                                           .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                                           .mimeTypeXML ()
+                                                                                                           .compressionGZIP ()
+                                                                                                           .build (),
                                                                                       s_aResMgr);
     aAttachment.setCharset (StandardCharsets.UTF_8);
     aAttachments.add (aAttachment);
@@ -498,11 +493,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
@@ -528,23 +522,20 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
-                                                                                            .mimeType (CMimeType.IMAGE_JPG)
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
+                                                                                         .mimeType (CMimeType.IMAGE_JPG)
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
@@ -569,11 +560,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
@@ -602,20 +592,18 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     // not the compressed one
     ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
     aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
@@ -638,10 +626,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSoapVersion,
@@ -690,7 +677,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     // Compression
     final NonBlockingByteArrayOutputStream aCompressedOS = new NonBlockingByteArrayOutputStream ();
     try (final InputStream aIS = new NonBlockingByteArrayInputStream (aSrc);
-        final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
+         final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
@@ -718,11 +705,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .compressionGZIP ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .compressionGZIP ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
@@ -804,15 +790,13 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
-                                                                                            .mimeType (CMimeType.IMAGE_JPG)
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
+                                                                                         .mimeType (CMimeType.IMAGE_JPG)
+                                                                                         .build (), s_aResMgr));
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
                                                                         MockMessages.createUserMessageNotSigned (m_eSoapVersion,

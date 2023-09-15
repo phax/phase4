@@ -88,7 +88,8 @@ final class MockClientMessages
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
-    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion, "srcmsgid", aEbms3ErrorList).setMustUnderstand (true);
+    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion, "srcmsgid", aEbms3ErrorList)
+                                                     .setMustUnderstand (true);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
                                                                aErrorMsg.getAsSoapDocument (),
                                                                eSoapVersion,
@@ -113,8 +114,7 @@ final class MockClientMessages
                                                                     MessageHelperMethods.createRandomMessageID (),
                                                                     null,
                                                                     aUserMessage,
-                                                                    true)
-                                                           .setMustUnderstand (true);
+                                                                    true).setMustUnderstand (true);
     final Document aDoc = aReceiptMsg.getAsSoapDocument ();
 
     return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
@@ -140,7 +140,8 @@ final class MockClientMessages
     aEbms3Properties.add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, "C4 FR"));
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
+                                                                                            aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("pmode-twoway",
                                                                                                               DEFAULT_AGREEMENT,
                                                                                                               "MyServiceTypes",
@@ -158,8 +159,8 @@ final class MockClientMessages
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
-                                                       eSoapVersion)
-                                              .setMustUnderstand (true);
+                                                       null,
+                                                       eSoapVersion).setMustUnderstand (true);
     return aDoc;
   }
 
@@ -174,7 +175,8 @@ final class MockClientMessages
     aEbms3Properties.add (MessageHelperMethods.createEbms3Property ("ContextID", "987654321"));
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
+                                                                                            aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("pm-esens-generic-resp",
                                                                                                               DEFAULT_AGREEMENT,
                                                                                                               "MyServiceTypes",
@@ -192,8 +194,8 @@ final class MockClientMessages
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
-                                                       eSoapVersion)
-                                              .setMustUnderstand (true);
+                                                       null,
+                                                       eSoapVersion).setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 
@@ -210,7 +212,8 @@ final class MockClientMessages
 
     // Use an empty message info by purpose
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
+                                                                                            aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (null,
                                                                                                               null,
                                                                                                               null,
@@ -225,8 +228,8 @@ final class MockClientMessages
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
-                                                       eSoapVersion)
-                                              .setMustUnderstand (true);
+                                                       null,
+                                                       eSoapVersion).setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 }

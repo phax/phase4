@@ -58,9 +58,28 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
   }
 
   @Nonnull
-  public static AS4UserMessage create (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Ebms3UserMessage aUserMessage)
+  public static AS4UserMessage create (@Nonnull final ESoapVersion eSoapVersion,
+                                       @Nonnull final Ebms3UserMessage aUserMessage)
   {
     return new AS4UserMessage (eSoapVersion, aUserMessage);
+  }
+
+  @Nonnull
+  @Deprecated (forRemoval = true, since = "2.3.0")
+  public static AS4UserMessage create (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+                                       @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
+                                       @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
+                                       @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
+                                       @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
+                                       @Nonnull final ESoapVersion eSoapVersion)
+  {
+    return create (aEbms3MessageInfo,
+                   aEbms3PayloadInfo,
+                   aEbms3CollaborationInfo,
+                   aEbms3PartyInfo,
+                   aEbms3MessageProperties,
+                   null,
+                   eSoapVersion);
   }
 
   @Nonnull
@@ -69,6 +88,7 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
                                        @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
                                        @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
                                        @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
+                                       @Nullable final String sMPC,
                                        @Nonnull final ESoapVersion eSoapVersion)
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
@@ -88,6 +108,9 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
     // Message Info
     aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
-    return new AS4UserMessage (eSoapVersion, aUserMessage);
+    // MPC
+    aUserMessage.setMpc (sMPC);
+
+    return create (eSoapVersion, aUserMessage);
   }
 }

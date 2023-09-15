@@ -80,10 +80,10 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
   public void before ()
   {
     final PMode aPMode = TestPMode.createTestPMode (AS4TestConstants.TEST_INITIATOR,
-                                                  AS4TestConstants.TEST_RESPONDER,
-                                                  MockJettySetup.getServerAddressFromSettings (),
-                                                  (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
-                                                  false);
+                                                    AS4TestConstants.TEST_RESPONDER,
+                                                    MockJettySetup.getServerAddressFromSettings (),
+                                                    (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
+                                                    false);
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
 
@@ -102,7 +102,6 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
     // Delete old PMode since it is getting created in the ESENS createPMode
     MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
-
   }
 
   @Test
@@ -126,10 +125,9 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
     Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                   MessageHelperMethods.createEbms3MessageInfo (),
                                                   AS4TestConstants.DEFAULT_MPC,
-                                                  aAny)
-                                         .getAsSoapDocument ();
+                                                  aAny).getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
-    String sResponse = sendPlainMessageAndWait (aEntity, true, null);
+    String sResponse = sendPlainMessage (aEntity, true, null);
 
     // Avoid stopping server to receive async response
     LOGGER.info ("Waiting for 1 second");
@@ -140,7 +138,7 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
     final String aPullID = nPullList.item (0).getTextContent ();
 
     aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), null, aPullID, null);
-    sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once

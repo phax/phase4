@@ -164,6 +164,7 @@ public final class MockMessages
                                   aEbms3CollaborationInfo,
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
+                                  null,
                                   eSOAPVersion).setMustUnderstand (true);
   }
 
@@ -198,6 +199,7 @@ public final class MockMessages
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
+                                                       null,
                                                        eSOAPVersion).setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
@@ -231,6 +233,7 @@ public final class MockMessages
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
+                                                       null,
                                                        eSOAPVersion).setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }

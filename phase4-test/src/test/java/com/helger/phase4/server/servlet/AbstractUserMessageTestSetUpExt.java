@@ -85,8 +85,10 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                      @Nullable final Consumer <String> aMessagingIDConsumer) throws Exception
   {
     // If argument is set replace the default one
-    final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID : sAnotherOrWrongPartyIdInitiator;
-    final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? DEFAULT_PARTY_ID : sAnotherOrWrongPartyIdResponder;
+    final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID
+                                                                                : sAnotherOrWrongPartyIdInitiator;
+    final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? DEFAULT_PARTY_ID
+                                                                                : sAnotherOrWrongPartyIdResponder;
     final Node aPayload;
     final Ebms3PayloadInfo aEbms3PayloadInfo;
     if (aAttachments == null)
@@ -117,8 +119,8 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
-                                                       ESoapVersion.AS4_DEFAULT)
-                                              .setMustUnderstand (true);
+                                                       null,
+                                                       ESoapVersion.AS4_DEFAULT).setMustUnderstand (true);
 
     if (aMessagingIDConsumer != null)
       aMessagingIDConsumer.accept (aMsg.getMessagingID ());

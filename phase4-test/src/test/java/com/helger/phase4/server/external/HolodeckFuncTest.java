@@ -49,7 +49,7 @@ import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.server.MockJettySetup;
 
-@Ignore ("Axis2 bug in Holodeck! Requires external proxy and PEPPOL pilot certificate!")
+@Ignore ("Axis2 bug in Holodeck! Requires external proxy and Peppol pilot certificate!")
 public final class HolodeckFuncTest extends AbstractCEFTestSetUp
 {
   /** The test URL for Holodeck */
@@ -83,10 +83,9 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
 
     // New message ID
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
@@ -119,8 +118,8 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                            aEbms3CollaborationInfo,
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
-                                                           m_eSoapVersion)
-                                                  .setMustUnderstand (true);
+                                                           null,
+                                                           m_eSoapVersion).setMustUnderstand (true);
 
     // Sign payload document
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,

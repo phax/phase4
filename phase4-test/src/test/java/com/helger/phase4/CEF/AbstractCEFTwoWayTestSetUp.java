@@ -148,6 +148,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
                                   aEbms3CollaborationInfo,
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
+                                  null,
                                   m_eSoapVersion).setMustUnderstand (true);
   }
 }

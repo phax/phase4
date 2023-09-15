@@ -30,7 +30,6 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -54,7 +53,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
-    return CollectionHelper.newListMapped (ESoapVersion.values (), x -> new Object [] { x });
+    return new CommonsArrayList <> (ESoapVersion.values (), x -> new Object [] { x });
   }
 
   private final ESoapVersion m_eSoapVersion;

@@ -34,7 +34,11 @@ public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProces
   @Nonnull
   public IPMode findPMode (@Nonnull final Ebms3SignalMessage aSignalMessage)
   {
-    final PMode aPMode = TestPMode.createTestPMode ("pullinitiator", "pullresponder", null, (i, r) -> "PullPMode", false);
+    final PMode aPMode = TestPMode.createTestPMode ("pullinitiator",
+                                                    "pullresponder",
+                                                    null,
+                                                    (i, r) -> "PullPMode",
+                                                    false);
     if (aSignalMessage.getPullRequest () != null)
     {
       if (!aSignalMessage.getAny ().isEmpty ())

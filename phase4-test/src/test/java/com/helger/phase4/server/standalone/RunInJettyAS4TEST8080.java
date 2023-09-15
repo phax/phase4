@@ -23,11 +23,10 @@ import com.helger.photon.jetty.JettyStarter;
  *
  * @author Philip Helger
  */
-public final class RunInJettyAS4TEST
+public final class RunInJettyAS4TEST8080
 {
-
   public static void main (final String... args) throws Exception
   {
-    new JettyStarter (RunInJettyAS4TEST.class).run ();
+    new JettyStarter (RunInJettyAS4TEST8080.class).run ();
   }
 }

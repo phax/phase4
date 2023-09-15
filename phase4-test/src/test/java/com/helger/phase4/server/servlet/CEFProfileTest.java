@@ -92,7 +92,7 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
     // Default MessageProperties for testing
     m_aEbms3UserMessage.setMessageProperties (createDefaultProperties ());
 
-    AS4ProfileSelector.setCustomAS4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_FOUR_CORNER);
+    AS4ProfileSelector.setCustomAS4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT);
   }
 
   @After
@@ -119,9 +119,9 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
                                         .setMustUnderstand (true)
                                         .getAsSoapDocument (m_aPayload);
 
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                             false,
-                             "'originalSender' property is empty or not existant but mandatory");
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                      false,
+                      "'originalSender' property is empty or not existant but mandatory");
   }
 
   @Test
@@ -141,14 +141,15 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
                                         .setMustUnderstand (true)
                                         .getAsSoapDocument (m_aPayload);
 
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                             false,
-                             "'finalRecipient' property is empty or not existant but mandatory");
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                      false,
+                      "'finalRecipient' property is empty or not existant but mandatory");
   }
 
   @Nonnull
   private static Ebms3Property _createRandomProperty ()
   {
-    return MessageHelperMethods.createEbms3Property ("randomname" + UUID.randomUUID (), "randomvalue" + UUID.randomUUID ());
+    return MessageHelperMethods.createEbms3Property ("randomname" + UUID.randomUUID (),
+                                                     "randomvalue" + UUID.randomUUID ());
   }
 }
