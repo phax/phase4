@@ -662,42 +662,6 @@ public final class AS4IncomingHandler
           {
             if (aAS4ProfileSelector.validateAgainstProfile ())
             {
-              // Check requirements of profiles (see #162)
-
-              // Check signature requirements
-              if (aProfile.getSignatureRequirement ().requiresExistence () && !aState.isSoapSignatureChecked ())
-              {
-                final String sMsg = "The AS4 profile requires a signed document, but the document was not signed";
-                aErrorMessagesTarget.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.getAsEbms3Error (aLocale,
-                                                                                                aState.getMessageID (),
-                                                                                                sMsg));
-              }
-              else
-                if (aProfile.getSignatureRequirement ().forbidsExistence () && aState.isSoapSignatureChecked ())
-                {
-                  final String sMsg = "The AS4 profile forbids the usage of a signature, but the document was signed";
-                  aErrorMessagesTarget.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.getAsEbms3Error (aLocale,
-                                                                                                  aState.getMessageID (),
-                                                                                                  sMsg));
-                }
-
-              // Check crypt requirements
-              if (aProfile.getCryptRequirement ().requiresExistence () && !aState.isSoapDecrypted ())
-              {
-                final String sMsg = "The AS4 profile requires an ecrypted document, but the document was not encrypted";
-                aErrorMessagesTarget.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.getAsEbms3Error (aLocale,
-                                                                                                aState.getMessageID (),
-                                                                                                sMsg));
-              }
-              else
-                if (aProfile.getCryptRequirement ().forbidsExistence () && aState.isSoapDecrypted ())
-                {
-                  final String sMsg = "The AS4 profile forbids the usage of encryption, but the document was encrypted";
-                  aErrorMessagesTarget.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.getAsEbms3Error (aLocale,
-                                                                                                  aState.getMessageID (),
-                                                                                                  sMsg));
-                }
-
               final ErrorList aErrorList = new ErrorList ();
               aValidator.validatePMode (aPMode, aErrorList);
               aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);

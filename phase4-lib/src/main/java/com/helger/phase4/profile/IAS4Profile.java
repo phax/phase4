@@ -72,18 +72,4 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName
    *         therefore not be used, or <code>false</code> if not.
    */
   boolean isDeprecated ();
-
-  /**
-   * @return The signature requirement. Never <code>null</code>.
-   * @since 2.3.0
-   */
-  @Nonnull
-  EProfileRequirement getSignatureRequirement ();
-
-  /**
-   * @return The crypt requirement. Never <code>null</code>.
-   * @since 2.3.0
-   */
-  @Nonnull
-  EProfileRequirement getCryptRequirement ();
 }
