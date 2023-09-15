@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
+import com.helger.phase4.profile.EProfileRequirement;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
 import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
@@ -48,9 +49,12 @@ public final class AS4EESPAProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IAS4ProfilePModeProvider aDefaultPModeProviderAcc = (i,
-                                                               r,
-                                                               a) -> EESPAPMode.createEESPAPMode (i, r, a, PMODE_ID_PROVIDER, true, false);
+    final IAS4ProfilePModeProvider aDefaultPModeProviderAcc = (i, r, a) -> EESPAPMode.createEESPAPMode (i,
+                                                                                                        r,
+                                                                                                        a,
+                                                                                                        PMODE_ID_PROVIDER,
+                                                                                                        true,
+                                                                                                        false);
     final IAS4ProfilePModeProvider aDefaultPModeProviderProd = (i, r, a) -> EESPAPMode.createEESPAPMode (i,
                                                                                                          r,
                                                                                                          a,
@@ -65,7 +69,9 @@ public final class AS4EESPAProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                    EESPACompatibilityValidator::new,
                                                    aDefaultPModeProviderAcc,
                                                    PMODE_ID_PROVIDER,
-                                                   false);
+                                                   false,
+                                                   EProfileRequirement.MUST,
+                                                   EProfileRequirement.MUST);
     aRegistrar.registerProfile (aProfileAcc);
 
     if (LOGGER.isDebugEnabled ())
@@ -75,7 +81,9 @@ public final class AS4EESPAProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                     EESPACompatibilityValidator::new,
                                                     aDefaultPModeProviderProd,
                                                     PMODE_ID_PROVIDER,
-                                                    false);
+                                                    false,
+                                                    EProfileRequirement.MUST,
+                                                    EProfileRequirement.MUST);
     aRegistrar.registerProfile (aProfileProd);
 
     // Default to acc

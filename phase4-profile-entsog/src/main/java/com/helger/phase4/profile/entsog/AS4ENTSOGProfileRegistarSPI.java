@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
+import com.helger.phase4.profile.EProfileRequirement;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
 import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
@@ -47,7 +48,11 @@ public final class AS4ENTSOGProfileRegistarSPI implements IAS4ProfileRegistrarSP
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> ENTSOGPMode.createENTSOGPMode (i, r, a, PMODE_ID_PROVIDER, true);
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> ENTSOGPMode.createENTSOGPMode (i,
+                                                                                                       r,
+                                                                                                       a,
+                                                                                                       PMODE_ID_PROVIDER,
+                                                                                                       true);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
@@ -56,7 +61,9 @@ public final class AS4ENTSOGProfileRegistarSPI implements IAS4ProfileRegistrarSP
                                                 ENTSOGCompatibilityValidator::new,
                                                 aDefaultPModeProvider,
                                                 PMODE_ID_PROVIDER,
-                                                false);
+                                                false,
+                                                EProfileRequirement.MUST,
+                                                EProfileRequirement.MUST);
     aRegistrar.registerProfile (aProfile);
     aRegistrar.setDefaultProfile (aProfile);
   }

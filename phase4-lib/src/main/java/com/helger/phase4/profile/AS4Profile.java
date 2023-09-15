@@ -43,6 +43,8 @@ public class AS4Profile implements IAS4Profile
   private final IAS4ProfilePModeProvider m_aDefaultPModeProvider;
   private final IPModeIDProvider m_aPModeIDProvider;
   private final boolean m_bDeprecated;
+  private final EProfileRequirement m_eSignatureRequirement;
+  private final EProfileRequirement m_eCryptRequirement;
 
   /**
    * Constructor
@@ -61,20 +63,36 @@ public class AS4Profile implements IAS4Profile
    * @param bDeprecated
    *        <code>true</code> if the profile is deprecated, <code>false</code>
    *        if not.
+   * @param eSignatureRequirement
+   *        The signature requirement. May not be <code>null</code>.
+   * @param eCryptRequirement
+   *        The crypt requirement. May not be <code>null</code>.
    */
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
                      @Nonnull final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
                      @Nonnull final IAS4ProfilePModeProvider aDefaultPModeProvider,
                      @Nonnull final IPModeIDProvider aPModeIDProvider,
-                     final boolean bDeprecated)
+                     final boolean bDeprecated,
+                     @Nonnull final EProfileRequirement eSignatureRequirement,
+                     @Nonnull final EProfileRequirement eCryptRequirement)
   {
-    m_sID = ValueEnforcer.notEmpty (sID, "ID");
-    m_sDisplayName = ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
-    m_aProfileValidatorProvider = ValueEnforcer.notNull (aProfileValidatorProvider, "ProfileValidatorProvider");
-    m_aDefaultPModeProvider = ValueEnforcer.notNull (aDefaultPModeProvider, "aDefaultPModeProvider");
-    m_aPModeIDProvider = ValueEnforcer.notNull (aPModeIDProvider, "PModeIDProvider");
+    ValueEnforcer.notEmpty (sID, "ID");
+    ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
+    ValueEnforcer.notNull (aProfileValidatorProvider, "ProfileValidatorProvider");
+    ValueEnforcer.notNull (aDefaultPModeProvider, "aDefaultPModeProvider");
+    ValueEnforcer.notNull (aPModeIDProvider, "PModeIDProvider");
+    ValueEnforcer.notNull (eSignatureRequirement, "SignatureRequirement");
+    ValueEnforcer.notNull (eCryptRequirement, "CryptRequirement");
+
+    m_sID = sID;
+    m_sDisplayName = sDisplayName;
+    m_aProfileValidatorProvider = aProfileValidatorProvider;
+    m_aDefaultPModeProvider = aDefaultPModeProvider;
+    m_aPModeIDProvider = aPModeIDProvider;
     m_bDeprecated = bDeprecated;
+    m_eSignatureRequirement = eSignatureRequirement;
+    m_eCryptRequirement = eCryptRequirement;
   }
 
   @Nonnull
@@ -116,6 +134,18 @@ public class AS4Profile implements IAS4Profile
     return m_bDeprecated;
   }
 
+  @Nonnull
+  public EProfileRequirement getSignatureRequirement ()
+  {
+    return m_eSignatureRequirement;
+  }
+
+  @Nonnull
+  public EProfileRequirement getCryptRequirement ()
+  {
+    return m_eCryptRequirement;
+  }
+
   @Override
   public boolean equals (final Object o)
   {
@@ -142,6 +172,8 @@ public class AS4Profile implements IAS4Profile
                                        .append ("DefaultPModeProvider", m_aDefaultPModeProvider)
                                        .append ("PModeIDProvider", m_aPModeIDProvider)
                                        .append ("Deprecated", m_bDeprecated)
+                                       .append ("SignatureRequirement", m_eSignatureRequirement)
+                                       .append ("CryptRequirement", m_eCryptRequirement)
                                        .getToString ();
   }
 }
