@@ -555,7 +555,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
           LOGGER.error (sLogPrefix + "Failed to decompress the payload of attachment #" + nAttachmentIndex);
           aProcessingErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aDisplayLocale,
                                                                                                aState.getMessageID ()));
-          return AS4MessageProcessorResult.createFailure (null);
+          return AS4MessageProcessorResult.createFailure ();
         }
 
         // Read data as SBDH
@@ -589,7 +589,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
             }
           }
 
-          return AS4MessageProcessorResult.createFailure (null);
+          return AS4MessageProcessorResult.createFailure ();
         }
 
         aReadAttachments.add (a);
@@ -620,7 +620,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                           aReadAttachments.size () +
                           " attachments";
       LOGGER.error (sLogPrefix + sMsg);
-      return AS4MessageProcessorResult.createFailure (sMsg);
+      aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
+                                                                           aState.getMessageID (),
+                                                                           sMsg));
+      return AS4MessageProcessorResult.createFailure ();
     }
 
     // The one and only
@@ -649,8 +652,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                           ex.getClass ().getName () +
                           " - " +
                           ex.getMessage ();
-      LOGGER.error (sLogPrefix + sMsg);
-      return AS4MessageProcessorResult.createFailure (sMsg);
+      LOGGER.error (sLogPrefix + sMsg, ex);
+      aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
+                                                                           aState.getMessageID (),
+                                                                           sMsg));
+      return AS4MessageProcessorResult.createFailure ();
     }
 
     {
@@ -685,7 +691,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                 m_aTransportProfile.getID () +
                                 ") - not handling incoming AS4 document";
             LOGGER.error (sLogPrefix + sMsg);
-            return AS4MessageProcessorResult.createFailure (sMsg);
+            aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
+                                                                                 aState.getMessageID (),
+                                                                                 sMsg));
+            return AS4MessageProcessorResult.createFailure ();
           }
 
           // Check if the message is for us
@@ -700,8 +709,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                               ex.getClass ().getName () +
                               " - " +
                               ex.getMessage ();
-          LOGGER.error (sLogPrefix + sMsg);
-          return AS4MessageProcessorResult.createFailure (sMsg);
+          LOGGER.error (sLogPrefix + sMsg, ex);
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
+                                                                               aState.getMessageID (),
+                                                                               sMsg));
+          return AS4MessageProcessorResult.createFailure ();
         }
       }
       else
@@ -736,11 +748,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
         catch (final Phase4PeppolClientException ex)
         {
-          final String sMsg = ex.getMessage ();
-          LOGGER.error (sLogPrefix + "Error invoking Peppol handler " + aHandler + ": " + sMsg);
+          final String sMsg = "Error invoking Peppol handler " + aHandler + ": " + ex.getMessage ();
+          LOGGER.error (sLogPrefix + sMsg, ex);
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
+                                                                               aState.getMessageID (),
+                                                                               sMsg));
 
           // Returned AS4 Error without a custom prefix
-          return AS4MessageProcessorResult.createFailure (sMsg);
+          return AS4MessageProcessorResult.createFailure ();
         }
         catch (final Exception ex)
         {
@@ -751,8 +766,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                 ex.getClass ().getName () +
                                 " - " +
                                 ex.getMessage ();
-            LOGGER.error (sLogPrefix + sMsg);
-            return AS4MessageProcessorResult.createFailure (sMsg);
+            LOGGER.error (sLogPrefix + sMsg, ex);
+            aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
+                                                                                 aState.getMessageID (),
+                                                                                 sMsg));
+            return AS4MessageProcessorResult.createFailure ();
           }
         }
       }

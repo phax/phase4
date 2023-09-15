@@ -168,8 +168,8 @@ public final class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
+                                                                                                             .getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -416,8 +416,7 @@ public final class AS4IncomingHandler
                                              aHeader.getNode (),
                                              aIncomingAttachments,
                                              aState,
-                                             aErrorList)
-                      .isSuccess ())
+                                             aErrorList).isSuccess ())
         {
           // Mark header as processed (for mustUnderstand check)
           aHeader.setProcessed (true);
@@ -593,6 +592,8 @@ public final class AS4IncomingHandler
     // Handle all headers - modifies the state
     _processSoapHeaderElements (aRegistry, aSoapDocument, aIncomingAttachments, aState, aErrorMessagesTarget);
 
+    // Here we know, if the message was signed and/or decrypted
+
     // Remember if header processing was successful or not
     final boolean bSoapHeaderElementProcessingSuccess = aErrorMessagesTarget.isEmpty ();
     aState.setSoapHeaderElementProcessingSuccessful (bSoapHeaderElementProcessingSuccess);
@@ -632,6 +633,17 @@ public final class AS4IncomingHandler
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Determined AS4 profile ID '" + sProfileID + "' for current message");
       aState.setProfileID (sProfileID);
+
+      if (StringHelper.hasText (sProfileID))
+      {
+        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
+        if (aProfile != null)
+        {
+
+        }
+        else
+          LOGGER.warn ("Weird - the AS4 profile ID '" + sProfileID + "' could not be resolved to an object.");
+      }
 
       final IPMode aPMode = aState.getPMode ();
       final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();

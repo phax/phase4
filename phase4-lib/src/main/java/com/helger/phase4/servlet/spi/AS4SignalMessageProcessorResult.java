@@ -72,7 +72,9 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
   @Override
   public String toString ()
   {
-    return ToStringGenerator.getDerived (super.toString ()).append ("m_aPullReturnUserMessage", m_aPullReturnUserMessage).getToString ();
+    return ToStringGenerator.getDerived (super.toString ())
+                            .append ("m_aPullReturnUserMessage", m_aPullReturnUserMessage)
+                            .getToString ();
   }
 
   @Nonnull
@@ -86,13 +88,24 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
                                                                @Nullable final String sAsyncResponseURL,
                                                                @Nullable final Ebms3UserMessage aPullReturnUserMessage)
   {
-    return new AS4SignalMessageProcessorResult (ESuccess.SUCCESS, null, aAttachments, sAsyncResponseURL, aPullReturnUserMessage);
+    return new AS4SignalMessageProcessorResult (ESuccess.SUCCESS,
+                                                null,
+                                                aAttachments,
+                                                sAsyncResponseURL,
+                                                aPullReturnUserMessage);
   }
 
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.3.0")
   public static AS4SignalMessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
   {
     ValueEnforcer.notNull (sErrorMsg, "ErrorMsg");
     return new AS4SignalMessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null, null, null);
+  }
+
+  @Nonnull
+  public static AS4SignalMessageProcessorResult createFailure ()
+  {
+    return new AS4SignalMessageProcessorResult (ESuccess.FAILURE, null, null, null, null);
   }
 }

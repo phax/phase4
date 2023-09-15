@@ -63,7 +63,9 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
                                        @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                        @Nullable final String sAsyncResponseURL)
   {
-    m_eSuccess = ValueEnforcer.notNull (eSuccess, "Success");
+    ValueEnforcer.notNull (eSuccess, "Success");
+
+    m_eSuccess = eSuccess;
     m_sErrorMsg = sErrorMsg;
     m_aAttachments = aAttachments;
     m_sAsyncResponseURL = sAsyncResponseURL;
@@ -79,11 +81,13 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
    *         failure.
    */
   @Nullable
+  @Deprecated (forRemoval = true, since = "2.3.0")
   public String getErrorMessage ()
   {
     return m_sErrorMsg;
   }
 
+  @Deprecated (forRemoval = true, since = "2.3.0")
   public boolean hasErrorMessage ()
   {
     return StringHelper.hasText (m_sErrorMsg);
@@ -172,7 +176,8 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   }
 
   /**
-   * Create a negative response with the provided error message.
+   * Create a negative response with the provided error message. This method is
+   * deprecated, because the error message is never used.
    *
    * @param sErrorMsg
    *        The error message to send back. May be <code>null</code> or empty
@@ -180,8 +185,27 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
    * @return Never <code>null</code>.
    */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.3.0")
   public static AS4MessageProcessorResult createFailure (@Nullable final String sErrorMsg)
   {
-    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, (ICommonsList <WSS4JAttachment>) null, (String) null);
+    return new AS4MessageProcessorResult (ESuccess.FAILURE,
+                                          sErrorMsg,
+                                          (ICommonsList <WSS4JAttachment>) null,
+                                          (String) null);
+  }
+
+  /**
+   * Create a negative response.
+   *
+   * @return Never <code>null</code>.
+   * @since 2.3.0
+   */
+  @Nonnull
+  public static AS4MessageProcessorResult createFailure ()
+  {
+    return new AS4MessageProcessorResult (ESuccess.FAILURE,
+                                          (String) null,
+                                          (ICommonsList <WSS4JAttachment>) null,
+                                          (String) null);
   }
 }

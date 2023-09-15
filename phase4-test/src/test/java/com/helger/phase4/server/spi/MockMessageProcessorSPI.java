@@ -38,6 +38,7 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.EMEPBinding;
@@ -107,7 +108,10 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
     {
       if (aPullRequest.getMpc ().equals (MPC_FAILURE))
       {
-        return AS4SignalMessageProcessorResult.createFailure ("Error in creating the usermessage - mock MPC 'failure' was used!");
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
+                                                                             aState.getMessageID (),
+                                                                             "Error in creating the usermessage - mock MPC 'failure' was used!"));
+        return AS4SignalMessageProcessorResult.createFailure ();
       }
 
       // Empty MPC

@@ -739,18 +739,6 @@ public class AS4RequestHandler implements AutoCloseable
               aErrorMessagesTarget.addAll (aProcessingErrorMessages);
             }
 
-            if (aResult.isFailure () && aResult.hasErrorMessage ())
-            {
-              aErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
-                                                                               sMessageID,
-                                                                               "Invoked AS4 message processor SPI " +
-                                                                                           aProcessor +
-                                                                                           " on '" +
-                                                                                           sMessageID +
-                                                                                           "' returned a failure: " +
-                                                                                           aResult.getErrorMessage ()));
-            }
-
             // Stop processing
             return;
           }
