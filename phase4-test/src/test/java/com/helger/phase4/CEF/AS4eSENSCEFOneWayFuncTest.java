@@ -45,7 +45,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.ScopedConfig;
+import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -461,7 +461,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
     aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
     aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
-    try (final ScopedConfig aSC = ScopedConfig.createTestConfig (aSettings))
+    try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.createTestConfig (aSettings))
     {
       final HttpProxyServer aProxyServer = _startProxyServerInterceptingFirstCall (nProxyPort);
       try
@@ -507,7 +507,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
     aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
 
-    try (final ScopedConfig aSC = ScopedConfig.createTestConfig (aSettings))
+    try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.createTestConfig (aSettings))
     {
       // Simulating a timeout with Thread.sleep but before it entirely triggers
       // let the program continue as if the Connection is back up again
@@ -689,7 +689,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
     aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
 
-    try (final ScopedConfig aSC = ScopedConfig.createTestConfig (aSettings))
+    try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.createTestConfig (aSettings))
     {
       // Forcing a Timeout from the retry handler
       final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()

@@ -30,7 +30,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -61,11 +60,10 @@ import jakarta.mail.MessagingException;
 @RunWith (Parameterized.class)
 public final class UserMessageManyAttachmentTest extends AbstractUserMessageTestSetUp
 {
-
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
-    return CollectionHelper.newListMapped (ESoapVersion.values (), x -> new Object [] { x });
+    return new CommonsArrayList <> (ESoapVersion.values (), x -> new Object [] { x });
   }
 
   private final ESoapVersion m_eSOAPVersion;
@@ -80,20 +78,17 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
-                                                                                            .mimeType (CMimeType.IMAGE_JPG)
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
+                                                                                         .mimeType (CMimeType.IMAGE_JPG)
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
                                                                             MockMessages.createUserMessageNotSigned (m_eSOAPVersion,
@@ -111,20 +106,17 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
-                                                                                            .mimeType (CMimeType.IMAGE_JPG)
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
+                                                                                         .mimeType (CMimeType.IMAGE_JPG)
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
@@ -149,20 +141,17 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
-                                                                                            .mimeType (CMimeType.IMAGE_JPG)
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
+                                                                                         .mimeType (CMimeType.IMAGE_JPG)
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
                                                                      MockMessages.createUserMessageNotSigned (m_eSOAPVersion,
@@ -177,7 +166,6 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-
   }
 
   @Test
@@ -185,20 +173,17 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
-                                                                                            .mimeType (CMimeType.IMAGE_JPG)
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
+                                                                                         .mimeType (CMimeType.IMAGE_JPG)
+                                                                                         .build (), s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
-                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
-                                                                                            .mimeTypeXML ()
-                                                                                            .build (),
-                                                                    s_aResMgr));
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,

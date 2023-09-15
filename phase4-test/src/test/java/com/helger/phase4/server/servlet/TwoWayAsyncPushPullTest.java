@@ -47,10 +47,10 @@ import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.standalone.RunInJettyAS4TEST9090;
 import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.test.profile.TestPMode;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -79,7 +79,7 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
   @Before
   public void before ()
   {
-    final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
+    final PMode aPMode = TestPMode.createTestPMode (AS4TestConstants.TEST_INITIATOR,
                                                   AS4TestConstants.TEST_RESPONDER,
                                                   MockJettySetup.getServerAddressFromSettings (),
                                                   (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),

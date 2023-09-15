@@ -45,11 +45,11 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.model.pmode.PMode;
-import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.phase4.server.standalone.RunInJettyAS4TEST9090;
 import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.test.profile.TestPMode;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;
@@ -90,11 +90,11 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   @Before
   public void setUpCEF ()
   {
-    m_aESENSTwoWayPMode = CEFPMode.createCEFPModeTwoWay (AS4TestConstants.CEF_INITIATOR_ID,
-                                                         AS4TestConstants.CEF_RESPONDER_ID,
-                                                         AS4TestConstants.DEFAULT_SERVER_ADDRESS,
-                                                         IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                         true);
+    m_aESENSTwoWayPMode = TestPMode.createTestPModeTwoWay (AS4TestConstants.CEF_INITIATOR_ID,
+                                                           AS4TestConstants.CEF_RESPONDER_ID,
+                                                           AS4TestConstants.DEFAULT_SERVER_ADDRESS,
+                                                           IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                           true);
 
     m_eSoapVersion = m_aESENSTwoWayPMode.getLeg1 ().getProtocol ().getSoapVersion ();
     m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
@@ -125,7 +125,8 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
+                                                                                            aAttachments);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final Ebms3PartyInfo aEbms3PartyInfo;
@@ -147,7 +148,6 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
                                   aEbms3CollaborationInfo,
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
-                                  m_eSoapVersion)
-                         .setMustUnderstand (true);
+                                  m_eSoapVersion).setMustUnderstand (true);
   }
 }

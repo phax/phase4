@@ -25,9 +25,11 @@
   <welcome-file-list>
     <welcome-file>secure</welcome-file>
   </welcome-file-list>
+  
   <listener>
-    <listener-class>com.helger.phase4.server.servlet.AS4WebAppListener</listener-class>
+    <listener-class>com.helger.phase4.test.servlet.AS4WebAppListener</listener-class>
   </listener>
+  
   <servlet>
     <servlet-name>AS4Servlet</servlet-name>
     <servlet-class>com.helger.phase4.servlet.AS4Servlet</servlet-class>

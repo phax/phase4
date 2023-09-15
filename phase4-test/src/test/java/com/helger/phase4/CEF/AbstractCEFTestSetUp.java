@@ -41,10 +41,10 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.model.pmode.PMode;
-import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.test.profile.TestPMode;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -59,7 +59,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
   @Before
   public void setUpCEF ()
   {
-    m_aESENSOneWayPMode = CEFPMode.createCEFPMode (AS4TestConstants.CEF_INITIATOR_ID,
+    m_aESENSOneWayPMode = TestPMode.createTestPMode (AS4TestConstants.CEF_INITIATOR_ID,
                                                    AS4TestConstants.CEF_RESPONDER_ID,
                                                    AS4TestConstants.DEFAULT_SERVER_ADDRESS,
                                                    IPModeIDProvider.DEFAULT_DYNAMIC,

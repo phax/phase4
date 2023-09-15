@@ -25,8 +25,8 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PMode;
-import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
+import com.helger.phase4.test.profile.TestPMode;
 
 @IsSPIImplementation
 public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProcessorSPI
@@ -34,7 +34,7 @@ public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProces
   @Nonnull
   public IPMode findPMode (@Nonnull final Ebms3SignalMessage aSignalMessage)
   {
-    final PMode aPMode = CEFPMode.createCEFPMode ("pullinitiator", "pullresponder", null, (i, r) -> "PullPMode", false);
+    final PMode aPMode = TestPMode.createTestPMode ("pullinitiator", "pullresponder", null, (i, r) -> "PullPMode", false);
     if (aSignalMessage.getPullRequest () != null)
     {
       if (!aSignalMessage.getAny ().isEmpty ())

@@ -34,7 +34,6 @@ import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.photon.io.WebFileIO;
-import com.helger.photon.jetty.JettyRunner;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
@@ -46,7 +45,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
 
   private static final Logger LOGGER = LoggerFactory.getLogger (MockJettySetup.class);
 
-  private static JettyRunner s_aJetty;
+  private static AS4JettyRunner s_aJetty;
   private static AS4ResourceHelper s_aResMgr;
 
   static
@@ -83,7 +82,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
     if (_isRunJetty ())
     {
       final int nPort = _getJettyPort ();
-      s_aJetty = new JettyRunner ("AS4 Mock Jetty");
+      s_aJetty = new AS4JettyRunner ();
       s_aJetty.setPort (nPort).setStopPort (nPort + 1000).setAllowAnnotationBasedConfig (false);
       s_aJetty.startServer ();
     }

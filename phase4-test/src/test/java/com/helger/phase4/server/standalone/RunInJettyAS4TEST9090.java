@@ -19,7 +19,7 @@ package com.helger.phase4.server.standalone;
 import java.io.IOException;
 
 import com.helger.commons.io.resource.FileSystemResource;
-import com.helger.phase4.ScopedConfig;
+import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.photon.jetty.JettyRunner;
 import com.helger.photon.jetty.JettyStopper;
 
@@ -33,11 +33,11 @@ public final class RunInJettyAS4TEST9090
   private static final int PORT = 9090;
   private static final int STOP_PORT = PORT + 1000;
 
-  private static ScopedConfig s_aSC;
+  private static ScopedAS4Configuration s_aSC;
 
   public static void startNinetyServer () throws Exception
   {
-    s_aSC = ScopedConfig.create (new FileSystemResource ("src/test/resources/test-phase4-9090.properties"));
+    s_aSC = ScopedAS4Configuration.create (new FileSystemResource ("src/test/resources/test-phase4-9090.properties"));
     final JettyRunner aJetty = new JettyRunner ();
     aJetty.setPort (PORT).setStopPort (STOP_PORT).setAllowAnnotationBasedConfig (false);
     aJetty.startServer ();

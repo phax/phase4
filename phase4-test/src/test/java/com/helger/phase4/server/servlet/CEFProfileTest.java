@@ -40,9 +40,9 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
-import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
 import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -92,7 +92,7 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
     // Default MessageProperties for testing
     m_aEbms3UserMessage.setMessageProperties (createDefaultProperties ());
 
-    AS4ProfileSelector.setCustomAS4ProfileID (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID_FOUR_CORNER);
+    AS4ProfileSelector.setCustomAS4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_FOUR_CORNER);
   }
 
   @After

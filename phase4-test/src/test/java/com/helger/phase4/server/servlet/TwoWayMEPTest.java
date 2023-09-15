@@ -46,9 +46,9 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.test.profile.TestPMode;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
@@ -59,7 +59,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Before
   public void before ()
   {
-    final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
+    final PMode aPMode = TestPMode.createTestPMode (AS4TestConstants.TEST_INITIATOR,
                                                   AS4TestConstants.TEST_RESPONDER,
                                                   MockJettySetup.getServerAddressFromSettings (),
                                                   (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),

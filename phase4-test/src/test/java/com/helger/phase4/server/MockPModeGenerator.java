@@ -124,6 +124,8 @@ public final class MockPModeGenerator
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
     aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
+    // Required for compatibility with the Test profile PModes
+    aPModeLegSecurity.setPModeAuthorize (false);
 
     aPMode.setLeg1 (new PModeLeg (_createPModeLegProtocol (eSOAPVersion),
                                   _createPModeLegBusinessInformation (eSOAPVersion),

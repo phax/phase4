@@ -55,9 +55,9 @@ import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
+import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import jakarta.mail.MessagingException;
@@ -93,7 +93,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   {
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
-    MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID_FOUR_CORNER);
+    MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_FOUR_CORNER);
   }
 
   @AfterClass

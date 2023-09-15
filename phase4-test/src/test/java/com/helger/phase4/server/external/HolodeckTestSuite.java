@@ -26,7 +26,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.helger.commons.collection.attr.IStringMap;
 import com.helger.commons.collection.attr.StringMap;
-import com.helger.phase4.ScopedConfig;
+import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.message.ReceiptMessageTest;
 import com.helger.phase4.server.message.UserMessageOneAttachmentTest;
@@ -48,7 +48,7 @@ public final class HolodeckTestSuite
   /** The default URL where Holodeck is supposed to run */
   public static final String DEFAULT_HOLODECK_URI = "http://localhost:8080/msh";
 
-  private static ScopedConfig s_aSC;
+  private static ScopedAS4Configuration s_aSC;
 
   @BeforeClass
   public static void init ()
@@ -56,7 +56,7 @@ public final class HolodeckTestSuite
     final IStringMap aSettings = new StringMap ();
     aSettings.putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
     aSettings.putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_HOLODECK_URI);
-    s_aSC = ScopedConfig.create (aSettings);
+    s_aSC = ScopedAS4Configuration.create (aSettings);
   }
 
   @AfterClass

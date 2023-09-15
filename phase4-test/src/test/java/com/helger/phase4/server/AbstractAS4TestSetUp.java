@@ -20,7 +20,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.helger.phase4.ScopedConfig;
+import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.scope.ScopeHelper;
 
 /**
@@ -34,12 +34,12 @@ import com.helger.scope.ScopeHelper;
  */
 public abstract class AbstractAS4TestSetUp
 {
-  private static ScopedConfig s_aSC;
+  private static ScopedAS4Configuration s_aSC;
 
   @BeforeClass
   public static void startTest () throws Exception
   {
-    s_aSC = ScopedConfig.createTestConfig ();
+    s_aSC = ScopedAS4Configuration.createTestConfig ();
   }
 
   @AfterClass

@@ -29,7 +29,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.ScopedConfig;
+import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.phase4.CEF.AbstractCEFTestSetUp;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -58,7 +58,7 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
   private static final String COLLABORATION_INFO_SERVICE_TYPE = null;
   private static final String COLLABORATION_INFO_ACTION = "ACT_SIMPLE_ONEWAY_DYN";
   private static final String TO_PARTY_ID = "holodeck-c3";
-  private static ScopedConfig s_aSC;
+  private static ScopedAS4Configuration s_aSC;
 
   @BeforeClass
   public static void noJetty ()
@@ -66,7 +66,7 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
     final IStringMap aSettings = new StringMap ();
     aSettings.putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
     aSettings.putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_AS4_NET_URI);
-    s_aSC = ScopedConfig.create (aSettings);
+    s_aSC = ScopedAS4Configuration.create (aSettings);
     AS4HttpDebug.setEnabled (false);
   }
 

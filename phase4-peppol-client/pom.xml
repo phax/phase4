@@ -88,6 +88,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-commons</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-lib</artifactId>
     </dependency>

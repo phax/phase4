@@ -38,13 +38,13 @@ import com.helger.phase4.config.AS4Configuration;
  * @author Philip Helger
  */
 @ThreadSafe
-public final class ScopedConfig implements AutoCloseable
+public final class ScopedAS4Configuration implements AutoCloseable
 {
   private static final String TEST_CONFIG_FILE = "src/test/resources/test-phase4.properties";
 
   private final IConfig m_aOldConfig;
 
-  private ScopedConfig (@Nonnull final IConfig aConfig)
+  private ScopedAS4Configuration (@Nonnull final IConfig aConfig)
   {
     m_aOldConfig = AS4Configuration.setConfig (aConfig);
   }
@@ -56,15 +56,15 @@ public final class ScopedConfig implements AutoCloseable
   }
 
   @Nonnull
-  public static ScopedConfig create (@Nonnull final IStringMap aMap)
+  public static ScopedAS4Configuration create (@Nonnull final IStringMap aMap)
   {
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
     aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString), EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
-    return new ScopedConfig (new Config (aVP));
+    return new ScopedAS4Configuration (new Config (aVP));
   }
 
   @Nonnull
-  public static ScopedConfig create (@Nonnull final IReadableResource aRes)
+  public static ScopedAS4Configuration create (@Nonnull final IReadableResource aRes)
   {
     ValueEnforcer.notNull (aRes, "Res");
     ValueEnforcer.isTrue (aRes.exists (), () -> "Resource does not exist: " + aRes);
@@ -72,22 +72,22 @@ public final class ScopedConfig implements AutoCloseable
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
     // By default priority must be higher than the default
     aVP.addConfigurationSource (new ConfigurationSourceProperties (aRes), EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
-    return new ScopedConfig (new Config (aVP));
+    return new ScopedAS4Configuration (new Config (aVP));
   }
 
   @Nonnull
-  public static ScopedConfig createTestConfig ()
+  public static ScopedAS4Configuration createTestConfig ()
   {
     return create (new FileSystemResource (TEST_CONFIG_FILE));
   }
 
   @Nonnull
-  public static ScopedConfig createTestConfig (@Nonnull final IStringMap aMap)
+  public static ScopedAS4Configuration createTestConfig (@Nonnull final IStringMap aMap)
   {
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
     aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString), EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
     aVP.addConfigurationSource (new ConfigurationSourceProperties (new FileSystemResource (TEST_CONFIG_FILE)),
                                 EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
-    return new ScopedConfig (new Config (aVP));
+    return new ScopedAS4Configuration (new Config (aVP));
   }
 }
