@@ -54,9 +54,10 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 
 /**
- * Validate certain requirements imposed by the CEF project.
+ * Validate certain requirements imposed by the CEF profile.
  *
  * @author bayerlma
+ * @author Philip Helger
  */
 public class CEFCompatibilityValidator implements IAS4ProfileValidator
 {
@@ -131,7 +132,10 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
       if (!eSOAPVersion.isAS4Default ())
       {
-        aErrorList.add (_createError (sFieldPrefix + "SoapVersion '" + eSOAPVersion.getVersion () + "' is unsupported"));
+        aErrorList.add (_createError (sFieldPrefix +
+                                      "SoapVersion '" +
+                                      eSOAPVersion.getVersion () +
+                                      "' is unsupported"));
       }
     }
 
@@ -251,7 +255,8 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyConsumer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
       }
       else
       {
@@ -261,7 +266,8 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyProducerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyProducer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
       }
       else
       {
@@ -291,7 +297,8 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     final EMEP eMEP = aPMode.getMEP ();
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
 
-    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) || (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
+    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
+        (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
     {
       // Valid
     }

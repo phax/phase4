@@ -63,8 +63,8 @@ public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                           aDefaultPModeProvider,
                                                           PMODE_ID_PROVIDER,
                                                           false,
-                                                          EProfileRequirement.MUST,
-                                                          EProfileRequirement.MUST);
+                                                          EProfileRequirement.MAY,
+                                                          EProfileRequirement.MAY);
     aRegistrar.registerProfile (aProfileFourCorner);
 
     if (LOGGER.isDebugEnabled ())
@@ -75,8 +75,8 @@ public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                          aDefaultPModeProvider,
                                                          PMODE_ID_PROVIDER,
                                                          false,
-                                                         EProfileRequirement.MUST,
-                                                         EProfileRequirement.MUST);
+                                                         EProfileRequirement.MAY,
+                                                         EProfileRequirement.MAY);
     aRegistrar.registerProfile (aProfileTwoCorner);
 
     // The four corner profile is the default

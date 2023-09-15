@@ -45,7 +45,7 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
 
 /**
- * PMode creation code.
+ * CEF PMode creation code.
  *
  * @author Philip Helger
  */
