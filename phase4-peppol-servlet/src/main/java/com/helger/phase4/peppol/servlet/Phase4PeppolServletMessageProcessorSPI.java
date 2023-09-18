@@ -525,6 +525,26 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         LOGGER.debug (sLogPrefix + "  SOAP Body Payload = " + XMLWriter.getNodeAsString (aPayload));
     }
 
+    // Check preconditions
+    if (!aState.isSoapDecrypted ())
+    {
+      final String sMsg = "The received Peppol message was not encrypted properly.";
+      LOGGER.error (sLogPrefix + sMsg);
+      aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsEbms3Error (aDisplayLocale,
+                                                                                       aState.getMessageID (),
+                                                                                       sMsg));
+      return AS4MessageProcessorResult.createFailure ();
+    }
+    if (!aState.isSoapSignatureChecked ())
+    {
+      final String sMsg = "The received Peppol message was not signed properly.";
+      LOGGER.error (sLogPrefix + sMsg);
+      aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsEbms3Error (aDisplayLocale,
+                                                                                           aState.getMessageID (),
+                                                                                           sMsg));
+      return AS4MessageProcessorResult.createFailure ();
+    }
+
     // Read all attachments
     final ICommonsList <ReadAttachment> aReadAttachments = new CommonsArrayList <> ();
     if (aIncomingAttachments != null)
@@ -552,9 +572,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
         if (a.m_aPayloadBytes == null)
         {
-          LOGGER.error (sLogPrefix + "Failed to decompress the payload of attachment #" + nAttachmentIndex);
+          final String sMsg = "Failed to decompress the payload of attachment #" + nAttachmentIndex;
+          LOGGER.error (sLogPrefix + sMsg);
           aProcessingErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aDisplayLocale,
-                                                                                               aState.getMessageID ()));
+                                                                                               aState.getMessageID (),
+                                                                                               sMsg));
           return AS4MessageProcessorResult.createFailure ();
         }
 

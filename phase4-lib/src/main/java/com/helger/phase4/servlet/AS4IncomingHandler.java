@@ -626,7 +626,8 @@ public final class AS4IncomingHandler
 
         // send EBMS:0001 error back
         aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale,
-                                                                                        aState.getMessageID ()));
+                                                                                        aState.getMessageID (),
+                                                                                        sMsg));
       }
 
       // Determine AS4 profile ID (since 0.13.0)
