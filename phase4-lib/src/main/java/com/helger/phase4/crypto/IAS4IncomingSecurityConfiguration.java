@@ -29,7 +29,6 @@ import javax.annotation.Nullable;
  */
 public interface IAS4IncomingSecurityConfiguration
 {
-
   /**
    * @return The signing parameters to be used for incoming messages. May be
    *         <code>null</code>.
