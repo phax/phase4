@@ -78,7 +78,9 @@ public final class Phase4BDEWSender
                                                               AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     // Default per section 2.2.6.2.1
-    public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
+    public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_SIGN = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
+    // Default per section 2.2.6.2.2
+    public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT = ECryptoKeyIdentifierType.SKI_KEY_IDENTIFIER;
 
     private BDEWPayloadParams m_aPayloadParams;
 
@@ -90,7 +92,7 @@ public final class Phase4BDEWSender
         httpClientFactory (new Phase4BDEWHttpClientSettings ());
 
         // Other crypt parameters are located in the PMode security part
-        cryptParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+        cryptParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT);
         cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
         cryptParams ().setEncryptSymmetricSessionKey (false);
 
@@ -102,7 +104,7 @@ public final class Phase4BDEWSender
 
         // See BDEW specs 2.2.6.2
         // Other signing parameters are located in the PMode security part
-        signingParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+        signingParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE_SIGN);
         signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
         // Use the BST value type "#X509PKIPathv1"
         signingParams ().setUseSingleCertificate (false);
