@@ -1157,8 +1157,8 @@ public class AS4RequestHandler implements AutoCloseable
 
     // We've got our response
     final Document aResponseDoc = aReceiptMessage.getAsSoapDocument ();
-    final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ())
-                                                                   .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderSign ());
+    final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
+                                                                     .setFromPMode (aEffectiveLeg.getSecurity ());
     final ESoapVersion eResponseSoapVersion = aEffectiveLeg.getProtocol ().getSoapVersion ();
     if (eResponseSoapVersion != eSoapVersion)
       LOGGER.warn ("Received message with " +
@@ -1439,14 +1439,14 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                 aLocalResponseAttachments);
 
             // Send UserMessage
-            final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ())
-                                                                           .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderSign ());
+            final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
+                                                                             .setFromPMode (aEffectiveLeg.getSecurity ());
             // Use the original receiver ID as the alias into the keystore for
             // encrypting the response message
             final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
-            final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aEffectiveLeg.getSecurity ())
-                                                                     .setAlias (sEncryptionAlias)
-                                                                     .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderCrypt ());
+            final AS4CryptParams aCryptParams = m_aIncomingSecurityConfig.getCryptParamsCloneOrNew ()
+                                                                         .setFromPMode (aEffectiveLeg.getSecurity ())
+                                                                         .setAlias (sEncryptionAlias);
 
             aAsyncResponseFactory = _createResponseUserMessage (aState,
                                                                 aEffectiveLeg.getProtocol ().getSoapVersion (),
@@ -1673,15 +1673,15 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                   aEbmsUserMessage,
                                                                                   aResponseAttachments);
 
-              final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aLeg2.getSecurity ())
-                                                                             .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderSign ());
+              final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
+                                                                               .setFromPMode (aLeg2.getSecurity ());
               final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ()
                                                               .getTo ()
                                                               .getPartyIdAtIndex (0)
                                                               .getValue ();
-              final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aLeg2.getSecurity ())
-                                                                       .setAlias (sEncryptionAlias)
-                                                                       .setSecurityProvider (m_aIncomingSecurityConfig.getSecurityProviderCrypt ());
+              final AS4CryptParams aCryptParams = m_aIncomingSecurityConfig.getCryptParamsCloneOrNew ()
+                                                                           .setFromPMode (aLeg2.getSecurity ())
+                                                                           .setAlias (sEncryptionAlias);
               ret = _createResponseUserMessage (aState,
                                                 aLeg2.getProtocol ().getSoapVersion (),
                                                 aResponseUserMsg,

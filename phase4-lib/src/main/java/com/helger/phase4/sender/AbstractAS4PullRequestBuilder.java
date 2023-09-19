@@ -193,8 +193,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
       }
 
       // Create on demand with all necessary parameters
-      final AS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSecurityProviderSign (m_aSigningParams.getSecurityProvider ())
-                                                                                                                     .setSecurityProviderCrypt (m_aCryptParams.getSecurityProvider ())
+      final AS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSigningParams (m_aSigningParams.getClone ())
+                                                                                                                     .setCryptParams (m_aCryptParams.getClone ())
                                                                                                                      .setDecryptParameterModifier (m_aDecryptParameterModifier);
 
       // Main sending

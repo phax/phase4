@@ -32,6 +32,7 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.equals.EqualsHelper;
+import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
@@ -122,10 +123,12 @@ public class SOAPHeaderElementProcessorRegistry
 
     // WSS4J must be after Ebms3Messaging handler!
     final Supplier <? extends IPMode> aFallbackPModeProvider = () -> aFallbackPMode;
+    final AS4SigningParams aSigningParams = aIncomingSecurityConfiguration.getSigningParams ();
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,
                                         new SOAPHeaderElementProcessorWSS4J (aCryptoFactorySign,
                                                                              aCryptoFactoryCrypt,
-                                                                             aIncomingSecurityConfiguration.getSecurityProviderSign (),
+                                                                             aSigningParams == null ? null
+                                                                                                    : aSigningParams.getSecurityProvider (),
                                                                              aFallbackPModeProvider,
                                                                              aIncomingSecurityConfiguration.getDecryptParameterModifier ()));
     return ret;

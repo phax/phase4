@@ -18,6 +18,7 @@ package com.helger.phase4.crypto;
 
 import java.security.Provider;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -28,13 +29,46 @@ import javax.annotation.Nullable;
  */
 public interface IAS4IncomingSecurityConfiguration
 {
+
   /**
-   * @return The Java Security provider to be used for incoming messages. May be
-   *         <code>null</code> to indicate the usage of the default JDK security
-   *         provider.
+   * @return The signing parameters to be used for incoming messages. May be
+   *         <code>null</code>.
+   * @since 2.3.0
    */
   @Nullable
-  Provider getSecurityProviderSign ();
+  AS4SigningParams getSigningParams ();
+
+  /**
+   * @return A clone of the existing signing parameters or a new object. Never
+   *         <code>null</code>.
+   * @since 2.3.0
+   */
+  @Nonnull
+  default AS4SigningParams getSigningParamsCloneOrNew ()
+  {
+    final AS4SigningParams a = getSigningParams ();
+    return a == null ? new AS4SigningParams () : a.getClone ();
+  }
+
+  /**
+   * @return The crypt parameters to be used for incoming messages. May be
+   *         <code>null</code>.
+   * @since 2.3.0
+   */
+  @Nullable
+  AS4CryptParams getCryptParams ();
+
+  /**
+   * @return A clone of the existing crypt parameters or a new object. Never
+   *         <code>null</code>.
+   * @since 2.3.0
+   */
+  @Nonnull
+  default AS4CryptParams getCryptParamsCloneOrNew ()
+  {
+    final AS4CryptParams a = getCryptParams ();
+    return a == null ? new AS4CryptParams () : a.getClone ();
+  }
 
   /**
    * @return The Java Security provider to be used for incoming messages. May be
@@ -42,7 +76,25 @@ public interface IAS4IncomingSecurityConfiguration
    *         provider.
    */
   @Nullable
-  Provider getSecurityProviderCrypt ();
+  @Deprecated (forRemoval = true, since = "2.3.0")
+  default Provider getSecurityProviderSign ()
+  {
+    final AS4SigningParams a = getSigningParams ();
+    return a == null ? null : a.getSecurityProvider ();
+  }
+
+  /**
+   * @return The Java Security provider to be used for incoming messages. May be
+   *         <code>null</code> to indicate the usage of the default JDK security
+   *         provider.
+   */
+  @Nullable
+  @Deprecated (forRemoval = true, since = "2.3.0")
+  default Provider getSecurityProviderCrypt ()
+  {
+    final AS4CryptParams a = getCryptParams ();
+    return a == null ? null : a.getSecurityProvider ();
+  }
 
   /**
    * @return An optional modifier to customize WSS4J

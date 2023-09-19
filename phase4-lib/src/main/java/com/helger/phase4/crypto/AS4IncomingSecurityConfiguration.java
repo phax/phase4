@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.crypto;
 
-import java.security.Provider;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -33,43 +31,37 @@ import com.helger.commons.string.ToStringGenerator;
 @NotThreadSafe
 public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityConfiguration
 {
-  private Provider m_aSecurityProviderSign;
-  private Provider m_aSecurityProviderCrypt;
+  private AS4SigningParams m_aSigningParams;
+  private AS4CryptParams m_aCryptParams;
   private IAS4DecryptParameterModifier m_aDecryptParameterModifier;
 
   public AS4IncomingSecurityConfiguration ()
   {}
 
   @Nullable
-  public Provider getSecurityProviderSign ()
+  public AS4SigningParams getSigningParams ()
   {
-    return m_aSecurityProviderSign;
+    return m_aSigningParams;
   }
 
   @Nonnull
-  public AS4IncomingSecurityConfiguration setSecurityProviderSign (@Nullable final Provider a)
+  public AS4IncomingSecurityConfiguration setSigningParams (@Nullable final AS4SigningParams a)
   {
-    m_aSecurityProviderSign = a;
+    m_aSigningParams = a;
     return this;
   }
 
   @Nullable
-  public Provider getSecurityProviderCrypt ()
+  public AS4CryptParams getCryptParams ()
   {
-    return m_aSecurityProviderCrypt;
+    return m_aCryptParams;
   }
 
   @Nonnull
-  public AS4IncomingSecurityConfiguration setSecurityProviderCrypt (@Nullable final Provider a)
+  public AS4IncomingSecurityConfiguration setCryptParams (@Nullable final AS4CryptParams a)
   {
-    m_aSecurityProviderCrypt = a;
+    m_aCryptParams = a;
     return this;
-  }
-
-  @Nonnull
-  public AS4IncomingSecurityConfiguration setSecurityProvider (@Nullable final Provider a)
-  {
-    return setSecurityProviderSign (a).setSecurityProviderCrypt (a);
   }
 
   @Nullable
@@ -88,8 +80,8 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (null).append ("SecurityProviderSign", m_aSecurityProviderSign)
-                                       .append ("SecurityProviderCrypt", m_aSecurityProviderCrypt)
+    return new ToStringGenerator (null).append ("SigningParams", m_aSigningParams)
+                                       .append ("CryptParams", m_aCryptParams)
                                        .append ("DecryptParameterModifier", m_aDecryptParameterModifier)
                                        .getToString ();
   }
@@ -97,9 +89,9 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
   @Nonnull
   public static AS4IncomingSecurityConfiguration createDefaultInstance ()
   {
-    // No SecurityProviderSign
-    // No SecurityProviderCrypt
-    // No RequestDataModifier
+    // No SigningParams
+    // No CryptParams
+    // No DecryptParameterModifier
     return new AS4IncomingSecurityConfiguration ();
   }
 }
