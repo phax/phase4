@@ -24,6 +24,7 @@ import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.profile.IAS4Profile;
+import com.helger.phase4.profile.IAS4ProfileManager;
 
 /**
  * Static helper class to make the AS4 profile selection more deterministic and
@@ -57,7 +58,8 @@ public final class AS4ProfileSelector
    * Get the AS4 profile ID to be used in the following order:
    * <ol>
    * <li>From {@link #getCustomAS4ProfileID()}</li>
-   * <li>from the configuration file</li>
+   * <li>from the configuration properties</li>
+   * <li>from the current {@link IAS4ProfileManager} (since v2.3.0)</li>
    * </ol>
    *
    * @return The AS4 profile ID to be used. May be <code>null</code>.
