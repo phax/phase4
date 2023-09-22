@@ -71,17 +71,17 @@
     <jaxb-plugin.group>com.helger.maven</jaxb-plugin.group>
     <jaxb-plugin.artifact>jaxb40-maven-plugin</jaxb-plugin.artifact>
     <jaxb-plugin.version>0.16.1</jaxb-plugin.version>
-    <ph-jaxb-plugin.version>4.0.2</ph-jaxb-plugin.version>
+    <ph-jaxb-plugin.version>4.0.3</ph-jaxb-plugin.version>
     <xmlsec.version>3.0.2</xmlsec.version>
     <wss4j.version>3.0.1</wss4j.version>
     <log4j.version>2.20.0</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <peppol-commons.version>9.0.8</peppol-commons.version>
-    <peppol-reporting.version>2.1.2</peppol-reporting.version>
+    <peppol-reporting.version>2.1.3</peppol-reporting.version>
     <ph-ubl.version>8.0.3</ph-ubl.version>
     <ph-schematron.version>7.1.2</ph-schematron.version>
     <phive.version>9.0.0</phive.version>
-    <phive-rules.version>3.1.0</phive-rules.version>
+    <phive-rules.version>3.1.1</phive-rules.version>
     <spring-boot.version>3.1.3</spring-boot.version>
   </properties>
   
