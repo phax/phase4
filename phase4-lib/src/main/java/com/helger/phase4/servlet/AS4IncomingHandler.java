@@ -176,148 +176,157 @@ public final class AS4IncomingHandler
     final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
     final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
 
-    if (aPlainContentType.equals (AS4RequestHandler.MT_MULTIPART_RELATED))
+    try
     {
-      // MIME message
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Received MIME message");
-
-      final String sBoundary = aContentType.getParameterValueWithName ("boundary");
-      if (StringHelper.hasNoText (sBoundary))
-        throw new Phase4Exception ("Content-Type '" + sContentType + "' misses 'boundary' parameter");
-
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("MIME Boundary: '" + sBoundary + "'");
-
-      // Ensure the stream gets closed correctly
-      try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
-                                                                                          aPayloadIS,
-                                                                                          aMessageMetadata,
-                                                                                          aHttpHeaders,
-                                                                                          aDumpOSHolder))
+      if (aPlainContentType.equals (AS4RequestHandler.MT_MULTIPART_RELATED))
       {
-        // PARSING MIME Message via MultipartStream
-        final MultipartStream aMulti = new MultipartStream (aRequestIS,
-                                                            sBoundary.getBytes (StandardCharsets.ISO_8859_1),
-                                                            (MultipartProgressNotifier) null);
+        // MIME message
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Received MIME message");
 
-        int nIndex = 0;
-        while (true)
-        {
-          final boolean bHasNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
-          if (!bHasNextPart)
-            break;
+        final String sBoundary = aContentType.getParameterValueWithName ("boundary");
+        if (StringHelper.hasNoText (sBoundary))
+          throw new Phase4Exception ("Content-Type '" + sContentType + "' misses 'boundary' parameter");
 
-          if (LOGGER.isDebugEnabled ())
-            LOGGER.debug ("Found MIME part #" + nIndex);
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("MIME Boundary: '" + sBoundary + "'");
 
-          try (final MultipartItemInputStream aBodyPartIS = aMulti.createInputStream ())
-          {
-            // Read headers AND content
-            final MimeBodyPart aBodyPart = new MimeBodyPart (aBodyPartIS);
-
-            if (nIndex == 0)
-            {
-              // First MIME part -> SOAP document
-              if (LOGGER.isDebugEnabled ())
-                LOGGER.debug ("Parsing first MIME part as SOAP document");
-
-              // Read SOAP document
-              aSoapDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
-
-              IMimeType aPlainPartMT = MimeTypeParser.safeParseMimeType (aBodyPart.getContentType ());
-              if (aPlainPartMT != null)
-                aPlainPartMT = aPlainPartMT.getCopyWithoutParameters ();
-
-              // Determine SOAP version from MIME part content type
-              eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainPartMT);
-              if (eSoapVersion != null && LOGGER.isDebugEnabled ())
-                LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from Content-Type");
-
-              if (eSoapVersion == null && aSoapDocument != null)
-              {
-                // Determine SOAP version from the read document
-                eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (XMLHelper.getNamespaceURI (aSoapDocument));
-                if (eSoapVersion != null && LOGGER.isDebugEnabled ())
-                  LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from XML root element namespace URI");
-              }
-            }
-            else
-            {
-              // MIME Attachment (index is gt 0)
-              if (LOGGER.isDebugEnabled ())
-                LOGGER.debug ("Parsing MIME part #" + nIndex + " as attachment");
-
-              final WSS4JAttachment aAttachment = aIAF.createAttachment (aBodyPart, aResHelper);
-              aIncomingAttachments.add (aAttachment);
-            }
-          }
-          nIndex++;
-        }
-      }
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Read MIME message with " + aIncomingAttachments.size () + " attachment(s)");
-    }
-    else
-    {
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Received plain message");
-
-      // Expect plain SOAP - read whole request to DOM
-      // Note: this may require a huge amount of memory for large requests
-      // Note: This closes the outgoing dump stream, when InputStream is closed
-      aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
+        // Ensure the stream gets closed correctly
+        // This methods opens the stream for the incoming dump
+        // Note: This closes the incoming dump stream, when InputStream is
+        // closed
+        try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                             aPayloadIS,
                                                                                             aMessageMetadata,
                                                                                             aHttpHeaders,
-                                                                                            aDumpOSHolder));
+                                                                                            aDumpOSHolder))
+        {
+          // PARSING MIME Message via MultipartStream
+          final MultipartStream aMulti = new MultipartStream (aRequestIS,
+                                                              sBoundary.getBytes (StandardCharsets.ISO_8859_1),
+                                                              (MultipartProgressNotifier) null);
 
-      if (LOGGER.isDebugEnabled ())
+          int nIndex = 0;
+          while (true)
+          {
+            final boolean bHasNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
+            if (!bHasNextPart)
+              break;
+
+            if (LOGGER.isDebugEnabled ())
+              LOGGER.debug ("Found MIME part #" + nIndex);
+
+            try (final MultipartItemInputStream aBodyPartIS = aMulti.createInputStream ())
+            {
+              // Read headers AND content
+              final MimeBodyPart aBodyPart = new MimeBodyPart (aBodyPartIS);
+
+              if (nIndex == 0)
+              {
+                // First MIME part -> SOAP document
+                if (LOGGER.isDebugEnabled ())
+                  LOGGER.debug ("Parsing first MIME part as SOAP document");
+
+                // Read SOAP document
+                aSoapDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
+
+                IMimeType aPlainPartMT = MimeTypeParser.safeParseMimeType (aBodyPart.getContentType ());
+                if (aPlainPartMT != null)
+                  aPlainPartMT = aPlainPartMT.getCopyWithoutParameters ();
+
+                // Determine SOAP version from MIME part content type
+                eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainPartMT);
+                if (eSoapVersion != null && LOGGER.isDebugEnabled ())
+                  LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from Content-Type");
+
+                if (eSoapVersion == null && aSoapDocument != null)
+                {
+                  // Determine SOAP version from the read document
+                  eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (XMLHelper.getNamespaceURI (aSoapDocument));
+                  if (eSoapVersion != null && LOGGER.isDebugEnabled ())
+                    LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from XML root element namespace URI");
+                }
+              }
+              else
+              {
+                // MIME Attachment (index is gt 0)
+                if (LOGGER.isDebugEnabled ())
+                  LOGGER.debug ("Parsing MIME part #" + nIndex + " as attachment");
+
+                final WSS4JAttachment aAttachment = aIAF.createAttachment (aBodyPart, aResHelper);
+                aIncomingAttachments.add (aAttachment);
+              }
+            }
+            nIndex++;
+          }
+        }
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Read MIME message with " + aIncomingAttachments.size () + " attachment(s)");
+      }
+      else
       {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Received plain message");
+
+        // Expect plain SOAP - read whole request to DOM
+        // This methods opens the stream for the incoming dump
+        // Note: this may require a huge amount of memory for large requests
+        // Note: This closes the incoming dump stream, when InputStream is
+        // closed
+        aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
+                                                                                              aPayloadIS,
+                                                                                              aMessageMetadata,
+                                                                                              aHttpHeaders,
+                                                                                              aDumpOSHolder));
+
+        if (LOGGER.isDebugEnabled ())
+        {
+          if (aSoapDocument != null)
+            LOGGER.debug ("Successfully parsed payload as XML");
+          else
+            LOGGER.debug ("Failed to parse payload as XML");
+        }
+
         if (aSoapDocument != null)
-          LOGGER.debug ("Successfully parsed payload as XML");
-        else
-          LOGGER.debug ("Failed to parse payload as XML");
-      }
-
-      if (aSoapDocument != null)
-      {
-        // Determine SOAP version from the read document
-        final String sNamespaceURI = XMLHelper.getNamespaceURI (aSoapDocument);
-        eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (sNamespaceURI);
-        if (eSoapVersion != null)
         {
-          if (LOGGER.isDebugEnabled ())
-            LOGGER.debug ("Determined SOAP version " +
-                          eSoapVersion +
-                          " from XML root element namespace URI '" +
-                          sNamespaceURI +
-                          "'");
+          // Determine SOAP version from the read document
+          final String sNamespaceURI = XMLHelper.getNamespaceURI (aSoapDocument);
+          eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (sNamespaceURI);
+          if (eSoapVersion != null)
+          {
+            if (LOGGER.isDebugEnabled ())
+              LOGGER.debug ("Determined SOAP version " +
+                            eSoapVersion +
+                            " from XML root element namespace URI '" +
+                            sNamespaceURI +
+                            "'");
+          }
+          else
+            LOGGER.warn ("Failed to determine SOAP version from XML root element namespace URI '" +
+                         sNamespaceURI +
+                         "'");
         }
-        else
-          LOGGER.warn ("Failed to determine SOAP version from XML root element namespace URI '" + sNamespaceURI + "'");
-      }
 
-      if (eSoapVersion == null)
-      {
-        // Determine SOAP version from content type
-        eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainContentType);
-        if (eSoapVersion != null)
+        if (eSoapVersion == null)
         {
-          if (LOGGER.isDebugEnabled ())
-            LOGGER.debug ("Determined SOAP version " +
-                          eSoapVersion +
-                          " from Content-Type '" +
-                          aPlainContentType.getAsString () +
-                          "'");
+          // Determine SOAP version from content type
+          eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainContentType);
+          if (eSoapVersion != null)
+          {
+            if (LOGGER.isDebugEnabled ())
+              LOGGER.debug ("Determined SOAP version " +
+                            eSoapVersion +
+                            " from Content-Type '" +
+                            aPlainContentType.getAsString () +
+                            "'");
+          }
+          else
+            LOGGER.warn ("Failed to determine SOAP version from Content-Type '" +
+                         aPlainContentType.getAsString () +
+                         "'");
         }
-        else
-          LOGGER.warn ("Failed to determine SOAP version from Content-Type '" + aPlainContentType.getAsString () + "'");
       }
-    }
 
-    try
-    {
       if (aSoapDocument == null)
       {
         // We don't have a SOAP document
@@ -333,11 +342,12 @@ public final class AS4IncomingHandler
         throw new Phase4Exception ("Failed to determine SOAP version of XML document!");
       }
 
+      // Main processing
       aCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
     }
     finally
     {
-      // Here, the incoming dump is finally ready closed and usable
+      // Here, the incoming dump is finally written, closed and usable
       if (aRealIncomingDumper != null && aDumpOSHolder.isSet ())
         try
         {

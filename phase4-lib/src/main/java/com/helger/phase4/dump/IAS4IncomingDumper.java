@@ -34,15 +34,16 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 public interface IAS4IncomingDumper
 {
   /**
-   * Called for new requests. It's the responsibility of the caller to close the
-   * created output stream.
+   * Called for new incoming AS4 requests. It's the responsibility of the caller
+   * to close the created output stream.
    *
    * @param aMessageMetadata
    *        Message metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaderMap
    *        The HTTP headers of the request. Never <code>null</code>.
    * @return If <code>null</code> is returned, nothing is dumped, else each byte
-   *         read from the source stream is written to that output stream.
+   *         read from the source stream is written to that output stream. The
+   *         OutputStream must be closed by the caller.
    * @throws IOException
    *         in case of an error
    * @since v0.9.6 the parameter changed from HttpServletRequest to
@@ -53,9 +54,9 @@ public interface IAS4IncomingDumper
                              @Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
 
   /**
-   * Called after the request is finished. Can e.g. be used to cleanup resources
-   * belonging to the message. This method may not throw an exception. Since
-   * 1.3.0 this method is only called, if
+   * Called after the AS4 request is handled internally. Can e.g. be used to
+   * cleanup resources belonging to the message. This method may not throw an
+   * exception. Since 1.3.0 this method is only called, if
    * {@link #onNewRequest(IAS4IncomingMessageMetadata, HttpHeaderMap)} returned
    * non-<code>null</code>.
    *

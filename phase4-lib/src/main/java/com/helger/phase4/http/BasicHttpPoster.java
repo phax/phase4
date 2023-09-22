@@ -369,6 +369,7 @@ public class BasicHttpPoster implements IHttpPoster
         }
         throw new IllegalStateException ("Should never be reached (after maximum of " + nMaxTries + " tries)!");
       }
+
       // else non retry
       {
         final HttpEntity aDumpingEntity = createDumpingHttpEntity (aRealOutgoingDumper,
@@ -377,7 +378,6 @@ public class BasicHttpPoster implements IHttpPoster
                                                                    aCustomHttpHeaders,
                                                                    0,
                                                                    aDumpOSHolder);
-
         try
         {
           // Send without retry

@@ -127,15 +127,15 @@ public final class AS4DumpManager
     }
 
     // Dump worthy?
-    final OutputStream aOS = aIncomingDumper.onNewRequest (aMessageMetadata, aHttpHeaders);
-    if (aOS == null)
+    final OutputStream aDumpOS = aIncomingDumper.onNewRequest (aMessageMetadata, aHttpHeaders);
+    if (aDumpOS == null)
     {
       // No wrapping needed
       return aRequestInputStream;
     }
 
     // Remember where we dump to
-    aDumpOSHolder.set (aOS);
+    aDumpOSHolder.set (aDumpOS);
 
     // Read and write at once
     return new WrappedInputStream (aRequestInputStream)
@@ -148,7 +148,8 @@ public final class AS4DumpManager
         final int ret = super.read ();
         if (ret != -1)
         {
-          aOS.write (ret & 0xff);
+          // Dump byte
+          aDumpOS.write (ret & 0xff);
         }
         return ret;
       }
@@ -159,7 +160,8 @@ public final class AS4DumpManager
         final int ret = super.read (b, nOffset, nLength);
         if (ret != -1)
         {
-          aOS.write (b, nOffset, ret);
+          // Dump bytes
+          aDumpOS.write (b, nOffset, ret);
         }
         return ret;
       }
@@ -173,8 +175,8 @@ public final class AS4DumpManager
           try
           {
             // Flush and close output stream as well
-            StreamHelper.flush (aOS);
-            StreamHelper.close (aOS);
+            StreamHelper.flush (aDumpOS);
+            StreamHelper.close (aDumpOS);
             m_bClosed = true;
           }
           finally
