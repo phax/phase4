@@ -81,6 +81,8 @@ public final class Phase4BDEWSender
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_SIGN = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
     // Default per section 2.2.6.2.2
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT = ECryptoKeyIdentifierType.SKI_KEY_IDENTIFIER;
+    // Default per section 2.3.2
+    public static final String DEFAULT_AGREEMENT_REF = "https://www.bdew.de/as4/communication/agreement";
 
     private BDEWPayloadParams m_aPayloadParams;
 
@@ -111,6 +113,8 @@ public final class Phase4BDEWSender
 
         // Must be empty
         conversationID ("");
+
+        agreementRef (DEFAULT_AGREEMENT_REF);
       }
       catch (final Exception ex)
       {
