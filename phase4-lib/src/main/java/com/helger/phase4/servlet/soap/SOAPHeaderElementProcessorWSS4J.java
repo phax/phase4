@@ -87,13 +87,13 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
   private final IAS4CryptoFactory m_aCryptoFactorySign;
   private final IAS4CryptoFactory m_aCryptoFactoryCrypt;
-  private final Provider m_aSecurityProviderSign;
+  private final Provider m_aSecurityProviderSignVerify;
   private final Supplier <? extends IPMode> m_aFallbackPModeProvider;
   private final IAS4DecryptParameterModifier m_aDecryptParameterModifier;
 
   public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                           @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                          @Nullable final Provider aSecurityProviderSign,
+                                          @Nullable final Provider aSecurityProviderSignVerify,
                                           @Nonnull final Supplier <? extends IPMode> aFallbackPModeProvider,
                                           @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier)
   {
@@ -102,7 +102,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     ValueEnforcer.notNull (aFallbackPModeProvider, "FallbackPModeProvider");
     m_aCryptoFactorySign = aCryptoFactorySign;
     m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
-    m_aSecurityProviderSign = aSecurityProviderSign;
+    m_aSecurityProviderSignVerify = aSecurityProviderSignVerify;
     m_aFallbackPModeProvider = aFallbackPModeProvider;
     m_aDecryptParameterModifier = aDecryptParameterModifier;
   }
@@ -147,7 +147,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aRequestData.setSigVerCrypto (m_aCryptoFactorySign.getCrypto (ECryptoMode.DECRYPT_VERIFY));
       aRequestData.setDecCrypto (m_aCryptoFactoryCrypt.getCrypto (ECryptoMode.DECRYPT_VERIFY));
       aRequestData.setWssConfig (aWSSConfig);
-      aRequestData.setSignatureProvider (m_aSecurityProviderSign);
+      aRequestData.setSignatureProvider (m_aSecurityProviderSignVerify);
 
       // Enable CRL checking
       if (false)

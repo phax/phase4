@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.servlet.soap;
 
+import java.security.Provider;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -34,6 +35,7 @@ import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
 import com.helger.phase4.model.pmode.IPMode;
@@ -123,15 +125,16 @@ public class SOAPHeaderElementProcessorRegistry
                                                                                              aPModeConsumer));
 
     // WSS4J must be after Ebms3Messaging handler!
-    final Supplier <? extends IPMode> aFallbackPModeProvider = () -> aFallbackPMode;
     final AS4SigningParams aSigningParams = aIncomingSecurityConfiguration.getSigningParams ();
+    final Provider aSecurityProviderSignVerify = aSigningParams == null ? null : aSigningParams.getSecurityProvider ();
+    final Supplier <? extends IPMode> aFallbackPModeProvider = () -> aFallbackPMode;
+    final IAS4DecryptParameterModifier aDecryptParameterModifier = aIncomingSecurityConfiguration.getDecryptParameterModifier ();
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,
                                         new SOAPHeaderElementProcessorWSS4J (aCryptoFactorySign,
                                                                              aCryptoFactoryCrypt,
-                                                                             aSigningParams == null ? null
-                                                                                                    : aSigningParams.getSecurityProvider (),
+                                                                             aSecurityProviderSignVerify,
                                                                              aFallbackPModeProvider,
-                                                                             aIncomingSecurityConfiguration.getDecryptParameterModifier ()));
+                                                                             aDecryptParameterModifier));
     return ret;
   }
 }
