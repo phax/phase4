@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.crypto;
 
-import java.security.Provider;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -67,32 +65,6 @@ public interface IAS4IncomingSecurityConfiguration
   {
     final AS4CryptParams a = getCryptParams ();
     return a == null ? new AS4CryptParams () : a.getClone ();
-  }
-
-  /**
-   * @return The Java Security provider to be used for incoming messages. May be
-   *         <code>null</code> to indicate the usage of the default JDK security
-   *         provider.
-   */
-  @Nullable
-  @Deprecated (forRemoval = true, since = "2.3.0")
-  default Provider getSecurityProviderSign ()
-  {
-    final AS4SigningParams a = getSigningParams ();
-    return a == null ? null : a.getSecurityProvider ();
-  }
-
-  /**
-   * @return The Java Security provider to be used for incoming messages. May be
-   *         <code>null</code> to indicate the usage of the default JDK security
-   *         provider.
-   */
-  @Nullable
-  @Deprecated (forRemoval = true, since = "2.3.0")
-  default Provider getSecurityProviderCrypt ()
-  {
-    final AS4CryptParams a = getCryptParams ();
-    return a == null ? null : a.getSecurityProvider ();
   }
 
   /**

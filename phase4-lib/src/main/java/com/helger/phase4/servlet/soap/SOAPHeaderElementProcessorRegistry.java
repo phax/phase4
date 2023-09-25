@@ -126,7 +126,8 @@ public class SOAPHeaderElementProcessorRegistry
 
     // WSS4J must be after Ebms3Messaging handler!
     final AS4SigningParams aSigningParams = aIncomingSecurityConfiguration.getSigningParams ();
-    final Provider aSecurityProviderSignVerify = aSigningParams == null ? null : aSigningParams.getSecurityProvider ();
+    final Provider aSecurityProviderSignVerify = aSigningParams == null ? null : aSigningParams
+                                                                                               .getSecurityProviderVerify ();
     final Supplier <? extends IPMode> aFallbackPModeProvider = () -> aFallbackPMode;
     final IAS4DecryptParameterModifier aDecryptParameterModifier = aIncomingSecurityConfiguration.getDecryptParameterModifier ();
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,

@@ -47,7 +47,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   private ECryptoAlgorithmSign m_eAlgorithmSign;
   private ECryptoAlgorithmSignDigest m_eAlgorithmSignDigest;
   private ECryptoAlgorithmC14N m_eAlgorithmC14N = ECryptoAlgorithmC14N.C14N_ALGORITHM_DEFAULT;
-  private Provider m_aSecurityProvider;
+  private Provider m_aSecurityProviderSign;
+  private Provider m_aSecurityProviderVerify;
   private boolean m_bUseSingleCertificate = DEFAULT_USE_SINGLE_CERTIFICATE;
   private IWSSecSignatureCustomizer m_aWSSecSignatureCustomizer;
 
@@ -171,17 +172,59 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   }
 
   /**
-   * @return The security provider to be used. May be <code>null</code>.
-   * @since 2.1.3
+   * @return The security provider for signing (not for verification) to be
+   *         used. May be <code>null</code>.
+   * @since 2.4.0
    */
   @Nullable
-  public final Provider getSecurityProvider ()
+  public final Provider getSecurityProviderSign ()
   {
-    return m_aSecurityProvider;
+    return m_aSecurityProviderSign;
   }
 
   /**
-   * Set the security provider to be used for signing.
+   * Set the security provider to be used for signing (not for verification).
+   *
+   * @param aSecurityProviderSign
+   *        The security provider to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.4.0
+   */
+  @Nonnull
+  public final AS4SigningParams setSecurityProviderSign (@Nullable final Provider aSecurityProviderSign)
+  {
+    m_aSecurityProviderSign = aSecurityProviderSign;
+    return this;
+  }
+
+  /**
+   * @return The security provider for verification (not for signing) to be
+   *         used. May be <code>null</code>.
+   * @since 2.4.0
+   */
+  @Nullable
+  public final Provider getSecurityProviderVerify ()
+  {
+    return m_aSecurityProviderVerify;
+  }
+
+  /**
+   * Set the security provider to be used for verification (not for signing).
+   *
+   * @param aSecurityProviderVerify
+   *        The security provider to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.4.0
+   */
+  @Nonnull
+  public final AS4SigningParams setSecurityProviderVerify (@Nullable final Provider aSecurityProviderVerify)
+  {
+    m_aSecurityProviderVerify = aSecurityProviderVerify;
+    return this;
+  }
+
+  /**
+   * Set the security provider to be used for signing and verification.
    *
    * @param aSecurityProvider
    *        The security provider to be used. May be <code>null</code>.
@@ -191,8 +234,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   @Nonnull
   public final AS4SigningParams setSecurityProvider (@Nullable final Provider aSecurityProvider)
   {
-    m_aSecurityProvider = aSecurityProvider;
-    return this;
+    return setSecurityProviderSign (aSecurityProvider).setSecurityProviderVerify (aSecurityProvider);
   }
 
   /**
@@ -275,7 +317,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
            .setAlgorithmSign (m_eAlgorithmSign)
            .setAlgorithmSignDigest (m_eAlgorithmSignDigest)
            .setAlgorithmC14N (m_eAlgorithmC14N)
-           .setSecurityProvider (m_aSecurityProvider)
+           .setSecurityProviderSign (m_aSecurityProviderSign)
+           .setSecurityProviderVerify (m_aSecurityProviderVerify)
            .setUseSingleCertificate (m_bUseSingleCertificate)
            .setWSSecSignatureCustomizer (m_aWSSecSignatureCustomizer);
   }
@@ -296,7 +339,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
                                        .append ("AlgorithmSign", m_eAlgorithmSign)
                                        .append ("AlgorithmSignDigest", m_eAlgorithmSignDigest)
                                        .append ("AlgorithmC14N", m_eAlgorithmC14N)
-                                       .append ("SecurityProvider", m_aSecurityProvider)
+                                       .append ("SecurityProviderSign", m_aSecurityProviderSign)
+                                       .append ("SecurityProviderVerify", m_aSecurityProviderVerify)
                                        .append ("UseSingleCertificate", m_bUseSingleCertificate)
                                        .append ("WSSecSignatureCustomizer", m_aWSSecSignatureCustomizer)
                                        .getToString ();
