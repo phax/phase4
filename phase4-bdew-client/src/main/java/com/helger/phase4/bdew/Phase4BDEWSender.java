@@ -28,6 +28,7 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import com.helger.phase4.profile.bdew.BDEWPMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +83,7 @@ public final class Phase4BDEWSender
     // Default per section 2.2.6.2.2
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT = ECryptoKeyIdentifierType.SKI_KEY_IDENTIFIER;
     // Default per section 2.3.2
-    public static final String DEFAULT_AGREEMENT_REF = "https://www.bdew.de/as4/communication/agreement";
+    public static final String DEFAULT_AGREEMENT_REF = BDEWPMode.DEFAULT_AGREEMENT_ID;
 
     private BDEWPayloadParams m_aPayloadParams;
 
