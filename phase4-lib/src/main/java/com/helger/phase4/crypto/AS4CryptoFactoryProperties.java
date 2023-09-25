@@ -115,11 +115,9 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
   /**
    * Lazily create a {@link Crypto} instance using the properties from
    * {@link #cryptoProperties()}.
-   *
-   * @return A {@link Crypto} instance and never <code>null</code>.
    */
   @Nonnull
-  public final Crypto getCrypto ()
+  public final Crypto getCrypto (@Nonnull final ECryptoMode eCryptoMode)
   {
     Crypto ret = m_aCrypto;
     if (ret == null)

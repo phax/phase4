@@ -60,6 +60,7 @@ import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
@@ -143,8 +144,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aRequestData.setCallbackHandler (aKeyStoreCallback);
       if (aAttachments.isNotEmpty ())
         aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
-      aRequestData.setSigVerCrypto (m_aCryptoFactorySign.getCrypto ());
-      aRequestData.setDecCrypto (m_aCryptoFactoryCrypt.getCrypto ());
+      aRequestData.setSigVerCrypto (m_aCryptoFactorySign.getCrypto (ECryptoMode.DECRYPT_VERIFY));
+      aRequestData.setDecCrypto (m_aCryptoFactoryCrypt.getCrypto (ECryptoMode.DECRYPT_VERIFY));
       aRequestData.setWssConfig (aWSSConfig);
       aRequestData.setSignatureProvider (m_aSecurityProviderSign);
 

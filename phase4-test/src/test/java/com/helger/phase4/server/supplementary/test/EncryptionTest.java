@@ -39,6 +39,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
+import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.WSSConfigManager;
@@ -104,7 +105,7 @@ public final class EncryptionTest
     final SecretKey aSymmetricKey = aKeyGen.generateKey ();
 
     LOGGER.info ("Before Encryption AES 128/RSA-15....");
-    final Document encryptedDoc = aBuilder.build (aCryptoFactory.getCrypto (), aSymmetricKey);
+    final Document encryptedDoc = aBuilder.build (aCryptoFactory.getCrypto (ECryptoMode.ENCRYPT_SIGN), aSymmetricKey);
     LOGGER.info ("After Encryption AES 128/RSA-15....");
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
 
@@ -130,7 +131,7 @@ public final class EncryptionTest
     final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_128);
     final SecretKey aSymmetricKey = aKeyGen.generateKey ();
 
-    final Document encryptedDoc = builder.build (aCryptoFactory.getCrypto (), aSymmetricKey);
+    final Document encryptedDoc = builder.build (aCryptoFactory.getCrypto (ECryptoMode.ENCRYPT_SIGN), aSymmetricKey);
 
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
     // System.out.println (outputString);

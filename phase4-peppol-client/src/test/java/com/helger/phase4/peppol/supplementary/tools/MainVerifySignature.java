@@ -43,6 +43,7 @@ import com.helger.commons.state.ESuccess;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
 import com.helger.phase4.servlet.soap.AS4KeyStoreCallbackHandler;
@@ -89,8 +90,8 @@ public class MainVerifySignature
       aRequestData.setCallbackHandler (aKeyStoreCallback);
       if (aAttachments.isNotEmpty ())
         aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
-      aRequestData.setSigVerCrypto (aCryptoFactory.getCrypto ());
-      aRequestData.setDecCrypto (aCryptoFactory.getCrypto ());
+      aRequestData.setSigVerCrypto (aCryptoFactory.getCrypto (ECryptoMode.DECRYPT_VERIFY));
+      aRequestData.setDecCrypto (aCryptoFactory.getCrypto (ECryptoMode.DECRYPT_VERIFY));
       aRequestData.setWssConfig (aWSSConfig);
 
       // Upon success, the SOAP document contains the decrypted content

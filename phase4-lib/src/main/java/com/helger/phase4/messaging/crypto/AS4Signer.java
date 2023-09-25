@@ -38,6 +38,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4SigningParams;
+import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.soap.ESoapVersion;
@@ -147,7 +148,7 @@ public final class AS4Signer
         LOGGER.debug ("After running WSSecSignatureCustomizer.customize");
     }
 
-    return aBuilder.build (aCryptoFactorySign.getCrypto ());
+    return aBuilder.build (aCryptoFactorySign.getCrypto (ECryptoMode.ENCRYPT_SIGN));
   }
 
   /**

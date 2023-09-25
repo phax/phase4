@@ -41,6 +41,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
+import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
@@ -150,7 +151,7 @@ public final class AS4Encryptor
       throw new IllegalStateException ("Failed to create a symmetric session key from " +
                                        aCryptParams.getSessionKeyProvider ());
 
-    return aBuilder.build (aCryptoFactoryCrypt.getCrypto (), aSymmetricKey);
+    return aBuilder.build (aCryptoFactoryCrypt.getCrypto (ECryptoMode.ENCRYPT_SIGN), aSymmetricKey);
   }
 
   /**
@@ -251,7 +252,8 @@ public final class AS4Encryptor
                                        aCryptParams.getSessionKeyProvider ());
 
     // Main sign and/or encrypt
-    final Document aEncryptedDoc = aBuilder.build (aCryptoFactoryCrypt.getCrypto (), aSymmetricKey);
+    final Document aEncryptedDoc = aBuilder.build (aCryptoFactoryCrypt.getCrypto (ECryptoMode.ENCRYPT_SIGN),
+                                                   aSymmetricKey);
 
     // The attachment callback handler contains the encrypted attachments
     // Important: read the attachment stream only once!

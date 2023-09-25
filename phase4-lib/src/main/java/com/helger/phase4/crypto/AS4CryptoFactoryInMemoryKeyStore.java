@@ -81,11 +81,9 @@ public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
   /**
    * Lazily create a {@link Crypto} instance using the key store and trust store
    * from the constructor.
-   *
-   * @return A {@link Crypto} instance and never <code>null</code>.
    */
   @Nonnull
-  public final Crypto getCrypto ()
+  public final Crypto getCrypto (@Nonnull final ECryptoMode eCryptoMode)
   {
     Merlin ret = m_aCrypto;
     if (ret == null)
@@ -111,8 +109,10 @@ public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
     KeyStore.PrivateKeyEntry ret = m_aPK;
     if (ret == null)
     {
-      ret = m_aPK = KeyStoreHelper.loadPrivateKey (m_aKeyStore, "in-memory KeyStore", m_sKeyAlias, m_sKeyPassword.toCharArray ())
-                                  .getKeyEntry ();
+      ret = m_aPK = KeyStoreHelper.loadPrivateKey (m_aKeyStore,
+                                                   "in-memory KeyStore",
+                                                   m_sKeyAlias,
+                                                   m_sKeyPassword.toCharArray ()).getKeyEntry ();
     }
     return ret;
   }

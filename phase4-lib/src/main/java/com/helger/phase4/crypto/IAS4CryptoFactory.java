@@ -36,10 +36,12 @@ import org.apache.wss4j.common.crypto.Crypto;
 public interface IAS4CryptoFactory
 {
   /**
+   * @param eCryptoMode
+   *        The crypto mode to use. Never <code>null</code>.
    * @return A WSS4J {@link Crypto} instance and never <code>null</code>.
    */
   @Nonnull
-  Crypto getCrypto ();
+  Crypto getCrypto (@Nonnull ECryptoMode eCryptoMode);
 
   /**
    * @return The underlying key store, or <code>null</code> if none is available

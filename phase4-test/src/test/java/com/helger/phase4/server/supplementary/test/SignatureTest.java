@@ -38,6 +38,7 @@ import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
+import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.scope.mock.ScopeTestRule;
@@ -89,7 +90,7 @@ public final class SignatureTest
     aBuilder.setSignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithmen as Hash Function
     aBuilder.setDigestAlgo (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getAlgorithmURI ());
-    final Document signedDoc = aBuilder.build (aCryptoFactory.getCrypto ());
+    final Document signedDoc = aBuilder.build (aCryptoFactory.getCrypto (ECryptoMode.ENCRYPT_SIGN));
 
     // final String outputString = XMLUtils.prettyDocumentToString (signedDoc);
 
@@ -98,7 +99,7 @@ public final class SignatureTest
     final WSHandlerResult aResults = aSecEngine.processSecurityHeader (signedDoc,
                                                                        null,
                                                                        null,
-                                                                       aCryptoFactory.getCrypto ());
+                                                                       aCryptoFactory.getCrypto (ECryptoMode.ENCRYPT_SIGN));
 
     final WSSecurityEngineResult actionResult = aResults.getActionResults ()
                                                         .get (Integer.valueOf (WSConstants.SIGN))
