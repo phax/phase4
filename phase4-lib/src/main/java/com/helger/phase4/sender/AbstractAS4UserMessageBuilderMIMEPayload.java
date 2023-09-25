@@ -154,7 +154,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
 
       // Add main attachment
       {
-        final WSS4JAttachment aMainAttachment = WSS4JAttachment.createOutgoingFileAttachment (m_aPayload, aResHelper);
+        final WSS4JAttachment aMainAttachment = createMainAttachment (m_aPayload, aResHelper);
         if (aMainAttachment != null)
           aUserMsg.addAttachment (aMainAttachment);
       }
