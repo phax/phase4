@@ -75,7 +75,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   private String m_sAlias;
   // The session key provider
   private ICryptoSessionKeyProvider m_aSessionKeyProvider = DEFAULT_SESSION_KEY_PROVIDER;
-  private Provider m_aSecurityProvider;
+  private Provider m_aSecurityProviderEncrypt;
+  private Provider m_aSecurityProviderDecrypt;
   private boolean m_bEncryptSymmetricSessionKey = DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY;
   private IWSSecEncryptCustomizer m_aWSSecEncryptCustomizer;
 
@@ -319,13 +320,63 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * @return The security provider to be used. May be <code>null</code>.
-   * @since 2.1.4
+   * Note: this is currently not used by WSS4J
+   *
+   * @return The security provider to be used for encryption (not for
+   *         decryption). May be <code>null</code>.
+   * @since 2.4.0
    */
   @Nullable
-  public final Provider getSecurityProvider ()
+  public final Provider getSecurityProviderEncrypt ()
   {
-    return m_aSecurityProvider;
+    return m_aSecurityProviderEncrypt;
+  }
+
+  /**
+   * Set the security provider to be used for encryption (not for
+   * decryption).<br>
+   * Note: this is currently not used by WSS4J
+   *
+   * @param aSecurityProviderEncrypt
+   *        The security provider to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.4.0
+   */
+  @Nonnull
+  public final AS4CryptParams setSecurityProviderEncrypt (@Nullable final Provider aSecurityProviderEncrypt)
+  {
+    m_aSecurityProviderEncrypt = aSecurityProviderEncrypt;
+    return this;
+  }
+
+  /**
+   * Note: this is currently not used by WSS4J
+   *
+   * @return The security provider to be used for decryption (not for
+   *         encryption). May be <code>null</code>.
+   * @since 2.4.0
+   */
+  @Nullable
+  public final Provider getSecurityProviderDecrypt ()
+  {
+    return m_aSecurityProviderDecrypt;
+  }
+
+  /**
+   * Set the security provider to be used for decryption (not for
+   * encryption).<br>
+   * Note: this is currently not used by WSS4J
+   *
+   * @param aSecurityProviderDecrypt
+   *        The security provider to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.4.0
+   */
+  @Nonnull
+  public final AS4CryptParams setSecurityProviderDecrypt (@Nullable final Provider aSecurityProviderDecrypt)
+  {
+    m_aSecurityProviderDecrypt = aSecurityProviderDecrypt;
+    return this;
   }
 
   /**
@@ -339,8 +390,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   @Nonnull
   public final AS4CryptParams setSecurityProvider (@Nullable final Provider aSecurityProvider)
   {
-    m_aSecurityProvider = aSecurityProvider;
-    return this;
+    return setSecurityProviderEncrypt (aSecurityProvider).setSecurityProviderDecrypt (aSecurityProvider);
   }
 
   /**
@@ -423,7 +473,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
            .setCertificate (m_aCert)
            .setAlias (m_sAlias)
            .setSessionKeyProvider (m_aSessionKeyProvider)
-           .setSecurityProvider (m_aSecurityProvider)
+           .setSecurityProviderEncrypt (m_aSecurityProviderEncrypt)
+           .setSecurityProviderDecrypt (m_aSecurityProviderDecrypt)
            .setEncryptSymmetricSessionKey (m_bEncryptSymmetricSessionKey)
            .setWSSecEncryptCustomizer (m_aWSSecEncryptCustomizer);
   }
@@ -448,7 +499,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
                                        .append ("Certificate", m_aCert)
                                        .append ("Alias", m_sAlias)
                                        .append ("SessionKeyProvider", m_aSessionKeyProvider)
-                                       .append ("SecurityProvider", m_aSecurityProvider)
+                                       .append ("SecurityProviderEncrypt", m_aSecurityProviderEncrypt)
+                                       .append ("SecurityProviderDecrypt", m_aSecurityProviderDecrypt)
                                        .append ("EncryptSymmetricSessionKey", m_bEncryptSymmetricSessionKey)
                                        .append ("WSSecEncryptCustomizer", m_aWSSecEncryptCustomizer)
                                        .getToString ();
