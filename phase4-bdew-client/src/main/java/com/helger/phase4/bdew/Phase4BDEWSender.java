@@ -28,7 +28,6 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import com.helger.phase4.profile.bdew.BDEWPMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +37,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
+import com.helger.phase4.profile.bdew.BDEWPMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -82,8 +82,6 @@ public final class Phase4BDEWSender
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_SIGN = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
     // Default per section 2.2.6.2.2
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT = ECryptoKeyIdentifierType.SKI_KEY_IDENTIFIER;
-    // Default per section 2.3.2
-    public static final String DEFAULT_AGREEMENT_REF = BDEWPMode.DEFAULT_AGREEMENT_ID;
 
     private BDEWPayloadParams m_aPayloadParams;
 
@@ -115,7 +113,7 @@ public final class Phase4BDEWSender
         // Must be empty
         conversationID ("");
 
-        agreementRef (DEFAULT_AGREEMENT_REF);
+        agreementRef (BDEWPMode.DEFAULT_AGREEMENT_ID);
       }
       catch (final Exception ex)
       {

@@ -53,6 +53,7 @@ import com.helger.phase4.wss.EWSSVersion;
 @Immutable
 public final class BDEWPMode
 {
+  // Default per section 2.3.2
   public static final String DEFAULT_AGREEMENT_ID = "https://www.bdew.de/as4/communication/agreement";
 
   public static final String BDEW_PARTY_ID_TYPE_GLN = "urn:oasis:names:tc:ebcore:partyid-type:iso6523:0088";
