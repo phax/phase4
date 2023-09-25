@@ -335,10 +335,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
-        else
-        {
-          _notifyPModeResolved (aPMode);
-        }
+
+        _notifyPModeResolved (aPMode);
       }
 
       // to use the configuration for leg2
