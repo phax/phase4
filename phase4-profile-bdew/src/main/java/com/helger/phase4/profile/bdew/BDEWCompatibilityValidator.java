@@ -101,7 +101,8 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       else
       {
         // Empty address protocol
-        aErrorList.add (_createError (sFieldPrefix + "AddressProtocol is missing"));
+        if (false)
+          aErrorList.add (_createError (sFieldPrefix + "AddressProtocol is missing"));
       }
 
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
