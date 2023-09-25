@@ -18,6 +18,7 @@ package com.helger.phase4.sender;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
@@ -104,8 +105,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   }
 
   /**
-   * Create the main attachment. This is mainly intended for ENTSOG to add some
-   * custom properties.
+   * Create the main attachment. This is mainly intended for ENTSOG/BDEW to add
+   * some custom properties.
    *
    * @param aPayload
    *        The outgoing main attachment as provided to the builder. Never
@@ -116,11 +117,38 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
    * @return May be <code>null</code> to indicate not to use the main payload
    * @throws IOException
    *         in case of error
+   * @since 2.2.2
    */
   @Nullable
   @OverrideOnDemand
   protected WSS4JAttachment createMainAttachment (@Nonnull final AS4OutgoingAttachment aPayload,
                                                   @Nonnull final AS4ResourceHelper aResHelper) throws IOException
+  {
+    return WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);
+  }
+
+  /**
+   * Create another attachment that is not "main". This is mainly intended for
+   * ENTSOG to add some custom properties.
+   *
+   * @param aPayload
+   *        The outgoing main attachment as provided to the builder. Never
+   *        <code>null</code>.s
+   * @param aResHelper
+   *        The resource helper to use for temporary files etc. Never
+   *        <code>null</code>.
+   * @param nAttachmentIndex
+   *        0-based attachment index. Always &ge; 0.
+   * @return May be <code>null</code> to indicate not to use the payload
+   * @throws IOException
+   *         in case of error
+   * @since 2.4.0
+   */
+  @Nullable
+  @OverrideOnDemand
+  protected WSS4JAttachment createOtherAttachment (@Nonnull final AS4OutgoingAttachment aPayload,
+                                                   @Nonnull final AS4ResourceHelper aResHelper,
+                                                   @Nonnegative final int nAttachmentIndex) throws IOException
   {
     return WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);
   }
@@ -160,8 +188,16 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
       }
 
       // Add other attachments
-      for (final AS4OutgoingAttachment aAttachment : m_aAttachments)
-        aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment, aResHelper));
+      {
+        int nIndex = 0;
+        for (final AS4OutgoingAttachment aAttachment : m_aAttachments)
+        {
+          final WSS4JAttachment aOtherAttachment = createOtherAttachment (aAttachment, aResHelper, nIndex);
+          if (aOtherAttachment != null)
+            aUserMsg.addAttachment (aOtherAttachment);
+          nIndex++;
+        }
+      }
 
       // Create on demand with all necessary parameters
       final AS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSigningParams (m_aSigningParams.getClone ())
