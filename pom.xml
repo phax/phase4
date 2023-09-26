@@ -82,7 +82,7 @@
     <ph-schematron.version>7.1.2</ph-schematron.version>
     <phive.version>9.0.0</phive.version>
     <phive-rules.version>3.1.1</phive-rules.version>
-    <spring-boot.version>3.1.3</spring-boot.version>
+    <spring-boot.version>3.1.4</spring-boot.version>
   </properties>
   
   <dependencyManagement>
