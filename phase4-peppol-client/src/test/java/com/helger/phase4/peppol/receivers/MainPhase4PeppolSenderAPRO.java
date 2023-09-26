@@ -54,6 +54,7 @@ public final class MainPhase4PeppolSenderAPRO
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
+      // 0106:32070687
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0106:24286995");
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
