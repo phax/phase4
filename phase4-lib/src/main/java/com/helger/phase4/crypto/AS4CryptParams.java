@@ -446,6 +446,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @param aSecurity
    *        The PMode security stuff to use. May be <code>null</code>.
    * @return this for chaining
+   * @see #setAlgorithmCrypt(ECryptoAlgorithmCrypt)
    */
   @Nonnull
   public final AS4CryptParams setFromPMode (@Nullable final PModeLegSecurity aSecurity)
