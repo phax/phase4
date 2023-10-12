@@ -32,10 +32,10 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.servlet.IAS4MessageState;
+import com.helger.phase4.v3.ChangeV3;
 
 /**
- * Implement this SPI interface to handle incoming messages appropriate.<br>
- * TODO Major release: remove Serializable
+ * Implement this SPI interface to handle incoming messages appropriate.
  *
  * @author Philip Helger
  */
@@ -140,6 +140,7 @@ public interface IAS4ServletMessageProcessorSPI
    *        in the originally returned message.
    * @since v0.9.8
    */
+  @ChangeV3 ("Remove default")
   default void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                           @Nonnull final IAS4MessageState aState,
                                           @Nonnull @Nonempty final String sResponseMessageID,

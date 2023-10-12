@@ -90,8 +90,7 @@ public class CustomPeppolIncomingSBDHandlerServiceImpl implements ISBDHandlerSer
 
   public void handle () throws Exception
   {
-    // TODO
-    // Very complex logic that leads to persisting the document in a database.
+    // TODO Add your logic that leads to persisting the document in a database.
     LOGGER.error ("The main 'handle' method needs to be implemented with something reasonable");
   }
 }

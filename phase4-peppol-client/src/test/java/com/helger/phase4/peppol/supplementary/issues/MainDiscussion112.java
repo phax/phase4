@@ -32,43 +32,43 @@ public class MainDiscussion112
   {
     public boolean isEmpty ()
     {
-      // TODO
+      // placeholder
       return false;
     }
 
     public int size ()
     {
-      // TODO
+      // placeholder
       return 0;
     }
 
     public IAS4DuplicateItem getItemOfMessageID (final String sMessageID)
     {
-      // TODO
+      // placeholder
       return null;
     }
 
     public ICommonsList <IAS4DuplicateItem> getAll ()
     {
-      // TODO
+      // placeholder
       return null;
     }
 
     public EContinue registerAndCheck (final String sMessageID, final String sProfileID, final String sPModeID)
     {
-      // TODO
+      // placeholder
       return null;
     }
 
     public EChange clearCache ()
     {
-      // TODO
+      // placeholder
       return null;
     }
 
     public ICommonsList <String> evictAllItemsBefore (final OffsetDateTime aRefDT)
     {
-      // TODO
+      // placeholder
       return null;
     }
   }
@@ -78,6 +78,7 @@ public class MainDiscussion112
     @Override
     public IAS4DuplicateManager createDuplicateManager ()
     {
+      // Create your duplicate manager
       return new MyDuplicateManager ();
     }
   }
@@ -85,6 +86,6 @@ public class MainDiscussion112
   public static void main (final String [] args)
   {
     MetaAS4Manager.setFactory (new MyManagerFactory ());
-    // TODO rest of the code
+    // add the rest of the code here
   }
 }

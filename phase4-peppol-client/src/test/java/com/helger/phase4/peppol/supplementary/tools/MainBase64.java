@@ -25,7 +25,7 @@ public final class MainBase64
 {
   public static void main (final String [] args)
   {
-    // TODO fix path
+    // adopt path to your needs
     final File f = new File ("src/test/resources/test-ap.p12");
     final byte [] b = SimpleFileIO.getAllFileBytes (f);
     SimpleFileIO.writeFile (new File (f.getAbsolutePath () + ".b64"), Base64.safeEncodeBytesToBytes (b));

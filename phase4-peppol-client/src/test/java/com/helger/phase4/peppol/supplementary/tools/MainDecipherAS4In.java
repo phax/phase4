@@ -40,7 +40,7 @@ public final class MainDecipherAS4In
   public static void main (final String [] args) throws Exception
   {
     // The file to decipher. Should be MIME based message.
-    // TODO fix path
+    // adopt path to your needs
     final File aFile = new File ("src/test/resources/external/incoming/165445-9-8a813f8d-3dda-4ef9-868e-f6d829972d4e.as4in");
     if (!aFile.exists ())
       throw new IllegalStateException ("The file " + aFile.getAbsolutePath () + " does not exist");
