@@ -45,13 +45,13 @@ public final class AS4BDEWProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> BDEWPMode.createBDEWPMode (i,
-                                                                                                   BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW,
-                                                                                                   r,
-                                                                                                   BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW,
-                                                                                                   a,
-                                                                                                   PMODE_ID_PROVIDER,
-                                                                                                   true);
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> BDEWPMode.createBDEWPMode(i,
+                                                                                                getType(i),
+                                                                                                r,
+                                                                                                getType(r),
+                                                                                                a,
+                                                                                                PMODE_ID_PROVIDER,
+                                                                                                true);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
@@ -64,4 +64,18 @@ public final class AS4BDEWProfileRegistarSPI implements IAS4ProfileRegistrarSPI
     aRegistrar.registerProfile (aProfile);
     aRegistrar.setDefaultProfile (aProfile);
   }
+
+  private static String getType(String id)
+  {
+      String type;
+      if (id.startsWith("99")) {
+          type = BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW;
+      } else if (id.startsWith("98")) {
+          type = BDEWPMode.BDEW_PARTY_ID_TYPE_DVGW;
+      } else {
+          type = BDEWPMode.BDEW_PARTY_ID_TYPE_GLN;
+      }
+      return type;
+  }
+
 }
