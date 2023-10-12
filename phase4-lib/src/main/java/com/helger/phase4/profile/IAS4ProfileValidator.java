@@ -22,11 +22,13 @@ import com.helger.commons.error.list.ErrorList;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.v3.ChangeV3;
 
 /**
- * Generic profile validator
+ * Generic AS4 profile validator
  *
  * @author bayerlma
+ * @author Philip Helger
  */
 public interface IAS4ProfileValidator
 {
@@ -38,6 +40,7 @@ public interface IAS4ProfileValidator
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
    */
+  @ChangeV3 ("add parameter if for UserMessage or SignalMessage")
   default void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {}
 

@@ -312,8 +312,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
        * </pre>
        */
 
-      // TODO we need a way to distinct
-      // signature and decrypt WSSecurityException provides no such thing
+      // TODO we need a way to differentiate signature and decrypt
+      // WSSecurityException provides no such thing
       aErrorList.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsError (aLocale));
       aState.setSoapWSS4JException (ex);
       return ESuccess.FAILURE;
