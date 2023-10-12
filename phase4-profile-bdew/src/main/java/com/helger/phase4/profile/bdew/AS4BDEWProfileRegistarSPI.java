@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
@@ -43,15 +44,26 @@ public final class AS4BDEWProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4BDEWProfileRegistarSPI.class);
 
+  @Nonnull
+  @Nonempty
+  private static String _getTypeFromID (@Nonnull @Nonempty final String sID)
+  {
+    if (sID.startsWith ("99"))
+      return BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW;
+    if (sID.startsWith ("98"))
+      return BDEWPMode.BDEW_PARTY_ID_TYPE_DVGW;
+    return BDEWPMode.BDEW_PARTY_ID_TYPE_GLN;
+  }
+
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> BDEWPMode.createBDEWPMode(i,
-                                                                                                getType(i),
-                                                                                                r,
-                                                                                                getType(r),
-                                                                                                a,
-                                                                                                PMODE_ID_PROVIDER,
-                                                                                                true);
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> BDEWPMode.createBDEWPMode (i,
+                                                                                                   _getTypeFromID (i),
+                                                                                                   r,
+                                                                                                   _getTypeFromID (r),
+                                                                                                   a,
+                                                                                                   PMODE_ID_PROVIDER,
+                                                                                                   true);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
@@ -63,19 +75,6 @@ public final class AS4BDEWProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                 false);
     aRegistrar.registerProfile (aProfile);
     aRegistrar.setDefaultProfile (aProfile);
-  }
-
-  private static String getType(String id)
-  {
-      String type;
-      if (id.startsWith("99")) {
-          type = BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW;
-      } else if (id.startsWith("98")) {
-          type = BDEWPMode.BDEW_PARTY_ID_TYPE_DVGW;
-      } else {
-          type = BDEWPMode.BDEW_PARTY_ID_TYPE_GLN;
-      }
-      return type;
   }
 
 }
