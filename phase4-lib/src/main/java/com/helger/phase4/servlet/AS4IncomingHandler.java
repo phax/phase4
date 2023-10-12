@@ -612,6 +612,7 @@ public final class AS4IncomingHandler
       // Every message can only contain 1 User message or 1 pull message
       // aUserMessage can be null on incoming Pull-Message!
       final Ebms3UserMessage aEbmsUserMessage = aState.getEbmsUserMessage ();
+      final Ebms3SignalMessage aEbmsSignalMessage = aState.getEbmsSignalMessage ();
       final Ebms3Error aEbmsError = aState.getEbmsError ();
       final Ebms3PullRequest aEbmsPullRequest = aState.getEbmsPullRequest ();
       final Ebms3Receipt aEbmsReceipt = aState.getEbmsReceipt ();
@@ -649,53 +650,61 @@ public final class AS4IncomingHandler
       final IPMode aPMode = aState.getPMode ();
       final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
 
+      final IAS4Profile aProfile;
+      final IAS4ProfileValidator aValidator;
+      // Only do profile checks if a profile is set
+      if (StringHelper.hasText (sProfileID))
+      {
+        // Resolve profile ID
+        aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
+        if (aProfile == null)
+          throw new IllegalStateException ("The configured AS4 profile '" + sProfileID + "' does not exist.");
+
+        // Profile Checks gets set when started with Server
+        aValidator = aProfile.getValidator ();
+      }
+      else
+      {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("AS4 state contains no AS4 profile ID - therefore no consistency checks are performed");
+
+        aProfile = null;
+        aValidator = null;
+      }
+
       if (aEbmsUserMessage != null)
       {
         // User message requires PMode
         if (aPMode == null)
-          throw new Phase4Exception ("No AS4 P-Mode configuration found for user-message!");
+          throw new Phase4Exception ("No AS4 P-Mode configuration found for UserMessage!");
 
         // Only check leg if the message is a usermessage
         if (aEffectiveLeg == null)
           throw new Phase4Exception ("No AS4 P-Mode leg could be determined!");
 
         // Only do profile checks if a profile is set
-        if (StringHelper.hasText (sProfileID))
+        // Profile Checks gets set when started with Server
+        if (aValidator != null)
         {
-          // Resolve profile ID
-          final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
-          if (aProfile == null)
-            throw new IllegalStateException ("The configured AS4 profile '" + sProfileID + "' does not exist.");
-
-          // Profile Checks gets set when started with Server
-          final IAS4ProfileValidator aValidator = aProfile.getValidator ();
-          if (aValidator != null)
+          if (aAS4ProfileSelector.validateAgainstProfile ())
           {
-            if (aAS4ProfileSelector.validateAgainstProfile ())
+            final ErrorList aErrorList = new ErrorList ();
+            aValidator.validatePMode (aPMode, aErrorList);
+            aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
+            if (aErrorList.isNotEmpty ())
             {
-              final ErrorList aErrorList = new ErrorList ();
-              aValidator.validatePMode (aPMode, aErrorList);
-              aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
-              if (aErrorList.isNotEmpty ())
-              {
-                throw new Phase4Exception ("Error validating incoming AS4 message with the profile " +
-                                           aProfile.getDisplayName () +
-                                           "\n following errors are present: " +
-                                           aErrorList.getAllErrors ().getAllTexts (aLocale));
-              }
-            }
-            else
-            {
-              LOGGER.warn ("The AS4 profile '" +
-                           sProfileID +
-                           "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
+              throw new Phase4Exception ("Error validating incoming AS4 UserMessage with the profile " +
+                                         aProfile.getDisplayName () +
+                                         "\n following errors are present: " +
+                                         aErrorList.getAllErrors ().getAllTexts (aLocale));
             }
           }
-        }
-        else
-        {
-          if (LOGGER.isDebugEnabled ())
-            LOGGER.debug ("AS4 state contains no AS4 profile ID - therefore no consistency checks are performed");
+          else
+          {
+            LOGGER.warn ("The AS4 profile '" +
+                         sProfileID +
+                         "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
+          }
         }
 
         // Ensure the decrypted attachments are used
@@ -711,8 +720,33 @@ public final class AS4IncomingHandler
         // Signal message
 
         // Pull-request also requires PMode
-        if (aEbmsPullRequest != null && aPMode == null)
-          throw new Phase4Exception ("No AS4 P-Mode configuration found for pull-request!");
+        if (aEbmsPullRequest != null)
+          if (aPMode == null)
+            throw new Phase4Exception ("No AS4 P-Mode configuration found for PullRequest!");
+
+        if (aValidator != null)
+        {
+          if (aAS4ProfileSelector.validateAgainstProfile ())
+          {
+            final ErrorList aErrorList = new ErrorList ();
+            if (aPMode != null)
+              aValidator.validatePMode (aPMode, aErrorList);
+            aValidator.validateSignalMessage (aEbmsSignalMessage, aErrorList);
+            if (aErrorList.isNotEmpty ())
+            {
+              throw new Phase4Exception ("Error validating incoming AS4 SignalMessage with the profile " +
+                                         aProfile.getDisplayName () +
+                                         "\n following errors are present: " +
+                                         aErrorList.getAllErrors ().getAllTexts (aLocale));
+            }
+          }
+          else
+          {
+            LOGGER.warn ("The AS4 profile '" +
+                         sProfileID +
+                         "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
+          }
+        }
       }
 
       final boolean bUseDecryptedSoap = aState.hasDecryptedSoapDocument ();
