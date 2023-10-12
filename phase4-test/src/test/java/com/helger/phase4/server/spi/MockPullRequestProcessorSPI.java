@@ -36,7 +36,7 @@ public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProces
   {
     final PMode aPMode = TestPMode.createTestPMode ("pullinitiator",
                                                     "pullresponder",
-                                                    null,
+                                                    "http://test.address.non/existing",
                                                     (i, r) -> "PullPMode",
                                                     false);
     if (aSignalMessage.getPullRequest () != null)

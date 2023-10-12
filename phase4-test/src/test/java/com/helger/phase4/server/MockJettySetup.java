@@ -29,6 +29,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.URLHelper;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
@@ -60,9 +61,14 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
   @Nonempty
   public static String getServerAddressFromSettings ()
   {
-    return AS4Configuration.getConfig ()
-                           .getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS,
-                                         AS4TestConstants.DEFAULT_SERVER_ADDRESS);
+    final String ret = AS4Configuration.getConfig ()
+                                       .getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS,
+                                                     AS4TestConstants.DEFAULT_SERVER_ADDRESS);
+    if (StringHelper.hasNoText (ret))
+      throw new IllegalStateException ("Configuration property '" +
+                                       MockJettySetup.SETTINGS_SERVER_ADDRESS +
+                                       "' is missing");
+    return ret;
   }
 
   private static boolean _isRunJetty ()

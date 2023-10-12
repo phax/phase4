@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.state.ETriState;
 import com.helger.phase4.CAS4;
@@ -152,10 +153,14 @@ public final class TestPMode
   @Nonnull
   public static PMode createTestPMode (@Nonnull @Nonempty final String sInitiatorID,
                                        @Nonnull @Nonempty final String sResponderID,
-                                       @Nullable final String sResponderAddress,
+                                       @Nonnull @Nonempty final String sResponderAddress,
                                        @Nonnull final IPModeIDProvider aPModeIDProvider,
                                        final boolean bPersist)
   {
+    ValueEnforcer.notEmpty (sInitiatorID, "InitiatorID");
+    ValueEnforcer.notEmpty (sResponderID, "ResponderID");
+    ValueEnforcer.notEmpty (sResponderAddress, "ResponderAddress");
+
     final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
     final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
