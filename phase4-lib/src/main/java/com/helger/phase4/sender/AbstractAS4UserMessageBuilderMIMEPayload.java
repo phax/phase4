@@ -51,10 +51,10 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4UserMessageBuilderMIMEPayload.class);
 
-  private AS4OutgoingAttachment m_aPayload;
+  protected AS4OutgoingAttachment m_aPayload;
 
   /**
-   * Create a new builder, with the some fields already set as outlined in
+   * Create a new builder, with some fields already set as outlined in
    * {@link AbstractAS4UserMessageBuilder#AbstractAS4UserMessageBuilder()}
    */
   protected AbstractAS4UserMessageBuilderMIMEPayload ()
@@ -91,17 +91,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
   {
-    if (!super.isEveryRequiredFieldSet ())
-      return false;
-
-    if (m_aPayload == null)
-    {
-      LOGGER.warn ("The field 'payload' is not set");
-      return false;
-    }
-
-    // All valid
-    return true;
+    return super.isEveryRequiredFieldSet();
   }
 
   /**
@@ -182,9 +172,11 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
 
       // Add main attachment
       {
-        final WSS4JAttachment aMainAttachment = createMainAttachment (m_aPayload, aResHelper);
-        if (aMainAttachment != null)
-          aUserMsg.addAttachment (aMainAttachment);
+        if (m_aPayload != null) {
+          final WSS4JAttachment aMainAttachment = createMainAttachment (m_aPayload, aResHelper);
+          if (aMainAttachment != null)
+            aUserMsg.addAttachment (aMainAttachment);
+        }
       }
 
       // Add other attachments

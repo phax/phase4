@@ -845,6 +845,11 @@ public final class Phase4PeppolSender
         LOGGER.warn ("The field 'processID' is not set");
         return false;
       }
+      if (m_aPayload == null)
+      {
+        LOGGER.warn ("The field 'payload' is not set");
+        return false;
+      }
 
       // m_sCountryC1 may be null, before 1.1.2024
       if (PDTFactory.getCurrentLocalDateUTC ().compareTo (DATE_COUNTRY_C1_BECOMES_MANDATORY) >= 0)

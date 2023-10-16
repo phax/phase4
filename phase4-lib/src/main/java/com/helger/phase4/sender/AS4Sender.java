@@ -67,7 +67,7 @@ public final class AS4Sender
   public static class BuilderUserMessage extends AbstractAS4UserMessageBuilderMIMEPayload <BuilderUserMessage>
   {
     /**
-     * Create a new builder, with the some fields already set as outlined in
+     * Create a new builder, with some fields already set as outlined in
      * {@link AbstractAS4UserMessageBuilderMIMEPayload#AbstractAS4UserMessageBuilderMIMEPayload()}
      */
     public BuilderUserMessage ()
