@@ -17,6 +17,7 @@
 package com.helger.phase4.profile.bdew;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -30,9 +31,12 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.ebms3header.Ebms3AgreementRef;
 import com.helger.phase4.ebms3header.Ebms3From;
+import com.helger.phase4.ebms3header.Ebms3PartyId;
+import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
@@ -47,6 +51,12 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+
+import java.security.cert.X509Certificate;
 
 /**
  * Validate certain requirements imposed by the BDEW project.
@@ -334,6 +344,59 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       else
       {
         aErrorList.add (_createError ("PMode.PayloadService.CompressionMode is missing"));
+      }
+    }
+  }
+
+  @Override
+  public void validateInitiatorIdentity(@Nonnull final Ebms3UserMessage aUserMsg,
+                                        @Nullable final X509Certificate aSignatureCert,
+                                        @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                        @Nonnull ErrorList aErrorList)
+  {
+    final Ebms3PartyInfo aIniatorPartyInfo = aUserMsg.getPartyInfo();
+
+    if (aIniatorPartyInfo != null)
+    {
+      Ebms3From aInitiator = aIniatorPartyInfo.getFrom();
+
+      if (aInitiator != null)
+      {
+        Ebms3PartyId aInitiatorPartyId = aInitiator.getPartyIdAtIndex(0);
+
+        if (aInitiatorPartyId != null)
+        {
+          String sInitiatorId = aInitiatorPartyId.getValue();
+
+          if (sInitiatorId != null)
+          {
+            if (aSignatureCert != null)
+            {
+              X500Name aSigName = new X500Name(aSignatureCert.getSubjectX500Principal().getName());
+              RDN aSigOuRDN = aSigName.getRDNs(BCStyle.OU)[0];
+              String sSigCertId = IETFUtils.valueToString(aSigOuRDN.getFirst().getValue());
+
+              if (!sInitiatorId.equals(sSigCertId))
+              {
+                aErrorList.add (_createError ("ID of initiator party does not match ID in signature certificate"));
+              }
+            }
+
+            if (aMessageMetadata.getRemoteTlsCerts() != null && aMessageMetadata.getRemoteTlsCerts().length > 0)
+            {
+              X509Certificate aTlsClientEndCert = aMessageMetadata.getRemoteTlsCerts()[0];
+
+              X500Name aTlsName = new X500Name(aTlsClientEndCert.getSubjectX500Principal().getName());
+              RDN aTlsOuRDN = aTlsName.getRDNs(BCStyle.OU)[0];
+              String sTlsCertId = IETFUtils.valueToString(aTlsOuRDN.getFirst().getValue());
+
+              if (!sInitiatorId.equals (sTlsCertId))
+              {
+                aErrorList.add (_createError ("ID of initiator party does not match ID in client TLS certificate"));
+              }
+            }
+          }
+        }
       }
     }
   }

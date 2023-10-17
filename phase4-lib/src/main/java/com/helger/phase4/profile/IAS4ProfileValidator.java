@@ -17,12 +17,16 @@
 package com.helger.phase4.profile;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.error.list.ErrorList;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.v3.ChangeV3;
+
+import java.security.cert.X509Certificate;
 
 /**
  * Generic AS4 profile validator
@@ -42,6 +46,24 @@ public interface IAS4ProfileValidator
    */
   @ChangeV3 ("add parameter if for UserMessage or SignalMessage")
   default void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
+  {}
+
+  /**
+   * Validation method
+   *
+   * @param aUserMsg
+   *        The message to use for comparison. May not be <code>null</code>.
+   * @param aSigCert
+   *        The signature certificate used to sign the message. Can be <code>null</code>.
+   * @param aMessageMetadata
+   *        Metadata of the message containing the TLS client certificate. May not be <code>null</code>.
+   * @param aErrorList
+   *        The error list to be filled. May not be <code>null</code>.
+   */
+  default void validateInitiatorIdentity(@Nonnull final Ebms3UserMessage aUserMsg,
+                                         @Nullable X509Certificate aSigCert,
+                                         @Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
+                                         @Nonnull final ErrorList aErrorList)
   {}
 
   /**

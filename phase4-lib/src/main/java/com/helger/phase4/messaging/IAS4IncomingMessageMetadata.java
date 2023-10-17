@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.messaging;
 
+import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 
 import javax.annotation.CheckForSigned;
@@ -150,6 +151,25 @@ public interface IAS4IncomingMessageMetadata
   default boolean hasRemoteUser ()
   {
     return StringHelper.hasText (getRemoteUser ());
+  }
+
+  /**
+   * Returns the TLS certificates presented by the remote client to
+   * authenticate itself.
+   *
+   * @return an array containing a chain of X509Certificate objects
+   */
+  @Nullable
+  X509Certificate[] getRemoteTlsCerts ();
+
+  /**
+   * @return <code>true</code> if the remote TLS certificate chain with at least
+   * a single certificate is present, <code>false</code> if not.
+   * @see #getRemoteUser()
+   */
+  default boolean hasRemoteTlsCerts ()
+  {
+    return getRemoteTlsCerts () != null && getRemoteTlsCerts ().length > 0;
   }
 
   /**

@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.servlet;
 
+import java.security.cert.X509Certificate;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
@@ -339,14 +340,16 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    */
   @Nonnull
   @OverrideOnDemand
-  protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope)
+  protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                                                                      @Nullable final X509Certificate[] aClientTlsCerts)
   {
     return AS4IncomingMessageMetadata.createForRequest ()
                                      .setRemoteAddr (aRequestScope.getRemoteAddr ())
                                      .setRemoteHost (aRequestScope.getRemoteHost ())
                                      .setRemotePort (aRequestScope.getRemotePort ())
                                      .setRemoteUser (aRequestScope.getRemoteUser ())
-                                     .setCookies (aRequestScope.getCookies ());
+                                     .setCookies (aRequestScope.getCookies ())
+                                     .setRemoteTlsCerts (aClientTlsCerts);
   }
 
   /**
@@ -392,8 +395,18 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                 @Nonnull final IAS4IncomingSecurityConfiguration aISC,
                                 @Nullable final IHandlerCustomizer aHandlerCustomizer) throws Exception
   {
+    X509Certificate[] aClientTlsCerts = null;
+    try
+    {
+      aClientTlsCerts = (X509Certificate[]) aRequestScope.getRequest ()
+                                                         .getAttribute ("jakarta.servlet.request.X509Certificate");
+    }  catch (final Exception ex)
+    {
+      LOGGER.info ("No client TLS certificate provided");
+    }
+
     // Start metadata
-    final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope);
+    final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope, aClientTlsCerts);
 
     try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCryptoFactorySign,
                                                                    aCryptoFactoryCrypt,
