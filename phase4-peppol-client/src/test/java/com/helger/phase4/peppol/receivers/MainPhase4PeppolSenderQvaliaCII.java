@@ -87,7 +87,7 @@ public final class MainPhase4PeppolSenderQvaliaCII
                                                                      ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .validationRegistry (aVESRegistry)
-                                  .validationConfiguration (EN16931Validation.VID_CII_139,
+                                  .validationConfiguration (EN16931Validation.VID_CII_1311,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
