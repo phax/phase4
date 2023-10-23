@@ -383,6 +383,11 @@ public final class Phase4CEFSender
         LOGGER.warn ("The field 'endpointDetailProvider' is not set");
         return false;
       }
+      if (m_aPayload == null)
+      {
+        LOGGER.warn ("The field 'payload' is not set");
+        return false;
+      }
       // m_aCertificateConsumer is optional
       // m_aAPEndointURLConsumer is optional
 

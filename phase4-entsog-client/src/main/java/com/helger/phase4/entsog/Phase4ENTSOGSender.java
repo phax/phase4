@@ -175,6 +175,11 @@ public final class Phase4ENTSOGSender
         LOGGER.warn ("The field 'conversationID' must not be changed");
         return false;
       }
+      if (m_aPayload == null)
+      {
+        LOGGER.warn ("The field 'payload' is not set");
+        return false;
+      }
 
       // All valid
       return true;
