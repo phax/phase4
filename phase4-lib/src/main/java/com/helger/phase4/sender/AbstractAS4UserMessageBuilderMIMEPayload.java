@@ -87,11 +87,23 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
     return thisAsT ();
   }
 
+  /**
+   * @return The currently set outgoing attachment payload. May be
+   *         <code>null</code>.
+   * @since 2.4.1
+   */
+  @Nullable
+  public final AS4OutgoingAttachment payload ()
+  {
+    return m_aPayload;
+  }
+
   @Override
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
   {
-    return super.isEveryRequiredFieldSet();
+    // No additional checks
+    return super.isEveryRequiredFieldSet ();
   }
 
   /**
@@ -171,12 +183,11 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
       aUserMsg.setPayload (null);
 
       // Add main attachment
+      if (m_aPayload != null)
       {
-        if (m_aPayload != null) {
-          final WSS4JAttachment aMainAttachment = createMainAttachment (m_aPayload, aResHelper);
-          if (aMainAttachment != null)
-            aUserMsg.addAttachment (aMainAttachment);
-        }
+        final WSS4JAttachment aMainAttachment = createMainAttachment (m_aPayload, aResHelper);
+        if (aMainAttachment != null)
+          aUserMsg.addAttachment (aMainAttachment);
       }
 
       // Add other attachments

@@ -170,14 +170,14 @@ public final class Phase4ENTSOGSender
       if (!super.isEveryRequiredFieldSet ())
         return false;
 
-      if (!"".equals (m_sConversationID))
-      {
-        LOGGER.warn ("The field 'conversationID' must not be changed");
-        return false;
-      }
       if (m_aPayload == null)
       {
         LOGGER.warn ("The field 'payload' is not set");
+        return false;
+      }
+      if (!"".equals (m_sConversationID))
+      {
+        LOGGER.warn ("The field 'conversationID' must not be changed");
         return false;
       }
 

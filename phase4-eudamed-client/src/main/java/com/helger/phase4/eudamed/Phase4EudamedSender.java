@@ -82,7 +82,8 @@ public final class Phase4EudamedSender
    *        The implementation type
    */
   @NotThreadSafe
-  public abstract static class AbstractEudamedUserMessageBuilder <IMPLTYPE extends AbstractEudamedUserMessageBuilder <IMPLTYPE>> extends
+  public abstract static class AbstractEudamedUserMessageBuilder <IMPLTYPE extends AbstractEudamedUserMessageBuilder <IMPLTYPE>>
+                                                                 extends
                                                                  AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     protected String m_sSenderID;
@@ -211,7 +212,8 @@ public final class Phase4EudamedSender
     }
 
     @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
+    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
+                                                   @Nonnull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -275,7 +277,9 @@ public final class Phase4EudamedSender
       }
 
       // e.g. SMP lookup (may throw an exception)
-      m_aEndpointDetailProvider.init (m_aDocTypeID, m_aProcessID, new SimpleParticipantIdentifier (null, m_sReceiverID));
+      m_aEndpointDetailProvider.init (m_aDocTypeID,
+                                      m_aProcessID,
+                                      new SimpleParticipantIdentifier (null, m_sReceiverID));
 
       // Certificate from e.g. SMP lookup (may throw an exception)
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
@@ -300,6 +304,11 @@ public final class Phase4EudamedSender
       if (!super.isEveryRequiredFieldSet ())
         return false;
 
+      if (m_aPayload == null)
+      {
+        LOGGER.warn ("The field 'payload' is not set");
+        return false;
+      }
       if (StringHelper.hasNoText (m_sSenderID))
       {
         LOGGER.warn ("The field 'senderID' is not set");
@@ -323,11 +332,6 @@ public final class Phase4EudamedSender
       if (m_aEndpointDetailProvider == null)
       {
         LOGGER.warn ("The field 'endpointDetailProvider' is not set");
-        return false;
-      }
-      if (m_aPayload == null)
-      {
-        LOGGER.warn ("The field 'payload' is not set");
         return false;
       }
       // m_aCertificateConsumer is optional

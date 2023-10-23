@@ -197,6 +197,8 @@ public final class Phase4BDEWSender
       if (!super.isEveryRequiredFieldSet ())
         return false;
 
+      // TODO #180 when is the payload mandatory?
+
       if (!"".equals (m_sConversationID))
       {
         LOGGER.warn ("The field 'conversationID' must not be changed");

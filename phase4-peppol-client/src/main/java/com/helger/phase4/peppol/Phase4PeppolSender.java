@@ -825,6 +825,11 @@ public final class Phase4PeppolSender
       if (!super.isEveryRequiredFieldSet ())
         return false;
 
+      if (m_aPayload == null)
+      {
+        LOGGER.warn ("The field 'payload' is not set");
+        return false;
+      }
       if (m_aSenderID == null)
       {
         LOGGER.warn ("The field 'senderID' is not set");
@@ -843,11 +848,6 @@ public final class Phase4PeppolSender
       if (m_aProcessID == null)
       {
         LOGGER.warn ("The field 'processID' is not set");
-        return false;
-      }
-      if (m_aPayload == null)
-      {
-        LOGGER.warn ("The field 'payload' is not set");
         return false;
       }
 
