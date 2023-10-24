@@ -610,7 +610,8 @@ public final class AS4IncomingHandler
                                                      @Nonnull final ESoapVersion eSoapVersion,
                                                      @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                      @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
-                                                     @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget) throws Phase4Exception
+                                                     @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget,
+                                                     @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata) throws Phase4Exception
   {
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aLocale, "Locale");
@@ -731,6 +732,7 @@ public final class AS4IncomingHandler
             final ErrorList aErrorList = new ErrorList ();
             aValidator.validatePMode (aPMode, aErrorList);
             aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
+            aValidator.validateInitiatorIdentity(aEbmsUserMessage, aState.getUsedCertificate(), aMessageMetadata, aErrorList);
             if (aErrorList.isNotEmpty ())
             {
               throw new Phase4Exception ("Error validating incoming AS4 UserMessage with the profile " +
@@ -851,7 +853,8 @@ public final class AS4IncomingHandler
                                                           eSoapVersion,
                                                           aIncomingAttachments,
                                                           aAS4ProfileSelector,
-                                                          aErrorMessages);
+                                                          aErrorMessages,
+                                                          aMessageMetadata);
 
       if (aState.isSoapHeaderElementProcessingSuccessful ())
       {

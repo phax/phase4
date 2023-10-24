@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.servlet;
 
+import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -51,6 +52,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private String m_sRemoteHost;
   private int m_nRemotePort = -1;
   private String m_sRemoteUser;
+  private X509Certificate[] m_aRemoteTlsCerts;
   private final ICommonsList <Cookie> m_aCookies = new CommonsArrayList <> ();
   private String m_sRequestMessageID;
 
@@ -186,6 +188,26 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   public AS4IncomingMessageMetadata setRemoteUser (@Nullable final String sRemoteUser)
   {
     m_sRemoteUser = sRemoteUser;
+    return this;
+  }
+
+  @Nullable
+  public X509Certificate[] getRemoteTlsCerts ()
+  {
+    return m_aRemoteTlsCerts;
+  }
+
+  /**
+   * Set the remote TLS certificates to be used.
+   *
+   * @param aRemoteTlsCerts
+   *        The TLS certificates the remote client presented during the handshake. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public AS4IncomingMessageMetadata setRemoteTlsCerts (@Nullable final X509Certificate[] aRemoteTlsCerts)
+  {
+    m_aRemoteTlsCerts = aRemoteTlsCerts;
     return this;
   }
 

@@ -1307,7 +1307,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                                            eSoapVersion,
                                                                            aIncomingAttachments,
                                                                            m_aIncomingProfileSelector,
-                                                                           aErrorMessagesTarget);
+                                                                           aErrorMessagesTarget,
+                                                                           m_aMessageMetadata);
 
     // Evaluate the results of processing
     final IPMode aPMode = aState.getPMode ();
