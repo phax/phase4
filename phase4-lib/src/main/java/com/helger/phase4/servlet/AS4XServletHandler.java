@@ -340,9 +340,20 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    */
   @Nonnull
   @OverrideOnDemand
-  protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                                                      @Nullable final X509Certificate[] aClientTlsCerts)
+  protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope)
   {
+    X509Certificate [] aClientTlsCerts = null;
+    try
+    {
+      // No constant available
+      aClientTlsCerts = (X509Certificate []) aRequestScope.getRequest ()
+                                                          .getAttribute ("jakarta.servlet.request.X509Certificate");
+    }
+    catch (final Exception ex)
+    {
+      LOGGER.warn ("No client TLS certificate provided: " + ex.getMessage ());
+    }
+
     return AS4IncomingMessageMetadata.createForRequest ()
                                      .setRemoteAddr (aRequestScope.getRemoteAddr ())
                                      .setRemoteHost (aRequestScope.getRemoteHost ())
@@ -395,18 +406,8 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                 @Nonnull final IAS4IncomingSecurityConfiguration aISC,
                                 @Nullable final IHandlerCustomizer aHandlerCustomizer) throws Exception
   {
-    X509Certificate[] aClientTlsCerts = null;
-    try
-    {
-      aClientTlsCerts = (X509Certificate[]) aRequestScope.getRequest ()
-                                                         .getAttribute ("jakarta.servlet.request.X509Certificate");
-    }  catch (final Exception ex)
-    {
-      LOGGER.info ("No client TLS certificate provided");
-    }
-
     // Start metadata
-    final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope, aClientTlsCerts);
+    final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope);
 
     try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCryptoFactorySign,
                                                                    aCryptoFactoryCrypt,

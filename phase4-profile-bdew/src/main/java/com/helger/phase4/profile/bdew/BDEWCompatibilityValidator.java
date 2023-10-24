@@ -16,8 +16,15 @@
  */
 package com.helger.phase4.profile.bdew;
 
+import java.security.cert.X509Certificate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -51,12 +58,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
-import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x500.style.IETFUtils;
-
-import java.security.cert.X509Certificate;
 
 /**
  * Validate certain requirements imposed by the BDEW project.
@@ -349,50 +350,54 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   }
 
   @Override
-  public void validateInitiatorIdentity(@Nonnull final Ebms3UserMessage aUserMsg,
-                                        @Nullable final X509Certificate aSignatureCert,
-                                        @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                        @Nonnull ErrorList aErrorList)
+  public void validateInitiatorIdentity (@Nonnull final Ebms3UserMessage aUserMsg,
+                                         @Nullable final X509Certificate aSignatureCert,
+                                         @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                         @Nonnull final ErrorList aErrorList)
   {
-    final Ebms3PartyInfo aIniatorPartyInfo = aUserMsg.getPartyInfo();
-
-    if (aIniatorPartyInfo != null)
+    final Ebms3PartyInfo aInitatorPartyInfo = aUserMsg.getPartyInfo ();
+    if (aInitatorPartyInfo != null)
     {
-      Ebms3From aInitiator = aIniatorPartyInfo.getFrom();
-
-      if (aInitiator != null)
+      final Ebms3From aInitiator = aInitatorPartyInfo.getFrom ();
+      if (aInitiator != null && aInitiator.hasPartyIdEntries ())
       {
-        Ebms3PartyId aInitiatorPartyId = aInitiator.getPartyIdAtIndex(0);
-
-        if (aInitiatorPartyId != null)
+        final Ebms3PartyId aInitiatorPartyID = aInitiator.getPartyIdAtIndex (0);
+        if (aInitiatorPartyID != null)
         {
-          String sInitiatorId = aInitiatorPartyId.getValue();
-
-          if (sInitiatorId != null)
+          final String sInitiatorID = aInitiatorPartyID.getValue ();
+          if (sInitiatorID != null)
           {
             if (aSignatureCert != null)
             {
-              X500Name aSigName = new X500Name(aSignatureCert.getSubjectX500Principal().getName());
-              RDN aSigOuRDN = aSigName.getRDNs(BCStyle.OU)[0];
-              String sSigCertId = IETFUtils.valueToString(aSigOuRDN.getFirst().getValue());
+              final X500Name aSigName = new X500Name (aSignatureCert.getSubjectX500Principal ().getName ());
+              final RDN aSigOuRDN = aSigName.getRDNs (BCStyle.OU)[0];
+              final String sSigCertId = IETFUtils.valueToString (aSigOuRDN.getFirst ().getValue ());
 
-              if (!sInitiatorId.equals(sSigCertId))
+              if (!sInitiatorID.equals (sSigCertId))
               {
-                aErrorList.add (_createError ("ID of initiator party does not match ID in signature certificate"));
+                aErrorList.add (_createError ("ID of initiator party '" +
+                                              sInitiatorID +
+                                              "' does not match ID in signature certificate '" +
+                                              sSigCertId +
+                                              "'"));
               }
             }
 
-            if (aMessageMetadata.getRemoteTlsCerts() != null && aMessageMetadata.getRemoteTlsCerts().length > 0)
+            if (aMessageMetadata.hasRemoteTlsCerts ())
             {
-              X509Certificate aTlsClientEndCert = aMessageMetadata.getRemoteTlsCerts()[0];
+              final X509Certificate aTlsClientEndCert = aMessageMetadata.remoteTlsCerts ().getFirst ();
 
-              X500Name aTlsName = new X500Name(aTlsClientEndCert.getSubjectX500Principal().getName());
-              RDN aTlsOuRDN = aTlsName.getRDNs(BCStyle.OU)[0];
-              String sTlsCertId = IETFUtils.valueToString(aTlsOuRDN.getFirst().getValue());
+              final X500Name aTlsName = new X500Name (aTlsClientEndCert.getSubjectX500Principal ().getName ());
+              final RDN aTlsOuRDN = aTlsName.getRDNs (BCStyle.OU)[0];
+              final String sTlsCertId = IETFUtils.valueToString (aTlsOuRDN.getFirst ().getValue ());
 
-              if (!sInitiatorId.equals (sTlsCertId))
+              if (!sInitiatorID.equals (sTlsCertId))
               {
-                aErrorList.add (_createError ("ID of initiator party does not match ID in client TLS certificate"));
+                aErrorList.add (_createError ("ID of initiator party '" +
+                                              sInitiatorID +
+                                              "' does not match ID in client TLS certificate '" +
+                                              sTlsCertId +
+                                              "'"));
               }
             }
           }

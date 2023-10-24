@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.profile;
 
+import java.security.cert.X509Certificate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,8 +28,6 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.v3.ChangeV3;
 
-import java.security.cert.X509Certificate;
-
 /**
  * Generic AS4 profile validator
  *
@@ -37,7 +37,7 @@ import java.security.cert.X509Certificate;
 public interface IAS4ProfileValidator
 {
   /**
-   * Validation method
+   * Validation a PMode
    *
    * @param aPMode
    *        The PMode to be validated. May not be <code>null</code>.
@@ -49,25 +49,28 @@ public interface IAS4ProfileValidator
   {}
 
   /**
-   * Validation method
+   * Validation the initiator identity
    *
    * @param aUserMsg
    *        The message to use for comparison. May not be <code>null</code>.
    * @param aSigCert
-   *        The signature certificate used to sign the message. Can be <code>null</code>.
+   *        The signature certificate used to sign the message. Can be
+   *        <code>null</code>.
    * @param aMessageMetadata
-   *        Metadata of the message containing the TLS client certificate. May not be <code>null</code>.
+   *        Metadata of the message optionally containing the TLS client
+   *        certificate used. May not be <code>null</code>.
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
+   * @since 2.5.0
    */
-  default void validateInitiatorIdentity(@Nonnull final Ebms3UserMessage aUserMsg,
-                                         @Nullable X509Certificate aSigCert,
-                                         @Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
-                                         @Nonnull final ErrorList aErrorList)
+  default void validateInitiatorIdentity (@Nonnull final Ebms3UserMessage aUserMsg,
+                                          @Nullable final X509Certificate aSigCert,
+                                          @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                          @Nonnull final ErrorList aErrorList)
   {}
 
   /**
-   * Validation method
+   * Validation a UserMessage
    *
    * @param aUserMsg
    *        The message to be validated. May not be <code>null</code>.
@@ -78,7 +81,7 @@ public interface IAS4ProfileValidator
   {}
 
   /**
-   * Validation method
+   * Validation a SignalMessage
    *
    * @param aSignalMsg
    *        The message to be validated. May not be <code>null</code>.

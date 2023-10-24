@@ -732,7 +732,10 @@ public final class AS4IncomingHandler
             final ErrorList aErrorList = new ErrorList ();
             aValidator.validatePMode (aPMode, aErrorList);
             aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
-            aValidator.validateInitiatorIdentity(aEbmsUserMessage, aState.getUsedCertificate(), aMessageMetadata, aErrorList);
+            aValidator.validateInitiatorIdentity (aEbmsUserMessage,
+                                                  aState.getUsedCertificate (),
+                                                  aMessageMetadata,
+                                                  aErrorList);
             if (aErrorList.isNotEmpty ())
             {
               throw new Phase4Exception ("Error validating incoming AS4 UserMessage with the profile " +

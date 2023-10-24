@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
+import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.string.ToStringGenerator;
@@ -52,7 +53,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private String m_sRemoteHost;
   private int m_nRemotePort = -1;
   private String m_sRemoteUser;
-  private X509Certificate[] m_aRemoteTlsCerts;
+  private ICommonsList <X509Certificate> m_aRemoteTlsCerts;
   private final ICommonsList <Cookie> m_aCookies = new CommonsArrayList <> ();
   private String m_sRequestMessageID;
 
@@ -192,7 +193,8 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   }
 
   @Nullable
-  public X509Certificate[] getRemoteTlsCerts ()
+  @ReturnsMutableObject
+  public ICommonsList <X509Certificate> remoteTlsCerts ()
   {
     return m_aRemoteTlsCerts;
   }
@@ -201,13 +203,18 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    * Set the remote TLS certificates to be used.
    *
    * @param aRemoteTlsCerts
-   *        The TLS certificates the remote client presented during the handshake. May be <code>null</code>.
+   *        The TLS certificates the remote client presented during the
+   *        handshake. May be <code>null</code>.
    * @return this for chaining
+   * @since 2.5.0
    */
   @Nonnull
-  public AS4IncomingMessageMetadata setRemoteTlsCerts (@Nullable final X509Certificate[] aRemoteTlsCerts)
+  public AS4IncomingMessageMetadata setRemoteTlsCerts (@Nullable final X509Certificate [] aRemoteTlsCerts)
   {
-    m_aRemoteTlsCerts = aRemoteTlsCerts;
+    if (ArrayHelper.isEmpty (aRemoteTlsCerts))
+      m_aRemoteTlsCerts = null;
+    else
+      m_aRemoteTlsCerts = new CommonsArrayList <> (aRemoteTlsCerts);
     return this;
   }
 

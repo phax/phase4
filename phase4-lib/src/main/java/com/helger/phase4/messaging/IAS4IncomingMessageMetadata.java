@@ -154,22 +154,26 @@ public interface IAS4IncomingMessageMetadata
   }
 
   /**
-   * Returns the TLS certificates presented by the remote client to
-   * authenticate itself.
+   * Returns the TLS certificates presented by the remote client to authenticate
+   * itself.
    *
-   * @return an array containing a chain of X509Certificate objects
+   * @return A list containing a chain of X509Certificate objects. Maybe
+   *         <code>null</code>.
+   * @since 2.5.0
    */
   @Nullable
-  X509Certificate[] getRemoteTlsCerts ();
+  @ReturnsMutableObject
+  ICommonsList <X509Certificate> remoteTlsCerts ();
 
   /**
    * @return <code>true</code> if the remote TLS certificate chain with at least
-   * a single certificate is present, <code>false</code> if not.
-   * @see #getRemoteUser()
+   *         a single certificate is present, <code>false</code> if not.
+   * @see #remoteTlsCerts()
+   * @since 2.5.0
    */
   default boolean hasRemoteTlsCerts ()
   {
-    return getRemoteTlsCerts () != null && getRemoteTlsCerts ().length > 0;
+    return remoteTlsCerts () != null && remoteTlsCerts ().isNotEmpty ();
   }
 
   /**
