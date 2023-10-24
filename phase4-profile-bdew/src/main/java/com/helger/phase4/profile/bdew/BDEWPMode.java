@@ -60,7 +60,7 @@ public final class BDEWPMode
   public static final String BDEW_PARTY_ID_TYPE_BDEW = "urn:oasis:names:tc:ebcore:partyid-type:unregistered:BDEW";
   public static final String BDEW_PARTY_ID_TYPE_DVGW = "urn:oasis:names:tc:ebcore:partyid-type:unregistered:DVGW";
 
-  public static final String SERVICE_TEST = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test";
+  public static final String SERVICE_TEST = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service";
   public static final String SERVICE_PATH_SWITCH = "https://www.bdew.de/as4/communication/services/pathSwitch";
   public static final String SERVICE_MARKTPROZESSE = "https://www.bdew.de/as4/communication/services/MP";
   public static final String SERVICE_FAHRPLAN = "https://www.bdew.de/as4/communication/services/FP";
