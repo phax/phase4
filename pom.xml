@@ -74,7 +74,7 @@
     <ph-jaxb-plugin.version>4.0.3</ph-jaxb-plugin.version>
     <xmlsec.version>3.0.3</xmlsec.version>
     <wss4j.version>3.0.1</wss4j.version>
-    <log4j.version>2.20.0</log4j.version>
+    <log4j.version>2.21.1</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <peppol-commons.version>9.0.8</peppol-commons.version>
     <peppol-reporting.version>2.1.4</peppol-reporting.version>
@@ -82,7 +82,7 @@
     <ph-schematron.version>7.1.2</ph-schematron.version>
     <phive.version>9.0.0</phive.version>
     <phive-rules.version>3.1.2</phive-rules.version>
-    <spring-boot.version>3.1.4</spring-boot.version>
+    <spring-boot.version>3.1.5</spring-boot.version>
   </properties>
   
   <dependencyManagement>
