@@ -197,7 +197,20 @@ public final class Phase4BDEWSender
       if (!super.isEveryRequiredFieldSet ())
         return false;
 
-      // TODO #180 when is the payload mandatory?
+      if (m_aPayload == null)
+      {
+        // See #180 for the specifics
+        if (m_sAction.equals (BDEWPMode.ACTION_REQUEST_SWITCH) || m_sAction.equals (BDEWPMode.ACTION_CONFIRM_SWITCH))
+        {
+          // Payload is optional
+        }
+        else
+        {
+          // Payload is mandatory
+          LOGGER.warn ("The field 'payload' is not set");
+          return false;
+        }
+      }
 
       if (!"".equals (m_sConversationID))
       {
