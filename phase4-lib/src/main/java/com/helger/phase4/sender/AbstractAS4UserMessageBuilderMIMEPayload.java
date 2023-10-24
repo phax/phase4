@@ -90,7 +90,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   /**
    * @return The currently set outgoing attachment payload. May be
    *         <code>null</code>.
-   * @since 2.4.1
+   * @since 2.5.0
    */
   @Nullable
   public final AS4OutgoingAttachment payload ()
