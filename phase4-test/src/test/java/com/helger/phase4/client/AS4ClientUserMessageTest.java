@@ -52,6 +52,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
+import com.helger.phase4.server.spi.MockAS4IncomingMessageProcessingStatusSPI;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -105,6 +106,9 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
                                                                                       IOException,
                                                                                       MessagingException
     {
+      final int nOldStarted = MockAS4IncomingMessageProcessingStatusSPI.getStarted ();
+      final int nOldEnded = MockAS4IncomingMessageProcessingStatusSPI.getEnded ();
+
       final IAS4ClientBuildMessageCallback aCallback = null;
       final IAS4OutgoingDumper aOutgoingDumper = null;
       final IAS4RetryCallback aRetryCallback = null;
@@ -115,6 +119,12 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
                                                          aRetryCallback).getResponse ();
       AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
                                  MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
+
+      final int nNewStarted = MockAS4IncomingMessageProcessingStatusSPI.getStarted ();
+      final int nNewEnded = MockAS4IncomingMessageProcessingStatusSPI.getEnded ();
+      assertTrue (nNewStarted > nOldStarted);
+      assertTrue (nNewEnded > nOldEnded);
+
       return ret;
     }
   }

@@ -50,6 +50,7 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
+import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.string.StringHelper;
@@ -70,6 +71,7 @@ import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessingStatusSPI;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -175,6 +177,23 @@ public final class AS4IncomingHandler
     ESoapVersion eSoapVersion = null;
     final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
     final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
+    Exception aCaughtException = null;
+
+    // Load all SPIs
+    final ICommonsList <IAS4IncomingMessageProcessingStatusSPI> aStatusSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4IncomingMessageProcessingStatusSPI.class);
+    for (final IAS4IncomingMessageProcessingStatusSPI aStatusSPI : aStatusSPIs)
+      try
+      {
+        aStatusSPI.onMessageProcessingStarted (aMessageMetadata);
+      }
+      catch (final Exception ex)
+      {
+        LOGGER.error ("IAS4IncomingMessageProcessingStatusSPI.onMessageProcessingStarted failed. SPI=" +
+                      aStatusSPI +
+                      "; MessageMetadata=" +
+                      aMessageMetadata,
+                      ex);
+      }
 
     try
     {
@@ -345,6 +364,12 @@ public final class AS4IncomingHandler
       // Main processing
       aCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
     }
+    catch (final Phase4Exception | IOException | MessagingException | WSSecurityException ex)
+    {
+      // Remember for callback
+      aCaughtException = ex;
+      throw ex;
+    }
     finally
     {
       // Here, the incoming dump is finally written, closed and usable
@@ -357,6 +382,21 @@ public final class AS4IncomingHandler
         {
           LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" +
                         aRealIncomingDumper +
+                        "; MessageMetadata=" +
+                        aMessageMetadata,
+                        ex);
+        }
+
+      // Inform interested parties about the end of processing
+      for (final IAS4IncomingMessageProcessingStatusSPI aStatusSPI : aStatusSPIs)
+        try
+        {
+          aStatusSPI.onMessageProcessingEnded (aMessageMetadata, aCaughtException);
+        }
+        catch (final Exception ex)
+        {
+          LOGGER.error ("IAS4IncomingMessageProcessingStatusSPI.onMessageProcessingEnded failed. SPI=" +
+                        aStatusSPI +
                         "; MessageMetadata=" +
                         aMessageMetadata,
                         ex);
