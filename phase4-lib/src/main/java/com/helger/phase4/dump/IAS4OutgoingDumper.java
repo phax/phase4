@@ -46,8 +46,8 @@ public interface IAS4OutgoingDumper
    *        Added in v1.2.0.
    * @param aMessageMetadata
    *        The incoming message metadata. This is always <code>null</code> for
-   *        requests. This is always non-<code>null</code> for responses. Added
-   *        in v1.2.0.
+   *        requests (outgoing messages). This is always non-<code>null</code>
+   *        for responses (incoming messages). Added in v1.2.0.
    * @param aState
    *        The incoming message processing state. This is always
    *        <code>null</code> for requests. This is always non-<code>null</code>
