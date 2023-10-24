@@ -231,7 +231,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
     }
     catch (final Exception ex)
     {
-      // TODO If this is a ExtendedHttpResponseException than the incoming
+      // TODO If this is an ExtendedHttpResponseException then the incoming
       // dumper is never invoked
       // Wrap in phase4 Exception
       throw new Phase4Exception ("Wrapped Phase4Exception", ex);

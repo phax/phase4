@@ -127,7 +127,11 @@ public final class AS4BidirectionalClientHelper
       final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
       if (aEntity == null)
         return null;
+
+      // Remember source response object
       aWrappedHttpResponse.set (aHttpResponse);
+
+      // Read response payload
       return EntityUtils.toByteArray (aEntity);
     };
 
