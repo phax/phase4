@@ -59,6 +59,8 @@ import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.client.IAS4SignalMessageConsumer;
+import com.helger.phase4.client.IAS4UserMessageConsumer;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.dump.AS4DumpManager;
@@ -908,7 +910,8 @@ public final class AS4IncomingHandler
                                                        @Nonnull final HttpResponse aHttpResponse,
                                                        @Nonnull final byte [] aResponsePayload,
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                       @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration) throws Phase4Exception
+                                                       @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                       @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
     final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
                                                    aCryptoFactoryCrypt,
@@ -937,6 +940,12 @@ public final class AS4IncomingHandler
       else
         LOGGER.warn ("A Message state is present, but it contains neither a UserMessage nor a SignalMessage.");
     }
+    else
+    {
+      // Invoke consumer here, because we have the state
+      if (aSignalMsgConsumer != null)
+        aSignalMsgConsumer.handleSignalMessage (ret, aMessageMetadata, aState);
+    }
     return ret;
   }
 
@@ -954,7 +963,8 @@ public final class AS4IncomingHandler
                                                    @Nonnull final HttpResponse aHttpResponse,
                                                    @Nonnull final byte [] aResponsePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                   @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration) throws Phase4Exception
+                                                   @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                   @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws Phase4Exception
   {
     final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
                                                    aCryptoFactoryCrypt,
@@ -982,6 +992,12 @@ public final class AS4IncomingHandler
         LOGGER.warn ("A Message state is present, but it contains a SignalMessage instead of a UserMessage.");
       else
         LOGGER.warn ("A Message state is present, but it contains neither a SignalMessage nor a UserMessage.");
+    }
+    else
+    {
+      // Invoke consumer here, because we have the state
+      if (aUserMsgConsumer != null)
+        aUserMsgConsumer.handleUserMessage (ret, aMessageMetadata, aState);
     }
     return ret;
   }

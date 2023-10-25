@@ -47,8 +47,6 @@ import com.helger.phase4.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
-import com.helger.phase4.ebms3header.Ebms3SignalMessage;
-import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4IncomingHandler;
@@ -159,21 +157,20 @@ public final class AS4BidirectionalClientHelper
 
       // Read response as EBMS3 Signal Message
       // Read it in any case to ensure signature validation etc. happens
-      final Ebms3SignalMessage aSignalMessage = AS4IncomingHandler.parseSignalMessage (aCryptoFactorySign,
-                                                                                       aCryptoFactoryCrypt,
-                                                                                       aPModeResolver,
-                                                                                       aIAF,
-                                                                                       aIncomingProfileSelector,
-                                                                                       aClientUserMsg.getAS4ResourceHelper (),
-                                                                                       aClientUserMsg.getPMode (),
-                                                                                       aLocale,
-                                                                                       aMessageMetadata,
-                                                                                       aWrappedHttpResponse.get (),
-                                                                                       aResponseEntity.getResponse (),
-                                                                                       aIncomingDumper,
-                                                                                       aIncomingSecurityConfiguration);
-      if (aSignalMessage != null && aSignalMsgConsumer != null)
-        aSignalMsgConsumer.handleSignalMessage (aSignalMessage, aMessageMetadata);
+      AS4IncomingHandler.parseSignalMessage (aCryptoFactorySign,
+                                             aCryptoFactoryCrypt,
+                                             aPModeResolver,
+                                             aIAF,
+                                             aIncomingProfileSelector,
+                                             aClientUserMsg.getAS4ResourceHelper (),
+                                             aClientUserMsg.getPMode (),
+                                             aLocale,
+                                             aMessageMetadata,
+                                             aWrappedHttpResponse.get (),
+                                             aResponseEntity.getResponse (),
+                                             aIncomingDumper,
+                                             aIncomingSecurityConfiguration,
+                                             aSignalMsgConsumer);
     }
     else
       LOGGER.info ("AS4 ResponseEntity is empty");
@@ -241,21 +238,20 @@ public final class AS4BidirectionalClientHelper
 
       // Read response as EBMS3 User Message
       // Read it in any case to ensure signature validation etc. happens
-      final Ebms3UserMessage aUserMessage = AS4IncomingHandler.parseUserMessage (aCryptoFactorySign,
-                                                                                 aCryptoFactoryCrypt,
-                                                                                 aPModeResolver,
-                                                                                 aIAF,
-                                                                                 aIncomingProfileSelector,
-                                                                                 aClientPullRequest.getAS4ResourceHelper (),
-                                                                                 null,
-                                                                                 aLocale,
-                                                                                 aMessageMetadata,
-                                                                                 aWrappedResponse.get (),
-                                                                                 aResponseEntity.getResponse (),
-                                                                                 aIncomingDumper,
-                                                                                 aIncomingSecurityConfiguration);
-      if (aUserMessage != null && aUserMsgConsumer != null)
-        aUserMsgConsumer.handleUserMessage (aUserMessage, aMessageMetadata);
+      AS4IncomingHandler.parseUserMessage (aCryptoFactorySign,
+                                           aCryptoFactoryCrypt,
+                                           aPModeResolver,
+                                           aIAF,
+                                           aIncomingProfileSelector,
+                                           aClientPullRequest.getAS4ResourceHelper (),
+                                           null,
+                                           aLocale,
+                                           aMessageMetadata,
+                                           aWrappedResponse.get (),
+                                           aResponseEntity.getResponse (),
+                                           aIncomingDumper,
+                                           aIncomingSecurityConfiguration,
+                                           aUserMsgConsumer);
     }
     else
       LOGGER.info ("AS4 ResponseEntity is empty");

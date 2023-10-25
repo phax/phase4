@@ -747,10 +747,12 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     {
       // Store the received signal message
       final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
-      m_aSignalMsgConsumer = aOld == null ? (aSignalMsg, aMMD) -> aSignalMsgKeeper.set (aSignalMsg) : (aSignalMsg,
-                                                                                                       aMMD) -> {
+      m_aSignalMsgConsumer = aOld == null ? (aSignalMsg, aMMD, aState) -> aSignalMsgKeeper.set (aSignalMsg) : (
+                                                                                                               aSignalMsg,
+                                                                                                               aMMD,
+                                                                                                               aState) -> {
         aSignalMsgKeeper.set (aSignalMsg);
-        aOld.handleSignalMessage (aSignalMsg, aMMD);
+        aOld.handleSignalMessage (aSignalMsg, aMMD, aState);
       };
 
       // Main sending

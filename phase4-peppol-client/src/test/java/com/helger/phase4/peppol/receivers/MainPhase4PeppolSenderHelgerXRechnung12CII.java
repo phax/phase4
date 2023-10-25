@@ -107,7 +107,7 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .rawResponseConsumer (aRRC)
-                                  .signalMsgConsumer ( (aSignalMsg, aMMD) -> aSignalMsgWrapper.set (aSignalMsg))
+                                  .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> aSignalMsgWrapper.set (aSignalMsg))
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
