@@ -660,11 +660,31 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    */
   public enum ESimpleUserMessageSendResult implements IHasID <String>, ISuccessIndicator
   {
+    /**
+     * Programming error, because not all mandatory fields are filled.
+     */
     INVALID_PARAMETERS ("invalid-parameters"),
+    /**
+     * Something failed on the network or HTTP(S) level
+     */
     TRANSPORT_ERROR ("transport-error"),
+    /**
+     * Some answer was received, but it was no valid AS4 Signal Message
+     */
     NO_SIGNAL_MESSAGE_RECEIVED ("no-signal-msg-received"),
+    /**
+     * An AS4 Error Message was received
+     */
     AS4_ERROR_MESSAGE_RECEIVED ("as4-error-msg-received"),
+    /**
+     * An AS4 Signal Message was received, but it was neither a Receipt nor an
+     * Error Message but something else.
+     */
     INVALID_SIGNAL_MESSAGE_RECEIVED ("invalid-signal-message-received"),
+    /**
+     * Everything worked according to plan. The message was successfully
+     * delivered.
+     */
     SUCCESS ("success");
 
     private final String m_sID;
