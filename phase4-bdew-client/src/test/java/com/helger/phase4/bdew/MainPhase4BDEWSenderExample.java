@@ -87,7 +87,7 @@ public class MainPhase4BDEWSenderExample
                                                                .compressionGZIP ()
                                                                .mimeTypeXML ()
                                                                .charset (StandardCharsets.UTF_8), aBDEWPayloadParams)
-                                .signalMsgConsumer (aSignalMsgHolder::set)
+                                .signalMsgConsumer ( (aSignalMsg, aMMD) -> aSignalMsgHolder.set (aSignalMsg))
                                 .sendMessageAndCheckForReceipt ();
       LOGGER.info ("BDEW send result: " + eResult);
     }

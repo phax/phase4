@@ -83,7 +83,7 @@ public final class AS4BidirectionalClientHelper
                                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                                    @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                                    @Nullable final IAS4RetryCallback aRetryCallback,
-                                                                   @Nullable final IAS4RawResponseConsumer aResponseConsumer,
+                                                                   @Nullable final IAS4RawResponseConsumer aRawResponseConsumer,
                                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws IOException,
                                                                                                                                  Phase4Exception,
                                                                                                                                  WSSecurityException,
@@ -135,6 +135,7 @@ public final class AS4BidirectionalClientHelper
       return EntityUtils.toByteArray (aEntity);
     };
 
+    // Main HTTP sending
     final AS4ClientSentMessage <byte []> aResponseEntity = aClientUserMsg.sendMessageWithRetries (sURL,
                                                                                                   aHttpResponseHdl,
                                                                                                   aBuildMessageCallback,
@@ -147,8 +148,8 @@ public final class AS4BidirectionalClientHelper
                  sURL +
                  "'");
 
-    if (aResponseConsumer != null)
-      aResponseConsumer.handleResponse (aResponseEntity);
+    if (aRawResponseConsumer != null)
+      aRawResponseConsumer.handleResponse (aResponseEntity);
 
     // Try interpret result as SignalMessage
     if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
@@ -172,7 +173,7 @@ public final class AS4BidirectionalClientHelper
                                                                                        aIncomingDumper,
                                                                                        aIncomingSecurityConfiguration);
       if (aSignalMessage != null && aSignalMsgConsumer != null)
-        aSignalMsgConsumer.handleSignalMessage (aSignalMessage);
+        aSignalMsgConsumer.handleSignalMessage (aSignalMessage, aMessageMetadata);
     }
     else
       LOGGER.info ("AS4 ResponseEntity is empty");
@@ -254,7 +255,7 @@ public final class AS4BidirectionalClientHelper
                                                                                  aIncomingDumper,
                                                                                  aIncomingSecurityConfiguration);
       if (aUserMessage != null && aUserMsgConsumer != null)
-        aUserMsgConsumer.handleUserMessage (aUserMessage);
+        aUserMsgConsumer.handleUserMessage (aUserMessage, aMessageMetadata);
     }
     else
       LOGGER.info ("AS4 ResponseEntity is empty");

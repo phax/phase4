@@ -19,6 +19,7 @@ package com.helger.phase4.client;
 import javax.annotation.Nonnull;
 
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
@@ -35,8 +36,12 @@ public interface IAS4UserMessageConsumer
    *
    * @param aUserMsg
    *        The User Message domain object. Never <code>null</code>.
+   * @param aMessageMetadata
+   *        The message metadata of the synchronously received message. Never
+   *        <code>null</code>. Added in v2.5.0.
    * @throws Phase4Exception
    *         in case of error
    */
-  void handleUserMessage (@Nonnull Ebms3UserMessage aUserMsg) throws Phase4Exception;
+  void handleUserMessage (@Nonnull Ebms3UserMessage aUserMsg, @Nonnull IAS4IncomingMessageMetadata aMessageMetadata)
+                                                                                                                     throws Phase4Exception;
 }

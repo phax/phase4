@@ -19,6 +19,7 @@ package com.helger.phase4.client;
 import javax.annotation.Nonnull;
 
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
@@ -35,8 +36,12 @@ public interface IAS4SignalMessageConsumer
    *
    * @param aSignalMsg
    *        The Signal Message domain object. Never <code>null</code>.
+   * @param aMessageMetadata
+   *        The message metadata of the synchronously received message. Never
+   *        <code>null</code>. Added in v2.5.0.
    * @throws Phase4Exception
    *         in case of error
    */
-  void handleSignalMessage (@Nonnull Ebms3SignalMessage aSignalMsg) throws Phase4Exception;
+  void handleSignalMessage (@Nonnull Ebms3SignalMessage aSignalMsg,
+                            @Nonnull IAS4IncomingMessageMetadata aMessageMetadata) throws Phase4Exception;
 }
