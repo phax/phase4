@@ -465,6 +465,20 @@ public final class MessageHelperMethods
     return aEbms3PayloadInfo;
   }
 
+  /**
+   * Take all headers from the MIME message and pass them to the provided
+   * consumer. Afterwards remove all headers from the MIME message itself.
+   *
+   * @param aMimeMsg
+   *        The message to use. May not be <code>null</code>.
+   * @param aConsumer
+   *        The consumer to be invoked. May not be <code>null</code>.
+   * @param bUnifyValues
+   *        <code>true</code> to unify the HTTP header values before passing
+   *        them to the consumer.
+   * @throws MessagingException
+   *         In case of MIME message processing problems
+   */
   public static void forEachHeaderAndRemoveAfterwards (@Nonnull final MimeMessage aMimeMsg,
                                                        @Nonnull final BiConsumer <String, String> aConsumer,
                                                        final boolean bUnifyValues) throws MessagingException
