@@ -189,14 +189,14 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
    *
    * @param aPModeLeg
    *        to get the SOAPVersion
-   * @param aSOAPDoc
+   * @param aSoapDoc
    *        the document that should be checked if it contains a SOAPBodyPayload
    * @return true if it contains a SOAPBodyPayload else false
    */
-  private static boolean _checkSOAPBodyHasPayload (@Nonnull final PModeLeg aPModeLeg, @Nonnull final Document aSOAPDoc)
+  private static boolean _checkSoapBodyHasPayload (@Nonnull final PModeLeg aPModeLeg, @Nonnull final Document aSoapDoc)
   {
-    // Check if a SOAPBodyPayload exists
-    final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
+    // Check if a SOAP-Body payload exists
+    final Element aBody = XMLHelper.getFirstChildElementOfName (aSoapDoc.getFirstChild (),
                                                                 aPModeLeg.getProtocol ()
                                                                          .getSoapVersion ()
                                                                          .getBodyElementName ());
@@ -210,7 +210,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
   }
 
   @Nonnull
-  public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
+  public ESuccess processHeaderElement (@Nonnull final Document aSoapDoc,
                                         @Nonnull final Element aElement,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                         @Nonnull final AS4MessageState aState,
@@ -375,7 +375,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         if (_checkMPCOfPMode (aEffectiveLeg, aMPCMgr, aLocale, aErrorList).isFailure ())
           return ESuccess.FAILURE;
 
-        bHasSoapBodyPayload = _checkSOAPBodyHasPayload (aEffectiveLeg, aSOAPDoc);
+        bHasSoapBodyPayload = _checkSoapBodyHasPayload (aEffectiveLeg, aSoapDoc);
         final String sEffectiveMPCID = _getMPCIDOfUserMsg (aUserMessage, aEffectiveLeg);
 
         // PMode is valid
@@ -644,7 +644,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
     // Remember in state
     aState.setPMode (aPMode);
-    aState.setOriginalSoapDocument (aSOAPDoc);
+    aState.setOriginalSoapDocument (aSoapDoc);
     aState.setOriginalAttachments (aAttachments);
     aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
     aState.setMPC (aEffectiveMPC);
