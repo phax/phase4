@@ -154,15 +154,15 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
                                                                                          .build (), s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSOAPVersion,
-                                                                     MockMessages.createUserMessageNotSigned (m_eSOAPVersion,
-                                                                                                              null,
-                                                                                                              aAttachments)
-                                                                                 .getAsSoapDocument (),
-                                                                     aAttachments,
-                                                                     m_aCryptoFactory,
-                                                                     false,
-                                                                     s_aResMgr,
-                                                                     m_aCryptParams);
+                                                                       MockMessages.createUserMessageNotSigned (m_eSOAPVersion,
+                                                                                                                null,
+                                                                                                                aAttachments)
+                                                                                   .getAsSoapDocument (),
+                                                                       aAttachments,
+                                                                       m_aCryptoFactory,
+                                                                       false,
+                                                                       s_aResMgr,
+                                                                       m_aCryptParams);
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -195,12 +195,12 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
                                                          false,
                                                          AS4SigningParams.createDefault ());
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSOAPVersion,
-                                                                     aDoc,
-                                                                     aAttachments,
-                                                                     m_aCryptoFactory,
-                                                                     false,
-                                                                     s_aResMgr,
-                                                                     m_aCryptParams);
+                                                                       aDoc,
+                                                                       aAttachments,
+                                                                       m_aCryptoFactory,
+                                                                       false,
+                                                                       s_aResMgr,
+                                                                       m_aCryptParams);
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));

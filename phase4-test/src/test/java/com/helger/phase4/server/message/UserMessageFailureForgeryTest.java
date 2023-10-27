@@ -201,15 +201,15 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                                          .build (), s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSoapVersion,
-                                                                     MockMessages.createUserMessageNotSigned (m_eSoapVersion,
-                                                                                                              null,
-                                                                                                              aAttachments)
-                                                                                 .getAsSoapDocument (),
-                                                                     aAttachments,
-                                                                     m_aCryptoFactory,
-                                                                     true,
-                                                                     s_aResMgr,
-                                                                     m_aCryptParams);
+                                                                       MockMessages.createUserMessageNotSigned (m_eSoapVersion,
+                                                                                                                null,
+                                                                                                                aAttachments)
+                                                                                   .getAsSoapDocument (),
+                                                                       aAttachments,
+                                                                       m_aCryptoFactory,
+                                                                       true,
+                                                                       s_aResMgr,
+                                                                       m_aCryptParams);
 
     final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMimeMsg.getContent ();
     // Since we want to change the attachment

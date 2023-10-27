@@ -38,20 +38,21 @@ public class AS4MimeMessage extends MimeMessage
   private final boolean m_bIsRepeatable;
 
   @Nonnull
-  private static Session _getSafeSession (@Nullable final Session aSession)
+  private static Session _getSafeMailSession (@Nullable final Session aSession)
   {
     return aSession != null ? aSession : Session.getDefaultInstance (System.getProperties (), null);
   }
 
   public AS4MimeMessage (@Nullable final Session aSession, final boolean bIsRepeatable)
   {
-    super (_getSafeSession (aSession));
+    super (_getSafeMailSession (aSession));
     m_bIsRepeatable = bIsRepeatable;
   }
 
   public AS4MimeMessage (@Nullable final Session aSession, @Nonnull final InputStream aIS) throws MessagingException
   {
-    super (_getSafeSession (aSession), aIS);
+    super (_getSafeMailSession (aSession), aIS);
+    // Assume InputStreams to be non-repeatable
     m_bIsRepeatable = false;
   }
 
