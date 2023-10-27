@@ -653,7 +653,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     // 1. compress
     // Is done when the attachments are added
 
-    // 2. sign and/or encrpyt
+    // 2. sign and/or encrypt
     Document aDoc = aPureDoc;
     AS4MimeMessage aMimeMsg = null;
     if (bSign || bEncrypt)
