@@ -79,12 +79,12 @@ public interface IAS4Message
    * Create a SOAP document from this message with the specified optional
    * payload. Attachments are not handled by this method.
    *
-   * @param aPayload
+   * @param aSoapBodyPayload
    *        The payload to be added into the SOAP body. May be
    *        <code>null</code>.
    * @return The created DOM document.
    * @since v0.9.8
    */
   @Nonnull
-  Document getAsSoapDocument (@Nullable Node aPayload);
+  Document getAsSoapDocument (@Nullable Node aSoapBodyPayload);
 }
