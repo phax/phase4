@@ -1204,7 +1204,7 @@ public class AS4RequestHandler implements AutoCloseable
     if (aCryptParms.isCryptEnabled (LOGGER::warn))
     {
       final boolean bMustUnderstand = true;
-      aMimeMsg = AS4Encryptor.encryptMimeMessage (eSoapVersion,
+      aMimeMsg = AS4Encryptor.encryptToMimeMessage (eSoapVersion,
                                                   aResponseDoc,
                                                   aResponseAttachments,
                                                   m_aCryptoFactoryCrypt,

@@ -631,7 +631,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                          .build (), s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments);
-    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSoapVersion,
                                                                      aMsg.getAsSoapDocument (),
                                                                      aAttachments,
                                                                      m_aCryptoFactory,
@@ -720,7 +720,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                          false,
                                                          AS4SigningParams.createDefault ());
 
-    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSoapVersion,
                                                                      aDoc,
                                                                      aAttachments,
                                                                      m_aCryptoFactory,

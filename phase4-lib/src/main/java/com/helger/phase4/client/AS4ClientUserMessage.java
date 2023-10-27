@@ -693,7 +693,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         final boolean bMustUnderstand = true;
         if (bAttachmentsPresent)
         {
-          aMimeMsg = AS4Encryptor.encryptMimeMessage (getSoapVersion (),
+          aMimeMsg = AS4Encryptor.encryptToMimeMessage (getSoapVersion (),
                                                       aDoc,
                                                       m_aAttachments,
                                                       aCryptoFactoryCrypt,

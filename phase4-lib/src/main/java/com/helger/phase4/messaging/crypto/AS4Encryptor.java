@@ -200,13 +200,13 @@ public final class AS4Encryptor
   }
 
   @Nonnull
-  private static AS4MimeMessage _encryptMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                                     @Nonnull final Document aDoc,
-                                                     @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                     @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                     final boolean bMustUnderstand,
-                                                     @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                     @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
+  private static AS4MimeMessage _encryptToMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
+                                                       @Nonnull final Document aDoc,
+                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                       @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                       final boolean bMustUnderstand,
+                                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                       @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     LOGGER.info ("Now encrypting AS4 MIME message. KeyIdentifierType=" +
                  aCryptParams.getKeyIdentifierType ().name () +
@@ -280,7 +280,13 @@ public final class AS4Encryptor
     }
   }
 
+  /**
+   * @deprecated Use
+   *             {@link #encryptToMimeMessage(ESoapVersion,Document,ICommonsList<WSS4JAttachment>,IAS4CryptoFactory,boolean,AS4ResourceHelper,AS4CryptParams)}
+   *             instead
+   */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.5.1")
   public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                    @Nonnull final Document aDoc,
                                                    @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
@@ -288,6 +294,24 @@ public final class AS4Encryptor
                                                    final boolean bMustUnderstand,
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                    @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
+  {
+    return encryptToMimeMessage (eSoapVersion,
+                                 aDoc,
+                                 aAttachments,
+                                 aCryptoFactoryCrypt,
+                                 bMustUnderstand,
+                                 aResHelper,
+                                 aCryptParams);
+  }
+
+  @Nonnull
+  public static AS4MimeMessage encryptToMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
+                                                     @Nonnull final Document aDoc,
+                                                     @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                     @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                     final boolean bMustUnderstand,
+                                                     @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                     @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
@@ -298,24 +322,24 @@ public final class AS4Encryptor
     if (AS4Configuration.isWSS4JSynchronizedSecurity ())
     {
       // Synchronize
-      return WSSSynchronizer.call ( () -> _encryptMimeMessage (eSoapVersion,
-                                                               aDoc,
-                                                               aAttachments,
-                                                               aCryptoFactoryCrypt,
-                                                               bMustUnderstand,
-                                                               aResHelper,
-                                                               aCryptParams));
+      return WSSSynchronizer.call ( () -> _encryptToMimeMessage (eSoapVersion,
+                                                                 aDoc,
+                                                                 aAttachments,
+                                                                 aCryptoFactoryCrypt,
+                                                                 bMustUnderstand,
+                                                                 aResHelper,
+                                                                 aCryptParams));
     }
 
     // Ensure WSSConfig is initialized
     WSSConfigManager.getInstance ();
 
-    return _encryptMimeMessage (eSoapVersion,
-                                aDoc,
-                                aAttachments,
-                                aCryptoFactoryCrypt,
-                                bMustUnderstand,
-                                aResHelper,
-                                aCryptParams);
+    return _encryptToMimeMessage (eSoapVersion,
+                                  aDoc,
+                                  aAttachments,
+                                  aCryptoFactoryCrypt,
+                                  bMustUnderstand,
+                                  aResHelper,
+                                  aCryptParams);
   }
 }

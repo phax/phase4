@@ -153,7 +153,7 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
                                                                                          .mimeTypeXML ()
                                                                                          .build (), s_aResMgr));
 
-    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
+    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSOAPVersion,
                                                                      MockMessages.createUserMessageNotSigned (m_eSOAPVersion,
                                                                                                               null,
                                                                                                               aAttachments)
@@ -194,7 +194,7 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
                                                          s_aResMgr,
                                                          false,
                                                          AS4SigningParams.createDefault ());
-    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
+    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSOAPVersion,
                                                                      aDoc,
                                                                      aAttachments,
                                                                      m_aCryptoFactory,

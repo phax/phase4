@@ -200,7 +200,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                                          .mimeTypeXML ()
                                                                                          .build (), s_aResMgr));
 
-    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSoapVersion,
                                                                      MockMessages.createUserMessageNotSigned (m_eSoapVersion,
                                                                                                               null,
                                                                                                               aAttachments)
