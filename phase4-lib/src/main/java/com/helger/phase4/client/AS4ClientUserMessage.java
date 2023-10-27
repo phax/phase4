@@ -76,10 +76,13 @@ import jakarta.mail.MessagingException;
 @NotThreadSafe
 public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessage>
 {
+  public static final boolean DEFAULT_FORCE_MIME_MESSAGE = false;
+
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessage.class);
 
   private Node m_aPayload;
   private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
+  private boolean m_bForceMimeMessage = DEFAULT_FORCE_MIME_MESSAGE;
 
   // Document related attributes
   private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
@@ -113,6 +116,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     super (EAS4MessageType.USER_MESSAGE, aResHelper);
   }
 
+  /**
+   * @return The payload of the user message that will be placed in the SOAP
+   *         body. May be <code>null</code>.
+   */
   @Nullable
   public final Node getPayload ()
   {
@@ -134,11 +141,44 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     return this;
   }
 
+  /**
+   * @return The list of attachments that are part of the message. If this list
+   *         is not empty, a MIME message is created. Having attachments and no
+   *         SOAP body is totally valid.
+   */
   @Nonnull
   @ReturnsMutableObject
   public final ICommonsList <WSS4JAttachment> attachments ()
   {
     return m_aAttachments;
+  }
+
+  /**
+   * @return <code>true</code> if a MIME message is always created, even if no
+   *         attachments are present, <code>false</code> to use a simple SOAP
+   *         message in case of absence of attachments. The default value is
+   *         {@value #DEFAULT_FORCE_MIME_MESSAGE}
+   * @since 2.5.1
+   */
+  public final boolean isForceMimeMessage ()
+  {
+    return m_bForceMimeMessage;
+  }
+
+  /**
+   * Enable the enforcement of packaging the AS4 user message in a MIME message.
+   *
+   * @param bForceMimeMessage
+   *        <code>true</code> to enforce it, <code>false</code> to make it
+   *        dynamic.
+   * @return this for chaining
+   * @since 2.5.1
+   */
+  @Nonnull
+  public final AS4ClientUserMessage setForceMimeMessage (final boolean bForceMimeMessage)
+  {
+    m_bForceMimeMessage = bForceMimeMessage;
+    return this;
   }
 
   /**
@@ -694,12 +734,12 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         if (bAttachmentsPresent)
         {
           aMimeMsg = AS4Encryptor.encryptToMimeMessage (getSoapVersion (),
-                                                      aDoc,
-                                                      m_aAttachments,
-                                                      aCryptoFactoryCrypt,
-                                                      bMustUnderstand,
-                                                      getAS4ResourceHelper (),
-                                                      cryptParams ().getClone ());
+                                                        aDoc,
+                                                        m_aAttachments,
+                                                        aCryptoFactoryCrypt,
+                                                        bMustUnderstand,
+                                                        getAS4ResourceHelper (),
+                                                        cryptParams ().getClone ());
 
           if (aCallback != null)
             aCallback.onEncryptedMimeMessage (aMimeMsg);
@@ -720,10 +760,11 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
       }
     }
 
-    if (bAttachmentsPresent && aMimeMsg == null)
+    if ((bAttachmentsPresent || m_bForceMimeMessage) && aMimeMsg == null)
     {
       // * not encrypted, not signed
       // * not encrypted, signed
+      // * forced by flag
       aMimeMsg = MimeMessageCreator.generateMimeMessage (getSoapVersion (), aDoc, m_aAttachments);
     }
 

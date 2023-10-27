@@ -82,6 +82,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   protected String m_sEndpointURL;
 
   protected final ICommonsList <AS4OutgoingAttachment> m_aAttachments = new CommonsArrayList <> ();
+  protected boolean m_bForceMimeMessage = AS4ClientUserMessage.DEFAULT_FORCE_MIME_MESSAGE;
 
   protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
 
@@ -505,6 +506,22 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * Enable the enforcement of packaging the AS4 user message in a MIME message.
+   *
+   * @param bForceMimeMessage
+   *        <code>true</code> to enforce it, <code>false</code> to make it
+   *        dynamic.
+   * @return this for chaining
+   * @since 2.5.1
+   */
+  @Nonnull
+  public final IMPLTYPE forceMimeMessage (final boolean b)
+  {
+    m_bForceMimeMessage = b;
+    return thisAsT ();
+  }
+
+  /**
    * Set an optional Ebms3 Signal Message Consumer. If this consumer is set, the
    * response is trying to be parsed as a Signal Message. This method is
    * optional and must not be called prior to sending.
@@ -649,6 +666,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
     for (final MessageProperty aItem : m_aMessageProperties)
       aUserMsg.ebms3Properties ().add (aItem.getAsEbms3Property ());
+
+    aUserMsg.setForceMimeMessage (m_bForceMimeMessage);
   }
 
   /**

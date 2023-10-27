@@ -114,6 +114,9 @@ public final class Phase4BDEWSender
         conversationID ("");
 
         agreementRef (BDEWPMode.DEFAULT_AGREEMENT_ID);
+
+        // According to #186
+        forceMimeMessage (true);
       }
       catch (final Exception ex)
       {
