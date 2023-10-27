@@ -65,7 +65,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
   }
 
   @Test
-  public void testUserMessageOneAttachmentMimeSuccess () throws Exception
+  public void testUserMessageMimeSuccess () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
@@ -84,7 +84,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
   }
 
   @Test
-  public void testUserMessageOneAttachmentSignedMimeSuccess () throws Exception
+  public void testUserMessageMimeSignedSuccess () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
@@ -112,7 +112,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
   }
 
   @Test
-  public void testUserMessageOneAttachmentEncryptedMimeSuccess () throws Exception
+  public void testUserMessageMimeEncryptedSuccess () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
