@@ -80,7 +80,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessage.class);
 
-  private Node m_aPayload;
+  private Node m_aSoapBodyPayload;
   private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
   private boolean m_bForceMimeMessage = DEFAULT_FORCE_MIME_MESSAGE;
 
@@ -123,7 +123,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   @Nullable
   public final Node getPayload ()
   {
-    return m_aPayload;
+    return m_aSoapBodyPayload;
   }
 
   /**
@@ -137,7 +137,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   @Nonnull
   public final AS4ClientUserMessage setPayload (@Nullable final Node aPayload)
   {
-    m_aPayload = aPayload;
+    m_aSoapBodyPayload = aPayload;
     return this;
   }
 
@@ -652,12 +652,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
     final boolean bSign = signingParams ().isSigningEnabled ();
     final boolean bEncrypt = cryptParams ().isCryptEnabled (LOGGER::warn);
+    final boolean bSoapBoayPayloadPresent = m_aSoapBodyPayload != null;
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             getRefToMessageID (),
                                                                                             ensureSendingDateTime ().getSendingDateTime ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null,
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aSoapBodyPayload != null,
                                                                                             m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,
                                                                                                               m_sAgreementRefValue,
@@ -685,7 +686,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     if (aCallback != null)
       aCallback.onAS4Message (aUserMsg);
 
-    final Document aPureDoc = aUserMsg.getAsSoapDocument (m_aPayload);
+    final Document aPureDoc = aUserMsg.getAsSoapDocument (m_aSoapBodyPayload);
 
     if (aCallback != null)
       aCallback.onSoapDocument (aPureDoc);
@@ -745,18 +746,24 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
             aCallback.onEncryptedMimeMessage (aMimeMsg);
         }
         else
-        {
-          final Document aEncryptedDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactoryCrypt,
-                                                                              getSoapVersion (),
-                                                                              aDoc,
-                                                                              bMustUnderstand,
-                                                                              cryptParams ().getClone ());
+          if (bSoapBoayPayloadPresent)
+          {
+            final Document aEncryptedDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactoryCrypt,
+                                                                                getSoapVersion (),
+                                                                                aDoc,
+                                                                                bMustUnderstand,
+                                                                                cryptParams ().getClone ());
 
-          if (aCallback != null)
-            aCallback.onEncryptedSoapDocument (aEncryptedDoc);
+            if (aCallback != null)
+              aCallback.onEncryptedSoapDocument (aEncryptedDoc);
 
-          aDoc = aEncryptedDoc;
-        }
+            aDoc = aEncryptedDoc;
+          }
+          else
+          {
+            // Empty message - nothing to encrypt
+            LOGGER.info ("AS4 encryption is enabled but neither a SOAP Body payload nor attachments are present");
+          }
       }
     }
 
