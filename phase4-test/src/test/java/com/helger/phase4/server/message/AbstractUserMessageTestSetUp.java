@@ -104,7 +104,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   }
 
   @Nonnull
-  private HttpPost _createPost ()
+  private static HttpPost _createMockPostToLocalJetty ()
   {
     final String sURL = MockJettySetup.getServerAddressFromSettings ();
 
@@ -116,8 +116,9 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   private String _sendPlainMessage (@Nonnull final HttpPost aPost,
                                     @Nonnull final HttpEntity aHttpEntity,
                                     final boolean bExpectSuccess,
-                                    @Nullable final String sExecptedErrorCode) throws IOException
+                                    @Nullable final String sExecptedResponseContent) throws IOException
   {
+    // Debug code
     AS4HttpDebug.debug ( () -> {
       final StringBuilder aSB = new StringBuilder ();
       aSB.append ("TEST-SEND-START to ").append (aPost.toString ()).append ("\n");
@@ -127,8 +128,8 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
         if (ArrayHelper.isNotEmpty (aHeaders))
         {
           for (final Header aHeader : aHeaders)
-            aSB.append (aHeader.getName ()).append ('=').append (aHeader.getValue ()).append ("\n");
-          aSB.append ("\n");
+            aSB.append (aHeader.getName ()).append ('=').append (aHeader.getValue ()).append ('\n');
+          aSB.append ('\n');
         }
         aSB.append (HttpClientHelper.entityToString (aHttpEntity, StandardCharsets.UTF_8));
       }
@@ -167,7 +168,10 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 
     try (final CloseableHttpClient aHttpClient = new HttpClientFactory (aHCS).createHttpClient ())
     {
+      // Response status code
       final MutableInt aSC = new MutableInt (-1);
+
+      // Get response content as UTF-8 String
       final String sResponse = aHttpClient.execute (aPost, aHttpResponse -> {
         aSC.set (aHttpResponse.getCode ());
 
@@ -197,37 +201,60 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
                                                                                                      nStatusCode ==
                                                                               CHttp.HTTP_INTERNAL_SERVER_ERROR);
         assertTrue ("Server responded with different error message than expected (" +
-                    sExecptedErrorCode +
+                    sExecptedResponseContent +
                     ")." +
                     " StatusCode=" +
                     nStatusCode +
                     "\nResponse: '" +
                     sResponse +
                     "'",
-                    sResponse.contains (sExecptedErrorCode));
+                    sResponse.contains (sExecptedResponseContent));
       }
       return sResponse;
     }
   }
 
-  @Nonnull
-  protected final String sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
-                                          final boolean bExpectSuccess,
-                                          @Nullable final String sExpectedErrorCode) throws IOException,
-                                                                                     MessagingException
-  {
-    final HttpPost aPost = _createPost ();
-    MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aHttpEntity.getMimeMessage (), aPost::addHeader, true);
-    return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExpectedErrorCode);
-  }
-
   /**
+   * Send a MIME message to the locally spawned Jetty
+   *
    * @param aHttpEntity
    *        the entity to send to the server
    * @param bExpectSuccess
    *        specifies if the test case expects a positive or negative response
    *        from the server
-   * @param sExpectedErrorCode
+   * @param sExecptedResponseContent
+   *        if you expect a negative response, you must give the expected error
+   *        code as it will get searched for in the response.
+   * @return Response as String
+   * @throws IOException
+   *         In case HTTP sending fails
+   * @throws MessagingException
+   *         in case there is some error with the MIME message
+   */
+  @Nonnull
+  protected final String sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
+                                          final boolean bExpectSuccess,
+                                          @Nullable final String sExecptedResponseContent) throws IOException,
+                                                                                           MessagingException
+  {
+    final HttpPost aPost = _createMockPostToLocalJetty ();
+
+    // Move all headers from MIME message to the HTTP POST
+    MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aHttpEntity.getMimeMessage (), aPost::addHeader, true);
+
+    // Ready to send
+    return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExecptedResponseContent);
+  }
+
+  /**
+   * Send a non-MIME message to the locally spawned Jetty
+   *
+   * @param aHttpEntity
+   *        the entity to send to the server
+   * @param bExpectSuccess
+   *        specifies if the test case expects a positive or negative response
+   *        from the server
+   * @param sExecptedResponseContent
    *        if you expect a negative response, you must give the expected error
    *        code as it will get searched for in the response.
    * @return Response as String
@@ -237,9 +264,11 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   @Nonnull
   protected final String sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
                                            final boolean bExpectSuccess,
-                                           @Nullable final String sExpectedErrorCode) throws IOException
+                                           @Nullable final String sExecptedResponseContent) throws IOException
   {
-    final HttpPost aPost = _createPost ();
-    return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExpectedErrorCode);
+    final HttpPost aPost = _createMockPostToLocalJetty ();
+
+    // Ready to send
+    return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExecptedResponseContent);
   }
 }
