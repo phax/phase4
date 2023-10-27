@@ -42,10 +42,10 @@
   </licenses>
   
   <scm>
-    <connection>scm:git:git@github.com:phax/phase4.git</connection>
-    <developerConnection>scm:git:git@github.com:phax/phase4.git</developerConnection>
-    <url>http://github.com/phax/phase4</url>
-    <tag>phase4-parent-pom-2.5.0</tag>
+    <connection>scm:git:https://github.com/phax/phase4.git</connection>
+    <developerConnection>scm:git:https://github.com/phax/phase4.git</developerConnection>
+    <url>https://github.com/phax/phase4</url>
+    <tag>HEAD</tag>
   </scm>
 
   <organization>
