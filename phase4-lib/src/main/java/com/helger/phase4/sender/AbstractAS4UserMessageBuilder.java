@@ -508,7 +508,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   /**
    * Enable the enforcement of packaging the AS4 user message in a MIME message.
    *
-   * @param bForceMimeMessage
+   * @param b
    *        <code>true</code> to enforce it, <code>false</code> to make it
    *        dynamic.
    * @return this for chaining
