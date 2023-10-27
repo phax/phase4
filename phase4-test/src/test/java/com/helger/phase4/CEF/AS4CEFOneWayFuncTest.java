@@ -632,12 +632,12 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSoapVersion,
-                                                                     aMsg.getAsSoapDocument (),
-                                                                     aAttachments,
-                                                                     m_aCryptoFactory,
-                                                                     false,
-                                                                     s_aResMgr,
-                                                                     m_aCryptParams);
+                                                                       aMsg.getAsSoapDocument (),
+                                                                       aAttachments,
+                                                                       m_aCryptoFactory,
+                                                                       false,
+                                                                       s_aResMgr,
+                                                                       m_aCryptParams);
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -721,12 +721,12 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                          AS4SigningParams.createDefault ());
 
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSoapVersion,
-                                                                     aDoc,
-                                                                     aAttachments,
-                                                                     m_aCryptoFactory,
-                                                                     false,
-                                                                     s_aResMgr,
-                                                                     m_aCryptParams);
+                                                                       aDoc,
+                                                                       aAttachments,
+                                                                       m_aCryptoFactory,
+                                                                       false,
+                                                                       s_aResMgr,
+                                                                       m_aCryptParams);
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));

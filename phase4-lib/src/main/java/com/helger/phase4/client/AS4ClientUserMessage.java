@@ -734,6 +734,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         final boolean bMustUnderstand = true;
         if (bAttachmentsPresent)
         {
+          // Attachments are never empty
           aMimeMsg = AS4Encryptor.encryptToMimeMessage (getSoapVersion (),
                                                         aDoc,
                                                         m_aAttachments,

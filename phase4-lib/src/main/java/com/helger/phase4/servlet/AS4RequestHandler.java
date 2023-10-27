@@ -1203,14 +1203,22 @@ public class AS4RequestHandler implements AutoCloseable
     final AS4MimeMessage aMimeMsg;
     if (aCryptParms.isCryptEnabled (LOGGER::warn))
     {
-      final boolean bMustUnderstand = true;
-      aMimeMsg = AS4Encryptor.encryptToMimeMessage (eSoapVersion,
-                                                  aResponseDoc,
-                                                  aResponseAttachments,
-                                                  m_aCryptoFactoryCrypt,
-                                                  bMustUnderstand,
-                                                  m_aResHelper,
-                                                  aCryptParms);
+      if (aResponseAttachments.isNotEmpty ())
+      {
+        final boolean bMustUnderstand = true;
+        aMimeMsg = AS4Encryptor.encryptToMimeMessage (eSoapVersion,
+                                                      aResponseDoc,
+                                                      aResponseAttachments,
+                                                      m_aCryptoFactoryCrypt,
+                                                      bMustUnderstand,
+                                                      m_aResHelper,
+                                                      aCryptParms);
+      }
+      else
+      {
+        LOGGER.info ("AS4 encryption is enabled but no response attachments are present");
+        aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion, aResponseDoc, aResponseAttachments);
+      }
     }
     else
     {

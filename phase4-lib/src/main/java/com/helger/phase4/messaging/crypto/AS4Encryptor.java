@@ -17,7 +17,6 @@
 package com.helger.phase4.messaging.crypto;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
 import javax.crypto.SecretKey;
@@ -33,7 +32,7 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.CollectionHelper;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.mime.CMimeType;
 import com.helger.mail.cte.EContentTransferEncoding;
@@ -202,7 +201,7 @@ public final class AS4Encryptor
   @Nonnull
   private static AS4MimeMessage _encryptToMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                        @Nonnull final Document aDoc,
-                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                       @Nonnull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments,
                                                        @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                        final boolean bMustUnderstand,
                                                        @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
@@ -232,12 +231,9 @@ public final class AS4Encryptor
             .add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments",
                                         AS4Signer.ENCRYPTION_MODE_CONTENT));
 
-    WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = null;
-    if (CollectionHelper.isNotEmpty (aAttachments))
-    {
-      aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments, aResHelper);
-      aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
-    }
+    final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
+                                                                                                          aResHelper);
+    aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
 
     // Ensure mustUnderstand value
     final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
@@ -257,16 +253,12 @@ public final class AS4Encryptor
 
     // The attachment callback handler contains the encrypted attachments
     // Important: read the attachment stream only once!
-    ICommonsList <WSS4JAttachment> aEncryptedAttachments = null;
-    if (aAttachmentCallbackHandler != null)
+    final ICommonsList <WSS4JAttachment> aEncryptedAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
+    // MIME Type and CTE must be set for encrypted attachments!
+    for (final WSS4JAttachment aAttachment : aEncryptedAttachments)
     {
-      aEncryptedAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
-      // MIME Type and CTE must be set for encrypted attachments!
-      for (final WSS4JAttachment aAttachment : aEncryptedAttachments)
-      {
-        aAttachment.overwriteMimeType (CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
-        aAttachment.setContentTransferEncoding (EContentTransferEncoding.BINARY);
-      }
+      aAttachment.overwriteMimeType (CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
+      aAttachment.setContentTransferEncoding (EContentTransferEncoding.BINARY);
     }
 
     // Use the encrypted attachments!
@@ -289,7 +281,7 @@ public final class AS4Encryptor
   @Deprecated (forRemoval = true, since = "2.5.1")
   public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                    @Nonnull final Document aDoc,
-                                                   @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                   @Nonnull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments,
                                                    @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                    final boolean bMustUnderstand,
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
@@ -307,7 +299,7 @@ public final class AS4Encryptor
   @Nonnull
   public static AS4MimeMessage encryptToMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                      @Nonnull final Document aDoc,
-                                                     @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                     @Nonnull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments,
                                                      @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                      final boolean bMustUnderstand,
                                                      @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
@@ -315,6 +307,7 @@ public final class AS4Encryptor
   {
     ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
+    ValueEnforcer.notEmptyNoNullValue (aAttachments, "Attachments");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aCryptParams, "CryptParams");
