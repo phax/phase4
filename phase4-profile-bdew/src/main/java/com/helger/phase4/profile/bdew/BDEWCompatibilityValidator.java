@@ -16,6 +16,16 @@
  */
 package com.helger.phase4.profile.bdew;
 
+import java.security.cert.X509Certificate;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.error.IError;
@@ -52,14 +62,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
-import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x500.style.IETFUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.security.cert.X509Certificate;
 
 /**
  * Validate certain requirements imposed by the BDEW project.
@@ -118,21 +120,21 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
           aErrorList.add (_createError (sFieldPrefix + "AddressProtocol is missing"));
       }
 
-      final PModeLegBusinessInformation aBusinessInfo = aPModeLeg.getBusinessInfo();
+      final PModeLegBusinessInformation aBusinessInfo = aPModeLeg.getBusinessInfo ();
       if (aBusinessInfo == null)
       {
-        aErrorList.add (_createError ("BusinessInfo is missing"));
+        aErrorList.add (_createError (sFieldPrefix + "BusinessInfo is missing"));
       }
       else
       {
-        String sService = aBusinessInfo.getService();
-        if (sService == null || !BDEWPMode.getServices ().contains (sService))
+        final String sService = aBusinessInfo.getService ();
+        if (sService == null || !BDEWPMode.containsService (sService))
         {
           aErrorList.add (_createError (sFieldPrefix + "BusinessInfo.Service '" + sService + "' is unsupported"));
         }
 
-        String sAction = aBusinessInfo.getAction ();
-        if (sAction == null || !BDEWPMode.getActions ().contains (sAction))
+        final String sAction = aBusinessInfo.getAction ();
+        if (sAction == null || !BDEWPMode.containsAction (sAction))
         {
           aErrorList.add (_createError (sFieldPrefix + "BusinessInfo.Action '" + sAction + "' is unsupported"));
         }
@@ -194,20 +196,22 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       }
       else
       {
-        if (!aPModeLegSecurity.getX509EncryptionAlgorithm().equals(ECryptoAlgorithmCrypt.AES_128_GCM)) {
-          aErrorList.add(_createError(sFieldPrefix +
-                                              "Security.X509EncryptionAlgorithm must use the value '" +
-                                              ECryptoAlgorithmCrypt.AES_128_GCM.getID() +
-                                              "' instead of '" +
-                                              aPModeLegSecurity.getX509EncryptionAlgorithm().getID() +
-                                              "'"));
+        if (!aPModeLegSecurity.getX509EncryptionAlgorithm ().equals (ECryptoAlgorithmCrypt.AES_128_GCM))
+        {
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "Security.X509EncryptionAlgorithm must use the value '" +
+                                        ECryptoAlgorithmCrypt.AES_128_GCM.getID () +
+                                        "' instead of '" +
+                                        aPModeLegSecurity.getX509EncryptionAlgorithm ().getID () +
+                                        "'"));
         }
       }
 
-      final Integer nEncryptionMinimumStrength = aPModeLegSecurity.getX509EncryptionMinimumStrength ();
-      if (nEncryptionMinimumStrength == null || !nEncryptionMinimumStrength.equals(128))
+      final Integer aEncryptionMinimumStrength = aPModeLegSecurity.getX509EncryptionMinimumStrength ();
+      if (aEncryptionMinimumStrength == null || aEncryptionMinimumStrength.intValue () != 128)
       {
-        aErrorList.add (_createError (sFieldPrefix + "Security.X509Encryption.MinimalStrength must be defined and set to 128"));
+        aErrorList.add (_createError (sFieldPrefix +
+                                      "Security.X509Encryption.MinimalStrength must be defined and set to 128"));
       }
 
       // Check WSS Version = 1.1.1
@@ -242,7 +246,8 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
         aErrorList.add (_createError (sFieldPrefix + "Security.PModeAuthorize is missing"));
       }
 
-      if (!aPModeLegSecurity.isSendReceiptDefined () || !aPModeLegSecurity.isSendReceipt ()) {
+      if (!aPModeLegSecurity.isSendReceiptDefined () || !aPModeLegSecurity.isSendReceipt ())
+      {
         aErrorList.add (_createError (sFieldPrefix + "Security.SendReceipt must be defined and set to 'true'"));
       }
       else
@@ -257,7 +262,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
                                         EPModeSendReceiptReplyPattern.RESPONSE +
                                         " instead of " +
                                         aPModeLegSecurity.getSendReceiptReplyPattern ()));
-        }
+      }
     }
     else
     {
@@ -355,7 +360,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
     }
 
     final PModeParty aResponderParty = aPMode.getResponder ();
-    if (aResponderParty != null && !aResponderParty.getRole().equals (CAS4.DEFAULT_RESPONDER_URL))
+    if (aResponderParty != null && !aResponderParty.getRole ().equals (CAS4.DEFAULT_RESPONDER_URL))
     {
       aErrorList.add (_createError ("PMode.Responder.Role must be set to '" + CAS4.DEFAULT_RESPONDER_URL + "'"));
     }
@@ -398,19 +403,21 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
     final PModeReceptionAwareness aPModeReceptionAwareness = aPMode.getReceptionAwareness ();
     if (aPModeReceptionAwareness != null)
     {
-      if (!aPModeReceptionAwareness.isReceptionAwarenessDefined () || !aPModeReceptionAwareness.isReceptionAwareness ()) {
-        aErrorList.add(_createError("PMode[1].ReceptionAwareness must be defined and set to 'true'"));
+      if (!aPModeReceptionAwareness.isReceptionAwarenessDefined () || !aPModeReceptionAwareness.isReceptionAwareness ())
+      {
+        aErrorList.add (_createError ("PMode[1].ReceptionAwareness must be defined and set to 'true'"));
       }
       else
       {
         if (!aPModeReceptionAwareness.isRetryDefined () || !aPModeReceptionAwareness.isRetry ())
         {
-          aErrorList.add(_createError("PMode[1].ReceptionAwareness.Retry must be defined and set to 'true'"));
+          aErrorList.add (_createError ("PMode[1].ReceptionAwareness.Retry must be defined and set to 'true'"));
         }
 
-        if (!aPModeReceptionAwareness.isDuplicateDetectionDefined () || !aPModeReceptionAwareness.isDuplicateDetection ())
+        if (!aPModeReceptionAwareness.isDuplicateDetectionDefined () ||
+            !aPModeReceptionAwareness.isDuplicateDetection ())
         {
-          aErrorList.add(_createError("PMode[1].ReceptionAwareness.DuplicateDetection must be defined and set to 'true'"));
+          aErrorList.add (_createError ("PMode[1].ReceptionAwareness.DuplicateDetection must be defined and set to 'true'"));
         }
       }
     }

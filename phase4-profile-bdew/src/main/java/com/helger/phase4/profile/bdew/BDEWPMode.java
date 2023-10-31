@@ -21,6 +21,8 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.collection.impl.CommonsHashSet;
+import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.state.ETriState;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
@@ -43,8 +45,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
-
-import java.util.Set;
 
 /**
  * PMode creation code.
@@ -74,6 +74,18 @@ public final class BDEWPMode
   public static final String ACTION_TEST_SERVICE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test";
   public static final String ACTION_REQUEST_SWITCH = "https://www.bdew.de/as4/communication/actions/requestSwitch";
   public static final String ACTION_CONFIRM_SWITCH = "https://www.bdew.de/as4/communication/actions/confirmSwitch";
+
+  private static final ICommonsSet <String> ALL_SERVICES = new CommonsHashSet <> (SERVICE_TEST,
+                                                                                  SERVICE_PATH_SWITCH,
+                                                                                  SERVICE_MARKTPROZESSE,
+                                                                                  SERVICE_FAHRPLAN,
+                                                                                  SERVICE_REDISPATCH_2_0,
+                                                                                  SERVICE_KWEP,
+                                                                                  SERVICE_SOGL);
+  private static final ICommonsSet <String> ALL_ACTIONS = new CommonsHashSet <> (ACTION_DEFAULT,
+                                                                                 ACTION_TEST_SERVICE,
+                                                                                 ACTION_REQUEST_SWITCH,
+                                                                                 ACTION_CONFIRM_SWITCH);
 
   private BDEWPMode ()
   {}
@@ -215,14 +227,13 @@ public final class BDEWPMode
     return aPMode;
   }
 
-  public static Set<String> getServices ()
+  public static boolean containsService (@Nonnull final String sService)
   {
-    return Set.of(SERVICE_TEST, SERVICE_PATH_SWITCH, SERVICE_MARKTPROZESSE, SERVICE_FAHRPLAN,
-                  SERVICE_REDISPATCH_2_0, SERVICE_KWEP, SERVICE_SOGL);
+    return ALL_SERVICES.contains (sService);
   }
 
-  public static Set<String> getActions ()
+  public static boolean containsAction (@Nonnull final String sAction)
   {
-    return Set.of(ACTION_DEFAULT, ACTION_TEST_SERVICE, ACTION_REQUEST_SWITCH, ACTION_CONFIRM_SWITCH);
+    return ALL_ACTIONS.contains (sAction);
   }
 }
