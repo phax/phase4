@@ -188,7 +188,7 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
           aPModeLegSecurity.hasUsernameTokenPassword () ||
           aPModeLegSecurity.hasUsernameTokenUsername ())
       {
-        aErrorList.add (_createError (sFieldPrefix + "Username nor it's part MUST NOT be set"));
+        aErrorList.add (_createError (sFieldPrefix + "Username nor its part MUST NOT be set"));
       }
 
       // PModeAuthorize
