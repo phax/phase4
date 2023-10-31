@@ -44,6 +44,8 @@ import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
 
+import java.util.Set;
+
 /**
  * PMode creation code.
  *
@@ -211,5 +213,16 @@ public final class BDEWPMode
       MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
     }
     return aPMode;
+  }
+
+  public static Set<String> getServices ()
+  {
+    return Set.of(SERVICE_TEST, SERVICE_PATH_SWITCH, SERVICE_MARKTPROZESSE, SERVICE_FAHRPLAN,
+                  SERVICE_REDISPATCH_2_0, SERVICE_KWEP, SERVICE_SOGL);
+  }
+
+  public static Set<String> getActions ()
+  {
+    return Set.of(ACTION_DEFAULT, ACTION_TEST_SERVICE, ACTION_REQUEST_SWITCH, ACTION_CONFIRM_SWITCH);
   }
 }

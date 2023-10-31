@@ -21,6 +21,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
+import com.helger.phase4.CAS4;
+import com.helger.phase4.model.pmode.PModeParty;
+import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
@@ -86,6 +89,26 @@ public final class BDEWCompatibilityValidatorTest
   }
 
   @Test
+  public void testValidatePModeAgreementMandatory ()
+  {
+    m_aPMode.setAgreement (null);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("PMode.Agreement must be set to '" + BDEWPMode.DEFAULT_AGREEMENT_ID + "'")));
+  }
+
+  @Test
+  public void testValidatePModeAgreementWrongValue ()
+  {
+    m_aPMode.setAgreement ("http://test.example.org");
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("PMode.Agreement must be set to '" + BDEWPMode.DEFAULT_AGREEMENT_ID + "'")));
+  }
+
+  @Test
   public void testValidatePModeWrongMEP ()
   {
     m_aPMode.setMEP (EMEP.TWO_WAY);
@@ -104,6 +127,28 @@ public final class BDEWCompatibilityValidatorTest
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP binding")));
+  }
+
+  @Test
+  public void testValidatePModeInitiatorRoleWrongValue ()
+  {
+    final PModeParty aInitiatorParty = PModeParty.createSimple ("id", "http://test.example.org");
+
+    m_aPMode.setInitiator (aInitiatorParty);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Initiator.Role must be set to '" + CAS4.DEFAULT_INITIATOR_URL + "'")));
+  }
+
+  @Test
+  public void testValidatePModeResponderRoleWrongValue ()
+  {
+    final PModeParty aResponderParty = PModeParty.createSimple ("id", "http://test.example.org");
+
+    m_aPMode.setResponder (aResponderParty);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Responder.Role must be set to '" + CAS4.DEFAULT_RESPONDER_URL + "'")));
   }
 
   @Test
@@ -287,6 +332,27 @@ public final class BDEWCompatibilityValidatorTest
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
   }
 
+
+  @Test
+  public void testValidatePModeSecuritySendReceiptMandatory ()
+  {
+    m_aPMode.getLeg1 ().getSecurity ().setSendReceipt (ETriState.UNDEFINED);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue ("Errors: " + m_aErrorList.toString (),
+                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Security.SendReceipt must be defined and set to 'true'")));
+  }
+
+  @Test
+  public void testValidatePModeSecuritySendReceiptTrue ()
+  {
+    m_aPMode.getLeg1 ().getSecurity ().setSendReceipt (ETriState.FALSE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue ("Errors: " + m_aErrorList.toString (),
+                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Security.SendReceipt must be defined and set to 'true'")));
+  }
+
   @Test
   public void testValidatePModeSecurityResponsePatternWrongBoolean ()
   {
@@ -404,6 +470,114 @@ public final class BDEWCompatibilityValidatorTest
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'")));
+  }
+
+  @Test
+  public void testValidatePModeBusinessInfoWrongService ()
+  {
+    final PModeLegBusinessInformation aBusinessInformation = BDEWPMode.generatePModeLegBusinessInformation ();
+    aBusinessInformation.setService ("http://test.example.org");
+    aBusinessInformation.setAction (BDEWPMode.ACTION_DEFAULT);
+
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    aBusinessInformation,
+                                    null,
+                                    null,
+                                    null));
+
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("BusinessInfo.Service 'http://test.example.org' is unsupported")));
+  }
+
+  @Test
+  public void testValidatePModeBusinessInfoWrongAction ()
+  {
+    final PModeLegBusinessInformation aBusinessInformation = BDEWPMode.generatePModeLegBusinessInformation ();
+    aBusinessInformation.setService (BDEWPMode.SERVICE_TEST);
+    aBusinessInformation.setAction ("http://test.example.org");
+
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    aBusinessInformation,
+                                    null,
+                                    null,
+                                    null));
+
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("BusinessInfo.Action 'http://test.example.org' is unsupported")));
+  }
+
+  @Test
+  public void testValidatePModeNoX509EncryptionMinimalStrength ()
+  {
+    m_aPMode.getLeg1 ().getSecurity ().setX509EncryptionMinimumStrength (null);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("X509Encryption.MinimalStrength must be defined and set to 128")));
+  }
+
+  @Test
+  public void testValidatePModeX509EncryptionMinimalStrengthWrongValue ()
+  {
+    m_aPMode.getLeg1 ().getSecurity ().setX509EncryptionMinimumStrength (Integer.valueOf (256));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("X509Encryption.MinimalStrength must be defined and set to 128")));
+  }
+
+  @Test
+  public void testValidatePModeReceptionAwarenessMandatory ()
+  {
+    m_aPMode.getReceptionAwareness ().setReceptionAwareness (ETriState.UNDEFINED);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ReceptionAwareness must be defined and set to 'true'")));
+  }
+
+  @Test
+  public void testValidatePModeReceptionAwarenessWrongValue ()
+  {
+    m_aPMode.getReceptionAwareness ().setReceptionAwareness (ETriState.FALSE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ReceptionAwareness must be defined and set to 'true'")));
+  }
+
+  @Test
+  public void testValidatePModeReceptionAwarenessRetryMandatory ()
+  {
+    m_aPMode.getReceptionAwareness ().setRetry (ETriState.UNDEFINED);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ReceptionAwareness.Retry must be defined and set to 'true'")));
+  }
+
+  @Test
+  public void testValidatePModeReceptionAwarenessRetryWrongValue ()
+  {
+    m_aPMode.getReceptionAwareness ().setRetry (ETriState.FALSE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ReceptionAwareness.Retry must be defined and set to 'true'")));
+  }
+
+  @Test
+  public void testValidatePModeReceptionAwarenessDuplicateDetectionMandatory ()
+  {
+    m_aPMode.getReceptionAwareness ().setDuplicateDetection (ETriState.UNDEFINED);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ReceptionAwareness.DuplicateDetection must be defined and set to 'true'")));
+  }
+
+  @Test
+  public void testValidatePModeReceptionAwarenessDuplicateDetectionWrongValue ()
+  {
+    m_aPMode.getReceptionAwareness ().setDuplicateDetection (ETriState.FALSE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ReceptionAwareness.DuplicateDetection must be defined and set to 'true'")));
   }
 
   @Test

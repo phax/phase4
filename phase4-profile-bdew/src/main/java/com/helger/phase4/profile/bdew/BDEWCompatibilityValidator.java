@@ -16,22 +16,13 @@
  */
 package com.helger.phase4.profile.bdew;
 
-import java.security.cert.X509Certificate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x500.style.IETFUtils;
-
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
@@ -48,16 +39,27 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.PModePayloadService;
+import com.helger.phase4.model.pmode.PModeReceptionAwareness;
 import com.helger.phase4.model.pmode.PModeValidationException;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.security.cert.X509Certificate;
 
 /**
  * Validate certain requirements imposed by the BDEW project.
@@ -99,7 +101,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
 
       if (StringHelper.hasText (sAddressProtocol))
       {
-        if (sAddressProtocol.equalsIgnoreCase ("http") || sAddressProtocol.equalsIgnoreCase ("https"))
+        if (sAddressProtocol.equalsIgnoreCase ("https"))
         {
           // Always okay
         }
@@ -114,6 +116,26 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
         // Empty address protocol
         if (false)
           aErrorList.add (_createError (sFieldPrefix + "AddressProtocol is missing"));
+      }
+
+      final PModeLegBusinessInformation aBusinessInfo = aPModeLeg.getBusinessInfo();
+      if (aBusinessInfo == null)
+      {
+        aErrorList.add (_createError ("BusinessInfo is missing"));
+      }
+      else
+      {
+        String sService = aBusinessInfo.getService();
+        if (sService == null || !BDEWPMode.getServices ().contains (sService))
+        {
+          aErrorList.add (_createError (sFieldPrefix + "BusinessInfo.Service '" + sService + "' is unsupported"));
+        }
+
+        String sAction = aBusinessInfo.getAction ();
+        if (sAction == null || !BDEWPMode.getActions ().contains (sAction))
+        {
+          aErrorList.add (_createError (sFieldPrefix + "BusinessInfo.Action '" + sAction + "' is unsupported"));
+        }
       }
 
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
@@ -171,15 +193,22 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
         aErrorList.add (_createError (sFieldPrefix + "Security.X509EncryptionAlgorithm is missing"));
       }
       else
-        if (!aPModeLegSecurity.getX509EncryptionAlgorithm ().equals (ECryptoAlgorithmCrypt.AES_128_GCM))
-        {
-          aErrorList.add (_createError (sFieldPrefix +
-                                        "Security.X509EncryptionAlgorithm must use the value '" +
-                                        ECryptoAlgorithmCrypt.AES_128_GCM.getID () +
-                                        "' instead of '" +
-                                        aPModeLegSecurity.getX509EncryptionAlgorithm ().getID () +
-                                        "'"));
+      {
+        if (!aPModeLegSecurity.getX509EncryptionAlgorithm().equals(ECryptoAlgorithmCrypt.AES_128_GCM)) {
+          aErrorList.add(_createError(sFieldPrefix +
+                                              "Security.X509EncryptionAlgorithm must use the value '" +
+                                              ECryptoAlgorithmCrypt.AES_128_GCM.getID() +
+                                              "' instead of '" +
+                                              aPModeLegSecurity.getX509EncryptionAlgorithm().getID() +
+                                              "'"));
         }
+      }
+
+      final Integer nEncryptionMinimumStrength = aPModeLegSecurity.getX509EncryptionMinimumStrength ();
+      if (nEncryptionMinimumStrength == null || !nEncryptionMinimumStrength.equals(128))
+      {
+        aErrorList.add (_createError (sFieldPrefix + "Security.X509Encryption.MinimalStrength must be defined and set to 128"));
+      }
 
       // Check WSS Version = 1.1.1
       if (aPModeLegSecurity.getWSSVersion () != null)
@@ -199,7 +228,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
           aPModeLegSecurity.hasUsernameTokenPassword () ||
           aPModeLegSecurity.hasUsernameTokenUsername ())
       {
-        aErrorList.add (_createError (sFieldPrefix + "Username nor it's part MUST NOT be set"));
+        aErrorList.add (_createError (sFieldPrefix + "Username nor its part MUST NOT be set"));
       }
 
       // PModeAuthorize
@@ -213,23 +242,22 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
         aErrorList.add (_createError (sFieldPrefix + "Security.PModeAuthorize is missing"));
       }
 
-      // SEND RECEIPT TRUE/FALSE when false don't send receipts anymore
-      if (aPModeLegSecurity.isSendReceiptDefined ())
-      {
-        if (aPModeLegSecurity.isSendReceipt ())
-        {
-          // set response required
-          if (!aPModeLegSecurity.isSendReceiptNonRepudiation ())
-            aErrorList.add (_createError (sFieldPrefix + "SendReceiptNonRepudiation must be set to 'true'"));
-
-          if (aPModeLegSecurity.getSendReceiptReplyPattern () != EPModeSendReceiptReplyPattern.RESPONSE)
-            aErrorList.add (_createError (sFieldPrefix +
-                                          "Security.SendReceiptReplyPattern must use the value " +
-                                          EPModeSendReceiptReplyPattern.RESPONSE +
-                                          " instead of " +
-                                          aPModeLegSecurity.getSendReceiptReplyPattern ()));
-        }
+      if (!aPModeLegSecurity.isSendReceiptDefined () || !aPModeLegSecurity.isSendReceipt ()) {
+        aErrorList.add (_createError (sFieldPrefix + "Security.SendReceipt must be defined and set to 'true'"));
       }
+      else
+      {
+        // set response required
+        if (!aPModeLegSecurity.isSendReceiptNonRepudiation ())
+          aErrorList.add (_createError (sFieldPrefix + "SendReceiptNonRepudiation must be set to 'true'"));
+
+        if (aPModeLegSecurity.getSendReceiptReplyPattern () != EPModeSendReceiptReplyPattern.RESPONSE)
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "Security.SendReceiptReplyPattern must use the value " +
+                                        EPModeSendReceiptReplyPattern.RESPONSE +
+                                        " instead of " +
+                                        aPModeLegSecurity.getSendReceiptReplyPattern ()));
+        }
     }
     else
     {
@@ -298,6 +326,12 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       aErrorList.add (_createError (ex.getMessage ()));
     }
 
+    final String sAgreement = aPMode.getAgreement ();
+    if (sAgreement == null || !sAgreement.equals (BDEWPMode.DEFAULT_AGREEMENT_ID))
+    {
+      aErrorList.add (_createError ("PMode.Agreement must be set to '" + BDEWPMode.DEFAULT_AGREEMENT_ID + "'"));
+    }
+
     final EMEP eMEP = aPMode.getMEP ();
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
 
@@ -312,6 +346,18 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
                                     ") and MEP binding (" +
                                     eMEPBinding +
                                     ") was specified, valid is only one-way/push."));
+    }
+
+    final PModeParty aInitiatorParty = aPMode.getInitiator ();
+    if (aInitiatorParty != null && !aInitiatorParty.getRole ().equals (CAS4.DEFAULT_INITIATOR_URL))
+    {
+      aErrorList.add (_createError ("PMode.Initiator.Role must be set to '" + CAS4.DEFAULT_INITIATOR_URL + "'"));
+    }
+
+    final PModeParty aResponderParty = aPMode.getResponder ();
+    if (aResponderParty != null && !aResponderParty.getRole().equals (CAS4.DEFAULT_RESPONDER_URL))
+    {
+      aErrorList.add (_createError ("PMode.Responder.Role must be set to '" + CAS4.DEFAULT_RESPONDER_URL + "'"));
     }
 
     // Leg1 must be present
@@ -345,6 +391,27 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       else
       {
         aErrorList.add (_createError ("PMode.PayloadService.CompressionMode is missing"));
+      }
+    }
+
+    // ReceptionAwareness
+    final PModeReceptionAwareness aPModeReceptionAwareness = aPMode.getReceptionAwareness ();
+    if (aPModeReceptionAwareness != null)
+    {
+      if (!aPModeReceptionAwareness.isReceptionAwarenessDefined () || !aPModeReceptionAwareness.isReceptionAwareness ()) {
+        aErrorList.add(_createError("PMode[1].ReceptionAwareness must be defined and set to 'true'"));
+      }
+      else
+      {
+        if (!aPModeReceptionAwareness.isRetryDefined () || !aPModeReceptionAwareness.isRetry ())
+        {
+          aErrorList.add(_createError("PMode[1].ReceptionAwareness.Retry must be defined and set to 'true'"));
+        }
+
+        if (!aPModeReceptionAwareness.isDuplicateDetectionDefined () || !aPModeReceptionAwareness.isDuplicateDetection ())
+        {
+          aErrorList.add(_createError("PMode[1].ReceptionAwareness.DuplicateDetection must be defined and set to 'true'"));
+        }
       }
     }
   }
