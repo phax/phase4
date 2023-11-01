@@ -218,7 +218,13 @@ public final class AS4DumpReader
 
     LOGGER.info ("Now at byte " + nHttpEnd + " having " + hm.getCount () + " HTTP headers");
 
-    WebScopeManager.onGlobalBegin (MockServletContext.create ());
+    final boolean bGlobalScopePresent = WebScopeManager.isGlobalScopePresent ();
+    if (!bGlobalScopePresent)
+    {
+      // Make sure one is present - for standalone use
+      WebScopeManager.onGlobalBegin (MockServletContext.create ());
+    }
+
     try (final WebScoped w = new WebScoped ();
          final AS4RequestHandler rh = new AS4RequestHandler (aCryptoFactorySign,
                                                              aCryptoFactoryCrypt,
@@ -300,7 +306,11 @@ public final class AS4DumpReader
     }
     finally
     {
-      WebScopeManager.onGlobalEnd ();
+      if (!bGlobalScopePresent)
+      {
+        // If we created one, also end it here
+        WebScopeManager.onGlobalEnd ();
+      }
     }
   }
 }
