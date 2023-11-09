@@ -515,7 +515,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
           aErrorList.add (_createError ("PartyInfo/From must contain no more than one PartyID"));
         }
 
-        if (StringHelper.hasNoText (aFrom.getRole ()) || !aFrom.getRole ().equals (CAS4.DEFAULT_INITIATOR_URL))
+        if (!CAS4.DEFAULT_INITIATOR_URL.equals (aFrom.getRole ()))
         {
           aErrorList.add (_createError ("PartyInfo/From/Role must be set to '" + CAS4.DEFAULT_INITIATOR_URL + "'"));
         }
@@ -533,7 +533,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
           aErrorList.add (_createError ("PartyInfo/To must contain no more than one PartyID"));
         }
 
-        if (StringHelper.hasNoText (aTo.getRole ()) || !aTo.getRole ().equals (CAS4.DEFAULT_RESPONDER_URL))
+        if (!CAS4.DEFAULT_RESPONDER_URL.equals (aTo.getRole ()))
         {
           aErrorList.add (_createError ("PartyInfo/To/Role must be set to '" + CAS4.DEFAULT_RESPONDER_URL + "'"));
         }
