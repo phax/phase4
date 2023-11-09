@@ -16,21 +16,9 @@
  */
 package com.helger.phase4.profile.bdew;
 
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Locale;
-
-import com.helger.phase4.CAS4;
-import com.helger.phase4.model.pmode.PModeParty;
-import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ETriState;
+import com.helger.phase4.CAS4;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
@@ -48,14 +36,26 @@ import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.model.pmode.PMode;
+import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.util.Locale;
+import java.util.UUID;
+
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 
 /**
  * All essentials need to be set and need to be not null since they are getting
@@ -581,6 +581,32 @@ public final class BDEWCompatibilityValidatorTest
   }
 
   @Test
+  public void testValidatePModeCorrect ()
+  {
+    final PModeLegBusinessInformation aBusinessInformation = BDEWPMode.generatePModeLegBusinessInformation ();
+    aBusinessInformation.setService (BDEWPMode.SERVICE_TEST);
+    aBusinessInformation.setAction (BDEWPMode.ACTION_TEST_SERVICE);
+
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
+    aErrorHandler.setReportAsResponse (true);
+    aErrorHandler.setReportProcessErrorNotifyConsumer (true);
+    aErrorHandler.setReportProcessErrorNotifyProducer (true);
+
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
+    aSecurityLeg.setSendReceipt (true);
+    aSecurityLeg.setPModeAuthorize (false);
+
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("https://test.example.org"),
+                                    aBusinessInformation,
+                                    aErrorHandler,
+                                    null,
+                                    aSecurityLeg));
+
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.isEmpty ());
+  }
+
+  @Test
   public void testValidateUserMessageNoMessageInfo ()
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
@@ -616,6 +642,71 @@ public final class BDEWCompatibilityValidatorTest
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PartyInfo is missing")));
+  }
+
+  @Test
+  public void testValidateUserMessageNoPartyInfoFromAndTo ()
+  {
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+    aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
+    aUserMessage.setPartyInfo (new Ebms3PartyInfo());
+    VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PartyInfo/From is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PartyInfo/To is missing")));
+  }
+
+  @Test
+  public void testValidateUserMessageMoreThanOnePartyID ()
+  {
+    final Ebms3PartyId aFirstId = MessageHelperMethods.createEbms3PartyId ("type", "value");
+    final Ebms3PartyId aSecondId = MessageHelperMethods.createEbms3PartyId ("type2", "value2");
+
+    final Ebms3From aFromPart = new Ebms3From ();
+    aFromPart.addPartyId (aFirstId);
+    aFromPart.addPartyId (aSecondId);
+    final Ebms3To aToPart = new Ebms3To ();
+    aToPart.addPartyId (aFirstId);
+    aToPart.addPartyId (aSecondId);
+    final Ebms3PartyInfo aPartyInfo = new Ebms3PartyInfo ();
+    aPartyInfo.setFrom (aFromPart);
+    aPartyInfo.setTo (aToPart);
+
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+    aUserMessage.setPartyInfo (aPartyInfo);
+
+    VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("must contain no more than one PartyID")));
+  }
+
+  @Test
+  public void testValidateUserMessagePartyInfoWrongRoles ()
+  {
+    final Ebms3PartyId aFirstId = MessageHelperMethods.createEbms3PartyId ("type", "value");
+    final Ebms3PartyId aSecondId = MessageHelperMethods.createEbms3PartyId ("type2", "value2");
+
+    final Ebms3From aFromPart = new Ebms3From ();
+    aFromPart.addPartyId (aFirstId);
+    aFromPart.addPartyId (aSecondId);
+    aFromPart.setRole ("http://test.example.org");
+
+    final Ebms3To aToPart = new Ebms3To ();
+    aToPart.addPartyId (aFirstId);
+    aToPart.addPartyId (aSecondId);
+    aToPart.setRole ("http://test.example.org");
+
+    final Ebms3PartyInfo aPartyInfo = new Ebms3PartyInfo ();
+    aPartyInfo.setFrom (aFromPart);
+    aPartyInfo.setTo (aToPart);
+
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+    aUserMessage.setPartyInfo (aPartyInfo);
+
+    VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("PartyInfo/From/Role must be set to '" + CAS4.DEFAULT_INITIATOR_URL + "'")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("PartyInfo/To/Role must be set to '" + CAS4.DEFAULT_RESPONDER_URL + "'")));
   }
 
   @Test
@@ -696,27 +787,62 @@ public final class BDEWCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidateUserMessageMoreThanOnePartyID ()
+  public void testValidateUserMessageWrongCollaborationInfoService ()
   {
-    final Ebms3PartyId aFirstId = MessageHelperMethods.createEbms3PartyId ("type", "value");
-    final Ebms3PartyId aSecondId = MessageHelperMethods.createEbms3PartyId ("type2", "value2");
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+    aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
+    final Ebms3CollaborationInfo aCollaborationInfo = new Ebms3CollaborationInfo ();
+    aCollaborationInfo.setService ("http://test.example.org");
+
+    aUserMessage.setCollaborationInfo (aCollaborationInfo);
+    VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("CollaborationInfo/Service 'http://test.example.org' is unsupported")));
+  }
+
+  @Test
+  public void testValidateUserMessageWrongCollaborationInfoAction ()
+  {
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+    aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
+    final Ebms3CollaborationInfo aCollaborationInfo = new Ebms3CollaborationInfo ();
+    aCollaborationInfo.setAction ("http://test.example.org");
+
+    aUserMessage.setCollaborationInfo (aCollaborationInfo);
+    VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("CollaborationInfo/Action 'http://test.example.org' is unsupported")));
+  }
+
+  @Test
+  public void testValidateUserMessageCorrect ()
+  {
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+
+    Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
+    aMessageInfo.setMessageId (UUID.randomUUID ().toString ());
+    aUserMessage.setMessageInfo (aMessageInfo);
 
     final Ebms3From aFromPart = new Ebms3From ();
-    aFromPart.addPartyId (aFirstId);
-    aFromPart.addPartyId (aSecondId);
+    aFromPart.addPartyId (new Ebms3PartyId ("1"));
+    aFromPart.setRole (CAS4.DEFAULT_INITIATOR_URL);
     final Ebms3To aToPart = new Ebms3To ();
-    aToPart.addPartyId (aFirstId);
-    aToPart.addPartyId (aSecondId);
+    aToPart.addPartyId (new Ebms3PartyId ("2"));
+    aToPart.setRole (CAS4.DEFAULT_RESPONDER_URL);
     final Ebms3PartyInfo aPartyInfo = new Ebms3PartyInfo ();
     aPartyInfo.setFrom (aFromPart);
     aPartyInfo.setTo (aToPart);
-
-    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setPartyInfo (aPartyInfo);
 
+    final Ebms3CollaborationInfo aCollaborationInfo = new Ebms3CollaborationInfo ();
+    aCollaborationInfo.setAgreementRef (BDEWPMode.DEFAULT_AGREEMENT_ID);
+    aCollaborationInfo.setService (BDEWPMode.SERVICE_TEST);
+    aCollaborationInfo.setAction (BDEWPMode.ACTION_TEST_SERVICE);
+
+    aUserMessage.setCollaborationInfo (aCollaborationInfo);
+
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("must contain no more than one PartyID")));
+    assertTrue (m_aErrorList.isEmpty ());
   }
 
   @Test
