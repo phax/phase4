@@ -38,9 +38,11 @@ import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.ebms3header.Ebms3AgreementRef;
+import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3From;
 import com.helger.phase4.ebms3header.Ebms3PartyId;
 import com.helger.phase4.ebms3header.Ebms3PartyInfo;
+import com.helger.phase4.ebms3header.Ebms3Service;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
@@ -509,14 +511,36 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       if (aFrom != null)
       {
         if (aFrom.getPartyIdCount () > 1)
+        {
           aErrorList.add (_createError ("PartyInfo/From must contain no more than one PartyID"));
+        }
+
+        if (StringHelper.hasNoText (aFrom.getRole ()) || !aFrom.getRole ().equals (CAS4.DEFAULT_INITIATOR_URL))
+        {
+          aErrorList.add (_createError ("PartyInfo/From/Role must be set to '" + CAS4.DEFAULT_INITIATOR_URL + "'"));
+        }
+      }
+      else
+      {
+        aErrorList.add (_createError ("PartyInfo/From is missing"));
       }
 
       final Ebms3To aTo = aUserMsg.getPartyInfo ().getTo ();
       if (aTo != null)
       {
         if (aTo.getPartyIdCount () > 1)
+        {
           aErrorList.add (_createError ("PartyInfo/To must contain no more than one PartyID"));
+        }
+
+        if (StringHelper.hasNoText (aTo.getRole ()) || !aTo.getRole ().equals (CAS4.DEFAULT_RESPONDER_URL))
+        {
+          aErrorList.add (_createError ("PartyInfo/To/Role must be set to '" + CAS4.DEFAULT_RESPONDER_URL + "'"));
+        }
+      }
+      else
+      {
+        aErrorList.add (_createError ("PartyInfo/To is missing"));
       }
     }
 
@@ -526,7 +550,8 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      final Ebms3AgreementRef aAgreementRef = aUserMsg.getCollaborationInfo ().getAgreementRef ();
+      final Ebms3CollaborationInfo aCollaborationInfo = aUserMsg.getCollaborationInfo ();
+      final Ebms3AgreementRef aAgreementRef = aCollaborationInfo.getAgreementRef ();
       if (aAgreementRef == null)
       {
         aErrorList.add (_createError ("CollaborationInfo/AgreementRef must be set!"));
@@ -542,6 +567,32 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
           aErrorList.add (_createError ("CollaborationInfo/PMode must not be set!"));
         if (aAgreementRef.getType () != null)
           aErrorList.add (_createError ("CollaborationInfo/Type must not be set!"));
+      }
+
+      Ebms3Service aService = aCollaborationInfo.getService();
+      if (aService == null || StringHelper.hasNoText (aService.getValue ()))
+      {
+        aErrorList.add (_createError ("CollaborationInfo/Service is missing"));
+      }
+      else
+      {
+        if (!BDEWPMode.containsService (aService.getValue ()))
+        {
+          aErrorList.add (_createError ("CollaborationInfo/Service '" + aService.getValue() + "' is unsupported"));
+        }
+      }
+
+      String sAction = aCollaborationInfo.getAction();
+      if (StringHelper.hasNoText (sAction))
+      {
+        aErrorList.add (_createError ("CollaborationInfo/Action is missing"));
+      }
+      else
+      {
+        if (!BDEWPMode.containsAction (sAction))
+        {
+          aErrorList.add (_createError ("CollaborationInfo/Action '" + sAction + "' is unsupported"));
+        }
       }
     }
   }
