@@ -226,23 +226,23 @@ public final class AS4DumpReader
     }
 
     try (final WebScoped w = new WebScoped ();
-         final AS4RequestHandler rh = new AS4RequestHandler (aCryptoFactorySign,
-                                                             aCryptoFactoryCrypt,
-                                                             DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-                                                             IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
-                                                             AS4IncomingSecurityConfiguration.createDefaultInstance (),
-                                                             AS4IncomingMessageMetadata.createForRequest ()))
+        final AS4RequestHandler rh = new AS4RequestHandler (aCryptoFactorySign,
+                                                            aCryptoFactoryCrypt,
+                                                            DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
+                                                            IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
+                                                            AS4IncomingSecurityConfiguration.createDefaultInstance (),
+                                                            AS4IncomingMessageMetadata.createForRequest ()))
     {
       final IAS4ServletMessageProcessorSPI aSPI = new IAS4ServletMessageProcessorSPI ()
       {
-        public AS4MessageProcessorResult processAS4UserMessage (final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                                final HttpHeaderMap aHttpHeaders,
-                                                                final Ebms3UserMessage aUserMessage,
-                                                                final IPMode aPMode,
-                                                                final Node aPayload,
-                                                                final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                                final IAS4MessageState aState,
-                                                                final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+        public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                                @Nonnull final HttpHeaderMap aHttpHeaders,
+                                                                @Nonnull final Ebms3UserMessage aUserMessage,
+                                                                @Nonnull final IPMode aPMode,
+                                                                @Nullable final Node aPayload,
+                                                                @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                                @Nonnull final IAS4MessageState aState,
+                                                                @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
         {
           try
           {
@@ -250,23 +250,24 @@ public final class AS4DumpReader
 
             int nIndex = 0;
             // For all attachments
-            for (final WSS4JAttachment aAttachment : aIncomingAttachments)
-            {
-              // Read current
-              final byte [] aDecryptedBytes = StreamHelper.getAllBytes (aAttachment.getInputStreamProvider ());
-              if (aDecryptedBytes == null)
+            if (aIncomingAttachments != null)
+              for (final WSS4JAttachment aAttachment : aIncomingAttachments)
               {
-                LOGGER.error ("Failed to read decrypted payload of attachment #" + nIndex);
-              }
-              else
-              {
-                // Invoke the consumer
-                aDecryptedConsumer.accept (nIndex, aDecryptedBytes);
-                LOGGER.info ("Handled decrypted payload #" + nIndex + " with " + aDecryptedBytes.length + " bytes");
-              }
+                // Read current
+                final byte [] aDecryptedBytes = StreamHelper.getAllBytes (aAttachment.getInputStreamProvider ());
+                if (aDecryptedBytes == null)
+                {
+                  LOGGER.error ("Failed to read decrypted payload of attachment #" + nIndex);
+                }
+                else
+                {
+                  // Invoke the consumer
+                  aDecryptedConsumer.accept (nIndex, aDecryptedBytes);
+                  LOGGER.info ("Handled decrypted payload #" + nIndex + " with " + aDecryptedBytes.length + " bytes");
+                }
 
-              nIndex++;
-            }
+                nIndex++;
+              }
             return AS4MessageProcessorResult.createSuccess ();
           }
           catch (final Exception ex)
