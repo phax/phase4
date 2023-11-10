@@ -48,10 +48,13 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    *        The received EBMS user message. Never <code>null</code>. Since
    *        v0.9.8.
    * @param aSBDBytes
-   *        The raw SBD bytes. Never <code>null</code>.
+   *        The raw SBD bytes. These are the bytes as received via AS4, just
+   *        decrypted and decompressed. Never <code>null</code>.
    * @param aSBD
-   *        The incoming parsed Standard Business Document that is never
-   *        <code>null</code>. This is the pre-parsed SBD bytes.
+   *        The incoming parsed Standard Business Document as JAXB data model.
+   *        This is the pre-parsed SBD bytes. Use
+   *        {@link com.helger.sbdh.SBDMarshaller} to serialize the document.
+   *        Never <code>null</code>
    * @param aPeppolSBD
    *        The pre-parsed Peppol Standard Business Document. Never
    *        <code>null</code>. Since v0.9.8.
