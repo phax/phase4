@@ -37,6 +37,34 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
  */
 public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4IncomingDumper
 {
+  public static final boolean DEFAULT_INCLUDE_HEADERS = true;
+
+  private boolean m_bIncludeHeaders = DEFAULT_INCLUDE_HEADERS;
+
+  /**
+   * @return <code>true</code> to include the headers in the dump,
+   *         <code>false</code> if not. The default is
+   *         {@link #DEFAULT_INCLUDE_HEADERS}.
+   * @since 2.5.2
+   */
+  public final boolean isIncludeHeaders ()
+  {
+    return m_bIncludeHeaders;
+  }
+
+  /**
+   * Include or exclude the headers from the dump.
+   *
+   * @param b
+   *        <code>true</code> to include the headers in the dump,
+   *        <code>false</code> if not.
+   * @since 2.5.2
+   */
+  public final void setIncludeHeaders (final boolean b)
+  {
+    m_bIncludeHeaders = b;
+  }
+
   /**
    * Create the output stream to which the data should be dumped.
    *
@@ -58,15 +86,23 @@ public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4Incomi
                                     @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     final OutputStream ret = openOutputStream (aMessageMetadata, aHttpHeaderMap);
-    if (ret != null && aHttpHeaderMap.isNotEmpty ())
+    if (ret != null && aHttpHeaderMap.isNotEmpty () && m_bIncludeHeaders)
     {
       // At least one header is contained
       for (final Map.Entry <String, ICommonsList <String>> aEntry : aHttpHeaderMap)
       {
         final String sKey = aEntry.getKey ();
         for (final String sValue : aEntry.getValue ())
-          ret.write ((sKey + HttpHeaderMap.SEPARATOR_KEY_VALUE + sValue + CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+        {
+          final boolean bQuoteIfNecessary = false;
+          final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
+          ret.write ((sKey +
+                      HttpHeaderMap.SEPARATOR_KEY_VALUE +
+                      sUnifiedValue +
+                      CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+        }
       }
+      // Separator only if at least one header is present
       ret.write (CHttp.EOL.getBytes (CHttp.HTTP_CHARSET));
     }
     return ret;

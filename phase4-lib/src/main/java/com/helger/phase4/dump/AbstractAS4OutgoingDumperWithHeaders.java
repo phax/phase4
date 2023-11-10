@@ -41,6 +41,34 @@ import com.helger.phase4.servlet.IAS4MessageState;
  */
 public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4OutgoingDumper
 {
+  public static final boolean DEFAULT_INCLUDE_HEADERS = true;
+
+  private boolean m_bIncludeHeaders = DEFAULT_INCLUDE_HEADERS;
+
+  /**
+   * @return <code>true</code> to include the headers in the dump,
+   *         <code>false</code> if not. The default is
+   *         {@link #DEFAULT_INCLUDE_HEADERS}.
+   * @since 2.5.2
+   */
+  public final boolean isIncludeHeaders ()
+  {
+    return m_bIncludeHeaders;
+  }
+
+  /**
+   * Include or exclude the headers from the dump.
+   *
+   * @param b
+   *        <code>true</code> to include the headers in the dump,
+   *        <code>false</code> if not.
+   * @since 2.5.2
+   */
+  public final void setIncludeHeaders (final boolean b)
+  {
+    m_bIncludeHeaders = b;
+  }
+
   /**
    * Create the output stream to which the data should be dumped.
    *
@@ -85,7 +113,7 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
                                       @Nonnegative final int nTry) throws IOException
   {
     final OutputStream ret = openOutputStream (eMsgMode, aMessageMetadata, aState, sMessageID, aCustomHeaders, nTry);
-    if (ret != null && aCustomHeaders != null && aCustomHeaders.isNotEmpty ())
+    if (ret != null && aCustomHeaders != null && aCustomHeaders.isNotEmpty () && m_bIncludeHeaders)
     {
       // At least one custom header is present
       for (final Map.Entry <String, ICommonsList <String>> aEntry : aCustomHeaders)
@@ -96,9 +124,13 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
           // By default quoting is disabled
           final boolean bQuoteIfNecessary = false;
           final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
-          ret.write ((sHeader + HttpHeaderMap.SEPARATOR_KEY_VALUE + sUnifiedValue + CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+          ret.write ((sHeader +
+                      HttpHeaderMap.SEPARATOR_KEY_VALUE +
+                      sUnifiedValue +
+                      CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
         }
       }
+      // Separator only if at least one header is present
       ret.write (CHttp.EOL.getBytes (CHttp.HTTP_CHARSET));
     }
     return ret;

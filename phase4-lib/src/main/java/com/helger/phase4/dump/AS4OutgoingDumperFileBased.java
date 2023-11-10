@@ -136,7 +136,10 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
                                            @Nonnegative final int nTry) throws IOException
   {
     final File aDumpFile = m_aFileProvider.getFile (eMsgMode, sMessageID, nTry);
-    LOGGER.info ("Logging outgoing AS4 message to '" + aDumpFile.getAbsolutePath () + "'");
+    LOGGER.info ("Logging outgoing AS4 message to '" +
+                 aDumpFile.getAbsolutePath () +
+                 "' " +
+                 (isIncludeHeaders () ? "including headers" : "excluding headers"));
     return FileHelper.getBufferedOutputStream (aDumpFile);
   }
 
