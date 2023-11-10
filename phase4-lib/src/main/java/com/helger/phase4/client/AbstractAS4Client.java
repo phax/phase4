@@ -556,7 +556,14 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     final String sMessageID = createMessageID ();
     final AS4ClientBuiltMessage aBuiltMsg = buildMessage (sMessageID, aCallback);
     HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
-    final HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getCustomHeaders ();
+    HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getCustomHeaders ();
+    if (false)
+    {
+      // Test custom header only
+      if (aBuiltHttpHeaders == null)
+        aBuiltHttpHeaders = new HttpHeaderMap ();
+      aBuiltHttpHeaders.addHeader ("X-UseEcsProxy", "1");
+    }
 
     if (m_aHttpRetrySettings.isRetryEnabled () ||
         aOutgoingDumper != null ||
