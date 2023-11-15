@@ -129,7 +129,8 @@ public final class AS4Encryptor
                  aCryptParams.getDigestAlgorithm () +
                  (aCryptParams.hasAlias () ? "; KeyAlias=" + aCryptParams.getAlias () : "") +
                  (aCryptParams.hasCertificate () ? "; CertificateSubjectCN=" +
-                                                   aCryptParams.getCertificate ().getSubjectDN ().getName () : ""));
+                                                   aCryptParams.getCertificate ().getSubjectDN ().getName ()
+                                                 : ""));
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
@@ -219,7 +220,8 @@ public final class AS4Encryptor
                  aCryptParams.getDigestAlgorithm () +
                  (aCryptParams.hasAlias () ? "; KeyAlias=" + aCryptParams.getAlias () : "") +
                  (aCryptParams.hasCertificate () ? "; CertificateSubjectCN=" +
-                                                   aCryptParams.getCertificate ().getSubjectDN ().getName () : ""));
+                                                   aCryptParams.getCertificate ().getSubjectDN ().getName ()
+                                                 : ""));
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
@@ -272,10 +274,10 @@ public final class AS4Encryptor
     }
   }
 
-  /**
-   * @deprecated Use
-   *             {@link #encryptToMimeMessage(ESoapVersion,Document,ICommonsList<WSS4JAttachment>,IAS4CryptoFactory,boolean,AS4ResourceHelper,AS4CryptParams)}
-   *             instead
+  /*
+   * Renamed. Use {@link
+   * #encryptToMimeMessage(ESoapVersion,Document,ICommonsList,IAS4CryptoFactory,
+   * boolean,AS4ResourceHelper,AS4CryptParams)} instead
    */
   @Nonnull
   @Deprecated (forRemoval = true, since = "2.5.1")
