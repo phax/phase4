@@ -102,6 +102,10 @@ public final class AS4DumpReader
    * @param aHttpHeaderConsumer
    *        The optional consumer for the read HTTP headers. May be
    *        <code>null</code>.
+   * @param aHttpEndIndexConsumer
+   *        An optional consumer for the number of header data bytes read, so
+   *        that the start index of the payload can easily be determined. May be
+   *        <code>null</code>.
    * @since 2.1.0
    */
   public static void readAndSkipInitialHttpHeaders (@Nonnull final byte [] aAS4InData,

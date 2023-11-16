@@ -27,6 +27,8 @@ import com.helger.commons.traits.IGenericImplTrait;
  *
  * @author Philip Helger
  * @since 0.13.0
+ * @param <IMPLTYPE>
+ *        Implementation type of the derived class
  */
 public abstract class AbstractAS4RawResponseConsumer <IMPLTYPE extends AbstractAS4RawResponseConsumer <IMPLTYPE>>
                                                      implements

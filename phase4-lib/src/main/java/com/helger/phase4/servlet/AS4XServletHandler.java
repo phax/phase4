@@ -389,6 +389,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    *        The factory to parse incoming attachments. May not be
    *        <code>null</code>. Defaults to
    *        {@link #getIncomingAttachmentFactory()}.
+   * @param aISC
+   *        The security configuration to use for incoming data. May not be
+   *        <code>null</code>. Since v2.1.3.
    * @param aHandlerCustomizer
    *        An optional callback that can be used to modify the internal
    *        {@link AS4RequestHandler} before and after processing. May be

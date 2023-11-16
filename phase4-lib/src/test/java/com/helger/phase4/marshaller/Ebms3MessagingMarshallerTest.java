@@ -35,13 +35,13 @@ import com.helger.phase4.soap11.Soap11Envelope;
 import com.helger.phase4.soap12.Soap12Envelope;
 
 /**
- * Test class for class {@link Ebms3ReaderBuilder}.
+ * Test class for class {@link Ebms3MessagingMarshaller}.
  *
  * @author Philip Helger
  */
-public final class Ebms3ReaderBuilderTest
+public final class Ebms3MessagingMarshallerTest
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (Ebms3ReaderBuilderTest.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (Ebms3MessagingMarshallerTest.class);
   private static final String PATH11 = "external/soap11test/";
   private static final String PATH12 = "external/soap12test/";
 
