@@ -112,7 +112,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                       @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                       @Nonnull final AS4MessageState aState,
                                       @Nonnull final ErrorList aErrorList,
-                                      @Nonnull final Supplier <WSSConfig> aWSSConfigSupplier)
+                                      @Nonnull final Supplier <? extends WSSConfig> aWSSConfigSupplier)
   {
     // Default is Leg 1, gets overwritten when a reference to a message id
     // exists and then uses leg2
@@ -126,7 +126,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                             aState.getResourceHelper ());
 
-      // Resolve the WSS config here to ensure the context matches
+      // Resolve the WSS config here to ensure the context matches (either from
+      // an instance of globally)
       final WSSConfig aWSSConfig = aWSSConfigSupplier.get ();
 
       if (m_aDecryptParameterModifier != null)
@@ -364,6 +365,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         final Element aSignatureAlgorithm = XMLHelper.getFirstChildElementOfName (aSignedNode,
                                                                                   CAS4.DS_NS,
                                                                                   "SignatureMethod");
+
+        // Get Signing algorithm
         String sAlgorithm = aSignatureAlgorithm == null ? null : aSignatureAlgorithm.getAttribute ("Algorithm");
         final ECryptoAlgorithmSign eSignAlgo = ECryptoAlgorithmSign.getFromURIOrNull (sAlgorithm);
         if (eSignAlgo == null)
@@ -371,14 +374,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           LOGGER.error ("Error processing the Security Header, your signing algorithm '" +
                         sAlgorithm +
                         "' is incorrect. Expected one of the following '" +
-                        Arrays.asList (ECryptoAlgorithmSign.values ()) +
+                        Arrays.toString (ECryptoAlgorithmSign.values ()) +
                         "' algorithms");
-
           aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
-
           return ESuccess.FAILURE;
         }
-
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("Using signature algorithm " + eSignAlgo);
 
@@ -392,11 +392,10 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           LOGGER.error ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
                         Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
                         "' algorithms");
-
           aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
-
           return ESuccess.FAILURE;
         }
+
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("Using signature digest algorithm " + eSignDigestAlgo);
       }
@@ -409,6 +408,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // Check if Attachment IDs are the same
         for (int i = 0; i < aAttachments.size (); i++)
         {
+          // Get "Content-ID" header
           String sAttachmentID = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
           if (StringHelper.hasNoText (sAttachmentID))
           {
@@ -416,6 +416,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
             return ESuccess.FAILURE;
           }
+
+          // Starts with "<attachment="?
           if (!sAttachmentID.startsWith (WSS4JAttachment.CONTENT_ID_PREFIX))
           {
             LOGGER.error ("The provided attachment ID '" +
@@ -426,6 +428,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
             return ESuccess.FAILURE;
           }
+
+          // Ends with ">"?
           if (!sAttachmentID.endsWith (WSS4JAttachment.CONTENT_ID_SUFFIX))
           {
             LOGGER.error ("The provided attachment ID '" +
@@ -436,6 +440,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
             return ESuccess.FAILURE;
           }
+
           // Strip prefix and suffix
           sAttachmentID = sAttachmentID.substring (WSS4JAttachment.CONTENT_ID_PREFIX.length (),
                                                    sAttachmentID.length () -
