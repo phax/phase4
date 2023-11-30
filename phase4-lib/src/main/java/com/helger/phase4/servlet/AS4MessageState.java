@@ -45,6 +45,7 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.mpc.IMPC;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -77,7 +78,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "phase4.pmode.effective.leg.number";
   private static final String KEY_WSS4J_SECURITY_ACTIONS = "phase4.soap.wss4j-security-actions";
   private static final String KEY_WSS4J_EXCEPTION = "phase4.soap.wss4j-exception";
-  private static final String KEY_PHASE4_PROFILE_ID = "phase4.profile.id";
+  private static final String KEY_PHASE4_PROFILE = "phase4.profile";
   private static final String KEY_AS4_MESSAGE_ID = "phase4.message.id";
   private static final String KEY_AS4_REF_TO_MESSAGE_ID = "phase4.ref.to.message.id";
   private static final String KEY_AS4_MESSAGE_TIMESTAMP = "phase4.message.timestamp";
@@ -312,20 +313,20 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   }
 
   @Nullable
-  public String getProfileID ()
+  public IAS4Profile getAS4Profile ()
   {
-    return getAsString (KEY_PHASE4_PROFILE_ID);
+    return getCastedValue (KEY_PHASE4_PROFILE);
   }
 
   /**
-   * Set the ID of the AS4 profile of the message.
+   * Set the AS4 profile of the message.
    *
-   * @param sProfileID
-   *        The internal AS4 profile ID. May be <code>null</code>.
+   * @param aProfile
+   *        The internal AS4 profile. May be <code>null</code>.
    */
-  public void setProfileID (@Nullable final String sProfileID)
+  public void setAS4Profile (@Nullable final IAS4Profile aProfile)
   {
-    putIn (KEY_PHASE4_PROFILE_ID, sProfileID);
+    putIn (KEY_PHASE4_PROFILE, aProfile);
   }
 
   @Nullable

@@ -43,6 +43,7 @@ public class AS4Profile implements IAS4Profile
   private final IAS4ProfilePModeProvider m_aDefaultPModeProvider;
   private final IPModeIDProvider m_aPModeIDProvider;
   private final boolean m_bDeprecated;
+  private final boolean m_bInvokeSPIForPingMessage;
 
   /**
    * Constructor
@@ -61,13 +62,16 @@ public class AS4Profile implements IAS4Profile
    * @param bDeprecated
    *        <code>true</code> if the profile is deprecated, <code>false</code>
    *        if not.
+   * @param bInvokeSPIForPingMessage
+   *        <code>true</code> to invoke the custom SPI handler for received
    */
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
                      @Nonnull final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
                      @Nonnull final IAS4ProfilePModeProvider aDefaultPModeProvider,
                      @Nonnull final IPModeIDProvider aPModeIDProvider,
-                     final boolean bDeprecated)
+                     final boolean bDeprecated,
+                     final boolean bInvokeSPIForPingMessage)
   {
     ValueEnforcer.notEmpty (sID, "ID");
     ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
@@ -81,6 +85,7 @@ public class AS4Profile implements IAS4Profile
     m_aDefaultPModeProvider = aDefaultPModeProvider;
     m_aPModeIDProvider = aPModeIDProvider;
     m_bDeprecated = bDeprecated;
+    m_bInvokeSPIForPingMessage = bInvokeSPIForPingMessage;
   }
 
   @Nonnull
@@ -122,6 +127,11 @@ public class AS4Profile implements IAS4Profile
     return m_bDeprecated;
   }
 
+  public boolean isInvokeSPIForPingMessage ()
+  {
+    return m_bInvokeSPIForPingMessage;
+  }
+
   @Override
   public boolean equals (final Object o)
   {
@@ -148,6 +158,7 @@ public class AS4Profile implements IAS4Profile
                                        .append ("DefaultPModeProvider", m_aDefaultPModeProvider)
                                        .append ("PModeIDProvider", m_aPModeIDProvider)
                                        .append ("Deprecated", m_bDeprecated)
+                                       .append ("InvokeSPIForPingMessage", m_bInvokeSPIForPingMessage)
                                        .getToString ();
   }
 }

@@ -73,4 +73,12 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName
    *         therefore not be used, or <code>false</code> if not.
    */
   boolean isDeprecated ();
+
+  /**
+   * @return <code>true</code> if this profile wants to handle Ping messages
+   *         inside the custom SPI handler. This was introduced for sole usage
+   *         in BDEW profile.
+   * @since v2.5.3
+   */
+  boolean isInvokeSPIForPingMessage ();
 }

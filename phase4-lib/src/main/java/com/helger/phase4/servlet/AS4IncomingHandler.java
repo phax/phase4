@@ -172,8 +172,8 @@ public final class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
-                                                                                                             .getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
+                                                                           : AS4DumpManager.getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -468,7 +468,8 @@ public final class AS4IncomingHandler
                                              aHeader.getNode (),
                                              aIncomingAttachments,
                                              aState,
-                                             aErrorList).isSuccess ())
+                                             aErrorList)
+                      .isSuccess ())
         {
           // Mark header as processed (for mustUnderstand check)
           aHeader.setProcessed (true);
@@ -688,7 +689,6 @@ public final class AS4IncomingHandler
       final String sProfileID = aAS4ProfileSelector.getAS4ProfileID (aState);
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Determined AS4 profile ID '" + sProfileID + "' for current message");
-      aState.setProfileID (sProfileID);
 
       final IPMode aPMode = aState.getPMode ();
       final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
@@ -702,6 +702,8 @@ public final class AS4IncomingHandler
         aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
         if (aProfile == null)
           throw new IllegalStateException ("The configured AS4 profile '" + sProfileID + "' does not exist.");
+
+        aState.setAS4Profile (aProfile);
 
         // Profile Checks gets set when started with Server
         aValidator = aProfile.getValidator ();

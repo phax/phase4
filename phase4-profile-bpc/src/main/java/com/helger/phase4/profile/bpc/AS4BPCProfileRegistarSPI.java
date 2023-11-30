@@ -57,6 +57,7 @@ public final class AS4BPCProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                 BPCCompatibilityValidator::new,
                                                 aDefaultPModeProvider,
                                                 PMODE_ID_PROVIDER,
+                                                false,
                                                 false);
     aRegistrar.registerProfile (aProfile);
     aRegistrar.setDefaultProfile (aProfile);

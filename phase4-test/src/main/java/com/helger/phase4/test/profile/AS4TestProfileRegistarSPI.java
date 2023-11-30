@@ -48,11 +48,9 @@ public final class AS4TestProfileRegistarSPI implements IAS4ProfileRegistrarSPI
   {
     final IPModeIDProvider aPMIDProv = IPModeIDProvider.DEFAULT_DYNAMIC;
 
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> TestPMode.createTestPMode (i,
-                                                                                                   r,
-                                                                                                   a,
-                                                                                                   aPMIDProv,
-                                                                                                   false);
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i,
+                                                            r,
+                                                            a) -> TestPMode.createTestPMode (i, r, a, aPMIDProv, false);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT + "'");
@@ -61,6 +59,7 @@ public final class AS4TestProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                     TestProfileCompatibilityValidator::new,
                                                     aDefaultPModeProvider,
                                                     aPMIDProv,
+                                                    false,
                                                     false);
     aRegistrar.registerProfile (aTestProfile);
 

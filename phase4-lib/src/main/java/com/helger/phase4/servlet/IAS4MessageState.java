@@ -43,6 +43,7 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.model.mpc.IMPC;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -118,7 +119,8 @@ public interface IAS4MessageState
   default Ebms3Error getEbmsError ()
   {
     final Ebms3SignalMessage aEbmsSignalMessage = getEbmsSignalMessage ();
-    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
+    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0)
+                                                                               : null;
   }
 
   /**
@@ -402,7 +404,19 @@ public interface IAS4MessageState
    * @since v0.9.7
    */
   @Nullable
-  String getProfileID ();
+  default String getProfileID ()
+  {
+    final IAS4Profile aProfile = getAS4Profile ();
+    return aProfile == null ? null : aProfile.getID ();
+  }
+
+  /**
+   * @return The phase4 profile to be used. May be <code>null</code> in case it
+   *         could not be determined.
+   * @since v2.5.3
+   */
+  @Nullable
+  IAS4Profile getAS4Profile ();
 
   /**
    * @return The AS4 message ID. Source is the <code>MessageInfo</code> element.

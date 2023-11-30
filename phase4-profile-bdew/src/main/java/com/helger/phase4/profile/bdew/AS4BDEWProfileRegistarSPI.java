@@ -72,7 +72,8 @@ public final class AS4BDEWProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                 BDEWCompatibilityValidator::new,
                                                 aDefaultPModeProvider,
                                                 PMODE_ID_PROVIDER,
-                                                false);
+                                                false,
+                                                true);
     aRegistrar.registerProfile (aProfile);
     aRegistrar.setDefaultProfile (aProfile);
   }

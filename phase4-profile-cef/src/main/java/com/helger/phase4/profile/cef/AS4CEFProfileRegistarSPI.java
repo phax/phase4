@@ -61,6 +61,7 @@ public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                           () -> new CEFCompatibilityValidator ().setExpectFourCornerModel (true),
                                                           aDefaultPModeProvider,
                                                           PMODE_ID_PROVIDER,
+                                                          false,
                                                           false);
     aRegistrar.registerProfile (aProfileFourCorner);
 
@@ -71,6 +72,7 @@ public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                          () -> new CEFCompatibilityValidator ().setExpectFourCornerModel (false),
                                                          aDefaultPModeProvider,
                                                          PMODE_ID_PROVIDER,
+                                                         false,
                                                          false);
     aRegistrar.registerProfile (aProfileTwoCorner);
 
