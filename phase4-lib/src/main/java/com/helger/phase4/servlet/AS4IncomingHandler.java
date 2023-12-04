@@ -172,8 +172,8 @@ public final class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
+                                                                                                             .getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -468,8 +468,7 @@ public final class AS4IncomingHandler
                                              aHeader.getNode (),
                                              aIncomingAttachments,
                                              aState,
-                                             aErrorList)
-                      .isSuccess ())
+                                             aErrorList).isSuccess ())
         {
           // Mark header as processed (for mustUnderstand check)
           aHeader.setProcessed (true);
@@ -814,8 +813,6 @@ public final class AS4IncomingHandler
 
       final boolean bIsPingMessage = AS4Helper.isPingMessage (aPMode);
       aState.setPingMessage (bIsPingMessage);
-      if (bIsPingMessage && (aProfile == null || !aProfile.isInvokeSPIForPingMessage()))
-        LOGGER.info ("Received an AS4 Ping message - meaning it will NOT be handled by the custom handlers.");
     }
 
     return aState;
