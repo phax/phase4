@@ -766,7 +766,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                       aReadAttachment.payloadBytes (),
                                       aReadAttachment.standardBusinessDocument (),
                                       aPeppolSBD,
-                                      aState);
+                                      aState,
+                                      aProcessingErrorMessages);
         }
         catch (final Phase4PeppolClientException ex)
         {

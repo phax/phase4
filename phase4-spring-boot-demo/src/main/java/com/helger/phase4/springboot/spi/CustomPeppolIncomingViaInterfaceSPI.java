@@ -24,8 +24,10 @@ import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI;
@@ -68,6 +70,9 @@ public class CustomPeppolIncomingViaInterfaceSPI implements IPhase4PeppolIncomin
      * @param aState
      *        The message state. Can e.g. be used to retrieve information about
      *        the certificate found in the message. Never <code>null</code>.
+     * @param aProcessingErrorMessages
+     *        The list of error messages to be filled by the custom handler.
+     *        Never <code>null</code>. Since v2.6.0.
      * @throws Exception
      *         In case it cannot be processed.
      */
@@ -77,7 +82,8 @@ public class CustomPeppolIncomingViaInterfaceSPI implements IPhase4PeppolIncomin
                             @Nonnull byte [] aSBDBytes,
                             @Nonnull StandardBusinessDocument aSBD,
                             @Nonnull PeppolSBDHDocument aPeppolSBD,
-                            @Nonnull IAS4MessageState aState) throws Exception;
+                            @Nonnull IAS4MessageState aState,
+                            @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
   }
 
   private static final Logger LOGGER = LoggerFactory.getLogger (CustomPeppolIncomingViaInterfaceSPI.class);
@@ -112,14 +118,22 @@ public class CustomPeppolIncomingViaInterfaceSPI implements IPhase4PeppolIncomin
                                  @Nonnull final byte [] aSBDBytes,
                                  @Nonnull final StandardBusinessDocument aSBD,
                                  @Nonnull final PeppolSBDHDocument aPeppolSBD,
-                                 @Nonnull final IAS4MessageState aState) throws Exception
+                                 @Nonnull final IAS4MessageState aState,
+                                 @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception
   {
     if (s_aHandler != null)
     {
       LOGGER.info ("Invoking the registered handler");
       try
       {
-        s_aHandler.handleIncomingSBD (aMessageMetadata, aHeaders, aUserMessage, aSBDBytes, aSBD, aPeppolSBD, aState);
+        s_aHandler.handleIncomingSBD (aMessageMetadata,
+                                      aHeaders,
+                                      aUserMessage,
+                                      aSBDBytes,
+                                      aSBD,
+                                      aPeppolSBD,
+                                      aState,
+                                      aProcessingErrorMessages);
       }
       finally
       {
