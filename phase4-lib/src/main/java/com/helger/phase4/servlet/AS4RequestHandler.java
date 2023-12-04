@@ -1372,7 +1372,7 @@ public class AS4RequestHandler implements AutoCloseable
     // * No errors so far (sign, encrypt, ...)
     // * Valid PMode
     // * Exactly one UserMessage or SignalMessage
-    // * No ping/test message
+    // * If Ping/test message then only if profile should invoke SPI
     // * No Duplicate message ID
     boolean bCanInvokeSPIs = true;
     if (aErrorMessagesTarget.isNotEmpty ())
