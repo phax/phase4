@@ -34,7 +34,7 @@ THE SOFTWARE.
   <!-- Die Rechnungsnummer: -->
   <!-- The invoice number: -->
   <cbc:ID>ERB_UBL_INVOICE_001</cbc:ID>
-  <cbc:IssueDate>2022-01-01</cbc:IssueDate>
+  <cbc:IssueDate>2023-01-01</cbc:IssueDate>
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
   <cbc:Note>Das ist ein globaler Kommentar zur Rechnung.</cbc:Note>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
@@ -142,7 +142,7 @@ THE SOFTWARE.
     <cbc:PaymentMeansCode>31</cbc:PaymentMeansCode>
     <!-- Fälligkeitsdatum: -->
     <!-- Expected payment date without discount: -->
-    <cbc:PaymentDueDate>2022-12-31</cbc:PaymentDueDate>
+    <cbc:PaymentDueDate>2023-12-31</cbc:PaymentDueDate>
     <cbc:PaymentChannelCode>IBAN</cbc:PaymentChannelCode>
     <cbc:InstructionNote>Sofort fällig</cbc:InstructionNote>
     <cac:PayeeFinancialAccount>
@@ -161,8 +161,8 @@ THE SOFTWARE.
     <cbc:Note>3% Skonto bei Zahlung in 5 Tagen/3% discount when paid in 5 days</cbc:Note>
     <cbc:SettlementDiscountPercent>3.00</cbc:SettlementDiscountPercent>
     <cac:SettlementPeriod>
-      <cbc:StartDate>2022-01-01</cbc:StartDate>
-      <cbc:EndDate>2022-12-30</cbc:EndDate>
+      <cbc:StartDate>2023-01-01</cbc:StartDate>
+      <cbc:EndDate>2023-12-30</cbc:EndDate>
     </cac:SettlementPeriod>
   </cac:PaymentTerms>
   <cac:AllowanceCharge>
