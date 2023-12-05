@@ -47,9 +47,9 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderInvalidKeystore
+public final class MainPhase4PeppolSenderNonPeppolKeystore
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderInvalidKeystore.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderNonPeppolKeystore.class);
 
   public static void main (final String [] args)
   {
