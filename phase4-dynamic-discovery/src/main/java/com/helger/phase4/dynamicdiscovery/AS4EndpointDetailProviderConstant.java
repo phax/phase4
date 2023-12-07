@@ -16,10 +16,15 @@
  */
 package com.helger.phase4.dynamicdiscovery;
 
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -36,14 +41,35 @@ import com.helger.peppolid.IProcessIdentifier;
  */
 public class AS4EndpointDetailProviderConstant implements IAS4EndpointDetailProvider
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4EndpointDetailProviderConstant.class);
+
   private final X509Certificate m_aReceiverCert;
   private final String m_sDestURL;
 
-  public AS4EndpointDetailProviderConstant (@Nullable final X509Certificate aReceiverCert, @Nonnull @Nonempty final String sDestURL)
+  public AS4EndpointDetailProviderConstant (@Nullable final X509Certificate aReceiverCert,
+                                            @Nonnull @Nonempty final String sDestURL)
   {
     ValueEnforcer.notEmpty (sDestURL, "DestURL");
     m_aReceiverCert = aReceiverCert;
     m_sDestURL = sDestURL;
+
+    if (aReceiverCert != null)
+    {
+      try
+      {
+        aReceiverCert.checkValidity ();
+      }
+      catch (final CertificateExpiredException ex)
+      {
+        LOGGER.warn ("The provided Endpoint certificate is already expired. Please use a different one: " +
+                     ex.getMessage ());
+      }
+      catch (final CertificateNotYetValidException ex)
+      {
+        LOGGER.warn ("The provided Endpoint certificate is not yet valid. Please use a different one: " +
+                     ex.getMessage ());
+      }
+    }
   }
 
   public void init (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
