@@ -38,8 +38,6 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.error.IError;
-import com.helger.commons.error.SingleError;
-import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
@@ -159,7 +157,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
    *        the MPC-Manager to search for the MPCID in the persisted data
    * @param aLocale
    *        Locale to be used for the error messages
-   * @param aErrorList
+   * @param aProcessingErrorMessagesTarget
    *        to write errors to if they occur
    * @return Success if everything is all right, else Failure
    */
@@ -167,7 +165,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
   private static ESuccess _checkMPCOfPMode (@Nonnull final PModeLeg aPModeLeg,
                                             @Nonnull final IMPCManager aMPCMgr,
                                             @Nonnull final Locale aLocale,
-                                            @Nonnull final ErrorList aErrorList)
+                                            @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
     // Check if MPC is contained in PMode and if so, if it is valid
     if (aPModeLeg.getBusinessInfo () != null)
@@ -177,8 +175,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       {
         final String sDetails = "Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!";
         LOGGER.error (sDetails);
-
-        aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (sDetails, aLocale));
+        aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.errorBuilder (aLocale)
+                                                                                    .errorDetail (sDetails)
+                                                                                    .build ());
         return ESuccess.FAILURE;
       }
     }
@@ -215,7 +214,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                         @Nonnull final Element aElement,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                         @Nonnull final AS4MessageState aState,
-                                        @Nonnull final ErrorList aErrorList)
+                                        @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
     final IMPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
     IPMode aPMode = null;
@@ -238,9 +237,13 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       // Invalid Header == not wellformed/invalid xml
       for (final IError aError : aCVEH.getErrorList ())
       {
-        LOGGER.error ("Header error: " + aError.getAsString (aLocale));
+        final String sDetails = "Header error: " + aError.getAsString (aLocale);
+        LOGGER.error (sDetails);
         // Clone the error and add an error ID
-        aErrorList.add (SingleError.builder (aError).errorID (EEbmsError.EBMS_INVALID_HEADER.getErrorCode ()).build ());
+        aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_INVALID_HEADER.errorBuilder (aLocale)
+                                                                          .errorDetail (sDetails,
+                                                                                        aError.getLinkedException ())
+                                                                          .build ());
       }
       return ESuccess.FAILURE;
     }
@@ -254,7 +257,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     {
       final String sDetails = "Too many UserMessage objects (" + nUserMessages + ") contained.";
       LOGGER.error (sDetails);
-      aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+      aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                            .errorDetail (sDetails)
+                                                                            .build ());
       return ESuccess.FAILURE;
     }
 
@@ -264,7 +269,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     {
       final String sDetails = "Too many SignalMessage objects (" + nSignalMessages + ") contained.";
       LOGGER.error (sDetails);
-      aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+      aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                            .errorDetail (sDetails)
+                                                                            .build ());
       return ESuccess.FAILURE;
     }
 
@@ -273,7 +280,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       // No Message was found
       final String sDetails = "Neither UserMessage nor SignalMessage object contained.";
       LOGGER.error (sDetails);
-      aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+      aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                            .errorDetail (sDetails)
+                                                                            .build ());
       return ESuccess.FAILURE;
     }
 
@@ -301,7 +310,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       {
         final String sDetails = "More than one PartyId is containted in From or To Recipient please check the message.";
         LOGGER.error (sDetails);
-        aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+        aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                              .errorDetail (sDetails)
+                                                                              .build ());
         return ESuccess.FAILURE;
       }
 
@@ -338,7 +349,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         {
           final String sDetails = "Failed to resolve PMode '" + sPModeID + "' using resolver " + m_aPModeResolver;
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.errorBuilder (aLocale)
+                                                                                      .errorDetail (sDetails)
+                                                                                      .build ());
           return ESuccess.FAILURE;
         }
 
@@ -364,7 +377,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         {
           final String sDetails = "Error processing the UserMessage, PMode does not contain leg 2.";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.errorBuilder (aLocale)
+                                                                                      .errorDetail (sDetails)
+                                                                                      .build ());
           return ESuccess.FAILURE;
         }
 
@@ -377,12 +392,14 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                   nLegNum +
                                   ".";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.errorBuilder (aLocale)
+                                                                                      .errorDetail (sDetails)
+                                                                                      .build ());
           return ESuccess.FAILURE;
         }
 
         aState.setEffectivePModeLeg (nLegNum, aEffectiveLeg);
-        if (_checkMPCOfPMode (aEffectiveLeg, aMPCMgr, aLocale, aErrorList).isFailure ())
+        if (_checkMPCOfPMode (aEffectiveLeg, aMPCMgr, aLocale, aProcessingErrorMessagesTarget).isFailure ())
           return ESuccess.FAILURE;
 
         bHasSoapBodyPayload = _checkSoapBodyHasPayload (aEffectiveLeg, aSoapDoc);
@@ -397,7 +414,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                   sEffectiveMPCID +
                                   "' is unknown!";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                .errorDetail (sDetails)
+                                                                                .build ());
           return ESuccess.FAILURE;
         }
       }
@@ -412,7 +431,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         {
           final String sDetails = "No PayloadInfo/PartInfo is specified, so no SOAP body payload is allowed.";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                .errorDetail (sDetails)
+                                                                                .build ());
           return ESuccess.FAILURE;
         }
 
@@ -422,7 +443,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         {
           final String sDetails = "No PayloadInfo/PartInfo is specified, so no attachments are allowed.";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.errorBuilder (aLocale)
+                                                                                    .errorDetail (sDetails)
+                                                                                    .build ());
           return ESuccess.FAILURE;
         }
       }
@@ -437,7 +460,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                   aAttachments.size () +
                                   " attachments.";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.errorBuilder (aLocale)
+                                                                                    .errorDetail (sDetails)
+                                                                                    .build ());
           return ESuccess.FAILURE;
         }
 
@@ -453,7 +478,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
             {
               final String sDetails = "Error processing the UserMessage. Expected a SOAPBody Payload but there is none present.";
               LOGGER.error (sDetails);
-              aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+              aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                    .errorDetail (sDetails)
+                                                                                    .build ());
               return ESuccess.FAILURE;
             }
           }
@@ -503,7 +530,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                               sAttachmentID +
                                               "' is not supported.";
                       LOGGER.error (sDetails);
-                      aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+                      aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                            .errorDetail (sDetails)
+                                                                                            .build ());
                       return ESuccess.FAILURE;
                     }
 
@@ -526,7 +555,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                                   sAttachmentID +
                                                   "' is not supported";
                           LOGGER.error (sDetails);
-                          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+                          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                                .errorDetail (sDetails)
+                                                                                                .build ());
                           return ESuccess.FAILURE;
                         }
                         else
@@ -546,7 +577,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                       sAttachmentID +
                                       "') is not present.";
               LOGGER.error (sDetails);
-              aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+              aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                    .errorDetail (sDetails)
+                                                                                    .build ());
               return ESuccess.FAILURE;
             }
           }
@@ -563,7 +596,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                   aAttachments.size () +
                                   " attachments. This is an indicator, that an external attached was provided.";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.errorBuilder (aLocale)
+                                                                                    .errorDetail (sDetails)
+                                                                                    .build ());
           return ESuccess.FAILURE;
         }
       }
@@ -595,7 +630,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           // Return value not recognized when MPC is not currently saved
           final String sDetails = "Failed to resolve the PullRequest MPC '" + sMPC + "'";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.errorBuilder (aLocale)
+                                                                                  .errorDetail (sDetails)
+                                                                                  .build ());
           return ESuccess.FAILURE;
         }
 
@@ -621,7 +658,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         {
           final String sDetails = "Failed to resolve PMode for PullRequest with MPC '" + sMPC + "'";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.errorBuilder (aLocale)
+                                                                                  .errorDetail (sDetails)
+                                                                                  .build ());
           return ESuccess.FAILURE;
         }
       }
@@ -633,7 +672,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           {
             final String sDetails = "The Receipt does not contain a RefToMessageId";
             LOGGER.error (sDetails);
-            aErrorList.add (EEbmsError.EBMS_INVALID_RECEIPT.getAsError (sDetails, aLocale));
+            aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_INVALID_RECEIPT.errorBuilder (aLocale)
+                                                                               .errorDetail (sDetails)
+                                                                               .build ());
             return ESuccess.FAILURE;
           }
         }
@@ -654,7 +695,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                 {
                   final String sDetails = "The Error does not contain a RefToMessageInError";
                   LOGGER.error (sDetails);
-                  aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+                  aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                        .errorDetail (sDetails)
+                                                                                        .build ());
                   return ESuccess.FAILURE;
                 }
             }

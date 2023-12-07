@@ -21,9 +21,8 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.commons.annotation.UnsupportedOperation;
 import com.helger.commons.error.IError;
-import com.helger.commons.error.SingleError;
-import com.helger.commons.string.StringHelper;
 import com.helger.commons.text.display.IHasDisplayText;
 import com.helger.phase4.ebms3header.Ebms3Description;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -91,7 +90,8 @@ public interface IEbmsError
 
   /**
    * Create a new {@link Ebms3ErrorBuilder} with the information of this
-   * element.
+   * element. Sets description, category, errorCode, severity and
+   * shortDescription.
    *
    * @param aContentLocale
    *        Content locale to use. May not be <code>null</code>.
@@ -114,43 +114,10 @@ public interface IEbmsError
    */
   @Nonnull
   @Deprecated (forRemoval = true, since = "2.6.0")
+  @UnsupportedOperation
   default IError getAsError (@Nonnull final Locale aContentLocale)
   {
-    return getAsError (null, aContentLocale);
-  }
-
-  /**
-   * Convert the EBMS Error into an {@link IError}.
-   *
-   * @param sAdditionalErrorText
-   *        An optional additional error text to be appended to the default
-   *        text. May be <code>null</code>.
-   * @param aContentLocale
-   *        The locale used to resolve the error text, in case the text is
-   *        multilingual. The locale may be ignored.
-   * @return The created {@link IError}.
-   * @since 2.6.0
-   */
-  @Nonnull
-  default IError getAsError (@Nullable final String sAdditionalErrorText, @Nonnull final Locale aContentLocale)
-  {
-    String sErrorText = "[" +
-                        getCategory ().getDisplayName () +
-                        "] " +
-                        StringHelper.getNotNull (getDescription ().getDisplayText (aContentLocale),
-                                                 getShortDescription ());
-    if (StringHelper.hasText (sAdditionalErrorText))
-    {
-      if (!sErrorText.endsWith ("."))
-        sErrorText += '.';
-      sErrorText += sAdditionalErrorText;
-    }
-
-    return SingleError.builder ()
-                      .errorLevel (getSeverity ().getErrorLevel ())
-                      .errorID (getErrorCode ())
-                      .errorText (sErrorText)
-                      .build ();
+    throw new UnsupportedOperationException ();
   }
 
   @Nonnull

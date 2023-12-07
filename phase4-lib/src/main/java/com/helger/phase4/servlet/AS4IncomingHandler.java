@@ -43,7 +43,6 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.http.HttpHeaderMap;
@@ -73,7 +72,6 @@ import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
-import com.helger.phase4.error.Ebms3ErrorBuilder;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessingStatusSPI;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -460,7 +458,7 @@ public final class AS4IncomingHandler
         LOGGER.debug ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
 
       // Error list for this processor
-      final ErrorList aErrorList = new ErrorList ();
+      final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget = new CommonsArrayList <> ();
 
       try
       {
@@ -469,7 +467,7 @@ public final class AS4IncomingHandler
                                              aHeader.getNode (),
                                              aIncomingAttachments,
                                              aState,
-                                             aErrorList).isSuccess ())
+                                             aProcessingErrorMessagesTarget).isSuccess ())
         {
           // Mark header as processed (for mustUnderstand check)
           aHeader.setProcessed (true);
@@ -483,19 +481,10 @@ public final class AS4IncomingHandler
                         " with processor " +
                         aProcessor +
                         "; error details: " +
-                        aErrorList);
+                        aProcessingErrorMessagesTarget);
 
-          final Locale aLocale = aState.getLocale ();
-          final String sRefToMessageID = aState.getMessageID ();
-          for (final IError aError : aErrorList)
-          {
-            aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder ().description (aError.getErrorText (aLocale), aLocale)
-                                                                  .errorCode (aError.getErrorID ())
-                                                                  .severity (aError.getErrorLevel ())
-                                                                  .origin (aError.getErrorFieldName ())
-                                                                  .refToMessageInError (sRefToMessageID)
-                                                                  .build ());
-          }
+          // Remember all errors from this processor
+          aEbmsErrorMessagesTarget.addAll (aProcessingErrorMessagesTarget);
 
           // Stop processing of other headers
           break;

@@ -22,9 +22,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.servlet.AS4MessageState;
 
 /**
@@ -50,7 +50,7 @@ public interface ISOAPHeaderElementProcessor
    * @param aState
    *        The current processing state (mutable implementation version
    *        needed). Never <code>null</code>.
-   * @param aErrorList
+   * @param aProcessingErrorMessagesTarget
    *        The error list to be filled in case there are processing errors.
    *        Never <code>null</code>. The list is always empty initially.
    * @return Never <code>null</code>. If {@link ESuccess#FAILURE} than the
@@ -61,5 +61,5 @@ public interface ISOAPHeaderElementProcessor
                                  @Nonnull Element aHeaderElement,
                                  @Nonnull ICommonsList <WSS4JAttachment> aAttachments,
                                  @Nonnull AS4MessageState aState,
-                                 @Nonnull ErrorList aErrorList);
+                                 @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget);
 }

@@ -89,15 +89,15 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   }
 
   @Nonnull
-  public Ebms3ErrorBuilder errorDetail (@Nullable final String s, @Nullable final Exception ex)
+  public Ebms3ErrorBuilder errorDetail (@Nullable final String s, @Nullable final Throwable t)
   {
     return errorDetail (StringHelper.getConcatenatedOnDemand (s,
                                                               ": ",
-                                                              ex == null ? "" : "Technical details: " +
-                                                                                StringHelper.getConcatenatedOnDemand (ex.getClass ()
+                                                              t == null ? "" : "Technical details: " +
+                                                                                StringHelper.getConcatenatedOnDemand (t.getClass ()
                                                                                                                         .getName (),
                                                                                                                       " - ",
-                                                                                                                      ex.getMessage ())));
+                                                                                                                      t.getMessage ())));
   }
 
   @Nonnull

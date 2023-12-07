@@ -47,7 +47,6 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
-import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.StreamHelper;
@@ -63,6 +62,7 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
+import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
@@ -111,7 +111,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   private ESuccess _verifyAndDecrypt (@Nonnull final Document aSOAPDoc,
                                       @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                       @Nonnull final AS4MessageState aState,
-                                      @Nonnull final ErrorList aErrorList,
+                                      @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget,
                                       @Nonnull final Supplier <? extends WSSConfig> aWSSConfigSupplier)
   {
     // Default is Leg 1, gets overwritten when a reference to a message id
@@ -315,7 +315,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       LOGGER.error (sDetails, ex);
       // TODO we need a way to differentiate signature and decrypt
       // WSSecurityException provides no such thing
-      aErrorList.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsError (sDetails + ": " + ex.getMessage (), aLocale));
+      aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_FAILED_DECRYPTION.errorBuilder (aLocale)
+                                                                           .errorDetail (sDetails, ex)
+                                                                           .build ());
       aState.setSoapWSS4JException (ex);
       return ESuccess.FAILURE;
     }
@@ -324,7 +326,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       // Decryption or Signature check failed
       final String sDetails = "IO error processing the WSSSecurity Header";
       LOGGER.error (sDetails, ex);
-      aErrorList.add (EEbmsError.EBMS_OTHER.getAsError (sDetails + ": " + ex.getMessage (), aLocale));
+      aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (aLocale)
+                                                               .errorDetail (sDetails, ex)
+                                                               .build ());
       aState.setSoapWSS4JException (ex);
       return ESuccess.FAILURE;
     }
@@ -335,7 +339,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                         @Nonnull final Element aSecurityNode,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                         @Nonnull final AS4MessageState aState,
-                                        @Nonnull final ErrorList aErrorList)
+                                        @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
     IPMode aPMode = aState.getPMode ();
     if (aPMode == null)
@@ -378,7 +382,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                   Arrays.toString (ECryptoAlgorithmSign.values ()) +
                                   "' algorithms";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aLocale)
+                                                                                   .errorDetail (sDetails)
+                                                                                   .build ());
           return ESuccess.FAILURE;
         }
         if (LOGGER.isDebugEnabled ())
@@ -396,7 +402,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                   Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
                                   "'";
           LOGGER.error (sDetails);
-          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (sDetails, aLocale));
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aLocale)
+                                                                                   .errorDetail (sDetails)
+                                                                                   .build ());
           return ESuccess.FAILURE;
         }
 
@@ -418,7 +426,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           {
             final String sDetails = "The provided attachment ID in the 'Content-ID' header may not be empty.";
             LOGGER.error (sDetails);
-            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+            aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                  .errorDetail (sDetails)
+                                                                                  .build ());
             return ESuccess.FAILURE;
           }
 
@@ -431,7 +441,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                     WSS4JAttachment.CONTENT_ID_PREFIX +
                                     "'";
             LOGGER.error (sDetails);
-            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+            aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                  .errorDetail (sDetails)
+                                                                                  .build ());
             return ESuccess.FAILURE;
           }
 
@@ -444,7 +456,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                     WSS4JAttachment.CONTENT_ID_SUFFIX +
                                     "'";
             LOGGER.error (sDetails);
-            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+            aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                  .errorDetail (sDetails)
+                                                                                  .build ());
             return ESuccess.FAILURE;
           }
 
@@ -465,7 +479,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                     sAttachmentID +
                                     "'";
             LOGGER.error (sDetails);
-            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
+            aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                  .errorDetail (sDetails)
+                                                                                  .build ());
             return ESuccess.FAILURE;
           }
         }
@@ -478,7 +494,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         eSuccess = WSSSynchronizer.call ( () -> _verifyAndDecrypt (aSOAPDoc,
                                                                    aAttachments,
                                                                    aState,
-                                                                   aErrorList,
+                                                                   aProcessingErrorMessagesTarget,
                                                                    WSSConfigManager::createStaticWSSConfig));
       }
       else
@@ -487,7 +503,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         eSuccess = _verifyAndDecrypt (aSOAPDoc,
                                       aAttachments,
                                       aState,
-                                      aErrorList,
+                                      aProcessingErrorMessagesTarget,
                                       WSSConfigManager.getInstance ()::createWSSConfig);
       }
       if (eSuccess.isFailure ())
