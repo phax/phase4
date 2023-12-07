@@ -256,9 +256,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     }
     catch (final IndexOutOfBoundsException | IllegalStateException | WSSecurityException ex)
     {
-      // Decryption or Signature check failed
-      LOGGER.error ("Error processing the WSSSecurity Header", ex);
-
       /**
        * Error processing the WSSSecurity Header
        *
@@ -313,17 +310,21 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
        * </pre>
        */
 
+      // Decryption or Signature check failed
+      final String sDetails = "Error processing the WSSSecurity Header";
+      LOGGER.error (sDetails, ex);
       // TODO we need a way to differentiate signature and decrypt
       // WSSecurityException provides no such thing
-      aErrorList.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsError (aLocale));
+      aErrorList.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsError (sDetails + ": " + ex.getMessage (), aLocale));
       aState.setSoapWSS4JException (ex);
       return ESuccess.FAILURE;
     }
     catch (final IOException ex)
     {
       // Decryption or Signature check failed
-      LOGGER.error ("IO error processing the WSSSecurity Header", ex);
-      aErrorList.add (EEbmsError.EBMS_OTHER.getAsError (aLocale));
+      final String sDetails = "IO error processing the WSSSecurity Header";
+      LOGGER.error (sDetails, ex);
+      aErrorList.add (EEbmsError.EBMS_OTHER.getAsError (sDetails + ": " + ex.getMessage (), aLocale));
       aState.setSoapWSS4JException (ex);
       return ESuccess.FAILURE;
     }
@@ -371,12 +372,13 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         final ECryptoAlgorithmSign eSignAlgo = ECryptoAlgorithmSign.getFromURIOrNull (sAlgorithm);
         if (eSignAlgo == null)
         {
-          LOGGER.error ("Error processing the Security Header, your signing algorithm '" +
-                        sAlgorithm +
-                        "' is incorrect. Expected one of the following '" +
-                        Arrays.toString (ECryptoAlgorithmSign.values ()) +
-                        "' algorithms");
-          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
+          final String sDetails = "Error processing the Security Header, your signing algorithm '" +
+                                  sAlgorithm +
+                                  "' is incorrect. Expected one of the following '" +
+                                  Arrays.toString (ECryptoAlgorithmSign.values ()) +
+                                  "' algorithms";
+          LOGGER.error (sDetails);
+          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (sDetails, aLocale));
           return ESuccess.FAILURE;
         }
         if (LOGGER.isDebugEnabled ())
@@ -389,10 +391,12 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         final ECryptoAlgorithmSignDigest eSignDigestAlgo = ECryptoAlgorithmSignDigest.getFromURIOrNull (sAlgorithm);
         if (eSignDigestAlgo == null)
         {
-          LOGGER.error ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
-                        Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
-                        "' algorithms");
-          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
+          final String sDetails = "Error processing the Security Header - the signing digest algorithm is incorrect." +
+                                  " Expected one of the following algorithms: '" +
+                                  Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
+                                  "'";
+          LOGGER.error (sDetails);
+          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (sDetails, aLocale));
           return ESuccess.FAILURE;
         }
 
@@ -412,32 +416,35 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           String sAttachmentID = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
           if (StringHelper.hasNoText (sAttachmentID))
           {
-            LOGGER.error ("The provided attachment ID in the 'Content-ID' header may not be empty.");
-            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+            final String sDetails = "The provided attachment ID in the 'Content-ID' header may not be empty.";
+            LOGGER.error (sDetails);
+            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
             return ESuccess.FAILURE;
           }
 
           // Starts with "<attachment="?
           if (!sAttachmentID.startsWith (WSS4JAttachment.CONTENT_ID_PREFIX))
           {
-            LOGGER.error ("The provided attachment ID '" +
-                          sAttachmentID +
-                          "' in the 'Content-ID' header does not start with the required prefix '" +
-                          WSS4JAttachment.CONTENT_ID_PREFIX +
-                          "'");
-            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+            final String sDetails = "The provided attachment ID '" +
+                                    sAttachmentID +
+                                    "' in the 'Content-ID' header does not start with the required prefix '" +
+                                    WSS4JAttachment.CONTENT_ID_PREFIX +
+                                    "'";
+            LOGGER.error (sDetails);
+            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
             return ESuccess.FAILURE;
           }
 
           // Ends with ">"?
           if (!sAttachmentID.endsWith (WSS4JAttachment.CONTENT_ID_SUFFIX))
           {
-            LOGGER.error ("The provided attachment ID '" +
-                          sAttachmentID +
-                          "' in the 'Content-ID' header does not end with the required suffix '" +
-                          WSS4JAttachment.CONTENT_ID_SUFFIX +
-                          "'");
-            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+            final String sDetails = "The provided attachment ID '" +
+                                    sAttachmentID +
+                                    "' in the 'Content-ID' header does not end with the required suffix '" +
+                                    WSS4JAttachment.CONTENT_ID_SUFFIX +
+                                    "'";
+            LOGGER.error (sDetails);
+            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
             return ESuccess.FAILURE;
           }
 
@@ -452,12 +459,13 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                            .getHref ();
           if (!sHref.contains (sAttachmentID))
           {
-            LOGGER.error ("The usermessage part information '" +
-                          sHref +
-                          "' does not reference the respective attachment ID '" +
-                          sAttachmentID +
-                          "'");
-            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+            final String sDetails = "The usermessage part information '" +
+                                    sHref +
+                                    "' does not reference the respective attachment ID '" +
+                                    sAttachmentID +
+                                    "'";
+            LOGGER.error (sDetails);
+            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (sDetails, aLocale));
             return ESuccess.FAILURE;
           }
         }

@@ -76,16 +76,52 @@ public interface IEbmsError
   @Nonnull
   EEbmsErrorCategory getCategory ();
 
+  /**
+   * Convert the EBMS Error into an {@link IError}.
+   *
+   * @param aContentLocale
+   *        The locale used to resolve the error text, in case the text is
+   *        multilingual. The locale may be ignored.
+   * @return The created {@link IError}.
+   */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.6.0")
   default IError getAsError (@Nonnull final Locale aContentLocale)
   {
+    return getAsError (null, aContentLocale);
+  }
+
+  /**
+   * Convert the EBMS Error into an {@link IError}.
+   *
+   * @param sAdditionalErrorText
+   *        An optional additional error text to be appended to the default
+   *        text. May be <code>null</code>.
+   * @param aContentLocale
+   *        The locale used to resolve the error text, in case the text is
+   *        multilingual. The locale may be ignored.
+   * @return The created {@link IError}.
+   * @since 2.6.0
+   */
+  @Nonnull
+  default IError getAsError (@Nullable final String sAdditionalErrorText, @Nonnull final Locale aContentLocale)
+  {
+    String sErrorText = "[" +
+                        getCategory ().getDisplayName () +
+                        "] " +
+                        StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale),
+                                                 getShortDescription ());
+    if (StringHelper.hasText (sAdditionalErrorText))
+    {
+      if (!sErrorText.endsWith ("."))
+        sErrorText += '.';
+      sErrorText += sAdditionalErrorText;
+    }
+
     return SingleError.builder ()
                       .errorLevel (getSeverity ().getErrorLevel ())
                       .errorID (getErrorCode ())
-                      .errorText ("[" +
-                                  getCategory ().getDisplayName () +
-                                  "] " +
-                                  StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale), getShortDescription ()))
+                      .errorText (sErrorText)
                       .build ();
   }
 
@@ -112,8 +148,9 @@ public interface IEbmsError
     return getAsEbms3Error (aContentLocale,
                             sRefToMessageInError,
                             sOrigin,
-                            sErrorDescription == null ? null
-                                                      : MessageHelperMethods.createEbms3Description (aContentLocale, sErrorDescription));
+                            sErrorDescription == null ? null : MessageHelperMethods.createEbms3Description (
+                                                                                                            aContentLocale,
+                                                                                                            sErrorDescription));
   }
 
   @Nonnull
@@ -124,9 +161,9 @@ public interface IEbmsError
   {
     final Ebms3Error aEbms3Error = new Ebms3Error ();
     // Default to shortDescription if none provided
-    aEbms3Error.setDescription (aEbmsDescription != null ? aEbmsDescription
-                                                         : MessageHelperMethods.createEbms3Description (aContentLocale,
-                                                                                                        getShortDescription ()));
+    aEbms3Error.setDescription (aEbmsDescription != null ? aEbmsDescription : MessageHelperMethods
+                                                                                                  .createEbms3Description (aContentLocale,
+                                                                                                                           getShortDescription ()));
     aEbms3Error.setErrorDetail (getErrorDetail ().getDisplayText (aContentLocale));
     aEbms3Error.setErrorCode (getErrorCode ());
     aEbms3Error.setSeverity (getSeverity ().getSeverity ());

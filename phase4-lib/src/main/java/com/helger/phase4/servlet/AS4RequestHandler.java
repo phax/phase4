@@ -847,9 +847,12 @@ public class AS4RequestHandler implements AutoCloseable
         }
         catch (final AS4DecompressException ex)
         {
-          LOGGER.error ("Failed to decompress AS4 payload", ex);
+          final String sDetails = "Failed to decompress AS4 payload";
+          LOGGER.error (sDetails, ex);
           // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
-          aErrorMessagesTarget.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
+          aErrorMessagesTarget.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale,
+                                                                                           sMessageID,
+                                                                                           sDetails));
           return;
         }
         catch (final RuntimeException ex)

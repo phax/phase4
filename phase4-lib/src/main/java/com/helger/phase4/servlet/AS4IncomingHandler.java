@@ -488,19 +488,13 @@ public final class AS4IncomingHandler
           final Locale aLocale = aState.getLocale ();
           for (final IError aError : aErrorList)
           {
-            final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
-            if (ePredefinedError != null)
-              aErrorMessages.add (ePredefinedError.getAsEbms3Error (aLocale, sRefToMessageID));
-            else
-            {
-              final Ebms3Error aEbms3Error = new Ebms3Error ();
-              aEbms3Error.setErrorDetail (aError.getErrorText (aLocale));
-              aEbms3Error.setErrorCode (aError.getErrorID ());
-              aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
-              aEbms3Error.setOrigin (aError.getErrorFieldName ());
-              aEbms3Error.setRefToMessageInError (sRefToMessageID);
-              aErrorMessages.add (aEbms3Error);
-            }
+            final Ebms3Error aEbms3Error = new Ebms3Error ();
+            aEbms3Error.setErrorDetail (aError.getErrorText (aLocale));
+            aEbms3Error.setErrorCode (aError.getErrorID ());
+            aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
+            aEbms3Error.setOrigin (aError.getErrorFieldName ());
+            aEbms3Error.setRefToMessageInError (sRefToMessageID);
+            aErrorMessages.add (aEbms3Error);
           }
 
           // Stop processing of other headers
@@ -511,14 +505,14 @@ public final class AS4IncomingHandler
       {
         // upon failure, the element stays unprocessed and sends back a signal
         // message with the errors
-        LOGGER.error ("Error processing SOAP header element " + aQName.toString () + " with processor " + aProcessor,
-                      ex);
-
+        final String sDetails = "Error processing SOAP header element " +
+                                aQName.toString () +
+                                " with processor " +
+                                aProcessor;
+        LOGGER.error (sDetails, ex);
         aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
                                                                    aState.getMessageID (),
-                                                                   "Error processing SOAP header element " +
-                                                                                           aQName.toString ()));
-
+                                                                   sDetails));
         // Stop processing of other headers
         break;
       }
@@ -667,21 +661,21 @@ public final class AS4IncomingHandler
                              (aEbmsError != null ? 1 : 0);
       if (nCountData != 1)
       {
-        final String sMsg = "Expected a UserMessage(" +
-                            (aEbmsUserMessage != null ? 1 : 0) +
-                            "), a PullRequest(" +
-                            (aEbmsPullRequest != null ? 1 : 0) +
-                            "), a Receipt(" +
-                            (aEbmsReceipt != null ? 1 : 0) +
-                            ") or an Error(" +
-                            (aEbmsError != null ? 1 : 0) +
-                            ")";
-        LOGGER.error (sMsg);
+        final String sDetails = "Expected a UserMessage(" +
+                                (aEbmsUserMessage != null ? 1 : 0) +
+                                "), a PullRequest(" +
+                                (aEbmsPullRequest != null ? 1 : 0) +
+                                "), a Receipt(" +
+                                (aEbmsReceipt != null ? 1 : 0) +
+                                ") or an Error(" +
+                                (aEbmsError != null ? 1 : 0) +
+                                ")";
+        LOGGER.error (sDetails);
 
         // send EBMS:0001 error back
         aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale,
                                                                                         aState.getMessageID (),
-                                                                                        sMsg));
+                                                                                        sDetails));
       }
 
       // Determine AS4 profile ID (since 0.13.0)
