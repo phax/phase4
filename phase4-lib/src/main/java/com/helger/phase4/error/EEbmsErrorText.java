@@ -47,7 +47,7 @@ public enum EEbmsErrorText implements IHasDisplayText
   POLICY_NONCOMPLIANCE ("The processor determined that the message's security methods, parameters, scope or other security policy-level requirements or agreements were not satisfied."),
   DYSFUNCTIONAL_RELIABILITY ("Some reliability function as implemented by the Reliability module, is not operational, or the reliability state associated with this message sequence is not valid."),
   DELIVERY_FAILURE ("Although the message was send under Guaranteed delivery reuqirement, the Reliability module could not get assurance that the message was properly delivered, in spite of resending efforts."),
-  MISSING_RECEIPT ("A Receipt has not been received  for a message that was previously sent by the MSH generating this error."),
+  MISSING_RECEIPT ("A Receipt has not been received for a message that was previously sent by the MSH generating this error."),
   INVALID_RECEIPT ("A Receipt has been received  for a message that was previously sent by the MSH generating this error, but the content does not match the message content (e.g. some part has not been acknowledged, or the digest associated does not match the signature digest, for NRR)."),
   DECOMPRESSION_FAILURE ("An error occurred during the decompression.");
 

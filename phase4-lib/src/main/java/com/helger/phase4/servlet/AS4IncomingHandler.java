@@ -73,6 +73,7 @@ import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.error.Ebms3ErrorBuilder;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessingStatusSPI;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -484,17 +485,12 @@ public final class AS4IncomingHandler
                         "; error details: " +
                         aErrorList);
 
-          final String sRefToMessageID = aState.getMessageID ();
           final Locale aLocale = aState.getLocale ();
+          final String sRefToMessageID = aState.getMessageID ();
           for (final IError aError : aErrorList)
           {
-            final Ebms3Error aEbms3Error = new Ebms3Error ();
-            aEbms3Error.setErrorDetail (aError.getErrorText (aLocale));
-            aEbms3Error.setErrorCode (aError.getErrorID ());
-            aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
-            aEbms3Error.setOrigin (aError.getErrorFieldName ());
-            aEbms3Error.setRefToMessageInError (sRefToMessageID);
-            aEbmsErrorMessagesTarget.add (aEbms3Error);
+            aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (aError, aLocale).refToMessageInError (sRefToMessageID)
+                                                                                 .build ());
           }
 
           // Stop processing of other headers
@@ -510,9 +506,11 @@ public final class AS4IncomingHandler
                                 " with processor " +
                                 aProcessor;
         LOGGER.error (sDetails, ex);
-        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
-                                                                             aState.getMessageID (),
-                                                                             sDetails));
+        aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aState.getLocale ())
+                                                                                                        .refToMessageInError (aState.getMessageID ())
+                                                                                                        .errorDetail (sDetails,
+                                                                                                                      ex)
+                                                                                                        .build ());
         // Stop processing of other headers
         break;
       }
@@ -674,9 +672,10 @@ public final class AS4IncomingHandler
         LOGGER.error (sDetails);
 
         // send EBMS:0001 error back
-        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale,
-                                                                                            aState.getMessageID (),
-                                                                                            sDetails));
+        aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED, aLocale)
+                                                                                                           .refToMessageInError (aState.getMessageID ())
+                                                                                                           .errorDetail (sDetails)
+                                                                                                           .build ());
       }
 
       // Determine AS4 profile ID (since 0.13.0)

@@ -45,6 +45,7 @@ import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.error.Ebms3ErrorBuilder;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
@@ -77,7 +78,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                           @Nonnull final IAS4MessageState aState,
-                                                          @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                          @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget)
   {
     // Needed for AS4_TA13 because we want to force a decompression failure and
     // for that to happen the stream has to be read
@@ -113,9 +114,10 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
     // To test returning with a failure works as intended
     if (aUserMessage.getCollaborationInfo ().getAction ().equals (ACTION_FAILURE))
     {
-      aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
-                                                                           aState.getMessageID (),
-                                                                           ACTION_FAILURE));
+      aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aState.getLocale ())
+                                                                                                      .refToMessageInError (aState.getMessageID ())
+                                                                                                      .errorDetail (ACTION_FAILURE)
+                                                                                                      .build ());
       return AS4MessageProcessorResult.createFailure ();
     }
     return AS4MessageProcessorResult.createSuccess ();

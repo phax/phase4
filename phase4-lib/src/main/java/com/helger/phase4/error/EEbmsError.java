@@ -131,19 +131,19 @@ public enum EEbmsError implements IEbmsError
   private final String m_sErrorCode;
   private final EEbmsErrorSeverity m_eSeverity;
   private final String m_sShortDescription;
-  private final IHasDisplayText m_aErrorDetail;
+  private final IHasDisplayText m_aDescription;
   private final EEbmsErrorCategory m_eCategory;
 
   EEbmsError (@Nonnull final String sErrorCode,
               @Nonnull final EEbmsErrorSeverity eSeverity,
               @Nonnull final String sShortDescription,
-              @Nonnull final IHasDisplayText aErrorDetail,
+              @Nonnull final IHasDisplayText aDescription,
               @Nonnull final EEbmsErrorCategory eCategory)
   {
     m_sErrorCode = sErrorCode;
     m_eSeverity = eSeverity;
     m_sShortDescription = sShortDescription;
-    m_aErrorDetail = aErrorDetail;
+    m_aDescription = aDescription;
     m_eCategory = eCategory;
   }
 
@@ -166,9 +166,9 @@ public enum EEbmsError implements IEbmsError
   }
 
   @Nonnull
-  public IHasDisplayText getErrorDetail ()
+  public IHasDisplayText getDescription ()
   {
-    return m_aErrorDetail;
+    return m_aDescription;
   }
 
   @Nonnull

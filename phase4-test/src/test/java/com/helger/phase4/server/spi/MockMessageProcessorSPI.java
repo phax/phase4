@@ -39,6 +39,7 @@ import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.error.Ebms3ErrorBuilder;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.EMEPBinding;
@@ -88,7 +89,7 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
                                                                   @Nonnull final IAS4MessageState aState,
-                                                                  @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                                  @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget)
   {
     if (aSignalMessage.getReceipt () != null)
     {
@@ -108,9 +109,10 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
     {
       if (aPullRequest.getMpc ().equals (MPC_FAILURE))
       {
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
-                                                                             aState.getMessageID (),
-                                                                             "Error in creating the usermessage - mock MPC 'failure' was used!"));
+        aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aState.getLocale ())
+                                                                                                        .refToMessageInError (aState.getMessageID ())
+                                                                                                        .errorDetail ("Error in creating the usermessage - mock MPC 'failure' was used!")
+                                                                                                        .build ());
         return AS4SignalMessageProcessorResult.createFailure ();
       }
 

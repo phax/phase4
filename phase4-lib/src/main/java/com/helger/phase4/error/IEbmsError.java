@@ -54,18 +54,32 @@ public interface IEbmsError
   /**
    * Gets the value of the shortDescription property.
    *
-   * @return possible object is {@link String }
+   * @return Short description. Never <code>null</code>.
    */
   @Nonnull
   String getShortDescription ();
 
   /**
-   * Gets the value of the errorDetail property.
+   * Gets the value of the description property.
    *
-   * @return possible object is {@link String }
+   * @return The multilingual description.
+   * @since 2.6.0
    */
   @Nonnull
-  IHasDisplayText getErrorDetail ();
+  IHasDisplayText getDescription ();
+
+  /**
+   * Gets the value of the errorDetail property.
+   *
+   * @return The multilingual description.
+   * @deprecated Use {@link #getDescription()} instead
+   */
+  @Nonnull
+  @Deprecated (forRemoval = true, since = "2.6.0")
+  default IHasDisplayText getErrorDetail ()
+  {
+    return getDescription ();
+  }
 
   /**
    * Gets the value of the category property.
@@ -108,7 +122,7 @@ public interface IEbmsError
     String sErrorText = "[" +
                         getCategory ().getDisplayName () +
                         "] " +
-                        StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale),
+                        StringHelper.getNotNull (getDescription ().getDisplayText (aContentLocale),
                                                  getShortDescription ());
     if (StringHelper.hasText (sAdditionalErrorText))
     {
@@ -132,12 +146,13 @@ public interface IEbmsError
   }
 
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.6.0")
   default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
                                       @Nullable final String sRefToMessageInError,
-                                      @Nullable final String sErrorDescription)
+                                      @Nullable final String sErrorDetails)
   {
     return new Ebms3ErrorBuilder (this, aContentLocale).refToMessageInError (sRefToMessageInError)
-                                                       .errorDetail (sErrorDescription)
+                                                       .errorDetail (sErrorDetails)
                                                        .build ();
   }
 

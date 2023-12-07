@@ -22,6 +22,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.builder.IBuilder;
+import com.helger.commons.error.IError;
+import com.helger.commons.error.level.IErrorLevel;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.ebms3header.Ebms3Description;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -44,18 +46,49 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   private EEbmsErrorSeverity m_eSeverity;
   private String m_sShortDescription;
 
+  /**
+   * Create an empty builder.
+   */
   public Ebms3ErrorBuilder ()
   {}
 
+  /**
+   * Create a new builder setting {@link #description(Ebms3Description)},
+   * {@link #category(EEbmsErrorCategory)}, {@link #errorCode(String)},
+   * {@link #severity(EEbmsErrorSeverity)} and {@link #shortDescription(String)}
+   *
+   * @param aError
+   *        The source error. May not be <code>null</code>.
+   * @param aContentLocale
+   *        The locale to be used to resolve error texts.
+   */
   public Ebms3ErrorBuilder (@Nonnull final IEbmsError aError, @Nonnull final Locale aContentLocale)
   {
     // Default to shortDescription if none provided
-    description (StringHelper.getNotNull (aError.getErrorDetail ().getDisplayText (aContentLocale),
+    description (StringHelper.getNotNull (aError.getDescription ().getDisplayText (aContentLocale),
                                           aError.getShortDescription ()), aContentLocale);
     category (aError.getCategory ());
     errorCode (aError.getErrorCode ());
     severity (aError.getSeverity ());
     shortDescription (aError.getShortDescription ());
+  }
+
+  /**
+   * Create a new builder setting {@link #description(Ebms3Description)},
+   * {@link #errorCode(String)}, {@link #severity(IErrorLevel)} and
+   * {@link #shortDescription(String)}
+   *
+   * @param aError
+   *        The source error. May not be <code>null</code>.
+   * @param aContentLocale
+   *        The locale to be used to resolve error texts.
+   */
+  public Ebms3ErrorBuilder (@Nonnull final IError aError, @Nonnull final Locale aContentLocale)
+  {
+    description (aError.getErrorText (aContentLocale), aContentLocale);
+    errorCode (aError.getErrorID ());
+    severity (aError.getErrorLevel ());
+    origin (aError.getErrorFieldName ());
   }
 
   @Nonnull
@@ -71,6 +104,16 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   {
     m_aDescription = a;
     return this;
+  }
+
+  @Nonnull
+  public Ebms3ErrorBuilder errorDetail (@Nullable final String s, @Nullable final Exception ex)
+  {
+    return errorDetail (StringHelper.getConcatenatedOnDemand (s,
+                                                              ": ",
+                                                              ex == null ? "" : ex.getClass ().getName () +
+                                                                                " - " +
+                                                                                ex.getMessage ()));
   }
 
   @Nonnull
@@ -109,6 +152,12 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   }
 
   @Nonnull
+  public Ebms3ErrorBuilder severity (@Nullable final IErrorLevel e)
+  {
+    return severity (e == null ? null : e.isError () ? EEbmsErrorSeverity.FAILURE : EEbmsErrorSeverity.WARNING);
+  }
+
+  @Nonnull
   public Ebms3ErrorBuilder severity (@Nullable final EEbmsErrorSeverity e)
   {
     m_eSeverity = e;
@@ -131,16 +180,47 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
       throw new IllegalStateException ("Error Code is required");
 
     final Ebms3Error aEbms3Error = new Ebms3Error ();
-    // Default to shortDescription if none provided
+
+    // This OPTIONAL element provides a narrative description of the error in
+    // the language defined by the xml:lang attribute. The content of this
+    // element is left to implementation-specific decisions.
     aEbms3Error.setDescription (m_aDescription);
+
+    // This OPTIONAL element provides additional details about the context in
+    // which the error occurred. For example, it may be an exception trace.
     aEbms3Error.setErrorDetail (m_sErrorDetail);
+
     if (m_eCategory != null)
+    {
+      // This OPTIONAL attribute identifies the type of error related to a
+      // particular origin. For example: Content, Packaging, UnPackaging,
+      // Communication, InternalProcess.
       aEbms3Error.setCategory (m_eCategory.getDisplayName ());
+    }
+
+    // This OPTIONAL attribute indicates the MessageId of the message in error,
+    // for which this error is raised.
     aEbms3Error.setRefToMessageInError (m_sRefToMessageInError);
+
+    // This REQUIRED attribute is a unique identifier for the type of error.
     aEbms3Error.setErrorCode (m_sErrorCode);
+
+    // This OPTIONAL attribute identifies the functional module within which the
+    // error occurred. This module could be the the ebMS Module, the Reliability
+    // Module, or the Security Module. Possible values for this attribute
+    // include "ebMS", "reliability", and "security". The use of other modules,
+    // and thus their corresponding @origin values, may be specified elsewhere,
+    // such as in a forthcoming Part 2 of this specification.
     aEbms3Error.setOrigin (m_sOrigin);
+
+    // This REQUIRED attribute indicates the severity of the error. Valid values
+    // are: warning, failure.
     aEbms3Error.setSeverity (m_eSeverity.getSeverity ());
+
+    // This OPTIONAL attribute provides a short description of the error that
+    // can be reported in a log, in order to facilitate readability.
     aEbms3Error.setShortDescription (m_sShortDescription);
+
     return aEbms3Error;
   }
 }

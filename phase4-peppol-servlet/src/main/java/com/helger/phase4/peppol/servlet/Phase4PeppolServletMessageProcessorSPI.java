@@ -72,6 +72,7 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.error.Ebms3ErrorBuilder;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.servlet.IAS4MessageState;
@@ -530,18 +531,20 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     {
       final String sDetails = "The received Peppol message was not encrypted properly.";
       LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsEbms3Error (aDisplayLocale,
-                                                                                       aState.getMessageID (),
-                                                                                       sDetails));
+      aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_FAILED_DECRYPTION, aDisplayLocale)
+                                                                                                             .refToMessageInError (sMessageID)
+                                                                                                             .errorDetail (sDetails)
+                                                                                                             .build ());
       return AS4MessageProcessorResult.createFailure ();
     }
     if (!aState.isSoapSignatureChecked ())
     {
       final String sDetails = "The received Peppol message was not signed properly.";
       LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsEbms3Error (aDisplayLocale,
-                                                                                           aState.getMessageID (),
-                                                                                           sDetails));
+      aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_FAILED_AUTHENTICATION, aDisplayLocale)
+                                                                                                                 .refToMessageInError (sMessageID)
+                                                                                                                 .errorDetail (sDetails)
+                                                                                                                 .build ());
       return AS4MessageProcessorResult.createFailure ();
     }
 
@@ -574,9 +577,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         {
           final String sDetails = "Failed to decompress the payload of attachment #" + nAttachmentIndex;
           LOGGER.error (sLogPrefix + sDetails);
-          aProcessingErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aDisplayLocale,
-                                                                                               aState.getMessageID (),
-                                                                                               sDetails));
+          aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_DECOMPRESSION_FAILURE, aDisplayLocale)
+                                                                                                                     .refToMessageInError (sMessageID)
+                                                                                                                     .errorDetail (sDetails)
+                                                                                                                     .build ());
           return AS4MessageProcessorResult.createFailure ();
         }
 
@@ -595,9 +599,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
           {
             final String sDetails = "Failed to read the provided SBDH document";
             LOGGER.error (sLogPrefix + sDetails);
-            aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
-                                                                                 aState.getMessageID (),
-                                                                                 sDetails));
+            aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aDisplayLocale)
+                                                                                                       .refToMessageInError (sMessageID)
+                                                                                                       .errorDetail (sDetails)
+                                                                                                       .build ());
           }
           else
           {
@@ -605,9 +610,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
             {
               final String sDetails = "Peppol SBDH Issue: " + aError.getAsString (aDisplayLocale);
               LOGGER.error (sLogPrefix + sDetails);
-              aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
-                                                                                   aState.getMessageID (),
-                                                                                   sDetails));
+              aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aDisplayLocale)
+                                                                                                         .refToMessageInError (sMessageID)
+                                                                                                         .errorDetail (sDetails)
+                                                                                                         .build ());
             }
           }
 
@@ -639,12 +645,13 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     {
       // In Peppol there must be exactly one payload
       final String sDetails = "In Peppol exactly one payload attachment is expected. This request has " +
-                          aReadAttachments.size () +
-                          " attachments";
+                              aReadAttachments.size () +
+                              " attachments";
       LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
-                                                                           aState.getMessageID (),
-                                                                           sDetails));
+      aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aDisplayLocale).refToMessageInError (
+                                                                                                                       aState.getMessageID ())
+                                                                                                 .errorDetail (sDetails)
+                                                                                                 .build ());
       return AS4MessageProcessorResult.createFailure ();
     }
 
@@ -675,9 +682,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                           " - " +
                           ex.getMessage ();
       LOGGER.error (sLogPrefix + sMsg, ex);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
-                                                                           aState.getMessageID (),
-                                                                           sMsg));
+      aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aDisplayLocale).refToMessageInError (
+                                                                                                                       aState.getMessageID ())
+                                                                                                 .errorDetail (sMsg)
+                                                                                                 .build ());
       return AS4MessageProcessorResult.createFailure ();
     }
 
@@ -713,9 +721,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                 m_aTransportProfile.getID () +
                                 ") - not handling incoming AS4 document";
             LOGGER.error (sLogPrefix + sMsg);
-            aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
-                                                                                 aState.getMessageID (),
-                                                                                 sMsg));
+            aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aDisplayLocale)
+                                                                                                       .refToMessageInError (aState.getMessageID ())
+                                                                                                       .errorDetail (sMsg)
+                                                                                                       .build ());
             return AS4MessageProcessorResult.createFailure ();
           }
 
@@ -732,9 +741,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                               " - " +
                               ex.getMessage ();
           LOGGER.error (sLogPrefix + sMsg, ex);
-          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
-                                                                               aState.getMessageID (),
-                                                                               sMsg));
+          aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aDisplayLocale)
+                                                                                                     .refToMessageInError (aState.getMessageID ())
+                                                                                                     .errorDetail (sMsg)
+                                                                                                     .build ());
           return AS4MessageProcessorResult.createFailure ();
         }
       }
@@ -773,9 +783,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         {
           final String sMsg = "Error invoking Peppol handler " + aHandler + ": " + ex.getMessage ();
           LOGGER.error (sLogPrefix + sMsg, ex);
-          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
-                                                                               aState.getMessageID (),
-                                                                               sMsg));
+          aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aDisplayLocale)
+                                                                                                     .refToMessageInError (aState.getMessageID ())
+                                                                                                     .errorDetail (sMsg)
+                                                                                                     .build ());
 
           // Returned AS4 Error without a custom prefix
           return AS4MessageProcessorResult.createFailure ();
@@ -790,9 +801,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                 " - " +
                                 ex.getMessage ();
             LOGGER.error (sLogPrefix + sMsg, ex);
-            aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
-                                                                                 aState.getMessageID (),
-                                                                                 sMsg));
+            aProcessingErrorMessages.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aDisplayLocale)
+                                                                                                       .refToMessageInError (aState.getMessageID ())
+                                                                                                       .errorDetail (sMsg)
+                                                                                                       .build ());
             return AS4MessageProcessorResult.createFailure ();
           }
         }
