@@ -23,16 +23,19 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.peppol.sml.ESML;
+import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.api.result.ValidationResultList;
-import com.helger.phive.peppol.PeppolValidation2023_05;
 import com.helger.photon.io.WebFileIO;
+import com.helger.security.keystore.EKeyStoreType;
+import com.helger.security.keystore.KeyStoreHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -44,9 +47,9 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSender
+public final class MainPhase4PeppolSenderExpiredKeystore
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSender.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderExpiredKeystore.class);
 
   public static void main (final String [] args)
   {
@@ -69,8 +72,21 @@ public final class MainPhase4PeppolSender
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
+
+      // Expired Peppol AP certificate that was valid until 2021
+      final IAS4CryptoFactory cf = new AS4CryptoFactoryInMemoryKeyStore (KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.PKCS12,
+                                                                                                            "peppol-expired-ap-cert-pw-peppol.p12",
+                                                                                                            "peppol"),
+                                                                         "cert",
+                                                                         "peppol",
+                                                                         KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
+                                                                                                      PeppolKeyStoreHelper.Config2018.TRUSTSTORE_PILOT_CLASSPATH,
+                                                                                                      PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
+                                                                                       .getKeyStore ());
+
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
+                                  .cryptoFactory (cf)
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
@@ -82,15 +98,7 @@ public final class MainPhase4PeppolSender
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidation2023_05.VID_OPENPEPPOL_INVOICE_UBL_V3,
-                                                            new Phase4PeppolValidatonResultHandler ()
-                                                            {
-                                                              @Override
-                                                              public void onValidationSuccess (final ValidationResultList aValidationResult)
-                                                              {
-                                                                LOGGER.info ("Successfully validated XML payload");
-                                                              }
-                                                            })
+                                  .disableValidation ()
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

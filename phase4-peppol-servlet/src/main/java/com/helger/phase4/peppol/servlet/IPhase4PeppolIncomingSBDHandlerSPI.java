@@ -21,8 +21,10 @@ import javax.annotation.Nonnull;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.commons.annotation.IsSPIInterface;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
@@ -62,6 +64,9 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    *        The message state. Can e.g. be used to retrieve information about
    *        the certificate found in the message. Never <code>null</code>. Since
    *        v0.9.8
+   * @param aProcessingErrorMessages
+   *        List for error messages that occur during processing. Never
+   *        <code>null</code>. Since v2.6.0.
    * @throws Phase4PeppolClientException
    *         if this specific exception is thrown, it translates into a
    *         synchronous AS4 error message.
@@ -76,11 +81,12 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
                           @Nonnull byte [] aSBDBytes,
                           @Nonnull StandardBusinessDocument aSBD,
                           @Nonnull PeppolSBDHDocument aPeppolSBD,
-                          @Nonnull IAS4MessageState aState) throws Exception;
+                          @Nonnull IAS4MessageState aState,
+                          @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
 
   /**
    * Define if an exception from
-   * {@link #handleIncomingSBD(IAS4IncomingMessageMetadata, HttpHeaderMap, Ebms3UserMessage, byte[], StandardBusinessDocument, PeppolSBDHDocument, IAS4MessageState)}
+   * {@link #handleIncomingSBD(IAS4IncomingMessageMetadata, HttpHeaderMap, Ebms3UserMessage, byte[], StandardBusinessDocument, PeppolSBDHDocument, IAS4MessageState, ICommonsList)}
    * results in a negative AS4 response or not. By default it is not.
    *
    * @return <code>true</code> to convert an Exception into an AS4 Error,
