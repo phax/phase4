@@ -42,6 +42,7 @@ import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.error.Ebms3ErrorBuilder;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4ErrorMessage;
 import com.helger.phase4.messaging.domain.AS4ReceiptMessage;
@@ -85,8 +86,8 @@ public final class MockMessages
                                                    @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                    @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
-    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
-                                                                                                                               null));
+    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (new Ebms3ErrorBuilder (EEbmsError.EBMS_INVALID_HEADER,
+                                                                                                      Locale.US).build ());
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList)
                                                      .setMustUnderstand (true);
     return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),

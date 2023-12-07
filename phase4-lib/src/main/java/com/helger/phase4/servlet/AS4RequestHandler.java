@@ -640,7 +640,7 @@ public class AS4RequestHandler implements AutoCloseable
    *        PMode to be used - may be <code>null</code> for Receipt messages.
    * @param aState
    *        The current state. Never <code>null</<code></code>.
-   * @param aErrorMessagesTarget
+   * @param aEbmsErrorMessagesTarget
    *        The list of error messages to be filled if something goes wrong.
    *        Never <code>null</code>.
    * @param aResponseAttachmentsTarget
@@ -656,7 +656,7 @@ public class AS4RequestHandler implements AutoCloseable
                                        @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                        @Nullable final IPMode aPMode,
                                        @Nonnull final IAS4MessageState aState,
-                                       @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget,
+                                       @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget,
                                        @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachmentsTarget,
                                        @Nonnull final SPIInvocationResult aSPIResult)
   {
@@ -737,7 +737,7 @@ public class AS4RequestHandler implements AutoCloseable
                              aProcessor +
                              " - considering the whole processing to be failed instead");
 
-              aErrorMessagesTarget.addAll (aProcessingErrorMessages);
+              aEbmsErrorMessagesTarget.addAll (aProcessingErrorMessages);
             }
 
             // Stop processing
@@ -753,15 +753,15 @@ public class AS4RequestHandler implements AutoCloseable
               if (aSPIResult.hasAsyncResponseURL ())
               {
                 // A second processor returned a response URL - not allowed
-                final String sErrorMsg = "Invoked AS4 message processor SPI " +
-                                         aProcessor +
-                                         " on '" +
-                                         sMessageID +
-                                         "' failed: the previous processor already returned an async response URL; it is not possible to handle two URLs. Please check your SPI implementations.";
-                LOGGER.error (sErrorMsg);
-                aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
-                                                                                              sMessageID,
-                                                                                              sErrorMsg));
+                final String sDetails = "Invoked AS4 message processor SPI " +
+                                        aProcessor +
+                                        " on '" +
+                                        sMessageID +
+                                        "' failed: the previous processor already returned an async response URL; it is not possible to handle two URLs. Please check your SPI implementations.";
+                LOGGER.error (sDetails);
+                aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
+                                                                                                  sMessageID,
+                                                                                                  sDetails));
                 // Stop processing
                 return;
               }
@@ -796,15 +796,15 @@ public class AS4RequestHandler implements AutoCloseable
                 // to the pullrequest initiator
                 if (aPullReturnUserMsg != null)
                 {
-                  final String sErrorMsg = "Invoked AS4 message processor SPI " +
-                                           aProcessor +
-                                           " on '" +
-                                           sMessageID +
-                                           "' failed: the previous processor already returned a usermessage; it is not possible to return two usermessage. Please check your SPI implementations.";
-                  LOGGER.warn (sErrorMsg);
-                  aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
-                                                                                                sMessageID,
-                                                                                                sErrorMsg));
+                  final String sDetails = "Invoked AS4 message processor SPI " +
+                                          aProcessor +
+                                          " on '" +
+                                          sMessageID +
+                                          "' failed: the previous processor already returned a usermessage; it is not possible to return two usermessage. Please check your SPI implementations.";
+                  LOGGER.warn (sDetails);
+                  aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
+                                                                                                    sMessageID,
+                                                                                                    sDetails));
                   // Stop processing
                   return;
                 }
@@ -815,15 +815,15 @@ public class AS4RequestHandler implements AutoCloseable
                 if (aPullReturnUserMsg == null)
                 {
                   // No message contained in the MPC
-                  final String sErrorMsg = "Invoked AS4 message processor SPI " +
-                                           aProcessor +
-                                           " on '" +
-                                           sMessageID +
-                                           "' returned a failure: no UserMessage contained in the MPC";
-                  LOGGER.warn (sErrorMsg);
-                  aErrorMessagesTarget.add (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getAsEbms3Error (m_aLocale,
-                                                                                                             sMessageID,
-                                                                                                             sErrorMsg));
+                  final String sDetails = "Invoked AS4 message processor SPI " +
+                                          aProcessor +
+                                          " on '" +
+                                          sMessageID +
+                                          "' returned a failure: no UserMessage contained in the MPC";
+                  LOGGER.warn (sDetails);
+                  aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getAsEbms3Error (m_aLocale,
+                                                                                                                 sMessageID,
+                                                                                                                 sDetails));
                   // Stop processing
                   return;
                 }
@@ -850,9 +850,11 @@ public class AS4RequestHandler implements AutoCloseable
           final String sDetails = "Failed to decompress AS4 payload";
           LOGGER.error (sDetails, ex);
           // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
-          aErrorMessagesTarget.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale,
-                                                                                           sMessageID,
-                                                                                           sDetails));
+          aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale,
+                                                                                               sMessageID,
+                                                                                               sDetails +
+                                                                                                           ": " +
+                                                                                                           ex.getMessage ()));
           return;
         }
         catch (final RuntimeException ex)
@@ -1299,9 +1301,9 @@ public class AS4RequestHandler implements AutoCloseable
                                                   @Nonnull final Document aSoapDocument,
                                                   @Nonnull final ESoapVersion eSoapVersion,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                  @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget) throws WSSecurityException,
-                                                                                                                 MessagingException,
-                                                                                                                 Phase4Exception
+                                                  @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws WSSecurityException,
+                                                                                                                     MessagingException,
+                                                                                                                     Phase4Exception
   {
     // Create the SOAP header element processor list
     final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (m_aPModeResolver,
@@ -1319,7 +1321,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                            eSoapVersion,
                                                                            aIncomingAttachments,
                                                                            m_aIncomingProfileSelector,
-                                                                           aErrorMessagesTarget,
+                                                                           aEbmsErrorMessagesTarget,
                                                                            m_aMessageMetadata);
 
     // Evaluate the results of processing
@@ -1351,14 +1353,11 @@ public class AS4RequestHandler implements AutoCloseable
                                                  .isBreak ();
       if (bIsDuplicate)
       {
-        LOGGER.error ("Not invoking SPIs, because message with Message ID '" +
-                      sMessageID +
-                      "' was already handled (this is a duplicate)");
-        aErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
-                                                                         sMessageID,
-                                                                         "Another message with the same Message ID '" +
-                                                                                     sMessageID +
-                                                                                     "' was already received!"));
+        final String sDetails = "Not invoking SPIs, because message with Message ID '" +
+                                sMessageID +
+                                "' was already handled (this is a duplicate)";
+        LOGGER.error (sDetails);
+        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale, sMessageID, sDetails));
       }
       else
       {
@@ -1379,7 +1378,7 @@ public class AS4RequestHandler implements AutoCloseable
     // * If ping/test message then only if profile should invoke SPI
     // * No Duplicate message ID
     boolean bCanInvokeSPIs = true;
-    if (aErrorMessagesTarget.isNotEmpty ())
+    if (aEbmsErrorMessagesTarget.isNotEmpty ())
     {
       // Previous processing errors
       bCanInvokeSPIs = false;
@@ -1422,7 +1421,7 @@ public class AS4RequestHandler implements AutoCloseable
                                 aDecryptedAttachments,
                                 aPMode,
                                 aState,
-                                aErrorMessagesTarget,
+                                aEbmsErrorMessagesTarget,
                                 aResponseAttachments,
                                 aSPIResult);
         if (aSPIResult.isFailure ())
@@ -1588,22 +1587,22 @@ public class AS4RequestHandler implements AutoCloseable
       // Not an incoming Ebms Error Message (either UserMessage or a different
       // SignalMessage)
 
-      if (aErrorMessagesTarget.isNotEmpty ())
+      if (aEbmsErrorMessagesTarget.isNotEmpty ())
       {
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("Creating AS4 error message with these " +
-                        aErrorMessagesTarget.size () +
+                        aEbmsErrorMessagesTarget.size () +
                         " errors: " +
-                        aErrorMessagesTarget.getAllMapped (Ebms3Error::getDescriptionValue));
+                        aEbmsErrorMessagesTarget.getAllMapped (Ebms3Error::getDescriptionValue));
 
         // Start building response error message
         final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                                           aState.getMessageID (),
-                                                                          aErrorMessagesTarget);
+                                                                          aEbmsErrorMessagesTarget);
 
         // Call optional consumer
         if (m_aErrorConsumer != null)
-          m_aErrorConsumer.onAS4ErrorMessage (aState, aErrorMessagesTarget, aResponseErrorMsg);
+          m_aErrorConsumer.onAS4ErrorMessage (aState, aEbmsErrorMessagesTarget, aResponseErrorMsg);
 
         // Generate ErrorMessage if errors in the process are present and the
         // pmode wants an error response

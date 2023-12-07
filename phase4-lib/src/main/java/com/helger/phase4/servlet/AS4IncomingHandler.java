@@ -410,7 +410,7 @@ public final class AS4IncomingHandler
                                                   @Nonnull final Document aSoapDocument,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                   @Nonnull final AS4MessageState aState,
-                                                  @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws Phase4Exception
+                                                  @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws Phase4Exception
   {
     final ESoapVersion eSoapVersion = aState.getSoapVersion ();
     final ICommonsList <AS4SingleSOAPHeader> aHeadersInMessage = new CommonsArrayList <> ();
@@ -494,7 +494,7 @@ public final class AS4IncomingHandler
             aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
             aEbms3Error.setOrigin (aError.getErrorFieldName ());
             aEbms3Error.setRefToMessageInError (sRefToMessageID);
-            aErrorMessages.add (aEbms3Error);
+            aEbmsErrorMessagesTarget.add (aEbms3Error);
           }
 
           // Stop processing of other headers
@@ -510,16 +510,16 @@ public final class AS4IncomingHandler
                                 " with processor " +
                                 aProcessor;
         LOGGER.error (sDetails, ex);
-        aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
-                                                                   aState.getMessageID (),
-                                                                   sDetails));
+        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
+                                                                             aState.getMessageID (),
+                                                                             sDetails));
         // Stop processing of other headers
         break;
       }
     }
 
     // If an error message is present, send it back gracefully
-    if (aErrorMessages.isEmpty ())
+    if (aEbmsErrorMessagesTarget.isEmpty ())
     {
       // Now check if all must understand headers were processed
       // Are all must-understand headers processed?
@@ -606,7 +606,7 @@ public final class AS4IncomingHandler
                                                      @Nonnull final ESoapVersion eSoapVersion,
                                                      @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                      @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
-                                                     @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget,
+                                                     @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget,
                                                      @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata) throws Phase4Exception
   {
     ValueEnforcer.notNull (aResHelper, "ResHelper");
@@ -616,7 +616,8 @@ public final class AS4IncomingHandler
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aIncomingAttachments, "IncomingAttachments");
     ValueEnforcer.notNull (aAS4ProfileSelector, "AS4ProfileSelector");
-    ValueEnforcer.notNull (aErrorMessagesTarget, "aErrorMessagesTarget");
+    ValueEnforcer.notNull (aEbmsErrorMessagesTarget, "EbmsErrorMessagesTarget");
+    ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
 
     if (LOGGER.isDebugEnabled ())
     {
@@ -637,12 +638,12 @@ public final class AS4IncomingHandler
     final AS4MessageState aState = new AS4MessageState (eSoapVersion, aResHelper, aLocale);
 
     // Handle all headers - modifies the state
-    _processSoapHeaderElements (aRegistry, aSoapDocument, aIncomingAttachments, aState, aErrorMessagesTarget);
+    _processSoapHeaderElements (aRegistry, aSoapDocument, aIncomingAttachments, aState, aEbmsErrorMessagesTarget);
 
     // Here we know, if the message was signed and/or decrypted
 
     // Remember if header processing was successful or not
-    final boolean bSoapHeaderElementProcessingSuccess = aErrorMessagesTarget.isEmpty ();
+    final boolean bSoapHeaderElementProcessingSuccess = aEbmsErrorMessagesTarget.isEmpty ();
     aState.setSoapHeaderElementProcessingSuccessful (bSoapHeaderElementProcessingSuccess);
     if (bSoapHeaderElementProcessingSuccess)
     {
@@ -673,9 +674,9 @@ public final class AS4IncomingHandler
         LOGGER.error (sDetails);
 
         // send EBMS:0001 error back
-        aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale,
-                                                                                        aState.getMessageID (),
-                                                                                        sDetails));
+        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale,
+                                                                                            aState.getMessageID (),
+                                                                                            sDetails));
       }
 
       // Determine AS4 profile ID (since 0.13.0)

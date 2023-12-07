@@ -528,20 +528,20 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     // Check preconditions
     if (!aState.isSoapDecrypted ())
     {
-      final String sMsg = "The received Peppol message was not encrypted properly.";
-      LOGGER.error (sLogPrefix + sMsg);
+      final String sDetails = "The received Peppol message was not encrypted properly.";
+      LOGGER.error (sLogPrefix + sDetails);
       aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsEbms3Error (aDisplayLocale,
                                                                                        aState.getMessageID (),
-                                                                                       sMsg));
+                                                                                       sDetails));
       return AS4MessageProcessorResult.createFailure ();
     }
     if (!aState.isSoapSignatureChecked ())
     {
-      final String sMsg = "The received Peppol message was not signed properly.";
-      LOGGER.error (sLogPrefix + sMsg);
+      final String sDetails = "The received Peppol message was not signed properly.";
+      LOGGER.error (sLogPrefix + sDetails);
       aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsEbms3Error (aDisplayLocale,
                                                                                            aState.getMessageID (),
-                                                                                           sMsg));
+                                                                                           sDetails));
       return AS4MessageProcessorResult.createFailure ();
     }
 
@@ -572,11 +572,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
         if (a.m_aPayloadBytes == null)
         {
-          final String sMsg = "Failed to decompress the payload of attachment #" + nAttachmentIndex;
-          LOGGER.error (sLogPrefix + sMsg);
+          final String sDetails = "Failed to decompress the payload of attachment #" + nAttachmentIndex;
+          LOGGER.error (sLogPrefix + sDetails);
           aProcessingErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aDisplayLocale,
                                                                                                aState.getMessageID (),
-                                                                                               sMsg));
+                                                                                               sDetails));
           return AS4MessageProcessorResult.createFailure ();
         }
 
@@ -593,21 +593,21 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         {
           if (aSBDHErrors.isEmpty ())
           {
-            final String sMsg = "Failed to read the provided SBDH document";
-            LOGGER.error (sLogPrefix + sMsg);
+            final String sDetails = "Failed to read the provided SBDH document";
+            LOGGER.error (sLogPrefix + sDetails);
             aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
                                                                                  aState.getMessageID (),
-                                                                                 sMsg));
+                                                                                 sDetails));
           }
           else
           {
             for (final IError aError : aSBDHErrors)
             {
-              final String sMsg = "Peppol SBDH Issue: " + aError.getAsString (aDisplayLocale);
-              LOGGER.error (sLogPrefix + sMsg);
+              final String sDetails = "Peppol SBDH Issue: " + aError.getAsString (aDisplayLocale);
+              LOGGER.error (sLogPrefix + sDetails);
               aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
                                                                                    aState.getMessageID (),
-                                                                                   sMsg));
+                                                                                   sDetails));
             }
           }
 
@@ -638,13 +638,13 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     if (aReadAttachments.size () != 1)
     {
       // In Peppol there must be exactly one payload
-      final String sMsg = "In Peppol exactly one payload attachment is expected. This request has " +
+      final String sDetails = "In Peppol exactly one payload attachment is expected. This request has " +
                           aReadAttachments.size () +
                           " attachments";
-      LOGGER.error (sLogPrefix + sMsg);
+      LOGGER.error (sLogPrefix + sDetails);
       aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aDisplayLocale,
                                                                            aState.getMessageID (),
-                                                                           sMsg));
+                                                                           sDetails));
       return AS4MessageProcessorResult.createFailure ();
     }
 

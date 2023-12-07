@@ -27,7 +27,6 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.text.display.IHasDisplayText;
 import com.helger.phase4.ebms3header.Ebms3Description;
 import com.helger.phase4.ebms3header.Ebms3Error;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
 
 /**
  * Base interface for a single EBMS error
@@ -126,9 +125,10 @@ public interface IEbmsError
   }
 
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.6.0")
   default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale, @Nullable final String sRefToMessageInError)
   {
-    return getAsEbms3Error (aContentLocale, sRefToMessageInError, (String) null);
+    return new Ebms3ErrorBuilder (this, aContentLocale).refToMessageInError (sRefToMessageInError).build ();
   }
 
   @Nonnull
@@ -136,41 +136,35 @@ public interface IEbmsError
                                       @Nullable final String sRefToMessageInError,
                                       @Nullable final String sErrorDescription)
   {
-    return getAsEbms3Error (aContentLocale, sRefToMessageInError, (String) null, sErrorDescription);
+    return new Ebms3ErrorBuilder (this, aContentLocale).refToMessageInError (sRefToMessageInError)
+                                                       .errorDetail (sErrorDescription)
+                                                       .build ();
   }
 
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.6.0")
   default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
                                       @Nullable final String sRefToMessageInError,
                                       @Nullable final String sOrigin,
                                       @Nullable final String sErrorDescription)
   {
-    return getAsEbms3Error (aContentLocale,
-                            sRefToMessageInError,
-                            sOrigin,
-                            sErrorDescription == null ? null : MessageHelperMethods.createEbms3Description (
-                                                                                                            aContentLocale,
-                                                                                                            sErrorDescription));
+    return new Ebms3ErrorBuilder (this, aContentLocale).refToMessageInError (sRefToMessageInError)
+                                                       .errorDetail (sErrorDescription)
+                                                       .origin (sOrigin)
+                                                       .build ();
   }
 
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.6.0")
   default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
                                       @Nullable final String sRefToMessageInError,
                                       @Nullable final String sOrigin,
                                       @Nullable final Ebms3Description aEbmsDescription)
   {
-    final Ebms3Error aEbms3Error = new Ebms3Error ();
-    // Default to shortDescription if none provided
-    aEbms3Error.setDescription (aEbmsDescription != null ? aEbmsDescription : MessageHelperMethods
-                                                                                                  .createEbms3Description (aContentLocale,
-                                                                                                                           getShortDescription ()));
-    aEbms3Error.setErrorDetail (getErrorDetail ().getDisplayText (aContentLocale));
-    aEbms3Error.setErrorCode (getErrorCode ());
-    aEbms3Error.setSeverity (getSeverity ().getSeverity ());
-    aEbms3Error.setShortDescription (getShortDescription ());
-    aEbms3Error.setCategory (getCategory ().getDisplayName ());
-    aEbms3Error.setRefToMessageInError (sRefToMessageInError);
-    aEbms3Error.setOrigin (sOrigin);
-    return aEbms3Error;
+    final Ebms3ErrorBuilder eb = new Ebms3ErrorBuilder (this, aContentLocale).refToMessageInError (sRefToMessageInError)
+                                                                             .origin (sOrigin);
+    if (aEbmsDescription != null)
+      eb.description (aEbmsDescription);
+    return eb.build ();
   }
 }

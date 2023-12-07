@@ -47,6 +47,17 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   public Ebms3ErrorBuilder ()
   {}
 
+  public Ebms3ErrorBuilder (@Nonnull final IEbmsError aError, @Nonnull final Locale aContentLocale)
+  {
+    // Default to shortDescription if none provided
+    description (StringHelper.getNotNull (aError.getErrorDetail ().getDisplayText (aContentLocale),
+                                          aError.getShortDescription ()), aContentLocale);
+    category (aError.getCategory ());
+    errorCode (aError.getErrorCode ());
+    severity (aError.getSeverity ());
+    shortDescription (aError.getShortDescription ());
+  }
+
   @Nonnull
   public Ebms3ErrorBuilder description (@Nullable final String s, @Nullable final Locale aLocale)
   {
