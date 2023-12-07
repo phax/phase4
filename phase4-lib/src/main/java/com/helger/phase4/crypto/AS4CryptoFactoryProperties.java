@@ -133,7 +133,8 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
     {
       ret = m_aKeyStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getKeyStoreType (),
                                                        m_aCryptoProps.getKeyStorePath (),
-                                                       m_aCryptoProps.getKeyStorePassword ()).getKeyStore ();
+                                                       m_aCryptoProps.getKeyStorePassword ())
+                                        .getKeyStore ();
     }
     return ret;
   }
@@ -151,8 +152,8 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
         ret = m_aPK = KeyStoreHelper.loadPrivateKey (aKeyStore,
                                                      m_aCryptoProps.getKeyStorePath (),
                                                      m_aCryptoProps.getKeyAlias (),
-                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY : sKeyPassword
-                                                                                                                       .toCharArray ())
+                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY
+                                                                          : sKeyPassword.toCharArray ())
                                     .getKeyEntry ();
       }
     }
@@ -177,6 +178,7 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
    * @see #getPrivateKeyEntry()
    */
   @Nullable
+  @Deprecated (forRemoval = true, since = "2.6.0")
   public final X509Certificate getCertificate ()
   {
     final KeyStore.PrivateKeyEntry aPK = getPrivateKeyEntry ();
@@ -191,7 +193,8 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
     {
       ret = m_aTrustStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getTrustStoreType (),
                                                          m_aCryptoProps.getTrustStorePath (),
-                                                         m_aCryptoProps.getTrustStorePassword ()).getKeyStore ();
+                                                         m_aCryptoProps.getTrustStorePassword ())
+                                          .getKeyStore ();
     }
     return ret;
   }
