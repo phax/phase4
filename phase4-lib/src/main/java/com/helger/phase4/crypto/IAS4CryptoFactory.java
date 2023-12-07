@@ -70,6 +70,7 @@ public interface IAS4CryptoFactory
    *         alias. May be <code>null</code>.
    */
   @Nullable
+  @Deprecated (forRemoval = true, since = "2.6.0")
   String getKeyPassword ();
 
   /**
