@@ -27,7 +27,6 @@ import org.apache.wss4j.common.crypto.Merlin;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.security.keystore.KeyStoreHelper;
 
 /**
  * This class contains an implementation of {@link IAS4CryptoFactory} in which
@@ -38,7 +37,7 @@ import com.helger.security.keystore.KeyStoreHelper;
  * @since 0.9.7
  */
 @Immutable
-public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
+public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
 {
   private final KeyStore m_aKeyStore;
   private final String m_sKeyAlias;
@@ -47,7 +46,6 @@ public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
 
   // Lazy initialized
   private Merlin m_aCrypto;
-  private KeyStore.PrivateKeyEntry m_aPK;
 
   /**
    * Default constructor.
@@ -103,20 +101,6 @@ public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
     return m_aKeyStore;
   }
 
-  @Nullable
-  public final KeyStore.PrivateKeyEntry getPrivateKeyEntry ()
-  {
-    KeyStore.PrivateKeyEntry ret = m_aPK;
-    if (ret == null)
-    {
-      ret = m_aPK = KeyStoreHelper.loadPrivateKey (m_aKeyStore,
-                                                   "in-memory KeyStore",
-                                                   m_sKeyAlias,
-                                                   m_sKeyPassword.toCharArray ()).getKeyEntry ();
-    }
-    return ret;
-  }
-
   @Nonnull
   public final String getKeyAlias ()
   {
@@ -124,9 +108,20 @@ public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
   }
 
   @Nonnull
+  @Deprecated
   public final String getKeyPassword ()
   {
     return m_sKeyPassword;
+  }
+
+  @Nullable
+  public String getKeyPasswordPerAlias (@Nullable final String sSearchKeyAlias)
+  {
+    // Use case insensitive compare, depends on the keystore type
+    if (m_sKeyAlias != null && sSearchKeyAlias != null && m_sKeyAlias.equalsIgnoreCase (sSearchKeyAlias))
+      return m_sKeyPassword;
+
+    return null;
   }
 
   @Nullable

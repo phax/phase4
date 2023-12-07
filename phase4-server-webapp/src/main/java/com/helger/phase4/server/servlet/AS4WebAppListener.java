@@ -37,6 +37,7 @@ import com.helger.httpclient.HttpDebugger;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
@@ -150,13 +151,15 @@ public final class AS4WebAppListener extends WebAppListener
   {
     AS4ServerInitializer.initAS4Server ();
 
+    final IAS4CryptoFactory aCF = AS4CryptoFactoryProperties.getDefaultInstance ();
+
     // Check if crypto properties are okay
-    final KeyStore aKS = AS4CryptoFactoryProperties.getDefaultInstance ().getKeyStore ();
+    final KeyStore aKS = aCF.getKeyStore ();
     if (aKS == null)
       throw new InitializationException ("Failed to load configured AS4 Key store - fix the configuration");
     LOGGER.info ("Successfully loaded configured AS4 key store from the crypto factory");
 
-    final KeyStore.PrivateKeyEntry aPKE = AS4CryptoFactoryProperties.getDefaultInstance ().getPrivateKeyEntry ();
+    final KeyStore.PrivateKeyEntry aPKE = aCF.getPrivateKeyEntry ();
     if (aPKE == null)
       throw new InitializationException ("Failed to load configured AS4 private key - fix the configuration");
     LOGGER.info ("Successfully loaded configured AS4 private key from the crypto factory");

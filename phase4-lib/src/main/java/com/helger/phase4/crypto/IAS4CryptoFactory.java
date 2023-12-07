@@ -23,6 +23,8 @@ import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.crypto.Crypto;
 
+import com.helger.phase4.v3.ChangeV3;
+
 /**
  * The basic phase4 crypto interface.
  * <ul>
@@ -68,18 +70,11 @@ public interface IAS4CryptoFactory
   /**
    * @return The password to access the private key entry denoted by the key
    *         alias. May be <code>null</code>.
+   * @deprecated Don't use. Use {@link #getKeyPasswordPerAlias(String)} instead.
    */
   @Nullable
   @Deprecated (forRemoval = true, since = "2.6.0")
   String getKeyPassword ();
-
-  /**
-   * @return The trust store to be used or <code>null</code> if none is
-   *         configured.
-   * @since 0.12.0
-   */
-  @Nullable
-  KeyStore getTrustStore ();
 
   /**
    * Returns the password for the key represented by the provided alias.
@@ -92,6 +87,7 @@ public interface IAS4CryptoFactory
    * @since 1.4.1
    */
   @Nullable
+  @ChangeV3 ("Make non-default")
   default String getKeyPasswordPerAlias (@Nullable final String sSearchKeyAlias)
   {
     // Use case insensitive compare, depends on the keystore type
@@ -101,4 +97,12 @@ public interface IAS4CryptoFactory
 
     return null;
   }
+
+  /**
+   * @return The trust store to be used or <code>null</code> if none is
+   *         configured.
+   * @since 0.12.0
+   */
+  @Nullable
+  KeyStore getTrustStore ();
 }

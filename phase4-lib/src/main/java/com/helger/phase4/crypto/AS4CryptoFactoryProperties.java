@@ -17,7 +17,6 @@
 package com.helger.phase4.crypto;
 
 import java.security.KeyStore;
-import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,7 +28,6 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
 import com.helger.security.keystore.KeyStoreHelper;
@@ -41,7 +39,7 @@ import com.helger.security.keystore.KeyStoreHelper;
  * @since 0.11.0
  */
 @Immutable
-public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
+public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
 {
   private static final AS4CryptoFactoryProperties DEFAULT_INSTANCE = new AS4CryptoFactoryProperties (AS4CryptoProperties.createFromConfig ());
 
@@ -60,7 +58,6 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
   // Lazy initialized
   private Crypto m_aCrypto;
   private KeyStore m_aKeyStore;
-  private KeyStore.PrivateKeyEntry m_aPK;
   private KeyStore m_aTrustStore;
 
   /**
@@ -140,49 +137,28 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
   }
 
   @Nullable
-  public final KeyStore.PrivateKeyEntry getPrivateKeyEntry ()
-  {
-    KeyStore.PrivateKeyEntry ret = m_aPK;
-    if (ret == null)
-    {
-      final KeyStore aKeyStore = getKeyStore ();
-      if (aKeyStore != null)
-      {
-        final String sKeyPassword = m_aCryptoProps.getKeyPassword ();
-        ret = m_aPK = KeyStoreHelper.loadPrivateKey (aKeyStore,
-                                                     m_aCryptoProps.getKeyStorePath (),
-                                                     m_aCryptoProps.getKeyAlias (),
-                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY
-                                                                          : sKeyPassword.toCharArray ())
-                                    .getKeyEntry ();
-      }
-    }
-    return ret;
-  }
-
-  @Nullable
   public final String getKeyAlias ()
   {
     return m_aCryptoProps.getKeyAlias ();
   }
 
   @Nullable
+  @Deprecated
   public final String getKeyPassword ()
   {
     return m_aCryptoProps.getKeyPassword ();
   }
 
-  /**
-   * @return The public certificate of the private key entry or
-   *         <code>null</code> if the private key entry could not be loaded.
-   * @see #getPrivateKeyEntry()
-   */
   @Nullable
-  @Deprecated (forRemoval = true, since = "2.6.0")
-  public final X509Certificate getCertificate ()
+  public String getKeyPasswordPerAlias (@Nullable final String sSearchKeyAlias)
   {
-    final KeyStore.PrivateKeyEntry aPK = getPrivateKeyEntry ();
-    return aPK == null ? null : (X509Certificate) aPK.getCertificate ();
+    final String sKeyAlias = getKeyAlias ();
+
+    // Use case insensitive compare, depends on the keystore type
+    if (sKeyAlias != null && sSearchKeyAlias != null && sKeyAlias.equalsIgnoreCase (sSearchKeyAlias))
+      return m_aCryptoProps.getKeyPassword ();
+
+    return null;
   }
 
   @Nullable
