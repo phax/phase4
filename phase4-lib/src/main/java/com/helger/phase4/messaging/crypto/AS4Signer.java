@@ -102,7 +102,8 @@ public final class AS4Signer
 
     aBuilder.setKeyIdentifierType (aSigningParams.getKeyIdentifierType ().getTypeID ());
     // Set keystore alias and key password
-    aBuilder.setUserInfo (aCryptoFactorySign.getKeyAlias (), aCryptoFactorySign.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoFactorySign.getKeyAlias (),
+                          aCryptoFactorySign.getKeyPasswordPerAlias (aCryptoFactorySign.getKeyAlias ()));
     aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
     aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());

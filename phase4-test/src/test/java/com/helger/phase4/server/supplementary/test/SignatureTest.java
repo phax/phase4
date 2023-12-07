@@ -85,7 +85,8 @@ public final class SignatureTest
     aSecHeader.insertSecurityHeader ();
 
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
-    aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (),
+                          aCryptoFactory.getKeyPasswordPerAlias (aCryptoFactory.getKeyAlias ()));
     aBuilder.setKeyIdentifierType (ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE.getTypeID ());
     aBuilder.setSignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithmen as Hash Function
