@@ -90,6 +90,21 @@ public interface IEbmsError
   EEbmsErrorCategory getCategory ();
 
   /**
+   * Create a new {@link Ebms3ErrorBuilder} with the information of this
+   * element.
+   *
+   * @param aContentLocale
+   *        Content locale to use. May not be <code>null</code>.
+   * @return Never <code>null</code>.
+   * @since 2.6.0
+   */
+  @Nonnull
+  default Ebms3ErrorBuilder errorBuilder (@Nonnull final Locale aContentLocale)
+  {
+    return new Ebms3ErrorBuilder (this, aContentLocale);
+  }
+
+  /**
    * Convert the EBMS Error into an {@link IError}.
    *
    * @param aContentLocale
@@ -142,7 +157,7 @@ public interface IEbmsError
   @Deprecated (forRemoval = true, since = "2.6.0")
   default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale, @Nullable final String sRefToMessageInError)
   {
-    return new Ebms3ErrorBuilder (this, aContentLocale).refToMessageInError (sRefToMessageInError).build ();
+    return errorBuilder (aContentLocale).refToMessageInError (sRefToMessageInError).build ();
   }
 
   @Nonnull
@@ -151,9 +166,9 @@ public interface IEbmsError
                                       @Nullable final String sRefToMessageInError,
                                       @Nullable final String sErrorDetails)
   {
-    return new Ebms3ErrorBuilder (this, aContentLocale).refToMessageInError (sRefToMessageInError)
-                                                       .errorDetail (sErrorDetails)
-                                                       .build ();
+    return errorBuilder (aContentLocale).refToMessageInError (sRefToMessageInError)
+                                        .errorDetail (sErrorDetails)
+                                        .build ();
   }
 
   @Nonnull
@@ -161,12 +176,12 @@ public interface IEbmsError
   default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
                                       @Nullable final String sRefToMessageInError,
                                       @Nullable final String sOrigin,
-                                      @Nullable final String sErrorDescription)
+                                      @Nullable final String sDetails)
   {
-    return new Ebms3ErrorBuilder (this, aContentLocale).refToMessageInError (sRefToMessageInError)
-                                                       .errorDetail (sErrorDescription)
-                                                       .origin (sOrigin)
-                                                       .build ();
+    return errorBuilder (aContentLocale).refToMessageInError (sRefToMessageInError)
+                                        .errorDetail (sDetails)
+                                        .origin (sOrigin)
+                                        .build ();
   }
 
   @Nonnull
@@ -176,8 +191,8 @@ public interface IEbmsError
                                       @Nullable final String sOrigin,
                                       @Nullable final Ebms3Description aEbmsDescription)
   {
-    final Ebms3ErrorBuilder eb = new Ebms3ErrorBuilder (this, aContentLocale).refToMessageInError (sRefToMessageInError)
-                                                                             .origin (sOrigin);
+    final Ebms3ErrorBuilder eb = errorBuilder (aContentLocale).refToMessageInError (sRefToMessageInError)
+                                                              .origin (sOrigin);
     if (aEbmsDescription != null)
       eb.description (aEbmsDescription);
     return eb.build ();

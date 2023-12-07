@@ -74,7 +74,6 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
-import com.helger.phase4.error.Ebms3ErrorBuilder;
 import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.http.BasicHttpPoster;
 import com.helger.phase4.http.HttpMimeMessageEntity;
@@ -760,10 +759,10 @@ public class AS4RequestHandler implements AutoCloseable
                                         sMessageID +
                                         "' failed: the previous processor already returned an async response URL; it is not possible to handle two URLs. Please check your SPI implementations.";
                 LOGGER.error (sDetails);
-                aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_VALUE_INCONSISTENT, m_aLocale)
-                                                                                                                   .refToMessageInError (sMessageID)
-                                                                                                                   .errorDetail (sDetails)
-                                                                                                                   .build ());
+                aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (m_aLocale)
+                                                                                .refToMessageInError (sMessageID)
+                                                                                .errorDetail (sDetails)
+                                                                                .build ());
                 // Stop processing
                 return;
               }
@@ -804,10 +803,10 @@ public class AS4RequestHandler implements AutoCloseable
                                           sMessageID +
                                           "' failed: the previous processor already returned a usermessage; it is not possible to return two usermessage. Please check your SPI implementations.";
                   LOGGER.warn (sDetails);
-                  aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_VALUE_INCONSISTENT, m_aLocale)
-                                                                                                                     .refToMessageInError (sMessageID)
-                                                                                                                     .errorDetail (sDetails)
-                                                                                                                     .build ());
+                  aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (m_aLocale)
+                                                                                  .refToMessageInError (sMessageID)
+                                                                                  .errorDetail (sDetails)
+                                                                                  .build ());
                   // Stop processing
                   return;
                 }
@@ -823,11 +822,11 @@ public class AS4RequestHandler implements AutoCloseable
                                           " on '" +
                                           sMessageID +
                                           "' returned a failure: no UserMessage contained in the MPC";
-                  LOGGER.warn (sDetails);
-                  aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL,
-                                                                       m_aLocale).refToMessageInError (sMessageID)
-                                                                                 .errorDetail (sDetails)
-                                                                                 .build ());
+                  LOGGER.error (sDetails);
+                  aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.errorBuilder (m_aLocale)
+                                                                                               .refToMessageInError (sMessageID)
+                                                                                               .errorDetail (sDetails)
+                                                                                               .build ());
                   // Stop processing
                   return;
                 }
@@ -853,13 +852,11 @@ public class AS4RequestHandler implements AutoCloseable
         {
           final String sDetails = "Failed to decompress AS4 payload";
           LOGGER.error (sDetails, ex);
-          final Locale aContentLocale = m_aLocale;
           // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
-          aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_DECOMPRESSION_FAILURE, aContentLocale)
-                                                                                                                     .refToMessageInError (sMessageID)
-                                                                                                                     .errorDetail (sDetails,
-                                                                                                                                   ex)
-                                                                                                                     .build ());
+          aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.errorBuilder (m_aLocale)
+                                                                             .refToMessageInError (sMessageID)
+                                                                             .errorDetail (sDetails, ex)
+                                                                             .build ());
           return;
         }
         catch (final RuntimeException ex)
@@ -1362,10 +1359,10 @@ public class AS4RequestHandler implements AutoCloseable
                                 sMessageID +
                                 "' was already handled (this is a duplicate)";
         LOGGER.error (sDetails);
-        aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, m_aLocale).refToMessageInError (
-                                                                                                                    sMessageID)
-                                                                                              .errorDetail (sDetails)
-                                                                                              .build ());
+        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (m_aLocale)
+                                                           .refToMessageInError (sMessageID)
+                                                           .errorDetail (sDetails)
+                                                           .build ());
       }
       else
       {

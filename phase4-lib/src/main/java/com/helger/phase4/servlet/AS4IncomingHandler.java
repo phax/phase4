@@ -489,8 +489,12 @@ public final class AS4IncomingHandler
           final String sRefToMessageID = aState.getMessageID ();
           for (final IError aError : aErrorList)
           {
-            aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (aError, aLocale).refToMessageInError (sRefToMessageID)
-                                                                                 .build ());
+            aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder ().description (aError.getErrorText (aLocale), aLocale)
+                                                                  .errorCode (aError.getErrorID ())
+                                                                  .severity (aError.getErrorLevel ())
+                                                                  .origin (aError.getErrorFieldName ())
+                                                                  .refToMessageInError (sRefToMessageID)
+                                                                  .build ());
           }
 
           // Stop processing of other headers
@@ -506,11 +510,10 @@ public final class AS4IncomingHandler
                                 " with processor " +
                                 aProcessor;
         LOGGER.error (sDetails, ex);
-        aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aState.getLocale ())
-                                                                                                        .refToMessageInError (aState.getMessageID ())
-                                                                                                        .errorDetail (sDetails,
-                                                                                                                      ex)
-                                                                                                        .build ());
+        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (aState.getLocale ())
+                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .errorDetail (sDetails, ex)
+                                                           .build ());
         // Stop processing of other headers
         break;
       }
@@ -672,10 +675,10 @@ public final class AS4IncomingHandler
         LOGGER.error (sDetails);
 
         // send EBMS:0001 error back
-        aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED, aLocale)
-                                                                                                           .refToMessageInError (aState.getMessageID ())
-                                                                                                           .errorDetail (sDetails)
-                                                                                                           .build ());
+        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.errorBuilder (aLocale)
+                                                                          .refToMessageInError (aState.getMessageID ())
+                                                                          .errorDetail (sDetails)
+                                                                          .build ());
       }
 
       // Determine AS4 profile ID (since 0.13.0)

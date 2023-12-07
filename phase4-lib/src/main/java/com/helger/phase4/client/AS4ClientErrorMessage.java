@@ -33,7 +33,6 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
-import com.helger.phase4.error.Ebms3ErrorBuilder;
 import com.helger.phase4.error.IEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.domain.AS4ErrorMessage;
@@ -60,7 +59,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
     ValueEnforcer.notNull (aError, "Error");
     ValueEnforcer.notNull (aLocale, "Locale");
 
-    m_aErrorMessages.add (new Ebms3ErrorBuilder (aError, aLocale).refToMessageInError (getRefToMessageID ()).build ());
+    m_aErrorMessages.add (aError.errorBuilder (aLocale).refToMessageInError (getRefToMessageID ()).build ());
   }
 
   @Nonnull

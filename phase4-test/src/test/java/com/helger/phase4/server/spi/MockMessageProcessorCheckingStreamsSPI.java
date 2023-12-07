@@ -45,7 +45,6 @@ import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
-import com.helger.phase4.error.Ebms3ErrorBuilder;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
@@ -114,10 +113,10 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
     // To test returning with a failure works as intended
     if (aUserMessage.getCollaborationInfo ().getAction ().equals (ACTION_FAILURE))
     {
-      aEbmsErrorMessagesTarget.add (new Ebms3ErrorBuilder (EEbmsError.EBMS_OTHER, aState.getLocale ())
-                                                                                                      .refToMessageInError (aState.getMessageID ())
-                                                                                                      .errorDetail (ACTION_FAILURE)
-                                                                                                      .build ());
+      aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (aState.getLocale ())
+                                                         .refToMessageInError (aState.getMessageID ())
+                                                         .errorDetail (ACTION_FAILURE)
+                                                         .build ());
       return AS4MessageProcessorResult.createFailure ();
     }
     return AS4MessageProcessorResult.createSuccess ();

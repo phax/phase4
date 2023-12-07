@@ -17,6 +17,7 @@
 package com.helger.phase4.error;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.error.level.EErrorLevel;
@@ -56,5 +57,14 @@ public enum EEbmsErrorSeverity implements IHasErrorLevelComparable <EEbmsErrorSe
   public IErrorLevel getErrorLevel ()
   {
     return m_aErrorLevel;
+  }
+
+  @Nullable
+  public static EEbmsErrorSeverity getFromErrorLevelOrNull (@Nullable final IErrorLevel aErrorLevel)
+  {
+    if (aErrorLevel == null)
+      return null;
+
+    return aErrorLevel.isError () ? EEbmsErrorSeverity.FAILURE : EEbmsErrorSeverity.WARNING;
   }
 }

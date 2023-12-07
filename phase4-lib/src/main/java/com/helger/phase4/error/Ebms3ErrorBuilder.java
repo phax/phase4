@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.builder.IBuilder;
-import com.helger.commons.error.IError;
 import com.helger.commons.error.level.IErrorLevel;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.ebms3header.Ebms3Description;
@@ -73,30 +72,13 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
     shortDescription (aError.getShortDescription ());
   }
 
-  /**
-   * Create a new builder setting {@link #description(Ebms3Description)},
-   * {@link #errorCode(String)}, {@link #severity(IErrorLevel)} and
-   * {@link #shortDescription(String)}
-   *
-   * @param aError
-   *        The source error. May not be <code>null</code>.
-   * @param aContentLocale
-   *        The locale to be used to resolve error texts.
-   */
-  public Ebms3ErrorBuilder (@Nonnull final IError aError, @Nonnull final Locale aContentLocale)
-  {
-    description (aError.getErrorText (aContentLocale), aContentLocale);
-    errorCode (aError.getErrorID ());
-    severity (aError.getErrorLevel ());
-    origin (aError.getErrorFieldName ());
-  }
-
   @Nonnull
   public Ebms3ErrorBuilder description (@Nullable final String s, @Nullable final Locale aLocale)
   {
-    return description (StringHelper.hasNoText (s) || aLocale == null ? null : MessageHelperMethods
-                                                                                                   .createEbms3Description (aLocale,
-                                                                                                                            s));
+    return description (StringHelper.hasNoText (s) ? null : MessageHelperMethods.createEbms3Description (aLocale == null
+                                                                                                                         ? Locale.US
+                                                                                                                         : aLocale,
+                                                                                                         s));
   }
 
   @Nonnull
@@ -111,9 +93,11 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   {
     return errorDetail (StringHelper.getConcatenatedOnDemand (s,
                                                               ": ",
-                                                              ex == null ? "" : ex.getClass ().getName () +
-                                                                                " - " +
-                                                                                ex.getMessage ()));
+                                                              ex == null ? "" : "Technical details: " +
+                                                                                StringHelper.getConcatenatedOnDemand (ex.getClass ()
+                                                                                                                        .getName (),
+                                                                                                                      " - ",
+                                                                                                                      ex.getMessage ())));
   }
 
   @Nonnull
@@ -152,9 +136,9 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   }
 
   @Nonnull
-  public Ebms3ErrorBuilder severity (@Nullable final IErrorLevel e)
+  public Ebms3ErrorBuilder severity (@Nullable final IErrorLevel a)
   {
-    return severity (e == null ? null : e.isError () ? EEbmsErrorSeverity.FAILURE : EEbmsErrorSeverity.WARNING);
+    return severity (EEbmsErrorSeverity.getFromErrorLevelOrNull (a));
   }
 
   @Nonnull
