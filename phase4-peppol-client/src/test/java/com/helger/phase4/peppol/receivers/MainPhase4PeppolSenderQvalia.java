@@ -17,11 +17,27 @@
 package com.helger.phase4.peppol.receivers;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.io.file.SimpleFileIO;
+import com.helger.json.IJsonObject;
+import com.helger.json.JsonArray;
+import com.helger.json.JsonObject;
+import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -34,11 +50,14 @@ import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.http.HttpRetrySettings;
+import com.helger.phase4.messaging.EAS4MessageMode;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phive.peppol.PeppolValidation2023_05;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
@@ -125,7 +144,43 @@ public final class MainPhase4PeppolSenderQvalia
 
     // Dump (for debugging purpose only)
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ());
+
+    final AS4OutgoingDumperFileBased aODF = new AS4OutgoingDumperFileBased ()
+    {
+      @Override
+      protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
+                                               @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
+                                               @Nullable final IAS4MessageState aState,
+                                               @Nonnull @Nonempty final String sMessageID,
+                                               @Nullable final HttpHeaderMap aCustomHeaders,
+                                               @Nonnegative final int nTry) throws IOException
+      {
+        final OutputStream ret = super.openOutputStream (eMsgMode,
+                                                         aMessageMetadata,
+                                                         aState,
+                                                         sMessageID,
+                                                         aCustomHeaders,
+                                                         nTry);
+
+        // Write headers into a separate file
+        File aHeaderFile = getFileProvider ().getFile (eMsgMode, sMessageID, nTry);
+        aHeaderFile = new File (aHeaderFile.getParentFile (), aHeaderFile.getName () + ".headers");
+        final IJsonObject aHeaders = new JsonObject ();
+        for (final Map.Entry <String, ICommonsList <String>> e : aCustomHeaders)
+          if (e.getValue ().size () == 1)
+            aHeaders.add (e.getKey (), e.getValue ().getFirst ());
+          else
+            aHeaders.add (e.getKey (), new JsonArray ().addAll (e.getValue ()));
+        SimpleFileIO.writeFile (aHeaderFile,
+                                aHeaders.getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
+                                StandardCharsets.UTF_8);
+
+        // Return the main OS
+        return ret;
+      }
+    };
+    aODF.setIncludeHeaders (false);
+    AS4DumpManager.setOutgoingDumper (aODF);
 
     try
     {
