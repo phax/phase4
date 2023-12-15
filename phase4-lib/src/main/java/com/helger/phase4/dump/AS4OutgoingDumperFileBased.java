@@ -127,6 +127,12 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
     m_aFileProvider = aFileProvider;
   }
 
+  @Nonnull
+  protected final IFileProvider getFileProvider ()
+  {
+    return m_aFileProvider;
+  }
+
   @Override
   protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
                                            @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
@@ -155,9 +161,8 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   public static AS4OutgoingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4OutgoingDumperFileBased ( (eMsgMode,
-                                             sMessageID,
-                                             nTry) -> new File (aBaseDirectory,
-                                                                IFileProvider.getFilename (sMessageID, nTry)));
+    return new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> new File (aBaseDirectory,
+                                                                                      IFileProvider.getFilename (sMessageID,
+                                                                                                                 nTry)));
   }
 }
