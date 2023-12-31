@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Philip Helger (www.helger.com)
+ * Copyright (C) 2023 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,10 +53,11 @@ import com.helger.phase4.wss.EWSSVersion;
  * Validate certain requirements imposed by the DBNAlliance.
  *
  * @author Philip Helger
+ * @author Michael Riviera
  */
 public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
 {
-  public DBNAllianceCompatibilityValidator()
+  public DBNAllianceCompatibilityValidator ()
   {}
 
   @Nonnull
@@ -245,7 +246,8 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyProducerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyProducer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
       }
       else
       {

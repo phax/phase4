@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Philip Helger (www.helger.com)
+ * Copyright (C) 2023 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@ package com.helger.phase4.profile.dbnalliance;
 
 import javax.annotation.Nonnull;
 
-import com.helger.phase4.profile.dbnalliance.DBNAllianceCompatibilityValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +32,7 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
  * Library specific implementation of {@link IAS4ProfileRegistrarSPI}.
  *
  * @author Philip Helger
+ * @author Michael Riviera
  */
 @IsSPIImplementation
 public final class AS4DBNAllianceProfileRegistarSPI implements IAS4ProfileRegistrarSPI
@@ -45,11 +45,13 @@ public final class AS4DBNAllianceProfileRegistarSPI implements IAS4ProfileRegist
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> DBNAlliancePMode.createDBNAlliancePMode (i,
-                                                                                                 r,
-                                                                                                 a,
-                                                                                                 PMODE_ID_PROVIDER,
-                                                                                                 true);
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i,
+                                                            r,
+                                                            a) -> DBNAlliancePMode.createDBNAlliancePMode (i,
+                                                                                                           r,
+                                                                                                           a,
+                                                                                                           PMODE_ID_PROVIDER,
+                                                                                                           true);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
