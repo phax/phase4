@@ -38,7 +38,7 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
 public final class AS4DBNAllianceProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
   public static final String AS4_PROFILE_ID = "dbnalliance";
-  public static final String AS4_PROFILE_NAME = "DBNAlliance";
+  public static final String AS4_PROFILE_NAME = "DBN Alliance";
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4DBNAllianceProfileRegistarSPI.class);
