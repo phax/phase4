@@ -19,8 +19,6 @@ package com.helger.phase4.peppol;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
-import java.time.LocalDate;
-import java.time.Month;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -39,7 +37,6 @@ import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.mime.CMimeType;
@@ -105,9 +102,6 @@ public final class Phase4PeppolSender
   public static final IPeppolURLProvider URL_PROVIDER = PeppolURLProvider.INSTANCE;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolSender.class);
-  private static final LocalDate DATE_COUNTRY_C1_BECOMES_MANDATORY = PDTFactory.createLocalDate (2024,
-                                                                                                 Month.JANUARY,
-                                                                                                 1);
 
   private Phase4PeppolSender ()
   {}
@@ -851,14 +845,11 @@ public final class Phase4PeppolSender
         return false;
       }
 
-      // m_sCountryC1 may be null, before 1.1.2024
-      if (PDTFactory.getCurrentLocalDateUTC ().compareTo (DATE_COUNTRY_C1_BECOMES_MANDATORY) >= 0)
+      // m_sCountryC1 is mandatory since 1.1.2024
+      if (StringHelper.hasNoText (m_sCountryC1))
       {
-        if (StringHelper.hasNoText (m_sCountryC1))
-        {
-          LOGGER.warn ("The field 'countryC1' is not set");
-          return false;
-        }
+        LOGGER.warn ("The field 'countryC1' is not set");
+        return false;
       }
 
       // m_aPayloadMimeType may be null
