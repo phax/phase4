@@ -108,7 +108,7 @@ public final class MainPhase4PeppolSenderQvalia
                                                                                 "1",
                                                                                 "peppol",
                                                                                 KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
-                                                                                                             PeppolKeyStoreHelper.Config2018.TRUSTSTORE_PRODUCTION_CLASSPATH,
+                                                                                                             PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PRODUCTION_CLASSPATH,
                                                                                                              PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
                                                                                               .getKeyStore ());
       final ESimpleUserMessageSendResult eResult;

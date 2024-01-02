@@ -53,7 +53,7 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.jaxb.validation.WrappedCollectingValidationEventHandler;
-import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.smp.ESMPTransportProfile;
@@ -401,7 +401,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
    */
   @Nullable
   public static PeppolReportingItem createPeppolReportingItemForReceivedMessage (@Nonnull final Ebms3UserMessage aUserMessage,
-                                                                                 @Nonnull final PeppolSBDHDocument aPeppolSBD,
+                                                                                 @Nonnull final PeppolSBDHData aPeppolSBD,
                                                                                  @Nonnull final IAS4MessageState aState,
                                                                                  @Nonnull @Nonempty final String sC3ID,
                                                                                  @Nonnull @Nonempty final String sC4CountryCode,
@@ -471,11 +471,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
    *        <code>null</code>.
    * @since 2.2.2
    * @see #createPeppolReportingItemForReceivedMessage(Ebms3UserMessage,
-   *      PeppolSBDHDocument, IAS4MessageState, String, String, String)
+   *      PeppolSBDHData, IAS4MessageState, String, String, String)
    */
   @OverrideOnDemand
   protected void afterSuccessfulPeppolProcessing (@Nonnull final Ebms3UserMessage aUserMessage,
-                                                  @Nonnull final PeppolSBDHDocument aPeppolSBD,
+                                                  @Nonnull final PeppolSBDHData aPeppolSBD,
                                                   @Nonnull final IAS4MessageState aState)
   {}
 
@@ -660,7 +660,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     final ReadAttachment aReadAttachment = aReadAttachments.getFirst ();
 
     // Extract Peppol values from SBD
-    final PeppolSBDHDocument aPeppolSBD;
+    final PeppolSBDHData aPeppolSBD;
     try
     {
       if (LOGGER.isDebugEnabled ())

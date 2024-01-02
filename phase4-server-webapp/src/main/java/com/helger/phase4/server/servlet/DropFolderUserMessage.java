@@ -41,7 +41,7 @@ import com.helger.commons.io.watchdir.WatchDir;
 import com.helger.commons.timing.StopWatch;
 import com.helger.config.IConfig;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
-import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smp.ESMPTransportProfile;
@@ -98,7 +98,7 @@ public final class DropFolderUserMessage
       else
       {
         // Extract Peppol specific data
-        final PeppolSBDHDocument aSBDH = new PeppolSBDHDocumentReader (IF).extractData (aSBD);
+        final PeppolSBDHData aSBDH = new PeppolSBDHDocumentReader (IF).extractData (aSBD);
         final ISMPServiceMetadataProvider aSMPClient = new SMPClient (UP,
                                                                       aSBDH.getReceiverAsIdentifier (),
                                                                       ESML.DIGIT_TEST);

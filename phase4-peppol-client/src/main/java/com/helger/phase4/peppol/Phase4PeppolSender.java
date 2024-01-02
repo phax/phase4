@@ -45,7 +45,7 @@ import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.diver.api.version.VESID;
-import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadBinaryMarshaller;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
 import com.helger.peppol.sbdh.spec12.BinaryContentType;
@@ -117,7 +117,7 @@ public final class Phase4PeppolSender
                                                       @Nonnull final Element aPayloadElement,
                                                       final boolean bClonePayloadElement)
   {
-    final PeppolSBDHDocument aData = new PeppolSBDHDocument (IF);
+    final PeppolSBDHData aData = new PeppolSBDHData (IF);
     aData.setSender (aSenderID.getScheme (), aSenderID.getValue ());
     aData.setReceiver (aReceiverID.getScheme (), aReceiverID.getValue ());
     aData.setDocumentType (aDocTypeID.getScheme (), aDocTypeID.getValue ());
@@ -1424,7 +1424,7 @@ public final class Phase4PeppolSender
      * @see #countryC1(String)
      */
     @Nonnull
-    public SBDHBuilder payloadAndMetadata (@Nonnull final PeppolSBDHDocument aSBDH)
+    public SBDHBuilder payloadAndMetadata (@Nonnull final PeppolSBDHData aSBDH)
     {
       ValueEnforcer.notNull (aSBDH, "SBDH");
       return senderParticipantID (aSBDH.getSenderAsIdentifier ()).receiverParticipantID (aSBDH.getReceiverAsIdentifier ())

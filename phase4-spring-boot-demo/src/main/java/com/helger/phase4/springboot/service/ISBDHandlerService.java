@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
@@ -40,7 +40,7 @@ public interface ISBDHandlerService
 
   void setStandardBusinessDocumentBytes (@Nonnull byte [] standardBusinessDocumentBytes);
 
-  void setPeppolStandardBusinessDocumentHeader (@Nonnull PeppolSBDHDocument peppolStandardBusinessDocumentHeader);
+  void setPeppolStandardBusinessDocumentHeader (@Nonnull PeppolSBDHData peppolStandardBusinessDocumentHeader);
 
   void setMessageState (@Nonnull IAS4MessageState messageState);
 

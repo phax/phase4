@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.resource.FileSystemResource;
-import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
@@ -61,7 +61,7 @@ public final class MainPhase4PeppolSenderSbdh
 
     try
     {
-      final PeppolSBDHDocument aSbdh = new PeppolSBDHDocumentReader (PeppolIdentifierFactory.INSTANCE).extractData (new FileSystemResource ("src/test/resources/external/examples/base-sbdh.xml"));
+      final PeppolSBDHData aSbdh = new PeppolSBDHDocumentReader (PeppolIdentifierFactory.INSTANCE).extractData (new FileSystemResource ("src/test/resources/external/examples/base-sbdh.xml"));
       if (aSbdh == null)
         throw new IllegalStateException ("Failed to read SBDH file to be send");
 

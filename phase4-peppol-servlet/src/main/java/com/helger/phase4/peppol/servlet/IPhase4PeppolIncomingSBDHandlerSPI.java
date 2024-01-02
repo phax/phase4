@@ -23,11 +23,12 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
+import com.helger.phase4.v3.ChangeV3;
 
 /**
  * This is the interface that must be implemented to handle incoming SBD
@@ -80,13 +81,13 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
                           @Nonnull Ebms3UserMessage aUserMessage,
                           @Nonnull byte [] aSBDBytes,
                           @Nonnull StandardBusinessDocument aSBD,
-                          @Nonnull PeppolSBDHDocument aPeppolSBD,
+                          @Nonnull PeppolSBDHData aPeppolSBD,
                           @Nonnull IAS4MessageState aState,
                           @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
 
   /**
    * Define if an exception from
-   * {@link #handleIncomingSBD(IAS4IncomingMessageMetadata, HttpHeaderMap, Ebms3UserMessage, byte[], StandardBusinessDocument, PeppolSBDHDocument, IAS4MessageState, ICommonsList)}
+   * {@link #handleIncomingSBD(IAS4IncomingMessageMetadata, HttpHeaderMap, Ebms3UserMessage, byte[], StandardBusinessDocument, PeppolSBDHData, IAS4MessageState, ICommonsList)}
    * results in a negative AS4 response or not. By default it is not.
    *
    * @return <code>true</code> to convert an Exception into an AS4 Error,
@@ -94,6 +95,7 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    *         than processing should continue.
    * @since 0.12.2
    */
+  @ChangeV3 ("Remove Exception handling and force usage of aProcessingErrorMessages")
   default boolean exceptionTranslatesToAS4Error ()
   {
     return false;

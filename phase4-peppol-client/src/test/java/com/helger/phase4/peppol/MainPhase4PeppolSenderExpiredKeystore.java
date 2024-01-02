@@ -80,7 +80,7 @@ public final class MainPhase4PeppolSenderExpiredKeystore
                                                                          "cert",
                                                                          "peppol",
                                                                          KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
-                                                                                                      PeppolKeyStoreHelper.Config2018.TRUSTSTORE_PILOT_CLASSPATH,
+                                                                                                      PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PILOT_CLASSPATH,
                                                                                                       PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
                                                                                        .getKeyStore ());
 
