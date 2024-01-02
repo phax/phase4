@@ -32,7 +32,7 @@
   <description>Base POM to build the phase4 projects</description>
   <url>https://github.com/phax/phase4</url>
   <inceptionYear>2015</inceptionYear>
- 
+
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -242,6 +242,11 @@
       </dependency>
       <dependency>
         <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-profile-dbnalliance</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-profile-eespa</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -309,6 +314,7 @@
         <module>phase4-profile-bdew</module>
         <module>phase4-profile-bpc</module>
         <module>phase4-profile-cef</module>
+        <module>phase4-profile-dbnalliance</module>
         <module>phase4-profile-eespa</module>
         <module>phase4-profile-entsog</module>
         <module>phase4-profile-peppol</module>
@@ -335,6 +341,7 @@
         <module>phase4-profile-bdew</module>
         <module>phase4-profile-bpc</module>
         <module>phase4-profile-cef</module>
+        <module>phase4-profile-dbnalliance</module>
         <module>phase4-profile-eespa</module>
         <module>phase4-profile-entsog</module>
         <module>phase4-profile-peppol</module>
