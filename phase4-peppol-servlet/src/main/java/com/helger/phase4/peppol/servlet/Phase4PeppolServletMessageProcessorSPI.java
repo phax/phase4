@@ -88,9 +88,11 @@ import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helper.peppol.reporting.api.PeppolReportingItem;
 
 /**
- * This is the SPI implementation to handle incoming AS4 requests from
- * phase4-servlet. Users of this package must implement
- * {@link IPhase4PeppolIncomingSBDHandlerSPI} instead.
+ * This is the SPI implementation to handle generic incoming AS4 requests. The
+ * main goal of this class is to implement the Peppol specific requirements of
+ * packaging data in SBDH. Users of this package must implement
+ * {@link IPhase4PeppolIncomingSBDHandlerSPI} instead which provides a more
+ * Peppol-style SPI handler.
  *
  * @author Philip Helger
  */
