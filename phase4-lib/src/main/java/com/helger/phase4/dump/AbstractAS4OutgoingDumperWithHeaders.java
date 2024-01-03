@@ -126,8 +126,8 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
           // By default quoting is disabled
           final boolean bQuoteIfNecessary = false;
           final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
-          ret.write ((sHeader + HttpHeaderMap.SEPARATOR_KEY_VALUE + sUnifiedValue + CHttp.EOL).getBytes (
-                                                                                                         CHttp.HTTP_CHARSET));
+          final String sLine = sHeader + HttpHeaderMap.SEPARATOR_KEY_VALUE + sUnifiedValue + CHttp.EOL;
+          ret.write (sLine.getBytes (CHttp.HTTP_CHARSET));
         }
       }
       // Separator only if at least one header is present

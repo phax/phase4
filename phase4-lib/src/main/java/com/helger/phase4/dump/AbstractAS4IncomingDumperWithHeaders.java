@@ -96,10 +96,8 @@ public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4Incomi
         {
           final boolean bQuoteIfNecessary = false;
           final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
-          ret.write ((sKey +
-                      HttpHeaderMap.SEPARATOR_KEY_VALUE +
-                      sUnifiedValue +
-                      CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+          final String sLine = sKey + HttpHeaderMap.SEPARATOR_KEY_VALUE + sUnifiedValue + CHttp.EOL;
+          ret.write (sLine.getBytes (CHttp.HTTP_CHARSET));
         }
       }
       // Separator only if at least one header is present
