@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+                Content:
+                This file contains a Full BIS3 PEPPOL UBL Invoice Response.
+
+                Errors:
+                None
+
+                Warnings:
+                None
+
+-->
+<ApplicationResponse xmlns="urn:oasis:names:specification:ubl:schema:xsd:ApplicationResponse-2"
+					 xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+					 xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:CustomizationID>urn:fdc:peppol.eu:poacc:trns:invoice_response:3</cbc:CustomizationID>
+	<cbc:ProfileID>urn:fdc:peppol.eu:poacc:bis:invoice_response:3</cbc:ProfileID>
+	<cbc:ID>imrid001</cbc:ID>
+	<cbc:IssueDate>2017-12-01</cbc:IssueDate>
+	<cbc:IssueTime>12:00:00</cbc:IssueTime>
+	<cbc:Note>text</cbc:Note>
+	<cac:SenderParty>
+		<cbc:EndpointID schemeID="0088">5798000012349</cbc:EndpointID>
+		<cac:PartyIdentification>
+			<cbc:ID schemeID="0184">DK88776655</cbc:ID>
+		</cac:PartyIdentification>
+		<cac:PartyLegalEntity>
+			<cbc:RegistrationName>Buyer organization</cbc:RegistrationName>
+		</cac:PartyLegalEntity>
+		<cac:Contact>
+			<cbc:Name>Jens Jensen</cbc:Name>
+			<cbc:Telephone>23232323</cbc:Telephone>
+			<cbc:ElectronicMail>jj@test-company.dk</cbc:ElectronicMail>
+		</cac:Contact>
+	</cac:SenderParty>
+	<cac:ReceiverParty>
+		<cbc:EndpointID schemeID="0088">7330001000000</cbc:EndpointID>
+		<cac:PartyIdentification>
+			<cbc:ID schemeID="0192">987654325</cbc:ID>
+		</cac:PartyIdentification>
+		<cac:PartyLegalEntity>
+			<cbc:RegistrationName>Seller company</cbc:RegistrationName>
+		</cac:PartyLegalEntity>
+	</cac:ReceiverParty>
+	<cac:DocumentResponse>
+		<cac:Response>
+			<cbc:ResponseCode>RE</cbc:ResponseCode>
+			<cbc:EffectiveDate>2018-09-24</cbc:EffectiveDate>
+			<cac:Status>
+				<cbc:StatusReasonCode listID="OPStatusAction">NOA</cbc:StatusReasonCode>
+				<cbc:StatusReason>VAT Reference not found</cbc:StatusReason>
+				<cac:Condition>
+					<cbc:AttributeID>BT-48</cbc:AttributeID>
+					<cbc:Description>EU123456789</cbc:Description>
+				</cac:Condition>
+			</cac:Status>
+		</cac:Response>
+		<cac:DocumentReference>
+			<cbc:ID>inv021</cbc:ID>
+			<cbc:IssueDate>2018-09-22</cbc:IssueDate>
+			<cbc:DocumentTypeCode>380</cbc:DocumentTypeCode>
+		</cac:DocumentReference>
+		<cac:IssuerParty>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="0192">123456785</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>Test Company AS</cbc:Name>
+			</cac:PartyName>
+		</cac:IssuerParty>
+	</cac:DocumentResponse>
+</ApplicationResponse>
