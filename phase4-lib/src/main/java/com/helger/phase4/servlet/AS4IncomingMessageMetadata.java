@@ -248,7 +248,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   /**
    * Set the request AS4 message ID to be used. This field should only be set by
    * responses. Usually you don't have to call this setter, as this is done by
-   * the factory methods {@link #createForResponse(String)}.
+   * the factory method {@link #createForResponse(String)}.
    *
    * @param sRequestMessageID
    *        The request message ID to be used. May be <code>null</code>.
