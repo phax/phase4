@@ -52,8 +52,9 @@ public interface IAS4OutgoingDumper
    *        differentiation. Added in v1.2.0.
    * @param aState
    *        The incoming message processing state. This is always
-   *        <code>null</code> for requests. This is always non-<code>null</code>
-   *        for responses. Added in v1.2.0.
+   *        <code>null</code> for requests and always non-<code>null</code> for
+   *        responses - see eMsgMode parameter for differentiation. Added in
+   *        v1.2.0.
    * @param sMessageID
    *        The AS4 message ID of the outgoing message. Neither
    *        <code>null</code> nor empty.
