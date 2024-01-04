@@ -20,6 +20,7 @@ import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 
@@ -35,7 +36,7 @@ public interface IPhase4PeppolCertificateCheckResultHandler
    * Invoked after certificate check.
    *
    * @param aAPCertificate
-   *        The AP certificate that was checked. Never <code>null</code>.
+   *        The AP certificate that was checked. May be <code>null</code>.
    * @param aCheckDT
    *        The date and time that was used to check the certificate. Never
    *        <code>null</code>.
@@ -44,7 +45,7 @@ public interface IPhase4PeppolCertificateCheckResultHandler
    * @throws Phase4PeppolException
    *         Implementation dependent
    */
-  void onCertificateCheckResult (@Nonnull X509Certificate aAPCertificate,
+  void onCertificateCheckResult (@Nullable X509Certificate aAPCertificate,
                                  @Nonnull OffsetDateTime aCheckDT,
                                  @Nonnull EPeppolCertificateCheckResult eCertCheckResult) throws Phase4PeppolException;
 }
