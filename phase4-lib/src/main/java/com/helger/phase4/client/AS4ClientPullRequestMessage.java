@@ -91,14 +91,14 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
     if (aCallback != null)
       aCallback.onSoapDocument (aPureDoc);
 
-    Document aDoc = aPureDoc;
+    final Document aDoc;
     if (signingParams ().isSigningEnabled ())
     {
       final IAS4CryptoFactory aCryptoFactorySign = internalGetCryptoFactorySign ();
 
       final boolean bMustUnderstand = true;
       final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
-                                                                 aDoc,
+                                                                 aPureDoc,
                                                                  getSoapVersion (),
                                                                  aPullRequest.getMessagingID (),
                                                                  null,
@@ -110,6 +110,10 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
         aCallback.onSignedSoapDocument (aSignedDoc);
 
       aDoc = aSignedDoc;
+    }
+    else
+    {
+      aDoc = aPureDoc;
     }
 
     // Wrap SOAP XML

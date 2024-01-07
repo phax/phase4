@@ -160,15 +160,14 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
     if (aCallback != null)
       aCallback.onSoapDocument (aPureDoc);
 
-    Document aDoc = aPureDoc;
-
+    final Document aDoc;
     if (m_bReceiptShouldBeSigned && signingParams ().isSigningEnabled ())
     {
       final IAS4CryptoFactory aCryptoFactorySign = internalGetCryptoFactorySign ();
 
       final boolean bMustUnderstand = true;
       final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
-                                                                 aDoc,
+                                                                 aPureDoc,
                                                                  getSoapVersion (),
                                                                  aReceiptMsg.getMessagingID (),
                                                                  null,
@@ -180,6 +179,10 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
         aCallback.onSignedSoapDocument (aSignedDoc);
 
       aDoc = aSignedDoc;
+    }
+    else
+    {
+      aDoc = aPureDoc;
     }
 
     // Wrap SOAP XML

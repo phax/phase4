@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.client;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -24,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.w3c.dom.Document;
 
 import com.helger.commons.ValueEnforcer;
@@ -31,10 +31,12 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.error.IEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4ErrorMessage;
 import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -48,6 +50,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
 public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4ClientErrorMessage>
 {
   private final ICommonsList <Ebms3Error> m_aErrorMessages = new CommonsArrayList <> ();
+  private boolean m_bErrorShouldBeSigned = false;
 
   public AS4ClientErrorMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
@@ -69,6 +72,18 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
     return m_aErrorMessages;
   }
 
+  public final boolean isReceiptShouldBeSigned ()
+  {
+    return m_bErrorShouldBeSigned;
+  }
+
+  @Nonnull
+  public final AS4ClientErrorMessage setErrorShouldBeSigned (final boolean bErrorShouldBeSigned)
+  {
+    m_bErrorShouldBeSigned = bErrorShouldBeSigned;
+    return this;
+  }
+
   private void _checkMandatoryAttributes ()
   {
     // Soap version can never be null
@@ -84,7 +99,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
 
   @Override
   public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
-                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws IOException
+                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException
   {
     _checkMandatoryAttributes ();
 
@@ -97,10 +112,35 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
     if (aCallback != null)
       aCallback.onAS4Message (aErrorMsg);
 
-    final Document aDoc = aErrorMsg.getAsSoapDocument ();
+    final Document aPureDoc = aErrorMsg.getAsSoapDocument ();
 
     if (aCallback != null)
-      aCallback.onSoapDocument (aDoc);
+      aCallback.onSoapDocument (aPureDoc);
+
+    final Document aDoc;
+    if (m_bErrorShouldBeSigned && signingParams ().isSigningEnabled ())
+    {
+      final IAS4CryptoFactory aCryptoFactorySign = internalGetCryptoFactorySign ();
+
+      final boolean bMustUnderstand = true;
+      final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
+                                                                 aPureDoc,
+                                                                 getSoapVersion (),
+                                                                 aErrorMsg.getMessagingID (),
+                                                                 null,
+                                                                 getAS4ResourceHelper (),
+                                                                 bMustUnderstand,
+                                                                 signingParams ().getClone ());
+
+      if (aCallback != null)
+        aCallback.onSignedSoapDocument (aSignedDoc);
+
+      aDoc = aSignedDoc;
+    }
+    else
+    {
+      aDoc = aPureDoc;
+    }
 
     // Wrap SOAP XML
     return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()));
