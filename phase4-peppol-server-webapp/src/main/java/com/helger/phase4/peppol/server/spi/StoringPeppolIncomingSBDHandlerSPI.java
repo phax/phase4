@@ -17,6 +17,7 @@
 package com.helger.phase4.peppol.server.spi;
 
 import java.io.File;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
@@ -25,12 +26,15 @@ import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.phase4.ebms3header.Ebms3Error;
+import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI;
@@ -64,7 +68,17 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
                                        "' (" +
                                        aSBDBytes.length +
                                        " bytes)");
-
     LOGGER.info ("Successfully wrote SBD to '" + aFile.getAbsolutePath () + "'");
+
+    final Ebms3Property aMockAction = CollectionHelper.findFirst (aUserMessage.getMessageProperties ().getProperty (),
+                                                                  x -> "MockAction".equals (x.getName ()));
+    if (aMockAction != null)
+    {
+      // Explicitly return an Error - for testing errors
+      LOGGER.info ("Found MockAction to return error with value '" + aMockAction.getValue () + "'");
+      aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (Locale.US)
+                                                         .errorDetail ("Mock error: " + aMockAction.getValue ())
+                                                         .build ());
+    }
   }
 }
