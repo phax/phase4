@@ -49,6 +49,13 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>com.helger.web</groupId>
+        <artifactId>ph-web-parent-pom</artifactId>
+        <version>${ph-web.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>com.helger.peppol</groupId>
         <artifactId>peppol-commons-parent-pom</artifactId>
         <version>${peppol-commons.version}</version>

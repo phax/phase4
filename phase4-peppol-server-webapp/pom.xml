@@ -45,18 +45,6 @@
     <m2e.jsf.activation>false</m2e.jsf.activation>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.helger.peppol</groupId>
-        <artifactId>peppol-commons-parent-pom</artifactId>
-        <version>${peppol-commons.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>com.helger.web</groupId>
@@ -69,10 +57,12 @@
     <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-sbdh</artifactId>
+      <version>${peppol-commons.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-smp-client</artifactId>
+      <version>${peppol-commons.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phase4</groupId>

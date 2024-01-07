@@ -80,6 +80,7 @@
     <peppol-reporting.version>2.2.1</peppol-reporting.version>
     <ph-ubl.version>8.0.3</ph-ubl.version>
     <ph-schematron.version>7.1.3</ph-schematron.version>
+    <ph-web.version>10.1.6</ph-web.version>
     <phive.version>9.0.0</phive.version>
     <phive-rules.version>3.1.6</phive-rules.version>
     <spring-boot.version>3.2.1</spring-boot.version>
@@ -118,7 +119,7 @@
       <dependency>
         <groupId>com.helger.web</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>10.1.5</version>
+        <version>${ph-web.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
