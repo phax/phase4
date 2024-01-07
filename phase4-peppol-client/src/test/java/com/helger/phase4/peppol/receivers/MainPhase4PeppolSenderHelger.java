@@ -29,7 +29,6 @@ import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
@@ -75,20 +74,11 @@ public final class MainPhase4PeppolSenderHelger
                        "'");
         }
       };
-      final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true)
-                                                                                   .setHandleHttpHeaders (true)
-                                                                                   .and (x -> {
-                                                                                     LOGGER.info ("Response status line: " +
-                                                                                                  x.getResponseStatusLine ());
-                                                                                     LOGGER.info ("Response headers:");
-                                                                                     x.getResponseHeaders ()
-                                                                                      .forEachSingleHeader ( (k,
-                                                                                                              v) -> LOGGER.info ("  " +
-                                                                                                                                 k +
-                                                                                                                                 "=" +
-                                                                                                                                 v),
-                                                                                                             false);
-                                                                                   });
+      final IAS4RawResponseConsumer aRRC = x -> {
+        LOGGER.info ("Response status line: " + x.getResponseStatusLine ());
+        LOGGER.info ("Response headers:");
+        x.getResponseHeaders ().forEachSingleHeader ( (k, v) -> LOGGER.info ("  " + k + "=" + v), false);
+      };
       final Builder aBuilder = Phase4PeppolSender.builder ()
                                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
