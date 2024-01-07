@@ -159,8 +159,9 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
    *        SOAP Version which should be used
    * @param sMessageID
    *        Message ID to use. May neither be <code>null</code> nor empty.
-   * @param aEbms3UserMessage
-   *        The received usermessage which should be responded too
+   * @param aEbms3UserMessageToRespond
+   *        The received usermessage which should be responded too. May be
+   *        <code>null</code>.
    * @param aSoapDocument
    *        If the SOAPDocument has WSS4j elements and the following parameter
    *        is true NonRepudiation will be used if the message is signed
@@ -171,7 +172,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
   @Nonnull
   public static AS4ReceiptMessage create (@Nonnull final ESoapVersion eSoapVersion,
                                           @Nonnull @Nonempty final String sMessageID,
-                                          @Nullable final Ebms3UserMessage aEbms3UserMessage,
+                                          @Nullable final Ebms3UserMessage aEbms3UserMessageToRespond,
                                           @Nullable final Node aSoapDocument,
                                           final boolean bShouldUseNonRepudiation)
   {
@@ -184,10 +185,9 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     {
       // Always use "now" as date time
       final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
-                                                                                              aEbms3UserMessage != null
-                                                                                                                        ? aEbms3UserMessage.getMessageInfo ()
-                                                                                                                                           .getMessageId ()
-                                                                                                                        : null);
+                                                                                              aEbms3UserMessageToRespond != null ? aEbms3UserMessageToRespond.getMessageInfo ()
+                                                                                                                                                             .getMessageId ()
+                                                                                                                                 : null);
       aSignalMessage.setMessageInfo (aEbms3MessageInfo);
     }
 
@@ -218,7 +218,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 
       // If the original usermessage is not signed, the receipt will contain the
       // original message part without wss4j security
-      aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessage)
+      aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessageToRespond)
                                           .getAsSoapDocument ()
                                           .getDocumentElement ());
     }

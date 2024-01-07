@@ -666,9 +666,8 @@ public class AS4RequestHandler implements AutoCloseable
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
-    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId () : aEbmsSignalMessage
-                                                                                                                      .getMessageInfo ()
-                                                                                                                      .getMessageId ();
+    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
+                                             : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
 
     // Get all processors
     final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
@@ -884,8 +883,8 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (
-                                                                                                                       aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
+                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -1130,7 +1129,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @param aState
+   * @param aIncomingState
    *        The processing state of the incoming message. Never
    *        <code>null</code>.
    * @param aSoapDocument
@@ -1148,7 +1147,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @throws WSSecurityException
    */
   @Nonnull
-  private IAS4ResponseFactory _createResponseReceiptMessage (@Nonnull final IAS4MessageState aState,
+  private IAS4ResponseFactory _createResponseReceiptMessage (@Nonnull final IAS4MessageState aIncomingState,
                                                              @Nullable final Document aSoapDocument,
                                                              @Nonnull final ESoapVersion eSoapVersion,
                                                              @Nonnull @Nonempty final String sResponseMessageID,
@@ -1156,6 +1155,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                              @Nullable final Ebms3UserMessage aUserMessage,
                                                              @Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
   {
+    // Create receipt
     final AS4ReceiptMessage aReceiptMessage = AS4ReceiptMessage.create (eSoapVersion,
                                                                         sResponseMessageID,
                                                                         aUserMessage,
@@ -1163,26 +1163,99 @@ public class AS4RequestHandler implements AutoCloseable
                                                                         _isSendNonRepudiationInformation (aEffectiveLeg))
                                                                .setMustUnderstand (true);
 
-    // We've got our response
-    final Document aResponseDoc = aReceiptMessage.getAsSoapDocument ();
-    final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
-                                                                     .setFromPMode (aEffectiveLeg.getSecurity ());
     final ESoapVersion eResponseSoapVersion = aEffectiveLeg.getProtocol ().getSoapVersion ();
     if (eResponseSoapVersion != eSoapVersion)
       LOGGER.warn ("Received message with " +
                    eSoapVersion +
                    " but the Response PMode leg requires " +
                    eResponseSoapVersion);
+
+    // Sign the Receipt
+    final Document aResponseDoc = aReceiptMessage.getAsSoapDocument ();
+    final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
+                                                                     .setFromPMode (aEffectiveLeg.getSecurity ());
     final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
                                                        aSigningParams,
                                                        aResponseDoc,
                                                        eResponseSoapVersion,
                                                        aReceiptMessage.getMessagingID ());
+
+    // Return the signed receipt
     return new AS4ResponseFactoryXML (m_aMessageMetadata,
-                                      aState,
+                                      aIncomingState,
                                       sResponseMessageID,
                                       aSignedDoc,
-                                      eSoapVersion.getMimeType ());
+                                      eResponseSoapVersion.getMimeType ());
+  }
+
+  @Nullable
+  private IAS4ResponseFactory _createResponseErrorMessage (@Nonnull final IAS4MessageState aIncomingState,
+                                                           @Nonnull final ESoapVersion eSoapVersion,
+                                                           @Nonnull @Nonempty final String sResponseMessageID,
+                                                           @Nullable final PModeLeg aEffectiveLeg,
+                                                           @Nonnull @Nonempty final ICommonsList <Ebms3Error> aEbmsErrorMessages)
+  {
+    // Start building response error message
+    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion,
+                                                              MessageHelperMethods.createEbms3MessageInfo (sResponseMessageID,
+                                                                                                           aIncomingState.getMessageID ()),
+                                                              aEbmsErrorMessages);
+
+    // Call optional consumer
+    if (m_aErrorConsumer != null)
+      m_aErrorConsumer.onAS4ErrorMessage (aIncomingState, aEbmsErrorMessages, aErrorMsg);
+
+    final ESoapVersion eResponseSoapVersion;
+    if (aEffectiveLeg != null)
+    {
+      eResponseSoapVersion = aEffectiveLeg.getProtocol ().getSoapVersion ();
+      if (eResponseSoapVersion != eSoapVersion)
+        LOGGER.warn ("Received message with " +
+                     eSoapVersion +
+                     " but the Response PMode leg requires " +
+                     eResponseSoapVersion);
+    }
+    else
+      eResponseSoapVersion = eSoapVersion;
+
+    // Generate ErrorMessage if errors in the process are present and the
+    // pmode wants an error response
+    // When aLeg == null, the response is true
+    if (!_isSendErrorAsResponse (aEffectiveLeg))
+    {
+      // Too bad - the error message gets dismissed
+      LOGGER.warn ("Not sending back the AS4 Error, because sending error responses is prohibited in the PMode");
+      return null;
+    }
+
+    // Sign the Error if possible
+    Document aResponseDoc = aErrorMsg.getAsSoapDocument ();
+    if (aEffectiveLeg != null)
+      try
+      {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Trying to sign AS4 Error response");
+
+        final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
+                                                                         .setFromPMode (aEffectiveLeg.getSecurity ());
+        final Document aSignedDoc = _signResponseIfNeeded (null,
+                                                           aSigningParams,
+                                                           aResponseDoc,
+                                                           eResponseSoapVersion,
+                                                           aErrorMsg.getMessagingID ());
+        aResponseDoc = aSignedDoc;
+      }
+      catch (final WSSecurityException ex)
+      {
+        // Signing does not work - so we send the error message unsigned
+        LOGGER.warn ("Tried to sign the AS4 Error message but failed. Returning the unsigned AS4 Error instead.", ex);
+      }
+
+    return new AS4ResponseFactoryXML (m_aMessageMetadata,
+                                      aIncomingState,
+                                      sResponseMessageID,
+                                      aResponseDoc,
+                                      eResponseSoapVersion.getMimeType ());
   }
 
   /**
@@ -1561,8 +1634,9 @@ public class AS4RequestHandler implements AutoCloseable
                                                          new ResponseHandlerXml ());
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     (aAsyncResponse == null ? "null" : XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                                                   AS4HttpDebug.getDebugXMLWriterSettings ())));
+                                     (aAsyncResponse == null ? "null"
+                                                             : XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                                          AS4HttpDebug.getDebugXMLWriterSettings ())));
         };
 
         final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
@@ -1589,7 +1663,7 @@ public class AS4RequestHandler implements AutoCloseable
     else
     {
       // Either error in header processing or
-      // Not an incoming Ebms Error Message (either UserMessage or a different
+      // not an incoming Ebms Error Message (either UserMessage or a different
       // SignalMessage)
 
       if (aEbmsErrorMessagesTarget.isNotEmpty ())
@@ -1598,36 +1672,23 @@ public class AS4RequestHandler implements AutoCloseable
           LOGGER.debug ("Creating AS4 error message with these " +
                         aEbmsErrorMessagesTarget.size () +
                         " errors: " +
-                        aEbmsErrorMessagesTarget.getAllMapped (Ebms3Error::getDescriptionValue));
+                        aEbmsErrorMessagesTarget.getAllMapped (x -> StringHelper.getConcatenatedOnDemand (x.getDescriptionValue (),
+                                                                                                          " / ",
+                                                                                                          x.getErrorDetail ())));
 
-        // Start building response error message
-        final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
-                                                                          aState.getMessageID (),
-                                                                          aEbmsErrorMessagesTarget);
-
-        // Call optional consumer
-        if (m_aErrorConsumer != null)
-          m_aErrorConsumer.onAS4ErrorMessage (aState, aEbmsErrorMessagesTarget, aResponseErrorMsg);
-
-        // Generate ErrorMessage if errors in the process are present and the
-        // pmode wants an error response
-        // When aLeg == null, the response is true
-        if (_isSendErrorAsResponse (aEffectiveLeg))
+        final String sTempResponseMessageID = MessageHelperMethods.createRandomMessageID ();
+        ret = _createResponseErrorMessage (aState,
+                                           eSoapVersion,
+                                           sTempResponseMessageID,
+                                           aEffectiveLeg,
+                                           aEbmsErrorMessagesTarget);
+        if (ret == null)
         {
-          sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ().getMessageInfo ().getMessageId ();
-          ret = new AS4ResponseFactoryXML (m_aMessageMetadata,
-                                           aState,
-                                           sResponseMessageID,
-                                           aResponseErrorMsg.getAsSoapDocument (),
-                                           eSoapVersion.getMimeType ());
+          // Too bad - the error message got dismissed
+          sResponseMessageID = null;
         }
         else
-        {
-          // Too bad - the error message gets dismissed
-          LOGGER.warn ("Not sending back the error, because sending error response is prohibited in PMode");
-          sResponseMessageID = null;
-          ret = null;
-        }
+          sResponseMessageID = sTempResponseMessageID;
       }
       else
       {
@@ -1787,8 +1848,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager
-                                                                                                                     .getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
+                                                                                 : AS4DumpManager.getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else

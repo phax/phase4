@@ -146,7 +146,8 @@ public interface IAS4MessageState
   }
 
   /**
-   * @return the PMode that is used with the current message
+   * @return the PMode that is used with the current message. May be
+   *         <code>null</code> if none was found.
    */
   @Nullable
   IPMode getPMode ();
@@ -345,7 +346,8 @@ public interface IAS4MessageState
   }
 
   /**
-   * @return The effective leg to use. May be leg 1 or leg 2 of the PMode.
+   * @return The effective leg to use. May be leg 1 or leg 2 of the PMode. If no
+   *         PMode was found, no PModeLeg is present.
    * @see #getPMode()
    */
   @Nullable
@@ -353,7 +355,8 @@ public interface IAS4MessageState
 
   /**
    * @return 1 or 2, depending on the used leg. Any other value indicates
-   *         "undefined".
+   *         "undefined". If no PMode was found, no PModeLeg is present.
+   * @see #getEffectivePModeLeg()
    */
   @CheckForSigned
   int getEffectivePModeLegNumber ();

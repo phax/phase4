@@ -366,6 +366,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       // compressed attachment and a SOAPBodyPayload
       boolean bHasSoapBodyPayload = false;
 
+      // PMode may be null if no CollaborationInfo is present
       if (aPMode != null)
       {
         aPModeLeg1 = aPMode.getLeg1 ();
