@@ -43,7 +43,6 @@ import com.helger.commons.annotation.UnsupportedOperation;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
@@ -468,8 +467,22 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     }
     else
     {
-      LOGGER.warn ("Incoming messages does not contain a UserMessage/MessageInfo/Timestamp value. Using current date time");
-      aExchangeDT = PDTFactory.getCurrentOffsetDateTime ();
+      // Try SBDH
+      final XMLOffsetDateTime aSbdhDT = aPeppolSBD.getCreationDateAndTime ();
+      if (aSbdhDT != null)
+      {
+        // Take SBDH creation date time
+        if (aSbdhDT.getOffset () != null)
+          aExchangeDT = aSbdhDT.toOffsetDateTime ();
+        else
+          aExchangeDT = OffsetDateTime.of (aSbdhDT.toLocalDateTime (), ZoneOffset.UTC);
+      }
+      else
+      {
+        // Neither in AS4 nor in SBDH
+        LOGGER.warn ("Incoming messages does not contain a UserMessage/MessageInfo/Timestamp value and no SBDH CreationDateTime. Using current date time");
+        aExchangeDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
+      }
     }
 
     // Incoming message signed by C2
