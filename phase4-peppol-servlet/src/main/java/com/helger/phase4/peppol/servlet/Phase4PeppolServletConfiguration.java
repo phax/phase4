@@ -51,6 +51,7 @@ public final class Phase4PeppolServletConfiguration
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
   private static boolean s_bPerformSBDHValueChecks = PeppolSBDHDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
+  private static boolean s_bCheckSBDHForMandatoryCountryC1 = PeppolSBDHDocumentReader.DEFAULT_CHECK_FOR_COUNTRY_C1;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
 
   private Phase4PeppolServletConfiguration ()
@@ -199,6 +200,37 @@ public final class Phase4PeppolServletConfiguration
     if (bChange)
     {
       LOGGER.info (CAS4.LIB_NAME + " Peppol SBDH value checks are now " + (b ? "enabled" : "disabled"));
+    }
+  }
+
+  /**
+   * @return <code>true</code> if the Country C1 element in the SBDH of received
+   *         messages is mandatory, and if such messages should be rejected, if
+   *         that field is missing. By default it is enabled.
+   * @since 2.7.1
+   */
+  public static boolean isCheckSBDHForMandatoryCountryC1 ()
+  {
+    return s_bCheckSBDHForMandatoryCountryC1;
+  }
+
+  /**
+   * Set whether the check for the mandatory Country C1 element in SBDH of
+   * received message is mandatory or not. By default it is enabled.
+   *
+   * @param b
+   *        <code>true</code> to check, <code>false</code> to disable the check.
+   * @since 2.7.1
+   */
+  public static void setCheckSBDHForMandatoryCountryC1 (final boolean b)
+  {
+    final boolean bChange = b != s_bCheckSBDHForMandatoryCountryC1;
+    s_bCheckSBDHForMandatoryCountryC1 = b;
+    if (bChange)
+    {
+      LOGGER.info (CAS4.LIB_NAME +
+                   " Peppol SBDH checking for mandatory C1 Country Code is now " +
+                   (b ? "enabled" : "disabled"));
     }
   }
 

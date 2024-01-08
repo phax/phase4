@@ -52,7 +52,6 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
-import com.helger.jaxb.validation.WrappedCollectingValidationEventHandler;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
@@ -603,9 +602,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       return AS4MessageProcessorResult.createFailure ();
     }
 
-    // Check if signing certificate is revoked
-    if (m_eCheckSigningCertificateRevocation.getAsBooleanValue (Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ()))
+    if (getCheckSigningCertificateRevocation ().getAsBooleanValue (Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ()))
     {
+      // Check if signing certificate is revoked
       final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
       final X509Certificate aSenderCert = aState.getUsedCertificate ();
       final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aSenderCert,
@@ -671,8 +670,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         // Hint for production systems: this may take a huge amount of memory,
         // if the payload is large
         final ErrorList aSBDHErrors = new ErrorList ();
-        a.m_aSBDH = new SBDMarshaller ().setValidationEventHandler (new WrappedCollectingValidationEventHandler (aSBDHErrors))
-                                        .read (a.m_aPayloadBytes);
+        a.m_aSBDH = new SBDMarshaller ().setCollectErrors (aSBDHErrors).read (a.m_aPayloadBytes);
 
         // Only fail if the first attachment is not an SBDH. The check for
         // exactly 1 attachment comes below
@@ -750,8 +748,13 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
 
       // Interpret as Peppol SBDH and eventually perform consistency checks
       final boolean bPerformValueChecks = Phase4PeppolServletConfiguration.isPerformSBDHValueChecks ();
-      aPeppolSBD = new PeppolSBDHDocumentReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerformValueChecks)
-                                                                                  .extractData (aReadAttachment.standardBusinessDocument ());
+      final boolean bCheckForCountryC1 = Phase4PeppolServletConfiguration.isCheckSBDHForMandatoryCountryC1 ();
+      // Read with SimpleIdentifierFactory - accepts more the
+      // PeppolIdentifierFactory
+      final PeppolSBDHDocumentReader aReader = new PeppolSBDHDocumentReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerformValueChecks)
+                                                                                                              .setCheckForCountryC1 (bCheckForCountryC1);
+
+      aPeppolSBD = aReader.extractData (aReadAttachment.standardBusinessDocument ());
 
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug (sLogPrefix +
