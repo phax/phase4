@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.OffsetDateTime;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -46,6 +47,7 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.ServiceLoaderHelper;
+import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.jaxb.validation.WrappedCollectingValidationEventHandler;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
@@ -53,6 +55,8 @@ import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ISMPTransportProfile;
+import com.helger.peppol.utils.EPeppolCertificateCheckResult;
+import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -67,6 +71,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
@@ -149,11 +154,13 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   }
 
   public static final ESMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2;
+
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolServletMessageProcessorSPI.class);
 
   private ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> m_aHandlers;
   private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;
   private Phase4PeppolReceiverCheckData m_aReceiverCheckData;
+  private ETriState m_eCheckSigningCertificateRevocation = ETriState.UNDEFINED;
 
   /**
    * Constructor. Uses all SPI implementations of
@@ -244,6 +251,41 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   public final Phase4PeppolServletMessageProcessorSPI setReceiverCheckData (@Nullable final Phase4PeppolReceiverCheckData aReceiverCheckData)
   {
     m_aReceiverCheckData = aReceiverCheckData;
+    return this;
+  }
+
+  /**
+   * @return Whether the X.509 certificate used for signing the message should
+   *         be check for revocation or not. By default it is "UNDEFINED"
+   *         meaning, that the global setting is used instead. May not be
+   *         <code>null</code>.
+   * @since 2.7.1
+   * @see Phase4PeppolServletConfiguration#isCheckSigningCertificateRevocation()
+   *      for the global setting
+   */
+  @Nonnull
+  public final ETriState getCheckSigningCertificateRevocation ()
+  {
+    return m_eCheckSigningCertificateRevocation;
+  }
+
+  /**
+   * Set whether the signing X.509 certificate should be checked for revocation
+   * or not.
+   *
+   * @param eCheckSigningCertificateRevocation
+   *        The signing certificate revocation state. May not be
+   *        <code>null</code>.
+   * @return this for chaining
+   * @since 2.7.1
+   * @see Phase4PeppolServletConfiguration#setCheckSigningCertificateRevocation(boolean)
+   *      to set this globally
+   */
+  @Nonnull
+  public final Phase4PeppolServletMessageProcessorSPI setCheckSigningCertificateRevocation (@Nonnull final ETriState eCheckSigningCertificateRevocation)
+  {
+    ValueEnforcer.notNull (eCheckSigningCertificateRevocation, "CheckSigningCertificateRevocation");
+    m_eCheckSigningCertificateRevocation = eCheckSigningCertificateRevocation;
     return this;
   }
 
@@ -411,6 +453,44 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         LOGGER.debug (sLogPrefix + "  No SOAP Body Payload present");
       else
         LOGGER.debug (sLogPrefix + "  SOAP Body Payload = " + XMLWriter.getNodeAsString (aPayload));
+    }
+
+    // Check preconditions
+    if (!aState.isSoapDecrypted ())
+    {
+      final String sDetails = "The received Peppol message was not encrypted properly.";
+      LOGGER.error (sLogPrefix + sDetails);
+      return AS4MessageProcessorResult.createFailure (sDetails);
+    }
+    if (!aState.isSoapSignatureChecked ())
+    {
+      final String sDetails = "The received Peppol message was not signed properly.";
+      LOGGER.error (sLogPrefix + sDetails);
+      return AS4MessageProcessorResult.createFailure (sDetails);
+    }
+
+    // Check if signing certificate is revoked
+    if (m_eCheckSigningCertificateRevocation.getAsBooleanValue (Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ()))
+    {
+      final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
+      final X509Certificate aSenderCert = aState.getUsedCertificate ();
+      final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aSenderCert,
+                                                                                                                aNow,
+                                                                                                                ETriState.UNDEFINED,
+                                                                                                                null);
+      if (eCertCheckResult.isInvalid ())
+      {
+        final String sDetails = "The received Peppol message is signed with a Peppol AP certificate invalid at " +
+                                aNow +
+                                ". Rejecting incoming message. Reason: " +
+                                eCertCheckResult.getReason ();
+        LOGGER.error (sLogPrefix + sDetails);
+        return AS4MessageProcessorResult.createFailure (sDetails);
+      }
+    }
+    else
+    {
+      LOGGER.warn (sLogPrefix + "The revocation check of the received signing certificate is disabled.");
     }
 
     // Read all attachments
