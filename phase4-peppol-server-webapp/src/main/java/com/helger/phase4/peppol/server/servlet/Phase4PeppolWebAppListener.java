@@ -197,6 +197,15 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                                     .getStorageFile (sMessageID,
                                                                                                                                      nTry,
                                                                                                                                      ".as4out")));
+
+    // Our server expects all SBDH to contain the COUNTRY_C1 element in SBDH
+    // (this is the default setting, but added it here for easy modification)
+    Phase4PeppolServletConfiguration.setCheckSBDHForMandatoryCountryC1 (true);
+
+    // Our server should check all signing certificates of incoming messages if
+    // they are revoked or not
+    // (this is the default setting, but added it here for easy modification)
+    Phase4PeppolServletConfiguration.setCheckSigningCertificateRevocation (true);
   }
 
   private static void _initPeppolAS4 ()
