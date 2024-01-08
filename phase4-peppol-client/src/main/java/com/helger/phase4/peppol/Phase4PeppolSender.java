@@ -37,7 +37,6 @@ import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
@@ -158,13 +157,18 @@ public final class Phase4PeppolSender
                                      sRealTypeVersion,
                                      aPayloadElement.getLocalName (),
                                      sRealInstanceIdentifier,
-                                     XMLOffsetDateTime.of (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ()));
+                                     MetaAS4Manager.getTimestampMgr ().getCurrentXMLDateTime ());
 
     // Not cloning the payload element is for saving memory only
     if (bClonePayloadElement)
       aData.setBusinessMessage (aPayloadElement);
     else
       aData.setBusinessMessageNoClone (aPayloadElement);
+
+    // Check with logging
+    if (!aData.areAllFieldsSet (true))
+      throw new IllegalArgumentException ("The Peppol SBDH data is incomplete. See logs for details.");
+
     return new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
   }
 
@@ -1427,11 +1431,17 @@ public final class Phase4PeppolSender
     public SBDHBuilder payloadAndMetadata (@Nonnull final PeppolSBDHData aSBDH)
     {
       ValueEnforcer.notNull (aSBDH, "SBDH");
+
+      // Check with logging
+      if (!aSBDH.areAllFieldsSet (true))
+        throw new IllegalArgumentException ("The provided Peppol SBDH data is incomplete. See logs for details.");
+
+      final StandardBusinessDocument aJaxbSbdh = new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aSBDH);
       return senderParticipantID (aSBDH.getSenderAsIdentifier ()).receiverParticipantID (aSBDH.getReceiverAsIdentifier ())
                                                                  .documentTypeID (aSBDH.getDocumentTypeAsIdentifier ())
                                                                  .processID (aSBDH.getProcessAsIdentifier ())
                                                                  .countryC1 (aSBDH.getCountryC1 ())
-                                                                 .payload (new SBDMarshaller ().getAsBytes (new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aSBDH)));
+                                                                 .payload (new SBDMarshaller ().getAsBytes (aJaxbSbdh));
     }
 
     @Override
