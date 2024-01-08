@@ -1188,7 +1188,7 @@ public class AS4RequestHandler implements AutoCloseable
                                       eResponseSoapVersion.getMimeType ());
   }
 
-  @Nullable
+  @Nonnull
   private IAS4ResponseFactory _createResponseErrorMessage (@Nonnull final IAS4MessageState aIncomingState,
                                                            @Nonnull final ESoapVersion eSoapVersion,
                                                            @Nonnull @Nonempty final String sResponseMessageID,
@@ -1205,6 +1205,7 @@ public class AS4RequestHandler implements AutoCloseable
     if (m_aErrorConsumer != null)
       m_aErrorConsumer.onAS4ErrorMessage (aIncomingState, aEbmsErrorMessages, aErrorMsg);
 
+    // Determine SOAP version
     final ESoapVersion eResponseSoapVersion;
     if (aEffectiveLeg != null)
     {
@@ -1218,24 +1219,15 @@ public class AS4RequestHandler implements AutoCloseable
     else
       eResponseSoapVersion = eSoapVersion;
 
-    // Generate ErrorMessage if errors in the process are present and the
-    // pmode wants an error response
-    // When aLeg == null, the response is true
-    if (!_isSendErrorAsResponse (aEffectiveLeg))
-    {
-      // Too bad - the error message gets dismissed
-      LOGGER.warn ("Not sending back the AS4 Error, because sending error responses is prohibited in the PMode");
-      return null;
-    }
-
-    // Sign the Error if possible
     Document aResponseDoc = aErrorMsg.getAsSoapDocument ();
     if (aEffectiveLeg != null)
+    {
+      // Sign the Error if possible
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Trying to sign AS4 Error response");
+
       try
       {
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Trying to sign AS4 Error response");
-
         final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
                                                                          .setFromPMode (aEffectiveLeg.getSecurity ());
         final Document aSignedDoc = _signResponseIfNeeded (null,
@@ -1250,6 +1242,12 @@ public class AS4RequestHandler implements AutoCloseable
         // Signing does not work - so we send the error message unsigned
         LOGGER.warn ("Tried to sign the AS4 Error message but failed. Returning the unsigned AS4 Error instead.", ex);
       }
+    }
+    else
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Cannot sign AS4 Error response, because no PMode Leg was provided");
+    }
 
     return new AS4ResponseFactoryXML (m_aMessageMetadata,
                                       aIncomingState,
@@ -1676,19 +1674,25 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                                           " / ",
                                                                                                           x.getErrorDetail ())));
 
-        final String sTempResponseMessageID = MessageHelperMethods.createRandomMessageID ();
-        ret = _createResponseErrorMessage (aState,
-                                           eSoapVersion,
-                                           sTempResponseMessageID,
-                                           aEffectiveLeg,
-                                           aEbmsErrorMessagesTarget);
-        if (ret == null)
+        // Generate ErrorMessage if errors in the process are present and the
+        // pmode wants an error response
+        // When aEffectiveLeg == null, the response is true
+        if (_isSendErrorAsResponse (aEffectiveLeg))
         {
-          // Too bad - the error message got dismissed
-          sResponseMessageID = null;
+          sResponseMessageID = MessageHelperMethods.createRandomMessageID ();
+          ret = _createResponseErrorMessage (aState,
+                                             eSoapVersion,
+                                             sResponseMessageID,
+                                             aEffectiveLeg,
+                                             aEbmsErrorMessagesTarget);
         }
         else
-          sResponseMessageID = sTempResponseMessageID;
+        {
+          // Too bad - the error message gets dismissed
+          LOGGER.warn ("Not sending back the AS4 Error response, because it is prohibited in the PMode");
+          sResponseMessageID = null;
+          ret = null;
+        }
       }
       else
       {
@@ -1731,7 +1735,6 @@ public class AS4RequestHandler implements AutoCloseable
               {
                 // We received an incoming user message and no errors occurred
                 final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
-
                 if (bSendReceiptAsResponse)
                 {
                   sResponseMessageID = MessageHelperMethods.createRandomMessageID ();
