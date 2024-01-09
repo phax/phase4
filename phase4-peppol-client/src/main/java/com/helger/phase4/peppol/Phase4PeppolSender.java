@@ -44,6 +44,7 @@ import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.diver.api.version.VESID;
+import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadBinaryMarshaller;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
@@ -1357,6 +1358,19 @@ public final class Phase4PeppolSender
         // A log message was already provided
         return ESuccess.FAILURE;
       }
+
+      if (false)
+      {
+        // This is the developer code, to be able to send out messages without
+        // Country C1
+        // After all the checks, the Scope element is removed
+        LOGGER.error ("Explicitly removing COUNTRY_C1 from the SBDH. Development only!");
+        aSBD.getStandardBusinessDocumentHeader ()
+            .getBusinessScope ()
+            .getScope ()
+            .removeIf (x -> CPeppolSBDH.SCOPE_COUNTRY_C1.equals (x.getType ()));
+      }
+
       if (m_aSBDDocumentConsumer != null)
         m_aSBDDocumentConsumer.accept (aSBD);
 
