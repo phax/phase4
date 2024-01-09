@@ -290,7 +290,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
     // Check if the certificate is really a Peppol AP certificate - fail early
     // if something is misconfigured
-    // No CRL/OCSP check for performance
+    // * Do not cache result
+    // * Use the global checking mode or provide a new one
     final boolean bPerformOCSP = true;
     final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
                                                                                                           MetaAS4Manager.getTimestampMgr ()

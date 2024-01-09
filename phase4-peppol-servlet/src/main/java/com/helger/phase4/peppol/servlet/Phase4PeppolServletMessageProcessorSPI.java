@@ -604,9 +604,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
 
     if (getCheckSigningCertificateRevocation ().getAsBooleanValue (Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ()))
     {
-      // Check if signing certificate is revoked
       final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
       final X509Certificate aSenderCert = aState.getUsedCertificate ();
+      // Check if signing AP certificate is revoked
+      // * Use global caching setting
+      // * Use global certificate check mode
       final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aSenderCert,
                                                                                                                 aNow,
                                                                                                                 ETriState.UNDEFINED,

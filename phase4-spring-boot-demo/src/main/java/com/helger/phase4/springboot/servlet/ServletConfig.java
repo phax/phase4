@@ -177,6 +177,9 @@ public class ServletConfig
     // TODO This block SHOULD be uncommented once you have a Peppol certificate
     if (false)
     {
+      // Check that your Peppol AP certificate is valid
+      // * No caching
+      // * Use global certificate check mode
       final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
                                                                                                             MetaAS4Manager.getTimestampMgr ()
                                                                                                                           .getCurrentDateTime (),
