@@ -1412,7 +1412,7 @@ public final class Phase4PeppolSender
     {}
 
     /**
-     * Set the payload to be used as a byte array.
+     * Set the SBDH payload to be used as a byte array.
      *
      * @param aSBDHBytes
      *        The SBDH bytes to be used. May not be <code>null</code>.
