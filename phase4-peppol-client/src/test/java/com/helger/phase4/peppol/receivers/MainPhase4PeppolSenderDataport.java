@@ -63,7 +63,8 @@ public final class MainPhase4PeppolSenderDataport
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0204:01-2004-73");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme (true ? "0204:04011000-961-87"
+                                                                                                                          : "0204:01-2004-73");
       final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
       {
         public void onAS4Message (final AbstractAS4Message <?> aMsg)
