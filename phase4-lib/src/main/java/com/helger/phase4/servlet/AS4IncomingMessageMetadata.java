@@ -26,10 +26,12 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
@@ -55,6 +57,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private String m_sRemoteUser;
   private ICommonsList <X509Certificate> m_aRemoteTlsCerts;
   private final ICommonsList <Cookie> m_aCookies = new CommonsArrayList <> ();
+  private final HttpHeaderMap m_aHttpHeaderMap = new HttpHeaderMap ();
   private String m_sRequestMessageID;
 
   /**
@@ -236,6 +239,22 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   public AS4IncomingMessageMetadata setCookies (@Nullable final Cookie [] aCookies)
   {
     m_aCookies.setAll (aCookies);
+    return this;
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public HttpHeaderMap getAllHttpHeaders ()
+  {
+    return m_aHttpHeaderMap.getClone ();
+  }
+
+  @Nonnull
+  public AS4IncomingMessageMetadata setHttpHeaders (@Nullable final HttpHeaderMap aHttpHeaderMap)
+  {
+    m_aHttpHeaderMap.removeAll ();
+    if (aHttpHeaderMap != null)
+      m_aHttpHeaderMap.addAllHeaders (aHttpHeaderMap);
     return this;
   }
 
