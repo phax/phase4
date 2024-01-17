@@ -160,7 +160,8 @@ public final class Phase4PeppolSender
                                      sRealInstanceIdentifier,
                                      MetaAS4Manager.getTimestampMgr ().getCurrentXMLDateTime ());
 
-    // Not cloning the payload element is for saving memory only
+    // Not cloning the payload element is for saving memory only (if it can be
+    // ensured, the source payload element is not altered externally of course)
     if (bClonePayloadElement)
       aData.setBusinessMessage (aPayloadElement);
     else
@@ -369,7 +370,9 @@ public final class Phase4PeppolSender
 
   /**
    * @return Create a new Builder for AS4 messages if the SBDH payload is
-   *         already present. Never <code>null</code>.
+   *         already present. This builder is slightly more limited, because it
+   *         doesn't offer validation, as it is expected to be done before.
+   *         Never <code>null</code>.
    * @see #builder() if you want phase4 to create the Standard Business Document
    * @since 0.9.6
    */
