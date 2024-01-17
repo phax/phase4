@@ -197,7 +197,7 @@ public class ServletConfig
     {
       // To process the message even though the receiver is not registered in
       // our AP
-      Phase4PeppolServletConfiguration.setReceiverCheckEnabled (false);
+      Phase4PeppolServletConfiguration.setReceiverCheckEnabled (true);
       Phase4PeppolServletConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
       Phase4PeppolServletConfiguration.setAS4EndpointURL (sAPURL);
       Phase4PeppolServletConfiguration.setAPCertificate (aAPCert);
