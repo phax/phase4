@@ -24,8 +24,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.StringHelper;
 
 import jakarta.servlet.http.Cookie;
@@ -185,6 +187,27 @@ public interface IAS4IncomingMessageMetadata
   @Nonnull
   @ReturnsMutableObject
   ICommonsList <Cookie> cookies ();
+
+  /**
+   * @return A copy of the list of all Cookies contained in the request. Never
+   *         <code>null</code> but maybe empty.
+   * @since 2.7.3
+   */
+  @Nonnull
+  @ReturnsMutableObject
+  default ICommonsList <Cookie> getAllCookies ()
+  {
+    return cookies ().getClone ();
+  }
+
+  /**
+   * @return A copy of all the HTTP headers from the incoming request. Never
+   *         <code>null</code> but maybe empty.
+   * @since 2.7.3
+   */
+  @Nonnull
+  @ReturnsMutableCopy
+  HttpHeaderMap getAllHttpHeaders ();
 
   /**
    * @return The AS4 message ID of the request message. This field is always
