@@ -312,6 +312,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     {
       Phase4PeppolServletConfiguration.setReceiverCheckEnabled (true);
       Phase4PeppolServletConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
+      Phase4PeppolServletConfiguration.setWildcardSelectionMode (Phase4PeppolServletConfiguration.DEFAULT_WILDCARD_SELECTION_MODE);
       Phase4PeppolServletConfiguration.setAS4EndpointURL (sAPURL);
       Phase4PeppolServletConfiguration.setAPCertificate (aAPCert);
       LOGGER.info (CAS4.LIB_NAME +

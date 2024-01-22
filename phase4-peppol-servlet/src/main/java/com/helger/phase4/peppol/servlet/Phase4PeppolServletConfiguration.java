@@ -18,16 +18,20 @@ package com.helger.phase4.peppol.servlet;
 
 import java.security.cert.X509Certificate;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.phase4.CAS4;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.PeppolWildcardSelector;
+import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
 
 /**
  * This class contains the references values against which incoming values are
@@ -43,11 +47,13 @@ public final class Phase4PeppolServletConfiguration
 {
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
+  public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.WILDCARD_ONLY;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolServletConfiguration.class);
 
   private static boolean s_bReceiverCheckEnabled = DEFAULT_RECEIVER_CHECK_ENABLED;
   private static ISMPServiceMetadataProvider s_aSMPClient;
+  private static PeppolWildcardSelector.EMode s_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
   private static boolean s_bPerformSBDHValueChecks = PeppolSBDHDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
@@ -74,8 +80,9 @@ public final class Phase4PeppolServletConfiguration
    * @param bReceiverCheckEnabled
    *        <code>true</code> to enable the checks, <code>false</code> to
    *        disable them.
-   * @see #setAS4EndpointURL(String)
    * @see #setSMPClient(ISMPServiceMetadataProvider)
+   * @see #setWildcardSelectionMode(EMode)
+   * @see #setAS4EndpointURL(String)
    * @see #setAPCertificate(X509Certificate)
    */
   public static void setReceiverCheckEnabled (final boolean bReceiverCheckEnabled)
@@ -105,6 +112,34 @@ public final class Phase4PeppolServletConfiguration
   public static void setSMPClient (@Nullable final ISMPServiceMetadataProvider aSMPClient)
   {
     s_aSMPClient = aSMPClient;
+  }
+
+  /**
+   * @return The Peppol SMP wildcard selection to be used for document type
+   *         resolution, if a wildcard document type identifier is used. Never
+   *         <code>null</code>. Defaults to
+   *         {@link #DEFAULT_WILDCARD_SELECTION_MODE}.
+   * @since 2.7.3
+   */
+  @Nonnull
+  public static PeppolWildcardSelector.EMode getWildcardSelectionMode ()
+  {
+    return s_eWildcardSelectionMode;
+  }
+
+  /**
+   * Change the Peppol SMP wildcard selection to be used for document type
+   * resolution, if a wildcard document type identifier is used.
+   *
+   * @param eWildcardSelectionMode
+   *        The wildcard selection mode to be used. May not be
+   *        <code>null</code>.
+   * @since 2.7.3
+   */
+  public static void setWildcardSelectionMode (@Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
+  {
+    ValueEnforcer.notNull (eWildcardSelectionMode, "WildcardSlectionMode");
+    s_eWildcardSelectionMode = eWildcardSelectionMode;
   }
 
   /**
@@ -172,7 +207,7 @@ public final class Phase4PeppolServletConfiguration
     if (aSMPClient == null || StringHelper.hasNoText (sAS4EndpointURL) || aAPCertificate == null)
       return null;
 
-    return new Phase4PeppolReceiverCheckData (aSMPClient, sAS4EndpointURL, aAPCertificate);
+    return new Phase4PeppolReceiverCheckData (aSMPClient, sAS4EndpointURL, aAPCertificate, getWildcardSelectionMode ());
   }
 
   /**

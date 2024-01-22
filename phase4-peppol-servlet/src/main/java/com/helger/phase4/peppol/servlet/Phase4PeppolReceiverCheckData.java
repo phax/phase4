@@ -23,7 +23,10 @@ import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.PeppolWildcardSelector;
+import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
 
 /**
  * This class contains the "per-request" data of
@@ -36,6 +39,7 @@ import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 public class Phase4PeppolReceiverCheckData
 {
   private final ISMPServiceMetadataProvider m_aSMPClient;
+  private final EMode m_eWildcardSelectionMode;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
 
@@ -50,15 +54,21 @@ public class Phase4PeppolReceiverCheckData
    * @param aAPCertificate
    *        The AP certificate to be used for compatibility. May not be
    *        <code>null</code>.
+   * @param eWildcardSelectionMode
+   *        The wildcard selection mode to use for the SMP. May not be
+   *        <code>null</code>. Added in 2.7.3.
    */
   public Phase4PeppolReceiverCheckData (@Nonnull final ISMPServiceMetadataProvider aSMPClient,
                                         @Nonnull @Nonempty final String sAS4EndpointURL,
-                                        @Nonnull final X509Certificate aAPCertificate)
+                                        @Nonnull final X509Certificate aAPCertificate,
+                                        @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
   {
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
+    ValueEnforcer.notNull (eWildcardSelectionMode, "WildcardSelectionMode");
     ValueEnforcer.notEmpty (sAS4EndpointURL, "AS4EndpointURL");
     ValueEnforcer.notNull (aAPCertificate, "APCertificate");
     m_aSMPClient = aSMPClient;
+    m_eWildcardSelectionMode = eWildcardSelectionMode;
     m_sAS4EndpointURL = sAS4EndpointURL;
     m_aAPCertificate = aAPCertificate;
   }
@@ -72,6 +82,16 @@ public class Phase4PeppolReceiverCheckData
   public ISMPServiceMetadataProvider getSMPClient ()
   {
     return m_aSMPClient;
+  }
+
+  /**
+   * @return The transport profile to be used. Never <code>null</code>.
+   * @since 2.7.3
+   */
+  @Nonnull
+  public final PeppolWildcardSelector.EMode getWildcardSelectionMode ()
+  {
+    return m_eWildcardSelectionMode;
   }
 
   /**
@@ -93,5 +113,15 @@ public class Phase4PeppolReceiverCheckData
   public X509Certificate getAPCertificate ()
   {
     return m_aAPCertificate;
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (null).append ("SMPClient", m_aSMPClient)
+                                       .append ("WildcardSelectionMode", m_eWildcardSelectionMode)
+                                       .append ("AS4EndpointURL", m_sAS4EndpointURL)
+                                       .append ("APCertificate", m_aAPCertificate)
+                                       .getToString ();
   }
 }

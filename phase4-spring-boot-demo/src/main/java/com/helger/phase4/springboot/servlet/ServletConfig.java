@@ -199,6 +199,7 @@ public class ServletConfig
       // our AP
       Phase4PeppolServletConfiguration.setReceiverCheckEnabled (true);
       Phase4PeppolServletConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
+      Phase4PeppolServletConfiguration.setWildcardSelectionMode (Phase4PeppolServletConfiguration.DEFAULT_WILDCARD_SELECTION_MODE);
       Phase4PeppolServletConfiguration.setAS4EndpointURL (sAPURL);
       Phase4PeppolServletConfiguration.setAPCertificate (aAPCert);
       LOGGER.info ("phase4 Peppol receiver checks are enabled");

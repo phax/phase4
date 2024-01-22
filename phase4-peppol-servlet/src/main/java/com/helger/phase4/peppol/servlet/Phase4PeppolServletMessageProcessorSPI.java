@@ -64,6 +64,7 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
+import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4Attachment;
@@ -84,9 +85,11 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.peppol.smp1.EndpointType;
+import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
 import com.helper.peppol.reporting.api.PeppolReportingItem;
 
 /**
@@ -300,9 +303,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                              @Nonnull final ISMPServiceMetadataProvider aSMPClient,
                                              @Nullable final IParticipantIdentifier aRecipientID,
                                              @Nullable final IDocumentTypeIdentifier aDocTypeID,
-                                             @Nullable final IProcessIdentifier aProcessID) throws Phase4PeppolServletException
+                                             @Nullable final IProcessIdentifier aProcessID,
+                                             @Nullable final PeppolWildcardSelector.EMode eWildcardSelectionMode) throws Phase4PeppolServletException
   {
-    if (aRecipientID == null || aDocTypeID == null || aProcessID == null)
+    if (aRecipientID == null || aDocTypeID == null || aProcessID == null || eWildcardSelectionMode == null)
       return null;
 
     try
@@ -319,11 +323,27 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                       " and " +
                       aProcessID.getURIEncoded () +
                       " and " +
-                      m_aTransportProfile.getID ());
+                      m_aTransportProfile.getID () +
+                      "; wildcard-mode=" +
+                      eWildcardSelectionMode);
       }
 
-      // Query the SMP
-      return aSMPClient.getEndpoint (aRecipientID, aDocTypeID, aProcessID, m_aTransportProfile);
+      final EndpointType aEndpoint;
+      final boolean bWildcard = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
+      if (bWildcard)
+      {
+        // Wildcard lookup
+        final SignedServiceMetadataType aSSM = aSMPClient.getWildcardServiceMetadataOrNull (aRecipientID,
+                                                                                            aDocTypeID,
+                                                                                            eWildcardSelectionMode);
+        aEndpoint = aSSM == null ? null : SMPClientReadOnly.getEndpoint (aSSM, aProcessID, m_aTransportProfile);
+      }
+      else
+      {
+        // Direct match
+        aEndpoint = aSMPClient.getEndpoint (aRecipientID, aDocTypeID, aProcessID, m_aTransportProfile);
+      }
+      return aEndpoint;
     }
     catch (final Exception ex)
     {
@@ -793,7 +813,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                                                        aReceiverCheckData.getSMPClient (),
                                                                        aReceiverID,
                                                                        aDocTypeID,
-                                                                       aProcessID);
+                                                                       aProcessID,
+                                                                       aReceiverCheckData.getWildcardSelectionMode ());
           if (aReceiverEndpoint == null)
           {
             final String sMsg = "Failed to resolve SMP endpoint for provided receiver ID (" +
