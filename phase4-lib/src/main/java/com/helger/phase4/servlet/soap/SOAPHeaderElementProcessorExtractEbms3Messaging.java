@@ -308,7 +308,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
       if (aFromPartyIdList.size () > 1 || aToPartyIdList.size () > 1)
       {
-        final String sDetails = "More than one PartyId is containted in From or To Recipient please check the message.";
+        final String sDetails = "More than one PartyId is contained in From or To Recipient please check the message.";
         LOGGER.error (sDetails);
         aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
                                                                               .errorDetail (sDetails)
