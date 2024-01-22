@@ -302,13 +302,26 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
       // PartyInfo is mandatory in UserMessage
       // From is mandatory in PartyInfo
-      // To is mandatory in PartyInfo
       final List <Ebms3PartyId> aFromPartyIdList = aUserMessage.getPartyInfo ().getFrom ().getPartyId ();
-      final List <Ebms3PartyId> aToPartyIdList = aUserMessage.getPartyInfo ().getTo ().getPartyId ();
-
-      if (aFromPartyIdList.size () > 1 || aToPartyIdList.size () > 1)
+      if (aFromPartyIdList.size () > 1)
       {
-        final String sDetails = "More than one PartyId is contained in From or To Recipient please check the message.";
+        final String sDetails = "More than one PartyId (" +
+                                aFromPartyIdList.size () +
+                                ") is contained in From-Recipient please check the message.";
+        LOGGER.error (sDetails);
+        aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                              .errorDetail (sDetails)
+                                                                              .build ());
+        return ESuccess.FAILURE;
+      }
+
+      // To is mandatory in PartyInfo
+      final List <Ebms3PartyId> aToPartyIdList = aUserMessage.getPartyInfo ().getTo ().getPartyId ();
+      if (aToPartyIdList.size () > 1)
+      {
+        final String sDetails = "More than one PartyId (" +
+                                aToPartyIdList.size () +
+                                ") is contained in To-Recipient please check the message.";
         LOGGER.error (sDetails);
         aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
                                                                               .errorDetail (sDetails)
