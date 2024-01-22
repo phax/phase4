@@ -59,7 +59,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4EndpointDetailProviderPeppol.class);
 
   private final ISMPServiceMetadataProvider m_aSMPClient;
-  private PeppolWildcardSelector.EMode m_eWildcardSelectionMode = EMode.WILDCARD_ONLY;
+  private PeppolWildcardSelector.EMode m_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private ISMPTransportProfile m_aTP = DEFAULT_TRANSPORT_PROFILE;
   private EndpointType m_aEndpoint;
 
@@ -172,14 +172,13 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
       // Perform SMP lookup
       try
       {
-        final boolean bWildcard = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ()) &&
-                                  m_aSMPClient instanceof SMPClientReadOnly;
+        final boolean bWildcard = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
         if (bWildcard)
         {
           // Wildcard lookup
-          final SignedServiceMetadataType aSSM = ((SMPClientReadOnly) m_aSMPClient).getWildcardServiceMetadataOrNull (aReceiverID,
-                                                                                                                      aDocTypeID,
-                                                                                                                      m_eWildcardSelectionMode);
+          final SignedServiceMetadataType aSSM = m_aSMPClient.getWildcardServiceMetadataOrNull (aReceiverID,
+                                                                                                aDocTypeID,
+                                                                                                m_eWildcardSelectionMode);
           m_aEndpoint = aSSM == null ? null : SMPClientReadOnly.getEndpoint (aSSM, aProcID, m_aTP);
         }
         else
