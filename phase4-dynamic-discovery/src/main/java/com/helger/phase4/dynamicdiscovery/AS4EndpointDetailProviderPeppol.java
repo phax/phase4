@@ -80,8 +80,9 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * @return The transport profile to be used. Defaults to
-   *         {@link #DEFAULT_WILDCARD_SELECTION_MODE}.
+   * @return The Peppol SMP wildcard selection to be used for document type
+   *         resolution, if a wildcard document type identifier is used.
+   *         Defaults to {@link #DEFAULT_WILDCARD_SELECTION_MODE}.
    */
   @Nonnull
   public final PeppolWildcardSelector.EMode getWildcardSelectionMode ()
@@ -90,7 +91,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * Change the Peppol wildcard selection to be used for document type
+   * Change the Peppol SMP wildcard selection to be used for document type
    * resolution, if a wildcard document type identifier is used. This only has
    * an effect if it is called prior to
    * {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}.
