@@ -827,9 +827,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                 m_aTransportProfile.getID () +
                                 ") - not handling incoming AS4 document";
             LOGGER.error (sLogPrefix + sMsg);
+            // the errorDetail MUST be set according to Peppol AS4 profile 2.2
             aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
                                                                .refToMessageInError (aState.getMessageID ())
-                                                               .errorDetail (sMsg)
+                                                               .description (sMsg, aDisplayLocale)
+                                                               .errorDetail ("PEPPOL:NOT_SERVICED")
                                                                .build ());
             return AS4MessageProcessorResult.createFailure ();
           }
