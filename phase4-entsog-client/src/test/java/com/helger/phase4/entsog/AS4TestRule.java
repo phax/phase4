@@ -1,8 +1,8 @@
 /*
- * Copyright (C) 2015-2023 Pavel Rotek
+ * Copyright (C) 2015-2024 Pavel Rotek
  * pavel[dot]rotek[at]gmail[dot]com
  *
- * Copyright (C) 2021 Philip Helger (www.helger.com)
+ * Copyright (C) 2021-2024 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
