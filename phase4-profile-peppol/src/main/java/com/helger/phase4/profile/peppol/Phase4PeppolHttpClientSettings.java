@@ -35,7 +35,7 @@ import com.helger.phase4.CAS4Version;
  * in v2.7.4
  *
  * @author Philip Helger
- * @since 0.9.10
+ * @since 0.9.10, 2.7.4
  */
 public class Phase4PeppolHttpClientSettings extends HttpClientSettings
 {
