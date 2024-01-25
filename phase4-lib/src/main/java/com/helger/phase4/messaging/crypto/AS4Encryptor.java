@@ -129,7 +129,7 @@ public final class AS4Encryptor
                  aCryptParams.getDigestAlgorithm () +
                  (aCryptParams.hasAlias () ? "; KeyAlias=" + aCryptParams.getAlias () : "") +
                  (aCryptParams.hasCertificate () ? "; CertificateSubjectCN=" +
-                                                   aCryptParams.getCertificate ().getSubjectDN ().getName ()
+                                                   aCryptParams.getCertificate ().getSubjectX500Principal ().getName ()
                                                  : ""));
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
@@ -220,7 +220,7 @@ public final class AS4Encryptor
                  aCryptParams.getDigestAlgorithm () +
                  (aCryptParams.hasAlias () ? "; KeyAlias=" + aCryptParams.getAlias () : "") +
                  (aCryptParams.hasCertificate () ? "; CertificateSubjectCN=" +
-                                                   aCryptParams.getCertificate ().getSubjectDN ().getName ()
+                                                   aCryptParams.getCertificate ().getSubjectX500Principal ().getName ()
                                                  : ""));
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
