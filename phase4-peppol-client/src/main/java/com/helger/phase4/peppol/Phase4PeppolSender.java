@@ -72,6 +72,7 @@ import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.profile.peppol.PeppolPMode;
+import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
 import com.helger.phase4.util.Phase4Exception;
