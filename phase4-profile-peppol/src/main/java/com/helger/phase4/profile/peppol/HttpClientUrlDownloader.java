@@ -20,8 +20,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
@@ -36,6 +39,8 @@ import com.helger.peppol.utils.IUrlDownloader;
  */
 public class HttpClientUrlDownloader implements IUrlDownloader
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (HttpClientUrlDownloader.class);
+
   private final HttpClientSettings m_aHCS;
 
   /**
@@ -52,12 +57,20 @@ public class HttpClientUrlDownloader implements IUrlDownloader
   }
 
   @Nullable
-  public byte [] downloadURL (final String sURL) throws Exception
+  public byte [] downloadURL (@Nonnull @Nonempty final String sURL) throws Exception
   {
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Trying to download CRL via HttpClient from '" + sURL + "'");
+
     try (final HttpClientManager aHCF = HttpClientManager.create (m_aHCS))
     {
       final HttpGet aGet = new HttpGet (sURL);
       return aHCF.execute (aGet, new ResponseHandlerByteArray ());
+    }
+    finally
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Finished downloading CRL via HttpClient from '" + sURL + "'");
     }
   }
 }
