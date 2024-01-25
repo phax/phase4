@@ -18,17 +18,26 @@ package com.helger.phase4.profile.peppol;
 
 import javax.annotation.Nonnull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.helger.commons.ValueEnforcer;
 import com.helger.httpclient.HttpClientSettings;
+import com.helger.peppol.utils.CRLCache;
 import com.helger.peppol.utils.CRLDownloader;
+import com.helger.peppol.utils.CertificateRevocationChecker;
 
 /**
  * The Peppol specific CRL downloader using the {@link HttpClientUrlDownloader}
  * internally.
  *
  * @author Philip Helger
+ * @since 2.7.4
  */
 public class PeppolCRLDownloader extends CRLDownloader
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (PeppolCRLDownloader.class);
+
   /**
    * Default constructor using {@link Phase4PeppolHttpClientSettings}.
    */
@@ -46,5 +55,31 @@ public class PeppolCRLDownloader extends CRLDownloader
   public PeppolCRLDownloader (@Nonnull final HttpClientSettings aHCS)
   {
     super (new HttpClientUrlDownloader (aHCS));
+  }
+
+  /**
+   * Install a global CRLCache using this CRL downloader and the default
+   * {@link Phase4PeppolHttpClientSettings}.
+   */
+  public static void setAsDefaultCRLCache ()
+  {
+    setAsDefaultCRLCache (new Phase4PeppolHttpClientSettings ());
+  }
+
+  /**
+   * Install a global CRLCache using this CRL downloader and the provided
+   * {@link HttpClientSettings}.
+   *
+   * @param aHCS
+   *        The {@link HttpClientSettings} to be used. May not be
+   *        <code>null</code>.
+   */
+  public static void setAsDefaultCRLCache (@Nonnull final HttpClientSettings aHCS)
+  {
+    ValueEnforcer.notNull (aHCS, "HttpClientSettings");
+
+    LOGGER.info ("Installing the PeppolCRLDownloader as the default CRL cache");
+    CertificateRevocationChecker.setDefaultCRLCache (new CRLCache (new PeppolCRLDownloader (aHCS),
+                                                                   CRLCache.DEFAULT_CACHING_DURATION));
   }
 }
