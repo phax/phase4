@@ -59,6 +59,8 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
+import com.helger.phase4.profile.peppol.PeppolCRLDownloader;
+import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
 import com.helger.photon.core.servlet.WebAppListener;
@@ -206,6 +208,11 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // they are revoked or not
     // (this is the default setting, but added it here for easy modification)
     Phase4PeppolServletConfiguration.setCheckSigningCertificateRevocation (true);
+
+    // Make sure the download of CRL is using Apache HttpClient and that the
+    // provided settings are used. If e.g. a proxy is needed to access outbound
+    // resources, it can be configured here
+    PeppolCRLDownloader.setAsDefaultCRLCache (new Phase4PeppolHttpClientSettings ());
   }
 
   private static void _initPeppolAS4 ()
