@@ -16,18 +16,35 @@
  */
 package com.helger.phase4.profile.peppol;
 
-import org.junit.Test;
+import javax.annotation.Nonnull;
+
+import com.helger.httpclient.HttpClientSettings;
+import com.helger.peppol.utils.CRLDownloader;
 
 /**
- * Test class for class {@link Phase4PeppolHttpClientSettings}
+ * The Peppol specific CRL downloader using the {@link HttpClientUrlDownloader}
+ * internally.
  *
  * @author Philip Helger
  */
-public class Phase4PeppolHttpClientSettingsTest
+public class PeppolCRLDownloader extends CRLDownloader
 {
-  @Test
-  public void testBasic ()
+  /**
+   * Default constructor using {@link Phase4PeppolHttpClientSettings}.
+   */
+  public PeppolCRLDownloader ()
   {
-    new Phase4PeppolHttpClientSettings ();
+    this (new Phase4PeppolHttpClientSettings ());
+  }
+
+  /**
+   * Constructor using specific settings
+   *
+   * @param aHCS
+   *        The {@link HttpClientSettings} to use. May not be <code>null</code>.
+   */
+  public PeppolCRLDownloader (@Nonnull final HttpClientSettings aHCS)
+  {
+    super (new HttpClientUrlDownloader (aHCS));
   }
 }

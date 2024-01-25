@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Philip Helger (www.helger.com)
+ * Copyright (C) 2019-2024 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,8 @@ import com.helger.phase4.CAS4Version;
 
 /**
  * Special {@link HttpClientSettings} with better defaults for Peppol.<br>
- * Was originally in phase4-peppol-client but was moved here in v2.7.4
+ * Was originally in phase4-peppol-client but was moved to phase4-profile-peppol
+ * in v2.7.4
  *
  * @author Philip Helger
  * @since 0.9.10
