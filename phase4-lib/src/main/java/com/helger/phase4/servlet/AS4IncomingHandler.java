@@ -171,8 +171,8 @@ public final class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
-                                                                                                             .getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
+                                                                           : AS4DumpManager.getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -467,7 +467,8 @@ public final class AS4IncomingHandler
                                              aHeader.getNode (),
                                              aIncomingAttachments,
                                              aState,
-                                             aProcessingErrorMessagesTarget).isSuccess ())
+                                             aProcessingErrorMessagesTarget)
+                      .isSuccess ())
         {
           // Mark header as processed (for mustUnderstand check)
           aHeader.setProcessed (true);
@@ -564,10 +565,13 @@ public final class AS4IncomingHandler
         // href
         final Ebms3PartInfo aPartInfo = CollectionHelper.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
                                                                     x -> x.getHref () != null &&
-                                                                         x.getHref ().contains (sAttachmentContentID));
+                                                                         (x.getHref ().equals (sAttachmentContentID) ||
+                                                                          x.getHref ()
+                                                                           .equals (MessageHelperMethods.PREFIX_CID +
+                                                                                    sAttachmentContentID)));
         if (aPartInfo != null && aPartInfo.getPartProperties () != null)
         {
-          // Find MimeType property
+          // Find "MimeType" property
           final Ebms3Property aProperty = CollectionHelper.findFirst (aPartInfo.getPartProperties ().getProperty (),
                                                                       x -> x.getName ()
                                                                             .equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_MIME_TYPE));
