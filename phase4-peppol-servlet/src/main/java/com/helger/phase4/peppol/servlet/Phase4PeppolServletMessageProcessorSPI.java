@@ -90,6 +90,7 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
+import com.helper.peppol.reporting.api.CPeppolReporting;
 import com.helper.peppol.reporting.api.PeppolReportingItem;
 
 /**
@@ -509,6 +510,13 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
 
     try
     {
+      String sC1CountryCode = aPeppolSBD.getCountryC1 ();
+      if (StringHelper.hasNoText (sC1CountryCode))
+      {
+        // Fallback to ZZ to make sure the item can be created
+        sC1CountryCode = CPeppolReporting.REPLACEMENT_COUNTRY_CODE;
+      }
+
       return PeppolReportingItem.builder ()
                                 .exchangeDateTime (aExchangeDT)
                                 .directionReceiving ()
@@ -517,7 +525,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                 .docTypeID (aPeppolSBD.getDocumentTypeAsIdentifier ())
                                 .processID (aPeppolSBD.getProcessAsIdentifier ())
                                 .transportProtocolPeppolAS4v2 ()
-                                .c1CountryCode (aPeppolSBD.getCountryC1 ())
+                                .c1CountryCode (sC1CountryCode)
                                 .c4CountryCode (sC4CountryCode)
                                 .endUserID (sEndUserID)
                                 .build ();
