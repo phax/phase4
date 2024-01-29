@@ -83,7 +83,7 @@
     <ph-web.version>10.1.7</ph-web.version>
     <phive.version>9.0.0</phive.version>
     <phive-rules.version>3.1.6</phive-rules.version>
-    <spring-boot.version>3.2.1</spring-boot.version>
+    <spring-boot.version>3.2.2</spring-boot.version>
   </properties>
   
   <dependencyManagement>
