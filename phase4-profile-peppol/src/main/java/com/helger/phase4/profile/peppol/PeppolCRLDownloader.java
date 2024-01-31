@@ -78,7 +78,7 @@ public class PeppolCRLDownloader extends CRLDownloader
   {
     ValueEnforcer.notNull (aHCS, "HttpClientSettings");
 
-    LOGGER.info ("Installing the PeppolCRLDownloader as the default CRL cache");
+    LOGGER.info ("Installing the PeppolCRLDownloader as the default CRL cache using HttpClientSettings " + aHCS);
     CertificateRevocationChecker.setDefaultCRLCache (new CRLCache (new PeppolCRLDownloader (aHCS),
                                                                    CRLCache.DEFAULT_CACHING_DURATION));
   }
