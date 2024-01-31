@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
@@ -41,10 +42,10 @@ public class HttpClientUrlDownloader implements IUrlDownloader
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (HttpClientUrlDownloader.class);
 
-  private final HttpClientSettings m_aHCS;
+  private final HttpClientFactory m_aHCF;
 
   /**
-   * Constructor
+   * Constructor with {@link HttpClientSettings}
    *
    * @param aHCS
    *        The {@link HttpClientSettings} to use. Must not be
@@ -52,8 +53,19 @@ public class HttpClientUrlDownloader implements IUrlDownloader
    */
   public HttpClientUrlDownloader (@Nonnull final HttpClientSettings aHCS)
   {
-    ValueEnforcer.notNull (aHCS, "HttpClientSettings");
-    m_aHCS = aHCS;
+    this (new HttpClientFactory (aHCS));
+  }
+
+  /**
+   * Constructor with {@link HttpClientFactory}
+   *
+   * @param aHCF
+   *        The {@link HttpClientFactory} to use. Must not be <code>null</code>.
+   */
+  public HttpClientUrlDownloader (@Nonnull final HttpClientFactory aHCF)
+  {
+    ValueEnforcer.notNull (aHCF, "HttpClientFactory");
+    m_aHCF = aHCF;
   }
 
   @Nullable
@@ -62,7 +74,7 @@ public class HttpClientUrlDownloader implements IUrlDownloader
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Trying to download CRL via HttpClient from '" + sURL + "'");
 
-    try (final HttpClientManager aHCF = HttpClientManager.create (m_aHCS))
+    try (final HttpClientManager aHCF = new HttpClientManager (m_aHCF))
     {
       final HttpGet aGet = new HttpGet (sURL);
       return aHCF.execute (aGet, new ResponseHandlerByteArray ());
