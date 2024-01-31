@@ -162,6 +162,20 @@ public class ServletConfig
 
   private static void _initPeppolAS4 ()
   {
+    // Our server expects all SBDH to contain the COUNTRY_C1 element in SBDH
+    // (this is the default setting, but added it here for easy modification)
+    Phase4PeppolServletConfiguration.setCheckSBDHForMandatoryCountryC1 (true);
+
+    // Our server should check all signing certificates of incoming messages if
+    // they are revoked or not
+    // (this is the default setting, but added it here for easy modification)
+    Phase4PeppolServletConfiguration.setCheckSigningCertificateRevocation (true);
+
+    // Make sure the download of CRL is using Apache HttpClient and that the
+    // provided settings are used. If e.g. a proxy is needed to access outbound
+    // resources, it can be configured here
+    PeppolCRLDownloader.setAsDefaultCRLCache (new Phase4PeppolHttpClientSettings ());
+
     // Check if crypto properties are okay
     final KeyStore aKS = AS4CryptoFactoryProperties.getDefaultInstance ().getKeyStore ();
     if (aKS == null)
@@ -211,20 +225,6 @@ public class ServletConfig
       Phase4PeppolServletConfiguration.setReceiverCheckEnabled (false);
       LOGGER.warn ("phase4 Peppol receiver checks are disabled");
     }
-
-    // Our server expects all SBDH to contain the COUNTRY_C1 element in SBDH
-    // (this is the default setting, but added it here for easy modification)
-    Phase4PeppolServletConfiguration.setCheckSBDHForMandatoryCountryC1 (true);
-
-    // Our server should check all signing certificates of incoming messages if
-    // they are revoked or not
-    // (this is the default setting, but added it here for easy modification)
-    Phase4PeppolServletConfiguration.setCheckSigningCertificateRevocation (true);
-
-    // Make sure the download of CRL is using Apache HttpClient and that the
-    // provided settings are used. If e.g. a proxy is needed to access outbound
-    // resources, it can be configured here
-    PeppolCRLDownloader.setAsDefaultCRLCache (new Phase4PeppolHttpClientSettings ());
   }
 
   private static final class Destroyer

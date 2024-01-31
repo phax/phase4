@@ -199,7 +199,10 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                                     .getStorageFile (sMessageID,
                                                                                                                                      nTry,
                                                                                                                                      ".as4out")));
+  }
 
+  private static void _initPeppolAS4 ()
+  {
     // Our server expects all SBDH to contain the COUNTRY_C1 element in SBDH
     // (this is the default setting, but added it here for easy modification)
     Phase4PeppolServletConfiguration.setCheckSBDHForMandatoryCountryC1 (true);
@@ -213,10 +216,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // provided settings are used. If e.g. a proxy is needed to access outbound
     // resources, it can be configured here
     PeppolCRLDownloader.setAsDefaultCRLCache (new Phase4PeppolHttpClientSettings ());
-  }
 
-  private static void _initPeppolAS4 ()
-  {
     final AS4CryptoFactoryProperties aCF = AS4CryptoFactoryProperties.getDefaultInstance ();
     final AS4CryptoProperties aCP = aCF.cryptoProperties ();
 
