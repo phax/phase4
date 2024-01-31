@@ -81,7 +81,12 @@ public class HttpClientUrlDownloader implements IUrlDownloader
     }
     catch (final Exception ex)
     {
-      LOGGER.error ("Failed to download CRL from '" + sURL + "'");
+      LOGGER.error ("Failed to download CRL from '" +
+                    sURL +
+                    "': " +
+                    ex.getClass ().getName () +
+                    " - " +
+                    ex.getMessage ());
       throw ex;
     }
     finally
