@@ -67,6 +67,11 @@ public class HttpClientUrlDownloader implements IUrlDownloader
       final HttpGet aGet = new HttpGet (sURL);
       return aHCF.execute (aGet, new ResponseHandlerByteArray ());
     }
+    catch (final Exception ex)
+    {
+      LOGGER.error ("Failed to download CRL from '" + sURL + "'");
+      throw ex;
+    }
     finally
     {
       if (LOGGER.isDebugEnabled ())
