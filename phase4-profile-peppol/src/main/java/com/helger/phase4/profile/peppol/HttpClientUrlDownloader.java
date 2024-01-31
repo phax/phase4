@@ -74,10 +74,10 @@ public class HttpClientUrlDownloader implements IUrlDownloader
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Trying to download CRL via HttpClient from '" + sURL + "'");
 
-    try (final HttpClientManager aHCF = new HttpClientManager (m_aHCF))
+    try (final HttpClientManager aHCM = new HttpClientManager (m_aHCF))
     {
       final HttpGet aGet = new HttpGet (sURL);
-      return aHCF.execute (aGet, new ResponseHandlerByteArray ());
+      return aHCM.execute (aGet, new ResponseHandlerByteArray ());
     }
     catch (final Exception ex)
     {

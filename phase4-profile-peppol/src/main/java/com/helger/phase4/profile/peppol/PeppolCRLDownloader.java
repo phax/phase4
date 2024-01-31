@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.peppol.utils.CRLCache;
 import com.helger.peppol.utils.CRLDownloader;
@@ -58,9 +59,21 @@ public class PeppolCRLDownloader extends CRLDownloader
   }
 
   /**
+   * Constructor using specific settings
+   *
+   * @param aHCF
+   *        The {@link HttpClientFactory} to use. May not be <code>null</code>.
+   */
+  public PeppolCRLDownloader (@Nonnull final HttpClientFactory aHCF)
+  {
+    super (new HttpClientUrlDownloader (aHCF));
+  }
+
+  /**
    * Install a global CRLCache using this CRL downloader and the default
    * {@link Phase4PeppolHttpClientSettings}.
    */
+  @Deprecated (forRemoval = true, since = "2.7.5")
   public static void setAsDefaultCRLCache ()
   {
     setAsDefaultCRLCache (new Phase4PeppolHttpClientSettings ());
