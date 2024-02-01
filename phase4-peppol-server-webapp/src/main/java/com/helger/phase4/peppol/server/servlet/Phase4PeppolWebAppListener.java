@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.hc.core5.http.HttpHost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -44,7 +45,6 @@ import com.helger.commons.url.URLHelper;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
-import com.helger.peppol.utils.ERevocationCheckMode;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
@@ -215,7 +215,11 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // Make sure the download of CRL is using Apache HttpClient and that the
     // provided settings are used. If e.g. a proxy is needed to access outbound
     // resources, it can be configured here
-    PeppolCRLDownloader.setAsDefaultCRLCache (new Phase4PeppolHttpClientSettings ());
+    final Phase4PeppolHttpClientSettings aHCS = new Phase4PeppolHttpClientSettings ();
+    if (false)
+      aHCS.setProxyHost (new HttpHost (AS4Configuration.getConfig ().getAsString ("http.proxy.host"),
+                                       AS4Configuration.getConfig ().getAsInt ("http.proxy.port")));
+    PeppolCRLDownloader.setAsDefaultCRLCache (aHCS);
 
     final AS4CryptoFactoryProperties aCF = AS4CryptoFactoryProperties.getDefaultInstance ();
     final AS4CryptoProperties aCP = aCF.cryptoProperties ();
@@ -299,13 +303,11 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // if something is misconfigured
     // * Do not cache result
     // * Use the global checking mode or provide a new one
-    final boolean bPerformOCSP = true;
     final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
                                                                                                           MetaAS4Manager.getTimestampMgr ()
                                                                                                                         .getCurrentDateTime (),
                                                                                                           ETriState.FALSE,
-                                                                                                          bPerformOCSP ? null
-                                                                                                                       : ERevocationCheckMode.NONE);
+                                                                                                          null);
     if (eCheckResult.isInvalid ())
       throw new InitializationException ("The provided certificate is not a valid Peppol AP certificate. Check result: " +
                                          eCheckResult);
