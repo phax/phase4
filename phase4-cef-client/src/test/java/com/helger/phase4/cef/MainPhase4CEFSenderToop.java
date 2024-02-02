@@ -31,7 +31,6 @@ import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.servlet.mock.MockServletContext;
@@ -97,7 +96,6 @@ public final class MainPhase4CEFSenderToop
                          .toRole ("http://www.toop.eu/edelivery/gateway")
                          .payload (AS4OutgoingAttachment.builder ().data (aPayloadBytes).mimeTypeXML ())
                          .smpClient (new BDXRClientReadOnly (Phase4CEFSender.URL_PROVIDER, aReceiverID, SML_TOOP))
-                         .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                          .buildMessageCallback (aBuildMessageCallback)
                          .sendMessage ()
                          .isSuccess ())
