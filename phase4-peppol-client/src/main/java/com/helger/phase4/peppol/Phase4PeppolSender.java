@@ -1416,11 +1416,19 @@ public final class Phase4PeppolSender
     {}
 
     /**
-     * Set the SBDH payload to be used as a byte array.
+     * Set the SBDH payload to be used as a byte array. This means, that you
+     * need to pass in all other mandatory fields manually (sender participant
+     * ID, receiver participant ID, document Type ID, process ID and country
+     * C1).
      *
      * @param aSBDHBytes
      *        The SBDH bytes to be used. May not be <code>null</code>.
      * @return this for chaining
+     * @see #senderParticipantID(IParticipantIdentifier)
+     * @see #receiverParticipantID(IParticipantIdentifier)
+     * @see #documentTypeID(IDocumentTypeIdentifier)
+     * @see #processID(IProcessIdentifier)
+     * @see #countryC1(String)
      */
     @Nonnull
     public SBDHBuilder payload (@Nonnull final byte [] aSBDHBytes)
