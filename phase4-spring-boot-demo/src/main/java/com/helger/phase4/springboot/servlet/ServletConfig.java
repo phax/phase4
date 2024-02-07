@@ -86,7 +86,6 @@ public class ServletConfig
     {
       // Multipart is handled specifically inside
       settings ().setMultipartEnabled (false);
-      // HTTP POST only
       final AS4XServletHandler hdl = new AS4XServletHandler ();
       // This method refers to the outer static method
       hdl.setCryptoFactorySupplier (ServletConfig::getCryptoFactoryToUse);
@@ -102,6 +101,7 @@ public class ServletConfig
                                                                                                                            return false;
                                                                                                                          }
                                                                                                                        }));
+      // HTTP POST only
       handlerRegistry ().registerHandler (EHttpMethod.POST, hdl);
     }
   }
