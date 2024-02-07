@@ -47,6 +47,7 @@ import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolCRLDownloader;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
+import com.helger.phase4.servlet.AS4IncomingProfileSelectorFromGlobal;
 import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.AS4XServletHandler;
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
@@ -89,6 +90,18 @@ public class ServletConfig
       final AS4XServletHandler hdl = new AS4XServletHandler ();
       // This method refers to the outer static method
       hdl.setCryptoFactorySupplier (ServletConfig::getCryptoFactoryToUse);
+
+      // Example code to disable PMode validation
+      if (false)
+        hdl.setHandlerCustomizer ( (aRequestScope, aUnifiedResponse, aHandler) -> aHandler.setIncomingProfileSelector (
+                                                                                                                       new AS4IncomingProfileSelectorFromGlobal ()
+                                                                                                                       {
+                                                                                                                         public boolean validateAgainstProfile ()
+                                                                                                                         {
+                                                                                                                           // override;
+                                                                                                                           return false;
+                                                                                                                         }
+                                                                                                                       }));
       handlerRegistry ().registerHandler (EHttpMethod.POST, hdl);
     }
   }
