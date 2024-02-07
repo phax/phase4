@@ -19,19 +19,25 @@ package com.helger.phase4.peppol.receivers;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.concurrent.ExecutorServiceHelper;
+import com.helger.commons.timing.StopWatch;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 
 public class MainSendInParallelHelger
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainSendInParallelHelger.class);
+
   public static void main (final String [] args) throws Exception
   {
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
-
     try
     {
       // https://accap.mypeppol.app/as4
+      final StopWatch aSW = StopWatch.createdStarted ();
       final ExecutorService aES = Executors.newFixedThreadPool (10);
 
       for (int i = 0; i < 500; ++i)
@@ -39,6 +45,7 @@ public class MainSendInParallelHelger
 
       aES.shutdown ();
       ExecutorServiceHelper.waitUntilAllTasksAreFinished (aES);
+      LOGGER.info ("Sending out took " + aSW.stopAndGetMillis () + "ms");
     }
     finally
     {
