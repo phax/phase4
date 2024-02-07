@@ -73,7 +73,6 @@ import com.helger.phase4.wss.EWSSVersion;
  */
 public class BDEWCompatibilityValidator implements IAS4ProfileValidator
 {
-
   public BDEWCompatibilityValidator ()
   {}
 
@@ -569,7 +568,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
           aErrorList.add (_createError ("CollaborationInfo/Type must not be set!"));
       }
 
-      Ebms3Service aService = aCollaborationInfo.getService();
+      final Ebms3Service aService = aCollaborationInfo.getService ();
       if (aService == null || StringHelper.hasNoText (aService.getValue ()))
       {
         aErrorList.add (_createError ("CollaborationInfo/Service is missing"));
@@ -578,11 +577,11 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       {
         if (!BDEWPMode.containsService (aService.getValue ()))
         {
-          aErrorList.add (_createError ("CollaborationInfo/Service '" + aService.getValue() + "' is unsupported"));
+          aErrorList.add (_createError ("CollaborationInfo/Service '" + aService.getValue () + "' is unsupported"));
         }
       }
 
-      String sAction = aCollaborationInfo.getAction();
+      final String sAction = aCollaborationInfo.getAction ();
       if (StringHelper.hasNoText (sAction))
       {
         aErrorList.add (_createError ("CollaborationInfo/Action is missing"));
