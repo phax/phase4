@@ -611,7 +611,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     // Check preconditions
     if (!aState.isSoapDecrypted ())
     {
-      final String sDetails = "The received Peppol message was not encrypted properly.";
+      final String sDetails = "The received Peppol message seems not to be encrypted (properly).";
       LOGGER.error (sLogPrefix + sDetails);
       aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_DECRYPTION.errorBuilder (aDisplayLocale)
                                                                      .refToMessageInError (sMessageID)
@@ -621,7 +621,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     }
     if (!aState.isSoapSignatureChecked ())
     {
-      final String sDetails = "The received Peppol message was not signed properly.";
+      final String sDetails = "The received Peppol message seems not to be signed (properly).";
       LOGGER.error (sLogPrefix + sDetails);
       aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aDisplayLocale)
                                                                          .refToMessageInError (sMessageID)
