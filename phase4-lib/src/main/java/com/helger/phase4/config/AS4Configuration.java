@@ -286,4 +286,15 @@ public final class AS4Configuration
   {
     return getConfig ().getAsString ("phase4.endpoint.address");
   }
+
+  /**
+   * @return <code>true</code> if stack traces should be contained in error
+   *         messages, <code>false</code> if not. Defaults to <code>true</code>.
+   * @since 2.7.5
+   */
+  public static boolean isIncludeStackTraceInErrorMessages ()
+  {
+    // Defaults to true for backwards compatibility reason
+    return getConfig ().getAsBoolean ("phase4.errormsg.include.stacktraces", true);
+  }
 }

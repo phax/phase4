@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import com.helger.commons.builder.IBuilder;
 import com.helger.commons.error.level.IErrorLevel;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Description;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -91,13 +92,15 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   @Nonnull
   public Ebms3ErrorBuilder errorDetail (@Nullable final String s, @Nullable final Throwable t)
   {
+    // Be able to allow disabling sending stack traces (see #225)
+    final Throwable aLogT = AS4Configuration.isIncludeStackTraceInErrorMessages () ? t : null;
     return errorDetail (StringHelper.getConcatenatedOnDemand (s,
                                                               ": ",
-                                                              t == null ? "" : "Technical details: " +
-                                                                                StringHelper.getConcatenatedOnDemand (t.getClass ()
-                                                                                                                        .getName (),
-                                                                                                                      " - ",
-                                                                                                                      t.getMessage ())));
+                                                              aLogT == null ? "" : "Technical details: " +
+                                                                                   StringHelper.getConcatenatedOnDemand (aLogT.getClass ()
+                                                                                                                              .getName (),
+                                                                                                                         " - ",
+                                                                                                                         aLogT.getMessage ())));
   }
 
   @Nonnull
