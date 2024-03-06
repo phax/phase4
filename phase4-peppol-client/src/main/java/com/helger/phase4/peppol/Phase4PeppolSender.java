@@ -786,7 +786,8 @@ public final class Phase4PeppolSender
         LOGGER.error ("At least one mandatory field for endpoint discovery is not set and therefore the AS4 message cannot be send.");
         return ESuccess.FAILURE;
       }
-      // e.g. SMP lookup (may throw an exception)
+
+      // e.g. SMP lookup. Throws an Phase4Exception in case of error
       m_aEndpointDetailProvider.init (m_aDocTypeID, m_aProcessID, m_aReceiverID);
 
       // Certificate from e.g. SMP lookup (may throw an exception)
