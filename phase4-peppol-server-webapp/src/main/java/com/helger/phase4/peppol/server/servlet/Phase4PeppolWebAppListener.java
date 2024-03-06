@@ -260,7 +260,9 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                 sType = "trusted-certificate";
         }
         catch (final Exception ex)
-        {}
+        {
+          // Ignore
+        }
         LOGGER.info ("  " +
                      nIndex +
                      ".: alias(" +
