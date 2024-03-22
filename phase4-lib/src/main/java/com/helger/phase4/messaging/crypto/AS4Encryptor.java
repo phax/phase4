@@ -183,20 +183,29 @@ public final class AS4Encryptor
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (aCryptParams, "CryptParams");
 
+    LOGGER.info ("phase4 --- encrypt.soap:start");
+
+    final Document ret;
     if (AS4Configuration.isWSS4JSynchronizedSecurity ())
     {
       // Synchronize
-      return WSSSynchronizer.call ( () -> _encryptSoapBodyPayload (aCryptoFactoryCrypt,
-                                                                   eSoapVersion,
-                                                                   aDoc,
-                                                                   bMustUnderstand,
-                                                                   aCryptParams));
+      ret = WSSSynchronizer.call ( () -> _encryptSoapBodyPayload (aCryptoFactoryCrypt,
+                                                                  eSoapVersion,
+                                                                  aDoc,
+                                                                  bMustUnderstand,
+                                                                  aCryptParams));
+    }
+    else
+    {
+      // Ensure WSSConfig is initialized
+      WSSConfigManager.getInstance ();
+
+      ret = _encryptSoapBodyPayload (aCryptoFactoryCrypt, eSoapVersion, aDoc, bMustUnderstand, aCryptParams);
     }
 
-    // Ensure WSSConfig is initialized
-    WSSConfigManager.getInstance ();
+    LOGGER.info ("phase4 --- encrypt.soap:start");
 
-    return _encryptSoapBodyPayload (aCryptoFactoryCrypt, eSoapVersion, aDoc, bMustUnderstand, aCryptParams);
+    return ret;
   }
 
   @Nonnull
@@ -314,27 +323,36 @@ public final class AS4Encryptor
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aCryptParams, "CryptParams");
 
+    LOGGER.info ("phase4 --- encrypt.mime:start");
+
+    final AS4MimeMessage ret;
     if (AS4Configuration.isWSS4JSynchronizedSecurity ())
     {
       // Synchronize
-      return WSSSynchronizer.call ( () -> _encryptToMimeMessage (eSoapVersion,
-                                                                 aDoc,
-                                                                 aAttachments,
-                                                                 aCryptoFactoryCrypt,
-                                                                 bMustUnderstand,
-                                                                 aResHelper,
-                                                                 aCryptParams));
+      ret = WSSSynchronizer.call ( () -> _encryptToMimeMessage (eSoapVersion,
+                                                                aDoc,
+                                                                aAttachments,
+                                                                aCryptoFactoryCrypt,
+                                                                bMustUnderstand,
+                                                                aResHelper,
+                                                                aCryptParams));
+    }
+    else
+    {
+      // Ensure WSSConfig is initialized
+      WSSConfigManager.getInstance ();
+
+      ret = _encryptToMimeMessage (eSoapVersion,
+                                   aDoc,
+                                   aAttachments,
+                                   aCryptoFactoryCrypt,
+                                   bMustUnderstand,
+                                   aResHelper,
+                                   aCryptParams);
     }
 
-    // Ensure WSSConfig is initialized
-    WSSConfigManager.getInstance ();
+    LOGGER.info ("phase4 --- encrypt.mime:end");
 
-    return _encryptToMimeMessage (eSoapVersion,
-                                  aDoc,
-                                  aAttachments,
-                                  aCryptoFactoryCrypt,
-                                  bMustUnderstand,
-                                  aResHelper,
-                                  aCryptParams);
+    return ret;
   }
 }

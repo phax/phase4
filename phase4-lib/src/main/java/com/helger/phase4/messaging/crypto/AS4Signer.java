@@ -193,29 +193,38 @@ public final class AS4Signer
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aSigningParams, "SigningParams");
 
+    LOGGER.info ("phase4 --- sign:start");
+
+    final Document ret;
     if (AS4Configuration.isWSS4JSynchronizedSecurity ())
     {
       // Synchronize
-      return WSSSynchronizer.call ( () -> _createSignedMessage (aCryptoFactorySign,
-                                                                aPreSigningMessage,
-                                                                eSoapVersion,
-                                                                sMessagingID,
-                                                                aAttachments,
-                                                                aResHelper,
-                                                                bMustUnderstand,
-                                                                aSigningParams));
+      ret = WSSSynchronizer.call ( () -> _createSignedMessage (aCryptoFactorySign,
+                                                               aPreSigningMessage,
+                                                               eSoapVersion,
+                                                               sMessagingID,
+                                                               aAttachments,
+                                                               aResHelper,
+                                                               bMustUnderstand,
+                                                               aSigningParams));
+    }
+    else
+    {
+      // Ensure WSSConfig is initialized
+      WSSConfigManager.getInstance ();
+
+      ret = _createSignedMessage (aCryptoFactorySign,
+                                  aPreSigningMessage,
+                                  eSoapVersion,
+                                  sMessagingID,
+                                  aAttachments,
+                                  aResHelper,
+                                  bMustUnderstand,
+                                  aSigningParams);
     }
 
-    // Ensure WSSConfig is initialized
-    WSSConfigManager.getInstance ();
+    LOGGER.info ("phase4 --- sign:end");
 
-    return _createSignedMessage (aCryptoFactorySign,
-                                 aPreSigningMessage,
-                                 eSoapVersion,
-                                 sMessagingID,
-                                 aAttachments,
-                                 aResHelper,
-                                 bMustUnderstand,
-                                 aSigningParams);
+    return ret;
   }
 }

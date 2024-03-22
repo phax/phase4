@@ -30,6 +30,8 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -76,6 +78,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   {
     return MessageHelperMethods::createRandomMessageID;
   }
+
+  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4Client.class);
 
   private final EAS4MessageType m_eMessageType;
   private final AS4ResourceHelper m_aResHelper;
@@ -565,6 +569,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       aBuiltHttpHeaders.addHeader ("X-UseEcsProxy", "1");
     }
 
+    LOGGER.info ("phase4 --- sending.withretries:start");
+
     if (m_aHttpRetrySettings.isRetryEnabled () ||
         aOutgoingDumper != null ||
         AS4DumpManager.getOutgoingDumper () != null)
@@ -596,6 +602,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                                             aRealResponseHandler,
                                                                             aOutgoingDumper,
                                                                             aRetryCallback);
-    return new AS4ClientSentMessage <> (aBuiltMsg, aStatusLineKeeper.get (), aResponseHeaders, aResponseContent);
+    final AS4ClientSentMessage <T> ret = new AS4ClientSentMessage <> (aBuiltMsg,
+                                                                      aStatusLineKeeper.get (),
+                                                                      aResponseHeaders,
+                                                                      aResponseContent);
+
+    LOGGER.info ("phase4 --- sending.withretries:end");
+
+    return ret;
   }
 }

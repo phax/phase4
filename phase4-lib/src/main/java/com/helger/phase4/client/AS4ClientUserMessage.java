@@ -645,6 +645,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                              @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException,
                                                                                                        MessagingException
   {
+    LOGGER.info ("phase4 --- usermessage-building:start");
+
     final String sAgreementRefPMode = m_aPModeIDFactory.apply (this);
 
     // check mandatory attributes
@@ -681,8 +683,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
                                                            null,
-                                                           getSoapVersion ())
-                                                  .setMustUnderstand (true);
+                                                           getSoapVersion ()).setMustUnderstand (true);
 
     if (aCallback != null)
       aCallback.onAS4Message (aUserMsg);
@@ -777,13 +778,20 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
       aMimeMsg = MimeMessageCreator.generateMimeMessage (getSoapVersion (), aDoc, m_aAttachments);
     }
 
+    final AS4ClientBuiltMessage ret;
     if (aMimeMsg != null)
     {
       // Wrap MIME message
-      return new AS4ClientBuiltMessage (sMessageID, HttpMimeMessageEntity.create (aMimeMsg));
+      ret = new AS4ClientBuiltMessage (sMessageID, HttpMimeMessageEntity.create (aMimeMsg));
+    }
+    else
+    {
+      // Wrap SOAP XML
+      ret = new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()));
     }
 
-    // Wrap SOAP XML
-    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()));
+    LOGGER.info ("phase4 --- usermessage-building:end");
+
+    return ret;
   }
 }
