@@ -368,6 +368,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <source>8</source>
+          <doclint>none</doclint>
         </configuration>
       </plugin> 
     </plugins>
