@@ -30,7 +30,7 @@ import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation2023_05;
+import com.helger.phive.peppol.PeppolValidation2023_11;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -107,7 +107,7 @@ public final class MainPhase4PeppolSenderFujitsuConstantReceiver
                                                                                                          "-----END CERTIFICATE-----\r\n"),
                                                             "https://testb2bportal.ts.fujitsu.com/ws/msh/receive")
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidation2023_05.VID_OPENPEPPOL_INVOICE_UBL_V3,
+                                  .validationConfiguration (PeppolValidation2023_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);

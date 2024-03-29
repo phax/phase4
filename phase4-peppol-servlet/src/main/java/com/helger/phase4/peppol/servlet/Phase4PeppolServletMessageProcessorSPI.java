@@ -767,7 +767,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     }
 
     // The one and only
-    final ReadAttachment aReadAttachment = aReadAttachments.getFirst ();
+    final ReadAttachment aReadAttachment = aReadAttachments.getFirstOrNull ();
 
     // Extract Peppol values from SBD
     final PeppolSBDHData aPeppolSBD;

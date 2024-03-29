@@ -390,6 +390,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    * @throws IOException
    *         In case something goes wrong during compression
    */
+  @SuppressWarnings ("resource")
   @Nonnull
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
                                                               @Nullable final String sContentID,
@@ -462,6 +463,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    * @throws IOException
    *         In case something goes wrong during compression
    */
+  @SuppressWarnings ("resource")
   @Nonnull
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final byte [] aSrcData,
                                                               @Nullable final String sContentID,
@@ -519,6 +521,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     return nBytes <= 64 * CGlobal.BYTES_PER_KILOBYTE;
   }
 
+  @SuppressWarnings ("resource")
   @Nonnull
   public static WSS4JAttachment createIncomingFileAttachment (@Nonnull final MimeBodyPart aBodyPart,
                                                               @Nonnull final AS4ResourceHelper aResHelper) throws MessagingException,

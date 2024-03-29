@@ -1238,7 +1238,7 @@ public final class Phase4PeppolSender
      *
      * @param aVESID
      *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2023_05.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
+     *        <code>PeppolValidation2023_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
      *        May be <code>null</code>.
      * @return this for chaining
      * @see #validationConfiguration(VESID,
@@ -1260,7 +1260,7 @@ public final class Phase4PeppolSender
      *
      * @param aVESID
      *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2023_05.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
+     *        <code>PeppolValidation2023_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
      *        May be <code>null</code>.
      * @param aValidationResultHandler
      *        The validation result handler for positive and negative response
