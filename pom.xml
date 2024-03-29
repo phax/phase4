@@ -74,16 +74,16 @@
     <ph-jaxb-plugin.version>4.0.3</ph-jaxb-plugin.version>
     <xmlsec.version>3.0.4</xmlsec.version>
     <wss4j.version>3.0.3</wss4j.version>
-    <log4j.version>2.23.0</log4j.version>
+    <log4j.version>2.23.1</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
-    <peppol-commons.version>9.3.1</peppol-commons.version>
-    <peppol-reporting.version>2.2.4</peppol-reporting.version>
-    <ph-ubl.version>9.0.0</ph-ubl.version>
+    <peppol-commons.version>9.3.3</peppol-commons.version>
+    <peppol-reporting.version>2.2.5</peppol-reporting.version>
+    <ph-ubl.version>9.0.1</ph-ubl.version>
     <ph-schematron.version>8.0.0</ph-schematron.version>
-    <ph-web.version>10.1.7</ph-web.version>
-    <phive.version>9.1.0</phive.version>
-    <phive-rules.version>3.1.8</phive-rules.version>
-    <spring-boot.version>3.2.3</spring-boot.version>
+    <ph-web.version>10.1.8</ph-web.version>
+    <phive.version>9.2.0</phive.version>
+    <phive-rules.version>3.1.9</phive-rules.version>
+    <spring-boot.version>3.2.4</spring-boot.version>
   </properties>
   
   <dependencyManagement>
@@ -91,7 +91,7 @@
       <dependency>
         <groupId>com.helger.commons</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
-        <version>11.1.4</version>
+        <version>11.1.5</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -105,14 +105,14 @@
       <dependency>
         <groupId>com.helger.schedule</groupId>
         <artifactId>ph-schedule-parent-pom</artifactId>
-        <version>5.0.0</version>
+        <version>5.0.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.masterdata</groupId>
         <artifactId>ph-masterdata-parent-pom</artifactId>
-        <version>7.0.1</version>
+        <version>7.0.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -126,7 +126,7 @@
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>9.2.1</version>
+        <version>9.2.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
