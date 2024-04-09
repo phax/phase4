@@ -31,6 +31,8 @@ import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.messaging.EAS4MessageMode;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
@@ -43,14 +45,22 @@ import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
+import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.security.NoSuchProviderException;
+import java.security.Security;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -86,6 +96,7 @@ public final class BDEWCompatibilityValidatorTest
                                           "http://localhost:8080",
                                           IPModeIDProvider.DEFAULT_DYNAMIC,
                                           true);
+    Security.addProvider(new BouncyCastleProvider());
   }
 
   @Test
@@ -852,6 +863,30 @@ public final class BDEWCompatibilityValidatorTest
     aSignalMessage.setMessageInfo (new Ebms3MessageInfo ());
     VALIDATOR.validateSignalMessage (aSignalMessage, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageInfo/MessageId is missing")));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testValidateInitiatorIdentityNonEmtMakoTls () throws CertificateException, NoSuchProviderException
+  {
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+    final AS4IncomingMessageMetadata incomingMessageMetadata = AS4IncomingMessageMetadata.createForRequest();
+    final CertificateFactory certificateFactory = CertificateFactory.getInstance("X509", "BC");
+    final Collection<X509Certificate> certificates = (Collection<X509Certificate>) certificateFactory.generateCertificates(BDEWCompatibilityValidator.class.getResourceAsStream("nonemtmako.cer"));
+    incomingMessageMetadata.setRemoteTlsCerts(certificates.toArray(new X509Certificate[0]));
+    VALIDATOR.validateInitiatorIdentity (aUserMessage, null, incomingMessageMetadata, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("is not an EMT/MAKO certificate")));
+  }
+
+  @Test
+  public void testValidateInitiatorIdentityNonEmtMakoSig () throws CertificateException, NoSuchProviderException
+  {
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+    final AS4IncomingMessageMetadata incomingMessageMetadata = AS4IncomingMessageMetadata.createForRequest();
+    final CertificateFactory certificateFactory = CertificateFactory.getInstance("X509", "BC");
+    final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(BDEWCompatibilityValidator.class.getResourceAsStream("nonemtmako.cer"));
+    VALIDATOR.validateInitiatorIdentity (aUserMessage, certificate, incomingMessageMetadata, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("is not an EMT/MAKO certificate")));
   }
 
 }
