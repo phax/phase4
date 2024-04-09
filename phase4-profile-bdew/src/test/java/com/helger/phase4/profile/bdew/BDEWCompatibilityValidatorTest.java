@@ -872,7 +872,7 @@ public final class BDEWCompatibilityValidatorTest
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     final AS4IncomingMessageMetadata incomingMessageMetadata = AS4IncomingMessageMetadata.createForRequest();
     final CertificateFactory certificateFactory = CertificateFactory.getInstance("X509", "BC");
-    final Collection<X509Certificate> certificates = (Collection<X509Certificate>) certificateFactory.generateCertificates(BDEWCompatibilityValidator.class.getResourceAsStream("nonemtmako.cer"));
+    final Collection<X509Certificate> certificates = (Collection<X509Certificate>) certificateFactory.generateCertificates(BDEWCompatibilityValidator.class.getResourceAsStream("nonemtmako.cert"));
     incomingMessageMetadata.setRemoteTlsCerts(certificates.toArray(new X509Certificate[0]));
     VALIDATOR.validateInitiatorIdentity (aUserMessage, null, incomingMessageMetadata, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("is not an EMT/MAKO certificate")));
@@ -884,7 +884,7 @@ public final class BDEWCompatibilityValidatorTest
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     final AS4IncomingMessageMetadata incomingMessageMetadata = AS4IncomingMessageMetadata.createForRequest();
     final CertificateFactory certificateFactory = CertificateFactory.getInstance("X509", "BC");
-    final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(BDEWCompatibilityValidator.class.getResourceAsStream("nonemtmako.cer"));
+    final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(BDEWCompatibilityValidator.class.getResourceAsStream("nonemtmako.cert"));
     VALIDATOR.validateInitiatorIdentity (aUserMessage, certificate, incomingMessageMetadata, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("is not an EMT/MAKO certificate")));
   }
