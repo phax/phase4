@@ -73,6 +73,9 @@ import com.helger.phase4.wss.EWSSVersion;
  */
 public class BDEWCompatibilityValidator implements IAS4ProfileValidator
 {
+
+  public static final String EMT_MAK = "EMT.MAK";
+
   public BDEWCompatibilityValidator ()
   {}
 
@@ -430,6 +433,38 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
                                          @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                          @Nonnull final ErrorList aErrorList)
   {
+
+    X509Certificate aTlsClientEndCert = null;
+    if (aMessageMetadata.hasRemoteTlsCerts ())
+    {
+      aTlsClientEndCert = aMessageMetadata.remoteTlsCerts ().getFirstOrNull ();
+
+      final X500Name aTlsName = new X500Name (aTlsClientEndCert.getSubjectX500Principal ().getName ());
+      final RDN aTlsCnRDN = aTlsName.getRDNs (BCStyle.CN)[0];
+      final String cn = IETFUtils.valueToString (aTlsCnRDN.getFirst ().getValue ());
+
+      if (!cn.contains (EMT_MAK))
+      {
+        aErrorList.add (_createError ("TLS certificate '" +
+                                              aTlsClientEndCert.getSubjectX500Principal()
+                                              + "' is not an EMT/MAKO certificate"));
+      }
+    }
+
+    if (aSignatureCert != null)
+    {
+      final X500Name aTlsName = new X500Name (aSignatureCert.getSubjectX500Principal ().getName ());
+      final RDN aSigCnRDN = aTlsName.getRDNs (BCStyle.CN)[0];
+      final String cn = IETFUtils.valueToString (aSigCnRDN.getFirst ().getValue ());
+
+      if (!cn.contains (EMT_MAK))
+      {
+        aErrorList.add (_createError ("Signature certificate '" +
+                                              aSignatureCert.getSubjectX500Principal()
+                                              + "' is not an EMT/MAKO certificate"));
+      }
+    }
+
     final Ebms3PartyInfo aInitatorPartyInfo = aUserMsg.getPartyInfo ();
     if (aInitatorPartyInfo != null)
     {
@@ -458,9 +493,8 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
               }
             }
 
-            if (aMessageMetadata.hasRemoteTlsCerts ())
+            if (aTlsClientEndCert != null)
             {
-              final X509Certificate aTlsClientEndCert = aMessageMetadata.remoteTlsCerts ().getFirstOrNull ();
 
               final X500Name aTlsName = new X500Name (aTlsClientEndCert.getSubjectX500Principal ().getName ());
               final RDN aTlsOuRDN = aTlsName.getRDNs (BCStyle.OU)[0];
