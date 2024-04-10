@@ -16,6 +16,27 @@
  */
 package com.helger.phase4.profile.bdew;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
+import java.security.NoSuchProviderException;
+import java.security.Security;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.UUID;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import com.helger.bc.PBCProvider;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ETriState;
 import com.helger.phase4.CAS4;
@@ -31,8 +52,6 @@ import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.messaging.EAS4MessageMode;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
@@ -49,23 +68,6 @@ import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.security.NoSuchProviderException;
-import java.security.Security;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.UUID;
-
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
 
 /**
  * All essentials need to be set and need to be not null since they are getting
@@ -85,6 +87,13 @@ public final class BDEWCompatibilityValidatorTest
   private PMode m_aPMode;
   private ErrorList m_aErrorList;
 
+  @BeforeClass
+  public static void beforeClass ()
+  {
+    // Required for certificate check
+    Security.addProvider (PBCProvider.getProvider ());
+  }
+
   @Before
   public void before ()
   {
@@ -96,7 +105,6 @@ public final class BDEWCompatibilityValidatorTest
                                           "http://localhost:8080",
                                           IPModeIDProvider.DEFAULT_DYNAMIC,
                                           true);
-    Security.addProvider(new BouncyCastleProvider());
   }
 
   @Test
@@ -106,7 +114,9 @@ public final class BDEWCompatibilityValidatorTest
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("PMode.Agreement must be set to '" + BDEWPMode.DEFAULT_AGREEMENT_ID + "'")));
+                                                .contains ("PMode.Agreement must be set to '" +
+                                                           BDEWPMode.DEFAULT_AGREEMENT_ID +
+                                                           "'")));
   }
 
   @Test
@@ -116,7 +126,9 @@ public final class BDEWCompatibilityValidatorTest
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("PMode.Agreement must be set to '" + BDEWPMode.DEFAULT_AGREEMENT_ID + "'")));
+                                                .contains ("PMode.Agreement must be set to '" +
+                                                           BDEWPMode.DEFAULT_AGREEMENT_ID +
+                                                           "'")));
   }
 
   @Test
@@ -148,7 +160,9 @@ public final class BDEWCompatibilityValidatorTest
     m_aPMode.setInitiator (aInitiatorParty);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("Initiator.Role must be set to '" + CAS4.DEFAULT_INITIATOR_URL + "'")));
+                                                .contains ("Initiator.Role must be set to '" +
+                                                           CAS4.DEFAULT_INITIATOR_URL +
+                                                           "'")));
   }
 
   @Test
@@ -159,7 +173,9 @@ public final class BDEWCompatibilityValidatorTest
     m_aPMode.setResponder (aResponderParty);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("Responder.Role must be set to '" + CAS4.DEFAULT_RESPONDER_URL + "'")));
+                                                .contains ("Responder.Role must be set to '" +
+                                                           CAS4.DEFAULT_RESPONDER_URL +
+                                                           "'")));
   }
 
   @Test
@@ -203,8 +219,7 @@ public final class BDEWCompatibilityValidatorTest
   @Test
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com",
-                                                          ESoapVersion.SOAP_11),
+    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11),
                                     null,
                                     null,
                                     null,
@@ -342,7 +357,6 @@ public final class BDEWCompatibilityValidatorTest
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
   }
-
 
   @Test
   public void testValidatePModeSecuritySendReceiptMandatory ()
@@ -660,7 +674,7 @@ public final class BDEWCompatibilityValidatorTest
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
-    aUserMessage.setPartyInfo (new Ebms3PartyInfo());
+    aUserMessage.setPartyInfo (new Ebms3PartyInfo ());
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PartyInfo/From is missing")));
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PartyInfo/To is missing")));
@@ -715,9 +729,13 @@ public final class BDEWCompatibilityValidatorTest
 
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("PartyInfo/From/Role must be set to '" + CAS4.DEFAULT_INITIATOR_URL + "'")));
+                                                .contains ("PartyInfo/From/Role must be set to '" +
+                                                           CAS4.DEFAULT_INITIATOR_URL +
+                                                           "'")));
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("PartyInfo/To/Role must be set to '" + CAS4.DEFAULT_RESPONDER_URL + "'")));
+                                                .contains ("PartyInfo/To/Role must be set to '" +
+                                                           CAS4.DEFAULT_RESPONDER_URL +
+                                                           "'")));
   }
 
   @Test
@@ -830,7 +848,7 @@ public final class BDEWCompatibilityValidatorTest
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
 
-    Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
+    final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
     aMessageInfo.setMessageId (UUID.randomUUID ().toString ());
     aUserMessage.setMessageInfo (aMessageInfo);
 
@@ -865,16 +883,22 @@ public final class BDEWCompatibilityValidatorTest
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageInfo/MessageId is missing")));
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void testValidateInitiatorIdentityNonEmtMakoTls () throws CertificateException, NoSuchProviderException
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
-    final AS4IncomingMessageMetadata incomingMessageMetadata = AS4IncomingMessageMetadata.createForRequest();
-    final CertificateFactory certificateFactory = CertificateFactory.getInstance("X509", "BC");
-    final Collection<X509Certificate> certificates = (Collection<X509Certificate>) certificateFactory.generateCertificates(BDEWCompatibilityValidator.class.getResourceAsStream("nonemtmako.cert"));
-    incomingMessageMetadata.setRemoteTlsCerts(certificates.toArray(new X509Certificate[0]));
-    VALIDATOR.validateInitiatorIdentity (aUserMessage, null, incomingMessageMetadata, m_aErrorList);
+    final AS4IncomingMessageMetadata aIncomingMessageMetadata = AS4IncomingMessageMetadata.createForRequest ();
+
+    // Set as TLS certificates
+    final CertificateFactory aCertificateFactory = CertificateFactory.getInstance ("X509",
+                                                                                   BouncyCastleProvider.PROVIDER_NAME);
+    @SuppressWarnings ("unchecked")
+    final Collection <X509Certificate> aCertificates = (Collection <X509Certificate>) aCertificateFactory.generateCertificates (BDEWCompatibilityValidator.class.getResourceAsStream ("nonemtmako.cert"));
+    assertNotNull (aCertificates);
+    aIncomingMessageMetadata.setRemoteTlsCerts (aCertificates.toArray (new X509Certificate [0]));
+
+    // Check compliance
+    VALIDATOR.validateInitiatorIdentity (aUserMessage, null, aIncomingMessageMetadata, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("is not an EMT/MAKO certificate")));
   }
 
@@ -882,11 +906,16 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidateInitiatorIdentityNonEmtMakoSig () throws CertificateException, NoSuchProviderException
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
-    final AS4IncomingMessageMetadata incomingMessageMetadata = AS4IncomingMessageMetadata.createForRequest();
-    final CertificateFactory certificateFactory = CertificateFactory.getInstance("X509", "BC");
-    final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(BDEWCompatibilityValidator.class.getResourceAsStream("nonemtmako.cert"));
-    VALIDATOR.validateInitiatorIdentity (aUserMessage, certificate, incomingMessageMetadata, m_aErrorList);
+    final AS4IncomingMessageMetadata aIncomingMessageMetadata = AS4IncomingMessageMetadata.createForRequest ();
+
+    // Build as signature certificate
+    final CertificateFactory aCertificateFactory = CertificateFactory.getInstance ("X509",
+                                                                                   BouncyCastleProvider.PROVIDER_NAME);
+    final X509Certificate aCertificate = (X509Certificate) aCertificateFactory.generateCertificate (BDEWCompatibilityValidator.class.getResourceAsStream ("nonemtmako.cert"));
+    assertNotNull (aCertificate);
+
+    // Check compliance
+    VALIDATOR.validateInitiatorIdentity (aUserMessage, aCertificate, aIncomingMessageMetadata, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("is not an EMT/MAKO certificate")));
   }
-
 }
