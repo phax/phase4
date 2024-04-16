@@ -34,13 +34,16 @@ public class MainSendInParallelHelger
   public static void main (final String [] args) throws Exception
   {
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
+
+    // No dumping
+
     try
     {
       // https://accap.mypeppol.app/as4
       final StopWatch aSW = StopWatch.createdStarted ();
       final ExecutorService aES = Executors.newFixedThreadPool (10);
 
-      for (int i = 0; i < 500; ++i)
+      for (int i = 0; i < 50; ++i)
         aES.submit (MainPhase4PeppolSenderHelger::send);
 
       aES.shutdown ();
