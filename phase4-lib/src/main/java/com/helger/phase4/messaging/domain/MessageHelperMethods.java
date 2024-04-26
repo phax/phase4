@@ -366,6 +366,7 @@ public final class MessageHelperMethods
   @Nonnull
   public static Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nullable final String sAgreementRefPMode,
                                                                      @Nullable final String sAgreementRefValue,
+                                                                     @Nullable final String sAgreementTypeValue,
                                                                      @Nullable final String sServiceType,
                                                                      @Nonnull @Nonempty final String sServiceValue,
                                                                      @Nonnull @Nonempty final String sAction,
@@ -381,6 +382,8 @@ public final class MessageHelperMethods
       final Ebms3AgreementRef aEbms3AgreementRef = new Ebms3AgreementRef ();
       if (StringHelper.hasText (sAgreementRefPMode))
         aEbms3AgreementRef.setPmode (sAgreementRefPMode);
+      if (StringHelper.hasText (sAgreementTypeValue))
+        aEbms3AgreementRef.setType (sAgreementTypeValue);
       aEbms3AgreementRef.setValue (sAgreementRefValue);
       aEbms3CollaborationInfo.setAgreementRef (aEbms3AgreementRef);
     }
