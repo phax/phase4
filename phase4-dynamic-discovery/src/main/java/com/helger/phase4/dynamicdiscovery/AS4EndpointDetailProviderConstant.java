@@ -55,6 +55,8 @@ public class AS4EndpointDetailProviderConstant implements IAS4EndpointDetailProv
 
     if (aReceiverCert != null)
     {
+      // Note: this is informational only. If the certificate is expired and you
+      // don't want that, you need check that before
       try
       {
         aReceiverCert.checkValidity ();
