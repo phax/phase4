@@ -85,7 +85,8 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     // New message ID
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
@@ -94,6 +95,7 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                                                                                    : m_aESENSOneWayPMode.getID (),
                                                                                                               true ? null
                                                                                                                    : DEFAULT_AGREEMENT,
+                                                                                                              null,
                                                                                                               COLLABORATION_INFO_SERVICE_TYPE,
                                                                                                               COLLABORATION_INFO_SERVICE,
                                                                                                               COLLABORATION_INFO_ACTION,
@@ -119,7 +121,8 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
                                                            null,
-                                                           m_eSoapVersion).setMustUnderstand (true);
+                                                           m_eSoapVersion)
+                                                  .setMustUnderstand (true);
 
     // Sign payload document
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
