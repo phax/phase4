@@ -339,6 +339,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     return this;
   }
 
+  /**
+   * @return The value of the <code>eb:AgreementRef</code> element. May be
+   *         <code>null</code>.
+   */
   @Nullable
   public final String getAgreementRefValue ()
   {
@@ -364,12 +368,25 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     return this;
   }
 
+  /**
+   * @return The value of the <code>eb:AgreementRef/@type</code> attribute. May
+   *         be <code>null</code>.
+   * @since 2.7.6
+   */
   @Nullable
   public final String getAgreementTypeValue ()
   {
     return m_sAgreementTypeValue;
   }
 
+  /**
+   * Set the value of the <code>eb:AgreementRef/@type</code> attribute.
+   *
+   * @param sAgreementTypeValue
+   *        The value to be set. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.7.6
+   */
   @Nonnull
   public final AS4ClientUserMessage setAgreementTypeValue (@Nullable final String sAgreementTypeValue)
   {
@@ -698,7 +715,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
                                                            null,
-                                                           getSoapVersion ()).setMustUnderstand (true);
+                                                           getSoapVersion ())
+                                                  .setMustUnderstand (true);
 
     if (aCallback != null)
       aCallback.onAS4Message (aUserMsg);
