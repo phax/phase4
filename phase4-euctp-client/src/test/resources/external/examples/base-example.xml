@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<IE3F26 xmlns="urn:wco:datamodel:eu:ics2:2">
+    <LRN>C-ICS00000022</LRN>
+    <documentIssueDate>
+        <DateTime>2024-04-12T11:13:57.099Z</DateTime>
+    </documentIssueDate>
+    <SpecificCircumstanceIndicator>F26</SpecificCircumstanceIndicator>
+    <addressedMemberState>
+        <country>DE</country>
+    </addressedMemberState>
+    <activeBorderTransportMeans>
+        <ModeOfTransport>4</ModeOfTransport>
+    </activeBorderTransportMeans>
+    <consignmentMasterLevel>
+        <consignmentHouseLevel>
+            <containerIndicator>0</containerIndicator>
+            <totalGrossMass>8.3</totalGrossMass>
+            <placeOfAcceptance>
+                <UNLOCODE>TRIST</UNLOCODE>
+            </placeOfAcceptance>
+            <transportDocumentMasterLevel>
+                <documentNumber>020-00000007</documentNumber>
+                <type>N741</type>
+            </transportDocumentMasterLevel>
+            <carrier>
+                <identificationNumber>DE2000326</identificationNumber>
+            </carrier>
+            <consignee>
+                <name>Bratwurstversand GmbH</name>
+                <typeOfPerson>1</typeOfPerson>
+                <address>
+                    <city>Rodes Town</city>
+                    <country>CH</country>
+                    <street>Bratwurstgasse 13</street>
+                    <postCode>55552</postCode>
+                    <number>Bratwurstgasse 13</number>
+                </address>
+            </consignee>
+            <goodsItem>
+                <goodsItemNumber>1</goodsItemNumber>
+                <commodity>
+                    <descriptionOfGoods>Uhu</descriptionOfGoods>
+                    <commodityCode>
+                        <harmonizedSystemSubHeadingCode>950300</harmonizedSystemSubHeadingCode>
+                    </commodityCode>
+                </commodity>
+                <weight>
+                    <grossMass>0.87</grossMass>
+                </weight>
+                <packaging>
+                    <shippingMarks>UPCR000001</shippingMarks>
+                    <numberOfPackages>3</numberOfPackages>
+                    <typeOfPackages>PK</typeOfPackages>
+                </packaging>
+            </goodsItem>
+            <goodsItem>
+                <goodsItemNumber>2</goodsItemNumber>
+                <commodity>
+                    <descriptionOfGoods>Ein Schuh</descriptionOfGoods>
+                    <commodityCode>
+                        <harmonizedSystemSubHeadingCode>950300</harmonizedSystemSubHeadingCode>
+                    </commodityCode>
+                </commodity>
+                <weight>
+                    <grossMass>0.87</grossMass>
+                </weight>
+                <packaging>
+                    <shippingMarks>UPCR000001</shippingMarks>
+                    <numberOfPackages>3</numberOfPackages>
+                    <typeOfPackages>PK</typeOfPackages>
+                </packaging>
+            </goodsItem>
+            <goodsItem>
+                <goodsItemNumber>3</goodsItemNumber>
+                <commodity>
+                    <descriptionOfGoods>Egal egal</descriptionOfGoods>
+                    <commodityCode>
+                        <harmonizedSystemSubHeadingCode>950300</harmonizedSystemSubHeadingCode>
+                    </commodityCode>
+                </commodity>
+                <weight>
+                    <grossMass>6.55</grossMass>
+                </weight>
+                <packaging>
+                    <shippingMarks>UPCR000002</shippingMarks>
+                    <numberOfPackages>3</numberOfPackages>
+                    <typeOfPackages>PK</typeOfPackages>
+                </packaging>
+            </goodsItem>
+            <goodsItem>
+                <goodsItemNumber>4</goodsItemNumber>
+                <commodity>
+                    <descriptionOfGoods>Toni Tellerlift Spezialmodell</descriptionOfGoods>
+                    <commodityCode>
+                        <harmonizedSystemSubHeadingCode>950300</harmonizedSystemSubHeadingCode>
+                    </commodityCode>
+                </commodity>
+                <weight>
+                    <grossMass>0.00</grossMass>
+                </weight>
+                <packaging>
+                    <shippingMarks>UPCR000000</shippingMarks>
+                    <numberOfPackages>3</numberOfPackages>
+                    <typeOfPackages>PK</typeOfPackages>
+                </packaging>
+            </goodsItem>
+            <consignor>
+                <name>Bratwurstversand GmbH</name>
+                <typeOfPerson>2</typeOfPerson>
+                <address>
+                    <city>Fake City</city>
+                    <country>DE</country>
+                    <street>Bratwurstgasse 13</street>
+                    <postCode>12332</postCode>
+                    <number>Bratwurstgasse 13</number>
+                </address>
+            </consignor>
+            <transportCharges>
+                <methodOfPayment>D</methodOfPayment>
+            </transportCharges>
+            <placeOfDelivery>
+                <UNLOCODE>TRIST</UNLOCODE>
+            </placeOfDelivery>
+            <countriesOfRoutingOfConsignment>
+                <sequenceNumber>1</sequenceNumber>
+                <country>TR</country>
+            </countriesOfRoutingOfConsignment>
+            <countriesOfRoutingOfConsignment>
+                <sequenceNumber>2</sequenceNumber>
+                <country>DE</country>
+            </countriesOfRoutingOfConsignment>
+            <transportDocumentHouseLevel>
+                <documentNumber>100000000005</documentNumber>
+                <type>N703</type>
+            </transportDocumentHouseLevel>
+        </consignmentHouseLevel>
+    </consignmentMasterLevel>
+    <declarant>
+        <name>CB Customs Broker GmbH</name>
+        <identificationNumber>DE6373283</identificationNumber>
+        <address>
+            <city>Kelsterbach</city>
+            <country>DE</country>
+            <street>Fasanenweg 4</street>
+            <postCode>65451</postCode>
+            <number>Fasanenweg 4</number>
+        </address>
+        <communication>
+            <identifier>ics2.dl@customs-broker.de</identifier>
+            <type>EM</type>
+        </communication>
+    </declarant>
+</IE3F26>

@@ -58,6 +58,7 @@ import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.client.IAS4AttachmentConsumer;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -953,7 +954,10 @@ public final class AS4IncomingHandler
                                                    @Nonnull final byte [] aResponsePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                   @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws Phase4Exception
+                                                   @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
+                                                   @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
+                                                   @Nullable final IAS4AttachmentConsumer aAttachmentConsumer
+                                                   ) throws Phase4Exception
   {
     final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
                                                    aCryptoFactoryCrypt,
@@ -977,16 +981,23 @@ public final class AS4IncomingHandler
     final Ebms3UserMessage ret = aState.getEbmsUserMessage ();
     if (ret == null)
     {
-      if (aState.getEbmsSignalMessage () != null)
+      if (aState.getEbmsSignalMessage () != null) {
         LOGGER.warn ("A Message state is present, but it contains a SignalMessage instead of a UserMessage.");
-      else
-        LOGGER.warn ("A Message state is present, but it contains neither a SignalMessage nor a UserMessage.");
+        aSignalMsgConsumer.handleSignalMessage(aState.getEbmsSignalMessage(), aMessageMetadata, aState);
+      } else {
+        LOGGER.warn("A Message state is present, but it contains neither a SignalMessage nor a UserMessage.");
+      }
     }
     else
     {
       // Invoke consumer here, because we have the state
       if (aUserMsgConsumer != null)
         aUserMsgConsumer.handleUserMessage (ret, aMessageMetadata, aState);
+
+      if (aAttachmentConsumer != null) {
+        ICommonsList<WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments() ? aState.getDecryptedAttachments() : new CommonsArrayList<>();
+        aAttachmentConsumer.handleAttachments(aDecryptedAttachments, aMessageMetadata, aState);
+      }
     }
     return ret;
   }
