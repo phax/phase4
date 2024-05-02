@@ -161,7 +161,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ))
                                                                                          .mimeType (CMimeType.APPLICATION_GZIP)
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
@@ -198,7 +199,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSoapVersion,
                                                                        MockMessages.createUserMessageNotSigned (m_eSoapVersion,
@@ -272,7 +274,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
                                                                             MockMessages.createUserMessageNotSigned (m_eSoapVersion,
@@ -303,7 +306,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ))
                                                                                          .mimeType (CMimeType.APPLICATION_GZIP)
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aSoapDoc, aAttachments);
     aMimeMsg.saveChanges ();
@@ -319,7 +323,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ))
                                                                                          .mimeType (CMimeType.APPLICATION_GZIP)
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final Document aSoapDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments)
                                           .getAsSoapDocument ();
@@ -327,11 +332,13 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG))
                                                                                          .mimeType (CMimeType.IMAGE_JPG)
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG2_JPG))
                                                                                          .mimeType (CMimeType.IMAGE_JPG)
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aSoapDoc, aAttachments);
     aMimeMsg.saveChanges ();

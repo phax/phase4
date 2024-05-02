@@ -364,8 +364,28 @@ public final class MessageHelperMethods
   }
 
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.7.6")
   public static Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nullable final String sAgreementRefPMode,
                                                                      @Nullable final String sAgreementRefValue,
+                                                                     @Nullable final String sServiceType,
+                                                                     @Nonnull @Nonempty final String sServiceValue,
+                                                                     @Nonnull @Nonempty final String sAction,
+                                                                     @Nonnull final String sConversationID)
+  {
+    // See https://github.com/phax/phase4/pull/238
+    return createEbms3CollaborationInfo (sAgreementRefPMode,
+                                         sAgreementRefValue,
+                                         null,
+                                         sServiceType,
+                                         sServiceValue,
+                                         sAction,
+                                         sConversationID);
+  }
+
+  @Nonnull
+  public static Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nullable final String sAgreementRefPMode,
+                                                                     @Nullable final String sAgreementRefValue,
+                                                                     @Nullable final String sAgreementTypeValue,
                                                                      @Nullable final String sServiceType,
                                                                      @Nonnull @Nonempty final String sServiceValue,
                                                                      @Nonnull @Nonempty final String sAction,
@@ -381,6 +401,8 @@ public final class MessageHelperMethods
       final Ebms3AgreementRef aEbms3AgreementRef = new Ebms3AgreementRef ();
       if (StringHelper.hasText (sAgreementRefPMode))
         aEbms3AgreementRef.setPmode (sAgreementRefPMode);
+      if (StringHelper.hasText (sAgreementTypeValue))
+        aEbms3AgreementRef.setType (sAgreementTypeValue);
       aEbms3AgreementRef.setValue (sAgreementRefValue);
       aEbms3CollaborationInfo.setAgreementRef (aEbms3AgreementRef);
     }

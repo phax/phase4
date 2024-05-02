@@ -96,6 +96,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   private String m_sConversationID;
 
   private String m_sAgreementRefValue;
+  private String m_sAgreementTypeValue;
 
   private String m_sFromRole = CAS4.DEFAULT_ROLE;
   private String m_sFromPartyIDType;
@@ -338,6 +339,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     return this;
   }
 
+  /**
+   * @return The value of the <code>eb:AgreementRef</code> element. May be
+   *         <code>null</code>.
+   */
   @Nullable
   public final String getAgreementRefValue ()
   {
@@ -360,6 +365,32 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   public final AS4ClientUserMessage setAgreementRefValue (@Nullable final String sAgreementRefValue)
   {
     m_sAgreementRefValue = sAgreementRefValue;
+    return this;
+  }
+
+  /**
+   * @return The value of the <code>eb:AgreementRef/@type</code> attribute. May
+   *         be <code>null</code>.
+   * @since 2.7.6
+   */
+  @Nullable
+  public final String getAgreementTypeValue ()
+  {
+    return m_sAgreementTypeValue;
+  }
+
+  /**
+   * Set the value of the <code>eb:AgreementRef/@type</code> attribute.
+   *
+   * @param sAgreementTypeValue
+   *        The value to be set. May be <code>null</code>.
+   * @return this for chaining
+   * @since 2.7.6
+   */
+  @Nonnull
+  public final AS4ClientUserMessage setAgreementTypeValue (@Nullable final String sAgreementTypeValue)
+  {
+    m_sAgreementTypeValue = sAgreementTypeValue;
     return this;
   }
 
@@ -664,6 +695,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                                                             m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,
                                                                                                               m_sAgreementRefValue,
+                                                                                                              m_sAgreementTypeValue,
                                                                                                               m_sServiceType,
                                                                                                               m_sServiceValue,
                                                                                                               m_sAction,
@@ -683,7 +715,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
                                                            null,
-                                                           getSoapVersion ()).setMustUnderstand (true);
+                                                           getSoapVersion ())
+                                                  .setMustUnderstand (true);
 
     if (aCallback != null)
       aCallback.onAS4Message (aUserMsg);

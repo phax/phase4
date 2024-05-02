@@ -194,12 +194,13 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
       else
       {
         // 200, 400 or 500
-        assertTrue ("Server responded with StatusCode=" + nStatusCode + ". Response:\n" + sResponse,
+        assertTrue ("Server responded with StatusCode=" +
+                    nStatusCode +
+                    ". Response:\n" +
+                    sResponse,
                     nStatusCode == CHttp.HTTP_OK ||
-                                                                                                     nStatusCode ==
-                                                    CHttp.HTTP_BAD_REQUEST ||
-                                                                                                     nStatusCode ==
-                                                                              CHttp.HTTP_INTERNAL_SERVER_ERROR);
+                               nStatusCode == CHttp.HTTP_BAD_REQUEST ||
+                               nStatusCode == CHttp.HTTP_INTERNAL_SERVER_ERROR);
         assertTrue ("Server responded with different error message than expected (" +
                     sExecptedResponseContent +
                     ")." +

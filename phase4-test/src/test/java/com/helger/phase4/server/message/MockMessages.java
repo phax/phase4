@@ -108,7 +108,8 @@ public final class MockMessages
                                      MessageHelperMethods.createRandomMessageID (),
                                      aEbms3UserMessage,
                                      aUserMessage,
-                                     true).setMustUnderstand (true);
+                                     true)
+                            .setMustUnderstand (true);
   }
 
   @Nonnull
@@ -132,6 +133,7 @@ public final class MockMessages
 
       aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID,
                                                                                    DEFAULT_AGREEMENT,
+                                                                                   null,
                                                                                    AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                    MockPModeGenerator.SOAP11_SERVICE,
                                                                                    AS4TestConstants.TEST_ACTION,
@@ -147,6 +149,7 @@ public final class MockMessages
 
       aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID,
                                                                                    DEFAULT_AGREEMENT,
+                                                                                   null,
                                                                                    AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                    AS4TestConstants.TEST_SERVICE,
                                                                                    AS4TestConstants.TEST_ACTION,
@@ -165,7 +168,8 @@ public final class MockMessages
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
                                   null,
-                                  eSOAPVersion).setMustUnderstand (true);
+                                  eSOAPVersion)
+                         .setMustUnderstand (true);
   }
 
   @Nonnull
@@ -184,6 +188,7 @@ public final class MockMessages
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID +
                                                                                                               "x",
                                                                                                               DEFAULT_AGREEMENT,
+                                                                                                              null,
                                                                                                               AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                                               AS4TestConstants.TEST_SERVICE,
                                                                                                               MockMessageProcessorCheckingStreamsSPI.ACTION_FAILURE,
@@ -200,7 +205,8 @@ public final class MockMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSOAPVersion).setMustUnderstand (true);
+                                                       eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 
@@ -222,6 +228,7 @@ public final class MockMessages
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (null,
                                                                                                               null,
                                                                                                               null,
+                                                                                                              null,
                                                                                                               "svc",
                                                                                                               "act",
                                                                                                               "conv");
@@ -234,7 +241,8 @@ public final class MockMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSOAPVersion).setMustUnderstand (true);
+                                                       eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 }
