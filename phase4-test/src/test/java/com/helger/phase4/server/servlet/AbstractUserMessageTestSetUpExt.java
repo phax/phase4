@@ -105,6 +105,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sReferenceToMessageID);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAnotherOrWrongPModeID,
                                                                                                               DEFAULT_AGREEMENT,
+                                                                                                              null,
                                                                                                               AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                                               AS4TestConstants.TEST_SERVICE,
                                                                                                               AS4TestConstants.TEST_ACTION,
@@ -120,7 +121,8 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       ESoapVersion.AS4_DEFAULT).setMustUnderstand (true);
+                                                       ESoapVersion.AS4_DEFAULT)
+                                              .setMustUnderstand (true);
 
     if (aMessagingIDConsumer != null)
       aMessagingIDConsumer.accept (aMsg.getMessagingID ());

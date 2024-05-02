@@ -86,13 +86,15 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     // New message ID
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (m_aESENSOneWayPMode.getID (),
                                                                                                               DEFAULT_AGREEMENT,
+                                                                                                              null,
                                                                                                               COLLABORATION_INFO_SERVICE_TYPE,
                                                                                                               COLLABORATION_INFO_SERVICE,
                                                                                                               COLLABORATION_INFO_ACTION,
@@ -118,7 +120,8 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
                                                            null,
-                                                           m_eSoapVersion).setMustUnderstand (true);
+                                                           m_eSoapVersion)
+                                                  .setMustUnderstand (true);
 
     // Sign payload document
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,

@@ -80,6 +80,7 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
                                                                                                  "12",
                                                                                                  DEFAULT_AGREEMENT,
                                                                                                  null,
+                                                                                                 null,
                                                                                                  CAS4.DEFAULT_SERVICE_URL,
                                                                                                  CAS4.DEFAULT_ACTION_URL,
                                                                                                  AS4TestConstants.TEST_CONVERSATION_ID));
