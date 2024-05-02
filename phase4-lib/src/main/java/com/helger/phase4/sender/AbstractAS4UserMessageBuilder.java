@@ -814,7 +814,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       if (aSignalMsg.hasErrorEntries ())
       {
         if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("The received SignalMessage contains at lease one error");
+          LOGGER.debug ("The received SignalMessage contains at least one error");
 
         // An error was returned from the other side
         // Errors have precedence over receipts

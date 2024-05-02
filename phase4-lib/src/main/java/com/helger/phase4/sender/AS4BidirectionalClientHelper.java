@@ -37,6 +37,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
+import com.helger.phase4.client.IAS4AttachmentConsumer;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.client.IAS4RetryCallback;
@@ -48,6 +49,7 @@ import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4IncomingHandler;
 import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
@@ -190,7 +192,10 @@ public final class AS4BidirectionalClientHelper
                                                                  @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                                  @Nullable final IAS4RetryCallback aRetryCallback,
                                                                  @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                                                 @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws IOException,
+                                                                 @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
+                                                                 @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
+                                                                 @Nullable final IAS4AttachmentConsumer aAttachmentConsumer,
+                                                                 @Nullable final IPMode aPMode) throws IOException,
                                                                                                                            Phase4Exception,
                                                                                                                            WSSecurityException,
                                                                                                                            MessagingException
@@ -244,14 +249,16 @@ public final class AS4BidirectionalClientHelper
                                            aIAF,
                                            aIncomingProfileSelector,
                                            aClientPullRequest.getAS4ResourceHelper (),
-                                           null,
+                                           aPMode,
                                            aLocale,
                                            aMessageMetadata,
                                            aWrappedResponse.get (),
                                            aResponseEntity.getResponse (),
                                            aIncomingDumper,
                                            aIncomingSecurityConfiguration,
-                                           aUserMsgConsumer);
+                                           aUserMsgConsumer,
+                                           aSignalMsgConsumer,
+                                           aAttachmentConsumer);
     }
     else
       LOGGER.info ("AS4 ResponseEntity is empty");
