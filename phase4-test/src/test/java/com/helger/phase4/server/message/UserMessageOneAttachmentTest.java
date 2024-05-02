@@ -71,7 +71,8 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
@@ -90,7 +91,8 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
@@ -118,7 +120,8 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSOAPVersion,
@@ -140,7 +143,8 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,

@@ -134,6 +134,7 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID,
                                                                                  DEFAULT_AGREEMENT,
+                                                                                 null,
                                                                                  AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                  AS4TestConstants.TEST_SERVICE,
                                                                                  AS4TestConstants.TEST_ACTION,
@@ -184,6 +185,7 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID,
                                                                                  DEFAULT_AGREEMENT,
+                                                                                 null,
                                                                                  AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                  AS4TestConstants.TEST_SERVICE,
                                                                                  AS4TestConstants.TEST_ACTION,
@@ -228,6 +230,7 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     final String sPModeID = SOAP_12_PARTY_ID + "-" + SOAP_12_PARTY_ID;
     aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID,
                                                                                  DEFAULT_AGREEMENT,
+                                                                                 null,
                                                                                  AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                  AS4TestConstants.TEST_SERVICE,
                                                                                  AS4TestConstants.TEST_ACTION,

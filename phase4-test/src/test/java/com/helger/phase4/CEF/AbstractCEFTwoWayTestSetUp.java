@@ -132,6 +132,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
     final Ebms3PartyInfo aEbms3PartyInfo;
     aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (m_aESENSTwoWayPMode.getID (),
                                                                                  DEFAULT_AGREEMENT,
+                                                                                 null,
                                                                                  AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                  MockPModeGenerator.SOAP11_SERVICE,
                                                                                  AS4TestConstants.TEST_ACTION,
@@ -149,6 +150,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
                                   null,
-                                  m_eSoapVersion).setMustUnderstand (true);
+                                  m_eSoapVersion)
+                         .setMustUnderstand (true);
   }
 }

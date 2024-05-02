@@ -18,6 +18,7 @@ package com.helger.phase4.peppol;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -81,9 +82,11 @@ import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.sbdh.CSBDH;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
+import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helper.peppol.reporting.api.PeppolReportingHelper;
 import com.helper.peppol.reporting.api.PeppolReportingItem;
 import com.helper.peppol.reporting.api.backend.PeppolReportingBackend;
@@ -666,6 +669,24 @@ public final class Phase4PeppolSender
     public final IMPLTYPE smpClient (@Nonnull final ISMPServiceMetadataProvider aSMPClient)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderPeppol (aSMPClient));
+    }
+
+    /**
+     * Use this method to explicit set the AP certificate and AP endpoint URL
+     * that was retrieved from a previous SMP query.
+     *
+     * @param aEndpoint
+     *        The Peppol SMP Endpoint instance. May not be <code>null</code>.
+     * @return this for chaining
+     * @throws CertificateException
+     *         In case the conversion from byte array to X509 certificate failed
+     * @since 2.7.6
+     */
+    @Nonnull
+    public final IMPLTYPE receiverEndpointDetails (@Nonnull final EndpointType aEndpoint) throws CertificateException
+    {
+      return receiverEndpointDetails (SMPClientReadOnly.getEndpointCertificate (aEndpoint),
+                                      SMPClientReadOnly.getEndpointAddress (aEndpoint));
     }
 
     /**

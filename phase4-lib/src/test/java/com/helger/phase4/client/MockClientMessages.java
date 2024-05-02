@@ -114,7 +114,8 @@ final class MockClientMessages
                                                                     MessageHelperMethods.createRandomMessageID (),
                                                                     null,
                                                                     aUserMessage,
-                                                                    true).setMustUnderstand (true);
+                                                                    true)
+                                                           .setMustUnderstand (true);
     final Document aDoc = aReceiptMsg.getAsSoapDocument ();
 
     return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
@@ -144,6 +145,7 @@ final class MockClientMessages
                                                                                             aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("pmode-twoway",
                                                                                                               DEFAULT_AGREEMENT,
+                                                                                                              null,
                                                                                                               "MyServiceTypes",
                                                                                                               "QuoteToCollect",
                                                                                                               "NewPurchaseOrder",
@@ -160,7 +162,8 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion).setMustUnderstand (true);
+                                                       eSoapVersion)
+                                              .setMustUnderstand (true);
     return aDoc;
   }
 
@@ -179,6 +182,7 @@ final class MockClientMessages
                                                                                             aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("pm-esens-generic-resp",
                                                                                                               DEFAULT_AGREEMENT,
+                                                                                                              null,
                                                                                                               "MyServiceTypes",
                                                                                                               "QuoteToCollect",
                                                                                                               "NewPurchaseOrder",
@@ -195,7 +199,8 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion).setMustUnderstand (true);
+                                                       eSoapVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 
@@ -217,6 +222,7 @@ final class MockClientMessages
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (null,
                                                                                                               null,
                                                                                                               null,
+                                                                                                              null,
                                                                                                               "svc",
                                                                                                               "act",
                                                                                                               "conv");
@@ -229,7 +235,8 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion).setMustUnderstand (true);
+                                                       eSoapVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 }

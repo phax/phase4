@@ -258,6 +258,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
     m_aCert = aCert;
     if (aCert != null)
     {
+      // Note: this is informational only. If the certificate is expired and you
+      // don't want that, you need check that before
       try
       {
         aCert.checkValidity ();
