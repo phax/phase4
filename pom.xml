@@ -26,7 +26,7 @@
   </parent>
   <groupId>com.helger.phase4</groupId>
   <artifactId>phase4-parent-pom</artifactId>
-  <version>2.7.6-SNAPSHOT</version>
+  <version>2.7.7-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phase4-parent-pom</name>
   <description>Base POM to build the phase4 projects</description>
@@ -82,7 +82,7 @@
     <ph-ubl.version>9.0.1</ph-ubl.version>
     <ph-schematron.version>8.0.0</ph-schematron.version>
     <ph-web.version>10.1.8</ph-web.version>
-    <phive.version>9.2.0</phive.version>
+    <phive.version>9.2.1</phive.version>
     <phive-rules.version>3.1.9</phive-rules.version>
     <spring-boot.version>3.2.5</spring-boot.version>
   </properties>
@@ -219,7 +219,7 @@
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
-        <version>1.16.1</version>
+        <version>1.17.0</version>
       </dependency>
 
       <dependency>

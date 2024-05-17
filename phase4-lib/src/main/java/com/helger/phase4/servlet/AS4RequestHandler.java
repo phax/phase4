@@ -666,8 +666,9 @@ public class AS4RequestHandler implements AutoCloseable
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
-    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
-                                             : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
+    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId () : aEbmsSignalMessage
+                                                                                                                      .getMessageInfo ()
+                                                                                                                      .getMessageId ();
 
     // Get all processors
     final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
@@ -723,23 +724,30 @@ public class AS4RequestHandler implements AutoCloseable
 
           if (aProcessingErrorMessages.isNotEmpty () || aResult.isFailure ())
           {
-            if (aProcessingErrorMessages.isNotEmpty ())
+            if (aResult.isFailure () && aProcessingErrorMessages.isEmpty ())
             {
-              if (LOGGER.isDebugEnabled ())
-                LOGGER.debug ("AS4 message processor " +
-                              aProcessor +
-                              " had processing errors - breaking. Details: " +
-                              aProcessingErrorMessages);
-
-              if (aResult.isSuccess ())
-                LOGGER.warn ("Processing errors are present but success was returned by a previous AS4 message processor " +
-                             aProcessor +
-                             " - considering the whole processing to be failed instead");
-
-              aEbmsErrorMessagesTarget.addAll (aProcessingErrorMessages);
+              // For 2.7.6 - make sure that at least one processing error
+              // message is contained
+              aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (m_aLocale)
+                                                                 .errorDetail ("An undefined generic error occurred")
+                                                                 .build ());
             }
 
+            if (LOGGER.isDebugEnabled ())
+              LOGGER.debug ("AS4 message processor " +
+                            aProcessor +
+                            " had processing errors - breaking. Details: " +
+                            aProcessingErrorMessages);
+
+            if (aResult.isSuccess ())
+              LOGGER.warn ("Processing errors are present but success was returned by a previous AS4 message processor " +
+                           aProcessor +
+                           " - considering the whole processing to be failed instead");
+
+            aEbmsErrorMessagesTarget.addAll (aProcessingErrorMessages);
+
             // Stop processing
+            aSPIResult.setSuccess (false);
             return;
           }
 
@@ -883,8 +891,8 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
-                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (
+                                                                                                                       aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -1632,9 +1640,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                          new ResponseHandlerXml ());
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     (aAsyncResponse == null ? "null"
-                                                             : XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                                          AS4HttpDebug.getDebugXMLWriterSettings ())));
+                                     (aAsyncResponse == null ? "null" : XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                                                   AS4HttpDebug.getDebugXMLWriterSettings ())));
         };
 
         final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
@@ -1851,8 +1858,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
-                                                                                 : AS4DumpManager.getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager
+                                                                                                                     .getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else
