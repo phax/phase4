@@ -77,14 +77,14 @@
     <bctls.version>1.78.1</bctls.version>
     <log4j.version>2.23.1</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
-    <peppol-commons.version>9.3.6</peppol-commons.version>
+    <peppol-commons.version>9.4.0</peppol-commons.version>
     <peppol-reporting.version>2.2.5</peppol-reporting.version>
     <ph-ubl.version>9.0.1</ph-ubl.version>
     <ph-schematron.version>8.0.0</ph-schematron.version>
     <ph-web.version>10.1.8</ph-web.version>
     <phive.version>9.2.1</phive.version>
-    <phive-rules.version>3.1.9</phive-rules.version>
-    <spring-boot.version>3.2.5</spring-boot.version>
+    <phive-rules.version>3.1.10</phive-rules.version>
+    <spring-boot.version>3.3.0</spring-boot.version>
   </properties>
   
   <dependencyManagement>
