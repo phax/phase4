@@ -274,12 +274,17 @@
       </dependency>
       <dependency>
         <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-bdew-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-cef-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.helger.phase4</groupId>
-        <artifactId>phase4-bdew-client</artifactId>
+        <artifactId>phase4-dbnalliance-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -323,8 +328,10 @@
         <module>phase4-test</module>
         <module>phase4-server-webapp</module>
         <module>phase4-dynamic-discovery</module>
-        <module>phase4-cef-client</module>
+        <!-- profile specific stuff -->
         <module>phase4-bdew-client</module>
+        <module>phase4-cef-client</module>
+        <module>phase4-dbnalliance-client</module>
         <module>phase4-entsog-client</module>
         <module>phase4-eudamed-client</module>
         <module>phase4-peppol-client</module>
@@ -350,8 +357,10 @@
         <module>phase4-test</module>
         <module>phase4-server-webapp</module>
         <module>phase4-dynamic-discovery</module>
-        <module>phase4-cef-client</module>
+        <!-- profile specific stuff -->
         <module>phase4-bdew-client</module>
+        <module>phase4-cef-client</module>
+        <module>phase4-dbnalliance-client</module>
         <module>phase4-entsog-client</module>
         <module>phase4-eudamed-client</module>
         <module>phase4-peppol-client</module>

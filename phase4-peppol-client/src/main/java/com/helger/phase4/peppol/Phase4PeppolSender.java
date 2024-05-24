@@ -473,7 +473,8 @@ public final class Phase4PeppolSender
 
     /**
      * Set the receiver participant ID of the message. The participant ID must
-     * be provided prior to sending.
+     * be provided prior to sending. This ends up in the "finalRecipient"
+     * UserMessage property.
      *
      * @param aReceiverID
      *        The receiver participant ID. May not be <code>null</code>.
