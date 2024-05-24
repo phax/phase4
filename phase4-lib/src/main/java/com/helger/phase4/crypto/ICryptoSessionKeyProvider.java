@@ -43,7 +43,19 @@ public interface ICryptoSessionKeyProvider
     }
     catch (final WSSecurityException ex)
     {
-      throw new IllegalStateException ("Failed to create session key", ex);
+      throw new IllegalStateException ("Failed to create session key (AES-128)", ex);
+    }
+  };
+
+  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_256 = () -> {
+    try
+    {
+      final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_256);
+      return aKeyGen.generateKey ();
+    }
+    catch (final WSSecurityException ex)
+    {
+      throw new IllegalStateException ("Failed to create session key (AES-256)", ex);
     }
   };
 }
