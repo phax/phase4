@@ -545,7 +545,7 @@ public final class BDEWCompatibilityValidatorTest
   @Test
   public void testValidatePModeX509EncryptionMinimalStrengthWrongValue ()
   {
-    m_aPMode.getLeg1 ().getSecurity ().setX509EncryptionMinimumStrength (Integer.valueOf (256));
+    m_aPMode.getLeg1 ().getSecurity ().setX509EncryptionMinimumStrength (256);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509Encryption.MinimalStrength must be defined and set to 128")));
