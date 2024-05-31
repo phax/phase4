@@ -65,6 +65,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   protected String m_sService;
   protected String m_sAction;
   protected String m_sAgreementRef;
+  protected String m_sAgreementType;
   protected String m_sPModeID;
 
   protected String m_sFromPartyIDType;
@@ -188,6 +189,12 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   public final IMPLTYPE agreementRef (@Nullable final String sAgreementRef)
   {
     m_sAgreementRef = sAgreementRef;
+    return thisAsT ();
+  }
+
+  public final IMPLTYPE agreementType (@Nullable final String sAgreementType)
+  {
+    m_sAgreementType = sAgreementType;
     return thisAsT ();
   }
 
@@ -641,6 +648,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       aUserMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
 
     aUserMsg.setAgreementRefValue (m_sAgreementRef);
+    aUserMsg.setAgreementTypeValue (m_sAgreementType);
     if (StringHelper.hasText (m_sPModeID))
       aUserMsg.setPModeID (m_sPModeID);
     else
