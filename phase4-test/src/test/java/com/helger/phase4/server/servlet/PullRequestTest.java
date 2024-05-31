@@ -79,7 +79,8 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         sFailure,
-                                                        null).getAsSoapDocument ();
+                                                        null)
+                                               .getAsSoapDocument ();
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
@@ -97,7 +98,8 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         sFailure,
-                                                        null).getAsSoapDocument ();
+                                                        null)
+                                               .getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
@@ -113,7 +115,8 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         sMPC,
-                                                        null).getAsSoapDocument ();
+                                                        null)
+                                               .getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
@@ -131,7 +134,8 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         AS4TestConstants.DEFAULT_MPC,
-                                                        aAny).getAsSoapDocument ();
+                                                        aAny)
+                                               .getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
@@ -151,7 +155,8 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         AS4TestConstants.DEFAULT_MPC,
-                                                        aAny).getAsSoapDocument ();
+                                                        aAny)
+                                               .getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
@@ -164,7 +169,8 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         null,
-                                                        null).getAsSoapDocument ();
+                                                        null)
+                                               .getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getErrorCode ());
   }

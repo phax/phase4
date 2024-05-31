@@ -90,7 +90,8 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                          .mimeTypeXML ()
                                                                                          .compressionGZIP ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
                                                                         testSignedUserMessage (m_eSoapVersion,

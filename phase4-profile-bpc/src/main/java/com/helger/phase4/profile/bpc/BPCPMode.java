@@ -52,6 +52,7 @@ import com.helger.phase4.wss.EWSSVersion;
  * @author Philip Helger
  */
 @Immutable
+@Deprecated (forRemoval = true, since = "2.7.7")
 public final class BPCPMode
 {
   public static final String DEFAULT_AGREEMENT_ID = "http://bpcpilot.change.me/tempagreement.html";

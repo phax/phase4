@@ -37,10 +37,11 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
 @IsSPIImplementation
 public final class AS4EESPAProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
+  // The IDs are unchanged for backwards compatibility
   public static final String AS4_PROFILE_ID_ACCEPTANCE = "eespa-acc";
-  public static final String AS4_PROFILE_NAME_ACCEPTANCE = "EESPA Acceptance";
+  public static final String AS4_PROFILE_NAME_ACCEPTANCE = "GENA Acceptance";
   public static final String AS4_PROFILE_ID_PROD = "eespa-prod";
-  public static final String AS4_PROFILE_NAME_PROD = "EESPA Production";
+  public static final String AS4_PROFILE_NAME_PROD = "GENA Production";
 
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
@@ -48,22 +49,18 @@ public final class AS4EESPAProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IAS4ProfilePModeProvider aDefaultPModeProviderAcc = (i,
-                                                               r,
-                                                               a) -> EESPAPMode.createEESPAPMode (i,
-                                                                                                  r,
-                                                                                                  a,
-                                                                                                  PMODE_ID_PROVIDER,
-                                                                                                  true,
-                                                                                                  false);
-    final IAS4ProfilePModeProvider aDefaultPModeProviderProd = (i,
-                                                                r,
-                                                                a) -> EESPAPMode.createEESPAPMode (i,
-                                                                                                   r,
-                                                                                                   a,
-                                                                                                   PMODE_ID_PROVIDER,
-                                                                                                   false,
-                                                                                                   false);
+    final IAS4ProfilePModeProvider aDefaultPModeProviderAcc = (i, r, a) -> EESPAPMode.createEESPAPMode (i,
+                                                                                                        r,
+                                                                                                        a,
+                                                                                                        PMODE_ID_PROVIDER,
+                                                                                                        true,
+                                                                                                        false);
+    final IAS4ProfilePModeProvider aDefaultPModeProviderProd = (i, r, a) -> EESPAPMode.createEESPAPMode (i,
+                                                                                                         r,
+                                                                                                         a,
+                                                                                                         PMODE_ID_PROVIDER,
+                                                                                                         false,
+                                                                                                         false);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_ACCEPTANCE + "'");

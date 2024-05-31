@@ -34,6 +34,7 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
  * @author Philip Helger
  */
 @IsSPIImplementation
+@Deprecated (forRemoval = true, since = "2.7.7")
 public final class AS4BPCProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
   public static final String AS4_PROFILE_ID = "bpc-mp";

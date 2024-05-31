@@ -54,6 +54,7 @@ import com.helger.phase4.wss.EWSSVersion;
  *
  * @author Philip Helger
  */
+@Deprecated (forRemoval = true, since = "2.7.7")
 public class BPCCompatibilityValidator implements IAS4ProfileValidator
 {
   public BPCCompatibilityValidator ()
@@ -245,7 +246,8 @@ public class BPCCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyProducerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyProducer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
       }
       else
       {

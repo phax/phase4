@@ -113,7 +113,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final Document aDoc = modifyUserMessage (m_aPMode.getID (),
                                              null,
@@ -143,7 +144,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (), s_aResMgr));
+                                                                                         .build (),
+                                                                    s_aResMgr));
 
     final Document aDoc = modifyUserMessage (m_aPMode.getID (),
                                              (String) null,
@@ -183,6 +185,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     // Default CollaborationInfo for testing
     aEbms3UserMessage.setCollaborationInfo (MessageHelperMethods.createEbms3CollaborationInfo (null,
                                                                                                DEFAULT_AGREEMENT,
+                                                                                               null,
                                                                                                null,
                                                                                                CAS4.DEFAULT_SERVICE_URL,
                                                                                                CAS4.DEFAULT_ACTION_URL,

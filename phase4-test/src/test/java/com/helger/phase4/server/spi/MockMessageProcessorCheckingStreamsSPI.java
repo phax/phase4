@@ -164,6 +164,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
     final Ebms3PartyInfo aEbms3PartyInfo;
     aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("PullPMode",
                                                                                  DEFAULT_AGREEMENT,
+                                                                                 null,
                                                                                  AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                  MockPModeGenerator.SOAP11_SERVICE,
                                                                                  AS4TestConstants.TEST_ACTION,
