@@ -192,6 +192,15 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     return thisAsT ();
   }
 
+  /**
+   * Set the "AgreementRef type" value. It's optional.
+   *
+   * @param sAgreementType
+   *        Agreement reference type. May be <code>null</code>.
+   * @return this for chaining.
+   * @since 2.7.8
+   */
+  @Nullable
   public final IMPLTYPE agreementType (@Nullable final String sAgreementType)
   {
     m_sAgreementType = sAgreementType;
@@ -561,6 +570,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // m_sService may be null
     // m_sAction may be null
     // m_sAgreementRef may be null
+    // m_sAgreementType may be null
     // m_sPModeID may be null
 
     // m_sFromPartyIDType may be null
