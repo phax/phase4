@@ -99,7 +99,7 @@ public final class CEFPMode
     aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256);
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
-    aPModeLegSecurity.setX509EncryptionMinimumStrength (Integer.valueOf (128));
+    aPModeLegSecurity.setX509EncryptionMinimumStrength (128);
     aPModeLegSecurity.setPModeAuthorize (false);
     aPModeLegSecurity.setSendReceipt (true);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);

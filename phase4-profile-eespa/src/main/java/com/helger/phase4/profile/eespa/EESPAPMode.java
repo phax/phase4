@@ -102,7 +102,7 @@ public final class EESPAPMode
     aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256);
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_256_GCM);
-    aPModeLegSecurity.setX509EncryptionMinimumStrength (Integer.valueOf (256));
+    aPModeLegSecurity.setX509EncryptionMinimumStrength (256);
     aPModeLegSecurity.setPModeAuthorize (false);
     aPModeLegSecurity.setSendReceipt (true);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);

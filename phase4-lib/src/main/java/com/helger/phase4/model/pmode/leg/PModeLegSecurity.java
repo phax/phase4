@@ -486,6 +486,12 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nonnull
+  public final EChange setX509EncryptionMinimumStrength (final int nX509EncryptionMinimumStrength)
+  {
+    return setX509EncryptionMinimumStrength (Integer.valueOf (nX509EncryptionMinimumStrength));
+  }
+
+  @Nonnull
   public final EChange setX509EncryptionMinimumStrength (@Nullable final Integer aX509EncryptionMinimumStrength)
   {
     if (EqualsHelper.equals (aX509EncryptionMinimumStrength, m_aX509EncryptionMinimumStrength))

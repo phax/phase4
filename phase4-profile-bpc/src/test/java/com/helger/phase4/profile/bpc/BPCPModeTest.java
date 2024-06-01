@@ -30,6 +30,7 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
  *
  * @author Philip Helger
  */
+@Deprecated (forRemoval = true, since = "2.7.7")
 public final class BPCPModeTest
 {
   @ClassRule

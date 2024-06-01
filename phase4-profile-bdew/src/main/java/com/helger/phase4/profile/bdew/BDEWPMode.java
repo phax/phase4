@@ -135,7 +135,7 @@ public final class BDEWPMode
     // Required by: BDEW AS4 profile section 2.2.6.2.1
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
-    aPModeLegSecurity.setX509EncryptionMinimumStrength (Integer.valueOf (128));
+    aPModeLegSecurity.setX509EncryptionMinimumStrength (128);
     aPModeLegSecurity.setPModeAuthorize (false);
     aPModeLegSecurity.setSendReceipt (true);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
