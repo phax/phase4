@@ -106,12 +106,6 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
             aErrorList.add (_createError (sFieldPrefix + "AddressProtocol '" + sAddressProtocol + "' is unsupported"));
           }
       }
-      else
-      {
-        // Empty address protocol (dynamically filled from SMP)
-        if (false)
-          aErrorList.add (_createError (sFieldPrefix + "AddressProtocol is missing"));
-      }
 
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
       if (!eSOAPVersion.isAS4Default ())
@@ -128,13 +122,6 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
     if (aPModeLegSecurity != null)
     {
       // Check Certificate
-      // certificate is in Partner/SMP - therefore not here :)
-      if (false)
-        if (aPModeLegSecurity.getX509SignatureCertificate () == null)
-        {
-          aErrorList.add (_createError (sFieldPrefix + "Security.X509SignatureCertificate is missing"));
-        }
-
       // Check Signature Algorithm
       if (aPModeLegSecurity.getX509SignatureAlgorithm () == null)
       {
@@ -305,10 +292,10 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
       _checkIfLegIsValid (aErrorList, aPModeLeg1, "PMode.Leg[1].");
     }
 
-//    if (aPMode.getLeg2 () != null)
-//    {
-//      aErrorList.add (_createError ("PMode.Leg[2] must not be present"));
-//    }
+    if (aPMode.getLeg2 () != null)
+    {
+      _checkIfLegIsValid (aErrorList, aPModeLeg2, "PMode.Leg[2].");
+    }
 
     // Compression application/gzip ONLY
     // other possible states are absent or "" (No input)

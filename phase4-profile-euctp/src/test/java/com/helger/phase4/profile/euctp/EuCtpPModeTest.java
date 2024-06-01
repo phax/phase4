@@ -26,9 +26,9 @@ import com.helger.phase4.model.pmode.PMode;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
 /**
- * Test class for class {@link PeppolPMode}
+ * Test class for class {@link EuCtpPMode}
  *
- * @author Philip Helger
+ * @author Jon Rios
  */
 public final class EuCtpPModeTest
 {
@@ -36,7 +36,7 @@ public final class EuCtpPModeTest
   public static final PhotonAppWebTestRule RULE = new PhotonAppWebTestRule ();
 
   @Test
-  public void testCEFPMode ()
+  public void testEuCTPPMode()
   {
     final PMode aPMode = EuCtpPMode.createEuCtpPMode ("TestInitiator",
                                                         "TestResponder",
