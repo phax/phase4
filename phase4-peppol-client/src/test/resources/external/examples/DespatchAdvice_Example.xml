@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+                Content:
+                This file contains a Full BIS3 PEPPOL UBL Despatch Adivce.
+
+                Errors:
+                None
+                
+                Warnings:
+                None
+				
+-->
+<DespatchAdvice xmlns="urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+	<cbc:CustomizationID>urn:fdc:peppol.eu:poacc:trns:despatch_advice:3</cbc:CustomizationID>
+	<cbc:ProfileID>urn:fdc:peppol.eu:poacc:bis:despatch_advice:3</cbc:ProfileID>
+	<cbc:ID>565899</cbc:ID>
+	<cbc:IssueDate>2018-09-20</cbc:IssueDate>
+	<cbc:IssueTime>12:00:00</cbc:IssueTime>
+	<cbc:Note>sample</cbc:Note>
+	<cac:OrderReference>
+		<cbc:ID>AEG012345</cbc:ID>
+	</cac:OrderReference>
+	<cac:DespatchSupplierParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="0088">7300010000001</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="0088">7300010000001</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PostalAddress>
+				<cbc:StreetName>Busy Street</cbc:StreetName>
+				<cbc:CityName>Farthing</cbc:CityName>
+				<cbc:PostalZone>AA99 1BB</cbc:PostalZone>
+				<cbc:CountrySubentity>Heremouthshire</cbc:CountrySubentity>
+				<cac:AddressLine>
+					<cbc:Line>The Roundabout</cbc:Line>
+				</cac:AddressLine>
+				<cac:Country>
+					<cbc:IdentificationCode>GB</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyLegalEntity>
+				<cbc:RegistrationName>Consortial</cbc:RegistrationName>
+			</cac:PartyLegalEntity>
+			<cac:Contact>
+				<cbc:Name>Mrs Bouquet</cbc:Name>
+				<cbc:Telephone>0158 1233714</cbc:Telephone>
+				<cbc:ElectronicMail>bouquet@fpconsortial.co.uk</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:DespatchSupplierParty>
+	<cac:DeliveryCustomerParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="0088">5798000000124</cbc:EndpointID>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="0088">5790000435951</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PostalAddress>
+				<cbc:StreetName>Avon Way</cbc:StreetName>
+				<cbc:AdditionalStreetName>way 2</cbc:AdditionalStreetName>
+				<cbc:CityName>Bridgtow</cbc:CityName>
+				<cbc:PostalZone>ZZ99 1ZZ</cbc:PostalZone>
+				<cbc:CountrySubentity>Avon</cbc:CountrySubentity>
+				<cac:AddressLine>
+					<cbc:Line>3rd Floor, Room 5</cbc:Line>
+				</cac:AddressLine>
+				<cac:Country>
+					<cbc:IdentificationCode>GB</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyLegalEntity>
+				<cbc:RegistrationName>IYT Corporation</cbc:RegistrationName>
+			</cac:PartyLegalEntity>
+		</cac:Party>
+		<cac:DeliveryContact>
+			<cbc:Name>Mr Fred Churchill</cbc:Name>
+			<cbc:Telephone>0127 2653214</cbc:Telephone>
+			<cbc:ElectronicMail>fred@iytcorporation.gov.uk</cbc:ElectronicMail>
+		</cac:DeliveryContact>
+	</cac:DeliveryCustomerParty>
+	<cac:BuyerCustomerParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="0088">5790000435951</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>IYT Corporation</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>Avon Way</cbc:StreetName>
+				<cbc:AdditionalStreetName>way 2</cbc:AdditionalStreetName>
+				<cbc:CityName>Bridgtow</cbc:CityName>
+				<cbc:PostalZone>ZZ99 1ZZ</cbc:PostalZone>
+				<cbc:CountrySubentity>Avon</cbc:CountrySubentity>
+				<cac:AddressLine>
+					<cbc:Line>3rd Floor, Room 5</cbc:Line>
+				</cac:AddressLine>
+				<cac:Country>
+					<cbc:IdentificationCode>GB</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+		</cac:Party>
+	</cac:BuyerCustomerParty>
+	<cac:SellerSupplierParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="0088">5790000435951</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>IYT Corporation</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>Avon Way</cbc:StreetName>
+				<cbc:AdditionalStreetName>way 2</cbc:AdditionalStreetName>
+				<cbc:CityName>Bridgtow</cbc:CityName>
+				<cbc:PostalZone>ZZ99 1ZZ</cbc:PostalZone>
+				<cbc:CountrySubentity>Avon</cbc:CountrySubentity>
+				<cac:AddressLine>
+					<cbc:Line>3rd Floor, Room 5</cbc:Line>
+				</cac:AddressLine>
+				<cac:Country>
+					<cbc:IdentificationCode>GB</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+		</cac:Party>
+	</cac:SellerSupplierParty>
+	<cac:OriginatorCustomerParty>
+		<cac:Party>
+			<cac:PartyIdentification>
+				<cbc:ID schemeID="0088">5790000435951</cbc:ID>
+			</cac:PartyIdentification>
+			<cac:PartyName>
+				<cbc:Name>IYT Corporation</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>Avon Way</cbc:StreetName>
+				<cbc:AdditionalStreetName>way 2</cbc:AdditionalStreetName>
+				<cbc:CityName>Bridgtow</cbc:CityName>
+				<cbc:PostalZone>ZZ99 1ZZ</cbc:PostalZone>
+				<cbc:CountrySubentity>Avon</cbc:CountrySubentity>
+				<cac:AddressLine>
+					<cbc:Line>3rd Floor, Room 5</cbc:Line>
+				</cac:AddressLine>
+				<cac:Country>
+					<cbc:IdentificationCode>GB</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+		</cac:Party>
+	</cac:OriginatorCustomerParty>
+	<cac:Shipment>
+		<cbc:ID>1</cbc:ID>
+		<cbc:Information>text</cbc:Information>
+		<cbc:GrossWeightMeasure unitCode="C62">1</cbc:GrossWeightMeasure>
+		<cbc:GrossVolumeMeasure unitCode="C62">1</cbc:GrossVolumeMeasure>
+		<cbc:TotalTransportHandlingUnitQuantity>3</cbc:TotalTransportHandlingUnitQuantity>
+		<cac:Consignment>
+			<cbc:ID>1</cbc:ID>
+			<cbc:Information>text</cbc:Information>
+			<cac:CarrierParty>
+				<cac:PartyName>
+					<cbc:Name>Name</cbc:Name>
+				</cac:PartyName>
+				<cac:Person>
+					<cac:IdentityDocumentReference>
+						<cbc:ID>1234</cbc:ID>
+						<cbc:DocumentType>Inv</cbc:DocumentType>
+					</cac:IdentityDocumentReference>
+				</cac:Person>
+			</cac:CarrierParty>
+		</cac:Consignment>
+		<cac:Delivery>
+			<cbc:TrackingID>456789</cbc:TrackingID>
+			<cac:EstimatedDeliveryPeriod>
+				<cbc:StartDate>2018-09-25</cbc:StartDate>
+				<cbc:StartTime>12:00:00</cbc:StartTime>
+				<cbc:EndDate>2018-09-27</cbc:EndDate>
+				<cbc:EndTime>12:00:00</cbc:EndTime>
+			</cac:EstimatedDeliveryPeriod>
+			<cac:Despatch>
+				<cbc:ActualDespatchDate>2018-09-25</cbc:ActualDespatchDate>
+				<cbc:ActualDespatchTime>13:00:00</cbc:ActualDespatchTime>
+				<cac:DespatchAddress>
+					<cbc:StreetName>Avon Way</cbc:StreetName>
+					<cbc:AdditionalStreetName>way 2</cbc:AdditionalStreetName>
+					<cbc:CityName>Bridgtow</cbc:CityName>
+					<cbc:PostalZone>ZZ99 1ZZ</cbc:PostalZone>
+					<cbc:CountrySubentity>Avon</cbc:CountrySubentity>
+					<cac:AddressLine>
+						<cbc:Line>3rd Floor, Room 5</cbc:Line>
+					</cac:AddressLine>
+					<cac:Country>
+						<cbc:IdentificationCode>GB</cbc:IdentificationCode>
+					</cac:Country>
+				</cac:DespatchAddress>
+			</cac:Despatch>
+		</cac:Delivery>
+	</cac:Shipment>
+	<cac:DespatchLine>
+		<cbc:ID>1</cbc:ID>
+		<cbc:Note>Mrs Green agreed to waive charge</cbc:Note>
+		<cbc:DeliveredQuantity unitCode="C62">10</cbc:DeliveredQuantity>
+		<cbc:OutstandingQuantity unitCode="C62">2</cbc:OutstandingQuantity>
+		<cbc:OutstandingReason>text</cbc:OutstandingReason>
+		<cac:OrderLineReference>
+			<cbc:LineID>1</cbc:LineID>
+			<cac:OrderReference>
+				<cbc:ID>AEG012345</cbc:ID>
+			</cac:OrderReference>
+		</cac:OrderLineReference>
+		<cac:Item>
+			<cbc:Name>beeswax</cbc:Name>
+			<cac:BuyersItemIdentification>
+				<cbc:ID>6578489</cbc:ID>
+			</cac:BuyersItemIdentification>
+			<cac:SellersItemIdentification>
+				<cbc:ID>17589683</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:StandardItemIdentification>
+				<cbc:ID schemeID="0160">1234567891234</cbc:ID>
+				<cbc:ExtendedID>22114455</cbc:ExtendedID>
+			</cac:StandardItemIdentification>
+			<cac:HazardousItem>
+				<cbc:UNDGCode>ADR</cbc:UNDGCode>
+				<cbc:HazardClassID>Code</cbc:HazardClassID>
+			</cac:HazardousItem>
+			<cac:AdditionalItemProperty>
+				<cbc:Name>Colour</cbc:Name>
+				<cbc:Value>Blue</cbc:Value>
+			</cac:AdditionalItemProperty>
+			<cac:ItemInstance>
+				<cbc:ManufactureDate>2018-01-01</cbc:ManufactureDate>
+				<cbc:BestBeforeDate>2018-12-01</cbc:BestBeforeDate>
+				<cbc:SerialID>4558784</cbc:SerialID>
+				<cac:LotIdentification>
+					<cbc:LotNumberID>546378239</cbc:LotNumberID>
+					<cbc:ExpiryDate>2010-01-01</cbc:ExpiryDate>
+				</cac:LotIdentification>
+			</cac:ItemInstance>
+		</cac:Item>
+		<cac:Shipment>
+			<cbc:ID>NA</cbc:ID>
+			<cac:TransportHandlingUnit>
+				<cbc:ID>5454</cbc:ID>
+				<cbc:TransportHandlingUnitTypeCode>4H</cbc:TransportHandlingUnitTypeCode>
+				<cbc:HazardousRiskIndicator>false</cbc:HazardousRiskIndicator>
+				<cbc:ShippingMarks>text</cbc:ShippingMarks>
+				<cac:MeasurementDimension>
+					<cbc:AttributeID>AAW</cbc:AttributeID>
+					<cbc:Measure unitCode="C62">1</cbc:Measure>
+				</cac:MeasurementDimension>
+				<cac:Package>
+					<cbc:ID>126</cbc:ID>
+					<cbc:PackagingTypeCode>BX</cbc:PackagingTypeCode>
+				</cac:Package>
+				<cac:Package>
+					<cbc:ID>667</cbc:ID>
+					<cbc:PackagingTypeCode>BX</cbc:PackagingTypeCode>
+				</cac:Package>
+			</cac:TransportHandlingUnit>
+		</cac:Shipment>
+	</cac:DespatchLine>
+</DespatchAdvice>

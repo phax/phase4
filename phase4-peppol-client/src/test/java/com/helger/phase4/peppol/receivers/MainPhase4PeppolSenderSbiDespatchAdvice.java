@@ -40,9 +40,9 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderSbiOrder
+public final class MainPhase4PeppolSenderSbiDespatchAdvice
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderSbiOrder.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderSbiDespatchAdvice.class);
 
   public static void main (final String [] args)
   {
@@ -54,7 +54,7 @@ public final class MainPhase4PeppolSenderSbiOrder
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/test-order.xml"))
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/DespatchAdvice_Example.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
@@ -63,8 +63,8 @@ public final class MainPhase4PeppolSenderSbiOrder
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0211:IT04513160962");
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
-                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Order-2::Order##urn:fdc:peppol.eu:poacc:trns:order:3::2.1"))
-                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:poacc:bis:ordering:3"))
+                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2::DespatchAdvice##urn:fdc:peppol.eu:poacc:trns:despatch_advice:3::2.1"))
+                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:poacc:bis:despatch_advice:3"))
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
