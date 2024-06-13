@@ -28,12 +28,6 @@ public class EuctpPullRequestBuilder extends AbstractAS4PullRequestBuilder<Euctp
 			cryptParams().setKeyEncAlgorithm(ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
 			cryptParams().setEncryptSymmetricSessionKey(false);
 
-			/*
-			 * Assumption: the BST "ValueType" attribute is set to
-			 * "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509PKIPathv1"
-			 * by WSS4J automatically (see WSSecSignature#addBST)
-			 */
-
 			// Other signing parameters are located in the PMode security part
 			signingParams().setKeyIdentifierType(DEFAULT_KEY_IDENTIFIER_TYPE_SIGN);
 			signingParams().setAlgorithmC14N(ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);

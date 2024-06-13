@@ -26,11 +26,10 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
+import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.core5.ssl.SSLContexts;
-import org.apache.hc.core5.ssl.TrustStrategy;
 import org.apache.hc.core5.util.Timeout;
 
-import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.http.tls.ETLSVersion;
 import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientSettings;
@@ -48,13 +47,21 @@ public class Phase4EuCtpHttpClientSettings extends HttpClientSettings
 	public static final Timeout DEFAULT_EUCTP_CONNECT_TIMEOUT = Timeout.ofSeconds(5);
 	public static final Timeout DEFAULT_EUCTP_RESPONSE_TIMEOUT = Timeout.ofSeconds(100);
 
+	public Phase4EuCtpHttpClientSettings() throws GeneralSecurityException
+	{
+		this(null, null);
+	}
+
 	public Phase4EuCtpHttpClientSettings(KeyStore keyStore, char[] keyPassword) throws GeneralSecurityException
 	{
-		// BDEW recommends at least TLS v1.2 [TR02102-2]
-		final SSLContext aSSLContext = SSLContexts.custom()
-				.setProtocol(ETLSVersion.TLS_12.getID())
-				.loadKeyMaterial(keyStore, keyPassword) // needed for client certificate
-				.build();
+		SSLContextBuilder aSSLContextBuilder = SSLContexts.custom()
+				.setProtocol(ETLSVersion.TLS_12.getID());
+
+		if (keyStore != null && keyPassword != null) {
+			aSSLContextBuilder = aSSLContextBuilder.loadKeyMaterial(keyStore, keyPassword);
+		}
+
+		final SSLContext aSSLContext = aSSLContextBuilder.build();
 
 		setSSLContext(aSSLContext);
 

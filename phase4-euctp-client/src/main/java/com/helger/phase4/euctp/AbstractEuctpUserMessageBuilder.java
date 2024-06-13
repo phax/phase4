@@ -1,5 +1,7 @@
 package com.helger.phase4.euctp;
 
+import java.util.UUID;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
@@ -35,7 +37,7 @@ public abstract class AbstractEuctpUserMessageBuilder<IMPLTYPE extends AbstractE
 		// Override default values
 		try
 		{
-//        httpClientFactory(new Phase4EuCtpHttpClientSettings());
+            httpClientFactory(new Phase4EuCtpHttpClientSettings());
 
 			// Other crypt parameters are located in the PMode security part
 			cryptParams().setKeyIdentifierType(DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT);
@@ -54,7 +56,7 @@ public abstract class AbstractEuctpUserMessageBuilder<IMPLTYPE extends AbstractE
 			// Use the BST value type "#X509PKIPathv1"
 			signingParams().setUseSingleCertificate(false);
 
-			conversationID("1");
+			conversationID(UUID.randomUUID().toString());
 
 			agreementRef(EuCtpPMode.DEFAULT_AGREEMENT_ID);
 
@@ -107,8 +109,7 @@ public abstract class AbstractEuctpUserMessageBuilder<IMPLTYPE extends AbstractE
 
 		if (m_aPayload == null)
 		{
-			// todo uli
-			if (m_sAction.equals(EuCtpPMode.ACTION_TEST))
+			if (EuCtpPMode.ACTION_TEST.equals(m_sAction))
 			{
 				// Payload is optional
 			}
