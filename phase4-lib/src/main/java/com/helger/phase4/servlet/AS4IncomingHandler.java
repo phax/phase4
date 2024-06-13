@@ -955,7 +955,6 @@ public final class AS4IncomingHandler
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
-                                                   @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
                                                    @Nullable final IAS4AttachmentConsumer aAttachmentConsumer
                                                    ) throws Phase4Exception
   {
@@ -981,13 +980,11 @@ public final class AS4IncomingHandler
     final Ebms3UserMessage ret = aState.getEbmsUserMessage ();
     if (ret == null)
     {
-      if (aState.getEbmsSignalMessage () != null) {
+      if (aState.getEbmsSignalMessage () != null)
         LOGGER.warn ("A Message state is present, but it contains a SignalMessage instead of a UserMessage.");
-        aSignalMsgConsumer.handleSignalMessage(aState.getEbmsSignalMessage(), aMessageMetadata, aState);
-      } else {
+      else
         LOGGER.warn("A Message state is present, but it contains neither a SignalMessage nor a UserMessage.");
       }
-    }
     else
     {
       // Invoke consumer here, because we have the state
