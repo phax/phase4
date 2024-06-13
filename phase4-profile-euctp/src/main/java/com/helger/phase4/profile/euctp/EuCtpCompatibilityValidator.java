@@ -292,7 +292,8 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
       _checkIfLegIsValid (aErrorList, aPModeLeg1, "PMode.Leg[1].");
     }
 
-    if (aPMode.getLeg2 () != null)
+    PModeLeg aPModeLeg2 = aPMode.getLeg2();
+    if (aPModeLeg2 != null)
     {
       _checkIfLegIsValid (aErrorList, aPModeLeg2, "PMode.Leg[2].");
     }
