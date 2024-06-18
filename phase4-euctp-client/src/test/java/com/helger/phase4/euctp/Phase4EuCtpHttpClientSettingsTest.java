@@ -19,6 +19,7 @@
  */
 package com.helger.phase4.euctp;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
@@ -32,9 +33,11 @@ import org.junit.Test;
 public class Phase4EuCtpHttpClientSettingsTest
 {
   @Test
-  public void testBasic () throws GeneralSecurityException
+  public void testBasic () throws GeneralSecurityException, IOException
   {
     KeyStore keyStore = KeyStore.getInstance("pkcs12");
-    new Phase4EuCtpHttpClientSettings(keyStore, "".toCharArray());
+    char[] password = "justForTesting1".toCharArray();
+    keyStore.load(getClass().getClassLoader().getResourceAsStream("crypto/testClient.keystore"), password);
+    new Phase4EuCtpHttpClientSettings(keyStore, password);
   }
 }
