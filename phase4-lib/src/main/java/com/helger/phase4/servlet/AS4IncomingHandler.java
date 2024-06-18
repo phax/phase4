@@ -52,6 +52,7 @@ import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
+import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.phase4.attachment.AS4DecompressException;
@@ -171,8 +172,8 @@ public final class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
+                                                                                                             .getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -467,8 +468,7 @@ public final class AS4IncomingHandler
                                              aHeader.getNode (),
                                              aIncomingAttachments,
                                              aState,
-                                             aProcessingErrorMessagesTarget)
-                      .isSuccess ())
+                                             aProcessingErrorMessagesTarget).isSuccess ())
         {
           // Mark header as processed (for mustUnderstand check)
           aHeader.setProcessed (true);
@@ -989,5 +989,63 @@ public final class AS4IncomingHandler
         aUserMsgConsumer.handleUserMessage (ret, aMessageMetadata, aState);
     }
     return ret;
+  }
+
+  @Nonnull
+  public static ESuccess parseUserOrSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                   @Nonnull final IPModeResolver aPModeResolver,
+                                                   @Nonnull final IAS4IncomingAttachmentFactory aIAF,
+                                                   @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
+                                                   @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                   @Nullable final IPMode aSendingPMode,
+                                                   @Nonnull final Locale aLocale,
+                                                   @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                   @Nonnull final HttpResponse aHttpResponse,
+                                                   @Nonnull final byte [] aResponsePayload,
+                                                   @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                   @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                   @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
+                                                   @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
+  {
+    final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
+                                                   aCryptoFactoryCrypt,
+                                                   aPModeResolver,
+                                                   aIAF,
+                                                   aAS4ProfileSelector,
+                                                   aResHelper,
+                                                   aSendingPMode,
+                                                   aLocale,
+                                                   aMessageMetadata,
+                                                   aHttpResponse,
+                                                   aResponsePayload,
+                                                   aIncomingDumper,
+                                                   aIncomingSecurityConfiguration);
+    if (aState == null)
+    {
+      // Error message was already logged
+      return ESuccess.FAILURE;
+    }
+
+    final Ebms3UserMessage aUserMsg = aState.getEbmsUserMessage ();
+    if (aUserMsg != null)
+    {
+      // Invoke consumer here, because we have the state
+      if (aUserMsgConsumer != null)
+        aUserMsgConsumer.handleUserMessage (aUserMsg, aMessageMetadata, aState);
+    }
+    else
+    {
+      final Ebms3SignalMessage aSignalMsg = aState.getEbmsSignalMessage ();
+      if (aSignalMsg != null)
+      {
+        // Invoke consumer here, because we have the state
+        if (aSignalMsgConsumer != null)
+          aSignalMsgConsumer.handleSignalMessage (aSignalMsg, aMessageMetadata, aState);
+      }
+      else
+        LOGGER.warn ("A Message state is present, but it contains neither a SignalMessage nor a UserMessage.");
+    }
+    return ESuccess.SUCCESS;
   }
 }
