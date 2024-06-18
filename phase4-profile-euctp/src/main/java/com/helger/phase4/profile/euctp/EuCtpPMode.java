@@ -176,7 +176,7 @@ public final class EuCtpPMode
    * @return New PMode and never <code>null</code>.
    */
   @Nonnull
-  public static PMode createEuCtpPMode(@Nonnull @Nonempty final String sInitiatorID,
+  public static PMode createEuCtpPushPMode(@Nonnull @Nonempty final String sInitiatorID,
                                        @Nonnull @Nonempty final String sResponderID,
                                        @Nullable final String sAddress,
                                        @Nonnull final IPModeIDProvider aPModeIDProvider,
@@ -192,9 +192,54 @@ public final class EuCtpPMode
                                     EMEP.ONE_WAY,
                                     EMEPBinding.PUSH,
                                     generatePModeLeg (sAddress),
-                                    generatePModeLeg (sAddress), // second leg needed for Pull Request answers
+                                    null,
 		                            generatePModePayloadService(),
                                     generatePModeReceptionAwareness ());
+
+    if (bPersist)
+    {
+      // Ensure it is stored
+      MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+    }
+    return aPMode;
+  }
+
+  /**
+   * One-Way Version of the Euctp pmode uses one-way push
+   *
+   * @param sInitiatorID
+   *        Initiator ID. May neither be <code>null</code> nor empty.
+   * @param sResponderID
+   *        Responder ID. May neither be <code>null</code> nor empty.
+   * @param sAddress
+   *        Endpoint address URL. May be <code>null</code>.
+   * @param aPModeIDProvider
+   *        PMode ID provider. May not be <code>null</code>.
+   * @param bPersist
+   *        <code>true</code> to persist the PMode in the PModeManager,
+   *        <code>false</code> to have it only in memory.
+   * @return New PMode and never <code>null</code>.
+   */
+  @Nonnull
+  public static PMode createEuCtpPullPMode(@Nonnull @Nonempty final String sInitiatorID,
+                                       @Nonnull @Nonempty final String sResponderID,
+                                       @Nullable final String sAddress,
+                                       @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                       final boolean bPersist)
+  {
+    final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, DEFAULT_PARTY_TYPE_ID);
+    final PModeParty aResponder = createParty (sResponderID, CAS4.DEFAULT_RESPONDER_URL, DEFAULT_CUSTOMS_PARTY_TYPE_ID);
+
+    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (aInitiator, aResponder),
+            aInitiator,
+            aResponder,
+            DEFAULT_AGREEMENT_ID,
+            EMEP.ONE_WAY,
+            EMEPBinding.PULL,
+            generatePModeLeg (sAddress),
+            null,
+            generatePModePayloadService(),
+            generatePModeReceptionAwareness ());
 
     if (bPersist)
     {

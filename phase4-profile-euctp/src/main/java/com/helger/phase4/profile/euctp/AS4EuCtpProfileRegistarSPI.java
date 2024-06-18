@@ -36,7 +36,7 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
 @IsSPIImplementation
 public final class AS4EuCtpProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
-  public static final String AS4_PROFILE_ID = "euctp";
+  public static final String AS4_PROFILE_ID = "euctp"; // TODO Philip two profiles
   public static final String AS4_PROFILE_NAME = "EuCTP";
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
@@ -46,7 +46,7 @@ public final class AS4EuCtpProfileRegistarSPI implements IAS4ProfileRegistrarSPI
   {
     final IAS4ProfilePModeProvider aDefaultPModeProvider = (i,
                                                             r,
-                                                            a) -> EuCtpPMode.createEuCtpPMode (i,
+                                                            a) -> EuCtpPMode.createEuCtpPushPMode (i,
                                                                                                  r,
                                                                                                  a,
                                                                                                  PMODE_ID_PROVIDER,
