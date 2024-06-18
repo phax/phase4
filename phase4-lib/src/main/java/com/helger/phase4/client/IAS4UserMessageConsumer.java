@@ -33,7 +33,9 @@ import com.helger.phase4.util.Phase4Exception;
 public interface IAS4UserMessageConsumer
 {
   /**
-   * Handling an EBMS 3 User Message
+   * Handling an EBMS 3 User Message. Make sure to copy all attachments you are
+   * interested in, because by default they are only available based on
+   * temporary files during the processing of the inbound request.
    *
    * @param aUserMsg
    *        The User Message domain object. Never <code>null</code>.

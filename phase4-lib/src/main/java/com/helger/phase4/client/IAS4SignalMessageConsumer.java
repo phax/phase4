@@ -33,7 +33,9 @@ import com.helger.phase4.util.Phase4Exception;
 public interface IAS4SignalMessageConsumer
 {
   /**
-   * Handling an EBMS 3 Signal Message
+   * Handling an EBMS 3 Signal Message. Make sure to copy all attachments you
+   * are interested in, because by default they are only available based on
+   * temporary files during the processing of the inbound request.
    *
    * @param aSignalMsg
    *        The Signal Message domain object. Never <code>null</code>.

@@ -221,6 +221,8 @@ public final class AS4BidirectionalClientHelper
       aWrappedResponse.set (aHttpResponse);
       return EntityUtils.toByteArray (aEntity);
     };
+
+    // Generic AS4 PullRequest sending
     final AS4ClientSentMessage <byte []> aResponseEntity = aClientPullRequest.sendMessageWithRetries (sURL,
                                                                                                       aResponseHdl,
                                                                                                       aBuildMessageCallback,
