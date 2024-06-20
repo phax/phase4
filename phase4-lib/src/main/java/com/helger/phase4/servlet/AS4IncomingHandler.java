@@ -157,6 +157,8 @@ public final class AS4IncomingHandler
                                                                                           MessagingException,
                                                                                           WSSecurityException
   {
+    LOGGER.info ("phase4 --- parsemessage:start");
+
     // Determine content type
     final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
     if (StringHelper.hasNoText (sContentType))
@@ -403,6 +405,8 @@ public final class AS4IncomingHandler
                         aMessageMetadata,
                         ex);
         }
+
+      LOGGER.info ("phase4 --- parsemessage:end");
     }
   }
 

@@ -140,6 +140,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           LOGGER.trace ("After modifyWSSConfig");
       }
 
+      LOGGER.info ("phase4 --- verify-decrypt:start");
+
       // Configure RequestData needed for the check / decrypt process!
       final RequestData aRequestData = new RequestData ();
       aRequestData.setCallbackHandler (aKeyStoreCallback);
@@ -178,6 +180,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       // This starts the main verification - throws an exception
       final WSHandlerResult aHdlRes = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
       final List <WSSecurityEngineResult> aResults = aHdlRes.getResults ();
+
+      LOGGER.info ("phase4 --- verify-decrypt:end");
 
       // Collect all unique used certificates
       final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
@@ -229,6 +233,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aState.setUsedCertificate (aUsedCert);
       aState.setDecryptedSoapDocument (aSOAPDoc);
 
+      LOGGER.info ("phase4 --- attachment.storetemp:start");
+
       // Decrypting the Attachments
       final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
       for (final WSS4JAttachment aResponseAttachment : aResponseAttachments)
@@ -252,6 +258,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
       // Remember in State
       aState.setDecryptedAttachments (aResponseAttachments);
+      LOGGER.info ("phase4 --- attachment.storetemp:end");
+
       return ESuccess.SUCCESS;
     }
     catch (final IndexOutOfBoundsException | IllegalStateException | WSSecurityException ex)
