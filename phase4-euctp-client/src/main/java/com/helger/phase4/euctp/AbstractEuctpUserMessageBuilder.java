@@ -10,6 +10,7 @@ import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.profile.euctp.EuCtpPMode;
+import com.helger.phase4.sender.AbstractAS4UserMessageBuilder;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public abstract class AbstractEuctpUserMessageBuilder<IMPLTYPE extends AbstractE
 	// Default per section 2.2.6.2.1
 	public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_SIGN = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
 	// Default per section 2.2.6.2.2
-	public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT = ECryptoKeyIdentifierType.SKI_KEY_IDENTIFIER;
+	public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT = ECryptoKeyIdentifierType.X509_KEY_IDENTIFIER;
 
 	protected AbstractEuctpUserMessageBuilder()
 	{
@@ -100,6 +101,8 @@ public abstract class AbstractEuctpUserMessageBuilder<IMPLTYPE extends AbstractE
 		return thisAsT();
 	}
 
+
+
 	@Override
 	@OverridingMethodsMustInvokeSuper
 	public boolean isEveryRequiredFieldSet()
@@ -123,5 +126,18 @@ public abstract class AbstractEuctpUserMessageBuilder<IMPLTYPE extends AbstractE
 
 		// All valid
 		return true;
+	}
+
+	@Nonnull
+	public AbstractEuctpUserMessageBuilder<IMPLTYPE> service(@Nonnull String serviceType, @Nonnull EEuCtpService eEuCtpService)
+	{
+		this.service(serviceType, eEuCtpService.getValue());
+		return this;
+	}
+
+	public AbstractEuctpUserMessageBuilder<IMPLTYPE> action(EEuCtpAction eEuCtpAction)
+	{
+		this.action(eEuCtpAction.name());
+		return this;
 	}
 }

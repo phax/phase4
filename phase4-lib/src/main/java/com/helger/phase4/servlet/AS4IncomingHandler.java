@@ -59,7 +59,6 @@ import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.client.IAS4AttachmentConsumer;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -954,8 +953,7 @@ public final class AS4IncomingHandler
                                                    @Nonnull final byte [] aResponsePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                   @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
-                                                   @Nullable final IAS4AttachmentConsumer aAttachmentConsumer
+                                                   @Nullable final IAS4UserMessageConsumer aUserMsgConsumer
                                                    ) throws Phase4Exception
   {
     final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
@@ -990,11 +988,6 @@ public final class AS4IncomingHandler
       // Invoke consumer here, because we have the state
       if (aUserMsgConsumer != null)
         aUserMsgConsumer.handleUserMessage (ret, aMessageMetadata, aState);
-
-      if (aAttachmentConsumer != null) {
-        ICommonsList<WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments() ? aState.getDecryptedAttachments() : new CommonsArrayList<>();
-        aAttachmentConsumer.handleAttachments(aDecryptedAttachments, aMessageMetadata, aState);
-      }
     }
     return ret;
   }

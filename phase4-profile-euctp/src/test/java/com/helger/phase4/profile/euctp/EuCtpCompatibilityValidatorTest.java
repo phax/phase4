@@ -74,7 +74,7 @@ public final class EuCtpCompatibilityValidatorTest
   public void before ()
   {
     m_aErrorList = new ErrorList ();
-    m_aPMode = EuCtpPMode.createEuCtpPMode ("TestInitiator",
+    m_aPMode = EuCtpPMode.createEuCtpPushPMode ("TestInitiator",
                                               "TestResponder",
                                               "http://localhost:8080",
                                               IPModeIDProvider.DEFAULT_DYNAMIC,

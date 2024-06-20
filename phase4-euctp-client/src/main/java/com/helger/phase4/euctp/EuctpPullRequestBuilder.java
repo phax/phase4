@@ -17,7 +17,7 @@ public class EuctpPullRequestBuilder extends AbstractAS4PullRequestBuilder<Euctp
 {
 	public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_SIGN = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
 	// Default per section 2.2.6.2.2
-	public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT = ECryptoKeyIdentifierType.SKI_KEY_IDENTIFIER;
+	public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT = ECryptoKeyIdentifierType.X509_KEY_IDENTIFIER;
 
 	public EuctpPullRequestBuilder()
 	{

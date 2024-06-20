@@ -38,7 +38,7 @@ public final class EuCtpPModeTest
   @Test
   public void testEuCTPPMode()
   {
-    final PMode aPMode = EuCtpPMode.createEuCtpPMode ("TestInitiator",
+    final PMode aPMode = EuCtpPMode.createEuCtpPushPMode ("TestInitiator",
                                                         "TestResponder",
                                                         "https://test.example.org",
                                                         IPModeIDProvider.DEFAULT_DYNAMIC,

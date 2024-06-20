@@ -59,6 +59,7 @@ public final class EuCtpPMode
 
   // required for connectivity tests
   public static final String ACTION_TEST = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test";
+  public static final String DEFAULT_SERVICE_TYPE = "eu-customs-service-type";
 
   private EuCtpPMode()
   {}
@@ -80,7 +81,7 @@ public final class EuCtpPMode
   {
     // Process ID
     final String sService = "eu_ics2_t2c";
-    final String sServiceType = "eu-customs-service-type";
+    final String sServiceType = DEFAULT_SERVICE_TYPE;
     // Document type ID
     final String sAction = null;
     final Long nPayloadProfileMaxKB = null;

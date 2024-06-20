@@ -119,24 +119,24 @@ public class MainPhase4EuCtpSenderExample
 				.userMsgConsumer((aUserMsg, aMessageMetadata, aState) -> {
 					aUserMessageHolder.set(aUserMsg);
 					aStateHolder.set(aState);
+
+					if (aState.hasDecryptedAttachments()) {
+						for (WSS4JAttachment attachment : aState.getDecryptedAttachments())
+						{
+							try (InputStream aInputStream = attachment.getSourceStream()) {
+								String parsedFile = new String(aInputStream.readAllBytes(), StandardCharsets.UTF_8);
+								attachmentsAsString.add(parsedFile);
+							}
+							catch (IOException e)
+							{
+								LOGGER.error("Error reading attachment: " + attachment, e);
+							}
+						}
+					}
 				})
 				.signalMsgConsumer((aSignalMsg, aMMD, aState) -> {
 					aSignalMessageHolder.set(aSignalMsg);
 					aStateHolder.set(aState);
-				})
-				.attachmentConsumer((aAttachments, aMessageMetadata, aState) -> {
-					// attachments' streams are only open here
-					for (WSS4JAttachment aAttachment : aAttachments)
-					{
-						try (InputStream aInputStream = aAttachment.getSourceStream()) {
-							String parsedFile = new String(aInputStream.readAllBytes(), StandardCharsets.UTF_8);
-							attachmentsAsString.add(parsedFile);
-						}
-						catch (IOException e)
-						{
-							LOGGER.error("Error reading attachment: " + aAttachment, e);
-						}
-					}
 				})
 				.cryptoFactoryCrypt(cryptoFactoryProperties)
 				.cryptoFactorySign(cryptoFactoryProperties)
@@ -194,8 +194,8 @@ public class MainPhase4EuCtpSenderExample
 				.toRole("Customs")
 				.toPartyIDType(EuCtpPMode.DEFAULT_CUSTOMS_PARTY_TYPE_ID)
 				.endpointURL("https://conformance.customs.ec.europa.eu:8445/domibus/services/msh")
-				.service("eu-customs-service-type", "eu_ics2_t2c")
-				.action("IE3F26")
+				.service(EuCtpPMode.DEFAULT_SERVICE_TYPE, EEuCtpService.TRADER_TO_CUSTOMS)
+				.action(EEuCtpAction.IE3F26)
 				.signalMsgConsumer((aSignalMsg, aMMD, aState) -> aSignalMsgHolder.set(aSignalMsg))
 				.cryptoFactorySign(cryptoFactoryProperties)
 				.cryptoFactoryCrypt(cryptoFactoryProperties)

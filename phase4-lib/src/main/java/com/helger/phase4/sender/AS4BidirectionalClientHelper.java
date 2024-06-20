@@ -37,7 +37,6 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
-import com.helger.phase4.client.IAS4AttachmentConsumer;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.client.IAS4RetryCallback;
@@ -195,7 +194,6 @@ public final class AS4BidirectionalClientHelper
                                                                  @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                  @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
                                                                  @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
-                                                                 @Nullable final IAS4AttachmentConsumer aAttachmentConsumer,
                                                                  @Nullable final IPMode aPMode) throws IOException,
                                                                                                                            Phase4Exception,
                                                                                                                            WSSecurityException,
@@ -259,8 +257,7 @@ public final class AS4BidirectionalClientHelper
               aResponseEntity.getResponse(),
               aIncomingDumper,
               aIncomingSecurityConfiguration,
-              aUserMsgConsumer,
-              aAttachmentConsumer);
+              aUserMsgConsumer);
 
       if (ebms3UserMessage == null) {
         // No user message was parsed from answer, maybe a Signal Message is present

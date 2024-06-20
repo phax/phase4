@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
-import com.helger.phase4.client.IAS4AttachmentConsumer;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
 import com.helger.phase4.crypto.AS4IncomingSecurityConfiguration;
@@ -56,8 +55,6 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   protected String m_sEndpointURL;
   protected IAS4UserMessageConsumer m_aUserMsgConsumer;
   protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
-  protected IAS4AttachmentConsumer m_aAttachmentConsumer;
-
   /**
    * Create a new builder, with the following fields already set:<br>
    */
@@ -154,21 +151,6 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
   {
     m_aSignalMsgConsumer = aSignalMsgConsumer;
-    return thisAsT ();
-  }
-
-  /**
-   * Set an optional Attachment Consumer. This method is
-   * optional and must not be called prior to sending.
-   *
-   * @param aAttachmentConsumer
-   *        The optional attachment consumer. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE attachmentConsumer (@Nullable final IAS4AttachmentConsumer aAttachmentConsumer)
-  {
-    m_aAttachmentConsumer = aAttachmentConsumer;
     return thisAsT ();
   }
 
@@ -293,7 +275,6 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
                                                                                m_aResponseConsumer,
                                                                                m_aUserMsgConsumer,
                                                                                m_aSignalMsgConsumer,
-                                                                               m_aAttachmentConsumer,
                                                                                m_aPMode);
     }
     catch (final Phase4Exception ex)
