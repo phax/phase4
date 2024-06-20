@@ -30,21 +30,35 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.state.ESuccess;
+import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.utils.PeppolCertificateHelper;
+import com.helger.peppol.xhe.DBNAlliancePayload;
+import com.helger.peppol.xhe.DBNAllianceXHEData;
+import com.helger.peppol.xhe.write.DBNAllianceXHEDocumentWriter;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
+import com.helger.peppolid.factory.BDXR2IdentifierFactory;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.crypto.ICryptoSessionKeyProvider;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR2;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
+import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.profile.dbnalliance.DBNAlliancePMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
+import com.helger.xhe.v10.CXHE10;
+import com.helger.xhe.v10.XHE10Marshaller;
+import com.helger.xhe.v10.XHE10XHEType;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import org.w3c.dom.Element;
 
 /**
  * This class contains all the specifics to send AS4 messages with the
@@ -56,10 +70,46 @@ import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 @Immutable
 public final class Phase4DBNAllianceSender
 {
+  public static final BDXR2IdentifierFactory IF = BDXR2IdentifierFactory.INSTANCE;
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4DBNAllianceSender.class);
 
   private Phase4DBNAllianceSender ()
   {}
+  
+  @Nullable
+  private static XHE10XHEType _createXHE (@Nonnull final IParticipantIdentifier aSenderID,
+                                          @Nonnull final IParticipantIdentifier aReceiverID,
+                                          @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                          @Nonnull final IProcessIdentifier aProcID,
+                                          @Nonnull final Element aPayloadElement,
+                                          final boolean bClonePayloadElement
+                                          )
+  {
+    final DBNAllianceXHEData aData = new DBNAllianceXHEData (IF);
+    aData.setFromParty (aSenderID.getScheme (), aSenderID.getValue ());
+    aData.setToParty (aReceiverID.getScheme (), aReceiverID.getValue ());
+    aData.setInstanceIdentifier (UUID.randomUUID ().toString ());
+    aData.setCreationDateAndTime (MetaAS4Manager.getTimestampMgr ().getCurrentXMLDateTime ());
+    
+    final DBNAlliancePayload aPayload = new DBNAlliancePayload (IF);
+    aPayload.setCustomizationID (null, aDocTypeID.getValue ());
+    aPayload.setProfileID (aProcID.getScheme (), aProcID.getValue ());
+    
+    // Not cloning the payload element is for saving memory only (if it can be
+    // ensured, the source payload element is not altered externally of course)
+    if (bClonePayloadElement)
+      aPayload.setPayloadContent (aPayloadElement);
+    else
+      aPayload.setPayloadContentNoClone (aPayloadElement);
+    
+    aData.addPayload(aPayload);
+    
+    // check with logging
+    if (!aData.areAllFieldsSet (true))
+      throw new IllegalArgumentException ("The DBNAlliance XHE data is incomplete. See logs for details.");
+    
+    return new DBNAllianceXHEDocumentWriter ().createExchangeHeaderEnvelope (aData);
+  }
 
   /**
    * @return Create a new Builder for AS4 messages if the XHE payload is
@@ -83,6 +133,7 @@ public final class Phase4DBNAllianceSender
                                                                      AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     // C4
+    protected IParticipantIdentifier m_aSenderID;
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
@@ -113,6 +164,24 @@ public final class Phase4DBNAllianceSender
       {
         throw new IllegalStateException ("Failed to init AS4 Client builder", ex);
       }
+    }
+    
+    /**
+     * Set the sender participant ID of the message. The participant ID must
+     * be provided prior to sending.
+     *
+     * @param aSenderID
+     *        The sender participant ID. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public final IMPLTYPE senderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
+    {
+      ValueEnforcer.notNull (aSenderID, "SenderID");
+      if (m_aSenderID != null)
+        LOGGER.warn ("An existing SenderParticipantID is overridden");
+      m_aSenderID = aSenderID;
+      return thisAsT ();
     }
 
     /**
@@ -226,7 +295,9 @@ public final class Phase4DBNAllianceSender
     @Nonnull
     public final IMPLTYPE smpClient (@Nonnull final IBDXR2ServiceMetadataProvider aSMPClient)
     {
-      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR2 (aSMPClient));
+      final AS4EndpointDetailProviderBDXR2 aEndpointDetailProvider = new AS4EndpointDetailProviderBDXR2 (aSMPClient);
+      aEndpointDetailProvider.setTransportProfile (ESMPTransportProfile.TRANSPORT_PROFILE_DBNA_AS4_v1);
+      return endpointDetailProvider (aEndpointDetailProvider);
     }
 
     /**
@@ -420,7 +491,83 @@ public final class Phase4DBNAllianceSender
   public static class DBNAllianceUserMessageBuilder extends
                                                     AbstractDBNAllianceUserMessageBuilder <DBNAllianceUserMessageBuilder>
   {
+    
+    private Element m_aPayloadElement;
+    
     public DBNAllianceUserMessageBuilder ()
     {}
+    
+    /**
+     * Set the payload element to be used, if it is available as a parsed DOM
+     * element. Internally the DOM element will be cloned before sending it out.
+     * If this method is called, it overwrites any other explicitly set payload.
+     *
+     * @param aPayloadElement
+     *        The payload element to be used. They payload element MUST have a
+     *        namespace URI. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public DBNAllianceUserMessageBuilder payload (@Nonnull final Element aPayloadElement)
+    {
+      ValueEnforcer.notNull (aPayloadElement, "Payload");
+      ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
+      m_aPayloadElement = aPayloadElement;
+      return this;
+    }
+    
+    @Override
+    protected ESuccess finishFields () throws Phase4Exception
+    {
+      // Ensure a DOM element is present
+      final Element aPayloadElement;
+      final boolean bClonePayloadElement;
+      if (m_aPayloadElement != null)
+      {
+        // Already provided as a DOM element
+        aPayloadElement = m_aPayloadElement;
+        bClonePayloadElement = true;
+      }
+      else
+        throw new IllegalStateException ("Unexpected - element are not present");
+
+      // Consistency check
+      if (CXHE10.NAMESPACE_URI_XHE.equals(aPayloadElement.getNamespaceURI ()))
+        throw new Phase4DBNAllianceException ("You cannot set a Exchange Header Envelope as the payload for the regular builder. The XHE is created automatically inside of this builder.");
+
+      // Optional payload validation
+      // _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
+
+      // Perform SMP lookup
+      if (super.finishFields ().isFailure ())
+        return ESuccess.FAILURE;
+
+      // Created SBDH
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Start creating SBDH for AS4 message");
+
+      final XHE10XHEType aXHE = _createXHE (m_aSenderID,
+                                            m_aReceiverID,
+                                            m_aDocTypeID,
+                                            m_aProcessID,
+                                            aPayloadElement,
+                                            bClonePayloadElement);
+      if (aXHE == null)
+      {
+        // A log message was already provided
+        return ESuccess.FAILURE;
+      }
+
+      final byte [] aXHEBytes = new XHE10Marshaller ().getAsBytes (aXHE);
+
+      // Now we have the main payload
+      payload (AS4OutgoingAttachment.builder ()
+                                    .data (aXHEBytes)
+                                    .compressionGZIP ()
+                                    .mimeTypeXML ()
+                                    .charset (StandardCharsets.UTF_8));
+
+      return ESuccess.SUCCESS;
+    }
   }
 }
