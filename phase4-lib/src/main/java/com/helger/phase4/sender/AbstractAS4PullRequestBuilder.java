@@ -26,8 +26,11 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
+import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
 import com.helger.phase4.crypto.AS4IncomingSecurityConfiguration;
+import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 
@@ -45,15 +48,27 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4PullRequestBuilder.class);
 
+  protected IPMode m_aPMode;
+  private boolean m_bUseLeg1 = true;
+
   protected String m_sMPC;
   protected String m_sEndpointURL;
   protected IAS4UserMessageConsumer m_aUserMsgConsumer;
-
+  protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
   /**
    * Create a new builder, with the following fields already set:<br>
    */
   protected AbstractAS4PullRequestBuilder ()
-  {}
+  {
+    try
+    {
+      pmode (pmodeResolver ().getPModeOfID (null, "s", "a", "i", "r", "a", null));
+    }
+    catch (final Exception ex)
+    {
+      // for compatibility reasons ignore if no PMode is found
+    }
+  }
 
   /**
    * Set the MPC to be used in the Pull Request.
@@ -95,6 +110,47 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   public final IMPLTYPE userMsgConsumer (@Nullable final IAS4UserMessageConsumer aUserMsgConsumer)
   {
     m_aUserMsgConsumer = aUserMsgConsumer;
+    return thisAsT ();
+  }
+
+  /**
+   * @return The currently set P-Mode. May be <code>null</code>.
+   */
+  @Nullable
+  public final IPMode pmode ()
+  {
+    return m_aPMode;
+  }
+
+  /**
+   * Set the PMode to be used. By default a generic PMode is used.
+   *
+   * @param aPMode
+   *        The PMode to be used. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE pmode (@Nullable final IPMode aPMode)
+  {
+    if (aPMode == null)
+      LOGGER.warn ("A null PMode was supplied");
+    m_aPMode = aPMode;
+    return thisAsT ();
+  }
+
+  /**
+   * Set an optional Ebms3 Signal Message Consumer. If this consumer is set, the
+   * response is trying to be parsed as a Signal Message. This method is
+   * optional and must not be called prior to sending.
+   *
+   * @param aSignalMsgConsumer
+   *        The optional signal message consumer. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
+  {
+    m_aSignalMsgConsumer = aSignalMsgConsumer;
     return thisAsT ();
   }
 
@@ -165,6 +221,11 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
       aPullRequestMsg.setRefToMessageID (m_sRefToMessageID);
 
     aPullRequestMsg.setMPC (m_sMPC);
+
+    if (m_aPMode != null) {
+      final PModeLeg aEffectiveLeg = m_bUseLeg1 ? m_aPMode.getLeg1 () : m_aPMode.getLeg2 ();
+      aPullRequestMsg.setValuesFromPMode(m_aPMode, aEffectiveLeg);
+    }
   }
 
   @Override
@@ -212,7 +273,9 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
                                                                                aIncomingSecurityConfiguration,
                                                                                m_aRetryCallback,
                                                                                m_aResponseConsumer,
-                                                                               m_aUserMsgConsumer);
+                                                                               m_aUserMsgConsumer,
+                                                                               m_aSignalMsgConsumer,
+                                                                               m_aPMode);
     }
     catch (final Phase4Exception ex)
     {
