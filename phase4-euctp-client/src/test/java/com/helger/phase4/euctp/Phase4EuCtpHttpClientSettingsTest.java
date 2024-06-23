@@ -25,19 +25,22 @@ import java.security.KeyStore;
 
 import org.junit.Test;
 
+import com.helger.security.keystore.EKeyStoreType;
+
 /**
  * Test class for class {@link Phase4EuCtpHttpClientSettings}
  *
  * @author Ulrik Stehling
+ * @author Philip Helger
  */
 public class Phase4EuCtpHttpClientSettingsTest
 {
   @Test
   public void testBasic () throws GeneralSecurityException, IOException
   {
-    KeyStore keyStore = KeyStore.getInstance("pkcs12");
-    char[] password = "justForTesting1".toCharArray();
-    keyStore.load(getClass().getClassLoader().getResourceAsStream("crypto/testClient.keystore"), password);
-    new Phase4EuCtpHttpClientSettings(keyStore, password);
+    final KeyStore aKeyStore = EKeyStoreType.PKCS12.getKeyStore ();
+    final char [] password = "justForTesting1".toCharArray ();
+    aKeyStore.load (getClass ().getClassLoader ().getResourceAsStream ("crypto/testClient.keystore"), password);
+    new Phase4EuCtpHttpClientSettings (aKeyStore, password);
   }
 }

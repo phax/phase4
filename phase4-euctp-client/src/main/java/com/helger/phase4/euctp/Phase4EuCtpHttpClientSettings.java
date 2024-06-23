@@ -22,9 +22,9 @@ package com.helger.phase4.euctp;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import javax.net.ssl.KeyManager;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.core5.ssl.SSLContexts;
@@ -43,49 +43,51 @@ import com.helger.phase4.CAS4Version;
  */
 public class Phase4EuCtpHttpClientSettings extends HttpClientSettings
 {
-	public static final Timeout DEFAULT_EUCTP_CONNECTION_REQUEST_TIMEOUT = Timeout.ofSeconds(1);
-	public static final Timeout DEFAULT_EUCTP_CONNECT_TIMEOUT = Timeout.ofSeconds(5);
-	public static final Timeout DEFAULT_EUCTP_RESPONSE_TIMEOUT = Timeout.ofSeconds(100);
+  public static final Timeout DEFAULT_EUCTP_CONNECTION_REQUEST_TIMEOUT = Timeout.ofSeconds (1);
+  public static final Timeout DEFAULT_EUCTP_CONNECT_TIMEOUT = Timeout.ofSeconds (5);
+  public static final Timeout DEFAULT_EUCTP_RESPONSE_TIMEOUT = Timeout.ofSeconds (100);
 
-	public Phase4EuCtpHttpClientSettings() throws GeneralSecurityException
-	{
-		this(null, null);
-	}
+  public Phase4EuCtpHttpClientSettings (@Nullable final KeyStore aKeyStore, @Nullable final char [] aKeyPassword)
+                                                                                                                  throws GeneralSecurityException
+  {
+    SSLContextBuilder aSSLContextBuilder = SSLContexts.custom ().setProtocol (ETLSVersion.TLS_12.getID ());
 
-	public Phase4EuCtpHttpClientSettings(KeyStore keyStore, char[] keyPassword) throws GeneralSecurityException
-	{
-		SSLContextBuilder aSSLContextBuilder = SSLContexts.custom()
-				.setProtocol(ETLSVersion.TLS_12.getID());
+    if (aKeyStore != null && aKeyPassword != null)
+    {
+      aSSLContextBuilder = aSSLContextBuilder.loadKeyMaterial (aKeyStore, aKeyPassword);
+    }
 
-		if (keyStore != null && keyPassword != null) {
-			aSSLContextBuilder = aSSLContextBuilder.loadKeyMaterial(keyStore, keyPassword);
-		}
+    final SSLContext aSSLContext = aSSLContextBuilder.build ();
+    setSSLContext (aSSLContext);
 
-		final SSLContext aSSLContext = aSSLContextBuilder.build();
+    // Cipher Suite follow
+    // https://www.enisa.europa.eu/publications/algorithms-key-sizes-and-parameters-report
+    final TLSConfigurationMode aTLSConfigMode = new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12,
+                                                                                               ETLSVersion.TLS_13 },
+                                                                          new String [] {
+                                                                                          // TLS
+                                                                                          // 1.3
+                                                                                          "TLS_AES_128_GCM_SHA256",
+                                                                                          "TLS_AES_256_GCM_SHA384",
+                                                                                          // TLS
+                                                                                          // 1.2
+                                                                                          "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+                                                                                          "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+                                                                                          "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+                                                                                          "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384" });
+    setTLSConfigurationMode (aTLSConfigMode);
 
-		setSSLContext(aSSLContext);
+    setConnectionRequestTimeout (DEFAULT_EUCTP_CONNECTION_REQUEST_TIMEOUT);
+    setConnectTimeout (DEFAULT_EUCTP_CONNECT_TIMEOUT);
+    setResponseTimeout (DEFAULT_EUCTP_RESPONSE_TIMEOUT);
 
-		// Cipher Suite follow https://www.enisa.europa.eu/publications/algorithms-key-sizes-and-parameters-report
-		final TLSConfigurationMode aTLSConfigMode = new TLSConfigurationMode(new ETLSVersion[]{ETLSVersion.TLS_12,
-				ETLSVersion.TLS_13},
-				new String[]{
-						// TLS
-						// 1.3
-						"TLS_AES_128_GCM_SHA256",
-						"TLS_AES_256_GCM_SHA384",
-						// TLS
-						// 1.2
-						"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
-						"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
-						"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
-						"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"});
-		setTLSConfigurationMode(aTLSConfigMode);
+    // Set an explicit user agent
+    setUserAgent (CAS4.LIB_NAME + "/" + CAS4Version.BUILD_VERSION + " " + CAS4.LIB_URL);
+  }
 
-		setConnectionRequestTimeout(DEFAULT_EUCTP_CONNECTION_REQUEST_TIMEOUT);
-		setConnectTimeout(DEFAULT_EUCTP_CONNECT_TIMEOUT);
-		setResponseTimeout(DEFAULT_EUCTP_RESPONSE_TIMEOUT);
-
-		// Set an explicit user agent
-		setUserAgent(CAS4.LIB_NAME + "/" + CAS4Version.BUILD_VERSION + " " + CAS4.LIB_URL);
-	}
+  @Nonnull
+  public static Phase4EuCtpHttpClientSettings createWithoutKeyStore () throws GeneralSecurityException
+  {
+    return new Phase4EuCtpHttpClientSettings (null, null);
+  }
 }

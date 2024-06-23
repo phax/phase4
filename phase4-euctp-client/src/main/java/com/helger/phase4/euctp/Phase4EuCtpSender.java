@@ -21,8 +21,6 @@ package com.helger.phase4.euctp;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class contains all the specifics to send AS4 messages with the euctp
@@ -34,9 +32,7 @@ import org.slf4j.LoggerFactory;
 @Immutable
 public final class Phase4EuCtpSender
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4EuCtpSender.class);
-
-  private Phase4EuCtpSender()
+  private Phase4EuCtpSender ()
   {}
 
   /**
@@ -46,22 +42,21 @@ public final class Phase4EuCtpSender
   @Nonnull
   public static EuctpUserMessageBuilder builder ()
   {
-    return new EuctpUserMessageBuilder();
+    return new EuctpUserMessageBuilder ();
   }
 
   /**
-   * The builder class for sending AS4 messages using euctp profile specifics.
-   * Use {@link #sendMessage()} to trigger the main transmission.
+   * The builder class for sending AS4 messages using EuCTP profile specifics.
+   * Use {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to
+   * trigger the main transmission.
    *
    * @author Ulrik Stehling
    */
-  public static class EuctpUserMessageBuilder extends AbstractEuctpUserMessageBuilder<EuctpUserMessageBuilder>
+  public static class EuctpUserMessageBuilder extends AbstractEuCtpUserMessageBuilder <EuctpUserMessageBuilder>
   {
-    public EuctpUserMessageBuilder()
+    public EuctpUserMessageBuilder ()
     {
-      super();
+      super ();
     }
-
-
   }
 }

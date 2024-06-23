@@ -59,7 +59,7 @@ public final class EuCtpPMode
 
   // required for connectivity tests
   public static final String ACTION_TEST = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test";
-  public static final String DEFAULT_SERVICE = "eu_ics2_t2c";
+  public static final String DEFAULT_SERVICE = EEuCtpService.TRADER_TO_CUSTOMS.getValue ();
   public static final String DEFAULT_SERVICE_TYPE = "eu-customs-service-type";
 
   private EuCtpPMode ()
