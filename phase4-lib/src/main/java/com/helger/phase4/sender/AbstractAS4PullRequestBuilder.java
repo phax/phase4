@@ -49,12 +49,13 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4PullRequestBuilder.class);
 
   protected IPMode m_aPMode;
-  private boolean m_bUseLeg1 = true;
+  private final boolean m_bUseLeg1 = true;
 
   protected String m_sMPC;
   protected String m_sEndpointURL;
   protected IAS4UserMessageConsumer m_aUserMsgConsumer;
   protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
+
   /**
    * Create a new builder, with the following fields already set:<br>
    */
@@ -114,6 +115,22 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * Set an optional Ebms3 Signal Message Consumer. If this consumer is set, the
+   * response is trying to be parsed as a Signal Message. This method is
+   * optional and must not be called prior to sending.
+   *
+   * @param aSignalMsgConsumer
+   *        The optional signal message consumer. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
+  {
+    m_aSignalMsgConsumer = aSignalMsgConsumer;
+    return thisAsT ();
+  }
+
+  /**
    * @return The currently set P-Mode. May be <code>null</code>.
    */
   @Nullable
@@ -138,22 +155,6 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     return thisAsT ();
   }
 
-  /**
-   * Set an optional Ebms3 Signal Message Consumer. If this consumer is set, the
-   * response is trying to be parsed as a Signal Message. This method is
-   * optional and must not be called prior to sending.
-   *
-   * @param aSignalMsgConsumer
-   *        The optional signal message consumer. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
-  {
-    m_aSignalMsgConsumer = aSignalMsgConsumer;
-    return thisAsT ();
-  }
-
   @Override
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
@@ -174,6 +175,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     }
 
     // m_aUserMsgConsumer is optional
+    // m_aSignalMsgConsumer is optional
 
     // All valid
     return true;
@@ -222,9 +224,10 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
 
     aPullRequestMsg.setMPC (m_sMPC);
 
-    if (m_aPMode != null) {
+    if (m_aPMode != null)
+    {
       final PModeLeg aEffectiveLeg = m_bUseLeg1 ? m_aPMode.getLeg1 () : m_aPMode.getLeg2 ();
-      aPullRequestMsg.setValuesFromPMode(m_aPMode, aEffectiveLeg);
+      aPullRequestMsg.setValuesFromPMode (m_aPMode, aEffectiveLeg);
     }
   }
 
@@ -259,23 +262,23 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
                                                                                                                      .setDecryptParameterModifier (m_aDecryptParameterModifier);
 
       // Main sending
-      AS4BidirectionalClientHelper.sendAS4PullRequestAndReceiveAS4UserMessage (m_aCryptoFactorySign,
-                                                                               m_aCryptoFactoryCrypt,
-                                                                               pmodeResolver (),
-                                                                               incomingAttachmentFactory (),
-                                                                               incomingProfileSelector (),
-                                                                               aPullRequestMsg,
-                                                                               m_aLocale,
-                                                                               m_sEndpointURL,
-                                                                               m_aBuildMessageCallback,
-                                                                               m_aOutgoingDumper,
-                                                                               m_aIncomingDumper,
-                                                                               aIncomingSecurityConfiguration,
-                                                                               m_aRetryCallback,
-                                                                               m_aResponseConsumer,
-                                                                               m_aUserMsgConsumer,
-                                                                               m_aSignalMsgConsumer,
-                                                                               m_aPMode);
+      AS4BidirectionalClientHelper.sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (m_aCryptoFactorySign,
+                                                                                       m_aCryptoFactoryCrypt,
+                                                                                       pmodeResolver (),
+                                                                                       incomingAttachmentFactory (),
+                                                                                       incomingProfileSelector (),
+                                                                                       aPullRequestMsg,
+                                                                                       m_aLocale,
+                                                                                       m_sEndpointURL,
+                                                                                       m_aBuildMessageCallback,
+                                                                                       m_aOutgoingDumper,
+                                                                                       m_aIncomingDumper,
+                                                                                       aIncomingSecurityConfiguration,
+                                                                                       m_aRetryCallback,
+                                                                                       m_aResponseConsumer,
+                                                                                       m_aUserMsgConsumer,
+                                                                                       m_aSignalMsgConsumer,
+                                                                                       m_aPMode);
     }
     catch (final Phase4Exception ex)
     {

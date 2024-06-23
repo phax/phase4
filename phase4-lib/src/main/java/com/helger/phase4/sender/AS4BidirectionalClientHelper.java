@@ -47,7 +47,6 @@ import com.helger.phase4.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
-import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
@@ -193,11 +192,10 @@ public final class AS4BidirectionalClientHelper
                                                                  @Nullable final IAS4RetryCallback aRetryCallback,
                                                                  @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                  @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
-                                                                 @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
                                                                  @Nullable final IPMode aPMode) throws IOException,
-                                                                                                                           Phase4Exception,
-                                                                                                                           WSSecurityException,
-                                                                                                                           MessagingException
+                                                                                                Phase4Exception,
+                                                                                                WSSecurityException,
+                                                                                                MessagingException
   {
     LOGGER.info ("Sending AS4 PullRequest to '" +
                  sURL +
@@ -242,40 +240,108 @@ public final class AS4BidirectionalClientHelper
       final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
                                                                                      .setRemoteAddr (sURL);
 
-      // Read response as EBMS3 User Message
+      // Read response as EBMS3 User Message or Signal Message
       // Read it in any case to ensure signature validation etc. happens
-      Ebms3UserMessage ebms3UserMessage = AS4IncomingHandler.parseUserMessage(aCryptoFactorySign,
-              aCryptoFactoryCrypt,
-              aPModeResolver,
-              aIAF,
-              aIncomingProfileSelector,
-              aClientPullRequest.getAS4ResourceHelper(),
-              aPMode,
-              aLocale,
-              aMessageMetadata,
-              aWrappedResponse.get(),
-              aResponseEntity.getResponse(),
-              aIncomingDumper,
-              aIncomingSecurityConfiguration,
-              aUserMsgConsumer);
+      AS4IncomingHandler.parseUserMessage (aCryptoFactorySign,
+                                           aCryptoFactoryCrypt,
+                                           aPModeResolver,
+                                           aIAF,
+                                           aIncomingProfileSelector,
+                                           aClientPullRequest.getAS4ResourceHelper (),
+                                           aPMode,
+                                           aLocale,
+                                           aMessageMetadata,
+                                           aWrappedResponse.get (),
+                                           aResponseEntity.getResponse (),
+                                           aIncomingDumper,
+                                           aIncomingSecurityConfiguration,
+                                           aUserMsgConsumer);
+    }
+    else
+      LOGGER.info ("AS4 ResponseEntity is empty");
+  }
 
-      if (ebms3UserMessage == null) {
-        // No user message was parsed from answer, maybe a Signal Message is present
-        AS4IncomingHandler.parseSignalMessage(aCryptoFactorySign,
-                aCryptoFactoryCrypt,
-                aPModeResolver,
-                aIAF,
-                aIncomingProfileSelector,
-                aClientPullRequest.getAS4ResourceHelper(),
-                aPMode,
-                aLocale,
-                aMessageMetadata,
-                aWrappedResponse.get(),
-                aResponseEntity.getResponse(),
-                aIncomingDumper,
-                aIncomingSecurityConfiguration,
-                aSignalMsgConsumer);
-      }
+  public static void sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                         @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                                         @Nonnull final IPModeResolver aPModeResolver,
+                                                                         @Nonnull final IAS4IncomingAttachmentFactory aIAF,
+                                                                         @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
+                                                                         @Nonnull final AS4ClientPullRequestMessage aClientPullRequest,
+                                                                         @Nonnull final Locale aLocale,
+                                                                         @Nonnull final String sURL,
+                                                                         @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
+                                                                         @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                                                         @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                                         @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                         @Nullable final IAS4RetryCallback aRetryCallback,
+                                                                         @Nullable final IAS4RawResponseConsumer aResponseConsumer,
+                                                                         @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
+                                                                         @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
+                                                                         @Nullable final IPMode aPMode) throws IOException,
+                                                                                                        Phase4Exception,
+                                                                                                        WSSecurityException,
+                                                                                                        MessagingException
+  {
+    LOGGER.info ("Sending AS4 PullRequest to '" +
+                 sURL +
+                 "' with max. " +
+                 aClientPullRequest.httpRetrySettings ().getMaxRetries () +
+                 " retries");
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("  MPC = '" + aClientPullRequest.getMPC () + "'");
+
+    final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
+    final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
+      // May throw an ExtendedHttpResponseException
+      final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
+      if (aEntity == null)
+        return null;
+
+      // Remember HTTP Response
+      aWrappedResponse.set (aHttpResponse);
+      return EntityUtils.toByteArray (aEntity);
+    };
+
+    // Generic AS4 PullRequest sending
+    final AS4ClientSentMessage <byte []> aResponseEntity = aClientPullRequest.sendMessageWithRetries (sURL,
+                                                                                                      aResponseHdl,
+                                                                                                      aBuildMessageCallback,
+                                                                                                      aOutgoingDumper,
+                                                                                                      aRetryCallback);
+    final String sRequestMessageID = aResponseEntity.getMessageID ();
+    LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
+                 sRequestMessageID +
+                 "' to '" +
+                 sURL +
+                 "'");
+
+    if (aResponseConsumer != null)
+      aResponseConsumer.handleResponse (aResponseEntity);
+
+    // Try to interpret result as UserMessage or SignalMessage
+    if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
+    {
+      final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+                                                                                     .setRemoteAddr (sURL);
+
+      // Read response as EBMS3 User Message or Signal Message
+      // Read it in any case to ensure signature validation etc. happens
+      AS4IncomingHandler.parseUserOrSignalMessage (aCryptoFactorySign,
+                                                   aCryptoFactoryCrypt,
+                                                   aPModeResolver,
+                                                   aIAF,
+                                                   aIncomingProfileSelector,
+                                                   aClientPullRequest.getAS4ResourceHelper (),
+                                                   aPMode,
+                                                   aLocale,
+                                                   aMessageMetadata,
+                                                   aWrappedResponse.get (),
+                                                   aResponseEntity.getResponse (),
+                                                   aIncomingDumper,
+                                                   aIncomingSecurityConfiguration,
+                                                   aUserMsgConsumer,
+                                                   aSignalMsgConsumer);
     }
     else
       LOGGER.info ("AS4 ResponseEntity is empty");
