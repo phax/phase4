@@ -59,9 +59,10 @@ public final class EuCtpPMode
 
   // required for connectivity tests
   public static final String ACTION_TEST = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test";
+  public static final String DEFAULT_SERVICE = "eu_ics2_t2c";
   public static final String DEFAULT_SERVICE_TYPE = "eu-customs-service-type";
 
-  private EuCtpPMode()
+  private EuCtpPMode ()
   {}
 
   /**
@@ -80,7 +81,7 @@ public final class EuCtpPMode
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     // Process ID
-    final String sService = "eu_ics2_t2c";
+    final String sService = DEFAULT_SERVICE;
     final String sServiceType = DEFAULT_SERVICE_TYPE;
     // Document type ID
     final String sAction = null;
@@ -154,14 +155,22 @@ public final class EuCtpPMode
   }
 
   @Nonnull
-  public static PModeParty createParty (@Nonnull @Nonempty final String sPartyID, @Nonnull @Nonempty final String sRole, String partyTypeId)
+  public static PModeParty createParty (@Nullable final String sPartyTypeID,
+                                        @Nonnull @Nonempty final String sPartyID,
+                                        @Nonnull @Nonempty final String sRole)
   {
-    // Party type is needed for Euctp
-    return new PModeParty (partyTypeId, sPartyID, sRole, null, null);
+    // Party type is needed for EuCTP
+    return new PModeParty (sPartyTypeID, sPartyID, sRole, null, null);
+  }
+
+  @Nonnull
+  public static PModePayloadService generatePModePayloadService ()
+  {
+    return new PModePayloadService (EAS4CompressionMode.GZIP);
   }
 
   /**
-   * One-Way Version of the Euctp pmode uses one-way push
+   * One-Way Version of the EuCTP pmode uses one-way push
    *
    * @param sInitiatorID
    *        Initiator ID. May neither be <code>null</code> nor empty.
@@ -177,14 +186,14 @@ public final class EuCtpPMode
    * @return New PMode and never <code>null</code>.
    */
   @Nonnull
-  public static PMode createEuCtpPushPMode(@Nonnull @Nonempty final String sInitiatorID,
-                                       @Nonnull @Nonempty final String sResponderID,
-                                       @Nullable final String sAddress,
-                                       @Nonnull final IPModeIDProvider aPModeIDProvider,
-                                       final boolean bPersist)
+  public static PMode createEuCtpPushPMode (@Nonnull @Nonempty final String sInitiatorID,
+                                            @Nonnull @Nonempty final String sResponderID,
+                                            @Nullable final String sAddress,
+                                            @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                            final boolean bPersist)
   {
-    final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, DEFAULT_PARTY_TYPE_ID);
-    final PModeParty aResponder = createParty (sResponderID, CAS4.DEFAULT_RESPONDER_URL, DEFAULT_CUSTOMS_PARTY_TYPE_ID);
+    final PModeParty aInitiator = createParty (DEFAULT_PARTY_TYPE_ID, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
+    final PModeParty aResponder = createParty (DEFAULT_CUSTOMS_PARTY_TYPE_ID, sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
     final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (aInitiator, aResponder),
                                     aInitiator,
@@ -194,7 +203,7 @@ public final class EuCtpPMode
                                     EMEPBinding.PUSH,
                                     generatePModeLeg (sAddress),
                                     null,
-		                            generatePModePayloadService(),
+                                    generatePModePayloadService (),
                                     generatePModeReceptionAwareness ());
 
     if (bPersist)
@@ -206,7 +215,7 @@ public final class EuCtpPMode
   }
 
   /**
-   * One-Way Version of the Euctp pmode uses one-way push
+   * One-Way Version of the EuCTP pmode uses one-way pull
    *
    * @param sInitiatorID
    *        Initiator ID. May neither be <code>null</code> nor empty.
@@ -222,25 +231,25 @@ public final class EuCtpPMode
    * @return New PMode and never <code>null</code>.
    */
   @Nonnull
-  public static PMode createEuCtpPullPMode(@Nonnull @Nonempty final String sInitiatorID,
-                                       @Nonnull @Nonempty final String sResponderID,
-                                       @Nullable final String sAddress,
-                                       @Nonnull final IPModeIDProvider aPModeIDProvider,
-                                       final boolean bPersist)
+  public static PMode createEuCtpPullPMode (@Nonnull @Nonempty final String sInitiatorID,
+                                            @Nonnull @Nonempty final String sResponderID,
+                                            @Nullable final String sAddress,
+                                            @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                            final boolean bPersist)
   {
-    final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, DEFAULT_PARTY_TYPE_ID);
-    final PModeParty aResponder = createParty (sResponderID, CAS4.DEFAULT_RESPONDER_URL, DEFAULT_CUSTOMS_PARTY_TYPE_ID);
+    final PModeParty aInitiator = createParty (DEFAULT_PARTY_TYPE_ID, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
+    final PModeParty aResponder = createParty (DEFAULT_CUSTOMS_PARTY_TYPE_ID, sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
     final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (aInitiator, aResponder),
-            aInitiator,
-            aResponder,
-            DEFAULT_AGREEMENT_ID,
-            EMEP.ONE_WAY,
-            EMEPBinding.PULL,
-            generatePModeLeg (sAddress),
-            null,
-            generatePModePayloadService(),
-            generatePModeReceptionAwareness ());
+                                    aInitiator,
+                                    aResponder,
+                                    DEFAULT_AGREEMENT_ID,
+                                    EMEP.ONE_WAY,
+                                    EMEPBinding.PULL,
+                                    generatePModeLeg (sAddress),
+                                    null,
+                                    generatePModePayloadService (),
+                                    generatePModeReceptionAwareness ());
 
     if (bPersist)
     {
@@ -248,10 +257,5 @@ public final class EuCtpPMode
       MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
     }
     return aPMode;
-  }
-
-  private static PModePayloadService generatePModePayloadService()
-  {
-    return new PModePayloadService(EAS4CompressionMode.GZIP);
   }
 }

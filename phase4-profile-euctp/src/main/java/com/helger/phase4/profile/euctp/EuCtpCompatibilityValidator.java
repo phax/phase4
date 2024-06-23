@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.profile.euctp;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import com.helger.commons.ValueEnforcer;
@@ -27,15 +25,12 @@ import com.helger.commons.error.IError;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.string.StringHelper;
-import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.ebms3header.Ebms3AgreementRef;
 import com.helger.phase4.ebms3header.Ebms3From;
-import com.helger.phase4.ebms3header.Ebms3MessageProperties;
-import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
@@ -61,7 +56,7 @@ import com.helger.phase4.wss.EWSSVersion;
  */
 public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
 {
-  public EuCtpCompatibilityValidator()
+  public EuCtpCompatibilityValidator ()
   {}
 
   @Nonnull
@@ -292,7 +287,7 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
       _checkIfLegIsValid (aErrorList, aPModeLeg1, "PMode.Leg[1].");
     }
 
-    PModeLeg aPModeLeg2 = aPMode.getLeg2();
+    final PModeLeg aPModeLeg2 = aPMode.getLeg2 ();
     if (aPModeLeg2 != null)
     {
       _checkIfLegIsValid (aErrorList, aPModeLeg2, "PMode.Leg[2].");
@@ -333,9 +328,10 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
       if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
 
-//      if (StringHelper.hasText (aUserMsg.getMessageInfo ().getRefToMessageId ()))
-//        aErrorList.add (_createError ("MessageInfo/RefToMessageId must not be set"));
-
+      // As we support One-Way-Pull this is allowed
+      if (false)
+        if (StringHelper.hasText (aUserMsg.getMessageInfo ().getRefToMessageId ()))
+          aErrorList.add (_createError ("MessageInfo/RefToMessageId must not be set"));
     }
 
     if (aUserMsg.getPartyInfo () == null)

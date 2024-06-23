@@ -36,32 +36,53 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
 @IsSPIImplementation
 public final class AS4EuCtpProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
-  public static final String AS4_PROFILE_ID = "euctp"; // TODO Philip two profiles
-  public static final String AS4_PROFILE_NAME = "EuCTP";
+  public static final String AS4_PROFILE_PUSH_ID = "euctp-push";
+  public static final String AS4_PROFILE_PUSH_NAME = "EuCTP Push";
+
+  public static final String AS4_PROFILE_PULL_ID = "euctp-pull";
+  public static final String AS4_PROFILE_PULL_NAME = "EuCTP Pull";
+
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4EuCtpProfileRegistarSPI.class);
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i,
-                                                            r,
-                                                            a) -> EuCtpPMode.createEuCtpPushPMode (i,
-                                                                                                 r,
-                                                                                                 a,
-                                                                                                 PMODE_ID_PROVIDER,
-                                                                                                 true);
+    // push
+    final IAS4ProfilePModeProvider aPushPModeProvider = (i, r, a) -> EuCtpPMode.createEuCtpPushPMode (i,
+                                                                                                      r,
+                                                                                                      a,
+                                                                                                      PMODE_ID_PROVIDER,
+                                                                                                      true);
 
     if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
-    final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
-                                                AS4_PROFILE_NAME,
-                                                EuCtpCompatibilityValidator::new,
-                                                aDefaultPModeProvider,
-                                                PMODE_ID_PROVIDER,
-                                                false,
-                                                false);
-    aRegistrar.registerProfile (aProfile);
-    aRegistrar.setDefaultProfile (aProfile);
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_PUSH_ID + "'");
+    final AS4Profile aPushProfile = new AS4Profile (AS4_PROFILE_PUSH_ID,
+                                                    AS4_PROFILE_PUSH_NAME,
+                                                    EuCtpCompatibilityValidator::new,
+                                                    aPushPModeProvider,
+                                                    PMODE_ID_PROVIDER,
+                                                    false,
+                                                    false);
+    aRegistrar.registerProfile (aPushProfile);
+    aRegistrar.setDefaultProfile (aPushProfile);
+
+    // pull
+    final IAS4ProfilePModeProvider aPullPModeProvider = (i, r, a) -> EuCtpPMode.createEuCtpPullPMode (i,
+                                                                                                      r,
+                                                                                                      a,
+                                                                                                      PMODE_ID_PROVIDER,
+                                                                                                      true);
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_PULL_ID + "'");
+    final AS4Profile aPullProfile = new AS4Profile (AS4_PROFILE_PULL_ID,
+                                                    AS4_PROFILE_PULL_NAME,
+                                                    EuCtpCompatibilityValidator::new,
+                                                    aPullPModeProvider,
+                                                    PMODE_ID_PROVIDER,
+                                                    false,
+                                                    false);
+    aRegistrar.registerProfile (aPullProfile);
   }
 }
