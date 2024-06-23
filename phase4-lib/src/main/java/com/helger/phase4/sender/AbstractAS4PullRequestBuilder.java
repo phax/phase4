@@ -49,7 +49,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4PullRequestBuilder.class);
 
   protected IPMode m_aPMode;
-  private final boolean m_bUseLeg1 = true;
+  private boolean m_bUseLeg1 = true;
 
   protected String m_sMPC;
   protected String m_sEndpointURL;
@@ -69,6 +69,46 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     {
       // for compatibility reasons ignore if no PMode is found
     }
+  }
+
+  /**
+   * @return The currently set P-Mode. May be <code>null</code>.
+   */
+  @Nullable
+  public final IPMode pmode ()
+  {
+    return m_aPMode;
+  }
+
+  /**
+   * Set the PMode to be used. By default a generic PMode is used.
+   *
+   * @param aPMode
+   *        The PMode to be used. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE pmode (@Nullable final IPMode aPMode)
+  {
+    if (aPMode == null)
+      LOGGER.warn ("A null PMode was supplied");
+    m_aPMode = aPMode;
+    return thisAsT ();
+  }
+
+  /**
+   * Determine whether to use leg 1 or leg 2 of the PMode.
+   *
+   * @param bUseLeg1
+   *        <code>true</code> to use leg 1, <code>false</code> to use leg 2.
+   * @return this for chaining
+   * @since 2.7.8
+   */
+  @Nonnull
+  public final IMPLTYPE useLeg1 (final boolean bUseLeg1)
+  {
+    m_bUseLeg1 = bUseLeg1;
+    return thisAsT ();
   }
 
   /**
@@ -127,31 +167,6 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
   {
     m_aSignalMsgConsumer = aSignalMsgConsumer;
-    return thisAsT ();
-  }
-
-  /**
-   * @return The currently set P-Mode. May be <code>null</code>.
-   */
-  @Nullable
-  public final IPMode pmode ()
-  {
-    return m_aPMode;
-  }
-
-  /**
-   * Set the PMode to be used. By default a generic PMode is used.
-   *
-   * @param aPMode
-   *        The PMode to be used. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE pmode (@Nullable final IPMode aPMode)
-  {
-    if (aPMode == null)
-      LOGGER.warn ("A null PMode was supplied");
-    m_aPMode = aPMode;
     return thisAsT ();
   }
 
