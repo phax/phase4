@@ -48,6 +48,7 @@ import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4IncomingHandler;
 import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
@@ -190,10 +191,11 @@ public final class AS4BidirectionalClientHelper
                                                                  @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                                  @Nullable final IAS4RetryCallback aRetryCallback,
                                                                  @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                                                 @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws IOException,
-                                                                                                                           Phase4Exception,
-                                                                                                                           WSSecurityException,
-                                                                                                                           MessagingException
+                                                                 @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
+                                                                 @Nullable final IPMode aPMode) throws IOException,
+                                                                                                Phase4Exception,
+                                                                                                WSSecurityException,
+                                                                                                MessagingException
   {
     LOGGER.info ("Sending AS4 PullRequest to '" +
                  sURL +
@@ -232,13 +234,13 @@ public final class AS4BidirectionalClientHelper
     if (aResponseConsumer != null)
       aResponseConsumer.handleResponse (aResponseEntity);
 
-    // Try interpret result as SignalMessage
+    // Try to interpret result as UserMessage or SignalMessage
     if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
     {
       final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
                                                                                      .setRemoteAddr (sURL);
 
-      // Read response as EBMS3 User Message
+      // Read response as EBMS3 User Message or Signal Message
       // Read it in any case to ensure signature validation etc. happens
       AS4IncomingHandler.parseUserMessage (aCryptoFactorySign,
                                            aCryptoFactoryCrypt,
@@ -246,7 +248,7 @@ public final class AS4BidirectionalClientHelper
                                            aIAF,
                                            aIncomingProfileSelector,
                                            aClientPullRequest.getAS4ResourceHelper (),
-                                           null,
+                                           aPMode,
                                            aLocale,
                                            aMessageMetadata,
                                            aWrappedResponse.get (),
@@ -254,6 +256,92 @@ public final class AS4BidirectionalClientHelper
                                            aIncomingDumper,
                                            aIncomingSecurityConfiguration,
                                            aUserMsgConsumer);
+    }
+    else
+      LOGGER.info ("AS4 ResponseEntity is empty");
+  }
+
+  public static void sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                         @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                                         @Nonnull final IPModeResolver aPModeResolver,
+                                                                         @Nonnull final IAS4IncomingAttachmentFactory aIAF,
+                                                                         @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
+                                                                         @Nonnull final AS4ClientPullRequestMessage aClientPullRequest,
+                                                                         @Nonnull final Locale aLocale,
+                                                                         @Nonnull final String sURL,
+                                                                         @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
+                                                                         @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                                                         @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                                         @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                         @Nullable final IAS4RetryCallback aRetryCallback,
+                                                                         @Nullable final IAS4RawResponseConsumer aResponseConsumer,
+                                                                         @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
+                                                                         @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
+                                                                         @Nullable final IPMode aPMode) throws IOException,
+                                                                                                        Phase4Exception,
+                                                                                                        WSSecurityException,
+                                                                                                        MessagingException
+  {
+    LOGGER.info ("Sending AS4 PullRequest to '" +
+                 sURL +
+                 "' with max. " +
+                 aClientPullRequest.httpRetrySettings ().getMaxRetries () +
+                 " retries");
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("  MPC = '" + aClientPullRequest.getMPC () + "'");
+
+    final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
+    final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
+      // May throw an ExtendedHttpResponseException
+      final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
+      if (aEntity == null)
+        return null;
+
+      // Remember HTTP Response
+      aWrappedResponse.set (aHttpResponse);
+      return EntityUtils.toByteArray (aEntity);
+    };
+
+    // Generic AS4 PullRequest sending
+    final AS4ClientSentMessage <byte []> aResponseEntity = aClientPullRequest.sendMessageWithRetries (sURL,
+                                                                                                      aResponseHdl,
+                                                                                                      aBuildMessageCallback,
+                                                                                                      aOutgoingDumper,
+                                                                                                      aRetryCallback);
+    final String sRequestMessageID = aResponseEntity.getMessageID ();
+    LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
+                 sRequestMessageID +
+                 "' to '" +
+                 sURL +
+                 "'");
+
+    if (aResponseConsumer != null)
+      aResponseConsumer.handleResponse (aResponseEntity);
+
+    // Try to interpret result as UserMessage or SignalMessage
+    if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
+    {
+      final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+                                                                                     .setRemoteAddr (sURL);
+
+      // Read response as EBMS3 User Message or Signal Message
+      // Read it in any case to ensure signature validation etc. happens
+      AS4IncomingHandler.parseUserOrSignalMessage (aCryptoFactorySign,
+                                                   aCryptoFactoryCrypt,
+                                                   aPModeResolver,
+                                                   aIAF,
+                                                   aIncomingProfileSelector,
+                                                   aClientPullRequest.getAS4ResourceHelper (),
+                                                   aPMode,
+                                                   aLocale,
+                                                   aMessageMetadata,
+                                                   aWrappedResponse.get (),
+                                                   aResponseEntity.getResponse (),
+                                                   aIncomingDumper,
+                                                   aIncomingSecurityConfiguration,
+                                                   aUserMsgConsumer,
+                                                   aSignalMsgConsumer);
     }
     else
       LOGGER.info ("AS4 ResponseEntity is empty");
