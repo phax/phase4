@@ -58,7 +58,7 @@ public abstract class AbstractEuCtpUserMessageBuilder <IMPLTYPE extends Abstract
       conversationID (UUID.randomUUID ().toString ());
 
       agreementRef (EuCtpPMode.DEFAULT_AGREEMENT_ID);
-	  agreementType(EuCtpPMode.DEFAULT_AGREEMENT_TYPE);
+      agreementType(EuCtpPMode.DEFAULT_AGREEMENT_TYPE);
 
       forceMimeMessage (true);
     }
