@@ -54,6 +54,7 @@ import com.helger.phase4.wss.EWSSVersion;
 public final class EuCtpPMode
 {
   public static final String DEFAULT_AGREEMENT_ID = "EU-ICS2-TI-V2.0";
+  public static final String DEFAULT_AGREEMENT_TYPE = "ics2-interface-version";
   public static final String DEFAULT_PARTY_TYPE_ID = "urn:oasis:names:tc:ebcore:partyid-type:unregistered:eu-customs:EORI";
   public static final String DEFAULT_CUSTOMS_PARTY_TYPE_ID = "urn:oasis:names:tc:ebcore:partyid-type:unregistered:eu-customs:auth";
 
