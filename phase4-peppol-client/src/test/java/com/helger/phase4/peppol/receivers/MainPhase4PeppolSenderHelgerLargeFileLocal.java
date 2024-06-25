@@ -23,7 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.resource.FileSystemResource;
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.HttpClientSettings;
+import com.helger.httpclient.response.ExtendedHttpResponseException;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
@@ -31,6 +33,7 @@ import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -54,6 +57,7 @@ public final class MainPhase4PeppolSenderHelgerLargeFileLocal
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
+      final Wrapper <Phase4Exception> aSendingExceptionKeeper = new Wrapper <> ();
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .httpClientFactory (new HttpClientSettings ().setRetryCount (0)
@@ -104,8 +108,20 @@ public final class MainPhase4PeppolSenderHelgerLargeFileLocal
                                                                                                                ""),
                                                             "http://localhost:8080/as4")
                                   .disableValidation ()
-                                  .sendMessageAndCheckForReceipt ();
+                                  .sendMessageAndCheckForReceipt (aSendingExceptionKeeper::set);
       LOGGER.info ("Peppol send result: " + eResult);
+
+      final Phase4Exception aSendingEx = aSendingExceptionKeeper.get ();
+      if (aSendingEx != null)
+      {
+        if (aSendingEx.getCause () instanceof ExtendedHttpResponseException)
+        {
+          final ExtendedHttpResponseException exr = (ExtendedHttpResponseException) aSendingEx.getCause ();
+          LOGGER.error ("Error sending Peppol message via AS4 due to HTTP status code " + exr.getStatusCode ());
+        }
+        else
+          LOGGER.error ("Exception sending AS4 user message", aSendingEx);
+      }
     }
     catch (final Exception ex)
     {
