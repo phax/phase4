@@ -52,6 +52,8 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
+import com.helger.peppol.reporting.api.CPeppolReporting;
+import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
@@ -90,8 +92,6 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
-import com.helper.peppol.reporting.api.CPeppolReporting;
-import com.helper.peppol.reporting.api.PeppolReportingItem;
 
 /**
  * This is the SPI implementation to handle generic incoming AS4 requests. The

@@ -45,6 +45,10 @@ import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.diver.api.version.VESID;
+import com.helger.peppol.reporting.api.PeppolReportingHelper;
+import com.helger.peppol.reporting.api.PeppolReportingItem;
+import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
+import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadBinaryMarshaller;
@@ -87,10 +91,6 @@ import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xsds.peppol.smp1.EndpointType;
-import com.helper.peppol.reporting.api.PeppolReportingHelper;
-import com.helper.peppol.reporting.api.PeppolReportingItem;
-import com.helper.peppol.reporting.api.backend.PeppolReportingBackend;
-import com.helper.peppol.reporting.api.backend.PeppolReportingBackendException;
 
 /**
  * This class contains all the specifics to send AS4 messages to PEPPOL. See
