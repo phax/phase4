@@ -40,9 +40,9 @@ public final class Phase4EuCtpSender
    *         Never <code>null</code>.
    */
   @Nonnull
-  public static EuctpUserMessageBuilder builder ()
+  public static EuCtpUserMessageBuilder builder ()
   {
-    return new EuctpUserMessageBuilder ();
+    return new EuCtpUserMessageBuilder();
   }
 
   /**
@@ -52,9 +52,9 @@ public final class Phase4EuCtpSender
    *
    * @author Ulrik Stehling
    */
-  public static class EuctpUserMessageBuilder extends AbstractEuCtpUserMessageBuilder <EuctpUserMessageBuilder>
+  public static class EuCtpUserMessageBuilder extends AbstractEuCtpUserMessageBuilder <EuCtpUserMessageBuilder>
   {
-    public EuctpUserMessageBuilder ()
+    public EuCtpUserMessageBuilder()
     {
       super ();
     }
