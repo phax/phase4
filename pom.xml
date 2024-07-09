@@ -83,8 +83,8 @@
     <ph-schematron.version>8.0.0</ph-schematron.version>
     <ph-web.version>10.1.8</ph-web.version>
     <phive.version>9.2.1</phive.version>
-    <phive-rules.version>3.1.10</phive-rules.version>
-    <spring-boot.version>3.3.0</spring-boot.version>
+    <phive-rules.version>3.1.11</phive-rules.version>
+    <spring-boot.version>3.3.1</spring-boot.version>
   </properties>
 
   <dependencyManagement>
@@ -127,7 +127,7 @@
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>9.2.4</version>
+        <version>9.2.5</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

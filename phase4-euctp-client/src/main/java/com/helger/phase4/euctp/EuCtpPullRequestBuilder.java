@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
-import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.sender.AbstractAS4PullRequestBuilder;
 
 public class EuCtpPullRequestBuilder extends AbstractAS4PullRequestBuilder <EuCtpPullRequestBuilder>
