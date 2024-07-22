@@ -745,7 +745,9 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Enable or disable the check of the receiver AP certificate.
+     * Enable or disable the check of the receiver AP certificate. This checks
+     * the validity of the certificate as well as the revocation status. It is
+     * strongly recommended to enable this check.
      *
      * @param bCheckReceiverAPCertificate
      *        <code>true</code> to enable it, <code>false</code> to disable it.
