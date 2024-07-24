@@ -88,7 +88,7 @@ public final class Phase4DBNAllianceSender
     final DBNAllianceXHEData aData = new DBNAllianceXHEData (IF);
     aData.setFromParty (aSenderID.getScheme (), aSenderID.getValue ());
     aData.setToParty (aReceiverID.getScheme (), aReceiverID.getValue ());
-    aData.setInstanceIdentifier (UUID.randomUUID ().toString ());
+    aData.setID (UUID.randomUUID ().toString ());
     aData.setCreationDateAndTime (MetaAS4Manager.getTimestampMgr ().getCurrentXMLDateTime ());
     
     final DBNAlliancePayload aPayload = new DBNAlliancePayload (IF);
@@ -108,7 +108,7 @@ public final class Phase4DBNAllianceSender
     if (!aData.areAllFieldsSet (true))
       throw new IllegalArgumentException ("The DBNAlliance XHE data is incomplete. See logs for details.");
     
-    return new DBNAllianceXHEDocumentWriter ().createExchangeHeaderEnvelope (aData);
+    return DBNAllianceXHEDocumentWriter.createExchangeHeaderEnvelope (aData);
   }
 
   /**
