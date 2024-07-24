@@ -70,14 +70,14 @@
   <properties>
     <jaxb-plugin.group>org.jvnet.jaxb</jaxb-plugin.group>
     <jaxb-plugin.artifact>jaxb-maven-plugin</jaxb-plugin.artifact>
-    <jaxb-plugin.version>4.0.6</jaxb-plugin.version>
+    <jaxb-plugin.version>4.0.8</jaxb-plugin.version>
     <ph-jaxb-plugin.version>4.0.3</ph-jaxb-plugin.version>
     <xmlsec.version>3.0.4</xmlsec.version>
     <wss4j.version>3.0.3</wss4j.version>
     <bctls.version>1.78.1</bctls.version>
     <log4j.version>2.23.1</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
-    <peppol-commons.version>9.4.0</peppol-commons.version>
+    <peppol-commons.version>9.5.0-SNAPSHOT</peppol-commons.version>
     <peppol-reporting.version>3.0.0</peppol-reporting.version>
     <ph-ubl.version>9.0.1</ph-ubl.version>
     <ph-schematron.version>8.0.0</ph-schematron.version>
