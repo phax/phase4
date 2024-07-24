@@ -11,6 +11,8 @@ Please see the **[Wiki](https://github.com/phax/phase4/wiki)** for all details.
 
 If you like the project, a star on GitHub is always appreciated.
 
+If you need commercial support, please reach out to me by email (see file `pom.xml` if you don't have it).
+
 ---
 
 My personal [Coding Styleguide](https://github.com/phax/meta/blob/master/CodingStyleguide.md) |

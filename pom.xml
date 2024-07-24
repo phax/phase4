@@ -26,7 +26,7 @@
   </parent>
   <groupId>com.helger.phase4</groupId>
   <artifactId>phase4-parent-pom</artifactId>
-  <version>2.7.8-SNAPSHOT</version>
+  <version>2.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phase4-parent-pom</name>
   <description>Base POM to build the phase4 projects</description>
@@ -40,7 +40,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <scm>
     <connection>scm:git:https://github.com/phax/phase4.git</connection>
     <developerConnection>scm:git:https://github.com/phax/phase4.git</developerConnection>
@@ -78,15 +78,15 @@
     <log4j.version>2.23.1</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <peppol-commons.version>9.4.0</peppol-commons.version>
-    <peppol-reporting.version>2.2.5</peppol-reporting.version>
+    <peppol-reporting.version>3.0.0</peppol-reporting.version>
     <ph-ubl.version>9.0.1</ph-ubl.version>
     <ph-schematron.version>8.0.0</ph-schematron.version>
     <ph-web.version>10.1.8</ph-web.version>
     <phive.version>9.2.1</phive.version>
-    <phive-rules.version>3.1.10</phive-rules.version>
-    <spring-boot.version>3.3.0</spring-boot.version>
+    <phive-rules.version>3.1.11</phive-rules.version>
+    <spring-boot.version>3.3.1</spring-boot.version>
   </properties>
-  
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -127,11 +127,11 @@
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>9.2.4</version>
+        <version>9.2.5</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      
+
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>peppol-smp-client</artifactId>
@@ -221,7 +221,7 @@
         <artifactId>commons-codec</artifactId>
         <version>1.17.0</version>
       </dependency>
-      
+
       <dependency>
         <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-lib</artifactId>
@@ -307,9 +307,19 @@
         <artifactId>phase4-peppol-servlet</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-profile-euctp</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-euctp-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <profiles>
     <profile>
       <id>java11-16</id>
@@ -325,6 +335,7 @@
         <module>phase4-profile-eespa</module>
         <module>phase4-profile-entsog</module>
         <module>phase4-profile-peppol</module>
+        <module>phase4-profile-euctp</module>
         <module>phase4-test</module>
         <module>phase4-server-webapp</module>
         <module>phase4-dynamic-discovery</module>
@@ -337,6 +348,7 @@
         <module>phase4-peppol-client</module>
         <module>phase4-peppol-servlet</module>
         <module>phase4-peppol-server-webapp</module>
+        <module>phase4-euctp-client</module>
         <!-- phase4-spring-boot-demo requires Java 17+ -->
       </modules>
     </profile>
@@ -354,6 +366,7 @@
         <module>phase4-profile-eespa</module>
         <module>phase4-profile-entsog</module>
         <module>phase4-profile-peppol</module>
+        <module>phase4-profile-euctp</module>
         <module>phase4-test</module>
         <module>phase4-server-webapp</module>
         <module>phase4-dynamic-discovery</module>
@@ -367,10 +380,11 @@
         <module>phase4-peppol-servlet</module>
         <module>phase4-peppol-server-webapp</module>
         <module>phase4-spring-boot-demo</module>
+        <module>phase4-euctp-client</module>
       </modules>
     </profile>
   </profiles>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -380,7 +394,7 @@
           <source>8</source>
           <doclint>none</doclint>
         </configuration>
-      </plugin> 
+      </plugin>
     </plugins>
   </build>
 </project>
