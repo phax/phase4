@@ -188,6 +188,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
           m_aEndpoint = m_aSMPClient.getEndpoint (aReceiverID, aDocTypeID, aProcID, m_aTP);
         }
         if (m_aEndpoint == null)
+        {
           throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
                                         aReceiverID.getURIEncoded () +
                                         ", " +
@@ -198,6 +199,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
                                         m_aTP.getID () +
                                         ")" +
                                         (bWildcard ? " [wildcard]" : " [static]"));
+        }
 
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("Successfully resolved SMP endpoint (" +
