@@ -16,8 +16,10 @@
  */
 package com.helger.phase4.dbnalliance;
 
+import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
@@ -27,10 +29,10 @@ import javax.annotation.concurrent.Immutable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.state.ESuccess;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.utils.PeppolCertificateHelper;
@@ -56,15 +58,13 @@ import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.xhe.v10.CXHE10;
 import com.helger.xhe.v10.XHE10Marshaller;
 import com.helger.xhe.v10.XHE10XHEType;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
-import org.w3c.dom.Element;
 
 /**
  * This class contains all the specifics to send AS4 messages with the
  * DBNAlliance profile. See <code>sendAS4Message</code> as the main method to
  * trigger the sending, with all potential customization.
  *
+ * @author Robinson Artemio Garcia Meléndez
  * @author Philip Helger
  */
 @Immutable
@@ -75,39 +75,38 @@ public final class Phase4DBNAllianceSender
 
   private Phase4DBNAllianceSender ()
   {}
-  
+
   @Nullable
   private static XHE10XHEType _createXHE (@Nonnull final IParticipantIdentifier aSenderID,
                                           @Nonnull final IParticipantIdentifier aReceiverID,
                                           @Nonnull final IDocumentTypeIdentifier aDocTypeID,
                                           @Nonnull final IProcessIdentifier aProcID,
                                           @Nonnull final Element aPayloadElement,
-                                          final boolean bClonePayloadElement
-                                          )
+                                          final boolean bClonePayloadElement)
   {
     final DBNAllianceXHEData aData = new DBNAllianceXHEData (IF);
     aData.setFromParty (aSenderID.getScheme (), aSenderID.getValue ());
     aData.setToParty (aReceiverID.getScheme (), aReceiverID.getValue ());
     aData.setID (UUID.randomUUID ().toString ());
     aData.setCreationDateAndTime (MetaAS4Manager.getTimestampMgr ().getCurrentXMLDateTime ());
-    
+
     final DBNAlliancePayload aPayload = new DBNAlliancePayload (IF);
     aPayload.setCustomizationID (null, aDocTypeID.getValue ());
     aPayload.setProfileID (aProcID.getScheme (), aProcID.getValue ());
-    
+
     // Not cloning the payload element is for saving memory only (if it can be
     // ensured, the source payload element is not altered externally of course)
     if (bClonePayloadElement)
       aPayload.setPayloadContent (aPayloadElement);
     else
       aPayload.setPayloadContentNoClone (aPayloadElement);
-    
-    aData.addPayload(aPayload);
-    
+
+    aData.addPayload (aPayload);
+
     // check with logging
     if (!aData.areAllFieldsSet (true))
       throw new IllegalArgumentException ("The DBNAlliance XHE data is incomplete. See logs for details.");
-    
+
     return DBNAllianceXHEDocumentWriter.createExchangeHeaderEnvelope (aData);
   }
 
@@ -124,6 +123,7 @@ public final class Phase4DBNAllianceSender
   /**
    * Abstract DBNAlliance UserMessage builder class with sanity methods.
    *
+   * @author Robinson Artemio Garcia Meléndez
    * @author Philip Helger
    * @param <IMPLTYPE>
    *        The implementation type
@@ -132,8 +132,9 @@ public final class Phase4DBNAllianceSender
                                                                      extends
                                                                      AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
-    // C4
+    // C1
     protected IParticipantIdentifier m_aSenderID;
+    // C4
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
@@ -165,10 +166,10 @@ public final class Phase4DBNAllianceSender
         throw new IllegalStateException ("Failed to init AS4 Client builder", ex);
       }
     }
-    
+
     /**
-     * Set the sender participant ID of the message. The participant ID must
-     * be provided prior to sending.
+     * Set the sender participant ID of the message. The participant ID must be
+     * provided prior to sending.
      *
      * @param aSenderID
      *        The sender participant ID. May not be <code>null</code>.
@@ -486,17 +487,18 @@ public final class Phase4DBNAllianceSender
    * The builder class for sending AS4 messages using DBNAlliance profile
    * specifics. Use {@link #sendMessage()} to trigger the main transmission.
    *
+   * @author Robinson Artemio Garcia Meléndez
    * @author Philip Helger
    */
   public static class DBNAllianceUserMessageBuilder extends
                                                     AbstractDBNAllianceUserMessageBuilder <DBNAllianceUserMessageBuilder>
   {
-    
+
     private Element m_aPayloadElement;
-    
+
     public DBNAllianceUserMessageBuilder ()
     {}
-    
+
     /**
      * Set the payload element to be used, if it is available as a parsed DOM
      * element. Internally the DOM element will be cloned before sending it out.
@@ -511,12 +513,13 @@ public final class Phase4DBNAllianceSender
     public DBNAllianceUserMessageBuilder payload (@Nonnull final Element aPayloadElement)
     {
       ValueEnforcer.notNull (aPayloadElement, "Payload");
-      ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
+      ValueEnforcer.notEmpty (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
       m_aPayloadElement = aPayloadElement;
       return this;
     }
-    
+
     @Override
+    @OverridingMethodsMustInvokeSuper
     protected ESuccess finishFields () throws Phase4Exception
     {
       // Ensure a DOM element is present
@@ -529,14 +532,15 @@ public final class Phase4DBNAllianceSender
         bClonePayloadElement = true;
       }
       else
-        throw new IllegalStateException ("Unexpected - element are not present");
+        throw new IllegalStateException ("Unexpected - element is not present");
 
       // Consistency check
-      if (CXHE10.NAMESPACE_URI_XHE.equals(aPayloadElement.getNamespaceURI ()))
+      if (CXHE10.NAMESPACE_URI_XHE.equals (aPayloadElement.getNamespaceURI ()))
         throw new Phase4DBNAllianceException ("You cannot set a Exchange Header Envelope as the payload for the regular builder. The XHE is created automatically inside of this builder.");
 
       // Optional payload validation
-      // _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
+      // _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID,
+      // m_aValidationResultHandler);
 
       // Perform SMP lookup
       if (super.finishFields ().isFailure ())

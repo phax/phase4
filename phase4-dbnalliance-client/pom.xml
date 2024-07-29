@@ -49,10 +49,14 @@
       <artifactId>phase4-dynamic-discovery</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
-      <artifactId>ph-xhe</artifactId>
-      <version>4.0.1</version>
-      <type>jar</type>
+      <groupId>com.helger.phase4</groupId>
+      <artifactId>phase4-profile-dbnalliance</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.helger.peppol</groupId>
+      <artifactId>peppol-id</artifactId>
+      <version>${peppol-commons.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.peppol</groupId>
@@ -62,18 +66,9 @@
     <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>dbnalliance-xhe</artifactId>
-      <version>9.4.1-SNAPSHOT</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.phase4</groupId>
-      <artifactId>phase4-profile-dbnalliance</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.peppol</groupId>
-      <artifactId>peppol-id</artifactId>
       <version>${peppol-commons.version}</version>
     </dependency>
+
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
