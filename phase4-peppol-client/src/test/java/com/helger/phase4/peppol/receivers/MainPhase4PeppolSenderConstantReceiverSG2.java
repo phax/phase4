@@ -30,7 +30,7 @@ import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidationSG;
+import com.helger.phive.peppol.PeppolValidationBisSG;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -107,7 +107,7 @@ public final class MainPhase4PeppolSenderConstantReceiverSG2
                                                                                                          "-----END CERTIFICATE-----"),
                                                             "https://dev.einvoicing.i-portal.biz/msh")
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidationSG.VID_OPENPEPPOL_BIS3_SG_UBL_INVOICE_2023_7,
+                                  .validationConfiguration (PeppolValidationBisSG.VID_OPENPEPPOL_BIS3_SG_UBL_INVOICE_2023_7,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);

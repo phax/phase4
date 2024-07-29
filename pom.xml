@@ -77,14 +77,14 @@
     <bctls.version>1.78.1</bctls.version>
     <log4j.version>2.23.1</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
-    <peppol-commons.version>9.5.0-SNAPSHOT</peppol-commons.version>
+    <peppol-commons.version>9.5.0</peppol-commons.version>
     <peppol-reporting.version>3.0.0</peppol-reporting.version>
     <ph-ubl.version>9.0.1</ph-ubl.version>
-    <ph-schematron.version>8.0.0</ph-schematron.version>
-    <ph-web.version>10.1.8</ph-web.version>
-    <phive.version>9.2.1</phive.version>
-    <phive-rules.version>3.1.11</phive-rules.version>
-    <spring-boot.version>3.3.1</spring-boot.version>
+    <ph-schematron.version>8.0.2</ph-schematron.version>
+    <ph-web.version>10.1.9</ph-web.version>
+    <phive.version>9.2.2</phive.version>
+    <phive-rules.version>3.1.12</phive-rules.version>
+    <spring-boot.version>3.3.2</spring-boot.version>
   </properties>
 
   <dependencyManagement>
@@ -131,7 +131,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>peppol-smp-client</artifactId>
@@ -143,6 +142,7 @@
           </exclusion>
         </exclusions>
       </dependency>
+      
       <dependency>
         <groupId>org.eclipse.angus</groupId>
         <artifactId>angus-mail</artifactId>
@@ -219,7 +219,7 @@
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
-        <version>1.17.0</version>
+        <version>1.17.1</version>
       </dependency>
 
       <dependency>
