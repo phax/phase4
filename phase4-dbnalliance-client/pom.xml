@@ -37,8 +37,8 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0</url>
       <distribution>repo</distribution>
     </license>
-  </licenses>
-
+  </licenses> 
+  
   <dependencies>
     <dependency>
       <groupId>com.helger.phase4</groupId>
@@ -47,6 +47,23 @@
     <dependency>
       <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-dynamic-discovery</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>ph-xhe</artifactId>
+      <version>4.0.1</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.peppol</groupId>
+      <artifactId>peppol-commons</artifactId>
+      <version>${peppol-commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.peppol</groupId>
+      <artifactId>dbnalliance-xhe</artifactId>
+      <version>9.4.1-SNAPSHOT</version>
+      <type>jar</type>
     </dependency>
     <dependency>
       <groupId>com.helger.phase4</groupId>
