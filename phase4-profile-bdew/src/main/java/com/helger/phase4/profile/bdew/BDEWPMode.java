@@ -108,6 +108,14 @@ public final class BDEWPMode
   }
 
   @Nonnull
+  public static PModeLegBusinessInformation generatePModeLegBusinessInformation (final String sService, final String sAction)
+  {
+    final Long nPayloadProfileMaxKB = null;
+    final String sMPCID = CAS4.DEFAULT_MPC_ID;
+    return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);
+  }
+
+  @Nonnull
   public static PModeLegErrorHandling generatePModeLegErrorHandling ()
   {
     final PModeAddressList aReportSenderErrorsTo = null;
@@ -151,6 +159,16 @@ public final class BDEWPMode
                          generatePModeLegErrorHandling (),
                          null,
                          generatePModeLegSecurity ());
+  }
+
+  @Nonnull
+  public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress, final String sService, final String sAction)
+  {
+    return new PModeLeg (generatePModeLegProtocol (sResponderAddress),
+            generatePModeLegBusinessInformation (sService, sAction),
+            generatePModeLegErrorHandling (),
+            null,
+            generatePModeLegSecurity ());
   }
 
   @Nonnull
@@ -216,6 +234,40 @@ public final class BDEWPMode
                                     null,
                                     generatePModePayloadSevice (),
                                     generatePModeReceptionAwareness ());
+
+    // Leg 2 stays null, because we only use one-way
+
+    if (bPersist)
+    {
+      // Ensure it is stored
+      MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+    }
+    return aPMode;
+  }
+  @Nonnull
+  public static PMode createBDEWPMode (@Nonnull @Nonempty final String sInitiatorID,
+                                       @Nonnull @Nonempty final String sInitiatorType,
+                                       @Nonnull @Nonempty final String sResponderID,
+                                       @Nonnull @Nonempty final String sResponderType,
+                                       @Nonnull @Nonempty final String sService,
+                                       @Nonnull @Nonempty final String sAction,
+                                       @Nullable final String sResponderAddress,
+                                       @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                       final boolean bPersist)
+  {
+    final PModeParty aInitiator = new PModeParty (sInitiatorType, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, null, null);
+    final PModeParty aResponder = new PModeParty (sResponderType, sResponderID, CAS4.DEFAULT_RESPONDER_URL, null, null);
+
+    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (aInitiator, aResponder),
+            aInitiator,
+            aResponder,
+            DEFAULT_AGREEMENT_ID,
+            EMEP.ONE_WAY,
+            EMEPBinding.PUSH,
+            generatePModeLeg (sResponderAddress, sService, sAction),
+            null,
+            generatePModePayloadSevice (),
+            generatePModeReceptionAwareness ());
 
     // Leg 2 stays null, because we only use one-way
 
