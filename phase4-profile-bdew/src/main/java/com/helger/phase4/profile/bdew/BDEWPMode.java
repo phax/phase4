@@ -50,6 +50,7 @@ import com.helger.phase4.wss.EWSSVersion;
  * PMode creation code.
  *
  * @author Gregor Scholtysik
+ * @author Philip Helger
  * @since 2.1.0
  */
 @Immutable
@@ -100,15 +101,12 @@ public final class BDEWPMode
   @Nonnull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
-    final String sService = null;
-    final String sAction = CAS4.DEFAULT_ACTION_URL;
-    final Long nPayloadProfileMaxKB = null;
-    final String sMPCID = CAS4.DEFAULT_MPC_ID;
-    return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);
+    return generatePModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL);
   }
 
   @Nonnull
-  public static PModeLegBusinessInformation generatePModeLegBusinessInformation (final String sService, final String sAction)
+  public static PModeLegBusinessInformation generatePModeLegBusinessInformation (@Nullable final String sService,
+                                                                                 @Nullable final String sAction)
   {
     final Long nPayloadProfileMaxKB = null;
     final String sMPCID = CAS4.DEFAULT_MPC_ID;
@@ -152,23 +150,22 @@ public final class BDEWPMode
   }
 
   @Nonnull
+  @Deprecated (forRemoval = true, since = "2.8.0")
   public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress)
   {
-    return new PModeLeg (generatePModeLegProtocol (sResponderAddress),
-                         generatePModeLegBusinessInformation (),
-                         generatePModeLegErrorHandling (),
-                         null,
-                         generatePModeLegSecurity ());
+    return generatePModeLeg (sResponderAddress, null, null);
   }
 
   @Nonnull
-  public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress, final String sService, final String sAction)
+  public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress,
+                                           @Nullable final String sService,
+                                           @Nullable final String sAction)
   {
     return new PModeLeg (generatePModeLegProtocol (sResponderAddress),
-            generatePModeLegBusinessInformation (sService, sAction),
-            generatePModeLegErrorHandling (),
-            null,
-            generatePModeLegSecurity ());
+                         generatePModeLegBusinessInformation (sService, sAction),
+                         generatePModeLegErrorHandling (),
+                         null,
+                         generatePModeLegSecurity ());
   }
 
   @Nonnull
@@ -193,7 +190,7 @@ public final class BDEWPMode
   }
 
   /**
-   * One-Way Version of the CEF pmode uses one-way push
+   * One-Way Version of the BDEW pmode uses one-way push
    *
    * @param sInitiatorID
    *        Initiator ID
@@ -221,6 +218,55 @@ public final class BDEWPMode
                                        @Nonnull final IPModeIDProvider aPModeIDProvider,
                                        final boolean bPersist)
   {
+    final String sService = null;
+    final String sAction = null;
+    return createBDEWPMode (sInitiatorID,
+                            sInitiatorType,
+                            sResponderID,
+                            sResponderType,
+                            sService,
+                            sAction,
+                            sResponderAddress,
+                            aPModeIDProvider,
+                            bPersist);
+  }
+
+  /**
+   * One-Way Version of the BDEW pmode uses one-way push
+   *
+   * @param sInitiatorID
+   *        Initiator ID
+   * @param sInitiatorType
+   *        Initiator type ID
+   * @param sResponderID
+   *        Responder ID
+   * @param sResponderType
+   *        Responder type ID
+   * @param sService
+   *        The service value
+   * @param sAction
+   *        The action value
+   * @param sResponderAddress
+   *        Responder URL
+   * @param aPModeIDProvider
+   *        PMode ID provider
+   * @param bPersist
+   *        <code>true</code> to persist the PMode in the PModeManager,
+   *        <code>false</code> to have it only in memory.
+   * @return New PMode
+   * @since 2.8.0
+   */
+  @Nonnull
+  public static PMode createBDEWPMode (@Nonnull @Nonempty final String sInitiatorID,
+                                       @Nonnull @Nonempty final String sInitiatorType,
+                                       @Nonnull @Nonempty final String sResponderID,
+                                       @Nonnull @Nonempty final String sResponderType,
+                                       @Nullable final String sService,
+                                       @Nullable final String sAction,
+                                       @Nullable final String sResponderAddress,
+                                       @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                       final boolean bPersist)
+  {
     final PModeParty aInitiator = new PModeParty (sInitiatorType, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, null, null);
     final PModeParty aResponder = new PModeParty (sResponderType, sResponderID, CAS4.DEFAULT_RESPONDER_URL, null, null);
 
@@ -230,44 +276,10 @@ public final class BDEWPMode
                                     DEFAULT_AGREEMENT_ID,
                                     EMEP.ONE_WAY,
                                     EMEPBinding.PUSH,
-                                    generatePModeLeg (sResponderAddress),
+                                    generatePModeLeg (sResponderAddress, sService, sAction),
                                     null,
                                     generatePModePayloadSevice (),
                                     generatePModeReceptionAwareness ());
-
-    // Leg 2 stays null, because we only use one-way
-
-    if (bPersist)
-    {
-      // Ensure it is stored
-      MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
-    }
-    return aPMode;
-  }
-  @Nonnull
-  public static PMode createBDEWPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                       @Nonnull @Nonempty final String sInitiatorType,
-                                       @Nonnull @Nonempty final String sResponderID,
-                                       @Nonnull @Nonempty final String sResponderType,
-                                       @Nonnull @Nonempty final String sService,
-                                       @Nonnull @Nonempty final String sAction,
-                                       @Nullable final String sResponderAddress,
-                                       @Nonnull final IPModeIDProvider aPModeIDProvider,
-                                       final boolean bPersist)
-  {
-    final PModeParty aInitiator = new PModeParty (sInitiatorType, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, null, null);
-    final PModeParty aResponder = new PModeParty (sResponderType, sResponderID, CAS4.DEFAULT_RESPONDER_URL, null, null);
-
-    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (aInitiator, aResponder),
-            aInitiator,
-            aResponder,
-            DEFAULT_AGREEMENT_ID,
-            EMEP.ONE_WAY,
-            EMEPBinding.PUSH,
-            generatePModeLeg (sResponderAddress, sService, sAction),
-            null,
-            generatePModePayloadSevice (),
-            generatePModeReceptionAwareness ());
 
     // Leg 2 stays null, because we only use one-way
 
