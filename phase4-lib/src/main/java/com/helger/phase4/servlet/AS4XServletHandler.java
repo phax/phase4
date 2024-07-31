@@ -54,7 +54,7 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class AS4XServletHandler implements IXServletSimpleHandler
 {
-  @ChangeV3 ("Renamed to IAS4RequestHandlerCustomizer")
+  @ChangeV3 ("Rename to IAS4RequestHandlerCustomizer")
   public interface IHandlerCustomizer
   {
     /**
