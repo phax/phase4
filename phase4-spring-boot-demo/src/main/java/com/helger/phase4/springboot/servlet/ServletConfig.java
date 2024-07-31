@@ -43,16 +43,21 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverCheckData;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
+import com.helger.phase4.peppol.servlet.Phase4PeppolServletMessageProcessorSPI;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolCRLDownloader;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.servlet.AS4IncomingProfileSelectorFromGlobal;
 import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.AS4XServletHandler;
+import com.helger.phase4.servlet.AS4XServletHandler.IHandlerCustomizer;
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
 import com.helger.photon.io.WebFileIO;
+import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.ServletHelper;
+import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xservlet.AbstractXServlet;
@@ -101,6 +106,41 @@ public class ServletConfig
                                                                                                                            return false;
                                                                                                                          }
                                                                                                                        }));
+
+      // Example for changing the receiver data based on the source URL
+      if (false)
+      {
+        final IHandlerCustomizer aHandlerCustomizer = (aRequestScope, aUnifiedResponse, aHandler) -> {
+          final String sUrl = aRequestScope.getURLDecoded ();
+          // The receiver check data you want to set
+          final Phase4PeppolReceiverCheckData aReceiverCheckData;
+          if (sUrl != null && sUrl.startsWith ("https://ap-prod.example.org/as4"))
+          {
+            aReceiverCheckData = new Phase4PeppolReceiverCheckData (new SMPClientReadOnly (URLHelper.getAsURI ("http://smp-prod.example.org")),
+                                                                    "https://ap-prod.example.org/as4",
+                                                                    CertificateHelper.convertStringToCertficateOrNull ("....Public Prod AP Cert...."),
+                                                                    EMode.BUSDOX_THEN_WILDCARD);
+          }
+          else
+          {
+            aReceiverCheckData = new Phase4PeppolReceiverCheckData (new SMPClientReadOnly (URLHelper.getAsURI ("http://smp-test.example.org")),
+                                                                    "https://ap-test.example.org/as4",
+                                                                    CertificateHelper.convertStringToCertficateOrNull ("....Public Test AP Cert...."),
+                                                                    EMode.BUSDOX_THEN_WILDCARD);
+          }
+
+          // Find the right SPI handler
+          for (final var aSPI : aHandler.getProcessorSupplier ().get ())
+            if (aSPI instanceof Phase4PeppolServletMessageProcessorSPI)
+            {
+              // Set receiver check data
+              ((Phase4PeppolServletMessageProcessorSPI) aSPI).setReceiverCheckData (aReceiverCheckData);
+              break;
+            }
+        };
+        hdl.setHandlerCustomizer (aHandlerCustomizer);
+      }
+
       // HTTP POST only
       handlerRegistry ().registerHandler (EHttpMethod.POST, hdl);
     }
@@ -179,13 +219,15 @@ public class ServletConfig
     // (this is the default setting, but added it here for easy modification)
     Phase4PeppolServletConfiguration.setCheckSBDHForMandatoryCountryC1 (true);
 
-    // Our server should check all signing certificates of incoming messages if
+    // Our server should check all signing certificates of incoming messages
+    // if
     // they are revoked or not
     // (this is the default setting, but added it here for easy modification)
     Phase4PeppolServletConfiguration.setCheckSigningCertificateRevocation (true);
 
     // Make sure the download of CRL is using Apache HttpClient and that the
-    // provided settings are used. If e.g. a proxy is needed to access outbound
+    // provided settings are used. If e.g. a proxy is needed to access
+    // outbound
     // resources, it can be configured here
     PeppolCRLDownloader.setAsDefaultCRLCache (new Phase4PeppolHttpClientSettings ());
 
@@ -203,7 +245,8 @@ public class ServletConfig
     // No OCSP check for performance
     final X509Certificate aAPCert = (X509Certificate) aPKE.getCertificate ();
 
-    // TODO This block SHOULD be uncommented once you have a Peppol certificate
+    // TODO This block SHOULD be uncommented once you have a Peppol
+    // certificate
     if (false)
     {
       // Check that your Peppol AP certificate is valid
