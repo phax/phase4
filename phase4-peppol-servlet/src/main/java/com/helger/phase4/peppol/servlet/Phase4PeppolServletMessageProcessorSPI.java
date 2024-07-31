@@ -98,13 +98,19 @@ import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
  * main goal of this class is to implement the Peppol specific requirements of
  * packaging data in SBDH. Users of this package must implement
  * {@link IPhase4PeppolIncomingSBDHandlerSPI} instead which provides a more
- * Peppol-style SPI handler.
+ * Peppol-style SPI handler. This class is instantiated only once, therefore
+ * changing the state of this class may have unintended side effects.
  *
  * @author Philip Helger
  */
 @IsSPIImplementation
 public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 {
+  /**
+   * This class represents the data of a single AS4 attachment.
+   *
+   * @author Philip Helger
+   */
   private static final class ReadAttachment
   {
     private String m_sID;
@@ -592,7 +598,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       LOGGER.debug (sLogPrefix + "  AS4 Action = '" + sAction + "'");
       LOGGER.debug (sLogPrefix + "  AS4 ConversationId = '" + sConversationID + "'");
 
-      // Log source properties
+      // Log User Message Message Properties
       if (aUserMessage.getMessageProperties () != null && aUserMessage.getMessageProperties ().hasPropertyEntries ())
       {
         LOGGER.debug (sLogPrefix + "  AS4 MessageProperties:");

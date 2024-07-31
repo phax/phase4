@@ -70,6 +70,7 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
                                        " bytes)");
     LOGGER.info ("Successfully wrote SBD to '" + aFile.getAbsolutePath () + "'");
 
+    // Check if any "MessageProperty" with name "MockAction" is contained
     final Ebms3Property aMockAction = CollectionHelper.findFirst (aUserMessage.getMessageProperties ().getProperty (),
                                                                   x -> "MockAction".equals (x.getName ()));
     if (aMockAction != null)
