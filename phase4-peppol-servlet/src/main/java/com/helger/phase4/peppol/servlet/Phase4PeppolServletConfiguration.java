@@ -29,6 +29,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.v3.ChangeV3;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
@@ -43,6 +44,7 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
  * @author Philip Helger
  */
 @NotThreadSafe
+@ChangeV3 ("Rename to Phase4PeppolGlobalServletConfiguration")
 public final class Phase4PeppolServletConfiguration
 {
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
