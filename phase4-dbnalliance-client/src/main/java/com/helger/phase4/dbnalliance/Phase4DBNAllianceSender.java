@@ -92,6 +92,8 @@ public final class Phase4DBNAllianceSender
     aData.setCreationDateAndTime (MetaAS4Manager.getTimestampMgr ().getCurrentXMLDateTime ());
     
     final DBNAlliancePayload aPayload = new DBNAlliancePayload (IF);
+    // Content type code is mandatory
+    aPayload.setContentTypeCode ("application/xml");
     aPayload.setCustomizationID (null, aDocTypeID.getValue ());
     aPayload.setProfileID (aProcID.getScheme (), aProcID.getValue ());
     
