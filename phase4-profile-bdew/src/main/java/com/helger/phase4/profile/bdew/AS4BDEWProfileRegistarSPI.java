@@ -52,6 +52,8 @@ public final class AS4BDEWProfileRegistarSPI implements IAS4ProfileRegistrarSPI
       return BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW;
     if (sID.startsWith ("98"))
       return BDEWPMode.BDEW_PARTY_ID_TYPE_DVGW;
+    if (sID.startsWith ("19"))
+      return BDEWPMode.BDEW_PARTY_ID_TYPE_BAHN;
     return BDEWPMode.BDEW_PARTY_ID_TYPE_GLN;
   }
 
