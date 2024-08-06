@@ -42,13 +42,18 @@ public interface IAS4Attachment
   String getId ();
 
   /**
-   * @return The MIME type in a string representation
+   * @return The MIME type in a string representation. If the attachment was
+   *         compressed and the <code>MimeType</code> part property was set it
+   *         can be queried via {@link #getUncompressedMimeType()}
+   * @see #getUncompressedMimeType()
    */
   String getMimeType ();
 
   /**
    * @return The MIME type of the uncompressed attachment. May be
-   *         <code>null</code>.
+   *         <code>null</code>. This is only set, if compression was active.
+   *         Otherwise use {@link #getMimeType()}.
+   * @see #getMimeType()
    */
   @Nullable
   String getUncompressedMimeType ();
