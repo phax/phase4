@@ -65,7 +65,9 @@ public final class MainPhase4PeppolSenderBasware
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0007:AS4_TESTBASWARE_PEPPOLEP");
+      IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme (true ? "0208:aaron"
+                                                                                                                    : true ? "0208:TEST-POPOX"
+                                                                                                                           : "0007:AS4_TESTBASWARE_PEPPOLEP");
       if (true)
         aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9925:BaswareTestBE");
       final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
