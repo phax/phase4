@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.OverrideOnDemand;
+import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.peppol.smp.ESMPTransportProfile;
@@ -37,11 +39,13 @@ import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.exception.SMPClientException;
+import com.helger.smpclient.peppol.ISMPServiceGroupProvider;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xsds.peppol.smp1.EndpointType;
+import com.helger.xsds.peppol.smp1.ServiceGroupType;
 import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
 
 /**
@@ -58,15 +62,29 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4EndpointDetailProviderPeppol.class);
 
-  private final ISMPServiceMetadataProvider m_aSMPClient;
+  private final ISMPServiceGroupProvider m_aServiceGroupProvider;
+  private final ISMPServiceMetadataProvider m_aServiceMetadataProvider;
   private PeppolWildcardSelector.EMode m_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private ISMPTransportProfile m_aTP = DEFAULT_TRANSPORT_PROFILE;
   private EndpointType m_aEndpoint;
 
-  public AS4EndpointDetailProviderPeppol (@Nonnull final ISMPServiceMetadataProvider aSMPClient)
+  public AS4EndpointDetailProviderPeppol (@Nonnull final ISMPServiceGroupProvider aServiceGroupProvider,
+                                          @Nonnull final ISMPServiceMetadataProvider aServiceMetadataProvider)
   {
-    ValueEnforcer.notNull (aSMPClient, "SMPClient");
-    m_aSMPClient = aSMPClient;
+    ValueEnforcer.notNull (aServiceGroupProvider, "ServiceGroupProvider");
+    ValueEnforcer.notNull (aServiceMetadataProvider, "ServiceMetadataProvider");
+    m_aServiceGroupProvider = aServiceGroupProvider;
+    m_aServiceMetadataProvider = aServiceMetadataProvider;
+  }
+
+  /**
+   * @return The service group provider passed in the constructor. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public final ISMPServiceGroupProvider getServiceGroupProvider ()
+  {
+    return m_aServiceGroupProvider;
   }
 
   /**
@@ -76,7 +94,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   @Nonnull
   public final ISMPServiceMetadataProvider getServiceMetadataProvider ()
   {
-    return m_aSMPClient;
+    return m_aServiceMetadataProvider;
   }
 
   /**
@@ -137,7 +155,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * @return The endpoint resolved. May only be non-<code>null</code> if
+   * @return The endpoint resolved. May only be non-<code>null</code> after
    *         {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}
    *         was called.
    */
@@ -145,6 +163,30 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   public final EndpointType getEndpoint ()
   {
     return m_aEndpoint;
+  }
+
+  @Nullable
+  @OverrideOnDemand
+  protected SignedServiceMetadataType resolvedBusdoxServiceMetadata (@Nonnull final IParticipantIdentifier aReceiverID,
+                                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID) throws SMPClientException
+  {
+    // Get meta data for participant/documentType
+    // throw an exception if not found
+    return m_aServiceMetadataProvider.getServiceMetadata (aReceiverID, aDocTypeID);
+  }
+
+  @Nullable
+  @OverrideOnDemand
+  protected SignedServiceMetadataType resolvedWildcardServiceMetadata (@Nonnull final IParticipantIdentifier aReceiverID,
+                                                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID) throws SMPClientException
+  {
+    // Resolve the service group and throw an exception if not found
+    final ServiceGroupType aSG = m_aServiceGroupProvider.getServiceGroup (aReceiverID);
+    // Service Group exists - perform wildcard lookup
+    return m_aServiceMetadataProvider.getWildcardServiceMetadataOrNull (aSG,
+                                                                        aReceiverID,
+                                                                        aDocTypeID,
+                                                                        m_eWildcardSelectionMode);
   }
 
   public void init (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
@@ -173,20 +215,27 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
       // Perform SMP lookup
       try
       {
+        final SignedServiceMetadataType aSSM;
         final boolean bWildcard = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
         if (bWildcard)
         {
-          // Wildcard lookup
-          final SignedServiceMetadataType aSSM = m_aSMPClient.getWildcardServiceMetadataOrNull (aReceiverID,
-                                                                                                aDocTypeID,
-                                                                                                m_eWildcardSelectionMode);
-          m_aEndpoint = aSSM == null ? null : SMPClientReadOnly.getEndpoint (aSSM, aProcID, m_aTP);
+          // Best match
+          aSSM = resolvedWildcardServiceMetadata (aReceiverID, aDocTypeID);
         }
         else
         {
-          // Direct match
-          m_aEndpoint = m_aSMPClient.getEndpoint (aReceiverID, aDocTypeID, aProcID, m_aTP);
+          // Exact match
+          aSSM = resolvedBusdoxServiceMetadata (aReceiverID, aDocTypeID);
         }
+
+        if (aSSM != null)
+        {
+          m_aEndpoint = SMPClientReadOnly.getEndpointAt (aSSM.getServiceMetadata (),
+                                                         aProcID,
+                                                         m_aTP,
+                                                         PDTFactory.getCurrentLocalDateTime ());
+        }
+
         if (m_aEndpoint == null)
         {
           throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
@@ -255,7 +304,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (null).append ("SMPClient", m_aSMPClient)
+    return new ToStringGenerator (null).append ("ServiceMetadataProvider", m_aServiceMetadataProvider)
                                        .append ("TransportProfile", m_aTP)
                                        .append ("EndpointSelectionMode", m_eWildcardSelectionMode)
                                        .appendIfNotNull ("Endpoint", m_aEndpoint)

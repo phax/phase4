@@ -22,12 +22,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
+import com.helger.smpclient.exception.SMPClientParticipantNotFoundException;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
@@ -59,21 +62,30 @@ public final class MainPhase4PeppolSenderNonExistingReceiver
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger-not-existing");
-      final ESimpleUserMessageSendResult eResult;
-      eResult = Phase4PeppolSender.builder ()
-                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
-                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
-                                  .receiverParticipantID (aReceiverID)
-                                  .senderPartyID ("POP000306")
-                                  .countryC1 ("AT")
-                                  .payload (aPayloadElement)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                     aReceiverID,
-                                                                     ESML.DIGIT_TEST))
-                                  .disableValidation ()
-                                  .sendMessageAndCheckForReceipt ();
-      LOGGER.info ("Peppol send result: " + eResult);
+      final Wrapper <Phase4Exception> aSendingException = new Wrapper <> ();
+      final ESimpleUserMessageSendResult eResult = Phase4PeppolSender.builder ()
+                                                                     .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
+                                                                     .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
+                                                                     .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
+                                                                     .receiverParticipantID (aReceiverID)
+                                                                     .senderPartyID ("POP000306")
+                                                                     .countryC1 ("AT")
+                                                                     .payload (aPayloadElement)
+                                                                     .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                                                        aReceiverID,
+                                                                                                        ESML.DIGIT_TEST))
+                                                                     .disableValidation ()
+                                                                     .sendMessageAndCheckForReceipt (aSendingException::set);
+      if (aSendingException.isSet ())
+      {
+        final Throwable aCause = aSendingException.get ().getCause ();
+        if (aCause instanceof SMPClientParticipantNotFoundException)
+          LOGGER.error ("The receiver's Participant ID is not present in the Peppol Network");
+        else
+          LOGGER.error ("Failed to send Peppol AS4 message", aSendingException.get ());
+      }
+      else
+        LOGGER.info ("Peppol send result: " + eResult);
     }
     catch (final Exception ex)
     {

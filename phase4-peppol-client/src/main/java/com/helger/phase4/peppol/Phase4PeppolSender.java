@@ -85,7 +85,6 @@ import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.sbdh.CSBDH;
 import com.helger.sbdh.SBDMarshaller;
-import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
@@ -642,7 +641,7 @@ public final class Phase4PeppolSender
      *        The endpoint detail provider to be used. May not be
      *        <code>null</code>.
      * @return this for chaining
-     * @see #smpClient(ISMPServiceMetadataProvider)
+     * @see #smpClient(SMPClientReadOnly)
      */
     @Nonnull
     public final IMPLTYPE endpointDetailProvider (@Nonnull final IAS4EndpointDetailProvider aEndpointDetailProvider)
@@ -667,9 +666,9 @@ public final class Phase4PeppolSender
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
     @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final ISMPServiceMetadataProvider aSMPClient)
+    public final IMPLTYPE smpClient (@Nonnull final SMPClientReadOnly aSMPClient)
     {
-      return endpointDetailProvider (new AS4EndpointDetailProviderPeppol (aSMPClient));
+      return endpointDetailProvider (new AS4EndpointDetailProviderPeppol (aSMPClient, aSMPClient));
     }
 
     /**
