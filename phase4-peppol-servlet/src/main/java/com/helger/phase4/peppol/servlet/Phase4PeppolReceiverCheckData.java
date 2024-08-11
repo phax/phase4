@@ -19,14 +19,15 @@ package com.helger.phase4.peppol.servlet;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.phase4.v3.ChangeV3;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
-import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
 
 /**
  * This class contains the "per-request" data of
@@ -35,13 +36,18 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
  * @author Philip Helger
  * @since 0.9.13
  */
-@Immutable
+@NotThreadSafe
+@ChangeV3 ("Rename to Phase4PeppolReceiverConfiguration; remove setter")
 public class Phase4PeppolReceiverCheckData
 {
+  private final boolean m_bReceiverCheckEnabled;
   private final ISMPServiceMetadataProvider m_aSMPClient;
-  private final EMode m_eWildcardSelectionMode;
+  private final PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
+  private final boolean m_bPerformSBDHValueChecks;
+  private final boolean m_bCheckSBDHForMandatoryCountryC1;
+  private boolean m_bCheckSigningCertificateRevocation;
 
   /**
    * Constructor
@@ -58,27 +64,89 @@ public class Phase4PeppolReceiverCheckData
    *        The wildcard selection mode to use for the SMP. May not be
    *        <code>null</code>. Added in 2.7.3.
    */
+  @Deprecated (since = "2.8.1", forRemoval = true)
   public Phase4PeppolReceiverCheckData (@Nonnull final ISMPServiceMetadataProvider aSMPClient,
                                         @Nonnull @Nonempty final String sAS4EndpointURL,
                                         @Nonnull final X509Certificate aAPCertificate,
                                         @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
   {
-    ValueEnforcer.notNull (aSMPClient, "SMPClient");
+    this (true,
+          aSMPClient,
+          eWildcardSelectionMode,
+          sAS4EndpointURL,
+          aAPCertificate,
+          Phase4PeppolServletConfiguration.isPerformSBDHValueChecks (),
+          Phase4PeppolServletConfiguration.isCheckSBDHForMandatoryCountryC1 (),
+          Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ());
+  }
+
+  /**
+   * Constructor
+   *
+   * @param bReceiverCheckEnabled
+   *        <code>true</code> if the receiver checks are enabled,
+   *        <code>false</code> otherwise
+   * @param aSMPClient
+   *        The SMP metadata provider to be used. May not be <code>null</code>
+   *        if receiver checks are enabled.
+   * @param eWildcardSelectionMode
+   *        The wildcard selection mode to use for the SMP. May not be
+   *        <code>null</code>
+   * @param sAS4EndpointURL
+   *        The endpoint URL to check against. May neither be <code>null</code>
+   *        nor empty if receiver checks are enabled.
+   * @param aAPCertificate
+   *        The AP certificate to be used for compatibility. May not be
+   *        <code>null</code> if receiver checks are enabled.
+   * @param bPerformSBDHValueChecks
+   *        <code>true</code> if SBDH value checks should be performed.
+   * @param bCheckSBDHForMandatoryCountryC1
+   *        <code>true</code> if SBDH value checks should be performed for
+   *        mandatory C1 country code.
+   * @param bCheckSigningCertificateRevocation
+   *        <code>true</code> if signing certificate revocation checks should be
+   *        performed.
+   * @since 2.8.1
+   */
+  public Phase4PeppolReceiverCheckData (final boolean bReceiverCheckEnabled,
+                                        @Nullable final ISMPServiceMetadataProvider aSMPClient,
+                                        @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
+                                        @Nullable final String sAS4EndpointURL,
+                                        @Nullable final X509Certificate aAPCertificate,
+                                        final boolean bPerformSBDHValueChecks,
+                                        final boolean bCheckSBDHForMandatoryCountryC1,
+                                        final boolean bCheckSigningCertificateRevocation)
+  {
+    if (bReceiverCheckEnabled)
+      ValueEnforcer.notNull (aSMPClient, "SMPClient");
     ValueEnforcer.notNull (eWildcardSelectionMode, "WildcardSelectionMode");
-    ValueEnforcer.notEmpty (sAS4EndpointURL, "AS4EndpointURL");
-    ValueEnforcer.notNull (aAPCertificate, "APCertificate");
+    if (bReceiverCheckEnabled)
+      ValueEnforcer.notEmpty (sAS4EndpointURL, "AS4EndpointURL");
+    if (bReceiverCheckEnabled)
+      ValueEnforcer.notNull (aAPCertificate, "APCertificate");
+    m_bReceiverCheckEnabled = bReceiverCheckEnabled;
     m_aSMPClient = aSMPClient;
     m_eWildcardSelectionMode = eWildcardSelectionMode;
     m_sAS4EndpointURL = sAS4EndpointURL;
     m_aAPCertificate = aAPCertificate;
+    m_bPerformSBDHValueChecks = bPerformSBDHValueChecks;
+    m_bCheckSBDHForMandatoryCountryC1 = bCheckSBDHForMandatoryCountryC1;
+    m_bCheckSigningCertificateRevocation = bCheckSigningCertificateRevocation;
+  }
+
+  public boolean isReceiverCheckEnabled ()
+  {
+    return m_bReceiverCheckEnabled;
   }
 
   /**
    * @return The SMP client object that should be used for the SMP lookup. It is
    *         customizable because it depends either on the SML or a direct URL
-   *         to the SMP may be provided. Never <code>null</code>.
+   *         to the SMP may be provided. Never <code>null</code> if receiver
+   *         checks are enabled.
+   * @see #isReceiverCheckEnabled()
    */
-  @Nonnull
+  @Nullable
   public ISMPServiceMetadataProvider getSMPClient ()
   {
     return m_aSMPClient;
@@ -96,10 +164,11 @@ public class Phase4PeppolReceiverCheckData
 
   /**
    * @return The URL of this AP to compare to against the SMP lookup result upon
-   *         retrieval. Neither <code>null</code> nor empty.
+   *         retrieval. Neither <code>null</code> nor empty if receiver checks
+   *         are enabled.
+   * @see #isReceiverCheckEnabled()
    */
-  @Nonnull
-  @Nonempty
+  @Nullable
   public String getAS4EndpointURL ()
   {
     return m_sAS4EndpointURL;
@@ -107,7 +176,9 @@ public class Phase4PeppolReceiverCheckData
 
   /**
    * @return The certificate of this AP to compare to against the SMP lookup
-   *         result upon retrieval. Never <code>null</code>.
+   *         result upon retrieval. Never <code>null</code> if receiver checks
+   *         are enabled.
+   * @see #isReceiverCheckEnabled()
    */
   @Nonnull
   public X509Certificate getAPCertificate ()
@@ -115,13 +186,40 @@ public class Phase4PeppolReceiverCheckData
     return m_aAPCertificate;
   }
 
+  public boolean isPerformSBDHValueChecks ()
+  {
+    return m_bPerformSBDHValueChecks;
+  }
+
+  public boolean isCheckSBDHForMandatoryCountryC1 ()
+  {
+    return m_bCheckSBDHForMandatoryCountryC1;
+  }
+
+  public boolean isCheckSigningCertificateRevocation ()
+  {
+    return m_bCheckSigningCertificateRevocation;
+  }
+
+  // only required temporarily
+  @Deprecated (since = "2.8.1", forRemoval = true)
+  public void internalSetCheckSigningCertificateRevocation (final boolean b)
+  {
+    m_bCheckSigningCertificateRevocation = b;
+  }
+
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (null).append ("SMPClient", m_aSMPClient)
+    return new ToStringGenerator (null).append ("ReceiverCheckEnabled", m_bReceiverCheckEnabled)
+                                       .append ("SMPClient", m_aSMPClient)
                                        .append ("WildcardSelectionMode", m_eWildcardSelectionMode)
                                        .append ("AS4EndpointURL", m_sAS4EndpointURL)
                                        .append ("APCertificate", m_aAPCertificate)
+                                       .append ("PerformSBDHValueChecks", m_bPerformSBDHValueChecks)
+                                       .append ("CheckSBDHForMandatoryCountryC1", m_bCheckSBDHForMandatoryCountryC1)
+                                       .append ("CheckSigningCertificateRevocation",
+                                                m_bCheckSigningCertificateRevocation)
                                        .getToString ();
   }
 }

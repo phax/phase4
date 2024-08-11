@@ -39,17 +39,19 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
  * compared. These are the static default values that can be overridden in
  * {@link Phase4PeppolServletMessageProcessorSPI}. Please note that this class
  * is not thread safe, as the default values are not meant to be modified during
- * runtime.
+ * runtime.<br>
+ * See {@link Phase4PeppolReceiverCheckData} for the "per-request" version of
+ * this class.
  *
  * @author Philip Helger
  */
 @NotThreadSafe
-@ChangeV3 ("Rename to Phase4PeppolGlobalServletConfiguration")
+@ChangeV3 ("Rename to Phase4PeppolGlobalReceiverConfiguration")
 public final class Phase4PeppolServletConfiguration
 {
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
-  public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
   public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.WILDCARD_ONLY;
+  public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolServletConfiguration.class);
 
@@ -190,29 +192,6 @@ public final class Phase4PeppolServletConfiguration
   }
 
   /**
-   * Get the statically configured data as a
-   * {@link Phase4PeppolReceiverCheckData} instance. Returns <code>null</code>
-   * if the checks are disabled, or if at least one mandatory field is not set.
-   *
-   * @return The instance data or <code>null</code>.
-   * @since 0.9.13
-   */
-  @Nullable
-  public static Phase4PeppolReceiverCheckData getAsReceiverCheckData ()
-  {
-    if (!isReceiverCheckEnabled ())
-      return null;
-
-    final ISMPServiceMetadataProvider aSMPClient = getSMPClient ();
-    final String sAS4EndpointURL = getAS4EndpointURL ();
-    final X509Certificate aAPCertificate = getAPCertificate ();
-    if (aSMPClient == null || StringHelper.hasNoText (sAS4EndpointURL) || aAPCertificate == null)
-      return null;
-
-    return new Phase4PeppolReceiverCheckData (aSMPClient, sAS4EndpointURL, aAPCertificate, getWildcardSelectionMode ());
-  }
-
-  /**
    * @return <code>true</code> if SBDH value checks are enabled,
    *         <code>false</code> if they are disabled.
    * @since 0.12.1
@@ -300,5 +279,38 @@ public final class Phase4PeppolServletConfiguration
                    " Peppol signing certificate revocation check is now " +
                    (b ? "enabled" : "disabled"));
     }
+  }
+
+  /**
+   * Get the statically configured data as a
+   * {@link Phase4PeppolReceiverCheckData} instance. Returns <code>null</code>
+   * if the checks are disabled, or if at least one mandatory field is not
+   * set.<br>
+   * Changed to NonNull in 2.8.1
+   *
+   * @return The instance data or <code>null</code>.
+   * @since 0.9.13
+   */
+  @Nonnull
+  public static Phase4PeppolReceiverCheckData getAsReceiverCheckData ()
+  {
+    final ISMPServiceMetadataProvider aSMPClient = getSMPClient ();
+    final String sAS4EndpointURL = getAS4EndpointURL ();
+    final X509Certificate aAPCertificate = getAPCertificate ();
+
+    final boolean bReceiverCheckEnabled;
+    if (aSMPClient == null || StringHelper.hasNoText (sAS4EndpointURL) || aAPCertificate == null)
+      bReceiverCheckEnabled = false;
+    else
+      bReceiverCheckEnabled = isReceiverCheckEnabled ();
+
+    return new Phase4PeppolReceiverCheckData (bReceiverCheckEnabled,
+                                              aSMPClient,
+                                              getWildcardSelectionMode (),
+                                              sAS4EndpointURL,
+                                              aAPCertificate,
+                                              isPerformSBDHValueChecks (),
+                                              isCheckSBDHForMandatoryCountryC1 (),
+                                              isCheckSigningCertificateRevocation ());
   }
 }

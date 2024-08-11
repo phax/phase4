@@ -176,7 +176,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   private ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> m_aHandlers;
   private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;
   private Phase4PeppolReceiverCheckData m_aReceiverCheckData;
-  private ETriState m_eCheckSigningCertificateRevocation = ETriState.UNDEFINED;
 
   /**
    * Constructor. Uses all SPI implementations of
@@ -278,11 +277,15 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
    * @since 2.7.1
    * @see Phase4PeppolServletConfiguration#isCheckSigningCertificateRevocation()
    *      for the global setting
+   * @deprecated Use the field in {@link Phase4PeppolReceiverCheckData} instead
    */
   @Nonnull
+  @Deprecated (since = "2.8.1", forRemoval = true)
   public final ETriState getCheckSigningCertificateRevocation ()
   {
-    return m_eCheckSigningCertificateRevocation;
+    return m_aReceiverCheckData != null ? ETriState.valueOf (m_aReceiverCheckData
+                                                                                 .isCheckSigningCertificateRevocation ())
+                                        : ETriState.UNDEFINED;
   }
 
   /**
@@ -296,12 +299,19 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
    * @since 2.7.1
    * @see Phase4PeppolServletConfiguration#setCheckSigningCertificateRevocation(boolean)
    *      to set this globally
+   * @deprecated Use the field in {@link Phase4PeppolReceiverCheckData} instead
    */
   @Nonnull
+  @Deprecated (since = "2.8.1", forRemoval = true)
   public final Phase4PeppolServletMessageProcessorSPI setCheckSigningCertificateRevocation (@Nonnull final ETriState eCheckSigningCertificateRevocation)
   {
     ValueEnforcer.notNull (eCheckSigningCertificateRevocation, "CheckSigningCertificateRevocation");
-    m_eCheckSigningCertificateRevocation = eCheckSigningCertificateRevocation;
+    if (eCheckSigningCertificateRevocation.isDefined ())
+    {
+      if (m_aReceiverCheckData == null)
+        m_aReceiverCheckData = Phase4PeppolServletConfiguration.getAsReceiverCheckData ();
+      m_aReceiverCheckData.internalSetCheckSigningCertificateRevocation (eCheckSigningCertificateRevocation.isTrue ());
+    }
     return this;
   }
 
@@ -586,6 +596,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     final Locale aDisplayLocale = aState.getLocale ();
     final String sLogPrefix = "[" + sMessageID + "] ";
 
+    // Start consistency checks if the receiver is supported or not
+    final Phase4PeppolReceiverCheckData aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
+                                                                                          : Phase4PeppolServletConfiguration.getAsReceiverCheckData ();
+
     // Debug log
     if (LOGGER.isDebugEnabled ())
     {
@@ -636,7 +650,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       return AS4MessageProcessorResult.createFailure ();
     }
 
-    if (getCheckSigningCertificateRevocation ().getAsBooleanValue (Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ()))
+    if (aReceiverCheckData.isCheckSigningCertificateRevocation ())
     {
       final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
       final X509Certificate aSenderCert = aState.getUsedCertificate ();
@@ -783,8 +797,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         LOGGER.debug (sLogPrefix + "Now evaluating the SBDH against Peppol rules");
 
       // Interpret as Peppol SBDH and eventually perform consistency checks
-      final boolean bPerformValueChecks = Phase4PeppolServletConfiguration.isPerformSBDHValueChecks ();
-      final boolean bCheckForCountryC1 = Phase4PeppolServletConfiguration.isCheckSBDHForMandatoryCountryC1 ();
+      final boolean bPerformValueChecks = aReceiverCheckData.isPerformSBDHValueChecks ();
+      final boolean bCheckForCountryC1 = aReceiverCheckData.isCheckSBDHForMandatoryCountryC1 ();
       // Read with SimpleIdentifierFactory - accepts more the
       // PeppolIdentifierFactory
       final PeppolSBDHDocumentReader aReader = new PeppolSBDHDocumentReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerformValueChecks)
@@ -808,72 +822,67 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       return AS4MessageProcessorResult.createFailure ();
     }
 
+    if (aReceiverCheckData.isReceiverCheckEnabled ())
     {
-      // Start consistency checks if the receiver is supported or not
-      final Phase4PeppolReceiverCheckData aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
-                                                                                            : Phase4PeppolServletConfiguration.getAsReceiverCheckData ();
-      if (aReceiverCheckData != null)
+      LOGGER.info (sLogPrefix + "Performing checks if the received data is registered in our SMP");
+
+      try
       {
-        LOGGER.info (sLogPrefix + "Performing checks if the received data is registered in our SMP");
-
-        try
+        // Get the endpoint information required from the recipient
+        // Check if an endpoint is registered
+        final IParticipantIdentifier aReceiverID = aPeppolSBD.getReceiverAsIdentifier ();
+        final IDocumentTypeIdentifier aDocTypeID = aPeppolSBD.getDocumentTypeAsIdentifier ();
+        final IProcessIdentifier aProcessID = aPeppolSBD.getProcessAsIdentifier ();
+        final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
+                                                                     aReceiverCheckData.getSMPClient (),
+                                                                     aReceiverID,
+                                                                     aDocTypeID,
+                                                                     aProcessID,
+                                                                     aReceiverCheckData.getWildcardSelectionMode ());
+        if (aReceiverEndpoint == null)
         {
-          // Get the endpoint information required from the recipient
-          // Check if an endpoint is registered
-          final IParticipantIdentifier aReceiverID = aPeppolSBD.getReceiverAsIdentifier ();
-          final IDocumentTypeIdentifier aDocTypeID = aPeppolSBD.getDocumentTypeAsIdentifier ();
-          final IProcessIdentifier aProcessID = aPeppolSBD.getProcessAsIdentifier ();
-          final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
-                                                                       aReceiverCheckData.getSMPClient (),
-                                                                       aReceiverID,
-                                                                       aDocTypeID,
-                                                                       aProcessID,
-                                                                       aReceiverCheckData.getWildcardSelectionMode ());
-          if (aReceiverEndpoint == null)
-          {
-            final String sMsg = "Failed to resolve SMP endpoint for provided receiver ID (" +
-                                (aReceiverID == null ? "null" : aReceiverID.getURIEncoded ()) +
-                                ")/documentType ID (" +
-                                (aDocTypeID == null ? "null" : aDocTypeID.getURIEncoded ()) +
-                                ")/process ID (" +
-                                (aProcessID == null ? "null" : aProcessID.getURIEncoded ()) +
-                                ")/transport profile (" +
-                                m_aTransportProfile.getID () +
-                                ") - not handling incoming AS4 document";
-            LOGGER.error (sLogPrefix + sMsg);
-            // the errorDetail MUST be set according to Peppol AS4 profile 2.2
-            aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                               .refToMessageInError (aState.getMessageID ())
-                                                               .description (sMsg, aDisplayLocale)
-                                                               .errorDetail ("PEPPOL:NOT_SERVICED")
-                                                               .build ());
-            return AS4MessageProcessorResult.createFailure ();
-          }
-
-          // Check if the message is for us
-          _checkIfReceiverEndpointURLMatches (sLogPrefix, aReceiverCheckData.getAS4EndpointURL (), aReceiverEndpoint);
-
-          // Get the recipient certificate from the SMP
-          _checkIfEndpointCertificateMatches (sLogPrefix, aReceiverCheckData.getAPCertificate (), aReceiverEndpoint);
-        }
-        catch (final Phase4Exception ex)
-        {
-          final String sMsg = "The addressing data contained in the SBDH could not be verified";
-          LOGGER.error (sLogPrefix + sMsg, ex);
+          final String sMsg = "Failed to resolve SMP endpoint for provided receiver ID (" +
+                              (aReceiverID == null ? "null" : aReceiverID.getURIEncoded ()) +
+                              ")/documentType ID (" +
+                              (aDocTypeID == null ? "null" : aDocTypeID.getURIEncoded ()) +
+                              ")/process ID (" +
+                              (aProcessID == null ? "null" : aProcessID.getURIEncoded ()) +
+                              ")/transport profile (" +
+                              m_aTransportProfile.getID () +
+                              ") - not handling incoming AS4 document";
+          LOGGER.error (sLogPrefix + sMsg);
+          // the errorDetail MUST be set according to Peppol AS4 profile 2.2
           aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
                                                              .refToMessageInError (aState.getMessageID ())
-                                                             .errorDetail (sMsg, ex)
+                                                             .description (sMsg, aDisplayLocale)
+                                                             .errorDetail ("PEPPOL:NOT_SERVICED")
                                                              .build ());
           return AS4MessageProcessorResult.createFailure ();
         }
-      }
-      else
-      {
-        LOGGER.info (sLogPrefix + "Endpoint checks for incoming AS4 messages are disabled");
-      }
 
-      // Receiving checks are positively done
+        // Check if the message is for us
+        _checkIfReceiverEndpointURLMatches (sLogPrefix, aReceiverCheckData.getAS4EndpointURL (), aReceiverEndpoint);
+
+        // Get the recipient certificate from the SMP
+        _checkIfEndpointCertificateMatches (sLogPrefix, aReceiverCheckData.getAPCertificate (), aReceiverEndpoint);
+      }
+      catch (final Phase4Exception ex)
+      {
+        final String sMsg = "The addressing data contained in the SBDH could not be verified";
+        LOGGER.error (sLogPrefix + sMsg, ex);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .errorDetail (sMsg, ex)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
     }
+    else
+    {
+      LOGGER.info (sLogPrefix + "Endpoint checks for incoming AS4 messages are disabled");
+    }
+
+    // Receiving checks are positively done
 
     if (m_aHandlers.isEmpty ())
     {
