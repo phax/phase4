@@ -64,6 +64,10 @@ public final class MainPhase4PeppolSenderHelgerReceiverError
                                                  .senderPartyID ("POP000306")
                                                  .countryC1 ("AT")
                                                  .payload (aPayloadElement)
+                                                 /*
+                                                  * Special handling by
+                                                  * 9915:helger receiver only
+                                                  */
                                                  .addMessageProperty (MessageProperty.builder ()
                                                                                      .name ("MockAction")
                                                                                      .value ("Expected failure"))
