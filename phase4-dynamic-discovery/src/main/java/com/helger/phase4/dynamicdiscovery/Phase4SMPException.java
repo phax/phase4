@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.smpclient.exception.SMPClientException;
 
 /**
  * SMP exception to be thrown from the endpoint detail providers.
@@ -43,7 +44,7 @@ public class Phase4SMPException extends Phase4Exception
    *        Optional causing exception
    * @since 0.13.0
    */
-  public Phase4SMPException (@Nullable final Throwable aCause)
+  public Phase4SMPException (@Nullable final SMPClientException aCause)
   {
     super (aCause);
   }
@@ -54,7 +55,7 @@ public class Phase4SMPException extends Phase4Exception
    * @param aCause
    *        Optional causing exception
    */
-  public Phase4SMPException (@Nonnull final String sMessage, @Nullable final Throwable aCause)
+  public Phase4SMPException (@Nonnull final String sMessage, @Nullable final SMPClientException aCause)
   {
     super (sMessage, aCause);
   }
