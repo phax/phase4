@@ -85,6 +85,7 @@ import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.sbdh.CSBDH;
 import com.helger.sbdh.SBDMarshaller;
+import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
@@ -668,7 +669,31 @@ public final class Phase4PeppolSender
     @Nonnull
     public final IMPLTYPE smpClient (@Nonnull final SMPClientReadOnly aSMPClient)
     {
-      return endpointDetailProvider (AS4EndpointDetailProviderPeppol.create (aSMPClient));
+      // Use the default mode
+      return smpClient (aSMPClient, AS4EndpointDetailProviderPeppol.DEFAULT_WILDCARD_SELECTION_MODE);
+    }
+
+    /**
+     * Set the SMP client to be used. This is the point where e.g. the
+     * differentiation between SMK and SML can be done. This must be set prior
+     * to sending. If the endpoint information are already known you can also
+     * use {@link #receiverEndpointDetails(X509Certificate, String)} instead.
+     *
+     * @param aSMPClient
+     *        The SMP client to be used. May not be <code>null</code>.
+     * @param eWildcardSelectionMode
+     *        The wildcard selection mode to use. May not be <code>null</code>.
+     * @return this for chaining
+     * @see #receiverEndpointDetails(X509Certificate, String)
+     * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
+     * @since 2.8.1
+     */
+    @Nonnull
+    public final IMPLTYPE smpClient (@Nonnull final SMPClientReadOnly aSMPClient,
+                                     @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
+    {
+      return endpointDetailProvider (AS4EndpointDetailProviderPeppol.create (aSMPClient)
+                                                                    .setWildcardSelectionMode (eWildcardSelectionMode));
     }
 
     /**
