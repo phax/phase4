@@ -310,4 +310,19 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
                                        .appendIfNotNull ("Endpoint", m_aEndpoint)
                                        .getToString ();
   }
+
+  /**
+   * Create a new {@link AS4EndpointDetailProviderPeppol} based on the provided
+   * SMP client.
+   *
+   * @param aSMPClient
+   *        The SMP client to use. May not be <code>null</code>
+   * @return Never <code>null</code>.
+   * @since 2.8.1
+   */
+  @Nonnull
+  public static AS4EndpointDetailProviderPeppol create (@Nonnull final SMPClientReadOnly aSMPClient)
+  {
+    return new AS4EndpointDetailProviderPeppol (aSMPClient, aSMPClient);
+  }
 }

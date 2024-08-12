@@ -668,7 +668,7 @@ public final class Phase4PeppolSender
     @Nonnull
     public final IMPLTYPE smpClient (@Nonnull final SMPClientReadOnly aSMPClient)
     {
-      return endpointDetailProvider (new AS4EndpointDetailProviderPeppol (aSMPClient, aSMPClient));
+      return endpointDetailProvider (AS4EndpointDetailProviderPeppol.create (aSMPClient));
     }
 
     /**
