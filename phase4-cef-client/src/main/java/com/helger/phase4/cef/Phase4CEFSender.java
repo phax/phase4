@@ -41,6 +41,7 @@ import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR2;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.model.MessageProperty;
+import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
@@ -105,6 +106,8 @@ public final class Phase4CEFSender
       // Override default values
       try
       {
+        as4ProfileID (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID_FOUR_CORNER);
+
         httpClientFactory (new Phase4CEFHttpClientSettings ());
       }
       catch (final Exception ex)

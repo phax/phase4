@@ -25,7 +25,6 @@ import com.helger.commons.id.IHasID;
 import com.helger.commons.name.IHasDisplayName;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.model.pmode.PMode;
-import com.helger.phase4.v3.ChangeV3;
 
 /**
  * Base interface for an AS4 profile - a group of settings that outline what
@@ -52,11 +51,10 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName
    * @param sAddress
    *        Address string
    * @return A PMode that is NOT yet in the manager and is not complete! The
-   *         following information is most likely not contained: initiator,
-   *         responder, URLs, certificates.
+   *         following information is most likely not contained: URLs,
+   *         certificates.
    */
   @Nonnull
-  @ChangeV3 ("the naming is bad. Should be called createPMode")
   PMode createPModeTemplate (@Nonnull @Nonempty String sInitiatorID,
                              @Nonnull @Nonempty String sResponderID,
                              @Nullable String sAddress);

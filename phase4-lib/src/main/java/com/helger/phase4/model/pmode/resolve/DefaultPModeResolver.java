@@ -20,34 +20,88 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.pmode.DefaultPMode;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.profile.IAS4Profile;
+import com.helger.phase4.profile.IAS4ProfileManager;
 
 /**
  * Default implementation of {@link IPModeResolver} using the fixed ID only. If
- * no ID is provided the default pmode is used.
+ * no ID is provided the default PMode is used.
  *
  * @author bayerlma
  * @author Philip Helger
  */
 public class DefaultPModeResolver implements IPModeResolver
 {
-  public static final IPModeResolver DEFAULT_PMODE_RESOLVER = new DefaultPModeResolver (false);
+  public static final IPModeResolver DEFAULT_PMODE_RESOLVER = new DefaultPModeResolver (null, false);
 
+  private final String m_sAS4ProfileID;
   private final boolean m_bUseDefaultAsFallback;
 
+  @Deprecated (forRemoval = true, since = "2.8.2")
   public DefaultPModeResolver (final boolean bUseDefaultAsFallback)
   {
+    this (null, bUseDefaultAsFallback);
+  }
+
+  public DefaultPModeResolver (@Nullable final String sAS4ProfileID, final boolean bUseDefaultAsFallback)
+  {
+    m_sAS4ProfileID = sAS4ProfileID;
     m_bUseDefaultAsFallback = bUseDefaultAsFallback;
+  }
+
+  /**
+   * @return The AS4 profile ID that was provided in the constructor. May be
+   *         <code>null</code>.
+   * @since 2.8.2
+   */
+  @Nullable
+  public final String getAS4ProfileID ()
+  {
+    return m_sAS4ProfileID;
   }
 
   public final boolean isUseDefaultAsFallback ()
   {
     return m_bUseDefaultAsFallback;
+  }
+
+  @Nullable
+  @OverrideOnDemand
+  protected IPMode createDefaultPMode (@Nonnull @Nonempty final String sInitiatorID,
+                                       @Nonnull @Nonempty final String sResponderID,
+                                       @Nullable final String sAddress)
+  {
+    // Use default pmode based on profile
+    final IAS4ProfileManager aProfileMgr = MetaAS4Manager.getProfileMgr ();
+    IAS4Profile aProfile = null;
+    if (StringHelper.hasText (m_sAS4ProfileID))
+    {
+      // Try to resolve ID from constructor
+      aProfile = aProfileMgr.getProfileOfID (m_sAS4ProfileID);
+    }
+    if (aProfile == null)
+    {
+      // ID not provided or non-existing - use default
+      aProfile = aProfileMgr.getDefaultProfileOrNull ();
+    }
+    if (aProfile != null)
+      return aProfile.createPModeTemplate (sInitiatorID, sResponderID, sAddress);
+
+    if (!m_bUseDefaultAsFallback)
+    {
+      // Not found and no default -> null
+      return null;
+    }
+
+    // 2. Default default PMode
+    return DefaultPMode.getOrCreateDefaultPMode (sInitiatorID, sResponderID, sAddress, true);
   }
 
   @Nullable
@@ -75,18 +129,15 @@ public class DefaultPModeResolver implements IPModeResolver
     if (ret != null)
       return ret;
 
-    // Use default pmode based on profile
-    final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfileOrNull ();
-    if (aProfile != null)
-      return aProfile.createPModeTemplate (sInitiatorID, sResponderID, sAddress);
+    // Try to resolve a default PMode from the other parameters
+    return createDefaultPMode (sInitiatorID, sResponderID, sAddress);
+  }
 
-    if (!m_bUseDefaultAsFallback)
-    {
-      // Not found and no default -> null
-      return null;
-    }
-
-    // 2. Default default PMode
-    return DefaultPMode.getOrCreateDefaultPMode (sInitiatorID, sResponderID, sAddress, true);
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (null).append ("AS4ProfileID", m_sAS4ProfileID)
+                                       .append ("UseDefaultAsFallback", m_bUseDefaultAsFallback)
+                                       .getToString ();
   }
 }

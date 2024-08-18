@@ -15,6 +15,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
+import com.helger.phase4.profile.euctp.AS4EuCtpProfileRegistarSPI;
 import com.helger.phase4.profile.euctp.EEuCtpAction;
 import com.helger.phase4.profile.euctp.EEuCtpService;
 import com.helger.phase4.profile.euctp.EuCtpPMode;
@@ -44,6 +45,8 @@ public abstract class AbstractEuCtpUserMessageBuilder <IMPLTYPE extends Abstract
     // Override default values
     try
     {
+      as4ProfileID (AS4EuCtpProfileRegistarSPI.AS4_PROFILE_PUSH_ID);
+
       // Other crypt parameters are located in the PMode security part
       cryptParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT);
       cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
@@ -58,7 +61,7 @@ public abstract class AbstractEuCtpUserMessageBuilder <IMPLTYPE extends Abstract
       conversationID (UUID.randomUUID ().toString ());
 
       agreementRef (EuCtpPMode.DEFAULT_AGREEMENT_ID);
-      agreementType(EuCtpPMode.DEFAULT_AGREEMENT_TYPE);
+      agreementType (EuCtpPMode.DEFAULT_AGREEMENT_TYPE);
 
       forceMimeMessage (true);
     }

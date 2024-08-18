@@ -32,6 +32,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;
+import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.wrapper.Wrapper;
@@ -44,6 +45,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.phase4.v3.ChangeV3;
 
 /**
  * Abstract builder base class for a user message.
@@ -88,21 +90,12 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
 
   /**
-   * Create a new builder, with the following fields already set:<br>
-   * {@link #pmode(IPMode)}<br>
+   * Create a new builder
    */
   protected AbstractAS4UserMessageBuilder ()
   {
     super ();
-    // Set default values
-    try
-    {
-      pmode (pmodeResolver ().getPModeOfID (null, "s", "a", "i", "r", "a", null));
-    }
-    catch (final Exception ex)
-    {
-      throw new IllegalStateException ("Failed to init AbstractAS4UserMessageBuilder", ex);
-    }
+    // No additional default values here
   }
 
   /**
@@ -124,8 +117,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   @Nonnull
   public final IMPLTYPE pmode (@Nullable final IPMode aPMode)
   {
-    if (aPMode == null)
-      LOGGER.warn ("A null PMode was supplied");
     m_aPMode = aPMode;
     return thisAsT ();
   }
@@ -554,6 +545,25 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   @Override
+  @Nonnull
+  @OverridingMethodsMustInvokeSuper
+  protected ESuccess finishFields () throws Phase4Exception
+  {
+    if (super.finishFields ().isFailure ())
+      return ESuccess.FAILURE;
+
+    if (m_aPMode == null && pmodeResolver () != null)
+    {
+      // Create a default PMode template
+      m_aPMode = pmodeResolver ().getPModeOfID (null, "s", "a", "i", "r", "a", null);
+      if (m_aPMode == null)
+        LOGGER.warn ("No PMode was provided, and the PMode Resolver delivered a null-PMode as well");
+    }
+
+    return ESuccess.SUCCESS;
+  }
+
+  @Override
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
   {
@@ -695,6 +705,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *
    * @author Philip Helger
    */
+  @ChangeV3 ("Moved to top-level and rename")
   public enum ESimpleUserMessageSendResult implements IHasID <String>, ISuccessIndicator
   {
     /**

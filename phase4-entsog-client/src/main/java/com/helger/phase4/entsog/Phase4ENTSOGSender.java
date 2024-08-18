@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
+import com.helger.phase4.profile.entsog.AS4ENTSOGProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -82,9 +83,12 @@ public final class Phase4ENTSOGSender
       // Override default values
       try
       {
+        as4ProfileID (AS4ENTSOGProfileRegistarSPI.AS4_PROFILE_ID);
         httpClientFactory (new Phase4ENTSOGHttpClientSettings ());
+
         signingParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
         cryptParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+
         conversationID ("");
       }
       catch (final Exception ex)

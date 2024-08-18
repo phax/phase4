@@ -40,6 +40,7 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.model.MessageProperty;
+import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.url.BDXLURLProvider;
@@ -99,6 +100,8 @@ public final class Phase4EudamedSender
       // Override default values
       try
       {
+        as4ProfileID (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID_FOUR_CORNER);
+
         httpClientFactory (new Phase4EudamedHttpClientSettings ());
       }
       catch (final Exception ex)

@@ -76,6 +76,7 @@ import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.MessageProperty;
+import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolPMode;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
@@ -436,6 +437,8 @@ public final class Phase4PeppolSender
       // Override default values
       try
       {
+        as4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
+
         // Use the Peppol specific timeout settings
         httpClientFactory (new Phase4PeppolHttpClientSettings ());
         agreementRef (PeppolPMode.DEFAULT_AGREEMENT_ID);

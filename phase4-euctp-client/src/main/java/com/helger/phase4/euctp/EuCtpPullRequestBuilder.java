@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
+import com.helger.phase4.profile.euctp.AS4EuCtpProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4PullRequestBuilder;
 
 public class EuCtpPullRequestBuilder extends AbstractAS4PullRequestBuilder <EuCtpPullRequestBuilder>
@@ -16,6 +17,8 @@ public class EuCtpPullRequestBuilder extends AbstractAS4PullRequestBuilder <EuCt
   {
     try
     {
+      as4ProfileID (AS4EuCtpProfileRegistarSPI.AS4_PROFILE_PULL_ID);
+
       // Other crypt parameters are located in the PMode security part
       cryptParams ().setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT);
       cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);

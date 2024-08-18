@@ -32,6 +32,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.state.ESuccess;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
@@ -83,6 +84,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected ESoapVersion m_eSoapVersion;
   protected HttpRetrySettings m_aHttpRetrySettings;
   protected Locale m_aLocale = DEFAULT_LOCALE;
+  protected String m_sAS4ProfileID;
 
   private IPModeResolver m_aPModeResolver;
   private IAS4IncomingAttachmentFactory m_aIAF;
@@ -470,6 +472,36 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * @return The selected AS4 profile to use. May be <code>null</code> to
+   *         indicate the default profile.
+   * @since 2.8.2
+   */
+  @Nullable
+  public final String as4ProfileID ()
+  {
+    return m_sAS4ProfileID;
+  }
+
+  /**
+   * Set the AS4 profile to be used.
+   *
+   * @param sAS4ProfileID
+   *        The AS4 profile to be used. May be <code>null</code> to indicate the
+   *        usage of the default profile. This internally changes the PMode
+   *        resolver!
+   * @return this for chaining
+   * @see #pmodeResolver(IPModeResolver)
+   * @since 2.8.2
+   */
+  @Nonnull
+  public final IMPLTYPE as4ProfileID (@Nullable final String sAS4ProfileID)
+  {
+    m_sAS4ProfileID = sAS4ProfileID;
+    return pmodeResolver (StringHelper.hasNoText (sAS4ProfileID) ? DefaultPModeResolver.DEFAULT_PMODE_RESOLVER
+                                                                 : new DefaultPModeResolver (sAS4ProfileID, false));
+  }
+
+  /**
    * @return The currently set {@link IPModeResolver}. May not be
    *         <code>null</code>.
    */
@@ -698,6 +730,26 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     return thisAsT ();
   }
 
+  /**
+   * Internal method that is invoked before the required field check is
+   * performed. Override to set additional dynamically created fields if
+   * necessary.<br>
+   * Don't add message properties in here, because if the required fields check
+   * fails than this method would be called again.<br>
+   * This is called before {@link #isEveryRequiredFieldSet()}
+   *
+   * @return {@link ESuccess} - never <code>null</code>. Returning failure here
+   *         stops sending the message.
+   * @throws Phase4Exception
+   *         if something goes wrong
+   */
+  @OverrideOnDemand
+  @OverridingMethodsMustInvokeSuper
+  protected ESuccess finishFields () throws Phase4Exception
+  {
+    return ESuccess.SUCCESS;
+  }
+
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
   {
@@ -722,6 +774,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       LOGGER.warn ("The field 'locale' is not set");
       return false;
     }
+    // m_sAS4ProfileID may be null
 
     if (m_aPModeResolver == null)
     {
@@ -746,25 +799,6 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
     // All valid
     return true;
-  }
-
-  /**
-   * Internal method that is invoked before the required field check is
-   * performed. Override to set additional dynamically created fields if
-   * necessary.<br>
-   * Don't add message properties in here, because if the required fields check
-   * fails than this method would be called again.
-   *
-   * @return {@link ESuccess} - never <code>null</code>. Returning failure here
-   *         stops sending the message.
-   * @throws Phase4Exception
-   *         if something goes wrong
-   */
-  @OverrideOnDemand
-  @OverridingMethodsMustInvokeSuper
-  protected ESuccess finishFields () throws Phase4Exception
-  {
-    return ESuccess.SUCCESS;
   }
 
   /**

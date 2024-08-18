@@ -37,6 +37,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
+import com.helger.phase4.profile.bdew.AS4BDEWProfileRegistarSPI;
 import com.helger.phase4.profile.bdew.BDEWPMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -90,6 +91,8 @@ public final class Phase4BDEWSender
       // Override default values
       try
       {
+        as4ProfileID (AS4BDEWProfileRegistarSPI.AS4_PROFILE_ID);
+
         httpClientFactory (new Phase4BDEWHttpClientSettings ());
 
         // Other crypt parameters are located in the PMode security part

@@ -71,7 +71,9 @@ public final class AS4Sender
      * {@link AbstractAS4UserMessageBuilderMIMEPayload#AbstractAS4UserMessageBuilderMIMEPayload()}
      */
     public BuilderUserMessage ()
-    {}
+    {
+      // Use no specific AS4 profile ID
+    }
   }
 
   /**

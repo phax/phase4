@@ -50,6 +50,7 @@ import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR2;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.profile.dbnalliance.AS4DBNAllianceProfileRegistarSPI;
 import com.helger.phase4.profile.dbnalliance.DBNAlliancePMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
@@ -151,8 +152,12 @@ public final class Phase4DBNAllianceSender
       // Override default values
       try
       {
+        as4ProfileID (AS4DBNAllianceProfileRegistarSPI.AS4_PROFILE_ID);
+
         httpClientFactory (new Phase4DBNAllianceHttpClientSettings ());
+
         agreementRef (DBNAlliancePMode.DEFAULT_AGREEMENT_ID);
+
         fromPartyIDType (DBNAlliancePMode.DEFAULT_PARTY_TYPE_ID);
         fromRole (CAS4.DEFAULT_INITIATOR_URL);
         toPartyIDType (DBNAlliancePMode.DEFAULT_PARTY_TYPE_ID);
