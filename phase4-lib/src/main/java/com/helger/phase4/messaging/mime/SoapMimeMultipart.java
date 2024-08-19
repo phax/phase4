@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.messaging.mime;
 
-import java.nio.charset.Charset;
-
 import javax.annotation.Nonnull;
 
 import com.helger.phase4.soap.ESoapVersion;
@@ -34,16 +32,18 @@ import jakarta.mail.internet.ParseException;
  */
 public class SoapMimeMultipart extends MimeMultipart
 {
-  public SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion,
-                            @Nonnull final Charset aCharset) throws ParseException
+  private static final String RELATED = "related";
+  private static final String CT_PARAM_TYPE = "type";
+
+  public SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion) throws ParseException
   {
-    super ("related");
+    super (RELATED);
 
     // type parameter is essential for Axis to work!
     // But no charset! RFC 2387, section 3.4 has a special definition
     final ContentType aContentType = new ContentType (contentType);
-    aContentType.setParameter ("type", eSoapVersion.getMimeType ().getAsString ());
-    aContentType.setParameter ("charset", aCharset.name ());
+    aContentType.setParameter (CT_PARAM_TYPE, eSoapVersion.getMimeType ().getAsString ());
+    // No "charset" parameter here (see #263)
     contentType = aContentType.toString ();
   }
 }

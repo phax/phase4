@@ -72,7 +72,12 @@ public final class MimeMessageCreator
       final MailcapCommandMap aCommandMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap ();
       for (final String sMimeType : aCommandMap.getMimeTypes ())
         for (final CommandInfo aCI : aCommandMap.getAllCommands (sMimeType))
-          aSB.append (sMimeType).append ("; ").append (aCI.getCommandName ()).append ("; ").append (aCI.getCommandClass ()).append ('\n');
+          aSB.append (sMimeType)
+             .append ("; ")
+             .append (aCI.getCommandName ())
+             .append ("; ")
+             .append (aCI.getCommandClass ())
+             .append ('\n');
       LoggerFactory.getLogger ("root").info (aSB.toString ());
     }
 
@@ -97,14 +102,15 @@ public final class MimeMessageCreator
     ValueEnforcer.notNull (aSoapEnvelope, "SoapEnvelope");
 
     final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
-    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (eSoapVersion, aCharset);
+    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (eSoapVersion);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
-    final String sContentType = eSoapVersion.getMimeType (aCharset).getAsString ();
+    final String sRootContentType = eSoapVersion.getMimeType (aCharset).getAsString ();
 
     {
       // Message Itself (repeatable)
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
-      aMessagePart.setDataHandler (new DataHandler (new DOMSource (aSoapEnvelope), sContentType));
+      aMessagePart.setDataHandler (new DataHandler (new DOMSource (aSoapEnvelope), sRootContentType));
+      // Set AFTER DataHandler
       aMessagePart.setHeader (CHttpHeader.CONTENT_TRANSFER_ENCODING, eCTE.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
