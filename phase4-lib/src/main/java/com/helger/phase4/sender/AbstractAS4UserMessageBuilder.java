@@ -199,10 +199,20 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return the current PMode ID. May be <code>null</code>.
+   * @see #pmodeID(String)
+   */
+  @Nullable
+  public final String pmodeID ()
+  {
+    return m_sPModeID;
+  }
+
+  /**
    * Set the optional PMode ID for packaging in the user message.
    *
    * @param s
-   *        Pmode ID. May be <code>null</code>.
+   *        PMode ID. May be <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
@@ -555,7 +565,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     if (m_aPMode == null && pmodeResolver () != null)
     {
       // Create a default PMode template
-      m_aPMode = pmodeResolver ().getPModeOfID (null, "s", "a", "i", "r", "a", null);
+      m_aPMode = pmodeResolver ().getPModeOfID (m_sPModeID, "s", "a", "i", "r", "a", null);
       if (m_aPMode == null)
         LOGGER.warn ("No PMode was provided, and the PMode Resolver delivered a null-PMode as well");
     }
