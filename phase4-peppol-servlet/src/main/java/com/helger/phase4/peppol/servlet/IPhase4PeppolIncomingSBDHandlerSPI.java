@@ -28,7 +28,7 @@ import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
-import com.helger.phase4.v3.ChangeV3;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This is the interface that must be implemented to handle incoming SBD
@@ -95,7 +95,7 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    *         than processing should continue.
    * @since 0.12.2
    */
-  @ChangeV3 ("Remove Exception handling and force usage of aProcessingErrorMessages")
+  @ChangePhase4V3 ("Remove Exception handling and force usage of aProcessingErrorMessages")
   default boolean exceptionTranslatesToAS4Error ()
   {
     return false;

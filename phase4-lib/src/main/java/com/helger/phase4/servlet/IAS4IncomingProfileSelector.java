@@ -19,7 +19,7 @@ package com.helger.phase4.servlet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.phase4.v3.ChangeV3;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Callback interface to determine the used AS4 profile of an incoming message.
@@ -49,7 +49,7 @@ public interface IAS4IncomingProfileSelector
    *         <code>false</code> if not. The default is <code>true</code>.
    * @since 0.13.1
    */
-  @ChangeV3 ("Make non-default")
+  @ChangePhase4V3 ("Make non-default")
   default boolean validateAgainstProfile ()
   {
     return true;

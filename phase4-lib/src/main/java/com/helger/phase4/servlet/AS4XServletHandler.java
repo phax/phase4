@@ -39,7 +39,7 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.phase4.v3.ChangeV3;
+import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -54,7 +54,7 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class AS4XServletHandler implements IXServletSimpleHandler
 {
-  @ChangeV3 ("Rename to IAS4RequestHandlerCustomizer")
+  @ChangePhase4V3 ("Rename to IAS4RequestHandlerCustomizer")
   public interface IHandlerCustomizer
   {
     /**
@@ -83,7 +83,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
      *        The main handler doing the hard work. Never <code>null</code>.
      * @since 0.9.5
      */
-    @ChangeV3 ("Removed default")
+    @ChangePhase4V3 ("Removed default")
     default void customizeAfterHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                                          @Nonnull final AS4UnifiedResponse aUnifiedResponse,
                                          @Nonnull final AS4RequestHandler aHandler)

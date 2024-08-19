@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.crypto.Crypto;
 
-import com.helger.phase4.v3.ChangeV3;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * The basic phase4 crypto interface.
@@ -87,7 +87,7 @@ public interface IAS4CryptoFactory
    * @since 1.4.1
    */
   @Nullable
-  @ChangeV3 ("Make non-default")
+  @ChangePhase4V3 ("Make non-default")
   default String getKeyPasswordPerAlias (@Nullable final String sSearchKeyAlias)
   {
     // Use case insensitive compare, depends on the keystore type
