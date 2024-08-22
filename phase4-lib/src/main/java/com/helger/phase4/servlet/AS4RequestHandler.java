@@ -109,6 +109,7 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.photon.io.PhotonWorkerPool;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
@@ -117,10 +118,9 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletInputStream;
 
 /**
- * Process incoming AS4 transmissions. This class is instantiated per request.
- * The method
- * {@link #handleRequest(IRequestWebScopeWithoutResponse, AS4UnifiedResponse)}
- * is the entry point for the complex processing.
+ * Process incoming AS4 transmissions. This class is responsible for handling
+ * data in a provider independent way, only based on InputStream and
+ * OutputStream.
  *
  * @author Martin Bayerl
  * @author Philip Helger
@@ -1821,13 +1821,14 @@ public class AS4RequestHandler implements AutoCloseable
    * This is the main handling routine when called from an abstract
    * (non-Servlet) API
    *
-   * @param aServletRequestIS
-   *        The input stream with the request data. May not be
+   * @param aRequestInputStream
+   *        The input stream with the raw AS4 request data. May not be
    *        <code>null</code>.
    * @param aRequestHttpHeaders
    *        The HTTP headers of the request. May not be <code>null</code>.
    * @param aHttpResponse
-   *        The HTTP response to be filled. May not be <code>null</code>.
+   *        The AS4 response abstraction to be filled. May not be
+   *        <code>null</code>.
    * @throws Phase4Exception
    *         in case the request is missing certain prerequisites. Since 0.9.11
    * @throws IOException
@@ -1839,7 +1840,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction)
    *      for a more generic API
    */
-  public void handleRequest (@Nonnull @WillClose final InputStream aServletRequestIS,
+  public void handleRequest (@Nonnull @WillClose final InputStream aRequestInputStream,
                              @Nonnull final HttpHeaderMap aRequestHttpHeaders,
                              @Nonnull final IAS4ResponseAbstraction aHttpResponse) throws Phase4Exception,
                                                                                    IOException,
@@ -1872,7 +1873,7 @@ public class AS4RequestHandler implements AutoCloseable
     AS4IncomingHandler.parseAS4Message (m_aIncomingAttachmentFactory,
                                         m_aResHelper,
                                         m_aMessageMetadata,
-                                        aServletRequestIS,
+                                        aRequestInputStream,
                                         aRequestHttpHeaders,
                                         aCallback,
                                         m_aIncomingDumper);
@@ -1896,6 +1897,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction)
    *      for a more generic API
    */
+  @ChangePhase4V3 ("Move to class AS4XServletHandler - should not be in here")
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                              @Nonnull final AS4UnifiedResponse aHttpResponse) throws Phase4Exception,
                                                                               IOException,
