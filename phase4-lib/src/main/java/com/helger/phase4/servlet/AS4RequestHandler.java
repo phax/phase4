@@ -125,6 +125,7 @@ import jakarta.servlet.ServletInputStream;
  * @author Martin Bayerl
  * @author Philip Helger
  */
+@ChangePhase4V3 ("Move to package 'incoming'")
 public class AS4RequestHandler implements AutoCloseable
 {
   private interface IAS4ResponseFactory

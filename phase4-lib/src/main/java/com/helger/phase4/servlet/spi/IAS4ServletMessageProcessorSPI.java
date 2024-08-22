@@ -40,7 +40,7 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  */
 @IsSPIInterface
-@ChangePhase4V3 ("Rename to 'IAS4IncomingMessageProcessorSPI'")
+@ChangePhase4V3 ("Rename to 'IAS4IncomingMessageProcessorSPI'; move to package 'incoming.spi'")
 public interface IAS4ServletMessageProcessorSPI
 {
   /**

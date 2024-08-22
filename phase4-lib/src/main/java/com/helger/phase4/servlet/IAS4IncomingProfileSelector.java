@@ -27,6 +27,7 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  * @since 0.13.0
  */
+@ChangePhase4V3 ("Move to package 'incoming'")
 public interface IAS4IncomingProfileSelector
 {
   /**

@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This class represents a single DOM element in a SOAP header with some
@@ -32,6 +33,7 @@ import com.helger.commons.string.ToStringGenerator;
  * @author Philip Helger
  */
 @NotThreadSafe
+@ChangePhase4V3 ("Move to package 'incoming.soap'")
 public class AS4SingleSOAPHeader
 {
   private final Element m_aNode;
@@ -49,7 +51,9 @@ public class AS4SingleSOAPHeader
    *        <code>true</code> if this is a must understand header,
    *        <code>false</code> otherwise.
    */
-  public AS4SingleSOAPHeader (@Nonnull final Element aNode, @Nonnull final QName aQName, final boolean bIsMustUnderstand)
+  public AS4SingleSOAPHeader (@Nonnull final Element aNode,
+                              @Nonnull final QName aQName,
+                              final boolean bIsMustUnderstand)
   {
     m_aNode = ValueEnforcer.notNull (aNode, "Node");
     m_aQName = ValueEnforcer.notNull (aQName, "QName");

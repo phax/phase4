@@ -32,7 +32,7 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  */
 @IsSPIInterface
-@ChangePhase4V3 ("Rename to 'IAS4IncomingPullRequestProcessorSPI'")
+@ChangePhase4V3 ("Rename to 'IAS4IncomingPullRequestProcessorSPI'; move to package 'incoming.spi'")
 public interface IAS4ServletPullRequestProcessorSPI
 {
   /**

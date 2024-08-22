@@ -68,6 +68,7 @@ import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4MessageState;
 import com.helger.phase4.servlet.mgr.AS4ServletPullRequestProcessorManager;
 import com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
+import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.xml.XMLHelper;
 
 /**
@@ -77,6 +78,7 @@ import com.helger.xml.XMLHelper;
  * @author bayerlma
  * @author Gregor Scholtysik
  */
+@ChangePhase4V3 ("Move to package 'incoming.soap'")
 public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
   /** The QName for which this processor should be invoked */

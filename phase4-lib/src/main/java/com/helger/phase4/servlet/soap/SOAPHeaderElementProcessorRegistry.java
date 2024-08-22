@@ -40,6 +40,7 @@ import com.helger.phase4.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This class manages the SOAP header element processors. This is used to
@@ -50,6 +51,7 @@ import com.helger.phase4.model.pmode.resolve.IPModeResolver;
  * @author Gregor Scholtysik
  */
 @NotThreadSafe
+@ChangePhase4V3 ("Move to package 'incoming.soap'")
 public class SOAPHeaderElementProcessorRegistry
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorRegistry.class);

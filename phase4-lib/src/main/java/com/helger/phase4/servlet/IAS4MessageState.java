@@ -46,12 +46,14 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Read-only AS4 message state for incoming messages.
  *
  * @author Philip Helger
  */
+@ChangePhase4V3 ("Move to package 'incoming'")
 public interface IAS4MessageState
 {
   /**

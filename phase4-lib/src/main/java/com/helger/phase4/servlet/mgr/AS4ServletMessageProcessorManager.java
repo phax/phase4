@@ -38,7 +38,7 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  */
 @ThreadSafe
-@ChangePhase4V3 ("Move to package 'incoming'; rename to AS4IncomingMessageProcessorManager")
+@ChangePhase4V3 ("Move to package 'incoming.mgr'; rename to AS4IncomingMessageProcessorManager")
 public final class AS4ServletMessageProcessorManager
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServletMessageProcessorManager.class);

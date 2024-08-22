@@ -26,6 +26,7 @@ import com.helger.commons.state.ESuccess;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.servlet.AS4MessageState;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Base interface for SOAP header processors that are invoked for incoming
@@ -34,6 +35,7 @@ import com.helger.phase4.servlet.AS4MessageState;
  * @author Philip Helger
  */
 @FunctionalInterface
+@ChangePhase4V3 ("Move to package 'incoming.soap'")
 public interface ISOAPHeaderElementProcessor
 {
   /**

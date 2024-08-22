@@ -26,6 +26,7 @@ import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.mgr.AS4DuplicateCleanupJob;
+import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.quartz.TriggerKey;
 
 /**
@@ -39,6 +40,7 @@ import com.helger.quartz.TriggerKey;
  * @author Philip Helger
  */
 @ThreadSafe
+@ChangePhase4V3 ("Move to package 'incoming'")
 public final class AS4ServerInitializer
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServerInitializer.class);
@@ -61,7 +63,9 @@ public final class AS4ServerInitializer
 
     final long nDisposalMinutes = AS4Configuration.getIncomingDuplicateDisposalMinutes ();
     if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Scheduling AS4DuplicateCleanupJob to dispose incoming metadata that is older than " + nDisposalMinutes + " minutes");
+      LOGGER.debug ("Scheduling AS4DuplicateCleanupJob to dispose incoming metadata that is older than " +
+                    nDisposalMinutes +
+                    " minutes");
 
     // Schedule jobs
     RW_LOCK.writeLocked ( () -> {

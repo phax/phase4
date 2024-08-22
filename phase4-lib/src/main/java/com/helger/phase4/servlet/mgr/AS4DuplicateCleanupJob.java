@@ -45,7 +45,7 @@ import com.helger.web.scope.util.AbstractScopeAwareJob;
  * @author Philip Helger
  */
 @DisallowConcurrentExecution
-@ChangePhase4V3 ("move to package 'incoming'")
+@ChangePhase4V3 ("move to package 'incoming.mgr'")
 public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);

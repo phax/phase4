@@ -48,6 +48,7 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This class keeps track of the status of an incoming message. It is basically
@@ -58,6 +59,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
  * @author Philip Helger
  */
 @NotThreadSafe
+@ChangePhase4V3 ("Move to package 'incoming'")
 public final class AS4MessageState extends AttributeContainerAny <String> implements IAS4MessageState
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4MessageState.class);

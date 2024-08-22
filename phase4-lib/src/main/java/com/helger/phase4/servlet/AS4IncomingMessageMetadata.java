@@ -36,6 +36,7 @@ import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 import jakarta.servlet.http.Cookie;
 
@@ -46,6 +47,7 @@ import jakarta.servlet.http.Cookie;
  * @author Philip Helger
  * @since 0.9.8
  */
+@ChangePhase4V3 ("Move to package 'incoming'")
 public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
 {
   private final String m_sIncomingUniqueID;

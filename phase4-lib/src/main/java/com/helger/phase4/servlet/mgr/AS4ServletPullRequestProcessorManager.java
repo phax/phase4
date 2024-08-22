@@ -38,7 +38,7 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author bayerlma
  */
 @ThreadSafe
-@ChangePhase4V3 ("Move to package 'incoming'; rename to 'AS4IncomingPullRequestProcessorManager'")
+@ChangePhase4V3 ("Move to package 'incoming.mgr'; rename to 'AS4IncomingPullRequestProcessorManager'")
 public final class AS4ServletPullRequestProcessorManager
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServletPullRequestProcessorManager.class);
