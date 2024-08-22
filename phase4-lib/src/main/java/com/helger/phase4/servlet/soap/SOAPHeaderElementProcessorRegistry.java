@@ -121,7 +121,7 @@ public class SOAPHeaderElementProcessorRegistry
         }
     };
 
-    // Ebms3Messaging handler
+    // Ebms3Messaging handler first
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING,
                                         new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver,
                                                                                              aPModeConsumer));
