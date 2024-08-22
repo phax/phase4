@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.lang.ClassHelper;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.quartz.DisallowConcurrentExecution;
 import com.helger.quartz.IJobExecutionContext;
 import com.helger.quartz.JobDataMap;
@@ -44,6 +45,7 @@ import com.helger.web.scope.util.AbstractScopeAwareJob;
  * @author Philip Helger
  */
 @DisallowConcurrentExecution
+@ChangePhase4V3 ("move to package 'incoming'")
 public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);
@@ -54,8 +56,8 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
   {}
 
   @Override
-  protected void onExecute (@Nonnull final JobDataMap aJobDataMap,
-                            @Nonnull final IJobExecutionContext aContext) throws JobExecutionException
+  protected void onExecute (@Nonnull final JobDataMap aJobDataMap, @Nonnull final IJobExecutionContext aContext)
+                                                                                                                 throws JobExecutionException
   {
     final long nMins = aJobDataMap.getAsLong (KEY_MINUTES);
     final OffsetDateTime aOldDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().minusMinutes (nMins);

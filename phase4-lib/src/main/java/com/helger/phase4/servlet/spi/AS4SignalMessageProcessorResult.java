@@ -73,7 +73,7 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
   public String toString ()
   {
     return ToStringGenerator.getDerived (super.toString ())
-                            .append ("m_aPullReturnUserMessage", m_aPullReturnUserMessage)
+                            .append ("PullReturnUserMessage", m_aPullReturnUserMessage)
                             .getToString ();
   }
 

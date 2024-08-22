@@ -44,6 +44,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 public class AS4MessageProcessorResult implements ISuccessIndicator
 {
   private final ESuccess m_eSuccess;
+  @Deprecated (forRemoval = true, since = "2.3.0")
   private final String m_sErrorMsg;
   private final ICommonsList <WSS4JAttachment> m_aAttachments;
   private final String m_sAsyncResponseURL;

@@ -29,6 +29,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This class manages all the {@link IAS4ServletMessageProcessorSPI} SPI
@@ -37,13 +38,14 @@ import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
  * @author Philip Helger
  */
 @ThreadSafe
+@ChangePhase4V3 ("Move to package 'incoming'; rename to AS4IncomingMessageProcessorManager")
 public final class AS4ServletMessageProcessorManager
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServletMessageProcessorManager.class);
 
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   @GuardedBy ("RW_LOCK")
-  private static final ICommonsList <IAS4ServletMessageProcessorSPI> s_aProcessors = new CommonsArrayList <> ();
+  private static final ICommonsList <IAS4ServletMessageProcessorSPI> PROCESSORS = new CommonsArrayList <> ();
 
   private AS4ServletMessageProcessorManager ()
   {}
@@ -60,7 +62,7 @@ public final class AS4ServletMessageProcessorManager
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Found " + aProcessorSPIs.size () + " AS4 message processors");
 
-    RW_LOCK.writeLocked ( () -> s_aProcessors.setAll (aProcessorSPIs));
+    RW_LOCK.writeLocked ( () -> PROCESSORS.setAll (aProcessorSPIs));
   }
 
   static
@@ -77,6 +79,6 @@ public final class AS4ServletMessageProcessorManager
   @ReturnsMutableCopy
   public static ICommonsList <IAS4ServletMessageProcessorSPI> getAllProcessors ()
   {
-    return RW_LOCK.readLockedGet (s_aProcessors::getClone);
+    return RW_LOCK.readLockedGet (PROCESSORS::getClone);
   }
 }

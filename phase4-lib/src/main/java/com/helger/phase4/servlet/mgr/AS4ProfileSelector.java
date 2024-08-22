@@ -25,6 +25,7 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.profile.IAS4ProfileManager;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Static helper class to make the AS4 profile selection more deterministic and
@@ -34,6 +35,7 @@ import com.helger.phase4.profile.IAS4ProfileManager;
  * @since 0.9.13
  */
 @ThreadSafe
+@ChangePhase4V3 ("this class looks a bit superflowous and global. Think about a better solution")
 public final class AS4ProfileSelector
 {
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
