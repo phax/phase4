@@ -137,13 +137,8 @@ public class ServletConfig
           }
 
           // Find the right SPI handler
-          for (final var aSPI : aHandler.getProcessorSupplier ().get ())
-            if (aSPI instanceof Phase4PeppolServletMessageProcessorSPI)
-            {
-              // Set receiver check data
-              ((Phase4PeppolServletMessageProcessorSPI) aSPI).setReceiverCheckData (aReceiverCheckData);
-              break;
-            }
+          aHandler.getProcessorOfType (Phase4PeppolServletMessageProcessorSPI.class)
+                  .setReceiverCheckData (aReceiverCheckData);
         };
         hdl.setHandlerCustomizer (aHandlerCustomizer);
       }

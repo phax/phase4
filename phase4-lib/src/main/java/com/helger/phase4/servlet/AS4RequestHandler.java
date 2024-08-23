@@ -565,6 +565,23 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
+   * Find the message processor of the specified type.
+   *
+   * @param aTargetClass
+   *        The target processor class to search.
+   * @return <code>null</code> if no such processor was found
+   * @since 2.8.2
+   */
+  @Nonnull
+  public final <T extends IAS4ServletMessageProcessorSPI> T getProcessorOfType (@Nonnull final Class <T> aTargetClass)
+  {
+    for (final IAS4ServletMessageProcessorSPI aEntry : m_aProcessorSupplier.get ())
+      if (aTargetClass.isInstance (aEntry))
+        return aTargetClass.cast (aEntry);
+    return null;
+  }
+
+  /**
    * @return An optional error consumer. <code>null</code> by default.
    * @since 0.9.7
    */
