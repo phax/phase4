@@ -50,7 +50,9 @@ import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolCRLDownloader;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.servlet.AS4IncomingProfileSelectorFromGlobal;
+import com.helger.phase4.servlet.AS4RequestHandler;
 import com.helger.phase4.servlet.AS4ServerInitializer;
+import com.helger.phase4.servlet.AS4UnifiedResponse;
 import com.helger.phase4.servlet.AS4XServletHandler;
 import com.helger.phase4.servlet.AS4XServletHandler.IHandlerCustomizer;
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
@@ -58,6 +60,7 @@ import com.helger.photon.io.WebFileIO;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.ServletHelper;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
+import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xservlet.AbstractXServlet;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
@@ -94,17 +97,43 @@ public class ServletConfig
       // This method refers to the outer static method
       hdl.setCryptoFactorySupplier (ServletConfig::getCryptoFactoryToUse);
 
-      // Example code to disable PMode validation
       if (false)
-        hdl.setHandlerCustomizer ( (aRequestScope, aUnifiedResponse, aHandler) -> aHandler.setIncomingProfileSelector (
-                                                                                                                       new AS4IncomingProfileSelectorFromGlobal ()
-                                                                                                                       {
-                                                                                                                         public boolean validateAgainstProfile ()
-                                                                                                                         {
-                                                                                                                           // override;
-                                                                                                                           return false;
-                                                                                                                         }
-                                                                                                                       }));
+      {
+        // Example code to show all possibilities of the handler customizer
+        hdl.setHandlerCustomizer (new IHandlerCustomizer ()
+        {
+          public void customizeBeforeHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                                               @Nonnull final AS4UnifiedResponse aUnifiedResponse,
+                                               @Nonnull final AS4RequestHandler aHandler)
+          {
+            // Set a different crypto factory based on the request
+            hdl.setCryptoFactory (null);
+            // TODO
+          }
+
+          public void customizeAfterHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                                              @Nonnull final AS4UnifiedResponse aUnifiedResponse,
+                                              @Nonnull final AS4RequestHandler aHandler)
+          {
+            // empty
+          }
+        });
+      }
+
+      if (false)
+      {
+        // Example code to disable PMode validation
+        hdl.setHandlerCustomizer ( (aRequestScope,
+                                    aUnifiedResponse,
+                                    aHandler) -> aHandler.setIncomingProfileSelector (new AS4IncomingProfileSelectorFromGlobal ()
+                                    {
+                                      public boolean validateAgainstProfile ()
+                                      {
+                                        // override;
+                                        return false;
+                                      }
+                                    }));
+      }
 
       // Example for changing the receiver data based on the source URL
       if (false)
@@ -187,8 +216,8 @@ public class ServletConfig
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
-        null)
+    if (CommandMap.getDefaultCommandMap ()
+                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");

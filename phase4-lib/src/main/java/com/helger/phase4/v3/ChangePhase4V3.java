@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * @author Philip Helger
  */
 @Retention (RetentionPolicy.SOURCE)
-@Target ({ ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR })
+@Target ({ ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD })
 public @interface ChangePhase4V3
 {
   String value() default "";

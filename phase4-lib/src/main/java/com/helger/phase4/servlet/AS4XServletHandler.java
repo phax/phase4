@@ -83,7 +83,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
      *        The main handler doing the hard work. Never <code>null</code>.
      * @since 0.9.5
      */
-    @ChangePhase4V3 ("Removed default")
+    @ChangePhase4V3 ("Remove default")
     default void customizeAfterHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                                          @Nonnull final AS4UnifiedResponse aUnifiedResponse,
                                          @Nonnull final AS4RequestHandler aHandler)
@@ -97,7 +97,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   private IPModeResolver m_aPModeResolver;
   private IAS4IncomingAttachmentFactory m_aIAF;
   private IAS4IncomingSecurityConfiguration m_aISC = AS4IncomingSecurityConfiguration.createDefaultInstance ();
-  private IHandlerCustomizer m_aHandlerCustomizer;
+  private IHandlerCustomizer m_aRequestHandlerCustomizer;
 
   /**
    * Default constructor.
@@ -181,8 +181,11 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @param aCryptoFactorySupplier
    *        Crypto factory supplier. May not be <code>null</code>.
    * @return this for chaining
+   * @see #setCryptoFactory(IAS4CryptoFactory)
    * @see #setCryptoFactorySignSupplier(Supplier)
+   * @see #setCryptoFactorySign(IAS4CryptoFactory)
    * @see #setCryptoFactoryCryptSupplier(Supplier)
+   * @see #setCryptoFactoryCrypt(IAS4CryptoFactory)
    * @since 0.9.15
    */
   @Nonnull
@@ -190,6 +193,25 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   {
     ValueEnforcer.notNull (aCryptoFactorySupplier, "CryptoFactorySupplier");
     return setCryptoFactorySignSupplier (aCryptoFactorySupplier).setCryptoFactoryCryptSupplier (aCryptoFactorySupplier);
+  }
+
+  /**
+   * Set the same crypto factory for signing and crypting. This is a sanity
+   * wrapper around {@link #setCryptoFactorySupplier(Supplier)}.
+   *
+   * @param aCryptoFactory
+   *        Crypto factory to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @see #setCryptoFactorySupplier(Supplier)
+   * @see #setCryptoFactoryCrypt(IAS4CryptoFactory)
+   * @see #setCryptoFactorySign(IAS4CryptoFactory)
+   * @since 2.8.2
+   */
+  @Nonnull
+  public final AS4XServletHandler setCryptoFactory (@Nonnull final IAS4CryptoFactory aCryptoFactory)
+  {
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    return setCryptoFactorySupplier ( () -> aCryptoFactory);
   }
 
   /**
@@ -208,6 +230,24 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   /**
+   * Set the crypto factory for signing. This is a sanity wrapper around
+   * {@link #setCryptoFactorySignSupplier(Supplier)}.
+   *
+   * @param aCryptoFactorySign
+   *        Crypto factory for signing to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @see #setCryptoFactory(IAS4CryptoFactory)
+   * @see #setCryptoFactoryCrypt(IAS4CryptoFactory)
+   * @since 2.8.2
+   */
+  @Nonnull
+  public final AS4XServletHandler setCryptoFactorySign (@Nonnull final IAS4CryptoFactory aCryptoFactorySign)
+  {
+    ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
+    return setCryptoFactorySignSupplier ( () -> aCryptoFactorySign);
+  }
+
+  /**
    * @param aCryptoFactoryCryptSupplier
    *        Crypto factory supplier for signing. May not be <code>null</code>.
    * @return this for chaining
@@ -220,6 +260,24 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     ValueEnforcer.notNull (aCryptoFactoryCryptSupplier, "CryptoFactoryCryptSupplier");
     m_aCryptoFactoryCryptSupplier = aCryptoFactoryCryptSupplier;
     return this;
+  }
+
+  /**
+   * Set the crypto factory crypting. This is a sanity wrapper around
+   * {@link #setCryptoFactoryCryptSupplier(Supplier)}.
+   *
+   * @param aCryptoFactoryCrypt
+   *        Crypto factory for crypting to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @see #setCryptoFactory(IAS4CryptoFactory)
+   * @see #setCryptoFactorySign(IAS4CryptoFactory)
+   * @since 2.8.2
+   */
+  @Nonnull
+  public final AS4XServletHandler setCryptoFactoryCrypt (@Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt)
+  {
+    ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
+    return setCryptoFactoryCryptSupplier ( () -> aCryptoFactoryCrypt);
   }
 
   /**
@@ -301,9 +359,10 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @return The additional customizer. May be <code>null</code>.
    */
   @Nullable
+  @ChangePhase4V3 ("Rename to getRequestHandlerCustomizer")
   public final IHandlerCustomizer getHandlerCustomizer ()
   {
-    return m_aHandlerCustomizer;
+    return m_aRequestHandlerCustomizer;
   }
 
   /**
@@ -314,9 +373,10 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @return this for chaining
    */
   @Nonnull
+  @ChangePhase4V3 ("Rename to setRequestHandlerCustomizer")
   public final AS4XServletHandler setHandlerCustomizer (@Nullable final IHandlerCustomizer aHandlerCustomizer)
   {
-    m_aHandlerCustomizer = aHandlerCustomizer;
+    m_aRequestHandlerCustomizer = aHandlerCustomizer;
     return this;
   }
 
@@ -459,6 +519,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   // Don't make this final, so that subclasses can call the other handleRequest
+  @ChangePhase4V3 ("Make final and require usage of 'IHandlerCustomizer' instead")
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                              @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
@@ -479,6 +540,6 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                    m_aPModeResolver,
                    m_aIAF,
                    m_aISC,
-                   m_aHandlerCustomizer);
+                   m_aRequestHandlerCustomizer);
   }
 }
