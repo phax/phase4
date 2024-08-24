@@ -65,24 +65,6 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
   }
 
   @Nonnull
-  @Deprecated (forRemoval = true, since = "2.3.0")
-  public static AS4UserMessage create (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                       @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
-                                       @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
-                                       @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
-                                       @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
-                                       @Nonnull final ESoapVersion eSoapVersion)
-  {
-    return create (aEbms3MessageInfo,
-                   aEbms3PayloadInfo,
-                   aEbms3CollaborationInfo,
-                   aEbms3PartyInfo,
-                   aEbms3MessageProperties,
-                   null,
-                   eSoapVersion);
-  }
-
-  @Nonnull
   public static AS4UserMessage create (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                        @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
                                        @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,

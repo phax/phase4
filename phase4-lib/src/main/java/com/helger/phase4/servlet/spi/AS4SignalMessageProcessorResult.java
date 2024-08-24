@@ -19,7 +19,6 @@ package com.helger.phase4.servlet.spi;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.ToStringGenerator;
@@ -42,8 +41,6 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
   /**
    * @param eSuccess
    *        Success or failure. May not be <code>null</code>.
-   * @param sErrorMsg
-   *        The error message to use. May be <code>null</code>.
    * @param aAttachments
    *        The response attachments. May be <code>null</code>.
    * @param sAsyncResponseURL
@@ -52,12 +49,11 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
    *        The user message to return. May be <code>null</code>.
    */
   protected AS4SignalMessageProcessorResult (@Nonnull final ESuccess eSuccess,
-                                             @Nullable final String sErrorMsg,
                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                              @Nullable final String sAsyncResponseURL,
                                              @Nullable final Ebms3UserMessage aPullReturnUserMessage)
   {
-    super (eSuccess, sErrorMsg, aAttachments, sAsyncResponseURL);
+    super (eSuccess, aAttachments, sAsyncResponseURL);
     m_aPullReturnUserMessage = aPullReturnUserMessage;
   }
 
@@ -91,23 +87,14 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
                                                                @Nullable final Ebms3UserMessage aPullReturnUserMessage)
   {
     return new AS4SignalMessageProcessorResult (ESuccess.SUCCESS,
-                                                null,
                                                 aAttachments,
                                                 sAsyncResponseURL,
                                                 aPullReturnUserMessage);
   }
 
   @Nonnull
-  @Deprecated (forRemoval = true, since = "2.3.0")
-  public static AS4SignalMessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
-  {
-    ValueEnforcer.notNull (sErrorMsg, "ErrorMsg");
-    return new AS4SignalMessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null, null, null);
-  }
-
-  @Nonnull
   public static AS4SignalMessageProcessorResult createFailure ()
   {
-    return new AS4SignalMessageProcessorResult (ESuccess.FAILURE, null, null, null, null);
+    return new AS4SignalMessageProcessorResult (ESuccess.FAILURE, null, null, null);
   }
 }

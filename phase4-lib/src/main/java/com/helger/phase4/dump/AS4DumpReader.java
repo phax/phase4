@@ -162,19 +162,6 @@ public final class AS4DumpReader
       aHttpEndIndexConsumer.accept (nHttpEnd);
   }
 
-  @Deprecated (forRemoval = true, since = "2.2.0")
-  public static void decryptAS4In (@Nonnull final byte [] aAS4InData,
-                                   @Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                   @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
-                                   @Nonnull final IDecryptedPayloadConsumer aDecryptedConsumer) throws WSSecurityException,
-                                                                                                Phase4Exception,
-                                                                                                IOException,
-                                                                                                MessagingException
-  {
-    // Use the same crypto factory for signing and crypting
-    decryptAS4In (aAS4InData, aCryptoFactory, aCryptoFactory, aHttpHeaderConsumer, aDecryptedConsumer);
-  }
-
   /**
    * Utility method to decrypt dumped .as4in message late.<br>
    * Note: this method was mainly created for internal use and does not win the

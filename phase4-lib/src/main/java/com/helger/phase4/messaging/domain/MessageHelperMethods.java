@@ -364,25 +364,6 @@ public final class MessageHelperMethods
   }
 
   @Nonnull
-  @Deprecated (forRemoval = true, since = "2.7.6")
-  public static Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nullable final String sAgreementRefPMode,
-                                                                     @Nullable final String sAgreementRefValue,
-                                                                     @Nullable final String sServiceType,
-                                                                     @Nonnull @Nonempty final String sServiceValue,
-                                                                     @Nonnull @Nonempty final String sAction,
-                                                                     @Nonnull final String sConversationID)
-  {
-    // See https://github.com/phax/phase4/pull/238
-    return createEbms3CollaborationInfo (sAgreementRefPMode,
-                                         sAgreementRefValue,
-                                         null,
-                                         sServiceType,
-                                         sServiceValue,
-                                         sAction,
-                                         sConversationID);
-  }
-
-  @Nonnull
   public static Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nullable final String sAgreementRefPMode,
                                                                      @Nullable final String sAgreementRefValue,
                                                                      @Nullable final String sAgreementTypeValue,

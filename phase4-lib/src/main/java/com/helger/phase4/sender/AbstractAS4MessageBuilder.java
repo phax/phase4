@@ -199,21 +199,6 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Due to the fact, that the crypto factory was split for signing and
-   * crypting, this API is no longer feasible. It returns the crypto factory
-   * used for signing.
-   *
-   * @return The currently set {@link IAS4CryptoFactory}. May be
-   *         <code>null</code>.
-   */
-  @Nullable
-  @Deprecated (forRemoval = true, since = "2.2.0")
-  public final IAS4CryptoFactory cryptoFactory ()
-  {
-    return cryptoFactorySign ();
-  }
-
-  /**
    * @return The currently set {@link IAS4CryptoFactory} for signing. May be
    *         <code>null</code>.
    * @see #cryptoFactoryCrypt()

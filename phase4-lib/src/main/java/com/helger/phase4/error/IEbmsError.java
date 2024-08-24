@@ -19,13 +19,8 @@ package com.helger.phase4.error;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import com.helger.commons.annotation.UnsupportedOperation;
-import com.helger.commons.error.IError;
 import com.helger.commons.text.display.IHasDisplayText;
-import com.helger.phase4.ebms3header.Ebms3Description;
-import com.helger.phase4.ebms3header.Ebms3Error;
 
 /**
  * Base interface for a single EBMS error
@@ -68,19 +63,6 @@ public interface IEbmsError
   IHasDisplayText getDescription ();
 
   /**
-   * Gets the value of the errorDetail property.
-   *
-   * @return The multilingual description.
-   * @deprecated Use {@link #getDescription()} instead
-   */
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.6.0")
-  default IHasDisplayText getErrorDetail ()
-  {
-    return getDescription ();
-  }
-
-  /**
    * Gets the value of the category property.
    *
    * @return possible object is {@link EEbmsErrorCategory }
@@ -102,66 +84,5 @@ public interface IEbmsError
   default Ebms3ErrorBuilder errorBuilder (@Nonnull final Locale aContentLocale)
   {
     return new Ebms3ErrorBuilder (this, aContentLocale);
-  }
-
-  /**
-   * Convert the EBMS Error into an {@link IError}.
-   *
-   * @param aContentLocale
-   *        The locale used to resolve the error text, in case the text is
-   *        multilingual. The locale may be ignored.
-   * @return The created {@link IError}.
-   */
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.6.0")
-  @UnsupportedOperation
-  default IError getAsError (@Nonnull final Locale aContentLocale)
-  {
-    throw new UnsupportedOperationException ();
-  }
-
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.6.0")
-  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale, @Nullable final String sRefToMessageInError)
-  {
-    return errorBuilder (aContentLocale).refToMessageInError (sRefToMessageInError).build ();
-  }
-
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.6.0")
-  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
-                                      @Nullable final String sRefToMessageInError,
-                                      @Nullable final String sErrorDetails)
-  {
-    return errorBuilder (aContentLocale).refToMessageInError (sRefToMessageInError)
-                                        .errorDetail (sErrorDetails)
-                                        .build ();
-  }
-
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.6.0")
-  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
-                                      @Nullable final String sRefToMessageInError,
-                                      @Nullable final String sOrigin,
-                                      @Nullable final String sDetails)
-  {
-    return errorBuilder (aContentLocale).refToMessageInError (sRefToMessageInError)
-                                        .errorDetail (sDetails)
-                                        .origin (sOrigin)
-                                        .build ();
-  }
-
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.6.0")
-  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
-                                      @Nullable final String sRefToMessageInError,
-                                      @Nullable final String sOrigin,
-                                      @Nullable final Ebms3Description aEbmsDescription)
-  {
-    final Ebms3ErrorBuilder eb = errorBuilder (aContentLocale).refToMessageInError (sRefToMessageInError)
-                                                              .origin (sOrigin);
-    if (aEbmsDescription != null)
-      eb.description (aEbmsDescription);
-    return eb.build ();
   }
 }

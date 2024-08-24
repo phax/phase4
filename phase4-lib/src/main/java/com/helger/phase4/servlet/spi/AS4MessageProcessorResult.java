@@ -46,30 +46,24 @@ import com.helger.phase4.v3.ChangePhase4V3;
 public class AS4MessageProcessorResult implements ISuccessIndicator
 {
   private final ESuccess m_eSuccess;
-  @Deprecated (forRemoval = true, since = "2.3.0")
-  private final String m_sErrorMsg;
   private final ICommonsList <WSS4JAttachment> m_aAttachments;
   private final String m_sAsyncResponseURL;
 
   /**
    * @param eSuccess
    *        Success or failure. May not be <code>null</code>.
-   * @param sErrorMsg
-   *        The error message to use. May be <code>null</code>.
    * @param aAttachments
    *        The response attachments. May be <code>null</code>.
    * @param sAsyncResponseURL
    *        The asynchronous response URLs. May be <code>null</code>.
    */
   protected AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess,
-                                       @Nullable final String sErrorMsg,
                                        @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                        @Nullable final String sAsyncResponseURL)
   {
     ValueEnforcer.notNull (eSuccess, "Success");
 
     m_eSuccess = eSuccess;
-    m_sErrorMsg = sErrorMsg;
     m_aAttachments = aAttachments;
     m_sAsyncResponseURL = sAsyncResponseURL;
   }
@@ -77,23 +71,6 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   public boolean isSuccess ()
   {
     return m_eSuccess.isSuccess ();
-  }
-
-  /**
-   * @return The error message. May be <code>null</code>, even in case of
-   *         failure.
-   */
-  @Nullable
-  @Deprecated (forRemoval = true, since = "2.3.0")
-  public String getErrorMessage ()
-  {
-    return m_sErrorMsg;
-  }
-
-  @Deprecated (forRemoval = true, since = "2.3.0")
-  public boolean hasErrorMessage ()
-  {
-    return StringHelper.hasText (m_sErrorMsg);
   }
 
   @Nonnull
@@ -143,7 +120,6 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   public String toString ()
   {
     return new ToStringGenerator (this).append ("Success", m_eSuccess)
-                                       .appendIf ("ErrorMsg", m_sErrorMsg, m_eSuccess::isFailure)
                                        .appendIf ("Attachments", m_aAttachments, m_eSuccess::isSuccess)
                                        .appendIfNotNull ("AsyncResponseURL", m_sAsyncResponseURL)
                                        .getToString ();
@@ -175,26 +151,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   public static AS4MessageProcessorResult createSuccessExt (@Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                             @Nullable final String sAsyncResponseURL)
   {
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS, (String) null, aAttachments, sAsyncResponseURL);
-  }
-
-  /**
-   * Create a negative response with the provided error message. This method is
-   * deprecated, because the error message is never used.
-   *
-   * @param sErrorMsg
-   *        The error message to send back. May be <code>null</code> or empty
-   *        since v1.3.1.
-   * @return Never <code>null</code>.
-   */
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.3.0")
-  public static AS4MessageProcessorResult createFailure (@Nullable final String sErrorMsg)
-  {
-    return new AS4MessageProcessorResult (ESuccess.FAILURE,
-                                          sErrorMsg,
-                                          (ICommonsList <WSS4JAttachment>) null,
-                                          (String) null);
+    return new AS4MessageProcessorResult (ESuccess.SUCCESS, aAttachments, sAsyncResponseURL);
   }
 
   /**
@@ -207,7 +164,6 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   public static AS4MessageProcessorResult createFailure ()
   {
     return new AS4MessageProcessorResult (ESuccess.FAILURE,
-                                          (String) null,
                                           (ICommonsList <WSS4JAttachment>) null,
                                           (String) null);
   }

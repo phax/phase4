@@ -112,46 +112,6 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   /**
-   * Constructor
-   *
-   * @param aCryptoFactorySupplier
-   *        Crypto factory supplier. May not be <code>null</code>.
-   * @param aPModeResolver
-   *        PMode resolved to be used. May not be <code>null</code>.
-   * @param aIAF
-   *        The attachment factory for incoming attachments. May not be
-   *        <code>null</code>.
-   * @since v0.9.8
-   * @deprecated Please use the default constructors and setters
-   */
-  @Deprecated (forRemoval = true, since = "2.1.3")
-  public AS4XServletHandler (@Nonnull final Supplier <? extends IAS4CryptoFactory> aCryptoFactorySupplier,
-                             @Nonnull final IPModeResolver aPModeResolver,
-                             @Nonnull final IAS4IncomingAttachmentFactory aIAF)
-  {
-    setCryptoFactorySupplier (aCryptoFactorySupplier);
-    setPModeResolver (aPModeResolver);
-    setIncomingAttachmentFactory (aIAF);
-  }
-
-  /**
-   * As the crypto factories for sign and crypt may be different, this general
-   * purpose API may not be used anymore. Use
-   * {@link #getCryptoFactorySignSupplier()} or
-   * {@link #getCryptoFactoryCryptSupplier()} instead.
-   *
-   * @return The supplier for the {@link IAS4CryptoFactory}. May not be
-   *         <code>null</code>.
-   * @since 0.9.15
-   */
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.2.0")
-  public final Supplier <? extends IAS4CryptoFactory> getCryptoFactorySupplier ()
-  {
-    return getCryptoFactorySignSupplier ();
-  }
-
-  /**
    * @return The supplier for the {@link IAS4CryptoFactory} for signing. May not
    *         be <code>null</code>.
    * @see #getCryptoFactoryCryptSupplier()

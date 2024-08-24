@@ -283,30 +283,6 @@ public final class AS4Encryptor
     }
   }
 
-  /*
-   * Renamed. Use {@link
-   * #encryptToMimeMessage(ESoapVersion,Document,ICommonsList,IAS4CryptoFactory,
-   * boolean,AS4ResourceHelper,AS4CryptParams)} instead
-   */
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.5.1")
-  public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                                   @Nonnull final Document aDoc,
-                                                   @Nonnull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments,
-                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                   final boolean bMustUnderstand,
-                                                   @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                   @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
-  {
-    return encryptToMimeMessage (eSoapVersion,
-                                 aDoc,
-                                 aAttachments,
-                                 aCryptoFactoryCrypt,
-                                 bMustUnderstand,
-                                 aResHelper,
-                                 aCryptParams);
-  }
-
   @Nonnull
   public static AS4MimeMessage encryptToMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                      @Nonnull final Document aDoc,

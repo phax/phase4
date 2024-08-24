@@ -44,12 +44,6 @@ public class DefaultPModeResolver implements IPModeResolver
   private final String m_sAS4ProfileID;
   private final boolean m_bUseDefaultAsFallback;
 
-  @Deprecated (forRemoval = true, since = "2.8.2")
-  public DefaultPModeResolver (final boolean bUseDefaultAsFallback)
-  {
-    this (null, bUseDefaultAsFallback);
-  }
-
   public DefaultPModeResolver (@Nullable final String sAS4ProfileID, final boolean bUseDefaultAsFallback)
   {
     m_sAS4ProfileID = sAS4ProfileID;
