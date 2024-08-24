@@ -45,7 +45,7 @@
     <connection>scm:git:https://github.com/phax/phase4.git</connection>
     <developerConnection>scm:git:https://github.com/phax/phase4.git</developerConnection>
     <url>https://github.com/phax/phase4</url>
-    <tag>phase4-parent-pom-2.8.1</tag>
+    <tag>2.x</tag>
   </scm>
 
   <organization>
