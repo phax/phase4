@@ -151,13 +151,6 @@ public final class BDEWPMode
   }
 
   @Nonnull
-  @Deprecated (forRemoval = true, since = "2.8.0")
-  public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress)
-  {
-    return generatePModeLeg (sResponderAddress, null, null);
-  }
-
-  @Nonnull
   public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress,
                                            @Nullable final String sService,
                                            @Nullable final String sAction)

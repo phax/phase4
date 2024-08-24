@@ -150,24 +150,6 @@ public final class Phase4BDEWSender
      *        {@link ECryptoKeyIdentifierType}. Defaults to
      *        BST_DIRECT_REFERENCE. May be <code>null</code>.
      * @return this for chaining
-     * @deprecated Use
-     *             {@link #signingKeyIdentifierType(ECryptoKeyIdentifierType)}
-     *             instead
-     */
-    @Nonnull
-    @Deprecated (since = "2.1.2", forRemoval = true)
-    public final IMPLTYPE setSigningKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
-    {
-      return signingKeyIdentifierType (eSigningKeyIdentifierType);
-    }
-
-    /**
-     * Signing Key Identifier Type.
-     *
-     * @param eSigningKeyIdentifierType
-     *        {@link ECryptoKeyIdentifierType}. Defaults to
-     *        BST_DIRECT_REFERENCE. May be <code>null</code>.
-     * @return this for chaining
      */
     @Nonnull
     public final IMPLTYPE signingKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)

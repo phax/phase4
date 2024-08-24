@@ -188,49 +188,6 @@ public final class Phase4PeppolSender
    *        Document type ID. May not be <code>null</code>.
    * @param aProcID
    *        Process ID. May not be <code>null</code>.
-   * @param sInstanceIdentifier
-   *        SBDH instance identifier. May be <code>null</code> to create a
-   *        random ID.
-   * @param sTypeVersion
-   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be
-   *        <code>null</code> to use the default.
-   * @param aPayloadElement
-   *        Payload element to be wrapped. May not be <code>null</code>.
-   * @return The domain object representation of the created SBDH or
-   *         <code>null</code> if not all parameters are present.
-   * @deprecated Use the version with the additional CountryC1 parameter
-   *             instead.
-   */
-  @Nullable
-  @Deprecated (forRemoval = true, since = "2.1.1")
-  public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
-                                                     @Nonnull final IParticipantIdentifier aReceiverID,
-                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                     @Nonnull final IProcessIdentifier aProcID,
-                                                     @Nullable final String sInstanceIdentifier,
-                                                     @Nullable final String sTypeVersion,
-                                                     @Nonnull final Element aPayloadElement)
-  {
-    return _createSBD (aSenderID,
-                       aReceiverID,
-                       aDocTypeID,
-                       aProcID,
-                       null,
-                       sInstanceIdentifier,
-                       sTypeVersion,
-                       aPayloadElement,
-                       true);
-  }
-
-  /**
-   * @param aSenderID
-   *        Sender participant ID. May not be <code>null</code>.
-   * @param aReceiverID
-   *        Receiver participant ID. May not be <code>null</code>.
-   * @param aDocTypeID
-   *        Document type ID. May not be <code>null</code>.
-   * @param aProcID
-   *        Process ID. May not be <code>null</code>.
    * @param sCountryC1
    *        Country code of C1. May be <code>null</code>.
    * @param sInstanceIdentifier
@@ -402,11 +359,6 @@ public final class Phase4PeppolSender
   {
     public static final boolean DEFAULT_COMPRESS_PAYLOAD = true;
     public static final boolean DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE = true;
-    /**
-     * @deprecated Use {@link #DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE} instead
-     */
-    @Deprecated (forRemoval = true, since = "2.2.0")
-    public static final boolean DEFAULT_BOOLEAN_CHECK_AP_CERTIFICATE = DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE;
 
     // C1
     protected IParticipantIdentifier m_aSenderID;

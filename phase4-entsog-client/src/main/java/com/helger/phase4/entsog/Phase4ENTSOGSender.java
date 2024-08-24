@@ -120,24 +120,6 @@ public final class Phase4ENTSOGSender
      *        {@link ECryptoKeyIdentifierType}. Defaults to ISSUER_SERIAL. May
      *        be <code>null</code>.
      * @return this for chaining
-     * @deprecated Use
-     *             {@link #signingKeyIdentifierType(ECryptoKeyIdentifierType)}
-     *             instead
-     */
-    @Deprecated (forRemoval = true, since = "2.2.2")
-    @Nonnull
-    public final IMPLTYPE setSigningKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
-    {
-      return signingKeyIdentifierType (eSigningKeyIdentifierType);
-    }
-
-    /**
-     * Signing Key Identifier Type.
-     *
-     * @param eSigningKeyIdentifierType
-     *        {@link ECryptoKeyIdentifierType}. Defaults to ISSUER_SERIAL. May
-     *        be <code>null</code>.
-     * @return this for chaining
      * @since 2.2.2
      */
     @Nonnull

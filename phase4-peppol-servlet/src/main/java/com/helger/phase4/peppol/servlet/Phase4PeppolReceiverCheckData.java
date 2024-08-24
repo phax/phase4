@@ -20,10 +20,9 @@ import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
@@ -36,9 +35,9 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector;
  * @author Philip Helger
  * @since 0.9.13
  */
-@NotThreadSafe
+@ThreadSafe
 @ChangePhase4V3 ("Rename to Phase4PeppolReceiverConfiguration; remove setter")
-public class Phase4PeppolReceiverCheckData
+public final class Phase4PeppolReceiverCheckData
 {
   private final boolean m_bReceiverCheckEnabled;
   private final ISMPServiceMetadataProvider m_aSMPClient;
@@ -47,38 +46,7 @@ public class Phase4PeppolReceiverCheckData
   private final X509Certificate m_aAPCertificate;
   private final boolean m_bPerformSBDHValueChecks;
   private final boolean m_bCheckSBDHForMandatoryCountryC1;
-  private boolean m_bCheckSigningCertificateRevocation;
-
-  /**
-   * Constructor
-   *
-   * @param aSMPClient
-   *        The SMP metadata provider to be used. May not be <code>null</code>.
-   * @param sAS4EndpointURL
-   *        The endpoint URL to check against. May neither be <code>null</code>
-   *        nor empty.
-   * @param aAPCertificate
-   *        The AP certificate to be used for compatibility. May not be
-   *        <code>null</code>.
-   * @param eWildcardSelectionMode
-   *        The wildcard selection mode to use for the SMP. May not be
-   *        <code>null</code>. Added in 2.7.3.
-   */
-  @Deprecated (since = "2.8.1", forRemoval = true)
-  public Phase4PeppolReceiverCheckData (@Nonnull final ISMPServiceMetadataProvider aSMPClient,
-                                        @Nonnull @Nonempty final String sAS4EndpointURL,
-                                        @Nonnull final X509Certificate aAPCertificate,
-                                        @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
-  {
-    this (true,
-          aSMPClient,
-          eWildcardSelectionMode,
-          sAS4EndpointURL,
-          aAPCertificate,
-          Phase4PeppolServletConfiguration.isPerformSBDHValueChecks (),
-          Phase4PeppolServletConfiguration.isCheckSBDHForMandatoryCountryC1 (),
-          Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ());
-  }
+  private final boolean m_bCheckSigningCertificateRevocation;
 
   /**
    * Constructor
@@ -157,7 +125,7 @@ public class Phase4PeppolReceiverCheckData
    * @since 2.7.3
    */
   @Nonnull
-  public final PeppolWildcardSelector.EMode getWildcardSelectionMode ()
+  public PeppolWildcardSelector.EMode getWildcardSelectionMode ()
   {
     return m_eWildcardSelectionMode;
   }
@@ -199,13 +167,6 @@ public class Phase4PeppolReceiverCheckData
   public boolean isCheckSigningCertificateRevocation ()
   {
     return m_bCheckSigningCertificateRevocation;
-  }
-
-  // only required temporarily
-  @Deprecated (since = "2.8.1", forRemoval = true)
-  public void internalSetCheckSigningCertificateRevocation (final boolean b)
-  {
-    m_bCheckSigningCertificateRevocation = b;
   }
 
   @Override

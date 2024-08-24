@@ -269,52 +269,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     return this;
   }
 
-  /**
-   * @return Whether the X.509 certificate used for signing the message should
-   *         be check for revocation or not. By default it is "UNDEFINED"
-   *         meaning, that the global setting is used instead. May not be
-   *         <code>null</code>.
-   * @since 2.7.1
-   * @see Phase4PeppolServletConfiguration#isCheckSigningCertificateRevocation()
-   *      for the global setting
-   * @deprecated Use the field in {@link Phase4PeppolReceiverCheckData} instead
-   */
-  @Nonnull
-  @Deprecated (since = "2.8.1", forRemoval = true)
-  public final ETriState getCheckSigningCertificateRevocation ()
-  {
-    return m_aReceiverCheckData != null ? ETriState.valueOf (m_aReceiverCheckData
-                                                                                 .isCheckSigningCertificateRevocation ())
-                                        : ETriState.UNDEFINED;
-  }
-
-  /**
-   * Set whether the signing X.509 certificate should be checked for revocation
-   * or not.
-   *
-   * @param eCheckSigningCertificateRevocation
-   *        The signing certificate revocation state. May not be
-   *        <code>null</code>.
-   * @return this for chaining
-   * @since 2.7.1
-   * @see Phase4PeppolServletConfiguration#setCheckSigningCertificateRevocation(boolean)
-   *      to set this globally
-   * @deprecated Use the field in {@link Phase4PeppolReceiverCheckData} instead
-   */
-  @Nonnull
-  @Deprecated (since = "2.8.1", forRemoval = true)
-  public final Phase4PeppolServletMessageProcessorSPI setCheckSigningCertificateRevocation (@Nonnull final ETriState eCheckSigningCertificateRevocation)
-  {
-    ValueEnforcer.notNull (eCheckSigningCertificateRevocation, "CheckSigningCertificateRevocation");
-    if (eCheckSigningCertificateRevocation.isDefined ())
-    {
-      if (m_aReceiverCheckData == null)
-        m_aReceiverCheckData = Phase4PeppolServletConfiguration.getAsReceiverCheckData ();
-      m_aReceiverCheckData.internalSetCheckSigningCertificateRevocation (eCheckSigningCertificateRevocation.isTrue ());
-    }
-    return this;
-  }
-
   @Nullable
   private EndpointType _getReceiverEndpoint (@Nonnull final String sLogPrefix,
                                              @Nonnull final ISMPServiceMetadataProvider aSMPClient,

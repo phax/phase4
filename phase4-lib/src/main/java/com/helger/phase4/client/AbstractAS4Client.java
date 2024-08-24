@@ -130,20 +130,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * This API is no longer usable, because the crypto factories for sign and
-   * crypt are separated. Use {@link #getAS4CryptoFactorySign()} or
-   * {@link #getAS4CryptoFactoryCrypt()} instead.
-   *
-   * @return The currently set crypto factory. <code>null</code> by default.
-   */
-  @Nullable
-  @Deprecated (forRemoval = true, since = "2.2.0")
-  public final IAS4CryptoFactory getAS4CryptoFactory ()
-  {
-    return getAS4CryptoFactorySign ();
-  }
-
-  /**
    * @return The currently set crypto factory for signing. <code>null</code> by
    *         default.
    * @since 2.2.0
@@ -369,34 +355,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     if (m_aSendingDateTime == null)
       m_aSendingDateTime = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
     return thisAsT ();
-  }
-
-  /**
-   * @return The sending date time if configured, or the current timestamp.
-   *         Never <code>null</code>.
-   * @since 0.12.0
-   */
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.2.2")
-  public final OffsetDateTime getSendingDateTimeOrNow ()
-  {
-    return m_aSendingDateTime != null ? m_aSendingDateTime : MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-  }
-
-  /**
-   * Set the sending date time of the AS4 message. If not set, the current point
-   * in time will be used.
-   *
-   * @param aSendingDateTime
-   *        The sending date time to be used. May be <code>null</code>.
-   * @return this for chaining
-   * @deprecated Use {@link #setSendingDateTime(OffsetDateTime)} instead
-   */
-  @Nonnull
-  @Deprecated (forRemoval = true, since = "2.2.2")
-  public final IMPLTYPE setSendingDateTimeOrNow (@Nullable final OffsetDateTime aSendingDateTime)
-  {
-    return setSendingDateTime (aSendingDateTime);
   }
 
   /**

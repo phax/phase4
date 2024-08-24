@@ -70,16 +70,6 @@ public class PeppolCRLDownloader extends CRLDownloader
   }
 
   /**
-   * Install a global CRLCache using this CRL downloader and the default
-   * {@link Phase4PeppolHttpClientSettings}.
-   */
-  @Deprecated (forRemoval = true, since = "2.7.5")
-  public static void setAsDefaultCRLCache ()
-  {
-    setAsDefaultCRLCache (new Phase4PeppolHttpClientSettings ());
-  }
-
-  /**
    * Install a global CRLCache using this CRL downloader and the provided
    * {@link HttpClientSettings}.
    *

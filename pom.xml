@@ -229,11 +229,6 @@
       </dependency>
       <dependency>
         <groupId>com.helger.phase4</groupId>
-        <artifactId>phase4-profile-bpc</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-profile-bdew</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -329,7 +324,6 @@
       <modules>
         <module>phase4-lib</module>
         <module>phase4-profile-bdew</module>
-        <module>phase4-profile-bpc</module>
         <module>phase4-profile-cef</module>
         <module>phase4-profile-dbnalliance</module>
         <module>phase4-profile-eespa</module>
@@ -360,7 +354,6 @@
       <modules>
         <module>phase4-lib</module>
         <module>phase4-profile-bdew</module>
-        <module>phase4-profile-bpc</module>
         <module>phase4-profile-cef</module>
         <module>phase4-profile-dbnalliance</module>
         <module>phase4-profile-eespa</module>
