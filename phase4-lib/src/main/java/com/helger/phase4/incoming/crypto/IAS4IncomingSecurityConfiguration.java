@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.crypto;
+package com.helger.phase4.incoming.crypto;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.phase4.v3.ChangePhase4V3;
+import com.helger.phase4.crypto.AS4CryptParams;
+import com.helger.phase4.crypto.AS4SigningParams;
+import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 
 /**
  * Interface to configure the security configuration for incoming messages.
@@ -27,7 +29,6 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  * @since 2.1.3
  */
-@ChangePhase4V3 ("Move to package 'incoming.crypto'")
 public interface IAS4IncomingSecurityConfiguration
 {
   /**

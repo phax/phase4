@@ -28,7 +28,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
-import com.helger.phase4.crypto.AS4IncomingSecurityConfiguration;
+import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;

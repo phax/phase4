@@ -31,7 +31,7 @@ import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
-import com.helger.phase4.crypto.AS4IncomingSecurityConfiguration;
+import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 
