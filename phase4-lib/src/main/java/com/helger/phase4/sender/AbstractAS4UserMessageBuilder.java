@@ -565,7 +565,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     if (m_aPMode == null && pmodeResolver () != null)
     {
       // Create a default PMode template
-      m_aPMode = pmodeResolver ().getPModeOfID (m_sPModeID, "s", "a", "i", "r", "a", null);
+      m_aPMode = pmodeResolver ().findPMode (m_sPModeID, "s", "a", "i", "r", "a", null);
       if (m_aPMode == null)
         LOGGER.warn ("No PMode was provided, and the PMode Resolver delivered a null-PMode as well");
     }

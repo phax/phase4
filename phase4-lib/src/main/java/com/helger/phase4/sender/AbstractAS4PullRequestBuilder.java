@@ -63,7 +63,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   {
     try
     {
-      pmode (pmodeResolver ().getPModeOfID (null, "s", "a", "i", "r", "a", null));
+      pmode (pmodeResolver ().findPMode (null, "s", "a", "i", "r", "a", null));
     }
     catch (final Exception ex)
     {

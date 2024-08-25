@@ -99,7 +99,7 @@ public class DefaultPModeResolver implements IPModeResolver
   }
 
   @Nullable
-  public IPMode getPModeOfID (@Nullable final String sPModeID,
+  public IPMode findPMode (@Nullable final String sPModeID,
                               @Nonnull final String sService,
                               @Nonnull final String sAction,
                               @Nonnull @Nonempty final String sInitiatorID,

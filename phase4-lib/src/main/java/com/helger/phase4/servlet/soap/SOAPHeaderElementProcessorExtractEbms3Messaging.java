@@ -351,7 +351,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         // Get responder address from properties file (may be null)
         final String sAddress = AS4Configuration.getThisEndpointAddress ();
 
-        aPMode = m_aPModeResolver.getPModeOfID (sPModeID,
+        aPMode = m_aPModeResolver.findPMode (sPModeID,
                                                 aCollaborationInfo.getService ().getValue (),
                                                 aCollaborationInfo.getAction (),
                                                 sInitiatorID,
