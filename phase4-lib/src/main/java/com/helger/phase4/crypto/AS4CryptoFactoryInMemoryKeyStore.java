@@ -107,13 +107,6 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
     return m_sKeyAlias;
   }
 
-  @Nonnull
-  @Deprecated
-  public final String getKeyPassword ()
-  {
-    return m_sKeyPassword;
-  }
-
   @Nullable
   public String getKeyPasswordPerAlias (@Nullable final String sSearchKeyAlias)
   {

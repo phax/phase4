@@ -130,8 +130,7 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
     {
       ret = m_aKeyStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getKeyStoreType (),
                                                        m_aCryptoProps.getKeyStorePath (),
-                                                       m_aCryptoProps.getKeyStorePassword ())
-                                        .getKeyStore ();
+                                                       m_aCryptoProps.getKeyStorePassword ()).getKeyStore ();
     }
     return ret;
   }
@@ -140,13 +139,6 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
   public final String getKeyAlias ()
   {
     return m_aCryptoProps.getKeyAlias ();
-  }
-
-  @Nullable
-  @Deprecated
-  public final String getKeyPassword ()
-  {
-    return m_aCryptoProps.getKeyPassword ();
   }
 
   @Nullable
@@ -169,8 +161,7 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
     {
       ret = m_aTrustStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getTrustStoreType (),
                                                          m_aCryptoProps.getTrustStorePath (),
-                                                         m_aCryptoProps.getTrustStorePassword ())
-                                          .getKeyStore ();
+                                                         m_aCryptoProps.getTrustStorePassword ()).getKeyStore ();
     }
     return ret;
   }
