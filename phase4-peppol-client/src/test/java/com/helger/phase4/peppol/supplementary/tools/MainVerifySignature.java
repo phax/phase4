@@ -46,7 +46,7 @@ import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
-import com.helger.phase4.servlet.soap.AS4KeyStoreCallbackHandler;
+import com.helger.phase4.incoming.soap.AS4KeyStoreCallbackHandler;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.servlet.mock.MockServletContext;
