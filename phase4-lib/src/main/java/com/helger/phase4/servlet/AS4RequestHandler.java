@@ -79,6 +79,7 @@ import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
+import com.helger.phase4.incoming.mgr.AS4IncomingMessageProcessorManager;
 import com.helger.phase4.incoming.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
@@ -101,7 +102,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
-import com.helger.phase4.servlet.mgr.AS4ServletMessageProcessorManager;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
@@ -376,7 +376,7 @@ public class AS4RequestHandler implements AutoCloseable
   private ISoapProcessingFinalizedCallback m_aSoapProcessingFinalizedCB;
 
   /** By default get all message processors from the global SPI registry */
-  private Supplier <? extends ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
+  private Supplier <? extends ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4IncomingMessageProcessorManager::getAllProcessors;
   private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
 
   @ChangePhase4V3 ("See https://github.com/phax/phase4/discussions/265")
@@ -542,7 +542,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   /**
    * @return The supplier used to get all SPIs. By default this is
-   *         {@link AS4ServletMessageProcessorManager#getAllProcessors()}.
+   *         {@link AS4IncomingMessageProcessorManager#getAllProcessors()}.
    */
   @Nonnull
   public final Supplier <? extends ICommonsList <IAS4ServletMessageProcessorSPI>> getProcessorSupplier ()

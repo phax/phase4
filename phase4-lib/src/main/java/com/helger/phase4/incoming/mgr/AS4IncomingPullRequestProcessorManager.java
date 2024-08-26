@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.servlet.mgr;
+package com.helger.phase4.incoming.mgr;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.GuardedBy;
@@ -28,39 +28,38 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.lang.ServiceLoaderHelper;
-import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
-import com.helger.phase4.v3.ChangePhase4V3;
+import com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
 
 /**
- * This class manages all the {@link IAS4ServletMessageProcessorSPI} SPI
+ * This class manages all the {@link IAS4ServletPullRequestProcessorSPI} SPI
  * implementations.
  *
+ * @author bayerlma
  * @author Philip Helger
  */
 @ThreadSafe
-@ChangePhase4V3 ("Move to package 'incoming.mgr'; rename to AS4IncomingMessageProcessorManager")
-public final class AS4ServletMessageProcessorManager
+public final class AS4IncomingPullRequestProcessorManager
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServletMessageProcessorManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingPullRequestProcessorManager.class);
 
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   @GuardedBy ("RW_LOCK")
-  private static final ICommonsList <IAS4ServletMessageProcessorSPI> PROCESSORS = new CommonsArrayList <> ();
+  private static final ICommonsList <IAS4ServletPullRequestProcessorSPI> PROCESSORS = new CommonsArrayList <> ();
 
-  private AS4ServletMessageProcessorManager ()
+  private AS4IncomingPullRequestProcessorManager ()
   {}
 
   /**
-   * Reload all SPI implementations of {@link IAS4ServletMessageProcessorSPI}.
+   * Reload all SPI implementations of
+   * {@link IAS4ServletPullRequestProcessorSPI}.
    */
   public static void reinitProcessors ()
   {
-    final ICommonsList <IAS4ServletMessageProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4ServletMessageProcessorSPI.class);
+    final ICommonsList <IAS4ServletPullRequestProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4ServletPullRequestProcessorSPI.class);
     if (aProcessorSPIs.isEmpty ())
-      LOGGER.warn ("No AS4 message processor is registered. All incoming messages will be discarded!");
+      LOGGER.warn ("No AS4 message processor is registered. All incoming pull requests will be discarded!");
     else
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Found " + aProcessorSPIs.size () + " AS4 message processors");
+      LOGGER.info ("Found " + aProcessorSPIs.size () + " AS4 pull requests processors");
 
     RW_LOCK.writeLocked ( () -> PROCESSORS.setAll (aProcessorSPIs));
   }
@@ -77,7 +76,7 @@ public final class AS4ServletMessageProcessorManager
    */
   @Nonnull
   @ReturnsMutableCopy
-  public static ICommonsList <IAS4ServletMessageProcessorSPI> getAllProcessors ()
+  public static ICommonsList <IAS4ServletPullRequestProcessorSPI> getAllProcessors ()
   {
     return RW_LOCK.readLockedGet (PROCESSORS::getClone);
   }

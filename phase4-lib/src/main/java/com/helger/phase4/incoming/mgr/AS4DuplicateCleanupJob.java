@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.servlet.mgr;
+package com.helger.phase4.incoming.mgr;
 
 import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.lang.ClassHelper;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.quartz.DisallowConcurrentExecution;
 import com.helger.quartz.IJobExecutionContext;
 import com.helger.quartz.JobDataMap;
@@ -45,7 +44,6 @@ import com.helger.web.scope.util.AbstractScopeAwareJob;
  * @author Philip Helger
  */
 @DisallowConcurrentExecution
-@ChangePhase4V3 ("move to package 'incoming.mgr'")
 public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);

@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.incoming.mgr.AS4DuplicateCleanupJob;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.servlet.mgr.AS4DuplicateCleanupJob;
 import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.quartz.TriggerKey;
 

@@ -19,7 +19,7 @@ package com.helger.phase4.servlet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
+import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.v3.ChangePhase4V3;
 
 /**

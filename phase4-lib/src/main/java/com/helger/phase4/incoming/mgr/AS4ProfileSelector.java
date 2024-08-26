@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.servlet.mgr;
+package com.helger.phase4.incoming.mgr;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
