@@ -35,7 +35,7 @@ import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI;
@@ -56,7 +56,7 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
                                  @Nonnull final byte [] aSBDBytes,
                                  @Nonnull final StandardBusinessDocument aSBD,
                                  @Nonnull final PeppolSBDHData aPeppolSBD,
-                                 @Nonnull final IAS4MessageState aState,
+                                 @Nonnull final IAS4IncomingMessageState aState,
                                  @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception
   {
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".sbd");

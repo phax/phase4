@@ -53,14 +53,15 @@ import com.helger.phase4.util.AS4ResourceHelper;
  * This class keeps track of the status of an incoming message. It is basically
  * a String to any map.<br>
  * Keys starting with <code>phase4.</code> are reserved for internal use.<br>
- * Instances of this object are only modified in the SOAP header handlers.
+ * Instances of this object are only modified in the SOAP header handlers.<br>
+ * Old name before v3: <code>AS4MessageState</code>
  *
  * @author Philip Helger
  */
 @NotThreadSafe
-public final class AS4MessageState extends AttributeContainerAny <String> implements IAS4MessageState
+public final class AS4IncomingMessageState extends AttributeContainerAny <String> implements IAS4IncomingMessageState
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4MessageState.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingMessageState.class);
 
   private static final String KEY_EBMS3_MESSAGING = "phase4.ebms3.messaging";
   private static final String KEY_PMODE = "phase4.pmode";
@@ -91,9 +92,9 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private final AS4ResourceHelper m_aResHelper;
   private final Locale m_aLocale;
 
-  public AS4MessageState (@Nonnull final ESoapVersion eSoapVersion,
-                          @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                          @Nonnull final Locale aLocale)
+  public AS4IncomingMessageState (@Nonnull final ESoapVersion eSoapVersion,
+                                  @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                  @Nonnull final Locale aLocale)
   {
     m_aReceiptDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
     m_eSoapVersion = ValueEnforcer.notNull (eSoapVersion, "SOAPVersion");

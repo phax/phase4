@@ -116,8 +116,8 @@ import jakarta.mail.MessagingException;
 
 /**
  * Process incoming AS4 transmissions. This class is responsible for handling
- * data in a provider independent way, only based on InputStream and
- * OutputStream.
+ * data in a provider independent way (so e.g. not Servlet specific), only based
+ * on InputStream and OutputStream.
  *
  * @author Martin Bayerl
  * @author Philip Helger
@@ -135,13 +135,13 @@ public class AS4RequestHandler implements AutoCloseable
   private static final class AS4ResponseFactoryXML implements IAS4ResponseFactory
   {
     private final IAS4IncomingMessageMetadata m_aIncomingMessageMetadata;
-    private final IAS4MessageState m_aState;
+    private final IAS4IncomingMessageState m_aState;
     private final String m_sResponseMessageID;
     private final Document m_aDoc;
     private final IMimeType m_aMimeType;
 
     public AS4ResponseFactoryXML (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                  @Nonnull final IAS4MessageState aState,
+                                  @Nonnull final IAS4IncomingMessageState aState,
                                   @Nonnull @Nonempty final String sResponseMessageID,
                                   @Nonnull final Document aDoc,
                                   @Nonnull final IMimeType aMimeType)
@@ -210,13 +210,13 @@ public class AS4RequestHandler implements AutoCloseable
   private static final class AS4ResponseFactoryMIME implements IAS4ResponseFactory
   {
     private final IAS4IncomingMessageMetadata m_aIncomingMessageMetadata;
-    private final IAS4MessageState m_aState;
+    private final IAS4IncomingMessageState m_aState;
     private final String m_sResponseMessageID;
     private final AS4MimeMessage m_aMimeMsg;
     private final HttpHeaderMap m_aHttpHeaders;
 
     public AS4ResponseFactoryMIME (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                   @Nonnull final IAS4MessageState aState,
+                                   @Nonnull final IAS4IncomingMessageState aState,
                                    @Nonnull @Nonempty final String sResponseMessageID,
                                    @Nonnull final AS4MimeMessage aMimeMsg) throws MessagingException
     {
@@ -811,7 +811,7 @@ public class AS4RequestHandler implements AutoCloseable
                                        @Nullable final Node aPayloadNode,
                                        @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                        @Nullable final IPMode aPMode,
-                                       @Nonnull final IAS4MessageState aState,
+                                       @Nonnull final IAS4IncomingMessageState aState,
                                        @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget,
                                        @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachmentsTarget,
                                        @Nonnull final SPIInvocationResult aSPIResult)
@@ -1036,7 +1036,7 @@ public class AS4RequestHandler implements AutoCloseable
     aSPIResult.setSuccess (true);
   }
 
-  private void _invokeSPIsForResponse (@Nonnull final IAS4MessageState aState,
+  private void _invokeSPIsForResponse (@Nonnull final IAS4IncomingMessageState aState,
                                        @Nullable final IAS4ResponseFactory aResponseFactory,
                                        @Nullable final HttpEntity aHttpEntity,
                                        @Nonnull final IMimeType aMimeType,
@@ -1311,7 +1311,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @throws WSSecurityException
    */
   @Nonnull
-  private IAS4ResponseFactory _createResponseReceiptMessage (@Nonnull final IAS4MessageState aIncomingState,
+  private IAS4ResponseFactory _createResponseReceiptMessage (@Nonnull final IAS4IncomingMessageState aIncomingState,
                                                              @Nullable final Document aSoapDocument,
                                                              @Nonnull final ESoapVersion eSoapVersion,
                                                              @Nonnull @Nonempty final String sResponseMessageID,
@@ -1353,7 +1353,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   @Nonnull
-  private IAS4ResponseFactory _createResponseErrorMessage (@Nonnull final IAS4MessageState aIncomingState,
+  private IAS4ResponseFactory _createResponseErrorMessage (@Nonnull final IAS4IncomingMessageState aIncomingState,
                                                            @Nonnull final ESoapVersion eSoapVersion,
                                                            @Nonnull @Nonempty final String sResponseMessageID,
                                                            @Nullable final PModeLeg aEffectiveLeg,
@@ -1496,7 +1496,7 @@ public class AS4RequestHandler implements AutoCloseable
    *         on error
    */
   @Nonnull
-  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final IAS4MessageState aState,
+  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final IAS4IncomingMessageState aState,
                                                           @Nonnull final ESoapVersion eSoapVersion,
                                                           @Nonnull final AS4UserMessage aResponseUserMsg,
                                                           @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
@@ -1550,16 +1550,16 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                                            m_aIncomingSecurityConfig);
 
     // Decompose the SOAP message
-    final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
-                                                                           m_aLocale,
-                                                                           aRegistry,
-                                                                           aHttpHeaders,
-                                                                           aSoapDocument,
-                                                                           eSoapVersion,
-                                                                           aIncomingAttachments,
-                                                                           m_aIncomingProfileSelector,
-                                                                           aEbmsErrorMessagesTarget,
-                                                                           m_aMessageMetadata);
+    final IAS4IncomingMessageState aState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
+                                                                                   m_aLocale,
+                                                                                   aRegistry,
+                                                                                   aHttpHeaders,
+                                                                                   aSoapDocument,
+                                                                                   eSoapVersion,
+                                                                                   aIncomingAttachments,
+                                                                                   m_aIncomingProfileSelector,
+                                                                                   aEbmsErrorMessagesTarget,
+                                                                                   m_aMessageMetadata);
 
     // Evaluate the results of processing
     final IPMode aPMode = aState.getPMode ();

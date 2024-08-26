@@ -48,11 +48,12 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
- * Read-only AS4 message state for incoming messages.
+ * Read-only AS4 message state for incoming messages.<br/>
+ * Old name before v3: <code>IAS4MessageState</code>
  *
  * @author Philip Helger
  */
-public interface IAS4MessageState
+public interface IAS4IncomingMessageState
 {
   /**
    * @return Date and time when the receipt started. This must be set in the

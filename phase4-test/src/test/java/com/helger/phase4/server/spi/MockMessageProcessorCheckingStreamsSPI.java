@@ -46,7 +46,7 @@ import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
@@ -77,7 +77,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nonnull final IAS4MessageState aState,
+                                                          @Nonnull final IAS4IncomingMessageState aState,
                                                           @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget)
   {
     // Needed for AS4_TA13 because we want to force a decompression failure and
@@ -128,7 +128,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
                                                                   @Nonnull final HttpHeaderMap aHttpHeaders,
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nonnull final IPMode aPmode,
-                                                                  @Nonnull final IAS4MessageState aState,
+                                                                  @Nonnull final IAS4IncomingMessageState aState,
                                                                   @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     if (aSignalMessage.getReceipt () != null)
@@ -189,7 +189,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
   }
 
   public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                         @Nonnull final IAS4MessageState aState,
+                                         @Nonnull final IAS4IncomingMessageState aState,
                                          @Nonnull @Nonempty final String sResponseMessageID,
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)

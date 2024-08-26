@@ -29,7 +29,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 
@@ -79,7 +79,7 @@ public interface IAS4IncomingMessageProcessorSPI
                                                    @Nonnull IPMode aPMode,
                                                    @Nullable Node aPayload,
                                                    @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                   @Nonnull IAS4MessageState aState,
+                                                   @Nonnull IAS4IncomingMessageState aState,
                                                    @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages);
 
   /**
@@ -112,7 +112,7 @@ public interface IAS4IncomingMessageProcessorSPI
                                                            @Nonnull HttpHeaderMap aHttpHeaders,
                                                            @Nonnull Ebms3SignalMessage aSignalMessage,
                                                            @Nullable IPMode aPMode,
-                                                           @Nonnull IAS4MessageState aState,
+                                                           @Nonnull IAS4IncomingMessageState aState,
                                                            @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages);
 
   /**
@@ -141,7 +141,7 @@ public interface IAS4IncomingMessageProcessorSPI
    * @since v0.9.8
    */
   void processAS4ResponseMessage (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
-                                  @Nonnull IAS4MessageState aState,
+                                  @Nonnull IAS4IncomingMessageState aState,
                                   @Nonnull @Nonempty String sResponseMessageID,
                                   @Nullable byte [] aResponseBytes,
                                   boolean bResponsePayloadIsAvailable);

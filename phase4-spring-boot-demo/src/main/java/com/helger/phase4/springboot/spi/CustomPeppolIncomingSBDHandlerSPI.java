@@ -28,7 +28,7 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI;
 import com.helger.phase4.springboot.enumeration.ESBDHHandlerServiceSelector;
@@ -52,7 +52,7 @@ public class CustomPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncomingS
                                  @Nonnull final byte [] aSBDBytes,
                                  @Nonnull final StandardBusinessDocument aSBD,
                                  @Nonnull final PeppolSBDHData aPeppolSBD,
-                                 @Nonnull final IAS4MessageState aState,
+                                 @Nonnull final IAS4IncomingMessageState aState,
                                  @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception
   {
     // Get the service from the locator

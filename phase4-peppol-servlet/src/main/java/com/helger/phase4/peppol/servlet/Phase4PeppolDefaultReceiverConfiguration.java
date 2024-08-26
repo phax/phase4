@@ -40,7 +40,8 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
  * is not thread safe, as the default values are not meant to be modified during
  * runtime.<br>
  * See {@link Phase4PeppolReceiverConfiguration} for the "per-request" version
- * of this class.
+ * of this class.<br/>
+ * Old name before v3: <code>Phase4PeppolServletConfiguration</code>
  *
  * @author Philip Helger
  */

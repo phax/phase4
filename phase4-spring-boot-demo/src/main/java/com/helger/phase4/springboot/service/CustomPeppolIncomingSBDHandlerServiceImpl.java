@@ -28,7 +28,7 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.springboot.enumeration.ESBDHHandlerServiceSelector;
 
@@ -46,7 +46,7 @@ public class CustomPeppolIncomingSBDHandlerServiceImpl implements ISBDHandlerSer
   private byte [] m_aStandardBusinessDocumentBytes;
   private StandardBusinessDocument m_aStandardBusinessDocument;
   private PeppolSBDHData m_aPeppolStandardBusinessDocumentHeader;
-  private IAS4MessageState m_aMessageState;
+  private IAS4IncomingMessageState m_aMessageState;
 
   // Managed Spring fields
 
@@ -83,7 +83,7 @@ public class CustomPeppolIncomingSBDHandlerServiceImpl implements ISBDHandlerSer
     m_aPeppolStandardBusinessDocumentHeader = peppolStandardBusinessDocumentHeader;
   }
 
-  public void setMessageState (@Nonnull final IAS4MessageState messageState)
+  public void setMessageState (@Nonnull final IAS4IncomingMessageState messageState)
   {
     m_aMessageState = messageState;
   }

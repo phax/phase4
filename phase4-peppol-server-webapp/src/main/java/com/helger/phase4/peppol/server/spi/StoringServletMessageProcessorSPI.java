@@ -40,7 +40,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
@@ -64,7 +64,7 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
   private static final Logger LOGGER = LoggerFactory.getLogger (StoringServletMessageProcessorSPI.class);
 
   private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                 @Nonnull final IAS4MessageState aState)
+                                 @Nonnull final IAS4IncomingMessageState aState)
   {
     // Write formatted SOAP
     {
@@ -157,7 +157,7 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nonnull final IAS4MessageState aState,
+                                                          @Nonnull final IAS4IncomingMessageState aState,
                                                           @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     LOGGER.info ("Received AS4 UserMessage");
@@ -185,7 +185,7 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
                                                                   @Nonnull final HttpHeaderMap aHttpHeaders,
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
-                                                                  @Nonnull final IAS4MessageState aState,
+                                                                  @Nonnull final IAS4IncomingMessageState aState,
                                                                   @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     LOGGER.info ("Received AS4 SignalMessage");
@@ -223,7 +223,7 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
   }
 
   public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                         @Nonnull final IAS4MessageState aState,
+                                         @Nonnull final IAS4IncomingMessageState aState,
                                          @Nonnull @Nonempty final String sResponseMessageID,
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)

@@ -76,7 +76,7 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
@@ -432,7 +432,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   @Nullable
   public static PeppolReportingItem createPeppolReportingItemForReceivedMessage (@Nonnull final Ebms3UserMessage aUserMessage,
                                                                                  @Nonnull final PeppolSBDHData aPeppolSBD,
-                                                                                 @Nonnull final IAS4MessageState aState,
+                                                                                 @Nonnull final IAS4IncomingMessageState aState,
                                                                                  @Nonnull @Nonempty final String sC3ID,
                                                                                  @Nonnull @Nonempty final String sC4CountryCode,
                                                                                  @Nonnull @Nonempty final String sEndUserID)
@@ -522,12 +522,12 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
    *        <code>null</code>.
    * @since 2.2.2
    * @see #createPeppolReportingItemForReceivedMessage(Ebms3UserMessage,
-   *      PeppolSBDHData, IAS4MessageState, String, String, String)
+   *      PeppolSBDHData, IAS4IncomingMessageState, String, String, String)
    */
   @OverrideOnDemand
   protected void afterSuccessfulPeppolProcessing (@Nonnull final Ebms3UserMessage aUserMessage,
                                                   @Nonnull final PeppolSBDHData aPeppolSBD,
-                                                  @Nonnull final IAS4MessageState aState)
+                                                  @Nonnull final IAS4IncomingMessageState aState)
   {}
 
   @Nonnull
@@ -537,7 +537,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                           @Nonnull final IPMode aSrcPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nonnull final IAS4MessageState aState,
+                                                          @Nonnull final IAS4IncomingMessageState aState,
                                                           @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     if (LOGGER.isDebugEnabled ())
@@ -886,7 +886,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                                   @Nonnull final HttpHeaderMap aHttpHeaders,
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
-                                                                  @Nonnull final IAS4MessageState aState,
+                                                                  @Nonnull final IAS4IncomingMessageState aState,
                                                                   @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     LOGGER.error ("Invoking processAS4SignalMessage is not supported");
@@ -894,7 +894,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   }
 
   public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                         @Nonnull final IAS4MessageState aState,
+                                         @Nonnull final IAS4IncomingMessageState aState,
                                          @Nonnull @Nonempty final String sResponseMessageID,
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)

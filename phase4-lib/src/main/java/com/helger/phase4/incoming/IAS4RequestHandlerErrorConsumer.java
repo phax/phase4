@@ -44,7 +44,7 @@ public interface IAS4RequestHandlerErrorConsumer
    *        The filled AS4 error message to be returned. Don't touch. Never
    *        <code>null</code>.
    */
-  void onAS4ErrorMessage (@Nonnull IAS4MessageState aState,
+  void onAS4ErrorMessage (@Nonnull IAS4IncomingMessageState aState,
                           @Nonnull @Nonempty ICommonsList <Ebms3Error> aEbmsErrors,
                           @Nonnull AS4ErrorMessage aAS4ErrorMsg);
 }

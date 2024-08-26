@@ -65,7 +65,7 @@ import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
-import com.helger.phase4.incoming.AS4MessageState;
+import com.helger.phase4.incoming.AS4IncomingMessageState;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.wss.WSSConfigManager;
@@ -110,7 +110,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   @Nonnull
   private ESuccess _verifyAndDecrypt (@Nonnull final Document aSOAPDoc,
                                       @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
-                                      @Nonnull final AS4MessageState aState,
+                                      @Nonnull final AS4IncomingMessageState aState,
                                       @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget,
                                       @Nonnull final Supplier <? extends WSSConfig> aWSSConfigSupplier)
   {
@@ -346,7 +346,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
                                         @Nonnull final Element aSecurityNode,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
-                                        @Nonnull final AS4MessageState aState,
+                                        @Nonnull final AS4IncomingMessageState aState,
                                         @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
     IPMode aPMode = aState.getPMode ();

@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
@@ -71,7 +71,7 @@ public interface IAS4OutgoingDumper
   @Nullable
   OutputStream onBeginRequest (@Nonnull EAS4MessageMode eMsgMode,
                                @Nullable IAS4IncomingMessageMetadata aMessageMetadata,
-                               @Nullable IAS4MessageState aState,
+                               @Nullable IAS4IncomingMessageState aState,
                                @Nonnull @Nonempty String sMessageID,
                                @Nullable HttpHeaderMap aCustomHeaders,
                                @Nonnegative int nTry) throws IOException;
@@ -102,7 +102,7 @@ public interface IAS4OutgoingDumper
    */
   void onEndRequest (@Nonnull EAS4MessageMode eMsgMode,
                      @Nullable IAS4IncomingMessageMetadata aMessageMetadata,
-                     @Nullable IAS4MessageState aState,
+                     @Nullable IAS4IncomingMessageState aState,
                      @Nonnull @Nonempty String sMessageID,
                      @Nullable Exception aCaughtException);
 }

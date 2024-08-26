@@ -36,7 +36,7 @@ public interface IAS4IncomingProfileSelector
    * @return The AS4 profile ID or <code>null</code> if none was found.
    */
   @Nullable
-  String getAS4ProfileID (@Nonnull IAS4MessageState aState);
+  String getAS4ProfileID (@Nonnull IAS4IncomingMessageState aState);
 
   /**
    * Configure if the profile validation rules should be applied or not. Usually

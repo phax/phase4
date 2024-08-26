@@ -414,7 +414,7 @@ public final class AS4IncomingHandler
   private static void _processSoapHeaderElements (@Nonnull final SOAPHeaderElementProcessorRegistry aRegistry,
                                                   @Nonnull final Document aSoapDocument,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                  @Nonnull final AS4MessageState aState,
+                                                  @Nonnull final AS4IncomingMessageState aState,
                                                   @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws Phase4Exception
   {
     final ESoapVersion eSoapVersion = aState.getSoapVersion ();
@@ -529,7 +529,7 @@ public final class AS4IncomingHandler
 
   private static void _decompressAttachments (@Nonnull final ICommonsList <WSS4JAttachment> aIncomingDecryptedAttachments,
                                               @Nonnull final Ebms3UserMessage aUserMessage,
-                                              @Nonnull final IAS4MessageState aState)
+                                              @Nonnull final IAS4IncomingMessageState aState)
   {
     // For all incoming attachments
     for (final WSS4JAttachment aIncomingAttachment : aIncomingDecryptedAttachments.getClone ())
@@ -597,7 +597,7 @@ public final class AS4IncomingHandler
   }
 
   @Nonnull
-  public static IAS4MessageState processEbmsMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+  public static IAS4IncomingMessageState processEbmsMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                      @Nonnull final Locale aLocale,
                                                      @Nonnull final SOAPHeaderElementProcessorRegistry aRegistry,
                                                      @Nonnull final HttpHeaderMap aHttpHeaders,
@@ -634,7 +634,7 @@ public final class AS4IncomingHandler
     }
 
     // This is where all data from the SOAP headers is stored to
-    final AS4MessageState aState = new AS4MessageState (eSoapVersion, aResHelper, aLocale);
+    final AS4IncomingMessageState aState = new AS4IncomingMessageState (eSoapVersion, aResHelper, aLocale);
 
     // Handle all headers - modifies the state
     _processSoapHeaderElements (aRegistry, aSoapDocument, aIncomingAttachments, aState, aEbmsErrorMessagesTarget);
@@ -814,7 +814,7 @@ public final class AS4IncomingHandler
   }
 
   @Nullable
-  private static IAS4MessageState _parseMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+  private static IAS4IncomingMessageState _parseMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                  @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                  @Nonnull final IPModeResolver aPModeResolver,
                                                  @Nonnull final IAS4IncomingAttachmentFactory aIAF,
@@ -829,7 +829,7 @@ public final class AS4IncomingHandler
                                                  @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration) throws Phase4Exception
   {
     // This wrapper will take the result
-    final Wrapper <IAS4MessageState> aRetWrapper = new Wrapper <> ();
+    final Wrapper <IAS4IncomingMessageState> aRetWrapper = new Wrapper <> ();
 
     // Handler for the parsed message
     final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
@@ -844,7 +844,7 @@ public final class AS4IncomingHandler
                                                                                                              aIncomingSecurityConfiguration);
 
       // Parse AS4, verify signature etc
-      final IAS4MessageState aState = processEbmsMessage (aResHelper,
+      final IAS4IncomingMessageState aState = processEbmsMessage (aResHelper,
                                                           aLocale,
                                                           aRegistry,
                                                           aHttpHeaders,
@@ -907,7 +907,7 @@ public final class AS4IncomingHandler
                                                        @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                        @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
-    final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
+    final IAS4IncomingMessageState aState = _parseMessage (aCryptoFactorySign,
                                                    aCryptoFactoryCrypt,
                                                    aPModeResolver,
                                                    aIAF,
@@ -960,7 +960,7 @@ public final class AS4IncomingHandler
                                                    @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws Phase4Exception
   {
-    final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
+    final IAS4IncomingMessageState aState = _parseMessage (aCryptoFactorySign,
                                                    aCryptoFactoryCrypt,
                                                    aPModeResolver,
                                                    aIAF,
@@ -1013,7 +1013,7 @@ public final class AS4IncomingHandler
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
-    final IAS4MessageState aState = _parseMessage (aCryptoFactorySign,
+    final IAS4IncomingMessageState aState = _parseMessage (aCryptoFactorySign,
                                                    aCryptoFactoryCrypt,
                                                    aPModeResolver,
                                                    aIAF,

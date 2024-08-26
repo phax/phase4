@@ -50,7 +50,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.AS4RequestHandler;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.IAS4ResponseAbstraction;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
@@ -235,7 +235,7 @@ public final class AS4DumpReader
                                                                 @Nonnull final IPMode aPMode,
                                                                 @Nullable final Node aPayload,
                                                                 @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                                @Nonnull final IAS4MessageState aState,
+                                                                @Nonnull final IAS4IncomingMessageState aState,
                                                                 @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
         {
           try
@@ -274,7 +274,7 @@ public final class AS4DumpReader
                                                                         final HttpHeaderMap aHttpHeaders,
                                                                         final Ebms3SignalMessage aSignalMessage,
                                                                         final IPMode aPMode,
-                                                                        final IAS4MessageState aState,
+                                                                        final IAS4IncomingMessageState aState,
                                                                         final ICommonsList <Ebms3Error> aProcessingErrorMessages)
         {
           LOGGER.error ("Unexpected signal msg. Can only handle user messages.");
@@ -282,7 +282,7 @@ public final class AS4DumpReader
         }
 
         public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                               @Nonnull final IAS4MessageState aState,
+                                               @Nonnull final IAS4IncomingMessageState aState,
                                                @Nonnull @Nonempty final String sResponseMessageID,
                                                @Nullable final byte [] aResponseBytes,
                                                final boolean bResponsePayloadIsAvailable)

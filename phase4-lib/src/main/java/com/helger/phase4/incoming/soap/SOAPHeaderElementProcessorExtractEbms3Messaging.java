@@ -57,7 +57,7 @@ import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
-import com.helger.phase4.incoming.AS4MessageState;
+import com.helger.phase4.incoming.AS4IncomingMessageState;
 import com.helger.phase4.incoming.mgr.AS4IncomingPullRequestProcessorManager;
 import com.helger.phase4.incoming.spi.IAS4IncomingPullRequestProcessorSPI;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
@@ -213,7 +213,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
   public ESuccess processHeaderElement (@Nonnull final Document aSoapDoc,
                                         @Nonnull final Element aElement,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
-                                        @Nonnull final AS4MessageState aState,
+                                        @Nonnull final AS4IncomingMessageState aState,
                                         @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
     final IMPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();

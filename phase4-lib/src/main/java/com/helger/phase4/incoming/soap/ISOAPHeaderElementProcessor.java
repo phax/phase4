@@ -25,7 +25,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ESuccess;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Error;
-import com.helger.phase4.incoming.AS4MessageState;
+import com.helger.phase4.incoming.AS4IncomingMessageState;
 
 /**
  * Base interface for SOAP header processors that are invoked for incoming
@@ -60,6 +60,6 @@ public interface ISOAPHeaderElementProcessor
   ESuccess processHeaderElement (@Nonnull Document aSOAPDoc,
                                  @Nonnull Element aHeaderElement,
                                  @Nonnull ICommonsList <WSS4JAttachment> aAttachments,
-                                 @Nonnull AS4MessageState aState,
+                                 @Nonnull AS4IncomingMessageState aState,
                                  @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget);
 }

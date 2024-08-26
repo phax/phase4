@@ -29,7 +29,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.traits.IGenericImplTrait;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
@@ -107,7 +107,7 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
   @Nullable
   protected abstract OutputStream openOutputStream (@Nonnull EAS4MessageMode eMsgMode,
                                                     @Nullable IAS4IncomingMessageMetadata aMessageMetadata,
-                                                    @Nullable IAS4MessageState aState,
+                                                    @Nullable IAS4IncomingMessageState aState,
                                                     @Nonnull @Nonempty String sMessageID,
                                                     @Nullable HttpHeaderMap aCustomHeaders,
                                                     @Nonnegative int nTry) throws IOException;
@@ -115,7 +115,7 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
   @Nullable
   public OutputStream onBeginRequest (@Nonnull final EAS4MessageMode eMsgMode,
                                       @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
-                                      @Nullable final IAS4MessageState aState,
+                                      @Nullable final IAS4IncomingMessageState aState,
                                       @Nonnull @Nonempty final String sMessageID,
                                       @Nullable final HttpHeaderMap aCustomHeaders,
                                       @Nonnegative final int nTry) throws IOException
@@ -144,7 +144,7 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
 
   public void onEndRequest (@Nonnull final EAS4MessageMode eMsgMode,
                             @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
-                            @Nullable final IAS4MessageState aState,
+                            @Nullable final IAS4IncomingMessageState aState,
                             @Nonnull @Nonempty final String sMessageID,
                             @Nullable final Exception aCaughtException)
   {}

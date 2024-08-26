@@ -19,7 +19,7 @@ package com.helger.phase4.client;
 import javax.annotation.Nonnull;
 
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.util.Phase4Exception;
 
@@ -50,5 +50,5 @@ public interface IAS4UserMessageConsumer
    */
   void handleUserMessage (@Nonnull Ebms3UserMessage aUserMsg,
                           @Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
-                          @Nonnull IAS4MessageState aState) throws Phase4Exception;
+                          @Nonnull IAS4IncomingMessageState aState) throws Phase4Exception;
 }

@@ -26,7 +26,7 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
@@ -76,6 +76,6 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
                           @Nonnull byte [] aSBDBytes,
                           @Nonnull StandardBusinessDocument aSBD,
                           @Nonnull PeppolSBDHData aPeppolSBD,
-                          @Nonnull IAS4MessageState aState,
+                          @Nonnull IAS4IncomingMessageState aState,
                           @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
 }

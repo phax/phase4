@@ -50,7 +50,7 @@ import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.http.HttpRetrySettings;
-import com.helger.phase4.incoming.IAS4MessageState;
+import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
@@ -150,7 +150,7 @@ public final class MainPhase4PeppolSenderQvalia
       @Override
       protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
                                                @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
-                                               @Nullable final IAS4MessageState aState,
+                                               @Nullable final IAS4IncomingMessageState aState,
                                                @Nonnull @Nonempty final String sMessageID,
                                                @Nullable final HttpHeaderMap aCustomHeaders,
                                                @Nonnegative final int nTry) throws IOException

@@ -29,7 +29,8 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector;
 
 /**
  * This class contains the "per-request" data of
- * {@link Phase4PeppolDefaultReceiverConfiguration}.
+ * {@link Phase4PeppolDefaultReceiverConfiguration}.<br/>
+ * Old name before v3: <code>Phase4PeppolReceiverCheckData</code>
  *
  * @author Philip Helger
  * @since 0.9.13
