@@ -496,7 +496,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
             // Check if there is a BodyPayload as specified in the UserMessage
             if (!bHasSoapBodyPayload)
             {
-              final String sDetails = "Error processing the UserMessage. Expected a SOAPBody Payload but there is none present.";
+              final String sDetails = "Error processing the UserMessage. Expected a SOAP body payload but there is none present.";
               LOGGER.error (sDetails);
               aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
                                                                                     .errorDetail (sDetails)

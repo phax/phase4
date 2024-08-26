@@ -343,7 +343,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
   }
 
   @Nonnull
-  public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
+  public ESuccess processHeaderElement (@Nonnull final Document aSoapDoc,
                                         @Nonnull final Element aSecurityNode,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                         @Nonnull final AS4IncomingMessageState aIncomingState,
@@ -499,7 +499,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       if (AS4Configuration.isWSS4JSynchronizedSecurity ())
       {
         // Use static WSSConfig creation
-        eSuccess = WSSSynchronizer.call ( () -> _verifyAndDecrypt (aSOAPDoc,
+        eSuccess = WSSSynchronizer.call ( () -> _verifyAndDecrypt (aSoapDoc,
                                                                    aAttachments,
                                                                    aIncomingState,
                                                                    aProcessingErrorMessagesTarget,
@@ -508,7 +508,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       else
       {
         // Use instance WSSConfig creation
-        eSuccess = _verifyAndDecrypt (aSOAPDoc,
+        eSuccess = _verifyAndDecrypt (aSoapDoc,
                                       aAttachments,
                                       aIncomingState,
                                       aProcessingErrorMessagesTarget,

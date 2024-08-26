@@ -39,7 +39,7 @@ public interface ISoapHeaderElementProcessor
   /**
    * Process the passed header element.
    *
-   * @param aSOAPDoc
+   * @param aSoapDoc
    *        The complete SOAP document (logically no MIME parts are contained).
    *        Never <code>null</code>.
    * @param aHeaderElement
@@ -57,7 +57,7 @@ public interface ISoapHeaderElementProcessor
    *         header is treated as "not handled".
    */
   @Nonnull
-  ESuccess processHeaderElement (@Nonnull Document aSOAPDoc,
+  ESuccess processHeaderElement (@Nonnull Document aSoapDoc,
                                  @Nonnull Element aHeaderElement,
                                  @Nonnull ICommonsList <WSS4JAttachment> aAttachments,
                                  @Nonnull AS4IncomingMessageState aIncomingState,
