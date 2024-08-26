@@ -24,7 +24,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.jaxb.GenericJAXBMarshaller;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.soap12.Soap12Envelope;
 import com.helger.xsds.xml.CXML_XSD;
 

@@ -31,7 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.eclipse.angus.mail.handlers.text_plain;
 
 import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.model.ESoapVersion;
 
 import jakarta.activation.ActivationDataFlavor;
 import jakarta.activation.DataSource;

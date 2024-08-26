@@ -26,7 +26,7 @@ import com.helger.phase4.ebms3header.Ebms3MessageProperties;
 import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.model.ESoapVersion;
 
 /**
  * AS4 user message

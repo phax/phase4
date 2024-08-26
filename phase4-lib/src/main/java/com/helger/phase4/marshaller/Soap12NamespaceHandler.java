@@ -18,7 +18,7 @@ package com.helger.phase4.marshaller;
 
 import javax.annotation.Nonnull;
 
-import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 
 /**

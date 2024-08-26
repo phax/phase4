@@ -48,6 +48,7 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
@@ -56,7 +57,6 @@ import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.server.MockPModeGenerator;
-import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt

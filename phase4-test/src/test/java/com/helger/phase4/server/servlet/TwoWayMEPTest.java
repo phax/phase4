@@ -39,6 +39,7 @@ import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
@@ -47,7 +48,6 @@ import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.server.MockJettySetup;
-import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.test.profile.TestPMode;
 import com.helger.xml.serialize.read.DOMReader;
 

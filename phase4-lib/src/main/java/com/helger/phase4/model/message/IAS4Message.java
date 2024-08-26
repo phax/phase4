@@ -23,7 +23,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.model.ESoapVersion;
 
 /**
  * Base interface for an AS4 message.

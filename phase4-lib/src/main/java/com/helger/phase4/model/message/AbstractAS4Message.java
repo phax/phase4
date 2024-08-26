@@ -32,7 +32,7 @@ import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
 import com.helger.phase4.marshaller.Soap11EnvelopeMarshaller;
 import com.helger.phase4.marshaller.Soap12EnvelopeMarshaller;
-import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.soap11.Soap11Body;
 import com.helger.phase4.soap11.Soap11Envelope;
 import com.helger.phase4.soap11.Soap11Header;

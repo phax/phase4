@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.phase4.messaging.http.HttpXMLEntity;
-import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.model.ESoapVersion;
 
 public final class PModePingTest extends AbstractUserMessageTestSetUpExt
 {

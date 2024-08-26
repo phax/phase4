@@ -30,12 +30,12 @@ import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.message.AS4PullRequestMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.mpc.MPC;
 import com.helger.phase4.server.spi.MockMessageProcessorSPI;
-import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class PullRequestTest extends AbstractUserMessageTestSetUpExt

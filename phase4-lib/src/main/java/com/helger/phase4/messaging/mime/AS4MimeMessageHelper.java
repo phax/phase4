@@ -34,7 +34,7 @@ import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.util.AS4XMLHelper;
 
 import jakarta.activation.CommandInfo;

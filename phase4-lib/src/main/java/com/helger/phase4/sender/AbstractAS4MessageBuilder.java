@@ -51,9 +51,9 @@ import com.helger.phase4.incoming.AS4IncomingProfileSelectorFromGlobal;
 import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.messaging.http.IHttpPoster;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
-import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.Phase4Exception;
 
 /**

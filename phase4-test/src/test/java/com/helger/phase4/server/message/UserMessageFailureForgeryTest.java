@@ -51,10 +51,10 @@ import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.messaging.mime.AS4SoapMimeMultipart;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
-import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
 

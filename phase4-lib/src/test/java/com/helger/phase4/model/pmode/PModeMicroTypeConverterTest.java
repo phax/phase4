@@ -43,6 +43,7 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeAddressList;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -53,7 +54,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.model.pmode.leg.PModePayloadProfile;
 import com.helger.phase4.model.pmode.leg.PModeProperty;
-import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.xml.mock.XMLTestHelper;
 

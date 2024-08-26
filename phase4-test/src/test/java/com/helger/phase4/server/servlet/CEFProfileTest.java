@@ -39,9 +39,9 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
-import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.xml.serialize.read.DOMReader;
 

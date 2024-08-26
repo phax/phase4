@@ -22,8 +22,8 @@ import org.w3c.dom.Document;
 
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.error.EEbmsError;
-import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt

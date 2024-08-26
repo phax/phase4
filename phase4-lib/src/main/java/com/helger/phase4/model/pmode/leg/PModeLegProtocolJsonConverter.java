@@ -21,7 +21,7 @@ import javax.annotation.concurrent.Immutable;
 
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
-import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.model.ESoapVersion;
 
 /**
  * JSON converter for objects of class {@link PModeLegProtocol}.
