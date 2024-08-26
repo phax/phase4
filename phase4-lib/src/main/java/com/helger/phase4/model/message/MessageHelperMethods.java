@@ -28,9 +28,14 @@ import javax.annotation.Nullable;
 import javax.annotation.RegEx;
 import javax.annotation.concurrent.Immutable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
@@ -54,7 +59,12 @@ import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3Service;
 import com.helger.phase4.ebms3header.Ebms3To;
+import com.helger.phase4.marshaller.DSigReferenceMarshaller;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.xml.ChildElementIterator;
+import com.helger.xml.XMLHelper;
+import com.helger.xml.serialize.write.XMLWriter;
+import com.helger.xsds.xmldsig.ReferenceType;
 
 /**
  * This class contains every method, static variables which are used by more
@@ -76,6 +86,8 @@ public final class MessageHelperMethods
    */
   @RegEx
   public static final String MESSAGE_ID_SUFFIX_REGEX = "^[a-zA-Z0-9\\._\\-]+$";
+
+  private static final Logger LOGGER = LoggerFactory.getLogger (MessageHelperMethods.class);
 
   private static String s_sCustomMessageIDSuffix = null;
 
@@ -462,5 +474,84 @@ public final class MessageHelperMethods
     }
 
     return aEbms3PayloadInfo;
+  }
+
+  /**
+   * Extract all "ds:Reference" nodes from the passed SOAP document. This method
+   * search ins
+   * "{soapDocument}/Envelop/Header/Security/Signature/SignedInfo".<br>
+   * Note: use <code>new DSigReferenceMarshaller ().read (aRef)</code> to read
+   * the content.
+   *
+   * @param aSoapDocument
+   *        The SOAP document to search in. May be <code>null</code>.
+   * @return A non-<code>null</code> but maybe empty list of Reference nodes.
+   * @see #getAllDSigReferences(Node)
+   */
+  @Nonnull
+  @ReturnsMutableCopy
+  public static ICommonsList <Node> getAllDSigReferenceNodes (@Nullable final Node aSoapDocument)
+  {
+    final ICommonsList <Node> aDSRefs = new CommonsArrayList <> ();
+    // Name is identical for SOAP 1.1 and 1.2
+    Node aNext = XMLHelper.getFirstChildElementOfName (aSoapDocument, "Envelope");
+    if (aNext != null)
+    {
+      // Name is identical for SOAP 1.1 and 1.2
+      aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
+      if (aNext != null)
+      {
+        aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.WSSE_NS, "Security");
+        if (aNext != null)
+        {
+          aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "Signature");
+          if (aNext != null)
+          {
+            aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "SignedInfo");
+            if (aNext != null)
+            {
+              new ChildElementIterator (aNext).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (CAS4.DS_NS,
+                                                                                                          "Reference"),
+                                                        aDSRefs::add);
+            }
+          }
+        }
+      }
+    }
+    return aDSRefs;
+  }
+
+  /**
+   * This is the typed version of {@link #getAllDSigReferenceNodes(Node)}
+   *
+   * @param aSoapDocument
+   *        The SOAP document to search in. May be <code>null</code>.
+   * @return A non-<code>null</code> but maybe empty list of
+   *         {@link ReferenceType} object.
+   */
+  @Nonnull
+  @ReturnsMutableCopy
+  public static ICommonsList <ReferenceType> getAllDSigReferences (@Nullable final Node aSoapDocument)
+  {
+    final ICommonsList <ReferenceType> ret = new CommonsArrayList <> ();
+    for (final Node aRefNode : getAllDSigReferenceNodes (aSoapDocument))
+    {
+      // Read XMLDsig Reference
+      final ReferenceType aRefObj = new DSigReferenceMarshaller ().read (aRefNode);
+      if (aRefObj == null)
+      {
+        LOGGER.error ("Failed to read the content of the 'Reference' node as an XMLDsig Reference object: " +
+                      aRefNode +
+                      " / " +
+                      XMLWriter.getNodeAsString (aRefNode));
+        LOGGER.error ("This will most likely end in invalid non-repudiation of receipt information!");
+      }
+      else
+      {
+        // Safe to remember
+        ret.add (aRefObj);
+      }
+    }
+    return ret;
   }
 }

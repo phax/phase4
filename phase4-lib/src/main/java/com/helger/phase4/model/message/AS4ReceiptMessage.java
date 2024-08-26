@@ -26,22 +26,14 @@ import org.w3c.dom.Node;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.phase4.CAS4;
-import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.ebms3header.MessagePartNRInformation;
 import com.helger.phase4.ebms3header.NonRepudiationInformation;
-import com.helger.phase4.marshaller.DSigReferenceMarshaller;
 import com.helger.phase4.marshaller.NonRepudiationInformationMarshaller;
 import com.helger.phase4.model.ESoapVersion;
-import com.helger.xml.ChildElementIterator;
-import com.helger.xml.XMLHelper;
-import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.xmldsig.ReferenceType;
 
 /**
@@ -76,83 +68,6 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
   }
 
   /**
-   * Extract all "ds:Reference" nodes from the passed SOAP document. This method
-   * search ins
-   * "{soapDocument}/Envelop/Header/Security/Signature/SignedInfo".<br>
-   * Note: use <code> XMLDSigReaderBuilder.dsigReference ().read (aRef)</code>
-   * to read the content
-   *
-   * @param aSoapDocument
-   *        The SOAP document to search in. May be <code>null</code>.
-   * @return A non-<code>null</code> but maybe empty list of Reference nodes.
-   * @see #getAllDSigReferences(Node)
-   */
-  @Nonnull
-  @ReturnsMutableCopy
-  public static ICommonsList <Node> getAllDSigReferenceNodes (@Nullable final Node aSoapDocument)
-  {
-    final ICommonsList <Node> aDSRefs = new CommonsArrayList <> ();
-    Node aNext = XMLHelper.getFirstChildElementOfName (aSoapDocument, "Envelope");
-    if (aNext != null)
-    {
-      aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
-      if (aNext != null)
-      {
-        aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.WSSE_NS, "Security");
-        if (aNext != null)
-        {
-          aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "Signature");
-          if (aNext != null)
-          {
-            aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "SignedInfo");
-            if (aNext != null)
-            {
-              new ChildElementIterator (aNext).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (CAS4.DS_NS,
-                                                                                                          "Reference"),
-                                                        aDSRefs::add);
-            }
-          }
-        }
-      }
-    }
-    return aDSRefs;
-  }
-
-  /**
-   * This is the typed version of {@link #getAllDSigReferenceNodes(Node)}
-   *
-   * @param aSoapDocument
-   *        The SOAP document to search in. May be <code>null</code>.
-   * @return A non-<code>null</code> but maybe empty list of
-   *         {@link ReferenceType} object.
-   */
-  @Nonnull
-  @ReturnsMutableCopy
-  public static ICommonsList <ReferenceType> getAllDSigReferences (@Nullable final Node aSoapDocument)
-  {
-    final ICommonsList <ReferenceType> ret = new CommonsArrayList <> ();
-    for (final Node aRefNode : getAllDSigReferenceNodes (aSoapDocument))
-    {
-      // Read XMLDsig Reference
-      final ReferenceType aRefObj = new DSigReferenceMarshaller ().read (aRefNode);
-      if (aRefObj == null)
-      {
-        LOGGER.error ("Failed to read the content of the 'Reference' node as an XMLDsig Reference object: " +
-                      aRefNode +
-                      " / " +
-                      XMLWriter.getNodeAsString (aRefNode));
-        LOGGER.error ("This will most likely end in invalid non-repudiation of receipt information!");
-      }
-      else
-      {
-        // Safe to remember
-        ret.add (aRefObj);
-      }
-    }
-    return ret;
-  }
-
-  /**
    * This method creates a receipt message.
    *
    * @param eSoapVersion
@@ -177,19 +92,16 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
                                           final boolean bShouldUseNonRepudiation)
   {
     // Only for signed messages
-    final ICommonsList <ReferenceType> aDSRefs = getAllDSigReferences (aSoapDocument);
+    final ICommonsList <ReferenceType> aDSRefs = MessageHelperMethods.getAllDSigReferences (aSoapDocument);
 
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
     // Message Info
     {
       // Always use "now" as date time
-      final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
-                                                                                              aEbms3UserMessageToRespond !=
-                                                                                                          null ? aEbms3UserMessageToRespond.getMessageInfo ()
-                                                                                                                                           .getMessageId ()
-                                                                                                               : null);
-      aSignalMessage.setMessageInfo (aEbms3MessageInfo);
+      final String sRefToMsgID = aEbms3UserMessageToRespond != null ? aEbms3UserMessageToRespond.getMessageInfo ()
+                                                                                                .getMessageId () : null;
+      aSignalMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo (sMessageID, sRefToMsgID));
     }
 
     final Ebms3Receipt aEbms3Receipt = new Ebms3Receipt ();
@@ -204,11 +116,11 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
         aNonRepudiationInformation.addMessagePartNRInformation (aMessagePartNRInformation);
       }
 
-      final Element aElement = new NonRepudiationInformationMarshaller ().getAsElement (aNonRepudiationInformation);
-      if (aElement == null)
+      final Element aNRIElement = new NonRepudiationInformationMarshaller ().getAsElement (aNonRepudiationInformation);
+      if (aNRIElement == null)
         LOGGER.error ("Failed to serialize NonRepudiationInformation object");
       else
-        aEbms3Receipt.addAny (aElement);
+        aEbms3Receipt.addAny (aNRIElement);
     }
     else
     {

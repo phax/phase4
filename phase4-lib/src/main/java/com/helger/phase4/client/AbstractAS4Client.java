@@ -518,7 +518,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     final String sMessageID = createMessageID ();
     final AS4ClientBuiltMessage aBuiltMsg = buildMessage (sMessageID, aCallback);
     HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
-    HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getCustomHeaders ();
+    HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getAllCustomHttpHeaders ();
     if (false)
     {
       // Test custom header only

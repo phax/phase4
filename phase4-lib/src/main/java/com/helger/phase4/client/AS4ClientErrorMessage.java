@@ -41,6 +41,7 @@ import com.helger.phase4.model.message.AS4ErrorMessage;
 import com.helger.phase4.model.message.EAS4MessageType;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.xsds.xmldsig.ReferenceType;
 
 /**
  * AS4 client for {@link AS4ErrorMessage} objects.
@@ -112,37 +113,43 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
     if (aCallback != null)
       aCallback.onAS4Message (aErrorMsg);
 
-    final Document aPureDoc = aErrorMsg.getAsSoapDocument ();
+    final Document aPureSoapDoc = aErrorMsg.getAsSoapDocument ();
 
     if (aCallback != null)
-      aCallback.onSoapDocument (aPureDoc);
+      aCallback.onSoapDocument (aPureSoapDoc);
 
     final Document aDoc;
+    ICommonsList <ReferenceType> aCreatedDSReferences = null;
     if (m_bErrorShouldBeSigned && signingParams ().isSigningEnabled ())
     {
       final IAS4CryptoFactory aCryptoFactorySign = internalGetCryptoFactorySign ();
 
       final boolean bMustUnderstand = true;
-      final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
-                                                                 aPureDoc,
-                                                                 getSoapVersion (),
-                                                                 aErrorMsg.getMessagingID (),
-                                                                 null,
-                                                                 getAS4ResourceHelper (),
-                                                                 bMustUnderstand,
-                                                                 signingParams ().getClone ());
+      final Document aSignedSoapDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
+                                                                     aPureSoapDoc,
+                                                                     getSoapVersion (),
+                                                                     aErrorMsg.getMessagingID (),
+                                                                     null,
+                                                                     getAS4ResourceHelper (),
+                                                                     bMustUnderstand,
+                                                                     signingParams ().getClone ());
+
+      // Extract the created references
+      aCreatedDSReferences = MessageHelperMethods.getAllDSigReferences (aSignedSoapDoc);
 
       if (aCallback != null)
-        aCallback.onSignedSoapDocument (aSignedDoc);
+        aCallback.onSignedSoapDocument (aSignedSoapDoc);
 
-      aDoc = aSignedDoc;
+      aDoc = aSignedSoapDoc;
     }
     else
     {
-      aDoc = aPureDoc;
+      aDoc = aPureSoapDoc;
     }
 
     // Wrap SOAP XML
-    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()));
+    return new AS4ClientBuiltMessage (sMessageID,
+                                      new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()),
+                                      aCreatedDSReferences);
   }
 }

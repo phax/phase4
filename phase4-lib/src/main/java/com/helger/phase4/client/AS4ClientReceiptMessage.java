@@ -25,13 +25,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.model.message.AS4ReceiptMessage;
 import com.helger.phase4.model.message.EAS4MessageType;
+import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.xsds.xmldsig.ReferenceType;
 
 /**
  * AS4 client for {@link AS4ReceiptMessage} objects.
@@ -155,37 +158,43 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
     if (aCallback != null)
       aCallback.onAS4Message (aReceiptMsg);
 
-    final Document aPureDoc = aReceiptMsg.getAsSoapDocument ();
+    final Document aPureSoapDoc = aReceiptMsg.getAsSoapDocument ();
 
     if (aCallback != null)
-      aCallback.onSoapDocument (aPureDoc);
+      aCallback.onSoapDocument (aPureSoapDoc);
 
     final Document aDoc;
+    ICommonsList <ReferenceType> aCreatedDSReferences = null;
     if (m_bReceiptShouldBeSigned && signingParams ().isSigningEnabled ())
     {
       final IAS4CryptoFactory aCryptoFactorySign = internalGetCryptoFactorySign ();
 
       final boolean bMustUnderstand = true;
-      final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
-                                                                 aPureDoc,
-                                                                 getSoapVersion (),
-                                                                 aReceiptMsg.getMessagingID (),
-                                                                 null,
-                                                                 getAS4ResourceHelper (),
-                                                                 bMustUnderstand,
-                                                                 signingParams ().getClone ());
+      final Document aSignedSoapDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
+                                                                     aPureSoapDoc,
+                                                                     getSoapVersion (),
+                                                                     aReceiptMsg.getMessagingID (),
+                                                                     null,
+                                                                     getAS4ResourceHelper (),
+                                                                     bMustUnderstand,
+                                                                     signingParams ().getClone ());
+
+      // Extract the created references
+      aCreatedDSReferences = MessageHelperMethods.getAllDSigReferences (aSignedSoapDoc);
 
       if (aCallback != null)
-        aCallback.onSignedSoapDocument (aSignedDoc);
+        aCallback.onSignedSoapDocument (aSignedSoapDoc);
 
-      aDoc = aSignedDoc;
+      aDoc = aSignedSoapDoc;
     }
     else
     {
-      aDoc = aPureDoc;
+      aDoc = aPureSoapDoc;
     }
 
     // Wrap SOAP XML
-    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()));
+    return new AS4ClientBuiltMessage (sMessageID,
+                                      new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()),
+                                      aCreatedDSReferences);
   }
 }

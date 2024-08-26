@@ -18,17 +18,20 @@ package com.helger.phase4.client;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.hc.core5.http.HttpEntity;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
+import com.helger.xsds.xmldsig.ReferenceType;
 
 import jakarta.mail.MessagingException;
 
@@ -37,25 +40,32 @@ import jakarta.mail.MessagingException;
  *
  * @author Philip Helger
  */
+@NotThreadSafe
 public final class AS4ClientBuiltMessage
 {
   private final String m_sMessageID;
   private final HttpEntity m_aHttpEntity;
-  private final HttpHeaderMap m_aCustomHeaders;
+  private final HttpHeaderMap m_aCustomHttpHeaders;
+  private final ICommonsList <ReferenceType> m_aDSReferences;
 
-  public AS4ClientBuiltMessage (@Nonnull @Nonempty final String sMessageID, @Nonnull final HttpXMLEntity aHttpEntity)
+  public AS4ClientBuiltMessage (@Nonnull @Nonempty final String sMessageID,
+                                @Nonnull final HttpXMLEntity aHttpEntity,
+                                @Nullable final ICommonsList <ReferenceType> aCreatedDSReferences)
   {
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
     m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
-    m_aCustomHeaders = null;
+    m_aCustomHttpHeaders = null;
+    m_aDSReferences = aCreatedDSReferences;
   }
 
   public AS4ClientBuiltMessage (@Nonnull @Nonempty final String sMessageID,
-                                @Nonnull final HttpMimeMessageEntity aHttpEntity) throws MessagingException
+                                @Nonnull final HttpMimeMessageEntity aHttpEntity,
+                                @Nullable final ICommonsList <ReferenceType> aCreatedDSReferences) throws MessagingException
   {
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
     m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
-    m_aCustomHeaders = AS4MimeMessageHelper.getAndRemoveAllHeaders (aHttpEntity.getMimeMessage ());
+    m_aCustomHttpHeaders = AS4MimeMessageHelper.getAndRemoveAllHeaders (aHttpEntity.getMimeMessage ());
+    m_aDSReferences = aCreatedDSReferences;
   }
 
   @Nonnull
@@ -78,9 +88,26 @@ public final class AS4ClientBuiltMessage
 
   @Nullable
   @ReturnsMutableCopy
-  public HttpHeaderMap getCustomHeaders ()
+  public HttpHeaderMap getAllCustomHttpHeaders ()
   {
-    return m_aCustomHeaders == null ? null : m_aCustomHeaders.getClone ();
+    return m_aCustomHttpHeaders == null ? null : m_aCustomHttpHeaders.getClone ();
+  }
+
+  public boolean hasCustomHttpHeaders ()
+  {
+    return m_aCustomHttpHeaders != null && m_aCustomHttpHeaders.isNotEmpty ();
+  }
+
+  @Nullable
+  @ReturnsMutableCopy
+  public ICommonsList <ReferenceType> getAllDSReferences ()
+  {
+    return m_aDSReferences == null ? null : m_aDSReferences.getClone ();
+  }
+
+  public boolean hasDSReferences ()
+  {
+    return m_aDSReferences != null && m_aDSReferences.isNotEmpty ();
   }
 
   @Override
@@ -88,7 +115,8 @@ public final class AS4ClientBuiltMessage
   {
     return new ToStringGenerator (this).append ("MessageID", m_sMessageID)
                                        .append ("HttpEntity", m_aHttpEntity)
-                                       .appendIfNotNull ("CustomHeaders", m_aCustomHeaders)
+                                       .appendIfNotNull ("CustomHttpHeaders", m_aCustomHttpHeaders)
+                                       .appendIfNotNull ("DSReferences", m_aDSReferences)
                                        .getToString ();
   }
 }

@@ -56,6 +56,7 @@ public final class AS4Signer
 {
   static final String ENCRYPTION_MODE_CONTENT = "Content";
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4Signer.class);
+  private static final String CID_ATTACHMENTS = MessageHelperMethods.PREFIX_CID + "Attachments";
 
   private AS4Signer ()
   {}
@@ -118,6 +119,7 @@ public final class AS4Signer
     aBuilder.getParts ().add (new WSEncryptionPart (sMessagingID, ENCRYPTION_MODE_CONTENT));
 
     // Sign the SOAP body
+    // Same element name for SOAP 1.1 and SOAP 1.2
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSoapVersion.getNamespaceURI (), ENCRYPTION_MODE_CONTENT));
 
     if (CollectionHelper.isNotEmpty (aAttachments))
@@ -125,8 +127,7 @@ public final class AS4Signer
       // Modify builder for attachments
 
       // "cid:Attachments" is a predefined ID used inside WSSecSignatureBase
-      aBuilder.getParts ()
-              .add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", ENCRYPTION_MODE_CONTENT));
+      aBuilder.getParts ().add (new WSEncryptionPart (CID_ATTACHMENTS, ENCRYPTION_MODE_CONTENT));
 
       final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                             aResHelper);

@@ -57,6 +57,7 @@ import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
+import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.EAS4MessageType;
 import com.helger.phase4.model.message.MessageHelperMethods;
@@ -64,6 +65,7 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.write.XMLWriter;
+import com.helger.xsds.xmldsig.ReferenceType;
 
 import jakarta.mail.MessagingException;
 
@@ -687,6 +689,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     final boolean bEncrypt = cryptParams ().isCryptEnabled (LOGGER::warn);
     final boolean bSoapBoayPayloadPresent = m_aSoapBodyPayload != null;
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
+    final ESoapVersion eSoapVersion = getSoapVersion ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             getRefToMessageID (),
@@ -715,26 +718,27 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
                                                            null,
-                                                           getSoapVersion ()).setMustUnderstand (true);
+                                                           eSoapVersion).setMustUnderstand (true);
 
     if (aCallback != null)
       aCallback.onAS4Message (aUserMsg);
 
-    final Document aPureDoc = aUserMsg.getAsSoapDocument (m_aSoapBodyPayload);
+    final Document aPureSoapDoc = aUserMsg.getAsSoapDocument (m_aSoapBodyPayload);
 
     if (aCallback != null)
-      aCallback.onSoapDocument (aPureDoc);
+      aCallback.onSoapDocument (aPureSoapDoc);
 
     // 1. compress
     // Is done when the attachments are added
 
     // 2. sign and/or encrypt
-    Document aDoc = aPureDoc;
+    Document aResultSoapDoc = aPureSoapDoc;
     AS4MimeMessage aMimeMsg = null;
+    ICommonsList <ReferenceType> aCreatedDSReferences = null;
     if (bSign || bEncrypt)
     {
       AS4HttpDebug.debug ( () -> "Unsigned/unencrypted UserMessage:\n" +
-                                 XMLWriter.getNodeAsString (aPureDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
+                                 XMLWriter.getNodeAsString (aPureSoapDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
 
       // 2a. sign
       if (bSign)
@@ -742,21 +746,25 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         final IAS4CryptoFactory aCryptoFactorySign = internalGetCryptoFactorySign ();
 
         final boolean bMustUnderstand = true;
-        final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
-                                                                   aDoc,
-                                                                   getSoapVersion (),
-                                                                   aUserMsg.getMessagingID (),
-                                                                   m_aAttachments,
-                                                                   getAS4ResourceHelper (),
-                                                                   bMustUnderstand,
-                                                                   signingParams ().getClone ());
-        aDoc = aSignedDoc;
+        final Document aSignedSoapDoc = AS4Signer.createSignedMessage (aCryptoFactorySign,
+                                                                       aResultSoapDoc,
+                                                                       eSoapVersion,
+                                                                       aUserMsg.getMessagingID (),
+                                                                       m_aAttachments,
+                                                                       getAS4ResourceHelper (),
+                                                                       bMustUnderstand,
+                                                                       signingParams ().getClone ());
+        aResultSoapDoc = aSignedSoapDoc;
+
+        // Extract the created references
+        aCreatedDSReferences = MessageHelperMethods.getAllDSigReferences (aSignedSoapDoc);
 
         if (aCallback != null)
-          aCallback.onSignedSoapDocument (aSignedDoc);
+          aCallback.onSignedSoapDocument (aSignedSoapDoc);
 
         AS4HttpDebug.debug ( () -> "Signed UserMessage:\n" +
-                                   XMLWriter.getNodeAsString (aSignedDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
+                                   XMLWriter.getNodeAsString (aSignedSoapDoc,
+                                                              AS4HttpDebug.getDebugXMLWriterSettings ()));
       }
 
       // 2b. encrypt
@@ -769,8 +777,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         if (bAttachmentsPresent)
         {
           // Attachments are never empty
-          aMimeMsg = AS4Encryptor.encryptToMimeMessage (getSoapVersion (),
-                                                        aDoc,
+          aMimeMsg = AS4Encryptor.encryptToMimeMessage (eSoapVersion,
+                                                        aResultSoapDoc,
                                                         m_aAttachments,
                                                         aCryptoFactoryCrypt,
                                                         bMustUnderstand,
@@ -783,16 +791,16 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         else
           if (bSoapBoayPayloadPresent)
           {
-            final Document aEncryptedDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactoryCrypt,
-                                                                                getSoapVersion (),
-                                                                                aDoc,
-                                                                                bMustUnderstand,
-                                                                                cryptParams ().getClone ());
+            final Document aEncryptedSoapDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactoryCrypt,
+                                                                                    eSoapVersion,
+                                                                                    aResultSoapDoc,
+                                                                                    bMustUnderstand,
+                                                                                    cryptParams ().getClone ());
 
             if (aCallback != null)
-              aCallback.onEncryptedSoapDocument (aEncryptedDoc);
+              aCallback.onEncryptedSoapDocument (aEncryptedSoapDoc);
 
-            aDoc = aEncryptedDoc;
+            aResultSoapDoc = aEncryptedSoapDoc;
           }
           else
           {
@@ -804,22 +812,27 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
     if ((bAttachmentsPresent || m_bForceMimeMessage) && aMimeMsg == null)
     {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Enforcing the creation of a MIME message");
+
       // * not encrypted, not signed
       // * not encrypted, signed
       // * forced by flag
-      aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (getSoapVersion (), aDoc, m_aAttachments);
+      aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion, aResultSoapDoc, m_aAttachments);
     }
 
     final AS4ClientBuiltMessage ret;
     if (aMimeMsg != null)
     {
       // Wrap MIME message
-      ret = new AS4ClientBuiltMessage (sMessageID, HttpMimeMessageEntity.create (aMimeMsg));
+      ret = new AS4ClientBuiltMessage (sMessageID, HttpMimeMessageEntity.create (aMimeMsg), aCreatedDSReferences);
     }
     else
     {
       // Wrap SOAP XML
-      ret = new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()));
+      ret = new AS4ClientBuiltMessage (sMessageID,
+                                       new HttpXMLEntity (aResultSoapDoc, eSoapVersion.getMimeType ()),
+                                       aCreatedDSReferences);
     }
 
     LOGGER.info ("phase4 --- usermessage-building:end");

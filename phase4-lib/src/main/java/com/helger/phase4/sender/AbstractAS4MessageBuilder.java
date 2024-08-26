@@ -211,35 +211,6 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link IAS4CryptoFactory} for crypting. May be
-   *         <code>null</code>.
-   * @see #cryptoFactorySign()
-   * @since 2.2.0
-   */
-  @Nullable
-  public final IAS4CryptoFactory cryptoFactoryCrypt ()
-  {
-    return m_aCryptoFactoryCrypt;
-  }
-
-  /**
-   * Set the crypto factory to be used for signing and crypting. The default
-   * crypto factory is set in the constructor to
-   * {@link AS4CryptoFactoryProperties#getDefaultInstance()}.
-   *
-   * @param aCryptoFactory
-   *        The crypto factory to be used. May be <code>null</code>.
-   * @return this for chaining
-   * @see #cryptoFactorySign(IAS4CryptoFactory)
-   * @see #cryptoFactoryCrypt(IAS4CryptoFactory)
-   */
-  @Nonnull
-  public final IMPLTYPE cryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
-  {
-    return cryptoFactorySign (aCryptoFactory).cryptoFactoryCrypt (aCryptoFactory);
-  }
-
-  /**
    * Set the crypto factory to be used for signing. The default crypto factory
    * is set in the constructor to
    * {@link AS4CryptoFactoryProperties#getDefaultInstance()}.
@@ -257,6 +228,18 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * @return The currently set {@link IAS4CryptoFactory} for crypting. May be
+   *         <code>null</code>.
+   * @see #cryptoFactorySign()
+   * @since 2.2.0
+   */
+  @Nullable
+  public final IAS4CryptoFactory cryptoFactoryCrypt ()
+  {
+    return m_aCryptoFactoryCrypt;
+  }
+
+  /**
    * Set the crypto factory to be used for crypting. The default crypto factory
    * is set in the constructor to
    * {@link AS4CryptoFactoryProperties#getDefaultInstance()}.
@@ -271,6 +254,23 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {
     m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
     return thisAsT ();
+  }
+
+  /**
+   * Set the crypto factory to be used for signing and crypting. The default
+   * crypto factory is set in the constructor to
+   * {@link AS4CryptoFactoryProperties#getDefaultInstance()}.
+   *
+   * @param aCryptoFactory
+   *        The crypto factory to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @see #cryptoFactorySign(IAS4CryptoFactory)
+   * @see #cryptoFactoryCrypt(IAS4CryptoFactory)
+   */
+  @Nonnull
+  public final IMPLTYPE cryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
+  {
+    return cryptoFactorySign (aCryptoFactory).cryptoFactoryCrypt (aCryptoFactory);
   }
 
   /**
@@ -534,7 +534,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   @Nonnull
   public final IMPLTYPE incomingAttachmentFactory (@Nonnull final IAS4IncomingAttachmentFactory aIAF)
   {
-    ValueEnforcer.notNull (aIAF, "IAF");
+    ValueEnforcer.notNull (aIAF, "IncomingAttachmentFactory");
     m_aIAF = aIAF;
     return thisAsT ();
   }
@@ -735,6 +735,12 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     return ESuccess.SUCCESS;
   }
 
+  /**
+   * Check if all required fields of the builder are set.
+   *
+   * @return <code>true</code> if all required fields are set,
+   *         <code>false</code> if not.
+   */
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
   {
@@ -789,7 +795,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   /**
    * Internal method that is invoked after the required fields are checked but
    * before sending takes place. This is e.g. the perfect place to add custom
-   * message properties.
+   * message properties. This is called after {@link #isEveryRequiredFieldSet()}
    *
    * @throws Phase4Exception
    *         if something goes wrong
@@ -799,8 +805,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {}
 
   /**
-   * Synchronously send the AS4 message. This method may only be called by
-   * {@link #sendMessage()}
+   * Synchronously send the AS4 message. This method is called after
+   * {@link #customizeBeforeSending()}. This method may only be called by
+   * {@link #sendMessage()}.
    *
    * @throws Phase4Exception
    *         In case of any error
@@ -810,7 +817,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   /**
    * Internal method that is invoked after successful sending took place. This
    * can e.g. be used to fulfill reporting requirements etc. This method must
-   * not throw an exception!
+   * not throw an exception. This method is called after
+   * {@link #mainSendMessage()}.
    *
    * @since 2.2.2
    */
