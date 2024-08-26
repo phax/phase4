@@ -52,8 +52,8 @@ public abstract class AbstractAS4CryptoFactory implements IAS4CryptoFactory
     return KeyStoreHelper.loadPrivateKey (aKeyStore,
                                           "phase4 CryptoFactory KeyStore",
                                           sKeyAlias,
-                                          sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY
-                                                               : sKeyPassword.toCharArray ())
+                                          sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY : sKeyPassword
+                                                                                                            .toCharArray ())
                          .getKeyEntry ();
   }
 

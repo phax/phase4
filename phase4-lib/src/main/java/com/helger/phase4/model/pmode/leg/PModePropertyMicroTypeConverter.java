@@ -57,7 +57,8 @@ public class PModePropertyMicroTypeConverter extends AbstractPModeMicroTypeConve
     final String sName = aElement.getAttributeValue (ATTR_NAME);
     final String sDescription = aElement.getAttributeValue (ATTR_DESCRIPTION);
     final String sDataType = aElement.getAttributeValue (ATTR_DATA_TYPE);
-    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAttributeValueAsBool (ATTR_MANDATORY, PModeProperty.DEFAULT_MANDATORY));
+    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAttributeValueAsBool (ATTR_MANDATORY,
+                                                                                        PModeProperty.DEFAULT_MANDATORY));
 
     return new PModeProperty (sName, sDescription, sDataType, eMandatory);
   }

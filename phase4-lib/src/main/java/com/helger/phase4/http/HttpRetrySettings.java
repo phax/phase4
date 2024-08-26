@@ -146,7 +146,8 @@ public class HttpRetrySettings
   }
 
   @Nonnull
-  public static Duration getIncreased (@Nonnull final Duration aDuration, @Nonnull final BigDecimal aRetryIncreaseFactor)
+  public static Duration getIncreased (@Nonnull final Duration aDuration,
+                                       @Nonnull final BigDecimal aRetryIncreaseFactor)
   {
     if (MathHelper.isEQ0 (aRetryIncreaseFactor))
       return Duration.ZERO;

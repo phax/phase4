@@ -193,10 +193,8 @@ public class AS4RawResponseConsumerWriteToFile extends
                 // By default quoting is disabled
                 final boolean bQuoteIfNecessary = false;
                 final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
-                aOS.write ((sHeader +
-                            HttpHeaderMap.SEPARATOR_KEY_VALUE +
-                            sUnifiedValue +
-                            CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+                aOS.write ((sHeader + HttpHeaderMap.SEPARATOR_KEY_VALUE + sUnifiedValue + CHttp.EOL).getBytes (
+                                                                                                               CHttp.HTTP_CHARSET));
               }
             }
           }

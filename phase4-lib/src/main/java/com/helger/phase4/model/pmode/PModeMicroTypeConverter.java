@@ -53,14 +53,20 @@ public final class PModeMicroTypeConverter extends AbstractBusinessObjectMicroTy
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     setObjectFields (aValue, ret);
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getInitiator (), sNamespaceURI, ELEMENT_INITIATOR));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getResponder (), sNamespaceURI, ELEMENT_RESPONDER));
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getInitiator (),
+                                                               sNamespaceURI,
+                                                               ELEMENT_INITIATOR));
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getResponder (),
+                                                               sNamespaceURI,
+                                                               ELEMENT_RESPONDER));
     ret.setAttribute (ATTR_AGREEMENT, aValue.getAgreement ());
     ret.setAttribute (ATTR_MEP, aValue.getMEPID ());
     ret.setAttribute (ATTR_MEP_BINDING, aValue.getMEPBindingID ());
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg1 (), sNamespaceURI, ELEMENT_LEG1));
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg2 (), sNamespaceURI, ELEMENT_LEG2));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getPayloadService (), sNamespaceURI, ELEMENT_PAYLOADSERVICE));
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getPayloadService (),
+                                                               sNamespaceURI,
+                                                               ELEMENT_PAYLOADSERVICE));
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReceptionAwareness (),
                                                                sNamespaceURI,
                                                                ELEMENT_RECEPETIONAWARENESS));
@@ -70,8 +76,10 @@ public final class PModeMicroTypeConverter extends AbstractBusinessObjectMicroTy
   @Nonnull
   public PMode convertToNative (@Nonnull final IMicroElement aElement)
   {
-    final PModeParty aInitiator = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_INITIATOR), PModeParty.class);
-    final PModeParty aResponder = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_RESPONDER), PModeParty.class);
+    final PModeParty aInitiator = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_INITIATOR),
+                                                                      PModeParty.class);
+    final PModeParty aResponder = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_RESPONDER),
+                                                                      PModeParty.class);
 
     final String sAgreement = aElement.getAttributeValue (ATTR_AGREEMENT);
 
@@ -85,8 +93,10 @@ public final class PModeMicroTypeConverter extends AbstractBusinessObjectMicroTy
     if (eMEPBinding == null)
       throw new IllegalStateException ("Failed to resolve MEPBinding '" + sMEPBinding + "'");
 
-    final PModeLeg aLeg1 = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG1), PModeLeg.class);
-    final PModeLeg aLeg2 = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG2), PModeLeg.class);
+    final PModeLeg aLeg1 = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG1),
+                                                               PModeLeg.class);
+    final PModeLeg aLeg2 = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG2),
+                                                               PModeLeg.class);
 
     final PModePayloadService aPayloadService = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_PAYLOADSERVICE),
                                                                                     PModePayloadService.class);

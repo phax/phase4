@@ -68,7 +68,8 @@ public interface IAS4RawResponseConsumer
    * @since 0.13.0
    */
   @Nullable
-  static IAS4RawResponseConsumer and (@Nullable final IAS4RawResponseConsumer lhs, @Nullable final IAS4RawResponseConsumer rhs)
+  static IAS4RawResponseConsumer and (@Nullable final IAS4RawResponseConsumer lhs,
+                                      @Nullable final IAS4RawResponseConsumer rhs)
   {
     if (lhs == null)
       return rhs;

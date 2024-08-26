@@ -47,8 +47,7 @@ public class Soap12EnvelopeMarshaller extends GenericJAXBMarshaller <Soap12Envel
            XSDS,
            createSimpleJAXBElement (new QName (ESoapVersion.SOAP_12.getNamespaceURI (),
                                                "Envelope",
-                                               ESoapVersion.SOAP_12.getNamespacePrefix ()),
-                                    Soap12Envelope.class));
+                                               ESoapVersion.SOAP_12.getNamespacePrefix ()), Soap12Envelope.class));
     setNamespaceContext (Soap12NamespaceHandler.getInstance ());
   }
 }

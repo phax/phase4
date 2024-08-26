@@ -67,17 +67,23 @@ public final class AS4MicroTypeConverterRegistrar implements IMicroTypeConverter
     // Register all MicroTypeConverter
     aRegistry.registerMicroElementTypeConverter (PModeParty.class, new PModePartyMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PMode.class, new PModeMicroTypeConverter ());
-    aRegistry.registerMicroElementTypeConverter (PModeLegBusinessInformation.class, new PModeLegBusinessInformationMicroTypeConverter ());
-    aRegistry.registerMicroElementTypeConverter (PModeLegErrorHandling.class, new PModeLegErrorHandlingMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeLegBusinessInformation.class,
+                                                 new PModeLegBusinessInformationMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeLegErrorHandling.class,
+                                                 new PModeLegErrorHandlingMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeLeg.class, new PModeLegMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeLegProtocol.class, new PModeLegProtocolMicroTypeConverter ());
-    aRegistry.registerMicroElementTypeConverter (PModeLegReliability.class, new PModeLegReliabilityMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeLegReliability.class,
+                                                 new PModeLegReliabilityMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeLegSecurity.class, new PModeLegSecurityMicroTypeConverter ());
-    aRegistry.registerMicroElementTypeConverter (PModePayloadProfile.class, new PModePayloadProfileMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModePayloadProfile.class,
+                                                 new PModePayloadProfileMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeProperty.class, new PModePropertyMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeAddressList.class, new PModeAddressListMicroTypeConverter ());
-    aRegistry.registerMicroElementTypeConverter (PModePayloadService.class, new PModePayloadServiceMicroTypeConverter ());
-    aRegistry.registerMicroElementTypeConverter (PModeReceptionAwareness.class, new PModeReceptionAwarenessMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModePayloadService.class,
+                                                 new PModePayloadServiceMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeReceptionAwareness.class,
+                                                 new PModeReceptionAwarenessMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (MPC.class, new MPCMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (AS4DuplicateItem.class, new AS4DuplicateItemMicroTypeConverter ());
   }

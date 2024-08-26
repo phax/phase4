@@ -42,7 +42,9 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
   private final String m_sProfileID;
   private final String m_sPModeID;
 
-  public AS4DuplicateItem (@Nonnull @Nonempty final String sMessageID, @Nullable final String sProfileID, @Nullable final String sPModeID)
+  public AS4DuplicateItem (@Nonnull @Nonempty final String sMessageID,
+                           @Nullable final String sProfileID,
+                           @Nullable final String sPModeID)
   {
     this (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), sMessageID, sProfileID, sPModeID);
   }

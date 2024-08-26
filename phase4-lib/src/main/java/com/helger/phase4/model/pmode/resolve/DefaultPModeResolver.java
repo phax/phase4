@@ -100,12 +100,12 @@ public class DefaultPModeResolver implements IPModeResolver
 
   @Nullable
   public IPMode findPMode (@Nullable final String sPModeID,
-                              @Nonnull final String sService,
-                              @Nonnull final String sAction,
-                              @Nonnull @Nonempty final String sInitiatorID,
-                              @Nonnull @Nonempty final String sResponderID,
-                              @Nullable final String sAgreementRef,
-                              @Nullable final String sAddress)
+                           @Nonnull final String sService,
+                           @Nonnull final String sAction,
+                           @Nonnull @Nonempty final String sInitiatorID,
+                           @Nonnull @Nonempty final String sResponderID,
+                           @Nullable final String sAgreementRef,
+                           @Nullable final String sAddress)
   {
     final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     IPMode ret = null;

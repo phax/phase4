@@ -89,7 +89,8 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
                                                        PModeLegReliability.DEFAULT_AT_MOST_ONCE_CONTRACT);
     final ETriState eInOrderContract = getTriState (aElement.getAttributeValue (ATTR_IN_ORDER_CONTRACT),
                                                     PModeLegReliability.DEFAULT_IN_ORDER_CONTACT);
-    final ETriState eStartGroup = getTriState (aElement.getAttributeValue (ATTR_START_GROUP), PModeLegReliability.DEFAULT_START_GROUP);
+    final ETriState eStartGroup = getTriState (aElement.getAttributeValue (ATTR_START_GROUP),
+                                               PModeLegReliability.DEFAULT_START_GROUP);
     final ICommonsList <String> aCorrelationStrings = new CommonsArrayList <> ();
     for (final IMicroElement aCorrelationElement : aElement.getAllChildElements (ELEMENT_CORRELATION))
     {

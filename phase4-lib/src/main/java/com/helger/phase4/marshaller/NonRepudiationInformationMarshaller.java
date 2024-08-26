@@ -49,8 +49,7 @@ public class NonRepudiationInformationMarshaller extends GenericJAXBMarshaller <
     super (NonRepudiationInformation.class,
            XSDS,
            createSimpleJAXBElement (new QName ("http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0",
-                                               "NonRepudiationInformation"),
-                                    NonRepudiationInformation.class));
+                                               "NonRepudiationInformation"), NonRepudiationInformation.class));
     setNamespaceContext (Ebms3NamespaceHandler.getInstance ());
   }
 }

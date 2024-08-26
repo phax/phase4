@@ -34,7 +34,7 @@ import com.helger.commons.wrapper.Wrapper;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
- * This class holds the global stream dumper.
+ * This class holds the global stream dumpers.
  *
  * @author Philip Helger
  * @since 0.9.0

@@ -164,7 +164,8 @@ public enum ESoapVersion
   }
 
   @Nullable
-  public static ESoapVersion getFromVersionOrDefault (@Nullable final String sVersion, @Nullable final ESoapVersion eDefault)
+  public static ESoapVersion getFromVersionOrDefault (@Nullable final String sVersion,
+                                                      @Nullable final ESoapVersion eDefault)
   {
     if (StringHelper.hasNoText (sVersion))
       return eDefault;

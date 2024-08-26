@@ -57,10 +57,13 @@ public final class PModeLegBusinessInformationJsonConverter
     if (aValue.hasAction ())
       ret.add (ACTION, aValue.getAction ());
     if (aValue.properties ().isNotEmpty ())
-      ret.addJson (PROPERTIES, new JsonArray ().addAllMapped (aValue.properties ().values (), PModePropertyJsonConverter::convertToJson));
+      ret.addJson (PROPERTIES,
+                   new JsonArray ().addAllMapped (aValue.properties ().values (),
+                                                  PModePropertyJsonConverter::convertToJson));
     if (aValue.payloadProfiles ().isNotEmpty ())
       ret.addJson (PAYLOAD_PROFILE,
-                   new JsonArray ().addAllMapped (aValue.payloadProfiles ().values (), PModePayloadProfileJsonConverter::convertToJson));
+                   new JsonArray ().addAllMapped (aValue.payloadProfiles ().values (),
+                                                  PModePayloadProfileJsonConverter::convertToJson));
     if (aValue.hasPayloadProfileMaxKB ())
       ret.add (PAYLOAD_PROFILE_MAX_KB, aValue.getPayloadProfileMaxKB ().longValue ());
     if (aValue.hasMPCID ())
@@ -96,6 +99,12 @@ public final class PModeLegBusinessInformationJsonConverter
     final Long aPayloadProfileMaxKB = aElement.getAsLongObj (PAYLOAD_PROFILE_MAX_KB);
     final String sMPCID = aElement.getAsString (MPCID);
 
-    return new PModeLegBusinessInformation (sService, sServiceType, sAction, aProperties, aPayloadProfiles, aPayloadProfileMaxKB, sMPCID);
+    return new PModeLegBusinessInformation (sService,
+                                            sServiceType,
+                                            sAction,
+                                            aProperties,
+                                            aPayloadProfiles,
+                                            aPayloadProfileMaxKB,
+                                            sMPCID);
   }
 }

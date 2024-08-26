@@ -185,9 +185,10 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     {
       // Always use "now" as date time
       final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
-                                                                                              aEbms3UserMessageToRespond != null ? aEbms3UserMessageToRespond.getMessageInfo ()
-                                                                                                                                                             .getMessageId ()
-                                                                                                                                 : null);
+                                                                                              aEbms3UserMessageToRespond !=
+                                                                                                          null ? aEbms3UserMessageToRespond.getMessageInfo ()
+                                                                                                                                           .getMessageId ()
+                                                                                                               : null);
       aSignalMessage.setMessageInfo (aEbms3MessageInfo);
     }
 

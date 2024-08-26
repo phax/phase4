@@ -52,7 +52,9 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   {}
 
   @Nonnull
-  public EContinue registerAndCheck (@Nullable final String sMessageID, @Nullable final String sProfileID, @Nullable final String sPModeID)
+  public EContinue registerAndCheck (@Nullable final String sMessageID,
+                                     @Nullable final String sProfileID,
+                                     @Nullable final String sPModeID)
   {
     if (StringHelper.hasNoText (sMessageID))
     {
@@ -91,7 +93,8 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   {
     // Get all message IDs to be removed
     final ICommonsList <String> aEvictItems = new CommonsArrayList <> ();
-    m_aRWLock.readLocked ( () -> m_aMap.forEachValue (x -> x.getDateTime ().isBefore (aRefDT), x -> aEvictItems.add (x.getMessageID ())));
+    m_aRWLock.readLocked ( () -> m_aMap.forEachValue (x -> x.getDateTime ().isBefore (aRefDT),
+                                                      x -> aEvictItems.add (x.getMessageID ())));
     if (aEvictItems.isNotEmpty ())
     {
       // Bulk erase all
