@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -50,7 +51,7 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
-import com.helger.phase4.incoming.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
@@ -217,14 +218,14 @@ public final class AS4DumpReader
     }
 
     try (final WebScoped w = new WebScoped ();
-        final AS4RequestHandler rh = new AS4RequestHandler (aCryptoFactorySign,
-                                                            aCryptoFactoryCrypt,
-                                                            DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-                                                            IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
-                                                            AS4IncomingSecurityConfiguration.createDefaultInstance (),
-                                                            AS4IncomingMessageMetadata.createForRequest ()))
+         final AS4RequestHandler rh = new AS4RequestHandler (aCryptoFactorySign,
+                                                             aCryptoFactoryCrypt,
+                                                             DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
+                                                             IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
+                                                             AS4IncomingSecurityConfiguration.createDefaultInstance (),
+                                                             AS4IncomingMessageMetadata.createForRequest ()))
     {
-      final IAS4ServletMessageProcessorSPI aSPI = new IAS4ServletMessageProcessorSPI ()
+      final IAS4IncomingMessageProcessorSPI aSPI = new IAS4IncomingMessageProcessorSPI ()
       {
         public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                                 @Nonnull final HttpHeaderMap aHttpHeaders,
@@ -277,6 +278,13 @@ public final class AS4DumpReader
           LOGGER.error ("Unexpected signal msg. Can only handle user messages.");
           return AS4SignalMessageProcessorResult.createSuccess ();
         }
+
+        public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                               @Nonnull final IAS4MessageState aState,
+                                               @Nonnull @Nonempty final String sResponseMessageID,
+                                               @Nullable final byte [] aResponseBytes,
+                                               final boolean bResponsePayloadIsAvailable)
+        {}
       };
       rh.setProcessorSupplier ( () -> new CommonsArrayList <> (aSPI));
       rh.handleRequest (new NonBlockingByteArrayInputStream (aAS4InData, nHttpEnd, aAS4InData.length - nHttpEnd),

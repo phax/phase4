@@ -28,10 +28,10 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.lang.ServiceLoaderHelper;
-import com.helger.phase4.incoming.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
 
 /**
- * This class manages all the {@link IAS4ServletMessageProcessorSPI} SPI
+ * This class manages all the {@link IAS4IncomingMessageProcessorSPI} SPI
  * implementations.
  *
  * @author Philip Helger
@@ -43,17 +43,17 @@ public final class AS4IncomingMessageProcessorManager
 
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   @GuardedBy ("RW_LOCK")
-  private static final ICommonsList <IAS4ServletMessageProcessorSPI> PROCESSORS = new CommonsArrayList <> ();
+  private static final ICommonsList <IAS4IncomingMessageProcessorSPI> PROCESSORS = new CommonsArrayList <> ();
 
   private AS4IncomingMessageProcessorManager ()
   {}
 
   /**
-   * Reload all SPI implementations of {@link IAS4ServletMessageProcessorSPI}.
+   * Reload all SPI implementations of {@link IAS4IncomingMessageProcessorSPI}.
    */
   public static void reinitProcessors ()
   {
-    final ICommonsList <IAS4ServletMessageProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4ServletMessageProcessorSPI.class);
+    final ICommonsList <IAS4IncomingMessageProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4IncomingMessageProcessorSPI.class);
     if (aProcessorSPIs.isEmpty ())
       LOGGER.warn ("No AS4 message processor is registered. All incoming messages will be discarded!");
     else
@@ -75,7 +75,7 @@ public final class AS4IncomingMessageProcessorManager
    */
   @Nonnull
   @ReturnsMutableCopy
-  public static ICommonsList <IAS4ServletMessageProcessorSPI> getAllProcessors ()
+  public static ICommonsList <IAS4IncomingMessageProcessorSPI> getAllProcessors ()
   {
     return RW_LOCK.readLockedGet (PROCESSORS::getClone);
   }

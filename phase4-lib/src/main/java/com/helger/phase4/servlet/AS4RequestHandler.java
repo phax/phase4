@@ -83,7 +83,7 @@ import com.helger.phase4.incoming.mgr.AS4IncomingMessageProcessorManager;
 import com.helger.phase4.incoming.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
-import com.helger.phase4.incoming.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
@@ -376,7 +376,7 @@ public class AS4RequestHandler implements AutoCloseable
   private ISoapProcessingFinalizedCallback m_aSoapProcessingFinalizedCB;
 
   /** By default get all message processors from the global SPI registry */
-  private Supplier <? extends ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4IncomingMessageProcessorManager::getAllProcessors;
+  private Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> m_aProcessorSupplier = AS4IncomingMessageProcessorManager::getAllProcessors;
   private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
 
   @ChangePhase4V3 ("See https://github.com/phax/phase4/discussions/265")
@@ -545,7 +545,7 @@ public class AS4RequestHandler implements AutoCloseable
    *         {@link AS4IncomingMessageProcessorManager#getAllProcessors()}.
    */
   @Nonnull
-  public final Supplier <? extends ICommonsList <IAS4ServletMessageProcessorSPI>> getProcessorSupplier ()
+  public final Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> getProcessorSupplier ()
   {
     return m_aProcessorSupplier;
   }
@@ -558,7 +558,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    */
   @Nonnull
-  public final AS4RequestHandler setProcessorSupplier (@Nonnull final Supplier <? extends ICommonsList <IAS4ServletMessageProcessorSPI>> aProcessorSupplier)
+  public final AS4RequestHandler setProcessorSupplier (@Nonnull final Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> aProcessorSupplier)
   {
     ValueEnforcer.notNull (aProcessorSupplier, "ProcessorSupplier");
     m_aProcessorSupplier = aProcessorSupplier;
@@ -574,9 +574,9 @@ public class AS4RequestHandler implements AutoCloseable
    * @since 2.8.2
    */
   @Nonnull
-  public final <T extends IAS4ServletMessageProcessorSPI> T getProcessorOfType (@Nonnull final Class <T> aTargetClass)
+  public final <T extends IAS4IncomingMessageProcessorSPI> T getProcessorOfType (@Nonnull final Class <T> aTargetClass)
   {
-    for (final IAS4ServletMessageProcessorSPI aEntry : m_aProcessorSupplier.get ())
+    for (final IAS4IncomingMessageProcessorSPI aEntry : m_aProcessorSupplier.get ())
       if (aTargetClass.isInstance (aEntry))
         return aTargetClass.cast (aEntry);
     return null;
@@ -689,7 +689,7 @@ public class AS4RequestHandler implements AutoCloseable
                                              : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
 
     // Get all processors
-    final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
+    final ICommonsList <IAS4IncomingMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Trying to invoke the following " +
@@ -703,7 +703,7 @@ public class AS4RequestHandler implements AutoCloseable
       LOGGER.error ("No IAS4ServletMessageProcessorSPI is available to process an incoming message");
 
     // Invoke ALL non-null SPIs
-    for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
+    for (final IAS4IncomingMessageProcessorSPI aProcessor : aAllProcessors)
       if (aProcessor != null)
         try
         {
@@ -934,7 +934,7 @@ public class AS4RequestHandler implements AutoCloseable
       LOGGER.info ("No response factory present");
 
     // Get all processors
-    final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
+    final ICommonsList <IAS4IncomingMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Trying to invoke the following " +
@@ -946,7 +946,7 @@ public class AS4RequestHandler implements AutoCloseable
                     ": " +
                     aAllProcessors);
 
-    for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
+    for (final IAS4IncomingMessageProcessorSPI aProcessor : aAllProcessors)
       if (aProcessor != null)
         try
         {

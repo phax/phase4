@@ -22,18 +22,17 @@ import javax.annotation.Nullable;
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Implement this SPI interface to handle incoming pull request appropriately
- * and give the servlet the right PMode back.
+ * and give the servlet the right PMode back.<br/>
+ * Name before v3: <code>IAS4ServletPullRequestProcessorSPI</code>
  *
  * @author bayerlma
  * @author Philip Helger
  */
 @IsSPIInterface
-@ChangePhase4V3 ("Rename to 'IAS4IncomingPullRequestProcessorSPI'; move to package 'incoming.spi'")
-public interface IAS4ServletPullRequestProcessorSPI
+public interface IAS4IncomingPullRequestProcessorSPI
 {
   /**
    * Process incoming AS4 signal message and determine the PMode to be used.

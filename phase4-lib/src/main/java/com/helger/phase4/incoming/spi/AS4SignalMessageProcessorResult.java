@@ -18,13 +18,13 @@ package com.helger.phase4.incoming.spi;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This class represents the result of a message processor SPI
@@ -33,7 +33,7 @@ import com.helger.phase4.v3.ChangePhase4V3;
  *
  * @author Philip Helger
  */
-@ChangePhase4V3 ("move to package 'incoming'")
+@Immutable
 public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
 {
   private final Ebms3UserMessage m_aPullReturnUserMessage;

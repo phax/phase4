@@ -58,7 +58,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.incoming.mgr.AS4IncomingPullRequestProcessorManager;
-import com.helger.phase4.incoming.spi.IAS4ServletPullRequestProcessorSPI;
+import com.helger.phase4.incoming.spi.IAS4IncomingPullRequestProcessorSPI;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -651,7 +651,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         }
 
         // Create SPI which returns a PMode
-        for (final IAS4ServletPullRequestProcessorSPI aProcessor : AS4IncomingPullRequestProcessorManager.getAllProcessors ())
+        for (final IAS4IncomingPullRequestProcessorSPI aProcessor : AS4IncomingPullRequestProcessorManager.getAllProcessors ())
         {
           aPMode = aProcessor.findPMode (aSignalMessage);
           if (aPMode != null)

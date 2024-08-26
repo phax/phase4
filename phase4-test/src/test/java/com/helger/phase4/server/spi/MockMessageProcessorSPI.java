@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Node;
 
 import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -41,7 +42,7 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
-import com.helger.phase4.incoming.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.EMEPBinding;
@@ -51,12 +52,12 @@ import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Test implementation of {@link IAS4ServletMessageProcessorSPI}
+ * Test implementation of {@link IAS4IncomingMessageProcessorSPI}
  *
  * @author Philip Helger
  */
 @IsSPIImplementation
-public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
+public class MockMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
 {
   public static final String MPC_FAILURE = "failure";
   public static final String MPC_EMPTY = "empty";
@@ -159,4 +160,11 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 
     return AS4SignalMessageProcessorResult.createSuccess (null, null, aUserMessage);
   }
+
+  public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                         @Nonnull final IAS4MessageState aState,
+                                         @Nonnull @Nonempty final String sResponseMessageID,
+                                         @Nullable final byte [] aResponseBytes,
+                                         final boolean bResponsePayloadIsAvailable)
+  {}
 }

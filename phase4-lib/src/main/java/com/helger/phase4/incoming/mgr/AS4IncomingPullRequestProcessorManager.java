@@ -28,10 +28,10 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.lang.ServiceLoaderHelper;
-import com.helger.phase4.incoming.spi.IAS4ServletPullRequestProcessorSPI;
+import com.helger.phase4.incoming.spi.IAS4IncomingPullRequestProcessorSPI;
 
 /**
- * This class manages all the {@link IAS4ServletPullRequestProcessorSPI} SPI
+ * This class manages all the {@link IAS4IncomingPullRequestProcessorSPI} SPI
  * implementations.
  *
  * @author bayerlma
@@ -44,18 +44,18 @@ public final class AS4IncomingPullRequestProcessorManager
 
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   @GuardedBy ("RW_LOCK")
-  private static final ICommonsList <IAS4ServletPullRequestProcessorSPI> PROCESSORS = new CommonsArrayList <> ();
+  private static final ICommonsList <IAS4IncomingPullRequestProcessorSPI> PROCESSORS = new CommonsArrayList <> ();
 
   private AS4IncomingPullRequestProcessorManager ()
   {}
 
   /**
    * Reload all SPI implementations of
-   * {@link IAS4ServletPullRequestProcessorSPI}.
+   * {@link IAS4IncomingPullRequestProcessorSPI}.
    */
   public static void reinitProcessors ()
   {
-    final ICommonsList <IAS4ServletPullRequestProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4ServletPullRequestProcessorSPI.class);
+    final ICommonsList <IAS4IncomingPullRequestProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4IncomingPullRequestProcessorSPI.class);
     if (aProcessorSPIs.isEmpty ())
       LOGGER.warn ("No AS4 message processor is registered. All incoming pull requests will be discarded!");
     else
@@ -76,7 +76,7 @@ public final class AS4IncomingPullRequestProcessorManager
    */
   @Nonnull
   @ReturnsMutableCopy
-  public static ICommonsList <IAS4ServletPullRequestProcessorSPI> getAllProcessors ()
+  public static ICommonsList <IAS4IncomingPullRequestProcessorSPI> getAllProcessors ()
   {
     return RW_LOCK.readLockedGet (PROCESSORS::getClone);
   }

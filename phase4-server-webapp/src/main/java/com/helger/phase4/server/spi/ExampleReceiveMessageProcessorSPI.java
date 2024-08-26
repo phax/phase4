@@ -40,7 +40,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
-import com.helger.phase4.incoming.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
 import com.helger.phase4.marshaller.Ebms3NamespaceHandler;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
@@ -52,12 +52,12 @@ import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
 /**
- * Example implementation of {@link IAS4ServletMessageProcessorSPI}
+ * Example implementation of {@link IAS4IncomingMessageProcessorSPI}
  *
  * @author Philip Helger
  */
 @IsSPIImplementation
-public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
+public class ExampleReceiveMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (ExampleReceiveMessageProcessorSPI.class);
 

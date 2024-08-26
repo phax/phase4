@@ -78,7 +78,7 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
-import com.helger.phase4.incoming.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.pmode.IPMode;
@@ -104,7 +104,7 @@ import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
  * @author Philip Helger
  */
 @IsSPIImplementation
-public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
+public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
 {
   /**
    * This class represents the data of a single AS4 attachment.
@@ -908,4 +908,12 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     LOGGER.error ("Invoking processAS4SignalMessage is not supported");
     throw new UnsupportedOperationException ();
   }
+
+  public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                         @Nonnull final IAS4MessageState aState,
+                                         @Nonnull @Nonempty final String sResponseMessageID,
+                                         @Nullable final byte [] aResponseBytes,
+                                         final boolean bResponsePayloadIsAvailable)
+  {}
+
 }
