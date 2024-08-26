@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.messaging;
+package com.helger.phase4.incoming;
 
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
@@ -29,13 +29,14 @@ import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.messaging.EAS4MessageMode;
 
 import jakarta.servlet.http.Cookie;
 
 /**
  * This interface lets you access optional metadata for a single incoming
  * message.<br>
- * See {@link AS4MessagingHelper} for a transformation method of this object to
+ * See {@link AS4IncomingHelper} for a transformation method of this object to
  * a JSON representation.<br>
  * Note: it does not contain the AS4 message ID or similar parameters, because
  * instance of the class must also be present for incoming messages that are

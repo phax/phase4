@@ -77,7 +77,6 @@ import com.helger.phase4.incoming.soap.AS4SingleSOAPHeader;
 import com.helger.phase4.incoming.soap.ISOAPHeaderElementProcessor;
 import com.helger.phase4.incoming.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessingStatusSPI;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.AS4Helper;

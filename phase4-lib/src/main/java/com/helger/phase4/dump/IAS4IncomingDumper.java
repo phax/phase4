@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 
 /**
  * Interface for dumping incoming requests

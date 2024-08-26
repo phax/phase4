@@ -31,7 +31,7 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.io.stream.WrappedInputStream;
 import com.helger.commons.wrapper.Wrapper;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 
 /**
  * This class holds the global stream dumpers.

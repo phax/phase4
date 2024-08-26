@@ -59,7 +59,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -807,7 +807,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
       // * not encrypted, not signed
       // * not encrypted, signed
       // * forced by flag
-      aMimeMsg = MimeMessageCreator.generateMimeMessage (getSoapVersion (), aDoc, m_aAttachments);
+      aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (getSoapVersion (), aDoc, m_aAttachments);
     }
 
     final AS4ClientBuiltMessage ret;

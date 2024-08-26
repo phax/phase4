@@ -19,8 +19,8 @@ package com.helger.phase4.client;
 import javax.annotation.Nonnull;
 
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.util.Phase4Exception;
 
 /**

@@ -22,7 +22,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.BiConsumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,12 +31,10 @@ import javax.annotation.concurrent.Immutable;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.datetime.XMLOffsetDateTime;
-import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.regex.RegExHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.EURLProtocol;
@@ -58,10 +55,6 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3Service;
 import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.mgr.MetaAS4Manager;
-
-import jakarta.mail.Header;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 
 /**
  * This class contains every method, static variables which are used by more
@@ -466,50 +459,5 @@ public final class MessageHelperMethods
     }
 
     return aEbms3PayloadInfo;
-  }
-
-  /**
-   * Take all headers from the MIME message and pass them to the provided
-   * consumer. Afterwards remove all headers from the MIME message itself.
-   *
-   * @param aMimeMsg
-   *        The message to use. May not be <code>null</code>.
-   * @param aConsumer
-   *        The consumer to be invoked. May not be <code>null</code>.
-   * @param bUnifyValues
-   *        <code>true</code> to unify the HTTP header values before passing
-   *        them to the consumer.
-   * @throws MessagingException
-   *         In case of MIME message processing problems
-   */
-  public static void forEachHeaderAndRemoveAfterwards (@Nonnull final MimeMessage aMimeMsg,
-                                                       @Nonnull final BiConsumer <String, String> aConsumer,
-                                                       final boolean bUnifyValues) throws MessagingException
-  {
-    // Create a copy
-    final ICommonsList <Header> aHeaders = CollectionHelper.newList (aMimeMsg.getAllHeaders ());
-
-    // First round
-    for (final Header aHeader : aHeaders)
-    {
-      // Make a single-line HTTP header value!
-      aConsumer.accept (aHeader.getName (),
-                        bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
-    }
-
-    // Remove all headers from MIME message
-    // Do it after the copy loop, in case a header has more than one value!
-    for (final Header aHeader : aHeaders)
-      aMimeMsg.removeHeader (aHeader.getName ());
-  }
-
-  @Nonnull
-  @ReturnsMutableCopy
-  public static HttpHeaderMap getAndRemoveAllHeaders (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
-  {
-    final HttpHeaderMap ret = new HttpHeaderMap ();
-    // Unification happens on the result header map
-    forEachHeaderAndRemoveAfterwards (aMimeMsg, ret::addHeader, false);
-    return ret;
   }
 }

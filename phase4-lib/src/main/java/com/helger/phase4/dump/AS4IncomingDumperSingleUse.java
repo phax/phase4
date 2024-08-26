@@ -25,7 +25,7 @@ import javax.annotation.WillNotClose;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 
 /**
  * A simple {@link IAS4IncomingDumper} that can be used for a single

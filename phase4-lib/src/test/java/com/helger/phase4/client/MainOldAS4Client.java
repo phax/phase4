@@ -54,9 +54,8 @@ import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
@@ -186,19 +185,19 @@ public final class MainOldAS4Client
             final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion,
                                                                                        null,
                                                                                        aAttachments);
-            final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion,
-                                                                                    AS4Signer.createSignedMessage (aCryptoFactory,
-                                                                                                                   aMsg.getAsSoapDocument (null),
-                                                                                                                   eSoapVersion,
-                                                                                                                   aMsg.getMessagingID (),
-                                                                                                                   aAttachments,
-                                                                                                                   aResHelper,
-                                                                                                                   false,
-                                                                                                                   AS4SigningParams.createDefault ()),
-                                                                                    aAttachments);
+            final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion,
+                                                                                      AS4Signer.createSignedMessage (aCryptoFactory,
+                                                                                                                     aMsg.getAsSoapDocument (null),
+                                                                                                                     eSoapVersion,
+                                                                                                                     aMsg.getMessagingID (),
+                                                                                                                     aAttachments,
+                                                                                                                     aResHelper,
+                                                                                                                     false,
+                                                                                                                     AS4SigningParams.createDefault ()),
+                                                                                      aAttachments);
 
             // Move all global mime headers to the POST request
-            MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aMimeMsg, aPost::addHeader, true);
+            AS4MimeMessageHelper.forEachHeaderAndRemoveAfterwards (aMimeMsg, aPost::addHeader, true);
             aPost.setEntity (HttpMimeMessageEntity.create (aMimeMsg));
             break;
           }

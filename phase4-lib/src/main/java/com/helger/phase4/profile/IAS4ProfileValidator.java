@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 
 /**

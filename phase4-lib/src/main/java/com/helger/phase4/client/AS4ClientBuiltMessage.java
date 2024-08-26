@@ -28,7 +28,7 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.http.HttpXMLEntity;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 
 import jakarta.mail.MessagingException;
 
@@ -55,7 +55,7 @@ public final class AS4ClientBuiltMessage
   {
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
     m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
-    m_aCustomHeaders = MessageHelperMethods.getAndRemoveAllHeaders (aHttpEntity.getMimeMessage ());
+    m_aCustomHeaders = AS4MimeMessageHelper.getAndRemoveAllHeaders (aHttpEntity.getMimeMessage ());
   }
 
   @Nonnull

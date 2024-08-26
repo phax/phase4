@@ -87,7 +87,6 @@ import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
 import com.helger.phase4.messaging.EAS4MessageMode;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4ErrorMessage;
@@ -96,7 +95,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.MEPHelper;
@@ -230,7 +229,7 @@ public class AS4RequestHandler implements AutoCloseable
       m_aState = aState;
       m_sResponseMessageID = sResponseMessageID;
       m_aMimeMsg = aMimeMsg;
-      m_aHttpHeaders = MessageHelperMethods.getAndRemoveAllHeaders (m_aMimeMsg);
+      m_aHttpHeaders = AS4MimeMessageHelper.getAndRemoveAllHeaders (m_aMimeMsg);
       if (!aMimeMsg.isRepeatable ())
         LOGGER.warn ("The response MIME message is not repeatable");
     }
@@ -1499,12 +1498,12 @@ public class AS4RequestHandler implements AutoCloseable
       else
       {
         LOGGER.info ("AS4 encryption is enabled but no response attachments are present");
-        aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion, aResponseDoc, aResponseAttachments);
+        aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion, aResponseDoc, aResponseAttachments);
       }
     }
     else
     {
-      aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion, aResponseDoc, aResponseAttachments);
+      aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion, aResponseDoc, aResponseAttachments);
     }
     if (aMimeMsg == null)
       throw new IllegalStateException ("Failed to create MimeMessage!");

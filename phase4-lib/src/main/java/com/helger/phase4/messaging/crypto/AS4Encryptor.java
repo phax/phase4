@@ -44,7 +44,7 @@ import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
@@ -275,7 +275,7 @@ public final class AS4Encryptor
     // Use the encrypted attachments!
     try
     {
-      return MimeMessageCreator.generateMimeMessage (eSoapVersion, aEncryptedDoc, aEncryptedAttachments);
+      return AS4MimeMessageHelper.generateMimeMessage (eSoapVersion, aEncryptedDoc, aEncryptedAttachments);
     }
     catch (final MessagingException ex)
     {

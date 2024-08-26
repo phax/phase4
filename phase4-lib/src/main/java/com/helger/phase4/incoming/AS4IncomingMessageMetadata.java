@@ -34,7 +34,6 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.EAS4MessageMode;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
 import jakarta.servlet.http.Cookie;

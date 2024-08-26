@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.messaging;
+package com.helger.phase4.incoming;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -30,15 +30,16 @@ import com.helger.json.JsonObject;
 import jakarta.servlet.http.Cookie;
 
 /**
- * Messaging helper methods.
+ * Messaging helper methods.<br>
+ * Old name before v3: <code>AS4MessagingHelper</code>
  *
  * @author Philip Helger
  * @since 0.9.10
  */
 @Immutable
-public final class AS4MessagingHelper
+public final class AS4IncomingHelper
 {
-  private AS4MessagingHelper ()
+  private AS4IncomingHelper ()
   {}
 
   /**

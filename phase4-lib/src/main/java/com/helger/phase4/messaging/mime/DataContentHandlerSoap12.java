@@ -58,12 +58,13 @@ public class DataContentHandlerSoap12 extends text_plain
 
   @Override
   @Nonnull
-  protected Object getData (@Nonnull final ActivationDataFlavor aFlavor, @Nonnull final DataSource ds)
-                                                                                                       throws IOException
+  protected Object getData (@Nonnull final ActivationDataFlavor aFlavor, @Nonnull final DataSource aDataSource)
+                                                                                                                throws IOException
   {
     if (aFlavor.getRepresentationClass () == StreamSource.class)
-      return new StreamSource (ds.getInputStream ());
-    throw new IOException ("Unsupported flavor " + aFlavor + " on DS " + ds);
+      return new StreamSource (aDataSource.getInputStream ());
+
+    throw new IOException ("Unsupported flavor " + aFlavor + " on DS " + aDataSource);
   }
 
   /**
@@ -75,18 +76,18 @@ public class DataContentHandlerSoap12 extends text_plain
   {
     try
     {
-      final Transformer transformer = TransformerFactory.newInstance ().newTransformer ();
-      final StreamResult result = new StreamResult (aOS);
+      final Transformer aTransformer = TransformerFactory.newInstance ().newTransformer ();
+      final StreamResult aStreamResult = new StreamResult (aOS);
       if (aObj instanceof DataSource)
       {
         // Streaming transform applies only to
         // javax.xml.transform.StreamSource
-        transformer.transform (new StreamSource (((DataSource) aObj).getInputStream ()), result);
+        aTransformer.transform (new StreamSource (((DataSource) aObj).getInputStream ()), aStreamResult);
       }
       else
         if (aObj instanceof Source)
         {
-          transformer.transform ((Source) aObj, result);
+          aTransformer.transform ((Source) aObj, aStreamResult);
         }
         else
         {
