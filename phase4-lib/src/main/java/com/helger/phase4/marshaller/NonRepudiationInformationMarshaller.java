@@ -41,6 +41,8 @@ public class NonRepudiationInformationMarshaller extends GenericJAXBMarshaller <
                                                                                CXLink.getXSDResource (),
                                                                                CXMLDSig.getXSDResource (),
                                                                                CAS4.XSD_EBBP_SIGNALS).getAsUnmodifiable ();
+  public static final QName ROOT_ELEMENT_QNAME = new QName ("http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0",
+                                                            "NonRepudiationInformation");
 
   public NonRepudiationInformationMarshaller ()
   {
@@ -48,8 +50,7 @@ public class NonRepudiationInformationMarshaller extends GenericJAXBMarshaller <
     // NonRepudiationInformation
     super (NonRepudiationInformation.class,
            XSDS,
-           createSimpleJAXBElement (new QName ("http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0",
-                                               "NonRepudiationInformation"), NonRepudiationInformation.class));
+           createSimpleJAXBElement (ROOT_ELEMENT_QNAME, NonRepudiationInformation.class));
     setNamespaceContext (Ebms3NamespaceHandler.getInstance ());
   }
 }

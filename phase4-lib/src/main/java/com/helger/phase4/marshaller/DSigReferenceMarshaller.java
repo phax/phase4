@@ -35,12 +35,12 @@ import com.helger.xsds.xmldsig.ReferenceType;
 public class DSigReferenceMarshaller extends GenericJAXBMarshaller <ReferenceType>
 {
   public static final List <ClassPathResource> XSDS = new CommonsArrayList <> (CXMLDSig.getXSDResource ()).getAsUnmodifiable ();
+  public static final QName ROOT_ELEMENT_QNAME = new QName (CXMLDSig.NAMESPACE_URI,
+                                                            "ReferenceType",
+                                                            CXMLDSig.DEFAULT_PREFIX);
 
   public DSigReferenceMarshaller ()
   {
-    super (ReferenceType.class,
-           XSDS,
-           createSimpleJAXBElement (new QName (CXMLDSig.NAMESPACE_URI, "ReferenceType", CXMLDSig.DEFAULT_PREFIX),
-                                    ReferenceType.class));
+    super (ReferenceType.class, XSDS, createSimpleJAXBElement (ROOT_ELEMENT_QNAME, ReferenceType.class));
   }
 }

@@ -38,16 +38,15 @@ public class Soap12EnvelopeMarshaller extends GenericJAXBMarshaller <Soap12Envel
 {
   public static final List <ClassPathResource> XSDS = new CommonsArrayList <> (CXML_XSD.getXSDResource (),
                                                                                CAS4.XSD_SOAP12).getAsUnmodifiable ();
+  public static final QName ROOT_ELEMENT_QNAME = new QName (ESoapVersion.SOAP_12.getNamespaceURI (),
+                                                            "Envelope",
+                                                            ESoapVersion.SOAP_12.getNamespacePrefix ());
 
   public Soap12EnvelopeMarshaller ()
   {
     // Information is taken from the @XmlType of
     // Soap12Envelope and from @XmlSchema of package-info
-    super (Soap12Envelope.class,
-           XSDS,
-           createSimpleJAXBElement (new QName (ESoapVersion.SOAP_12.getNamespaceURI (),
-                                               "Envelope",
-                                               ESoapVersion.SOAP_12.getNamespacePrefix ()), Soap12Envelope.class));
+    super (Soap12Envelope.class, XSDS, createSimpleJAXBElement (ROOT_ELEMENT_QNAME, Soap12Envelope.class));
     setNamespaceContext (Soap12NamespaceHandler.getInstance ());
   }
 }

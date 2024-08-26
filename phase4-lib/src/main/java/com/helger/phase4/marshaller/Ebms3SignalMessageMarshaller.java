@@ -22,8 +22,6 @@ import com.helger.jaxb.GenericJAXBMarshaller;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.ObjectFactory;
 
-import jakarta.xml.bind.JAXBElement;
-
 /**
  * Marshaller for {@link Ebms3SignalMessage} objects. This should only simplify
  * the easy of logging returned signal messages but it is in itself not a valid
@@ -34,15 +32,13 @@ import jakarta.xml.bind.JAXBElement;
  */
 public class Ebms3SignalMessageMarshaller extends GenericJAXBMarshaller <Ebms3SignalMessage>
 {
-  public static final QName SignalMessage_QNAME = new QName (ObjectFactory._Messaging_QNAME.getNamespaceURI (),
-                                                             "SignalMessage");
+  public static final QName ROOT_ELEMENT_QNAME = new QName (ObjectFactory._Messaging_QNAME.getNamespaceURI (),
+                                                            "SignalMessage");
 
   public Ebms3SignalMessageMarshaller ()
   {
     // No XSD, because the "SignalMessage" is not a dedicated element
-    super (Ebms3SignalMessage.class,
-           null,
-           value -> new JAXBElement <> (SignalMessage_QNAME, Ebms3SignalMessage.class, null, value));
+    super (Ebms3SignalMessage.class, null, createSimpleJAXBElement (ROOT_ELEMENT_QNAME, Ebms3SignalMessage.class));
     setNamespaceContext (Ebms3NamespaceHandler.getInstance ());
   }
 }

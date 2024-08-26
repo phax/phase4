@@ -36,16 +36,15 @@ import com.helger.phase4.soap11.Soap11Envelope;
 public class Soap11EnvelopeMarshaller extends GenericJAXBMarshaller <Soap11Envelope>
 {
   public static final List <ClassPathResource> XSDS = new CommonsArrayList <> (CAS4.XSD_SOAP11).getAsUnmodifiable ();
+  public static final QName ROOT_ELEMENT_QNAME = new QName (ESoapVersion.SOAP_11.getNamespaceURI (),
+                                                            "Envelope",
+                                                            ESoapVersion.SOAP_11.getNamespacePrefix ());
 
   public Soap11EnvelopeMarshaller ()
   {
     // Information is taken from the @XmlType of
     // Soap11Envelope and from @XmlSchema of package-info
-    super (Soap11Envelope.class,
-           XSDS,
-           createSimpleJAXBElement (new QName (ESoapVersion.SOAP_11.getNamespaceURI (),
-                                               "Envelope",
-                                               ESoapVersion.SOAP_11.getNamespacePrefix ()), Soap11Envelope.class));
+    super (Soap11Envelope.class, XSDS, createSimpleJAXBElement (ROOT_ELEMENT_QNAME, Soap11Envelope.class));
     setNamespaceContext (Soap11NamespaceHandler.getInstance ());
   }
 }
