@@ -144,9 +144,6 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
-
-    // Enforce Peppol profile usage
-    AS4ProfileSelector.setCustomAS4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
   }
 
   @Override
@@ -171,6 +168,9 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
   private static void _initAS4 ()
   {
+    // Enforce Peppol profile usage
+    AS4ProfileSelector.setCustomAS4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
+
     // Start duplicate check
     AS4ServerInitializer.initAS4Server ();
 

@@ -37,6 +37,7 @@ import com.helger.config.IConfig;
 import com.helger.config.source.EConfigSourceType;
 import com.helger.config.source.MultiConfigurationValueProvider;
 import com.helger.config.source.res.ConfigurationSourceProperties;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This class contains the central phase4 configuration. <br>
@@ -234,6 +235,7 @@ public final class AS4Configuration
    *         <code>phase4.profile</code>. May be <code>null</code>.
    */
   @Nullable
+  @ChangePhase4V3 ("Use configuration property and global setter together")
   public static String getAS4ProfileID ()
   {
     return getConfig ().getAsString ("phase4.profile");

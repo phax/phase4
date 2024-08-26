@@ -47,8 +47,8 @@ import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.incoming.AS4ServerInitializer;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverConfiguration;
 import com.helger.phase4.peppol.servlet.Phase4PeppolDefaultReceiverConfiguration;
+import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverConfiguration;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletMessageProcessorSPI;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolCRLDownloader;
@@ -127,24 +127,24 @@ public class ServletConfig
             if (sUrl != null && sUrl.startsWith ("https://ap-prod.example.org/as4"))
             {
               aReceiverCheckData = new Phase4PeppolReceiverConfiguration (true,
-                                                                      new SMPClientReadOnly (URLHelper.getAsURI ("http://smp-prod.example.org")),
-                                                                      Phase4PeppolDefaultReceiverConfiguration.DEFAULT_WILDCARD_SELECTION_MODE,
-                                                                      "https://ap-prod.example.org/as4",
-                                                                      CertificateHelper.convertStringToCertficateOrNull ("....Public Prod AP Cert...."),
-                                                                      Phase4PeppolDefaultReceiverConfiguration.isPerformSBDHValueChecks (),
-                                                                      Phase4PeppolDefaultReceiverConfiguration.isCheckSBDHForMandatoryCountryC1 (),
-                                                                      Phase4PeppolDefaultReceiverConfiguration.isCheckSigningCertificateRevocation ());
+                                                                          new SMPClientReadOnly (URLHelper.getAsURI ("http://smp-prod.example.org")),
+                                                                          Phase4PeppolDefaultReceiverConfiguration.DEFAULT_WILDCARD_SELECTION_MODE,
+                                                                          "https://ap-prod.example.org/as4",
+                                                                          CertificateHelper.convertStringToCertficateOrNull ("....Public Prod AP Cert...."),
+                                                                          Phase4PeppolDefaultReceiverConfiguration.isPerformSBDHValueChecks (),
+                                                                          Phase4PeppolDefaultReceiverConfiguration.isCheckSBDHForMandatoryCountryC1 (),
+                                                                          Phase4PeppolDefaultReceiverConfiguration.isCheckSigningCertificateRevocation ());
             }
             else
             {
               aReceiverCheckData = new Phase4PeppolReceiverConfiguration (true,
-                                                                      new SMPClientReadOnly (URLHelper.getAsURI ("http://smp-test.example.org")),
-                                                                      Phase4PeppolDefaultReceiverConfiguration.DEFAULT_WILDCARD_SELECTION_MODE,
-                                                                      "https://ap-test.example.org/as4",
-                                                                      CertificateHelper.convertStringToCertficateOrNull ("....Public Test AP Cert...."),
-                                                                      Phase4PeppolDefaultReceiverConfiguration.isPerformSBDHValueChecks (),
-                                                                      Phase4PeppolDefaultReceiverConfiguration.isCheckSBDHForMandatoryCountryC1 (),
-                                                                      Phase4PeppolDefaultReceiverConfiguration.isCheckSigningCertificateRevocation ());
+                                                                          new SMPClientReadOnly (URLHelper.getAsURI ("http://smp-test.example.org")),
+                                                                          Phase4PeppolDefaultReceiverConfiguration.DEFAULT_WILDCARD_SELECTION_MODE,
+                                                                          "https://ap-test.example.org/as4",
+                                                                          CertificateHelper.convertStringToCertficateOrNull ("....Public Test AP Cert...."),
+                                                                          Phase4PeppolDefaultReceiverConfiguration.isPerformSBDHValueChecks (),
+                                                                          Phase4PeppolDefaultReceiverConfiguration.isCheckSBDHForMandatoryCountryC1 (),
+                                                                          Phase4PeppolDefaultReceiverConfiguration.isCheckSigningCertificateRevocation ());
             }
 
             // Find the right SPI handler
@@ -209,9 +209,6 @@ public class ServletConfig
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
 
-    // Enforce Peppol profile usage
-    AS4ProfileSelector.setCustomAS4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
-
     // Init the data path
     {
       // Get the ServletContext base path
@@ -228,6 +225,9 @@ public class ServletConfig
 
   private static void _initAS4 ()
   {
+    // Enforce Peppol profile usage
+    AS4ProfileSelector.setCustomAS4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
+
     AS4ServerInitializer.initAS4Server ();
   }
 

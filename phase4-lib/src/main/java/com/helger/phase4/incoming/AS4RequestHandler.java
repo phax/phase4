@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillClose;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.wss4j.common.ext.WSSecurityException;
@@ -122,6 +123,7 @@ import jakarta.mail.MessagingException;
  * @author Martin Bayerl
  * @author Philip Helger
  */
+@NotThreadSafe
 public class AS4RequestHandler implements AutoCloseable
 {
   private interface IAS4ResponseFactory
