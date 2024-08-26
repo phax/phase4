@@ -32,7 +32,7 @@ import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.MockServletContext;
@@ -58,7 +58,7 @@ public final class MainPhase4PeppolSenderHelgerLargeFileLocal
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
       final Wrapper <Phase4Exception> aSendingExceptionKeeper = new Wrapper <> ();
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .httpClientFactory (new HttpClientSettings ().setRetryCount (0)
                                                                                .setResponseTimeout (Timeout.ofMinutes (5)))

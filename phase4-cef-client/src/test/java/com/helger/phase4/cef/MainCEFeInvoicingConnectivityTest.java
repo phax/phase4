@@ -41,7 +41,7 @@ import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
@@ -121,7 +121,7 @@ public class MainCEFeInvoicingConnectivityTest
       };
       // XXX The message ID to use in the UI
       final String sAS4MessageID = "36999089-662a-441f-95fd-470bec2b538e-100@phase4";
-      final ESimpleUserMessageSendResult eRes = Phase4CEFSender.builder ()
+      final EAS4UserMessageSendResult eRes = Phase4CEFSender.builder ()
                                                                .cryptoFactory (CF)
                                                                .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
                                                                .action ("TC1Leg1")

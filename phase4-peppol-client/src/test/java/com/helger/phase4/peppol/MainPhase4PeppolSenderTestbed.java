@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -53,7 +53,7 @@ public final class MainPhase4PeppolSenderTestbed
       // TODO use correct participant ID
       final IParticipantIdentifier aSenderID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("yours");
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("theirs");
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))

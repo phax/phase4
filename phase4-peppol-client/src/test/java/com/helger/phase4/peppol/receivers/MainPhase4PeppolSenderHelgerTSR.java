@@ -34,7 +34,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolSender.Builder;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -90,7 +90,7 @@ public final class MainPhase4PeppolSenderHelgerTSR
                                                  .sbdDocumentConsumer (x -> LOGGER.info (new SBDMarshaller ().setFormattedOutput (true)
                                                                                                              .getAsString (x)))
                                                  .buildMessageCallback (aBuildMessageCallback);
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = aBuilder.sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
 

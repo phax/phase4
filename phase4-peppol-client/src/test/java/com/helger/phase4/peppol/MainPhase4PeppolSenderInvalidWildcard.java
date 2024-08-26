@@ -29,7 +29,7 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -67,7 +67,7 @@ public final class MainPhase4PeppolSenderInvalidWildcard
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   /*
                                    * It is invalid to include the "*" in the SMP

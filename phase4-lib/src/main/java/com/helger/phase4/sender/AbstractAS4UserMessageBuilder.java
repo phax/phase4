@@ -27,13 +27,9 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.id.IHasID;
-import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.state.ESuccess;
-import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
@@ -45,7 +41,6 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Abstract builder base class for a user message.
@@ -709,95 +704,18 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Specific enumeration with the result error codes of the
-   * {@link AbstractAS4UserMessageBuilder#sendMessageAndCheckForReceipt()}
-   * method.
-   *
-   * @author Philip Helger
-   */
-  @ChangePhase4V3 ("Moved to top-level and rename")
-  public enum ESimpleUserMessageSendResult implements IHasID <String>, ISuccessIndicator
-  {
-    /**
-     * Programming error, because not all mandatory fields are filled.
-     */
-    INVALID_PARAMETERS ("invalid-parameters"),
-    /**
-     * Something failed on the network or HTTP(S) level
-     */
-    TRANSPORT_ERROR ("transport-error"),
-    /**
-     * Some answer was received, but it was no valid AS4 Signal Message
-     */
-    NO_SIGNAL_MESSAGE_RECEIVED ("no-signal-msg-received"),
-    /**
-     * An AS4 Error Message was received
-     */
-    AS4_ERROR_MESSAGE_RECEIVED ("as4-error-msg-received"),
-    /**
-     * An AS4 Signal Message was received, but it was neither a Receipt nor an
-     * Error Message but something else.
-     */
-    INVALID_SIGNAL_MESSAGE_RECEIVED ("invalid-signal-message-received"),
-    /**
-     * Everything worked according to plan. The message was successfully
-     * delivered.
-     */
-    SUCCESS ("success");
-
-    private final String m_sID;
-
-    ESimpleUserMessageSendResult (@Nonnull @Nonempty final String sID)
-    {
-      m_sID = sID;
-    }
-
-    /**
-     * @return The ID of the of the error message.
-     * @since 1.0.0-rc1
-     */
-    @Nonnull
-    @Nonempty
-    public String getID ()
-    {
-      return m_sID;
-    }
-
-    public boolean isSuccess ()
-    {
-      return this == SUCCESS;
-    }
-
-    /**
-     * @return A recommendation whether a retry might be feasible in case the
-     *         internal retries were disabled.
-     * @since 1.0.0-rc1
-     */
-    public boolean isRetryFeasible ()
-    {
-      return this == TRANSPORT_ERROR || this == NO_SIGNAL_MESSAGE_RECEIVED || this == INVALID_SIGNAL_MESSAGE_RECEIVED;
-    }
-
-    @Nullable
-    public static ESimpleUserMessageSendResult getFromIDOrNull (@Nullable final String sID)
-    {
-      return EnumHelper.getFromIDOrNull (ESimpleUserMessageSendResult.class, sID);
-    }
-  }
-
-  /**
    * This is a sanity method that encapsulates all the sending checks that are
    * necessary to determine overall sending success or error.<br>
    * Note: this method is not thread-safe, because it changes the signal message
    * consumer internally.
    *
-   * @return {@link ESimpleUserMessageSendResult#SUCCESS} only if all parameters
+   * @return {@link EAS4UserMessageSendResult#SUCCESS} only if all parameters
    *         are correct, HTTP transmission was successful and if a positive AS4
    *         Receipt was returned. Never <code>null</code>.
    * @since 0.13.0
    */
   @Nonnull
-  public final ESimpleUserMessageSendResult sendMessageAndCheckForReceipt ()
+  public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt ()
   {
     // This information might be crucial to determine what went wrong
     return sendMessageAndCheckForReceipt (ex -> LOGGER.error ("Exception sending AS4 user message", ex));
@@ -812,13 +730,13 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @param aExceptionConsumer
    *        An optional Consumer that takes an eventually thrown
    *        {@link Phase4Exception}. May be <code>null</code>.
-   * @return {@link ESimpleUserMessageSendResult#SUCCESS} only if all parameters
+   * @return {@link EAS4UserMessageSendResult#SUCCESS} only if all parameters
    *         are correct, HTTP transmission was successful and if a positive AS4
    *         Receipt was returned. Never <code>null</code>.
    * @since 1.0.0-rc1
    */
   @Nonnull
-  public final ESimpleUserMessageSendResult sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer)
+  public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer)
   {
     final IAS4SignalMessageConsumer aOld = m_aSignalMsgConsumer;
     try
@@ -837,7 +755,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       if (sendMessage ().isFailure ())
       {
         // Parameters are missing/incorrect
-        return ESimpleUserMessageSendResult.INVALID_PARAMETERS;
+        return EAS4UserMessageSendResult.INVALID_PARAMETERS;
       }
 
       final Ebms3SignalMessage aSignalMsg = aSignalMsgKeeper.get ();
@@ -847,7 +765,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
           LOGGER.debug ("Failed to get a SignalMessage as the response");
 
         // Unexpected response - invalid XML or at least no Ebms3 signal message
-        return ESimpleUserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED;
+        return EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED;
       }
 
       if (aSignalMsg.hasErrorEntries ())
@@ -857,20 +775,20 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
         // An error was returned from the other side
         // Errors have precedence over receipts
-        return ESimpleUserMessageSendResult.AS4_ERROR_MESSAGE_RECEIVED;
+        return EAS4UserMessageSendResult.AS4_ERROR_MESSAGE_RECEIVED;
       }
 
       if (aSignalMsg.getReceipt () != null)
       {
         // A receipt was returned - this is deemed success
-        return ESimpleUserMessageSendResult.SUCCESS;
+        return EAS4UserMessageSendResult.SUCCESS;
       }
 
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("The SignalMessage contains neither Errors nor a Receipt - unexpected SignalMessage layout.");
 
       // Neither an error nor a receipt was returned - this is weird
-      return ESimpleUserMessageSendResult.INVALID_SIGNAL_MESSAGE_RECEIVED;
+      return EAS4UserMessageSendResult.INVALID_SIGNAL_MESSAGE_RECEIVED;
     }
     catch (final Phase4Exception ex)
     {
@@ -880,7 +798,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       if (aExceptionConsumer != null)
         aExceptionConsumer.accept (ex);
       // Something went wrong - see the logs
-      return ESimpleUserMessageSendResult.TRANSPORT_ERROR;
+      return EAS4UserMessageSendResult.TRANSPORT_ERROR;
     }
     finally
     {

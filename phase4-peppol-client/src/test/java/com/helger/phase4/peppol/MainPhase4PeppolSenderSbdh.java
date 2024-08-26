@@ -30,7 +30,7 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -65,7 +65,7 @@ public final class MainPhase4PeppolSenderSbdh
         throw new IllegalStateException ("Failed to read SBDH file to be send");
 
       // Start configuring here
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.sbdhBuilder ()
                                   .payloadAndMetadata (aSbdh)
                                   .senderPartyID ("POP000306")

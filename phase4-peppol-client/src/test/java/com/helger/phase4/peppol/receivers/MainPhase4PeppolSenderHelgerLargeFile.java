@@ -34,7 +34,7 @@ import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phive.peppol.PeppolValidation2023_11;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -62,7 +62,7 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
       final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true)
                                                                                    .setHandleHttpHeaders (true);
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .httpClientFactory (new HttpClientSettings ().setRetryCount (0)
                                                                                .setResponseTimeout (Timeout.ofMinutes (5)))

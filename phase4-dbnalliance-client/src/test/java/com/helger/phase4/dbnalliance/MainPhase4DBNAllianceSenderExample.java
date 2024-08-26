@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.dbna.EDBNASML;
@@ -62,7 +62,7 @@ public class MainPhase4DBNAllianceSenderExample
                                                                                    EDBNASML.TEST.getZoneName()));
       aSMPClient.setVerifySignature (false);
       
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = Phase4DBNAllianceSender.builder ()
                                        .documentTypeID (SimpleIdentifierFactory.INSTANCE.createDocumentTypeIdentifier ("bdx-docid-qns", "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##DBNAlliance-1.0-data-Core"))
                                        .processID (Phase4DBNAllianceSender.IF.createProcessIdentifier(null, "bdx:noprocess"))

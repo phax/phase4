@@ -32,7 +32,7 @@ import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidation;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.en16931.EN16931Validation;
 import com.helger.phive.xml.source.IValidationSourceXML;
@@ -72,7 +72,7 @@ public final class MainPhase4PeppolSenderQvaliaCII
       final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry = Phase4PeppolValidation.createDefaultRegistry ();
       EN16931Validation.initEN16931 (aVESRegistry);
 
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100::CrossIndustryInvoice##urn:cen.eu:en16931:2017::D16B"))

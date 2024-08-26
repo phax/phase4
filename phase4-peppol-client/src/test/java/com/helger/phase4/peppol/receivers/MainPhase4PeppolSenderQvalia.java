@@ -57,7 +57,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phive.peppol.PeppolValidation2023_11;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
@@ -111,7 +111,7 @@ public final class MainPhase4PeppolSenderQvalia
                                                                                                              PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PRODUCTION_CLASSPATH,
                                                                                                              PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
                                                                                               .getKeyStore ());
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
                                   .cryptoFactory (cf)

@@ -30,7 +30,7 @@ import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolSender.Builder;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -70,7 +70,7 @@ public final class MainPhase4PeppolSenderHelgerWildcard
                                                                                     ESML.DIGIT_TEST))
                                                  .checkReceiverAPCertificate (true)
                                                  .disableValidation ();
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = aBuilder.sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
 

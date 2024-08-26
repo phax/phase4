@@ -51,7 +51,7 @@ import com.helger.phase4.model.mpc.MPC;
 import com.helger.phase4.profile.euctp.EEuCtpAction;
 import com.helger.phase4.profile.euctp.EEuCtpService;
 import com.helger.phase4.profile.euctp.EuCtpPMode;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.servlet.mock.MockServletContext;
@@ -177,7 +177,7 @@ public class MainPhase4EuCtpSenderExample
                                            final Wrapper <Ebms3SignalMessage> aSignalMsgHolder,
                                            final AS4CryptoFactoryProperties cryptoFactoryProperties)
   {
-    ESimpleUserMessageSendResult eResult;
+    EAS4UserMessageSendResult eResult;
     eResult = Phase4EuCtpSender.builder ()
                                .httpClientFactory (aHttpClientSettings)
                                .fromPartyID (fromPartyID)
@@ -206,7 +206,7 @@ public class MainPhase4EuCtpSenderExample
     final byte [] aPayloadBytes = StreamHelper.getAllBytes (new ClassPathResource ("/external/examples/base-example.xml"));
 
     final Wrapper <Ebms3SignalMessage> aSignalMsgHolder = new Wrapper <> ();
-    ESimpleUserMessageSendResult eResult;
+    EAS4UserMessageSendResult eResult;
     eResult = Phase4EuCtpSender.builder ()
                                .httpClientFactory (aHttpClientSettings)
                                .fromPartyID (fromPartyID)

@@ -36,7 +36,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 
@@ -71,7 +71,7 @@ public class MainPhase4BDEWSenderExample
       final Wrapper <Ebms3SignalMessage> aSignalMsgHolder = new Wrapper <> ();
 
       // Start configuring here
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = Phase4BDEWSender.builder ()
                                 .encryptionKeyIdentifierType (ECryptoKeyIdentifierType.X509_KEY_IDENTIFIER)
                                 .signingKeyIdentifierType (ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE)

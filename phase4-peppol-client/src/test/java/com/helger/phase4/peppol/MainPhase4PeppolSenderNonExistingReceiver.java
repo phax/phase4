@@ -26,7 +26,7 @@ import com.helger.commons.wrapper.Wrapper;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
@@ -63,7 +63,7 @@ public final class MainPhase4PeppolSenderNonExistingReceiver
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger-not-existing");
       final Wrapper <Phase4Exception> aSendingException = new Wrapper <> ();
-      final ESimpleUserMessageSendResult eResult = Phase4PeppolSender.builder ()
+      final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
                                                                      .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                                                      .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                                                      .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))

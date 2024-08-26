@@ -37,7 +37,7 @@ import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidation;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.en16931.EN16931Validation;
 import com.helger.phive.xml.source.IValidationSourceXML;
@@ -92,7 +92,7 @@ public final class MainPhase4PeppolSenderQvaliaUBL
 
       // Invalid certificate is valid until 2029
       final IAS4CryptoFactory cf = AS4CryptoFactoryProperties.getDefaultInstance ();
-      final ESimpleUserMessageSendResult eResult;
+      final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
                                   .cryptoFactory (cf)
