@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.messaging.domain;
+package com.helger.phase4.model.message;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,6 +51,8 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
                                          IAS4Message,
                                          IGenericImplTrait <IMPLTYPE>
 {
+  private static final QName QNAME_WSU_ID = new QName (CAS4.WSU_NS, "Id");
+
   private final ESoapVersion m_eSoapVersion;
   private final EAS4MessageType m_eMsgType;
   private final String m_sMessagingID;
@@ -63,7 +65,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
     m_sMessagingID = MessageHelperMethods.createRandomMessagingID ();
 
     // Must be a "wsu:Id" for WSSec to be found
-    m_aMessaging.getOtherAttributes ().put (new QName (CAS4.WSU_NS, "Id"), m_sMessagingID);
+    m_aMessaging.getOtherAttributes ().put (QNAME_WSU_ID, m_sMessagingID);
   }
 
   @Nonnull
@@ -154,6 +156,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
     return new ToStringGenerator (this).append ("SOAPVersion", m_eSoapVersion)
                                        .append ("MsgType", m_eMsgType)
                                        .append ("MessagingID", m_sMessagingID)
+                                       .append ("Messaging", m_aMessaging)
                                        .getToString ();
   }
 }

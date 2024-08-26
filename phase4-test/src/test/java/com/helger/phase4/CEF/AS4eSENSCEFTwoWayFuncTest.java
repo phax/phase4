@@ -29,8 +29,8 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.http.HttpMimeMessageEntity;
-import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
+import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 

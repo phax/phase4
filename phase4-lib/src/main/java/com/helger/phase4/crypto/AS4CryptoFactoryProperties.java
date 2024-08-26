@@ -118,7 +118,10 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
   {
     Crypto ret = m_aCrypto;
     if (ret == null)
+    {
+      // Create only once and cache
       ret = m_aCrypto = createCrypto (m_aCryptoProps);
+    }
     return ret;
   }
 
@@ -159,6 +162,7 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
     KeyStore ret = m_aTrustStore;
     if (ret == null)
     {
+      // Load only once and cache then
       ret = m_aTrustStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getTrustStoreType (),
                                                          m_aCryptoProps.getTrustStorePath (),
                                                          m_aCryptoProps.getTrustStorePassword ()).getKeyStore ();

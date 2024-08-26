@@ -40,13 +40,13 @@ import com.helger.phase4.ebms3header.Ebms3MessageProperties;
 import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
-import com.helger.phase4.http.AS4HttpDebug;
-import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.crypto.AS4Signer;
-import com.helger.phase4.messaging.domain.AS4UserMessage;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.messaging.http.AS4HttpDebug;
+import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
+import com.helger.phase4.model.message.AS4UserMessage;
+import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.MockJettySetup;
 
 @Ignore ("Working! Requires external proxy and Peppol pilot certificate!")

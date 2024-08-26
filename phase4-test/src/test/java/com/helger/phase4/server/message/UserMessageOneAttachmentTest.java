@@ -38,12 +38,12 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
-import com.helger.phase4.messaging.domain.AS4UserMessage;
+import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
+import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.server.external.IHolodeckTests;
 import com.helger.phase4.soap.ESoapVersion;
 

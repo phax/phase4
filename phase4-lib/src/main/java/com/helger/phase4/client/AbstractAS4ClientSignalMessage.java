@@ -22,7 +22,7 @@ import javax.annotation.WillNotClose;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.phase4.messaging.domain.EAS4MessageType;
+import com.helger.phase4.model.message.EAS4MessageType;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**

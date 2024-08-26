@@ -52,7 +52,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.mail.datasource.InputStreamProviderDataSource;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import jakarta.activation.DataHandler;

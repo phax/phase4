@@ -37,8 +37,8 @@ import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.MessageProperty;
+import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
 

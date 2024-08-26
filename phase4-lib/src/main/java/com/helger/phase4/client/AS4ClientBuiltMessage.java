@@ -26,8 +26,8 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.phase4.http.HttpMimeMessageEntity;
-import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
+import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 
 import jakarta.mail.MessagingException;

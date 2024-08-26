@@ -29,7 +29,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
-import com.helger.phase4.http.AS4HttpDebug;
+import com.helger.phase4.messaging.http.AS4HttpDebug;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phive.peppol.PeppolValidationBisAUNZ;
 import com.helger.servlet.mock.MockServletContext;

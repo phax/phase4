@@ -26,7 +26,8 @@ import com.helger.phase4.model.pmode.IPMode;
 /**
  * Implement this SPI interface to handle incoming pull request appropriately
  * and give the servlet the right PMode back.<br/>
- * Name before v3: <code>IAS4ServletPullRequestProcessorSPI</code>
+ * Name before v3:
+ * <code>com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI</code>
  *
  * @author bayerlma
  * @author Philip Helger

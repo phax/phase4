@@ -24,7 +24,7 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.ebms3header.Ebms3Property;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.model.message.MessageHelperMethods;
 
 /**
  * Reusable constants for testing.

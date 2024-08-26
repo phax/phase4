@@ -29,7 +29,7 @@ import org.w3c.dom.NodeList;
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
-import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
 public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp

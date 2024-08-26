@@ -28,7 +28,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Description;
 import com.helger.phase4.ebms3header.Ebms3Error;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.model.message.MessageHelperMethods;
 
 /**
  * Builder class for {@link Ebms3Error}

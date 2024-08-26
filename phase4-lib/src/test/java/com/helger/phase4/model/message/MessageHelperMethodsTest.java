@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.messaging.domain;
+package com.helger.phase4.model.message;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -113,7 +113,21 @@ public final class MessageHelperMethodsTest
     }
 
     // Invalid suffixes
-    for (final String s : new String [] { " ", "ab c", "<", ">", "(", ")", "@", ",", ";", ":", "\\", "\"", "[", "]", "\t" })
+    for (final String s : new String [] { " ",
+                                          "ab c",
+                                          "<",
+                                          ">",
+                                          "(",
+                                          ")",
+                                          "@",
+                                          ",",
+                                          ";",
+                                          ":",
+                                          "\\",
+                                          "\"",
+                                          "[",
+                                          "]",
+                                          "\t" })
       try
       {
         MessageHelperMethods.setCustomMessageIDSuffix (s);

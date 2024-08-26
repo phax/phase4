@@ -41,11 +41,11 @@ import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.messaging.crypto.AS4Signer;
-import com.helger.phase4.messaging.domain.AS4ErrorMessage;
-import com.helger.phase4.messaging.domain.AS4ReceiptMessage;
-import com.helger.phase4.messaging.domain.AS4UserMessage;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.error.EEbmsError;
+import com.helger.phase4.model.message.AS4ErrorMessage;
+import com.helger.phase4.model.message.AS4ReceiptMessage;
+import com.helger.phase4.model.message.AS4UserMessage;
+import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 

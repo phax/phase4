@@ -30,7 +30,7 @@ import com.helger.commons.io.ByteArrayWrapper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.model.message.MessageHelperMethods;
 
 /**
  * This represents a single payload for an outgoing message.

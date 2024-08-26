@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 import org.apache.wss4j.dom.WsuIdAllocator;
 
 import com.helger.commons.string.StringHelper;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.model.message.MessageHelperMethods;
 
 /**
  * phase4 specific implementation of {@link WsuIdAllocator}.

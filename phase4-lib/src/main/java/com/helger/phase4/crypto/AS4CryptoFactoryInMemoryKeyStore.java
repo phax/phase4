@@ -27,6 +27,7 @@ import org.apache.wss4j.common.crypto.Merlin;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.string.ToStringGenerator;
 
 /**
  * This class contains an implementation of {@link IAS4CryptoFactory} in which
@@ -121,5 +122,15 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
   public final KeyStore getTrustStore ()
   {
     return m_aTrustStore;
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("KeyStore?", m_aKeyStore != null)
+                                       .append ("KeyAlias", m_sKeyAlias)
+                                       .appendPassword ("KeyPassword")
+                                       .append ("TrustStore?", m_aTrustStore != null)
+                                       .getToString ();
   }
 }

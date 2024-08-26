@@ -35,7 +35,8 @@ import com.helger.phase4.model.pmode.IPMode;
 
 /**
  * Implement this SPI interface to handle incoming messages appropriate.<br/>
- * Name before v3: <code>IAS4ServletMessageProcessorSPI</code>
+ * Name before v3:
+ * <code>com.helger.phase4.servlet.IAS4ServletMessageProcessorSPI</code>
  *
  * @author Philip Helger
  */

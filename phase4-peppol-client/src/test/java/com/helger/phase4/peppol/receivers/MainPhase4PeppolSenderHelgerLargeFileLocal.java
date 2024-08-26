@@ -30,7 +30,7 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.http.HttpRetrySettings;
+import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;

@@ -20,8 +20,8 @@ import javax.annotation.Nonnull;
 
 import org.w3c.dom.Document;
 
-import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
+import com.helger.phase4.model.message.AbstractAS4Message;
 
 /**
  * Callback interface for AS4 client message creation.

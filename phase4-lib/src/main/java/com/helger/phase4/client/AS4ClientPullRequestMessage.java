@@ -27,11 +27,11 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
-import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.crypto.AS4Signer;
-import com.helger.phase4.messaging.domain.AS4PullRequestMessage;
-import com.helger.phase4.messaging.domain.EAS4MessageType;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.messaging.http.HttpXMLEntity;
+import com.helger.phase4.model.message.AS4PullRequestMessage;
+import com.helger.phase4.model.message.EAS4MessageType;
+import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
