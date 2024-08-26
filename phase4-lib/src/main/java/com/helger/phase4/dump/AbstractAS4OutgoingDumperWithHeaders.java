@@ -39,7 +39,7 @@ import com.helger.phase4.servlet.IAS4MessageState;
  *
  * @author Philip Helger
  * @param <IMPLTYPE>
- *        Implementation type (since v3)
+ *        Implementation type (since v3.0.0)
  * @since 0.9.7
  */
 public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE>>
@@ -141,4 +141,11 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
     }
     return ret;
   }
+
+  public void onEndRequest (@Nonnull final EAS4MessageMode eMsgMode,
+                            @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
+                            @Nullable final IAS4MessageState aState,
+                            @Nonnull @Nonempty final String sMessageID,
+                            @Nullable final Exception aCaughtException)
+  {}
 }

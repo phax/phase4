@@ -43,7 +43,7 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
  * @author Philip Helger
  * @since 0.9.3
  */
-public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHeaders
+public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHeaders <AS4IncomingDumperFileBased>
 {
   /**
    * Callback interface to create a file based on the provided metadata.
@@ -134,12 +134,6 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
                  "' " +
                  (isIncludeHeaders () ? "including headers" : "excluding headers"));
     return FileHelper.getBufferedOutputStream (aDumpFile);
-  }
-
-  public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                            @Nullable final Exception aCaughtException)
-  {
-    // empty
   }
 
   /**

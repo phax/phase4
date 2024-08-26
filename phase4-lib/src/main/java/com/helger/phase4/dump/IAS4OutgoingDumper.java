@@ -28,7 +28,6 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Interface for dumping outgoing requests
@@ -97,11 +96,13 @@ public interface IAS4OutgoingDumper
    * @param sMessageID
    *        The AS4 message ID of the outgoing message. Neither
    *        <code>null</code> nor empty.
+   * @param aCaughtException
+   *        An optional exception caught during processing. May be
+   *        <code>null</code>. Added in v3.0.0.
    */
-  @ChangePhase4V3 ("Make non default")
-  default void onEndRequest (@Nonnull final EAS4MessageMode eMsgMode,
-                             @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
-                             @Nullable final IAS4MessageState aState,
-                             @Nonnull @Nonempty final String sMessageID)
-  {}
+  void onEndRequest (@Nonnull EAS4MessageMode eMsgMode,
+                     @Nullable IAS4IncomingMessageMetadata aMessageMetadata,
+                     @Nullable IAS4MessageState aState,
+                     @Nonnull @Nonempty String sMessageID,
+                     @Nullable Exception aCaughtException);
 }

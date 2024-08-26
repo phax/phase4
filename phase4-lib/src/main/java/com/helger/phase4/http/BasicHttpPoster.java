@@ -286,6 +286,7 @@ public class BasicHttpPoster implements IHttpPoster
 
     // This class holds the effective OutputStream to which the dump is written
     final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
+    IOException aCaughtException = null;
     try
     {
       if (aRetrySettings.isRetryEnabled ())
@@ -390,13 +391,18 @@ public class BasicHttpPoster implements IHttpPoster
         }
       }
     }
+    catch (final IOException ex)
+    {
+      aCaughtException = ex;
+      throw ex;
+    }
     finally
     {
       // Add the possibility to close open resources
       if (aRealOutgoingDumper != null && aDumpOSHolder.isSet ())
         try
         {
-          aRealOutgoingDumper.onEndRequest (EAS4MessageMode.REQUEST, null, null, sMessageID);
+          aRealOutgoingDumper.onEndRequest (EAS4MessageMode.REQUEST, null, null, sMessageID, aCaughtException);
         }
         catch (final Exception ex)
         {

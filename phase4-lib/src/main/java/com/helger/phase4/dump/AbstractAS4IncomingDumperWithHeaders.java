@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
@@ -33,9 +34,14 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
  * output stream.
  *
  * @author Philip Helger
+ * @param <IMPLTYPE>
+ *        Implementation type (since v3.0.0)
  * @since 0.9.7
  */
-public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4IncomingDumper
+public abstract class AbstractAS4IncomingDumperWithHeaders <IMPLTYPE extends AbstractAS4IncomingDumperWithHeaders <IMPLTYPE>>
+                                                           implements
+                                                           IAS4IncomingDumper,
+                                                           IGenericImplTrait <IMPLTYPE>
 {
   public static final boolean DEFAULT_INCLUDE_HEADERS = true;
 
@@ -58,11 +64,13 @@ public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4Incomi
    * @param b
    *        <code>true</code> to include the headers in the dump,
    *        <code>false</code> if not.
+   * @return this for chaining (since v3.0.0)
    * @since 2.5.2
    */
-  public final void setIncludeHeaders (final boolean b)
+  public final IMPLTYPE setIncludeHeaders (final boolean b)
   {
     m_bIncludeHeaders = b;
+    return thisAsT ();
   }
 
   /**
@@ -104,5 +112,11 @@ public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4Incomi
       ret.write (CHttp.EOL.getBytes (CHttp.HTTP_CHARSET));
     }
     return ret;
+  }
+
+  public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                            @Nullable final Exception aCaughtException)
+  {
+    // empty
   }
 }
