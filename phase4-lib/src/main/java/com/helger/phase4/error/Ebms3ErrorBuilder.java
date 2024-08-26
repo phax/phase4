@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.builder.IBuilder;
 import com.helger.commons.error.level.IErrorLevel;
@@ -35,6 +36,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
  * @author Philip Helger
  * @since 2.6.0
  */
+@NotThreadSafe
 public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
 {
   private Ebms3Description m_aDescription;
