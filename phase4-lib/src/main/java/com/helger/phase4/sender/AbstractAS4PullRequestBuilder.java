@@ -28,7 +28,10 @@ import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
+import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
+import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
+import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -272,9 +275,12 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
       }
 
       // Create on demand with all necessary parameters
-      final AS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSigningParams (m_aSigningParams.getClone ())
-                                                                                                                     .setCryptParams (m_aCryptParams.getClone ())
-                                                                                                                     .setDecryptParameterModifier (m_aDecryptParameterModifier);
+      final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSigningParams (m_aSigningParams.getClone ())
+                                                                                                                      .setCryptParams (m_aCryptParams.getClone ())
+                                                                                                                      .setDecryptParameterModifier (m_aDecryptParameterModifier);
+
+      // Use defaults
+      final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration = new AS4IncomingReceiverConfiguration ();
 
       // Main sending
       AS4BidirectionalClientHelper.sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (m_aCryptoFactorySign,
@@ -289,6 +295,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
                                                                                        m_aOutgoingDumper,
                                                                                        m_aIncomingDumper,
                                                                                        aIncomingSecurityConfiguration,
+                                                                                       aIncomingReceiverConfiguration,
                                                                                        m_aRetryCallback,
                                                                                        m_aResponseConsumer,
                                                                                        m_aUserMsgConsumer,

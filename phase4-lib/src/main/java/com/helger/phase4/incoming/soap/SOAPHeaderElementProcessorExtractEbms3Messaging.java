@@ -43,7 +43,6 @@ import com.helger.commons.string.StringHelper;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
@@ -58,6 +57,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.incoming.AS4IncomingMessageState;
+import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.mgr.AS4IncomingPullRequestProcessorManager;
 import com.helger.phase4.incoming.spi.IAS4IncomingPullRequestProcessorSPI;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
@@ -87,6 +87,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
   private final IPModeResolver m_aPModeResolver;
   private final Consumer <? super IPMode> m_aPModeConsumer;
+  private final IAS4IncomingReceiverConfiguration m_aIncomingReceiverConfiguration;
 
   /**
    * Ctor
@@ -96,13 +97,18 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
    * @param aPModeConsumer
    *        An optional consumer that is invoked every time a PMode was
    *        successfully resolved. May be <code>null</code>.
+   * @param aIRC
+   *        The incoming receiver configuration. May not be <code>null</code>.
+   *        Since v3.0.0.
    */
   public SOAPHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IPModeResolver aPModeResolver,
-                                                          @Nullable final Consumer <? super IPMode> aPModeConsumer)
+                                                          @Nullable final Consumer <? super IPMode> aPModeConsumer,
+                                                          @Nonnull final IAS4IncomingReceiverConfiguration aIRC)
   {
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     m_aPModeResolver = aPModeResolver;
     m_aPModeConsumer = aPModeConsumer;
+    m_aIncomingReceiverConfiguration = aIRC;
   }
 
   /**
@@ -346,8 +352,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           sAgreementRef = aCollaborationInfo.getAgreementRef ().getValue ();
         }
 
-        // Get responder address from properties file (may be null)
-        final String sAddress = AS4Configuration.getThisEndpointAddress ();
+        // Get responder address
+        final String sAddress = m_aIncomingReceiverConfiguration.getReceiverEndpointAddress ();
 
         aPMode = m_aPModeResolver.findPMode (sPModeID,
                                              aCollaborationInfo.getService ().getValue (),

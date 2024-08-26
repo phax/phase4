@@ -37,6 +37,7 @@ import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
+import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
@@ -97,7 +98,8 @@ public class SOAPHeaderElementProcessorRegistry
                                                                   @Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                                   @Nullable final IPMode aFallbackPMode,
-                                                                  @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration)
+                                                                  @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                  @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration)
   {
     // Register all SOAP header element processors
     // Registration order matches execution order!
@@ -122,7 +124,8 @@ public class SOAPHeaderElementProcessorRegistry
     // Ebms3Messaging handler first
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING,
                                         new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver,
-                                                                                             aPModeConsumer));
+                                                                                             aPModeConsumer,
+                                                                                             aIncomingReceiverConfiguration));
 
     // WSS4J must be after Ebms3Messaging handler!
     final AS4SigningParams aSigningParams = aIncomingSecurityConfiguration.getSigningParams ();

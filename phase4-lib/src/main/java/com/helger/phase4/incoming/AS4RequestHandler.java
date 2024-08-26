@@ -360,13 +360,14 @@ public class AS4RequestHandler implements AutoCloseable
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4RequestHandler.class);
 
   private final AS4ResourceHelper m_aResHelper;
+  private final IAS4IncomingMessageMetadata m_aMessageMetadata;
   private IAS4CryptoFactory m_aCryptoFactorySign;
   private IAS4CryptoFactory m_aCryptoFactoryCrypt;
   private IPModeResolver m_aPModeResolver;
   private IAS4IncomingAttachmentFactory m_aIncomingAttachmentFactory;
   private IAS4IncomingSecurityConfiguration m_aIncomingSecurityConfig;
+  private IAS4IncomingReceiverConfiguration m_aIncomingReceiverConfig;
   private IAS4IncomingProfileSelector m_aIncomingProfileSelector = AS4IncomingProfileSelectorFromGlobal.INSTANCE;
-  private final IAS4IncomingMessageMetadata m_aMessageMetadata;
   private Locale m_aLocale = Locale.US;
   private IAS4IncomingDumper m_aIncomingDumper;
   private IAS4OutgoingDumper m_aOutgoingDumper;
@@ -392,12 +393,22 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The supplier for the {@link IAS4CryptoFactory} for signing. May not
-   *         be <code>null</code>.
+   * @return The incoming message metadata as provided in the constructor. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  protected final IAS4IncomingMessageMetadata getMessageMetadata ()
+  {
+    return m_aMessageMetadata;
+  }
+
+  /**
+   * @return The {@link IAS4CryptoFactory} for signing. May be <code>null</code>
+   *         if not initialized.
    * @see #getCryptoFactoryCrypt()
    * @since 3.0.0
    */
-  @Nonnull
+  @Nullable
   public final IAS4CryptoFactory getCryptoFactorySign ()
   {
     return m_aCryptoFactorySign;
@@ -423,12 +434,12 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The supplier for the {@link IAS4CryptoFactory} for crypting. May
-   *         not be <code>null</code>.
+   * @return The {@link IAS4CryptoFactory} for crypting. May be
+   *         <code>null</code> if not initialized.
    * @see #getCryptoFactorySign()
    * @since 3.0.0
    */
-  @Nonnull
+  @Nullable
   public final IAS4CryptoFactory getCryptoFactoryCrypt ()
   {
     return m_aCryptoFactoryCrypt;
@@ -472,10 +483,11 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The {@link IPModeResolver} to be used. Never <code>null</code>.
+   * @return The {@link IPModeResolver} to be used. May be <code>null</code> if
+   *         not initialized.
    * @since 3.0.0
    */
-  @Nonnull
+  @Nullable
   public final IPModeResolver getPModeResolver ()
   {
     return m_aPModeResolver;
@@ -496,11 +508,11 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The {@link IAS4IncomingAttachmentFactory} to be used. Never
-   *         <code>null</code>.
+   * @return The {@link IAS4IncomingAttachmentFactory} to be used. May be
+   *         <code>null</code> if not initialized.
    * @since 3.0.0
    */
-  @Nonnull
+  @Nullable
   public final IAS4IncomingAttachmentFactory getIncomingAttachmentFactory ()
   {
     return m_aIncomingAttachmentFactory;
@@ -522,11 +534,11 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The {@link IAS4IncomingSecurityConfiguration} to be used. Never
-   *         <code>null</code>.
+   * @return The {@link IAS4IncomingSecurityConfiguration} to be used. May be
+   *         <code>null</code> if not initialized.
    * @since 3.0.0
    */
-  @Nonnull
+  @Nullable
   public final IAS4IncomingSecurityConfiguration getIncomingSecurityConfiguration ()
   {
     return m_aIncomingSecurityConfig;
@@ -547,26 +559,27 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The locale for error messages. Never <code>null</code>.
+   * @return The {@link IAS4IncomingReceiverConfiguration} to be used. May be
+   *         <code>null</code> if not initialized.
+   * @since 3.0.0
    */
-  @Nonnull
-  public final Locale getLocale ()
+  @Nullable
+  public final IAS4IncomingReceiverConfiguration getIncomingReceiverConfiguration ()
   {
-    return m_aLocale;
+    return m_aIncomingReceiverConfig;
   }
 
   /**
-   * Set the error for EBMS error messages.
-   *
-   * @param aLocale
-   *        The locale. May not be <code>null</code>.
+   * @param aIRC
+   *        The incoming receiver configuration. May not be <code>null</code>.
    * @return this for chaining
+   * @since 3.0.0
    */
   @Nonnull
-  public final AS4RequestHandler setLocale (@Nonnull final Locale aLocale)
+  public final AS4RequestHandler setIncomingReceiverConfiguration (@Nonnull final IAS4IncomingReceiverConfiguration aIRC)
   {
-    ValueEnforcer.notNull (aLocale, "Locale");
-    m_aLocale = aLocale;
+    ValueEnforcer.notNull (aIRC, "ICS");
+    m_aIncomingReceiverConfig = aIRC;
     return this;
   }
 
@@ -594,6 +607,30 @@ public class AS4RequestHandler implements AutoCloseable
   {
     ValueEnforcer.notNull (aIncomingProfileSelector, "IncomingProfileSelector");
     m_aIncomingProfileSelector = aIncomingProfileSelector;
+    return this;
+  }
+
+  /**
+   * @return The locale for error messages. Never <code>null</code>.
+   */
+  @Nonnull
+  public final Locale getLocale ()
+  {
+    return m_aLocale;
+  }
+
+  /**
+   * Set the error for EBMS error messages.
+   *
+   * @param aLocale
+   *        The locale. May not be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final AS4RequestHandler setLocale (@Nonnull final Locale aLocale)
+  {
+    ValueEnforcer.notNull (aLocale, "Locale");
+    m_aLocale = aLocale;
     return this;
   }
 
@@ -678,6 +715,36 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
+   * @return The internal SOAP processing finalized callback. <code>null</code>
+   *         by default.
+   * @since 0.13.1
+   */
+  @Nullable
+  public final ISoapProcessingFinalizedCallback getSoapProcessingFinalizedCallback ()
+  {
+    return m_aSoapProcessingFinalizedCB;
+  }
+
+  /**
+   * Set the internal SOAP processing finalized callback. Only use when you know
+   * what you are doing. This callback is invoked both in the synchronous AND
+   * the asynchronous processing. A simple way to await the finalization could
+   * e.g. be a <code>java.util.concurrent.CountDownLatch</code>.
+   *
+   * @param aSoapProcessingFinalizedCB
+   *        The callback to be invoked. May be <code>null</code>. Only
+   *        non-<code>null</code> callbacks are invoked ;-)
+   * @return this for chaining
+   * @since 0.13.1
+   */
+  @Nonnull
+  public final AS4RequestHandler setSoapProcessingFinalizedCallback (@Nullable final ISoapProcessingFinalizedCallback aSoapProcessingFinalizedCB)
+  {
+    m_aSoapProcessingFinalizedCB = aSoapProcessingFinalizedCB;
+    return this;
+  }
+
+  /**
    * @return The supplier used to get all SPIs. By default this is
    *         {@link AS4IncomingMessageProcessorManager#getAllProcessors()}.
    */
@@ -743,36 +810,6 @@ public class AS4RequestHandler implements AutoCloseable
   public final AS4RequestHandler setErrorConsumer (@Nullable final IAS4RequestHandlerErrorConsumer aErrorConsumer)
   {
     m_aErrorConsumer = aErrorConsumer;
-    return this;
-  }
-
-  /**
-   * @return The internal SOAP processing finalized callback. <code>null</code>
-   *         by default.
-   * @since 0.13.1
-   */
-  @Nullable
-  public final ISoapProcessingFinalizedCallback getSoapProcessingFinalizedCallback ()
-  {
-    return m_aSoapProcessingFinalizedCB;
-  }
-
-  /**
-   * Set the internal SOAP processing finalized callback. Only use when you know
-   * what you are doing. This callback is invoked both in the synchronous AND
-   * the asynchronous processing. A simple way to await the finalization could
-   * e.g. be a <code>java.util.concurrent.CountDownLatch</code>.
-   *
-   * @param aSoapProcessingFinalizedCB
-   *        The callback to be invoked. May be <code>null</code>. Only
-   *        non-<code>null</code> callbacks are invoked ;-)
-   * @return this for chaining
-   * @since 0.13.1
-   */
-  @Nonnull
-  public final AS4RequestHandler setSoapProcessingFinalizedCallback (@Nullable final ISoapProcessingFinalizedCallback aSoapProcessingFinalizedCB)
-  {
-    m_aSoapProcessingFinalizedCB = aSoapProcessingFinalizedCB;
     return this;
   }
 
@@ -1547,7 +1584,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                                            m_aCryptoFactorySign,
                                                                                                            m_aCryptoFactoryCrypt,
                                                                                                            (IPMode) null,
-                                                                                                           m_aIncomingSecurityConfig);
+                                                                                                           m_aIncomingSecurityConfig,
+                                                                                                           m_aIncomingReceiverConfig);
 
     // Decompose the SOAP message
     final IAS4IncomingMessageState aState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,

@@ -158,6 +158,13 @@ public final class AS4IncomingHandler
                                                                                           MessagingException,
                                                                                           WSSecurityException
   {
+    ValueEnforcer.notNull (aIAF, "IncomingAttachmentFactory");
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
+    ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
+    ValueEnforcer.notNull (aPayloadIS, "PayloadIS");
+    ValueEnforcer.notNull (aHttpHeaders, "aHttpHeaders");
+    ValueEnforcer.notNull (aCallback, "Callback");
+
     LOGGER.info ("phase4 --- parsemessage:start");
 
     // Determine content type
@@ -826,7 +833,8 @@ public final class AS4IncomingHandler
                                                          @Nonnull final HttpResponse aHttpResponse,
                                                          @Nonnull final byte [] aResponsePayload,
                                                          @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                         @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration) throws Phase4Exception
+                                                         @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                         @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration) throws Phase4Exception
   {
     // This wrapper will take the result
     final Wrapper <IAS4IncomingMessageState> aRetWrapper = new Wrapper <> ();
@@ -841,7 +849,8 @@ public final class AS4IncomingHandler
                                                                                                              aCryptoFactorySign,
                                                                                                              aCryptoFactoryCrypt,
                                                                                                              aSendingPMode,
-                                                                                                             aIncomingSecurityConfiguration);
+                                                                                                             aIncomingSecurityConfiguration,
+                                                                                                             aIncomingReceiverConfiguration);
 
       // Parse AS4, verify signature etc
       final IAS4IncomingMessageState aState = processEbmsMessage (aResHelper,
@@ -905,6 +914,7 @@ public final class AS4IncomingHandler
                                                        @Nonnull final byte [] aResponsePayload,
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                        @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                       @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                        @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
     final IAS4IncomingMessageState aState = _parseMessage (aCryptoFactorySign,
@@ -919,7 +929,8 @@ public final class AS4IncomingHandler
                                                            aHttpResponse,
                                                            aResponsePayload,
                                                            aIncomingDumper,
-                                                           aIncomingSecurityConfiguration);
+                                                           aIncomingSecurityConfiguration,
+                                                           aIncomingReceiverConfiguration);
     if (aState == null)
     {
       // Error message was already logged
@@ -958,6 +969,7 @@ public final class AS4IncomingHandler
                                                    @Nonnull final byte [] aResponsePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                   @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws Phase4Exception
   {
     final IAS4IncomingMessageState aState = _parseMessage (aCryptoFactorySign,
@@ -972,7 +984,8 @@ public final class AS4IncomingHandler
                                                            aHttpResponse,
                                                            aResponsePayload,
                                                            aIncomingDumper,
-                                                           aIncomingSecurityConfiguration);
+                                                           aIncomingSecurityConfiguration,
+                                                           aIncomingReceiverConfiguration);
     if (aState == null)
     {
       // Error message was already logged
@@ -1010,6 +1023,7 @@ public final class AS4IncomingHandler
                                                    @Nonnull final byte [] aResponsePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                   @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
@@ -1025,7 +1039,8 @@ public final class AS4IncomingHandler
                                                            aHttpResponse,
                                                            aResponsePayload,
                                                            aIncomingDumper,
-                                                           aIncomingSecurityConfiguration);
+                                                           aIncomingSecurityConfiguration,
+                                                           aIncomingReceiverConfiguration);
     if (aState == null)
     {
       // Error message was already logged

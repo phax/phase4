@@ -49,6 +49,7 @@ import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.IAS4ResponseAbstraction;
@@ -226,6 +227,7 @@ public final class AS4DumpReader
       aHandler.setPModeResolver (DefaultPModeResolver.DEFAULT_PMODE_RESOLVER);
       aHandler.setIncomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
       aHandler.setIncomingSecurityConfiguration (AS4IncomingSecurityConfiguration.createDefaultInstance ());
+      aHandler.setIncomingReceiverConfiguration (new AS4IncomingReceiverConfiguration ());
 
       final IAS4IncomingMessageProcessorSPI aSPI = new IAS4IncomingMessageProcessorSPI ()
       {

@@ -31,7 +31,10 @@ import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
+import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
+import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
+import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 
@@ -203,9 +206,12 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
       }
 
       // Create on demand with all necessary parameters
-      final AS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSigningParams (m_aSigningParams.getClone ())
-                                                                                                                     .setCryptParams (m_aCryptParams.getClone ())
-                                                                                                                     .setDecryptParameterModifier (m_aDecryptParameterModifier);
+      final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration = new AS4IncomingSecurityConfiguration ().setSigningParams (m_aSigningParams.getClone ())
+                                                                                                                      .setCryptParams (m_aCryptParams.getClone ())
+                                                                                                                      .setDecryptParameterModifier (m_aDecryptParameterModifier);
+
+      // Use defaults
+      final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration = new AS4IncomingReceiverConfiguration ();
 
       // Main sending
       AS4BidirectionalClientHelper.sendAS4UserMessageAndReceiveAS4SignalMessage (m_aCryptoFactorySign,
@@ -220,6 +226,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
                                                                                  m_aOutgoingDumper,
                                                                                  m_aIncomingDumper,
                                                                                  aIncomingSecurityConfiguration,
+                                                                                 aIncomingReceiverConfiguration,
                                                                                  m_aRetryCallback,
                                                                                  m_aResponseConsumer,
                                                                                  m_aSignalMsgConsumer);

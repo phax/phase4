@@ -49,6 +49,7 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.incoming.AS4IncomingHandler;
 import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
+import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
@@ -81,6 +82,7 @@ public final class AS4BidirectionalClientHelper
                                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                                    @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                   @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                                    @Nullable final IAS4RetryCallback aRetryCallback,
                                                                    @Nullable final IAS4RawResponseConsumer aRawResponseConsumer,
                                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws IOException,
@@ -171,6 +173,7 @@ public final class AS4BidirectionalClientHelper
                                              aResponseEntity.getResponse (),
                                              aIncomingDumper,
                                              aIncomingSecurityConfiguration,
+                                             aIncomingReceiverConfiguration,
                                              aSignalMsgConsumer);
     }
     else
@@ -189,6 +192,7 @@ public final class AS4BidirectionalClientHelper
                                                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                  @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                                  @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                 @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                                  @Nullable final IAS4RetryCallback aRetryCallback,
                                                                  @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                  @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
@@ -255,6 +259,7 @@ public final class AS4BidirectionalClientHelper
                                            aResponseEntity.getResponse (),
                                            aIncomingDumper,
                                            aIncomingSecurityConfiguration,
+                                           aIncomingReceiverConfiguration,
                                            aUserMsgConsumer);
     }
     else
@@ -273,6 +278,7 @@ public final class AS4BidirectionalClientHelper
                                                                          @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                          @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                                          @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                         @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                                          @Nullable final IAS4RetryCallback aRetryCallback,
                                                                          @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                          @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
@@ -340,6 +346,7 @@ public final class AS4BidirectionalClientHelper
                                                    aResponseEntity.getResponse (),
                                                    aIncomingDumper,
                                                    aIncomingSecurityConfiguration,
+                                                   aIncomingReceiverConfiguration,
                                                    aUserMsgConsumer,
                                                    aSignalMsgConsumer);
     }
