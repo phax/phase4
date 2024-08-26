@@ -180,7 +180,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                                          ".as4in"))
     {
       @Override
-      public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+      public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                @Nullable final Exception aCaughtException)
       {
         // Save the metadata also to a file
         final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".metadata");

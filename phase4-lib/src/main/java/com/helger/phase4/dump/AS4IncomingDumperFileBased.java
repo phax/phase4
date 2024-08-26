@@ -105,9 +105,9 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    */
   public AS4IncomingDumperFileBased ()
   {
-    this ( (aMessageMetadata,
-            aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
-                                         DEFAULT_BASE_PATH + IFileProvider.getFilename (aMessageMetadata)));
+    this ( (aMessageMetadata, aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
+                                                           DEFAULT_BASE_PATH +
+                                                                                                    IFileProvider.getFilename (aMessageMetadata)));
   }
 
   /**
@@ -136,6 +136,12 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
     return FileHelper.getBufferedOutputStream (aDumpFile);
   }
 
+  public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                            @Nullable final Exception aCaughtException)
+  {
+    // empty
+  }
+
   /**
    * Create a new instance for the provided directory.
    *
@@ -148,8 +154,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   public static AS4IncomingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4IncomingDumperFileBased ( (aMessageMetadata,
-                                             aHttpHeaderMap) -> new File (aBaseDirectory,
-                                                                          IFileProvider.getFilename (aMessageMetadata)));
+    return new AS4IncomingDumperFileBased ( (aMessageMetadata, aHttpHeaderMap) -> new File (aBaseDirectory,
+                                                                                            IFileProvider.getFilename (aMessageMetadata)));
   }
 }

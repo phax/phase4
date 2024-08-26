@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 
 import com.helger.commons.ValueEnforcer;
@@ -60,5 +61,11 @@ public class AS4IncomingDumperSingleUse extends AbstractAS4IncomingDumperWithHea
     if (!m_aUsedOS.compareAndSet (false, true))
       throw new IllegalStateException ("This single-use dumper was already used.");
     return m_aOS;
+  }
+
+  public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                            @Nullable final Exception aCaughtException)
+  {
+    // empty
   }
 }

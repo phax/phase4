@@ -382,7 +382,7 @@ public final class AS4IncomingHandler
       if (aRealIncomingDumper != null && aDumpOSHolder.isSet ())
         try
         {
-          aRealIncomingDumper.onEndRequest (aMessageMetadata);
+          aRealIncomingDumper.onEndRequest (aMessageMetadata, aCaughtException);
         }
         catch (final Exception ex)
         {
