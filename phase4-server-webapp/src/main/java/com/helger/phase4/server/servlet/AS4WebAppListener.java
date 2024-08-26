@@ -151,18 +151,20 @@ public final class AS4WebAppListener extends WebAppListener
   {
     AS4ServerInitializer.initAS4Server ();
 
-    final IAS4CryptoFactory aCF = AS4CryptoFactoryProperties.getDefaultInstance ();
-
     // Check if crypto properties are okay
-    final KeyStore aKS = aCF.getKeyStore ();
-    if (aKS == null)
-      throw new InitializationException ("Failed to load configured AS4 Key store - fix the configuration");
-    LOGGER.info ("Successfully loaded configured AS4 key store from the crypto factory");
+    {
+      final IAS4CryptoFactory aCF = AS4CryptoFactoryProperties.getDefaultInstance ();
 
-    final KeyStore.PrivateKeyEntry aPKE = aCF.getPrivateKeyEntry ();
-    if (aPKE == null)
-      throw new InitializationException ("Failed to load configured AS4 private key - fix the configuration");
-    LOGGER.info ("Successfully loaded configured AS4 private key from the crypto factory");
+      final KeyStore aKS = aCF.getKeyStore ();
+      if (aKS == null)
+        throw new InitializationException ("Failed to load configured AS4 Key store - fix the configuration");
+      LOGGER.info ("Successfully loaded configured AS4 key store from the crypto factory");
+
+      final KeyStore.PrivateKeyEntry aPKE = aCF.getPrivateKeyEntry ();
+      if (aPKE == null)
+        throw new InitializationException ("Failed to load configured AS4 private key - fix the configuration");
+      LOGGER.info ("Successfully loaded configured AS4 private key from the crypto factory");
+    }
 
     // Store the incoming file as is
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ( (aMessageMetadata,

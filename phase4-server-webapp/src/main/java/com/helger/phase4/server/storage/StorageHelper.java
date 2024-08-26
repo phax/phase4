@@ -48,7 +48,7 @@ public final class StorageHelper
   {}
 
   @Nonnull
-  private static File _getStorageFile (@Nonnull final OffsetDateTime aLDT, @Nonnull final String sExt)
+  private static File _getStorageFile (@Nonnull final OffsetDateTime aLDT, @Nonnull final String sFilenameExt)
   {
     final String sYear = StringHelper.getLeadingZero (aLDT.getYear (), 4);
     final String sMonth = StringHelper.getLeadingZero (aLDT.getMonthValue (), 2);
@@ -57,30 +57,30 @@ public final class StorageHelper
                                                                       "-" +
                                                                       FILE_SEQ_COUNTER.incrementAndGet () +
                                                                       "-" +
-                                                                      sExt);
+                                                                      sFilenameExt);
     return WebFileIO.getDataIO ().getFile ("as4dump/" + sYear + "/" + sMonth + "/" + sDay + "/" + sFilename);
   }
 
   @Nonnull
   public static File getStorageFile (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                     @Nonnull final String sExt)
+                                     @Nonnull final String sFilenameExt)
   {
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
-    ValueEnforcer.notEmpty (sExt, "Ext");
-    ValueEnforcer.isTrue (sExt.contains ("."), "Extension must contain a dot");
+    ValueEnforcer.notEmpty (sFilenameExt, "Ext");
+    ValueEnforcer.isTrue (sFilenameExt.contains ("."), "Extension must contain a dot");
 
-    return _getStorageFile (aMessageMetadata.getIncomingDT (), aMessageMetadata.getIncomingUniqueID () + sExt);
+    return _getStorageFile (aMessageMetadata.getIncomingDT (), aMessageMetadata.getIncomingUniqueID () + sFilenameExt);
   }
 
   @Nonnull
   public static File getStorageFile (@Nonnull @Nonempty final String sMessageID,
                                      @Nonnegative final int nTry,
-                                     @Nonnull final String sExt)
+                                     @Nonnull final String sFilenameExt)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
-    ValueEnforcer.notEmpty (sExt, "Ext");
-    ValueEnforcer.isTrue (sExt.contains ("."), "Extension must contain a dot");
+    ValueEnforcer.notEmpty (sFilenameExt, "Ext");
+    ValueEnforcer.isTrue (sFilenameExt.contains ("."), "Extension must contain a dot");
 
-    return _getStorageFile (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), sMessageID + "-" + nTry + sExt);
+    return _getStorageFile (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), sMessageID + "-" + nTry + sFilenameExt);
   }
 }
