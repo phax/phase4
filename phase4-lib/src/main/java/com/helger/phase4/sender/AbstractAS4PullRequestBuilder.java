@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
-import com.helger.phase4.client.IAS4SignalMessageConsumer;
-import com.helger.phase4.client.IAS4UserMessageConsumer;
 import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
+import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
+import com.helger.phase4.incoming.IAS4UserMessageConsumer;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.model.pmode.IPMode;

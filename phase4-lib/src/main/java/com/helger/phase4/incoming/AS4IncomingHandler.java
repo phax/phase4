@@ -59,8 +59,6 @@ import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.client.IAS4SignalMessageConsumer;
-import com.helger.phase4.client.IAS4UserMessageConsumer;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
@@ -148,7 +146,7 @@ public final class AS4IncomingHandler
 
   public static void parseAS4Message (@Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                      @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                      @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                       @Nonnull @WillClose final InputStream aPayloadIS,
                                       @Nonnull final HttpHeaderMap aHttpHeaders,
                                       @Nonnull final IAS4ParsedMessageCallback aCallback,
@@ -159,7 +157,7 @@ public final class AS4IncomingHandler
   {
     ValueEnforcer.notNull (aIAF, "IncomingAttachmentFactory");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
-    ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
+    ValueEnforcer.notNull (aIncomingMessageMetadata, "IncomingMessageMetadata");
     ValueEnforcer.notNull (aPayloadIS, "PayloadIS");
     ValueEnforcer.notNull (aHttpHeaders, "aHttpHeaders");
     ValueEnforcer.notNull (aCallback, "Callback");
@@ -195,14 +193,14 @@ public final class AS4IncomingHandler
     for (final IAS4IncomingMessageProcessingStatusSPI aStatusSPI : aStatusSPIs)
       try
       {
-        aStatusSPI.onMessageProcessingStarted (aMessageMetadata);
+        aStatusSPI.onMessageProcessingStarted (aIncomingMessageMetadata);
       }
       catch (final Exception ex)
       {
         LOGGER.error ("IAS4IncomingMessageProcessingStatusSPI.onMessageProcessingStarted failed. SPI=" +
                       aStatusSPI +
                       "; MessageMetadata=" +
-                      aMessageMetadata,
+                      aIncomingMessageMetadata,
                       ex);
       }
 
@@ -227,7 +225,7 @@ public final class AS4IncomingHandler
         // closed
         try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                             aPayloadIS,
-                                                                                            aMessageMetadata,
+                                                                                            aIncomingMessageMetadata,
                                                                                             aHttpHeaders,
                                                                                             aDumpOSHolder))
         {
@@ -305,7 +303,7 @@ public final class AS4IncomingHandler
         // closed
         aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                               aPayloadIS,
-                                                                                              aMessageMetadata,
+                                                                                              aIncomingMessageMetadata,
                                                                                               aHttpHeaders,
                                                                                               aDumpOSHolder));
 
@@ -387,14 +385,14 @@ public final class AS4IncomingHandler
       if (aRealIncomingDumper != null && aDumpOSHolder.isSet ())
         try
         {
-          aRealIncomingDumper.onEndRequest (aMessageMetadata, aCaughtException);
+          aRealIncomingDumper.onEndRequest (aIncomingMessageMetadata, aCaughtException);
         }
         catch (final Exception ex)
         {
           LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" +
                         aRealIncomingDumper +
                         "; MessageMetadata=" +
-                        aMessageMetadata,
+                        aIncomingMessageMetadata,
                         ex);
         }
 
@@ -402,14 +400,14 @@ public final class AS4IncomingHandler
       for (final IAS4IncomingMessageProcessingStatusSPI aStatusSPI : aStatusSPIs)
         try
         {
-          aStatusSPI.onMessageProcessingEnded (aMessageMetadata, aCaughtException);
+          aStatusSPI.onMessageProcessingEnded (aIncomingMessageMetadata, aCaughtException);
         }
         catch (final Exception ex)
         {
           LOGGER.error ("IAS4IncomingMessageProcessingStatusSPI.onMessageProcessingEnded failed. SPI=" +
                         aStatusSPI +
                         "; MessageMetadata=" +
-                        aMessageMetadata,
+                        aIncomingMessageMetadata,
                         ex);
         }
 
@@ -834,7 +832,7 @@ public final class AS4IncomingHandler
                                                          @Nonnull final Locale aLocale,
                                                          @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                          @Nonnull final HttpResponse aHttpResponse,
-                                                         @Nonnull final byte [] aResponsePayload,
+                                                         @Nonnull final byte [] aMessagePayload,
                                                          @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                          @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                          @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration) throws Phase4Exception
@@ -883,7 +881,7 @@ public final class AS4IncomingHandler
     for (final Header aHeader : aHttpResponse.getHeaders ())
       aHttpHeaders.addHeader (aHeader.getName (), aHeader.getValue ());
 
-    try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))
+    try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aMessagePayload))
     {
       // Parse incoming message
       parseAS4Message (aIAF,
@@ -920,7 +918,7 @@ public final class AS4IncomingHandler
                                                        @Nonnull final Locale aLocale,
                                                        @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                        @Nonnull final HttpResponse aHttpResponse,
-                                                       @Nonnull final byte [] aResponsePayload,
+                                                       @Nonnull final byte [] aMessagePayload,
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                        @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                        @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
@@ -936,7 +934,7 @@ public final class AS4IncomingHandler
                                                                    aLocale,
                                                                    aIncomingMessageMetadata,
                                                                    aHttpResponse,
-                                                                   aResponsePayload,
+                                                                   aMessagePayload,
                                                                    aIncomingDumper,
                                                                    aIncomingSecurityConfiguration,
                                                                    aIncomingReceiverConfiguration);
@@ -975,7 +973,7 @@ public final class AS4IncomingHandler
                                                    @Nonnull final Locale aLocale,
                                                    @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                    @Nonnull final HttpResponse aHttpResponse,
-                                                   @Nonnull final byte [] aResponsePayload,
+                                                   @Nonnull final byte [] aMessagePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                    @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
@@ -991,7 +989,7 @@ public final class AS4IncomingHandler
                                                                    aLocale,
                                                                    aIncomingMessageMetadata,
                                                                    aHttpResponse,
-                                                                   aResponsePayload,
+                                                                   aMessagePayload,
                                                                    aIncomingDumper,
                                                                    aIncomingSecurityConfiguration,
                                                                    aIncomingReceiverConfiguration);
@@ -1029,7 +1027,7 @@ public final class AS4IncomingHandler
                                                    @Nonnull final Locale aLocale,
                                                    @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                    @Nonnull final HttpResponse aHttpResponse,
-                                                   @Nonnull final byte [] aResponsePayload,
+                                                   @Nonnull final byte [] aMessagePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                    @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
@@ -1046,7 +1044,7 @@ public final class AS4IncomingHandler
                                                                    aLocale,
                                                                    aIncomingMessageMetadata,
                                                                    aHttpResponse,
-                                                                   aResponsePayload,
+                                                                   aMessagePayload,
                                                                    aIncomingDumper,
                                                                    aIncomingSecurityConfiguration,
                                                                    aIncomingReceiverConfiguration);

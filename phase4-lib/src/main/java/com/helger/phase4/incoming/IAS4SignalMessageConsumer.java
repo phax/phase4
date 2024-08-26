@@ -14,31 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.client;
+package com.helger.phase4.incoming;
 
 import javax.annotation.Nonnull;
 
-import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
-import com.helger.phase4.incoming.IAS4IncomingMessageState;
+import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
- * Specialized interface for the EBMS 3 User Message consumer.
+ * Specialized interface for the EBMS 3 Signal Message consumer.
  *
  * @author Philip Helger
- * @since 0.12.0
+ * @since 0.9.14
  */
 @FunctionalInterface
-public interface IAS4UserMessageConsumer
+public interface IAS4SignalMessageConsumer
 {
   /**
-   * Handling an EBMS 3 User Message. Make sure to copy all attachments you are
-   * interested in, because by default they are only available based on
+   * Handling an EBMS 3 Signal Message. Make sure to copy all attachments you
+   * are interested in, because by default they are only available based on
    * temporary files during the processing of the inbound request.
    *
-   * @param aUserMsg
-   *        The User Message domain object. Never <code>null</code>.
+   * @param aSignalMsg
+   *        The Signal Message domain object. Never <code>null</code>.
    * @param aIncomingMessageMetadata
    *        The message metadata of the synchronously received message. Never
    *        <code>null</code>. Added in v2.5.0.
@@ -48,7 +46,7 @@ public interface IAS4UserMessageConsumer
    * @throws Phase4Exception
    *         in case of error
    */
-  void handleUserMessage (@Nonnull Ebms3UserMessage aUserMsg,
-                          @Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                          @Nonnull IAS4IncomingMessageState aIncomingState) throws Phase4Exception;
+  void handleSignalMessage (@Nonnull Ebms3SignalMessage aSignalMsg,
+                            @Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                            @Nonnull IAS4IncomingMessageState aIncomingState) throws Phase4Exception;
 }
