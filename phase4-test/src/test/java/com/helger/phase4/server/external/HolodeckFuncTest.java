@@ -46,7 +46,7 @@ import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.server.MockJettySetup;
 
 @Ignore ("Axis2 bug in Holodeck! Requires external proxy and Peppol pilot certificate!")
@@ -134,7 +134,7 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                                false,
                                                                AS4SigningParams.createDefault ());
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aSignedDoc, aAttachments);
+    final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aSignedDoc, aAttachments);
     sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
   }
 }

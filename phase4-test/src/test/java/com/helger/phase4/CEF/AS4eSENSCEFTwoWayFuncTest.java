@@ -32,7 +32,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 
 public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 {
@@ -93,7 +93,7 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
                                                                                          .build (),
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                         testSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                aAttachments,

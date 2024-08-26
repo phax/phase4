@@ -52,7 +52,7 @@ import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.messaging.mime.SoapMimeMultipart;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.XMLHelper;
@@ -182,7 +182,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
       if (aElement.hasAttribute ("href"))
         aElement.setAttribute ("href", MessageHelperMethods.PREFIX_CID + "invalid" + i);
     }
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
+    final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg),
                      false,
                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
@@ -277,7 +277,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                                          .build (),
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                             MockMessages.createUserMessageNotSigned (m_eSoapVersion,
                                                                                                                      null,
                                                                                                                      aAttachments)
@@ -309,7 +309,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                                          .build (),
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aSoapDoc, aAttachments);
+    final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aSoapDoc, aAttachments);
     aMimeMsg.saveChanges ();
     sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg),
                      false,
@@ -340,7 +340,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                                          .build (),
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aSoapDoc, aAttachments);
+    final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aSoapDoc, aAttachments);
     aMimeMsg.saveChanges ();
     sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg),
                      false,

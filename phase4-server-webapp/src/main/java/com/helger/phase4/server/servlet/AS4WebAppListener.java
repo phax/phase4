@@ -41,9 +41,9 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.incoming.AS4IncomingHelper;
 import com.helger.phase4.incoming.AS4ServerInitializer;
-import com.helger.phase4.messaging.AS4MessagingHelper;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.server.storage.StorageHelper;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
@@ -178,7 +178,7 @@ public final class AS4WebAppListener extends WebAppListener
         // Save the metadata also to a file
         final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".metadata");
         if (SimpleFileIO.writeFile (aFile,
-                                    AS4MessagingHelper.getIncomingMetadataAsJson (aMessageMetadata)
+                                    AS4IncomingHelper.getIncomingMetadataAsJson (aMessageMetadata)
                                                       .getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
                                     StandardCharsets.UTF_8).isFailure ())
           LOGGER.error ("Failed to write metadata to '" + aFile.getAbsolutePath () + "'");

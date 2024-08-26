@@ -41,7 +41,7 @@ import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.server.external.IHolodeckTests;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
@@ -93,7 +93,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   public void testUserMessageSOAPBodyPayloadSignedMimeSuccess () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                         MockMessages.createUserMessageSigned (m_eSoapVersion,
                                                                                                               aPayload,
                                                                                                               null,

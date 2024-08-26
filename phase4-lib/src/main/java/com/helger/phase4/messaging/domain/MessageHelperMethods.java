@@ -270,6 +270,9 @@ public final class MessageHelperMethods
                                                    @Nullable final String sType,
                                                    @Nonnull final String sValue)
   {
+    ValueEnforcer.notEmpty (sName, "Name");
+    ValueEnforcer.notNull (sValue, "Value");
+
     final Ebms3Property aProp = new Ebms3Property ();
     aProp.setName (sName);
     aProp.setType (sType);

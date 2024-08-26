@@ -41,7 +41,7 @@ import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.server.external.IHolodeckTests;
 import com.helger.phase4.soap.ESoapVersion;
 
@@ -73,7 +73,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                                          .build (),
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+    final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSOAPVersion,
                                                                             MockMessages.createUserMessageNotSigned (m_eSOAPVersion,
                                                                                                                      null,
                                                                                                                      aAttachments)
@@ -103,7 +103,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                          s_aResMgr,
                                                          false,
                                                          AS4SigningParams.createDefault ());
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
+    final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
 
     sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
   }

@@ -52,7 +52,7 @@ import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.http.HttpMimeMessageEntity;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
@@ -194,13 +194,12 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
       else
       {
         // 200, 400 or 500
-        assertTrue ("Server responded with StatusCode=" +
-                    nStatusCode +
-                    ". Response:\n" +
-                    sResponse,
+        assertTrue ("Server responded with StatusCode=" + nStatusCode + ". Response:\n" + sResponse,
                     nStatusCode == CHttp.HTTP_OK ||
-                               nStatusCode == CHttp.HTTP_BAD_REQUEST ||
-                               nStatusCode == CHttp.HTTP_INTERNAL_SERVER_ERROR);
+                                                                                                     nStatusCode ==
+                                                    CHttp.HTTP_BAD_REQUEST ||
+                                                                                                     nStatusCode ==
+                                                                              CHttp.HTTP_INTERNAL_SERVER_ERROR);
         assertTrue ("Server responded with different error message than expected (" +
                     sExecptedResponseContent +
                     ")." +
@@ -241,7 +240,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
     final HttpPost aPost = _createMockPostToLocalJetty ();
 
     // Move all headers from MIME message to the HTTP POST
-    MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aHttpEntity.getMimeMessage (), aPost::addHeader, true);
+    AS4MimeMessageHelper.forEachHeaderAndRemoveAfterwards (aHttpEntity.getMimeMessage (), aPost::addHeader, true);
 
     // Ready to send
     return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExecptedResponseContent);

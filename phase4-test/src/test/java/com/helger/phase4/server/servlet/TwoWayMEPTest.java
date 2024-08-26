@@ -38,7 +38,7 @@ import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
@@ -123,7 +123,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                              aAttachments,
                                              null,
                                              null);
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
+    final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -155,7 +155,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                              aAttachments,
                                              null,
                                              null);
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
+    final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));

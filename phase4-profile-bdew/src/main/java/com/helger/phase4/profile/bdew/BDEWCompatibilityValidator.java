@@ -46,7 +46,7 @@ import com.helger.phase4.ebms3header.Ebms3Service;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;

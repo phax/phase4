@@ -67,7 +67,7 @@ import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
-import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.soap.ESoapVersion;
 
@@ -102,7 +102,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void testEsens_TA01 () throws Exception
   {
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                         createTestSignedUserMessage (m_eSoapVersion,
                                                                                                      m_aPayload,
                                                                                                      null,
@@ -195,7 +195,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                          .build (),
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                         createTestSignedUserMessage (m_eSoapVersion,
                                                                                                      m_aPayload,
                                                                                                      aAttachments,
@@ -238,7 +238,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                          .build (),
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                         createTestSignedUserMessage (m_eSoapVersion,
                                                                                                      m_aPayload,
                                                                                                      aAttachments,
@@ -290,7 +290,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                          .build (),
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                         createTestSignedUserMessage (m_eSoapVersion,
                                                                                                      m_aPayload,
                                                                                                      aAttachments,
@@ -338,7 +338,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                          .build (),
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+    final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                         createTestSignedUserMessage (m_eSoapVersion,
                                                                                                      m_aPayload,
                                                                                                      aAttachments,
@@ -468,7 +468,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
       try
       {
         // send message
-        final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+        final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                             createTestSignedUserMessage (m_eSoapVersion,
                                                                                                          m_aPayload,
                                                                                                          null,
@@ -542,7 +542,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
       try
       {
         // send message
-        final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+        final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                             createTestSignedUserMessage (m_eSoapVersion,
                                                                                                          m_aPayload,
                                                                                                          null,
@@ -722,7 +722,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
       try
       {
         // send message
-        final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+        final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                             createTestSignedUserMessage (m_eSoapVersion,
                                                                                                          m_aPayload,
                                                                                                          null,
