@@ -65,6 +65,7 @@ import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
+import com.helger.phase4.profile.IAS4ProfileValidator.EProfileValidationMode;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
@@ -111,7 +112,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeAgreementMandatory ()
   {
     m_aPMode.setAgreement (null);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode.Agreement must be set to '" +
@@ -123,7 +124,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeAgreementWrongValue ()
   {
     m_aPMode.setAgreement ("http://test.example.org");
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode.Agreement must be set to '" +
@@ -137,7 +138,7 @@ public final class BDEWCompatibilityValidatorTest
     m_aPMode.setMEP (EMEP.TWO_WAY);
     // Only one-way push allowed
     m_aPMode.setMEPBinding (EMEPBinding.PULL);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP")));
   }
@@ -147,7 +148,7 @@ public final class BDEWCompatibilityValidatorTest
   {
     // SYNC not allowed
     m_aPMode.setMEPBinding (EMEPBinding.SYNC);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP binding")));
   }
@@ -158,7 +159,7 @@ public final class BDEWCompatibilityValidatorTest
     final PModeParty aInitiatorParty = PModeParty.createSimple ("id", "http://test.example.org");
 
     m_aPMode.setInitiator (aInitiatorParty);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Initiator.Role must be set to '" +
                                                            CAS4.DEFAULT_INITIATOR_URL +
@@ -171,7 +172,7 @@ public final class BDEWCompatibilityValidatorTest
     final PModeParty aResponderParty = PModeParty.createSimple ("id", "http://test.example.org");
 
     m_aPMode.setResponder (aResponderParty);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Responder.Role must be set to '" +
                                                            CAS4.DEFAULT_RESPONDER_URL +
@@ -182,7 +183,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeNoLeg ()
   {
     m_aPMode.setLeg1 (null);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[1] is missing")));
   }
 
@@ -190,7 +191,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeNoProtocol ()
   {
     m_aPMode.setLeg1 (new PModeLeg (null, null, null, null, null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol is missing")));
   }
 
@@ -199,7 +200,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeNoProtocolAddress ()
   {
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion (null), null, null, null, null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol is missing")));
   }
 
@@ -211,7 +212,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("AddressProtocol 'ftp' is unsupported")));
   }
@@ -224,7 +225,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("SoapVersion '1.1' is unsupported")));
   }
 
@@ -238,7 +239,7 @@ public final class BDEWCompatibilityValidatorTest
                                     PModeLegErrorHandling.createUndefined (),
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509SignatureAlgorithm is missing")));
   }
 
@@ -253,7 +254,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmSign.ECDSA_SHA_256.getID ())));
   }
@@ -268,7 +269,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509SignatureHashFunction is missing")));
   }
@@ -283,7 +284,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
   }
@@ -298,7 +299,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509EncryptionAlgorithm is missing")));
   }
@@ -313,7 +314,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
   }
@@ -329,7 +330,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.WSSVersion must use the value WSS_111 instead of WSS_10")));
   }
@@ -338,7 +339,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeSecurityPModeAuthorizeMandatory ()
   {
     m_aPMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue ("Errors: " + m_aErrorList.toString (),
                 m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.PModeAuthorize is missing")));
@@ -354,7 +355,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
   }
 
@@ -362,7 +363,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeSecuritySendReceiptMandatory ()
   {
     m_aPMode.getLeg1 ().getSecurity ().setSendReceipt (ETriState.UNDEFINED);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue ("Errors: " + m_aErrorList.toString (),
                 m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.SendReceipt must be defined and set to 'true'")));
@@ -372,7 +373,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeSecuritySendReceiptTrue ()
   {
     m_aPMode.getLeg1 ().getSecurity ().setSendReceipt (ETriState.FALSE);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue ("Errors: " + m_aErrorList.toString (),
                 m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.SendReceipt must be defined and set to 'true'")));
@@ -389,7 +390,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.SendReceiptReplyPattern must use the value RESPONSE instead of CALLBACK")));
   }
@@ -405,7 +406,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null));
 
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode.Leg[1].ErrorHandling is missing")));
   }
@@ -419,7 +420,7 @@ public final class BDEWCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.AsResponse is missing")));
   }
@@ -434,7 +435,7 @@ public final class BDEWCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.AsResponse must be 'true'")));
   }
@@ -448,7 +449,7 @@ public final class BDEWCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer is missing")));
   }
@@ -463,7 +464,7 @@ public final class BDEWCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'")));
   }
@@ -477,7 +478,7 @@ public final class BDEWCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer is missing")));
   }
@@ -492,7 +493,7 @@ public final class BDEWCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'")));
   }
@@ -510,7 +511,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null));
 
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("BusinessInfo.Service 'http://test.example.org' is unsupported")));
   }
@@ -528,7 +529,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     null));
 
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("BusinessInfo.Action 'http://test.example.org' is unsupported")));
   }
@@ -537,7 +538,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeNoX509EncryptionMinimalStrength ()
   {
     m_aPMode.getLeg1 ().getSecurity ().setX509EncryptionMinimumStrength (null);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509Encryption.MinimalStrength must be defined and set to 128")));
   }
@@ -546,7 +547,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeX509EncryptionMinimalStrengthWrongValue ()
   {
     m_aPMode.getLeg1 ().getSecurity ().setX509EncryptionMinimumStrength (256);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509Encryption.MinimalStrength must be defined and set to 128")));
   }
@@ -555,7 +556,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeReceptionAwarenessMandatory ()
   {
     m_aPMode.getReceptionAwareness ().setReceptionAwareness (ETriState.UNDEFINED);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReceptionAwareness must be defined and set to 'true'")));
   }
@@ -564,7 +565,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeReceptionAwarenessWrongValue ()
   {
     m_aPMode.getReceptionAwareness ().setReceptionAwareness (ETriState.FALSE);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReceptionAwareness must be defined and set to 'true'")));
   }
@@ -573,7 +574,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeReceptionAwarenessRetryMandatory ()
   {
     m_aPMode.getReceptionAwareness ().setRetry (ETriState.UNDEFINED);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReceptionAwareness.Retry must be defined and set to 'true'")));
   }
@@ -582,7 +583,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeReceptionAwarenessRetryWrongValue ()
   {
     m_aPMode.getReceptionAwareness ().setRetry (ETriState.FALSE);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReceptionAwareness.Retry must be defined and set to 'true'")));
   }
@@ -591,7 +592,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeReceptionAwarenessDuplicateDetectionMandatory ()
   {
     m_aPMode.getReceptionAwareness ().setDuplicateDetection (ETriState.UNDEFINED);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReceptionAwareness.DuplicateDetection must be defined and set to 'true'")));
   }
@@ -600,7 +601,7 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidatePModeReceptionAwarenessDuplicateDetectionWrongValue ()
   {
     m_aPMode.getReceptionAwareness ().setDuplicateDetection (ETriState.FALSE);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReceptionAwareness.DuplicateDetection must be defined and set to 'true'")));
   }
@@ -627,7 +628,7 @@ public final class BDEWCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
 
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.isEmpty ());
   }
 

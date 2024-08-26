@@ -322,8 +322,13 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   }
 
   @Override
-  public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
+  public void validatePMode (@Nonnull final IPMode aPMode,
+                             @Nonnull final ErrorList aErrorList,
+                             @Nonnull final EProfileValidationMode eValidationMode)
   {
+    ValueEnforcer.notNull (aPMode, "PMode");
+    ValueEnforcer.notNull (aErrorList, "ErrorList");
+    ValueEnforcer.notNull (eValidationMode, "ValidationMode");
     ValueEnforcer.isTrue (aErrorList.isEmpty (), () -> "Errors in global PMode validation: " + aErrorList);
 
     try
@@ -433,7 +438,6 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
                                          @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                          @Nonnull final ErrorList aErrorList)
   {
-
     X509Certificate aTlsClientEndCert = null;
     if (aMessageMetadata.hasRemoteTlsCerts ())
     {
@@ -446,8 +450,8 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       if (!cn.contains (EMT_MAK))
       {
         aErrorList.add (_createError ("TLS certificate '" +
-                                              aTlsClientEndCert.getSubjectX500Principal()
-                                              + "' is not an EMT/MAKO certificate"));
+                                      aTlsClientEndCert.getSubjectX500Principal () +
+                                      "' is not an EMT/MAKO certificate"));
       }
     }
 
@@ -460,8 +464,8 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       if (!cn.contains (EMT_MAK))
       {
         aErrorList.add (_createError ("Signature certificate '" +
-                                              aSignatureCert.getSubjectX500Principal()
-                                              + "' is not an EMT/MAKO certificate"));
+                                      aSignatureCert.getSubjectX500Principal () +
+                                      "' is not an EMT/MAKO certificate"));
       }
     }
 

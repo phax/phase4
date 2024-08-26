@@ -48,6 +48,7 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
+import com.helger.phase4.profile.IAS4ProfileValidator.EProfileValidationMode;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
@@ -68,26 +69,26 @@ public final class EuCtpCompatibilityValidatorTest
   private static final EuCtpCompatibilityValidator VALIDATOR = new EuCtpCompatibilityValidator ();
 
   private ErrorList m_aErrorList;
-  private PMode m_aMode;
+  private PMode m_aPMode;
 
   @Before
   public void before ()
   {
     m_aErrorList = new ErrorList ();
-    m_aMode = EuCtpPMode.createEuCtpPushPMode ("TestInitiator",
-                                               "TestResponder",
-                                               "http://localhost:8080",
-                                               IPModeIDProvider.DEFAULT_DYNAMIC,
-                                               true);
+    m_aPMode = EuCtpPMode.createEuCtpPushPMode ("TestInitiator",
+                                                "TestResponder",
+                                                "http://localhost:8080",
+                                                IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                true);
   }
 
   @Test
   public void testValidatePModeWrongMEP ()
   {
-    m_aMode.setMEP (EMEP.TWO_WAY);
+    m_aPMode.setMEP (EMEP.TWO_WAY);
     // Only 2-way push-push allowed
-    m_aMode.setMEPBinding (EMEPBinding.PULL);
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setMEPBinding (EMEPBinding.PULL);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP")));
   }
@@ -96,8 +97,8 @@ public final class EuCtpCompatibilityValidatorTest
   public void testValidatePModeWrongMEPBinding ()
   {
     // SYNC not allowed
-    m_aMode.setMEPBinding (EMEPBinding.SYNC);
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setMEPBinding (EMEPBinding.SYNC);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP binding")));
   }
@@ -105,16 +106,16 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeNoLeg ()
   {
-    m_aMode.setLeg1 (null);
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (null);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[1] is missing")));
   }
 
   @Test
   public void testValidatePModeNoProtocol ()
   {
-    m_aMode.setLeg1 (new PModeLeg (null, null, null, null, null));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (null, null, null, null, null));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol is missing")));
   }
 
@@ -122,20 +123,20 @@ public final class EuCtpCompatibilityValidatorTest
   @Ignore ("The response address is most of the time not set")
   public void testValidatePModeNoProtocolAddress ()
   {
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion (null), null, null, null, null));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion (null), null, null, null, null));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol is missing")));
   }
 
   @Test
   public void testValidatePModeProtocolAddressIsNotHttp ()
   {
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"),
-                                   null,
-                                   null,
-                                   null,
-                                   null));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("AddressProtocol 'ftp' is unsupported")));
   }
@@ -143,12 +144,12 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
-    m_aMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11),
-                                   null,
-                                   null,
-                                   null,
-                                   null));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("SoapVersion '1.1' is unsupported")));
   }
 
@@ -156,14 +157,14 @@ public final class EuCtpCompatibilityValidatorTest
   @Ignore ("The X509 certificate is always null, as it is received from the SMP")
   public void testValidatePModeSecurityNoX509SignatureCertificate ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureCertificate (null);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   aSecurityLeg));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509SignatureCertificate is missing")));
   }
@@ -171,29 +172,29 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeSecurityNoX509SignatureAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (null);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   aSecurityLeg));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509SignatureAlgorithm is missing")));
   }
 
   @Test
   public void testValidatePModeSecurityWrongX509SignatureAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_384);
     assertNotSame (ECryptoAlgorithmSign.RSA_SHA_256, aSecurityLeg.getX509SignatureAlgorithm ());
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   aSecurityLeg));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmSign.RSA_SHA_256.getID ())));
   }
@@ -201,14 +202,14 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeSecurityNoX509SignatureHashFunction ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureHashFunction (null);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   aSecurityLeg));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509SignatureHashFunction is missing")));
   }
@@ -216,14 +217,14 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeSecurityWrongX509SignatureHashFunction ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   aSecurityLeg));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
   }
@@ -231,14 +232,14 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeSecurityNoX509EncryptionAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509EncryptionAlgorithm (null);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   aSecurityLeg));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509EncryptionAlgorithm is missing")));
   }
@@ -246,14 +247,14 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeSecurityWrongX509EncryptionAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_192_CBC);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   aSecurityLeg));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
   }
@@ -262,14 +263,14 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeSecurityWrongWSSVersion ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setWSSVersion (EWSSVersion.WSS_10);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   aSecurityLeg));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.WSSVersion must use the value WSS_111 instead of WSS_10")));
   }
@@ -277,8 +278,8 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeSecurityPModeAuthorizeMandatory ()
   {
-    m_aMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue ("Errors: " + m_aErrorList.toString (),
                 m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.PModeAuthorize is missing")));
@@ -287,29 +288,29 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeSecurityPModeAuthorizeTrue ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setPModeAuthorize (true);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   aSecurityLeg));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
   }
 
   @Test
   public void testValidatePModeSecurityResponsePatternWrongBoolean ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setSendReceipt (true);
     aSecurityLeg.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.CALLBACK);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   aSecurityLeg));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.SendReceiptReplyPattern must use the value RESPONSE instead of CALLBACK")));
   }
@@ -319,13 +320,13 @@ public final class EuCtpCompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingMandatory ()
   {
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   null,
-                                   null,
-                                   null));
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
 
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode.Leg[1].ErrorHandling is missing")));
   }
@@ -334,12 +335,12 @@ public final class EuCtpCompatibilityValidatorTest
   public void testValidatePModeErrorHandlingReportAsResponseMandatory ()
   {
     final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   aErrorHandler,
-                                   null,
-                                   null));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.AsResponse is missing")));
   }
@@ -349,12 +350,12 @@ public final class EuCtpCompatibilityValidatorTest
   {
     final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     aErrorHandler.setReportAsResponse (false);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   aErrorHandler,
-                                   null,
-                                   null));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.AsResponse must be 'true'")));
   }
@@ -363,12 +364,12 @@ public final class EuCtpCompatibilityValidatorTest
   public void testValidatePModeErrorHandlingReportProcessErrorNotifyConsumerMandatory ()
   {
     final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   aErrorHandler,
-                                   null,
-                                   null));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer is missing")));
   }
@@ -378,12 +379,12 @@ public final class EuCtpCompatibilityValidatorTest
   {
     final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     aErrorHandler.setReportProcessErrorNotifyConsumer (false);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   aErrorHandler,
-                                   null,
-                                   null));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'")));
   }
@@ -392,12 +393,12 @@ public final class EuCtpCompatibilityValidatorTest
   public void testValidatePModeErrorHandlingReportDeliveryFailuresNotifyProducerMandatory ()
   {
     final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   aErrorHandler,
-                                   null,
-                                   null));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer is missing")));
   }
@@ -407,12 +408,12 @@ public final class EuCtpCompatibilityValidatorTest
   {
     final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     aErrorHandler.setReportProcessErrorNotifyProducer (false);
-    m_aMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                   null,
-                                   aErrorHandler,
-                                   null,
-                                   null));
-    VALIDATOR.validatePMode (m_aMode, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'")));
   }

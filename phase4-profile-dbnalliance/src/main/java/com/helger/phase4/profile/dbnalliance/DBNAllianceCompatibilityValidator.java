@@ -272,8 +272,13 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
-  public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
+  public void validatePMode (@Nonnull final IPMode aPMode,
+                             @Nonnull final ErrorList aErrorList,
+                             @Nonnull final EProfileValidationMode eValidationMode)
   {
+    ValueEnforcer.notNull (aPMode, "PMode");
+    ValueEnforcer.notNull (aErrorList, "ErrorList");
+    ValueEnforcer.notNull (eValidationMode, "ValidationMode");
     ValueEnforcer.isTrue (aErrorList.isEmpty (), () -> "Errors in global PMode validation: " + aErrorList.toString ());
 
     try
