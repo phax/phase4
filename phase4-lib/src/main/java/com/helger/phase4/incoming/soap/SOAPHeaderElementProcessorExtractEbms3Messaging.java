@@ -219,7 +219,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
   public ESuccess processHeaderElement (@Nonnull final Document aSoapDoc,
                                         @Nonnull final Element aElement,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
-                                        @Nonnull final AS4IncomingMessageState aState,
+                                        @Nonnull final AS4IncomingMessageState aIncomingState,
                                         @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
     final IMPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
@@ -228,7 +228,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     IMPC aEffectiveMPC = null;
     String sInitiatorID = null;
     String sResponderID = null;
-    final Locale aLocale = aState.getLocale ();
+    final Locale aLocale = aIncomingState.getLocale ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -255,7 +255,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     }
 
     // Remember in state
-    aState.setMessaging (aMessaging);
+    aIncomingState.setMessaging (aMessaging);
 
     // 0 or 1 are allowed
     final int nUserMessages = aMessaging.getUserMessageCount ();
@@ -301,9 +301,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       {
         // Set this is as early as possible, so that eventually occurring error
         // messages can use the "RefToMessageId" element properly
-        aState.setMessageID (aMsgInfo.getMessageId ());
-        aState.setRefToMessageID (aMsgInfo.getRefToMessageId ());
-        aState.setMessageTimestamp (aMsgInfo.getTimestamp ());
+        aIncomingState.setMessageID (aMsgInfo.getMessageId ());
+        aIncomingState.setRefToMessageID (aMsgInfo.getRefToMessageId ());
+        aIncomingState.setMessageTimestamp (aMsgInfo.getTimestamp ());
       }
 
       // PartyInfo is mandatory in UserMessage
@@ -418,7 +418,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           return ESuccess.FAILURE;
         }
 
-        aState.setEffectivePModeLeg (nLegNum, aEffectiveLeg);
+        aIncomingState.setEffectivePModeLeg (nLegNum, aEffectiveLeg);
         if (_checkMPCOfPMode (aEffectiveLeg, aMPCMgr, aLocale, aProcessingErrorMessagesTarget).isFailure ())
           return ESuccess.FAILURE;
 
@@ -442,7 +442,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       }
 
       // Remember in state
-      aState.setSoapBodyPayloadPresent (bHasSoapBodyPayload);
+      aIncomingState.setSoapBodyPayloadPresent (bHasSoapBodyPayload);
 
       final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.getPayloadInfo ();
       if (aEbms3PayloadInfo == null || aEbms3PayloadInfo.getPartInfo ().isEmpty ())
@@ -634,9 +634,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       {
         // Set this is as early as possible, so that eventually occurring error
         // messages can use the "RefToMessageId" element properly
-        aState.setMessageID (aMsgInfo.getMessageId ());
-        aState.setRefToMessageID (aMsgInfo.getRefToMessageId ());
-        aState.setMessageTimestamp (aMsgInfo.getTimestamp ());
+        aIncomingState.setMessageID (aMsgInfo.getMessageId ());
+        aIncomingState.setRefToMessageID (aMsgInfo.getRefToMessageId ());
+        aIncomingState.setMessageTimestamp (aMsgInfo.getTimestamp ());
       }
 
       final Ebms3PullRequest aEbms3PullRequest = aSignalMessage.getPullRequest ();
@@ -726,13 +726,13 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     }
 
     // Remember in state
-    aState.setPMode (aPMode);
-    aState.setOriginalSoapDocument (aSoapDoc);
-    aState.setOriginalAttachments (aAttachments);
-    aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
-    aState.setMPC (aEffectiveMPC);
-    aState.setInitiatorID (sInitiatorID);
-    aState.setResponderID (sResponderID);
+    aIncomingState.setPMode (aPMode);
+    aIncomingState.setOriginalSoapDocument (aSoapDoc);
+    aIncomingState.setOriginalAttachments (aAttachments);
+    aIncomingState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
+    aIncomingState.setMPC (aEffectiveMPC);
+    aIncomingState.setInitiatorID (sInitiatorID);
+    aIncomingState.setResponderID (sResponderID);
 
     return ESuccess.SUCCESS;
   }

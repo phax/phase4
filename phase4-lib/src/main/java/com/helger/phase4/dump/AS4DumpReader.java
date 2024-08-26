@@ -231,13 +231,13 @@ public final class AS4DumpReader
 
       final IAS4IncomingMessageProcessorSPI aSPI = new IAS4IncomingMessageProcessorSPI ()
       {
-        public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+        public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                                 @Nonnull final HttpHeaderMap aHttpHeaders,
                                                                 @Nonnull final Ebms3UserMessage aUserMessage,
                                                                 @Nonnull final IPMode aPMode,
                                                                 @Nullable final Node aPayload,
                                                                 @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                                @Nonnull final IAS4IncomingMessageState aState,
+                                                                @Nonnull final IAS4IncomingMessageState aIncomingState,
                                                                 @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
         {
           try
@@ -272,19 +272,19 @@ public final class AS4DumpReader
           }
         }
 
-        public AS4SignalMessageProcessorResult processAS4SignalMessage (final IAS4IncomingMessageMetadata aMessageMetadata,
+        public AS4SignalMessageProcessorResult processAS4SignalMessage (final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                                         final HttpHeaderMap aHttpHeaders,
                                                                         final Ebms3SignalMessage aSignalMessage,
                                                                         final IPMode aPMode,
-                                                                        final IAS4IncomingMessageState aState,
+                                                                        final IAS4IncomingMessageState aIncomingState,
                                                                         final ICommonsList <Ebms3Error> aProcessingErrorMessages)
         {
           LOGGER.error ("Unexpected signal msg. Can only handle user messages.");
           return AS4SignalMessageProcessorResult.createSuccess ();
         }
 
-        public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                               @Nonnull final IAS4IncomingMessageState aState,
+        public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                               @Nonnull final IAS4IncomingMessageState aIncomingState,
                                                @Nonnull @Nonempty final String sResponseMessageID,
                                                @Nullable final byte [] aResponseBytes,
                                                final boolean bResponsePayloadIsAvailable)

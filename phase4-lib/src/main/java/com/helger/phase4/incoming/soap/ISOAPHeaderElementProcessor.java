@@ -47,7 +47,7 @@ public interface ISOAPHeaderElementProcessor
    * @param aAttachments
    *        Existing extracted attachments. Never <code>null</code> but maybe
    *        empty.
-   * @param aState
+   * @param aIncomingState
    *        The current processing state (mutable implementation version
    *        needed). Never <code>null</code>.
    * @param aProcessingErrorMessagesTarget
@@ -60,6 +60,6 @@ public interface ISOAPHeaderElementProcessor
   ESuccess processHeaderElement (@Nonnull Document aSOAPDoc,
                                  @Nonnull Element aHeaderElement,
                                  @Nonnull ICommonsList <WSS4JAttachment> aAttachments,
-                                 @Nonnull AS4IncomingMessageState aState,
+                                 @Nonnull AS4IncomingMessageState aIncomingState,
                                  @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget);
 }

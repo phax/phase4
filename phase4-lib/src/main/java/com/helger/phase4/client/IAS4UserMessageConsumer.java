@@ -39,16 +39,16 @@ public interface IAS4UserMessageConsumer
    *
    * @param aUserMsg
    *        The User Message domain object. Never <code>null</code>.
-   * @param aMessageMetadata
+   * @param aIncomingMessageMetadata
    *        The message metadata of the synchronously received message. Never
    *        <code>null</code>. Added in v2.5.0.
-   * @param aState
+   * @param aIncomingState
    *        The internal processing state of the signal message. Never
    *        <code>null</code>. Added in v2.5.0.
    * @throws Phase4Exception
    *         in case of error
    */
   void handleUserMessage (@Nonnull Ebms3UserMessage aUserMsg,
-                          @Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
-                          @Nonnull IAS4IncomingMessageState aState) throws Phase4Exception;
+                          @Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                          @Nonnull IAS4IncomingMessageState aIncomingState) throws Phase4Exception;
 }

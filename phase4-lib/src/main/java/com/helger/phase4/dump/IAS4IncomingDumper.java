@@ -37,7 +37,7 @@ public interface IAS4IncomingDumper
    * Called for new incoming AS4 requests. It's the responsibility of the caller
    * to close the created output stream.
    *
-   * @param aMessageMetadata
+   * @param aIncomingMessageMetadata
    *        Message metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaderMap
    *        The HTTP headers of the request. Never <code>null</code>.
@@ -50,7 +50,7 @@ public interface IAS4IncomingDumper
    *        {@link HttpHeaderMap}
    */
   @Nullable
-  OutputStream onNewRequest (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
+  OutputStream onNewRequest (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                              @Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
 
   /**
@@ -60,11 +60,11 @@ public interface IAS4IncomingDumper
    * {@link #onNewRequest(IAS4IncomingMessageMetadata, HttpHeaderMap)} returned
    * non-<code>null</code>.
    *
-   * @param aMessageMetadata
+   * @param aIncomingMessageMetadata
    *        Message metadata. Never <code>null</code>.
    * @param aCaughtException
    *        An eventually caught exception.
    * @since v0.9.9
    */
-  void onEndRequest (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata, @Nullable Exception aCaughtException);
+  void onEndRequest (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata, @Nullable Exception aCaughtException);
 }

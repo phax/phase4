@@ -44,12 +44,12 @@ public interface IAS4OutgoingDumper
    * @param eMsgMode
    *        Are we dumping a request or a response? Never <code>null</code>.
    *        Added in v1.2.0.
-   * @param aMessageMetadata
+   * @param aIncomingMessageMetadata
    *        The incoming message metadata. This is always <code>null</code> for
    *        requests (outgoing messages) and always non-<code>null</code> for
    *        responses (incoming messages) - see eMsgMode parameter for
    *        differentiation. Added in v1.2.0.
-   * @param aState
+   * @param aIncomingState
    *        The incoming message processing state. This is always
    *        <code>null</code> for requests and always non-<code>null</code> for
    *        responses - see eMsgMode parameter for differentiation. Added in
@@ -70,8 +70,8 @@ public interface IAS4OutgoingDumper
    */
   @Nullable
   OutputStream onBeginRequest (@Nonnull EAS4MessageMode eMsgMode,
-                               @Nullable IAS4IncomingMessageMetadata aMessageMetadata,
-                               @Nullable IAS4IncomingMessageState aState,
+                               @Nullable IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                               @Nullable IAS4IncomingMessageState aIncomingState,
                                @Nonnull @Nonempty String sMessageID,
                                @Nullable HttpHeaderMap aCustomHeaders,
                                @Nonnegative int nTry) throws IOException;
@@ -85,11 +85,11 @@ public interface IAS4OutgoingDumper
    * @param eMsgMode
    *        Are we dumping a request or a response? Never <code>null</code>.
    *        Added in v1.2.0.
-   * @param aMessageMetadata
+   * @param aIncomingMessageMetadata
    *        The incoming message metadata. This is always <code>null</code> for
    *        requests. This is always non-<code>null</code> for responses. Added
    *        in v1.2.0.
-   * @param aState
+   * @param aIncomingState
    *        The incoming message processing state. This is always
    *        <code>null</code> for requests. This is always non-<code>null</code>
    *        for responses. Added in v1.2.0.
@@ -101,8 +101,8 @@ public interface IAS4OutgoingDumper
    *        <code>null</code>. Added in v3.0.0.
    */
   void onEndRequest (@Nonnull EAS4MessageMode eMsgMode,
-                     @Nullable IAS4IncomingMessageMetadata aMessageMetadata,
-                     @Nullable IAS4IncomingMessageState aState,
+                     @Nullable IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                     @Nullable IAS4IncomingMessageState aIncomingState,
                      @Nonnull @Nonempty String sMessageID,
                      @Nullable Exception aCaughtException);
 }

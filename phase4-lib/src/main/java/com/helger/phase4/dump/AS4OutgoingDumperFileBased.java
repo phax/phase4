@@ -135,8 +135,8 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
 
   @Override
   protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
-                                           @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
-                                           @Nullable final IAS4IncomingMessageState aState,
+                                           @Nullable final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                           @Nullable final IAS4IncomingMessageState aIncomingState,
                                            @Nonnull @Nonempty final String sMessageID,
                                            @Nullable final HttpHeaderMap aCustomHeaders,
                                            @Nonnegative final int nTry) throws IOException

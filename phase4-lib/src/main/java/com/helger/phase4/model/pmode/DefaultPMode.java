@@ -35,7 +35,8 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 
 /**
  * Default PMode configuration Specification from
- * <code>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/os/ebms_core-3.0-spec-os.pdf</code>
+ * <code>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/os/ebms_core-3.0-spec-os.pdf</code><br>
+ * This PMode is NOT specific to any profile and only present as a fallback.
  *
  * @author bayerlma
  * @author Philip Helger
@@ -92,9 +93,9 @@ public final class DefaultPMode
     final PModeParty aResponder = new PModeParty ("default", sResponderID, CAS4.DEFAULT_RESPONDER_URL, null, null);
 
     // ID: Add "default-" prefix to easily identify "default" PModes
+    final String sPModeID = "default-" + IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (aInitiator, aResponder);
     // Leg 2 stays null, because we only use one-way
-    final PMode aDefaultPMode = new PMode ("default-" +
-                                           IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (aInitiator, aResponder),
+    final PMode aDefaultPMode = new PMode (sPModeID,
                                            aInitiator,
                                            aResponder,
                                            "urn:as4:agreement",
@@ -107,8 +108,7 @@ public final class DefaultPMode
     if (bPersist)
     {
       // Create or update
-      final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
-      aPModeMgr.createOrUpdatePMode (aDefaultPMode);
+      MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aDefaultPMode);
     }
     return aDefaultPMode;
   }

@@ -39,7 +39,10 @@ import com.helger.phase4.profile.IAS4ProfileManager;
  */
 public class DefaultPModeResolver implements IPModeResolver
 {
-  public static final IPModeResolver DEFAULT_PMODE_RESOLVER = new DefaultPModeResolver (null, false);
+  public static boolean DEFAULT_CREATE_DEFAULT_PMODE = false;
+
+  public static final IPModeResolver DEFAULT_PMODE_RESOLVER = new DefaultPModeResolver (null,
+                                                                                        DEFAULT_CREATE_DEFAULT_PMODE);
 
   private final String m_sAS4ProfileID;
   private final boolean m_bUseDefaultAsFallback;
@@ -61,6 +64,10 @@ public class DefaultPModeResolver implements IPModeResolver
     return m_sAS4ProfileID;
   }
 
+  /**
+   * @return <code>true</code> if a "dummy default PMode" should be created, if
+   *         no other options worked.
+   */
   public final boolean isUseDefaultAsFallback ()
   {
     return m_bUseDefaultAsFallback;

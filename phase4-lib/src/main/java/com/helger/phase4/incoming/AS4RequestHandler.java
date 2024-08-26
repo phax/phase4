@@ -136,24 +136,24 @@ public class AS4RequestHandler implements AutoCloseable
   private static final class AS4ResponseFactoryXML implements IAS4ResponseFactory
   {
     private final IAS4IncomingMessageMetadata m_aIncomingMessageMetadata;
-    private final IAS4IncomingMessageState m_aState;
+    private final IAS4IncomingMessageState m_aIncomingState;
     private final String m_sResponseMessageID;
     private final Document m_aDoc;
     private final IMimeType m_aMimeType;
 
     public AS4ResponseFactoryXML (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                  @Nonnull final IAS4IncomingMessageState aState,
+                                  @Nonnull final IAS4IncomingMessageState aIncomingState,
                                   @Nonnull @Nonempty final String sResponseMessageID,
                                   @Nonnull final Document aDoc,
                                   @Nonnull final IMimeType aMimeType)
     {
       ValueEnforcer.notNull (aIncomingMessageMetadata, "IncomingMessageMetadata");
-      ValueEnforcer.notNull (aState, "State");
+      ValueEnforcer.notNull (aIncomingState, "IncomingState");
       ValueEnforcer.notEmpty (sResponseMessageID, "ResponseMessageID");
       ValueEnforcer.notNull (aDoc, "Doc");
       ValueEnforcer.notNull (aMimeType, "MimeType");
       m_aIncomingMessageMetadata = aIncomingMessageMetadata;
-      m_aState = aState;
+      m_aIncomingState = aIncomingState;
       m_sResponseMessageID = sResponseMessageID;
       m_aDoc = aDoc;
       m_aMimeType = aMimeType;
@@ -181,7 +181,7 @@ public class AS4RequestHandler implements AutoCloseable
           // No custom headers
           final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (EAS4MessageMode.RESPONSE,
                                                                        m_aIncomingMessageMetadata,
-                                                                       m_aState,
+                                                                       m_aIncomingState,
                                                                        m_sResponseMessageID,
                                                                        null,
                                                                        0);
@@ -195,7 +195,7 @@ public class AS4RequestHandler implements AutoCloseable
               StreamHelper.close (aDumpOS);
               aOutgoingDumper.onEndRequest (EAS4MessageMode.RESPONSE,
                                             m_aIncomingMessageMetadata,
-                                            m_aState,
+                                            m_aIncomingState,
                                             m_sResponseMessageID,
                                             (Exception) null);
             }
@@ -211,22 +211,22 @@ public class AS4RequestHandler implements AutoCloseable
   private static final class AS4ResponseFactoryMIME implements IAS4ResponseFactory
   {
     private final IAS4IncomingMessageMetadata m_aIncomingMessageMetadata;
-    private final IAS4IncomingMessageState m_aState;
+    private final IAS4IncomingMessageState m_aIncomingState;
     private final String m_sResponseMessageID;
     private final AS4MimeMessage m_aMimeMsg;
     private final HttpHeaderMap m_aHttpHeaders;
 
     public AS4ResponseFactoryMIME (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                   @Nonnull final IAS4IncomingMessageState aState,
+                                   @Nonnull final IAS4IncomingMessageState aIncomingState,
                                    @Nonnull @Nonempty final String sResponseMessageID,
                                    @Nonnull final AS4MimeMessage aMimeMsg) throws MessagingException
     {
       ValueEnforcer.notNull (aIncomingMessageMetadata, "IncomingMessageMetadata");
-      ValueEnforcer.notNull (aState, "State");
+      ValueEnforcer.notNull (aIncomingState, "IncomingState");
       ValueEnforcer.notEmpty (sResponseMessageID, "ResponseMessageID");
       ValueEnforcer.notNull (aMimeMsg, "MimeMsg");
       m_aIncomingMessageMetadata = aIncomingMessageMetadata;
-      m_aState = aState;
+      m_aIncomingState = aIncomingState;
       m_sResponseMessageID = sResponseMessageID;
       m_aMimeMsg = aMimeMsg;
       m_aHttpHeaders = AS4MimeMessageHelper.getAndRemoveAllHeaders (m_aMimeMsg);
@@ -263,7 +263,7 @@ public class AS4RequestHandler implements AutoCloseable
         {
           final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (EAS4MessageMode.RESPONSE,
                                                                        m_aIncomingMessageMetadata,
-                                                                       m_aState,
+                                                                       m_aIncomingState,
                                                                        m_sResponseMessageID,
                                                                        m_aHttpHeaders,
                                                                        0);
@@ -277,7 +277,7 @@ public class AS4RequestHandler implements AutoCloseable
               StreamHelper.close (aDumpOS);
               aOutgoingDumper.onEndRequest (EAS4MessageMode.RESPONSE,
                                             m_aIncomingMessageMetadata,
-                                            m_aState,
+                                            m_aIncomingState,
                                             m_sResponseMessageID,
                                             (Exception) null);
             }
@@ -832,7 +832,7 @@ public class AS4RequestHandler implements AutoCloseable
    *        Original attachments from source message. May be <code>null</code>.
    * @param aPMode
    *        PMode to be used - may be <code>null</code> for Receipt messages.
-   * @param aState
+   * @param aIncomingState
    *        The current state. Never <code>null</<code></code>.
    * @param aEbmsErrorMessagesTarget
    *        The list of error messages to be filled if something goes wrong.
@@ -849,7 +849,7 @@ public class AS4RequestHandler implements AutoCloseable
                                        @Nullable final Node aPayloadNode,
                                        @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                        @Nullable final IPMode aPMode,
-                                       @Nonnull final IAS4IncomingMessageState aState,
+                                       @Nonnull final IAS4IncomingMessageState aIncomingState,
                                        @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget,
                                        @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachmentsTarget,
                                        @Nonnull final SPIInvocationResult aSPIResult)
@@ -897,7 +897,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                         aPMode,
                                                         aPayloadNode,
                                                         aDecryptedAttachments,
-                                                        aState,
+                                                        aIncomingState,
                                                         aProcessingErrorMessages);
           }
           else
@@ -906,7 +906,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                           aHttpHeaders,
                                                           aEbmsSignalMessage,
                                                           aPMode,
-                                                          aState,
+                                                          aIncomingState,
                                                           aProcessingErrorMessages);
           }
 
@@ -1074,7 +1074,7 @@ public class AS4RequestHandler implements AutoCloseable
     aSPIResult.setSuccess (true);
   }
 
-  private void _invokeSPIsForResponse (@Nonnull final IAS4IncomingMessageState aState,
+  private void _invokeSPIsForResponse (@Nonnull final IAS4IncomingMessageState aIncomingState,
                                        @Nullable final IAS4ResponseFactory aResponseFactory,
                                        @Nullable final HttpEntity aHttpEntity,
                                        @Nonnull final IMimeType aMimeType,
@@ -1116,7 +1116,7 @@ public class AS4RequestHandler implements AutoCloseable
       LOGGER.debug ("Trying to invoke the following " +
                     aAllProcessors.size () +
                     " SPIs on AS4 message ID '" +
-                    aState.getMessageID () +
+                    aIncomingState.getMessageID () +
                     "' and AS4 response message ID '" +
                     sResponseMessageID +
                     ": " +
@@ -1130,7 +1130,7 @@ public class AS4RequestHandler implements AutoCloseable
             LOGGER.debug ("Invoking AS4 message processor " + aProcessor + " for response");
 
           aProcessor.processAS4ResponseMessage (m_aMessageMetadata,
-                                                aState,
+                                                aIncomingState,
                                                 sResponseMessageID,
                                                 aResponsePayload,
                                                 bResponsePayloadIsAvailable);
@@ -1514,7 +1514,7 @@ public class AS4RequestHandler implements AutoCloseable
    * With this method it is possible to send a usermessage back, the method will
    * check if signing is needed and if the message needs to be a mime message.
    *
-   * @param aState
+   * @param aIncomingState
    *        The state of the incoming message. Never <code>null</code>.
    * @param eSoapVersion
    *        the SOAP version to use. May not be <code>null</code>
@@ -1534,7 +1534,7 @@ public class AS4RequestHandler implements AutoCloseable
    *         on error
    */
   @Nonnull
-  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final IAS4IncomingMessageState aState,
+  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final IAS4IncomingMessageState aIncomingState,
                                                           @Nonnull final ESoapVersion eSoapVersion,
                                                           @Nonnull final AS4UserMessage aResponseUserMsg,
                                                           @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
@@ -1554,7 +1554,7 @@ public class AS4RequestHandler implements AutoCloseable
     {
       // FIXME encryption of SOAP body is missing here
       ret = new AS4ResponseFactoryXML (m_aMessageMetadata,
-                                       aState,
+                                       aIncomingState,
                                        sResponseMessageID,
                                        aSignedDoc,
                                        eSoapVersion.getMimeType ());
@@ -1566,7 +1566,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                      aResponseAttachments,
                                                                      eSoapVersion,
                                                                      aCryptParams);
-      ret = new AS4ResponseFactoryMIME (m_aMessageMetadata, aState, sResponseMessageID, aMimeMsg);
+      ret = new AS4ResponseFactoryMIME (m_aMessageMetadata, aIncomingState, sResponseMessageID, aMimeMsg);
     }
     return ret;
   }
@@ -1589,30 +1589,30 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                                            m_aIncomingReceiverConfig);
 
     // Decompose the SOAP message
-    final IAS4IncomingMessageState aState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
-                                                                                   m_aLocale,
-                                                                                   aRegistry,
-                                                                                   aHttpHeaders,
-                                                                                   aSoapDocument,
-                                                                                   eSoapVersion,
-                                                                                   aIncomingAttachments,
-                                                                                   m_aIncomingProfileSelector,
-                                                                                   aEbmsErrorMessagesTarget,
-                                                                                   m_aMessageMetadata);
+    final IAS4IncomingMessageState aIncomingState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
+                                                                                           m_aLocale,
+                                                                                           aRegistry,
+                                                                                           aHttpHeaders,
+                                                                                           aSoapDocument,
+                                                                                           eSoapVersion,
+                                                                                           aIncomingAttachments,
+                                                                                           m_aIncomingProfileSelector,
+                                                                                           aEbmsErrorMessagesTarget,
+                                                                                           m_aMessageMetadata);
 
     // Evaluate the results of processing
-    final IPMode aPMode = aState.getPMode ();
-    final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
-    final String sMessageID = aState.getMessageID ();
-    final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
-                                                                                                   : aState.getOriginalAttachments ();
-    final Node aPayloadNode = aState.getSoapBodyPayloadNode ();
-    final Ebms3UserMessage aEbmsUserMessage = aState.getEbmsUserMessage ();
-    final Ebms3SignalMessage aEbmsSignalMessage = aState.getEbmsSignalMessage ();
+    final IPMode aPMode = aIncomingState.getPMode ();
+    final PModeLeg aEffectiveLeg = aIncomingState.getEffectivePModeLeg ();
+    final String sMessageID = aIncomingState.getMessageID ();
+    final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aIncomingState.hasDecryptedAttachments () ? aIncomingState.getDecryptedAttachments ()
+                                                                                                           : aIncomingState.getOriginalAttachments ();
+    final Node aPayloadNode = aIncomingState.getSoapBodyPayloadNode ();
+    final Ebms3UserMessage aEbmsUserMessage = aIncomingState.getEbmsUserMessage ();
+    final Ebms3SignalMessage aEbmsSignalMessage = aIncomingState.getEbmsSignalMessage ();
 
-    if (aState.isSoapHeaderElementProcessingSuccessful ())
+    if (aIncomingState.isSoapHeaderElementProcessingSuccessful ())
     {
-      final String sProfileID = aState.getProfileID ();
+      final String sProfileID = aIncomingState.getProfileID ();
 
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Now checking for duplicate message with message ID '" +
@@ -1663,21 +1663,21 @@ public class AS4RequestHandler implements AutoCloseable
       bCanInvokeSPIs = false;
     }
 
-    final IAS4Profile aAS4Profile = aState.getAS4Profile ();
+    final IAS4Profile aAS4Profile = aIncomingState.getAS4Profile ();
     if (aAS4Profile == null)
     {
       // If no AS4 profile is present, we don't invoke SPI for ping messages
-      if (aState.isPingMessage ())
+      if (aIncomingState.isPingMessage ())
         bCanInvokeSPIs = false;
     }
     else
     {
       // If an AS4 profile is present, we check if we need to pass through ping
       // messages or not
-      if (aState.isPingMessage ())
+      if (aIncomingState.isPingMessage ())
         bCanInvokeSPIs = aAS4Profile.isInvokeSPIForPingMessage ();
     }
-    if (aState.isPingMessage () && !bCanInvokeSPIs)
+    if (aIncomingState.isPingMessage () && !bCanInvokeSPIs)
       LOGGER.info ("Received an AS4 Ping message - meaning it will NOT be handled by the custom handlers.");
 
     if (bCanInvokeSPIs)
@@ -1686,7 +1686,7 @@ public class AS4RequestHandler implements AutoCloseable
       if (aPMode == null ||
           aPMode.getMEPBinding ().isSynchronous () ||
           aPMode.getMEPBinding ().isAsynchronousInitiator () ||
-          aState.getEffectivePModeLegNumber () != 1)
+          aIncomingState.getEffectivePModeLegNumber () != 1)
       {
         // Call synchronous
 
@@ -1699,7 +1699,7 @@ public class AS4RequestHandler implements AutoCloseable
                                 aPayloadNode,
                                 aDecryptedAttachments,
                                 aPMode,
-                                aState,
+                                aIncomingState,
                                 aEbmsErrorMessagesTarget,
                                 aResponseAttachments,
                                 aSPIResult);
@@ -1732,7 +1732,7 @@ public class AS4RequestHandler implements AutoCloseable
                                   aPayloadNode,
                                   aDecryptedAttachments,
                                   aPMode,
-                                  aState,
+                                  aIncomingState,
                                   aLocalErrorMessages,
                                   aLocalResponseAttachments,
                                   aAsyncSPIResult);
@@ -1762,7 +1762,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                          .setFromPMode (aEffectiveLeg.getSecurity ())
                                                                          .setAlias (sEncryptionAlias);
 
-            aAsyncResponseFactory = _createResponseUserMessage (aState,
+            aAsyncResponseFactory = _createResponseUserMessage (aIncomingState,
                                                                 aEffectiveLeg.getProtocol ().getSoapVersion (),
                                                                 aResponseUserMsg,
                                                                 aResponseAttachments,
@@ -1776,16 +1776,16 @@ public class AS4RequestHandler implements AutoCloseable
             // Send ErrorMessage Undefined - see
             // https://github.com/phax/phase4/issues/4
             final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
-                                                                              aState.getMessageID (),
+                                                                              aIncomingState.getMessageID (),
                                                                               aLocalErrorMessages);
             sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ().getMessageInfo ().getMessageId ();
 
             // Pass error messages to the outside
             if (m_aErrorConsumer != null && aLocalErrorMessages.isNotEmpty ())
-              m_aErrorConsumer.onAS4ErrorMessage (aState, aLocalErrorMessages, aResponseErrorMsg);
+              m_aErrorConsumer.onAS4ErrorMessage (aIncomingState, aLocalErrorMessages, aResponseErrorMsg);
 
             aAsyncResponseFactory = new AS4ResponseFactoryXML (m_aMessageMetadata,
-                                                               aState,
+                                                               aIncomingState,
                                                                sResponseMessageID,
                                                                aResponseErrorMsg.getAsSoapDocument (),
                                                                eSoapVersion.getMimeType ());
@@ -1804,7 +1804,7 @@ public class AS4RequestHandler implements AutoCloseable
           aHttpEntity = m_aResHelper.createRepeatableHttpEntity (aHttpEntity);
 
           // Use the prebuilt entity for dumping
-          _invokeSPIsForResponse (aState,
+          _invokeSPIsForResponse (aIncomingState,
                                   aAsyncResponseFactory,
                                   aHttpEntity,
                                   eSoapVersion.getMimeType (),
@@ -1854,7 +1854,7 @@ public class AS4RequestHandler implements AutoCloseable
     // Try building error message
     final String sResponseMessageID;
     final IAS4ResponseFactory ret;
-    if (aState.isSoapHeaderElementProcessingSuccessful () && aState.getEbmsError () != null)
+    if (aIncomingState.isSoapHeaderElementProcessingSuccessful () && aIncomingState.getEbmsError () != null)
     {
       // Processing was successful, and it is an incoming Ebms Error Message
       sResponseMessageID = null;
@@ -1882,7 +1882,7 @@ public class AS4RequestHandler implements AutoCloseable
         if (_isSendErrorAsResponse (aEffectiveLeg))
         {
           sResponseMessageID = MessageHelperMethods.createRandomMessageID ();
-          ret = _createResponseErrorMessage (aState,
+          ret = _createResponseErrorMessage (aIncomingState,
                                              eSoapVersion,
                                              sResponseMessageID,
                                              aEffectiveLeg,
@@ -1927,7 +1927,7 @@ public class AS4RequestHandler implements AutoCloseable
 
               sResponseMessageID = aResponseUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
               ret = new AS4ResponseFactoryXML (m_aMessageMetadata,
-                                               aState,
+                                               aIncomingState,
                                                sResponseMessageID,
                                                aResponseUserMsg.getAsSoapDocument (),
                                                eSoapVersion.getMimeType ());
@@ -1940,7 +1940,7 @@ public class AS4RequestHandler implements AutoCloseable
                 if (bSendReceiptAsResponse)
                 {
                   sResponseMessageID = MessageHelperMethods.createRandomMessageID ();
-                  ret = _createResponseReceiptMessage (aState,
+                  ret = _createResponseReceiptMessage (aIncomingState,
                                                        aSoapDocument,
                                                        eSoapVersion,
                                                        sResponseMessageID,
@@ -1988,7 +1988,7 @@ public class AS4RequestHandler implements AutoCloseable
               final AS4CryptParams aCryptParams = m_aIncomingSecurityConfig.getCryptParamsCloneOrNew ()
                                                                            .setFromPMode (aLeg2.getSecurity ())
                                                                            .setAlias (sEncryptionAlias);
-              ret = _createResponseUserMessage (aState,
+              ret = _createResponseUserMessage (aIncomingState,
                                                 aLeg2.getProtocol ().getSoapVersion (),
                                                 aResponseUserMsg,
                                                 aResponseAttachments,
@@ -2007,7 +2007,7 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     // Create the HttpEntity on demand
-    _invokeSPIsForResponse (aState, ret, null, eSoapVersion.getMimeType (), sResponseMessageID);
+    _invokeSPIsForResponse (aIncomingState, ret, null, eSoapVersion.getMimeType (), sResponseMessageID);
 
     return ret;
   }

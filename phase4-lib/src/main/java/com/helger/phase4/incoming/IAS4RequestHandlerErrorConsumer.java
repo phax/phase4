@@ -35,7 +35,7 @@ public interface IAS4RequestHandlerErrorConsumer
    * Invoked when an AS4 error message is created. This doesn't mean that the
    * response message is also sent back - that can be configured in the P-Mode.
    *
-   * @param aState
+   * @param aIncomingState
    *        The current message processing state. Never <code>null</code>.
    * @param aEbmsErrors
    *        The list of errors that occurred. Neither <code>null</code> nor
@@ -44,7 +44,7 @@ public interface IAS4RequestHandlerErrorConsumer
    *        The filled AS4 error message to be returned. Don't touch. Never
    *        <code>null</code>.
    */
-  void onAS4ErrorMessage (@Nonnull IAS4IncomingMessageState aState,
+  void onAS4ErrorMessage (@Nonnull IAS4IncomingMessageState aIncomingState,
                           @Nonnull @Nonempty ICommonsList <Ebms3Error> aEbmsErrors,
                           @Nonnull AS4ErrorMessage aAS4ErrorMsg);
 }

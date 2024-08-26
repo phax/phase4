@@ -46,7 +46,7 @@ public interface IAS4IncomingMessageProcessorSPI
   /**
    * Process incoming AS4 user message
    *
-   * @param aMessageMetadata
+   * @param aIncomingMessageMetadata
    *        Message metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaders
    *        The original HTTP headers. Never <code>null</code>.
@@ -62,7 +62,7 @@ public interface IAS4IncomingMessageProcessorSPI
    * @param aIncomingAttachments
    *        Extracted, decrypted and verified attachments. May be
    *        <code>null</code> or empty if no attachments are present.
-   * @param aState
+   * @param aIncomingState
    *        The current message state. Can be used to determine all other things
    *        potentially necessary for processing the incoming message. Never
    *        <code>null</code>.
@@ -74,13 +74,13 @@ public interface IAS4IncomingMessageProcessorSPI
    *         EBMS_OTHER error.
    */
   @Nonnull
-  AS4MessageProcessorResult processAS4UserMessage (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
+  AS4MessageProcessorResult processAS4UserMessage (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                    @Nonnull HttpHeaderMap aHttpHeaders,
                                                    @Nonnull Ebms3UserMessage aUserMessage,
                                                    @Nonnull IPMode aPMode,
                                                    @Nullable Node aPayload,
                                                    @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                   @Nonnull IAS4IncomingMessageState aState,
+                                                   @Nonnull IAS4IncomingMessageState aIncomingState,
                                                    @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages);
 
   /**
@@ -89,7 +89,7 @@ public interface IAS4IncomingMessageProcessorSPI
    * not be added to a SignalMessage Because the will be ignored in the MSH -
    * Processing.
    *
-   * @param aMessageMetadata
+   * @param aIncomingMessageMetadata
    *        Request metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaders
    *        The original HTTP headers. Never <code>null</code>.
@@ -97,7 +97,7 @@ public interface IAS4IncomingMessageProcessorSPI
    *        The received signal message. May not be <code>null</code>.
    * @param aPMode
    *        PMode - only needed for pull-request. May be <code>null</code>.
-   * @param aState
+   * @param aIncomingState
    *        The current message state. Can be used to determine all other things
    *        potentially necessary for processing the incoming message. Never
    *        <code>null</code>.
@@ -109,19 +109,19 @@ public interface IAS4IncomingMessageProcessorSPI
    *         EBMS_OTHER error.
    */
   @Nonnull
-  AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
+  AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                            @Nonnull HttpHeaderMap aHttpHeaders,
                                                            @Nonnull Ebms3SignalMessage aSignalMessage,
                                                            @Nullable IPMode aPMode,
-                                                           @Nonnull IAS4IncomingMessageState aState,
+                                                           @Nonnull IAS4IncomingMessageState aIncomingState,
                                                            @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages);
 
   /**
    * Optional callback to process a response message
    *
-   * @param aMessageMetadata
+   * @param aIncomingMessageMetadata
    *        Incoming message metadata. Never <code>null</code>.
-   * @param aState
+   * @param aIncomingState
    *        The current message state. Can be used to determine all other things
    *        potentially necessary for processing the response message. Never
    *        <code>null</code>.
@@ -141,8 +141,8 @@ public interface IAS4IncomingMessageProcessorSPI
    *        in the originally returned message.
    * @since v0.9.8
    */
-  void processAS4ResponseMessage (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
-                                  @Nonnull IAS4IncomingMessageState aState,
+  void processAS4ResponseMessage (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                  @Nonnull IAS4IncomingMessageState aIncomingState,
                                   @Nonnull @Nonempty String sResponseMessageID,
                                   @Nullable byte [] aResponseBytes,
                                   boolean bResponsePayloadIsAvailable);

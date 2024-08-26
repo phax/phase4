@@ -120,7 +120,8 @@ public interface IPModeManager
   }
 
   /**
-   * Get a predicate that matches a PMode by ID, initiator and responder.
+   * Get a predicate that matches a PMode by ID or initiator and responder
+   * together.
    *
    * @param sID
    *        PMode ID to search. May be <code>null</code>.

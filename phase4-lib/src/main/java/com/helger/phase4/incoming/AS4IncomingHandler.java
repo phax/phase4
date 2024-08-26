@@ -420,10 +420,10 @@ public final class AS4IncomingHandler
   private static void _processSoapHeaderElements (@Nonnull final SOAPHeaderElementProcessorRegistry aRegistry,
                                                   @Nonnull final Document aSoapDocument,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                  @Nonnull final AS4IncomingMessageState aState,
+                                                  @Nonnull final AS4IncomingMessageState aIncomingState,
                                                   @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws Phase4Exception
   {
-    final ESoapVersion eSoapVersion = aState.getSoapVersion ();
+    final ESoapVersion eSoapVersion = aIncomingState.getSoapVersion ();
     final ICommonsList <AS4SingleSOAPHeader> aHeadersInMessage = new CommonsArrayList <> ();
     {
       // Find SOAP header
@@ -478,7 +478,7 @@ public final class AS4IncomingHandler
         if (aProcessor.processHeaderElement (aSoapDocument,
                                              aHeader.getNode (),
                                              aIncomingAttachments,
-                                             aState,
+                                             aIncomingState,
                                              aProcessingErrorMessagesTarget).isSuccess ())
         {
           // Mark header as processed (for mustUnderstand check)
@@ -511,8 +511,8 @@ public final class AS4IncomingHandler
                                 " with processor " +
                                 aProcessor;
         LOGGER.error (sDetails, ex);
-        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (aState.getLocale ())
-                                                           .refToMessageInError (aState.getMessageID ())
+        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (aIncomingState.getLocale ())
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
                                                            .errorDetail (sDetails, ex)
                                                            .build ());
         // Stop processing of other headers
@@ -535,12 +535,12 @@ public final class AS4IncomingHandler
 
   private static void _decompressAttachments (@Nonnull final ICommonsList <WSS4JAttachment> aIncomingDecryptedAttachments,
                                               @Nonnull final Ebms3UserMessage aUserMessage,
-                                              @Nonnull final IAS4IncomingMessageState aState)
+                                              @Nonnull final IAS4IncomingMessageState aIncomingState)
   {
     // For all incoming attachments
     for (final WSS4JAttachment aIncomingAttachment : aIncomingDecryptedAttachments.getClone ())
     {
-      final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getId ());
+      final EAS4CompressionMode eCompressionMode = aIncomingState.getAttachmentCompressionMode (aIncomingAttachment.getId ());
       if (eCompressionMode != null)
       {
         final IHasInputStream aOldISP = aIncomingAttachment.getInputStreamProvider ();
@@ -640,25 +640,29 @@ public final class AS4IncomingHandler
     }
 
     // This is where all data from the SOAP headers is stored to
-    final AS4IncomingMessageState aState = new AS4IncomingMessageState (eSoapVersion, aResHelper, aLocale);
+    final AS4IncomingMessageState aIncomingState = new AS4IncomingMessageState (eSoapVersion, aResHelper, aLocale);
 
     // Handle all headers - modifies the state
-    _processSoapHeaderElements (aRegistry, aSoapDocument, aIncomingAttachments, aState, aEbmsErrorMessagesTarget);
+    _processSoapHeaderElements (aRegistry,
+                                aSoapDocument,
+                                aIncomingAttachments,
+                                aIncomingState,
+                                aEbmsErrorMessagesTarget);
 
     // Here we know, if the message was signed and/or decrypted
 
     // Remember if header processing was successful or not
     final boolean bSoapHeaderElementProcessingSuccess = aEbmsErrorMessagesTarget.isEmpty ();
-    aState.setSoapHeaderElementProcessingSuccessful (bSoapHeaderElementProcessingSuccess);
+    aIncomingState.setSoapHeaderElementProcessingSuccessful (bSoapHeaderElementProcessingSuccess);
     if (bSoapHeaderElementProcessingSuccess)
     {
       // Every message can only contain 1 User message or 1 pull message
       // aUserMessage can be null on incoming Pull-Message!
-      final Ebms3UserMessage aEbmsUserMessage = aState.getEbmsUserMessage ();
-      final Ebms3SignalMessage aEbmsSignalMessage = aState.getEbmsSignalMessage ();
-      final Ebms3Error aEbmsError = aState.getEbmsError ();
-      final Ebms3PullRequest aEbmsPullRequest = aState.getEbmsPullRequest ();
-      final Ebms3Receipt aEbmsReceipt = aState.getEbmsReceipt ();
+      final Ebms3UserMessage aEbmsUserMessage = aIncomingState.getEbmsUserMessage ();
+      final Ebms3SignalMessage aEbmsSignalMessage = aIncomingState.getEbmsSignalMessage ();
+      final Ebms3Error aEbmsError = aIncomingState.getEbmsError ();
+      final Ebms3PullRequest aEbmsPullRequest = aIncomingState.getEbmsPullRequest ();
+      final Ebms3Receipt aEbmsReceipt = aIncomingState.getEbmsReceipt ();
 
       // Check payload consistency
       final int nCountData = (aEbmsUserMessage != null ? 1 : 0) +
@@ -680,18 +684,18 @@ public final class AS4IncomingHandler
 
         // send EBMS:0001 error back
         aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.errorBuilder (aLocale)
-                                                                          .refToMessageInError (aState.getMessageID ())
+                                                                          .refToMessageInError (aIncomingState.getMessageID ())
                                                                           .errorDetail (sDetails)
                                                                           .build ());
       }
 
       // Determine AS4 profile ID (since 0.13.0)
-      final String sProfileID = aAS4ProfileSelector.getAS4ProfileID (aState);
+      final String sProfileID = aAS4ProfileSelector.getAS4ProfileID (aIncomingState);
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Determined AS4 profile ID '" + sProfileID + "' for current message");
 
-      final IPMode aPMode = aState.getPMode ();
-      final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
+      final IPMode aPMode = aIncomingState.getPMode ();
+      final PModeLeg aEffectiveLeg = aIncomingState.getEffectivePModeLeg ();
 
       final IAS4Profile aProfile;
       final IAS4ProfileValidator aValidator;
@@ -703,7 +707,7 @@ public final class AS4IncomingHandler
         if (aProfile == null)
           throw new IllegalStateException ("The configured AS4 profile '" + sProfileID + "' does not exist.");
 
-        aState.setAS4Profile (aProfile);
+        aIncomingState.setAS4Profile (aProfile);
 
         // Profile Checks gets set when started with Server
         aValidator = aProfile.getValidator ();
@@ -737,7 +741,7 @@ public final class AS4IncomingHandler
             aValidator.validatePMode (aPMode, aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
             aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
             aValidator.validateInitiatorIdentity (aEbmsUserMessage,
-                                                  aState.getUsedCertificate (),
+                                                  aIncomingState.getUsedCertificate (),
                                                   aMessageMetadata,
                                                   aErrorList);
             if (aErrorList.isNotEmpty ())
@@ -757,12 +761,12 @@ public final class AS4IncomingHandler
         }
 
         // Ensure the decrypted attachments are used
-        final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
-                                                                                                       : aState.getOriginalAttachments ();
+        final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aIncomingState.hasDecryptedAttachments () ? aIncomingState.getDecryptedAttachments ()
+                                                                                                               : aIncomingState.getOriginalAttachments ();
 
         // Decompress attachments (if compressed)
         // Result is directly in the decrypted attachments list!
-        _decompressAttachments (aDecryptedAttachments, aEbmsUserMessage, aState);
+        _decompressAttachments (aDecryptedAttachments, aEbmsUserMessage, aIncomingState);
       }
       else
       {
@@ -798,8 +802,8 @@ public final class AS4IncomingHandler
         }
       }
 
-      final boolean bUseDecryptedSoap = aState.hasDecryptedSoapDocument ();
-      final Document aRealSoapDoc = bUseDecryptedSoap ? aState.getDecryptedSoapDocument () : aSoapDocument;
+      final boolean bUseDecryptedSoap = aIncomingState.hasDecryptedSoapDocument ();
+      final Document aRealSoapDoc = bUseDecryptedSoap ? aIncomingState.getDecryptedSoapDocument () : aSoapDocument;
       assert aRealSoapDoc != null;
 
       // Find SOAP body (mandatory according to SOAP XSD)
@@ -810,13 +814,13 @@ public final class AS4IncomingHandler
         throw new Phase4Exception ((bUseDecryptedSoap ? "Decrypted" : "Original") +
                                    " SOAP document is missing a Body element");
 
-      aState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
+      aIncomingState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
 
       final boolean bIsPingMessage = AS4Helper.isPingMessage (aPMode);
-      aState.setPingMessage (bIsPingMessage);
+      aIncomingState.setPingMessage (bIsPingMessage);
     }
 
-    return aState;
+    return aIncomingState;
   }
 
   @Nullable
@@ -828,7 +832,7 @@ public final class AS4IncomingHandler
                                                          @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                          @Nullable final IPMode aSendingPMode,
                                                          @Nonnull final Locale aLocale,
-                                                         @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                         @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                          @Nonnull final HttpResponse aHttpResponse,
                                                          @Nonnull final byte [] aResponsePayload,
                                                          @Nullable final IAS4IncomingDumper aIncomingDumper,
@@ -852,25 +856,25 @@ public final class AS4IncomingHandler
                                                                                                              aIncomingReceiverConfiguration);
 
       // Parse AS4, verify signature etc
-      final IAS4IncomingMessageState aState = processEbmsMessage (aResHelper,
-                                                                  aLocale,
-                                                                  aRegistry,
-                                                                  aHttpHeaders,
-                                                                  aSoapDocument,
-                                                                  eSoapVersion,
-                                                                  aIncomingAttachments,
-                                                                  aAS4ProfileSelector,
-                                                                  aErrorMessages,
-                                                                  aMessageMetadata);
+      final IAS4IncomingMessageState aIncomingState = processEbmsMessage (aResHelper,
+                                                                          aLocale,
+                                                                          aRegistry,
+                                                                          aHttpHeaders,
+                                                                          aSoapDocument,
+                                                                          eSoapVersion,
+                                                                          aIncomingAttachments,
+                                                                          aAS4ProfileSelector,
+                                                                          aErrorMessages,
+                                                                          aIncomingMessageMetadata);
 
-      if (aState.isSoapHeaderElementProcessingSuccessful ())
+      if (aIncomingState.isSoapHeaderElementProcessingSuccessful ())
       {
         // Remember the parsed signal message
-        aRetWrapper.set (aState);
+        aRetWrapper.set (aIncomingState);
       }
       else
       {
-        throw new Phase4Exception ("Error processing AS4 message", aState.getSoapWSS4JException ());
+        throw new Phase4Exception ("Error processing AS4 message", aIncomingState.getSoapWSS4JException ());
       }
     };
 
@@ -882,7 +886,13 @@ public final class AS4IncomingHandler
     try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))
     {
       // Parse incoming message
-      parseAS4Message (aIAF, aResHelper, aMessageMetadata, aPayloadIS, aHttpHeaders, aCallback, aIncomingDumper);
+      parseAS4Message (aIAF,
+                       aResHelper,
+                       aIncomingMessageMetadata,
+                       aPayloadIS,
+                       aHttpHeaders,
+                       aCallback,
+                       aIncomingDumper);
     }
     catch (final Phase4Exception ex)
     {
@@ -908,7 +918,7 @@ public final class AS4IncomingHandler
                                                        @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                        @Nullable final IPMode aSendingPMode,
                                                        @Nonnull final Locale aLocale,
-                                                       @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                       @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                        @Nonnull final HttpResponse aHttpResponse,
                                                        @Nonnull final byte [] aResponsePayload,
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
@@ -916,30 +926,30 @@ public final class AS4IncomingHandler
                                                        @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                        @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
-    final IAS4IncomingMessageState aState = _parseMessage (aCryptoFactorySign,
-                                                           aCryptoFactoryCrypt,
-                                                           aPModeResolver,
-                                                           aIAF,
-                                                           aAS4ProfileSelector,
-                                                           aResHelper,
-                                                           aSendingPMode,
-                                                           aLocale,
-                                                           aMessageMetadata,
-                                                           aHttpResponse,
-                                                           aResponsePayload,
-                                                           aIncomingDumper,
-                                                           aIncomingSecurityConfiguration,
-                                                           aIncomingReceiverConfiguration);
-    if (aState == null)
+    final IAS4IncomingMessageState aIncomingState = _parseMessage (aCryptoFactorySign,
+                                                                   aCryptoFactoryCrypt,
+                                                                   aPModeResolver,
+                                                                   aIAF,
+                                                                   aAS4ProfileSelector,
+                                                                   aResHelper,
+                                                                   aSendingPMode,
+                                                                   aLocale,
+                                                                   aIncomingMessageMetadata,
+                                                                   aHttpResponse,
+                                                                   aResponsePayload,
+                                                                   aIncomingDumper,
+                                                                   aIncomingSecurityConfiguration,
+                                                                   aIncomingReceiverConfiguration);
+    if (aIncomingState == null)
     {
       // Error message was already logged
       return null;
     }
 
-    final Ebms3SignalMessage ret = aState.getEbmsSignalMessage ();
+    final Ebms3SignalMessage ret = aIncomingState.getEbmsSignalMessage ();
     if (ret == null)
     {
-      if (aState.getEbmsUserMessage () != null)
+      if (aIncomingState.getEbmsUserMessage () != null)
         LOGGER.warn ("A Message state is present, but it contains a UserMessage instead of a SignalMessage.");
       else
         LOGGER.warn ("A Message state is present, but it contains neither a UserMessage nor a SignalMessage.");
@@ -948,7 +958,7 @@ public final class AS4IncomingHandler
     {
       // Invoke consumer here, because we have the state
       if (aSignalMsgConsumer != null)
-        aSignalMsgConsumer.handleSignalMessage (ret, aMessageMetadata, aState);
+        aSignalMsgConsumer.handleSignalMessage (ret, aIncomingMessageMetadata, aIncomingState);
     }
     return ret;
   }
@@ -963,7 +973,7 @@ public final class AS4IncomingHandler
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                    @Nullable final IPMode aSendingPMode,
                                                    @Nonnull final Locale aLocale,
-                                                   @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                   @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                    @Nonnull final HttpResponse aHttpResponse,
                                                    @Nonnull final byte [] aResponsePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
@@ -971,30 +981,30 @@ public final class AS4IncomingHandler
                                                    @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws Phase4Exception
   {
-    final IAS4IncomingMessageState aState = _parseMessage (aCryptoFactorySign,
-                                                           aCryptoFactoryCrypt,
-                                                           aPModeResolver,
-                                                           aIAF,
-                                                           aAS4ProfileSelector,
-                                                           aResHelper,
-                                                           aSendingPMode,
-                                                           aLocale,
-                                                           aMessageMetadata,
-                                                           aHttpResponse,
-                                                           aResponsePayload,
-                                                           aIncomingDumper,
-                                                           aIncomingSecurityConfiguration,
-                                                           aIncomingReceiverConfiguration);
-    if (aState == null)
+    final IAS4IncomingMessageState aIncomingState = _parseMessage (aCryptoFactorySign,
+                                                                   aCryptoFactoryCrypt,
+                                                                   aPModeResolver,
+                                                                   aIAF,
+                                                                   aAS4ProfileSelector,
+                                                                   aResHelper,
+                                                                   aSendingPMode,
+                                                                   aLocale,
+                                                                   aIncomingMessageMetadata,
+                                                                   aHttpResponse,
+                                                                   aResponsePayload,
+                                                                   aIncomingDumper,
+                                                                   aIncomingSecurityConfiguration,
+                                                                   aIncomingReceiverConfiguration);
+    if (aIncomingState == null)
     {
       // Error message was already logged
       return null;
     }
 
-    final Ebms3UserMessage ret = aState.getEbmsUserMessage ();
+    final Ebms3UserMessage ret = aIncomingState.getEbmsUserMessage ();
     if (ret == null)
     {
-      if (aState.getEbmsSignalMessage () != null)
+      if (aIncomingState.getEbmsSignalMessage () != null)
         LOGGER.warn ("A Message state is present, but it contains a SignalMessage instead of a UserMessage.");
       else
         LOGGER.warn ("A Message state is present, but it contains neither a SignalMessage nor a UserMessage.");
@@ -1003,7 +1013,7 @@ public final class AS4IncomingHandler
     {
       // Invoke consumer here, because we have the state
       if (aUserMsgConsumer != null)
-        aUserMsgConsumer.handleUserMessage (ret, aMessageMetadata, aState);
+        aUserMsgConsumer.handleUserMessage (ret, aIncomingMessageMetadata, aIncomingState);
     }
     return ret;
   }
@@ -1017,7 +1027,7 @@ public final class AS4IncomingHandler
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                    @Nullable final IPMode aSendingPMode,
                                                    @Nonnull final Locale aLocale,
-                                                   @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                   @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                    @Nonnull final HttpResponse aHttpResponse,
                                                    @Nonnull final byte [] aResponsePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
@@ -1026,41 +1036,41 @@ public final class AS4IncomingHandler
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
-    final IAS4IncomingMessageState aState = _parseMessage (aCryptoFactorySign,
-                                                           aCryptoFactoryCrypt,
-                                                           aPModeResolver,
-                                                           aIAF,
-                                                           aAS4ProfileSelector,
-                                                           aResHelper,
-                                                           aSendingPMode,
-                                                           aLocale,
-                                                           aMessageMetadata,
-                                                           aHttpResponse,
-                                                           aResponsePayload,
-                                                           aIncomingDumper,
-                                                           aIncomingSecurityConfiguration,
-                                                           aIncomingReceiverConfiguration);
-    if (aState == null)
+    final IAS4IncomingMessageState aIncomingState = _parseMessage (aCryptoFactorySign,
+                                                                   aCryptoFactoryCrypt,
+                                                                   aPModeResolver,
+                                                                   aIAF,
+                                                                   aAS4ProfileSelector,
+                                                                   aResHelper,
+                                                                   aSendingPMode,
+                                                                   aLocale,
+                                                                   aIncomingMessageMetadata,
+                                                                   aHttpResponse,
+                                                                   aResponsePayload,
+                                                                   aIncomingDumper,
+                                                                   aIncomingSecurityConfiguration,
+                                                                   aIncomingReceiverConfiguration);
+    if (aIncomingState == null)
     {
       // Error message was already logged
       return ESuccess.FAILURE;
     }
 
-    final Ebms3UserMessage aUserMsg = aState.getEbmsUserMessage ();
+    final Ebms3UserMessage aUserMsg = aIncomingState.getEbmsUserMessage ();
     if (aUserMsg != null)
     {
       // Invoke consumer here, because we have the state
       if (aUserMsgConsumer != null)
-        aUserMsgConsumer.handleUserMessage (aUserMsg, aMessageMetadata, aState);
+        aUserMsgConsumer.handleUserMessage (aUserMsg, aIncomingMessageMetadata, aIncomingState);
     }
     else
     {
-      final Ebms3SignalMessage aSignalMsg = aState.getEbmsSignalMessage ();
+      final Ebms3SignalMessage aSignalMsg = aIncomingState.getEbmsSignalMessage ();
       if (aSignalMsg != null)
       {
         // Invoke consumer here, because we have the state
         if (aSignalMsgConsumer != null)
-          aSignalMsgConsumer.handleSignalMessage (aSignalMsg, aMessageMetadata, aState);
+          aSignalMsgConsumer.handleSignalMessage (aSignalMsg, aIncomingMessageMetadata, aIncomingState);
       }
       else
         LOGGER.warn ("A Message state is present, but it contains neither a SignalMessage nor a UserMessage.");

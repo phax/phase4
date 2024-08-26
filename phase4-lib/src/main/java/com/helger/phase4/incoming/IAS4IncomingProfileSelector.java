@@ -31,12 +31,12 @@ public interface IAS4IncomingProfileSelector
    * Try to determine the AS4 profile to be used for an incoming message. This
    * method is only called after the SOAP headers were processed successfully.
    *
-   * @param aState
+   * @param aIncomingState
    *        The message state of processing. Never <code>null</code>.
    * @return The AS4 profile ID or <code>null</code> if none was found.
    */
   @Nullable
-  String getAS4ProfileID (@Nonnull IAS4IncomingMessageState aState);
+  String getAS4ProfileID (@Nonnull IAS4IncomingMessageState aIncomingState);
 
   /**
    * Configure if the profile validation rules should be applied or not. Usually

@@ -83,11 +83,11 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
    * @param eMsgMode
    *        Are we dumping a request or a response? Never <code>null</code>.
    *        Added in v1.2.0.
-   * @param aMessageMetadata
+   * @param aIncomingMessageMetadata
    *        The incoming message metadata. This is always <code>null</code> for
    *        requests. This is always non-<code>null</code> for responses. Added
    *        in v1.2.0.
-   * @param aState
+   * @param aIncomingState
    *        The incoming message processing state. This is always
    *        <code>null</code> for requests. This is always non-<code>null</code>
    *        for responses. Added in v1.2.0.
@@ -106,21 +106,26 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
    */
   @Nullable
   protected abstract OutputStream openOutputStream (@Nonnull EAS4MessageMode eMsgMode,
-                                                    @Nullable IAS4IncomingMessageMetadata aMessageMetadata,
-                                                    @Nullable IAS4IncomingMessageState aState,
+                                                    @Nullable IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                                    @Nullable IAS4IncomingMessageState aIncomingState,
                                                     @Nonnull @Nonempty String sMessageID,
                                                     @Nullable HttpHeaderMap aCustomHeaders,
                                                     @Nonnegative int nTry) throws IOException;
 
   @Nullable
   public OutputStream onBeginRequest (@Nonnull final EAS4MessageMode eMsgMode,
-                                      @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
-                                      @Nullable final IAS4IncomingMessageState aState,
+                                      @Nullable final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                      @Nullable final IAS4IncomingMessageState aIncomingState,
                                       @Nonnull @Nonempty final String sMessageID,
                                       @Nullable final HttpHeaderMap aCustomHeaders,
                                       @Nonnegative final int nTry) throws IOException
   {
-    final OutputStream ret = openOutputStream (eMsgMode, aMessageMetadata, aState, sMessageID, aCustomHeaders, nTry);
+    final OutputStream ret = openOutputStream (eMsgMode,
+                                               aIncomingMessageMetadata,
+                                               aIncomingState,
+                                               sMessageID,
+                                               aCustomHeaders,
+                                               nTry);
     if (ret != null && aCustomHeaders != null && aCustomHeaders.isNotEmpty () && m_bIncludeHeaders)
     {
       // At least one custom header is present
@@ -143,8 +148,8 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
   }
 
   public void onEndRequest (@Nonnull final EAS4MessageMode eMsgMode,
-                            @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
-                            @Nullable final IAS4IncomingMessageState aState,
+                            @Nullable final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                            @Nullable final IAS4IncomingMessageState aIncomingState,
                             @Nonnull @Nonempty final String sMessageID,
                             @Nullable final Exception aCaughtException)
   {}
