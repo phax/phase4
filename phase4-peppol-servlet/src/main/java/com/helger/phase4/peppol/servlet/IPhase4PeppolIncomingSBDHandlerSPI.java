@@ -67,9 +67,6 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    * @param aProcessingErrorMessages
    *        List for error messages that occur during processing. Never
    *        <code>null</code>. Since v2.6.0.
-   * @throws Phase4PeppolClientException
-   *         if this specific exception is thrown, it translates into a
-   *         synchronous AS4 error message.
    * @throws Exception
    *         In case it cannot be processed.
    */

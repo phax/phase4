@@ -552,7 +552,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
 
     // Start consistency checks if the receiver is supported or not
     final Phase4PeppolReceiverConfiguration aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
-                                                                                          : Phase4PeppolDefaultReceiverConfiguration.getAsReceiverCheckData ();
+                                                                                              : Phase4PeppolDefaultReceiverConfiguration.getAsReceiverCheckData ();
 
     // Debug log
     if (LOGGER.isDebugEnabled ())
@@ -860,16 +860,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                       aPeppolSBD,
                                       aState,
                                       aProcessingErrorMessages);
-        }
-        catch (final Phase4PeppolClientException ex)
-        {
-          final String sDetails = "Error invoking Peppol handler " + aHandler;
-          LOGGER.error (sLogPrefix + sDetails, ex);
-          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                             .refToMessageInError (aState.getMessageID ())
-                                                             .errorDetail (sDetails, ex)
-                                                             .build ());
-          return AS4MessageProcessorResult.createFailure ();
         }
         catch (final Exception ex)
         {
