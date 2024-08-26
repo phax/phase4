@@ -27,7 +27,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.soap.ESoapVersion;

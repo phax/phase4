@@ -59,7 +59,6 @@ import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
@@ -68,6 +67,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
+import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.soap.ESoapVersion;
 

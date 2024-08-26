@@ -60,6 +60,8 @@ public interface IAS4Attachment
 
   /**
    * Get the source stream of the attachment using the default resource helper.
+   * The streams retrieved by this method are automatically closed when the
+   * respective resource helper goes out of scope.
    *
    * @return A non-<code>null</code> InputStream on the source.
    */
@@ -67,8 +69,9 @@ public interface IAS4Attachment
   InputStream getSourceStream ();
 
   /**
-   * Get the source stream of the attachment using the provided resource helper.
-   * This can be helpful, if the source helper is already out of scope.
+   * Get the source stream of the attachment using the provided resource helper,
+   * to automatically close the stream at the end of the message. This can be
+   * helpful, if the source helper is already out of scope.
    *
    * @param aResourceHelper
    *        The resource helper to use. May not be <code>null</code>.
@@ -77,6 +80,12 @@ public interface IAS4Attachment
   @Nonnull
   InputStream getSourceStream (@Nonnull AS4ResourceHelper aResourceHelper);
 
+  /**
+   * This is primarily an internal method. If you use it, you need to make sure
+   * to close the streams yourself if you open them.
+   *
+   * @return The internal input stream provider. May be <code>null</code>.
+   */
   @Nullable
   IHasInputStream getInputStreamProvider ();
 
