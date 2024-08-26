@@ -28,7 +28,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.lang.ServiceLoaderHelper;
-import com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
+import com.helger.phase4.incoming.spi.IAS4ServletPullRequestProcessorSPI;
 
 /**
  * This class manages all the {@link IAS4ServletPullRequestProcessorSPI} SPI

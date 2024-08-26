@@ -58,6 +58,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.incoming.mgr.AS4IncomingPullRequestProcessorManager;
+import com.helger.phase4.incoming.spi.IAS4ServletPullRequestProcessorSPI;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -67,7 +68,6 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4MessageState;
-import com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
 import com.helger.xml.XMLHelper;
 
 /**

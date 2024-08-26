@@ -22,10 +22,10 @@ import org.w3c.dom.Element;
 
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.incoming.spi.IAS4ServletPullRequestProcessorSPI;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PMode;
-import com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
 import com.helger.phase4.test.profile.TestPMode;
 
 @IsSPIImplementation
