@@ -24,7 +24,6 @@ import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This class represents a single DOM element in a SOAP header with some
@@ -33,7 +32,6 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  */
 @NotThreadSafe
-@ChangePhase4V3 ("Move to package 'incoming.soap'")
 public class AS4SingleSOAPHeader
 {
   private final Element m_aNode;

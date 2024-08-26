@@ -19,6 +19,7 @@ package com.helger.phase4.incoming.soap;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -30,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Internal WSS4J callback handler to check if a certain key alias is present in
@@ -39,7 +39,7 @@ import com.helger.phase4.v3.ChangePhase4V3;
  *
  * @author Philip Helger
  */
-@ChangePhase4V3 ("Move to package 'incoming.soap'")
+@Immutable
 public final class AS4KeyStoreCallbackHandler implements CallbackHandler
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4KeyStoreCallbackHandler.class);
