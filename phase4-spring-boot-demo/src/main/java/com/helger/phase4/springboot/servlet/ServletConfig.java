@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2024 Philip Helger (www.helger.com)
+ * Copyright (C) 2015-2024 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +55,7 @@ import com.helger.phase4.profile.peppol.PeppolCRLDownloader;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.servlet.AS4UnifiedResponse;
 import com.helger.phase4.servlet.AS4XServletHandler;
-import com.helger.phase4.servlet.AS4XServletHandler.IHandlerCustomizer;
+import com.helger.phase4.servlet.IAS4ServletRequestHandlerCustomizer;
 import com.helger.photon.io.WebFileIO;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.ServletHelper;
@@ -94,83 +94,70 @@ public class ServletConfig
       // Multipart is handled specifically inside
       settings ().setMultipartEnabled (false);
       final AS4XServletHandler hdl = new AS4XServletHandler ();
-      // This method refers to the outer static method
-      hdl.setCryptoFactorySupplier (ServletConfig::getCryptoFactoryToUse);
-
-      if (false)
+      hdl.setRequestHandlerCustomizer (new IAS4ServletRequestHandlerCustomizer ()
       {
-        // Example code to show all possibilities of the handler customizer
-        hdl.setHandlerCustomizer (new IHandlerCustomizer ()
+        public void customizeBeforeHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                                             @Nonnull final AS4UnifiedResponse aUnifiedResponse,
+                                             @Nonnull final AS4RequestHandler aRequestHandler)
         {
-          public void customizeBeforeHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                               @Nonnull final AS4UnifiedResponse aUnifiedResponse,
-                                               @Nonnull final AS4RequestHandler aHandler)
+          // This method refers to the outer static method
+          aRequestHandler.setCryptoFactory (ServletConfig.getCryptoFactoryToUse ());
+
+          // Example code to disable PMode validation
+          if (false)
           {
-            // Set a different crypto factory based on the request
-            hdl.setCryptoFactory (null);
-            // TODO
+            aRequestHandler.setIncomingProfileSelector (new AS4IncomingProfileSelectorFromGlobal ()
+            {
+              @Override
+              public boolean validateAgainstProfile ()
+              {
+                // override;
+                return false;
+              }
+            });
           }
 
-          public void customizeAfterHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                              @Nonnull final AS4UnifiedResponse aUnifiedResponse,
-                                              @Nonnull final AS4RequestHandler aHandler)
+          // Example for changing the Peppol receiver data based on the source
+          // URL
+          if (false)
           {
-            // empty
-          }
-        });
-      }
+            final String sUrl = aRequestScope.getURLDecoded ();
+            // The receiver check data you want to set
+            final Phase4PeppolReceiverCheckData aReceiverCheckData;
+            if (sUrl != null && sUrl.startsWith ("https://ap-prod.example.org/as4"))
+            {
+              aReceiverCheckData = new Phase4PeppolReceiverCheckData (true,
+                                                                      new SMPClientReadOnly (URLHelper.getAsURI ("http://smp-prod.example.org")),
+                                                                      Phase4PeppolServletConfiguration.DEFAULT_WILDCARD_SELECTION_MODE,
+                                                                      "https://ap-prod.example.org/as4",
+                                                                      CertificateHelper.convertStringToCertficateOrNull ("....Public Prod AP Cert...."),
+                                                                      Phase4PeppolServletConfiguration.isPerformSBDHValueChecks (),
+                                                                      Phase4PeppolServletConfiguration.isCheckSBDHForMandatoryCountryC1 (),
+                                                                      Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ());
+            }
+            else
+            {
+              aReceiverCheckData = new Phase4PeppolReceiverCheckData (true,
+                                                                      new SMPClientReadOnly (URLHelper.getAsURI ("http://smp-test.example.org")),
+                                                                      Phase4PeppolServletConfiguration.DEFAULT_WILDCARD_SELECTION_MODE,
+                                                                      "https://ap-test.example.org/as4",
+                                                                      CertificateHelper.convertStringToCertficateOrNull ("....Public Test AP Cert...."),
+                                                                      Phase4PeppolServletConfiguration.isPerformSBDHValueChecks (),
+                                                                      Phase4PeppolServletConfiguration.isCheckSBDHForMandatoryCountryC1 (),
+                                                                      Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ());
+            }
 
-      if (false)
-      {
-        // Example code to disable PMode validation
-        hdl.setHandlerCustomizer ( (aRequestScope, aUnifiedResponse, aHandler) -> aHandler.setIncomingProfileSelector (
-                                                                                                                       new AS4IncomingProfileSelectorFromGlobal ()
-                                                                                                                       {
-                                                                                                                         @Override
-                                                                                                                         public boolean validateAgainstProfile ()
-                                                                                                                         {
-                                                                                                                           // override;
-                                                                                                                           return false;
-                                                                                                                         }
-                                                                                                                       }));
-      }
-
-      // Example for changing the receiver data based on the source URL
-      if (false)
-      {
-        final IHandlerCustomizer aHandlerCustomizer = (aRequestScope, aUnifiedResponse, aHandler) -> {
-          final String sUrl = aRequestScope.getURLDecoded ();
-          // The receiver check data you want to set
-          final Phase4PeppolReceiverCheckData aReceiverCheckData;
-          if (sUrl != null && sUrl.startsWith ("https://ap-prod.example.org/as4"))
-          {
-            aReceiverCheckData = new Phase4PeppolReceiverCheckData (true,
-                                                                    new SMPClientReadOnly (URLHelper.getAsURI ("http://smp-prod.example.org")),
-                                                                    Phase4PeppolServletConfiguration.DEFAULT_WILDCARD_SELECTION_MODE,
-                                                                    "https://ap-prod.example.org/as4",
-                                                                    CertificateHelper.convertStringToCertficateOrNull ("....Public Prod AP Cert...."),
-                                                                    Phase4PeppolServletConfiguration.isPerformSBDHValueChecks (),
-                                                                    Phase4PeppolServletConfiguration.isCheckSBDHForMandatoryCountryC1 (),
-                                                                    Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ());
+            // Find the right SPI handler
+            aRequestHandler.getProcessorOfType (Phase4PeppolServletMessageProcessorSPI.class)
+                           .setReceiverCheckData (aReceiverCheckData);
           }
-          else
-          {
-            aReceiverCheckData = new Phase4PeppolReceiverCheckData (true,
-                                                                    new SMPClientReadOnly (URLHelper.getAsURI ("http://smp-test.example.org")),
-                                                                    Phase4PeppolServletConfiguration.DEFAULT_WILDCARD_SELECTION_MODE,
-                                                                    "https://ap-test.example.org/as4",
-                                                                    CertificateHelper.convertStringToCertficateOrNull ("....Public Test AP Cert...."),
-                                                                    Phase4PeppolServletConfiguration.isPerformSBDHValueChecks (),
-                                                                    Phase4PeppolServletConfiguration.isCheckSBDHForMandatoryCountryC1 (),
-                                                                    Phase4PeppolServletConfiguration.isCheckSigningCertificateRevocation ());
-          }
+        }
 
-          // Find the right SPI handler
-          aHandler.getProcessorOfType (Phase4PeppolServletMessageProcessorSPI.class)
-                  .setReceiverCheckData (aReceiverCheckData);
-        };
-        hdl.setHandlerCustomizer (aHandlerCustomizer);
-      }
+        public void customizeAfterHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                                            @Nonnull final AS4UnifiedResponse aUnifiedResponse,
+                                            @Nonnull final AS4RequestHandler aRequestHandler)
+        {}
+      });
 
       // HTTP POST only
       handlerRegistry ().registerHandler (EHttpMethod.POST, hdl);

@@ -218,13 +218,15 @@ public final class AS4DumpReader
     }
 
     try (final WebScoped w = new WebScoped ();
-         final AS4RequestHandler rh = new AS4RequestHandler (aCryptoFactorySign,
-                                                             aCryptoFactoryCrypt,
-                                                             DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-                                                             IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE,
-                                                             AS4IncomingSecurityConfiguration.createDefaultInstance (),
-                                                             AS4IncomingMessageMetadata.createForRequest ()))
+         final AS4RequestHandler aHandler = new AS4RequestHandler (AS4IncomingMessageMetadata.createForRequest ()))
     {
+      // Set default values in handler
+      aHandler.setCryptoFactorySign (aCryptoFactorySign);
+      aHandler.setCryptoFactoryCrypt (aCryptoFactoryCrypt);
+      aHandler.setPModeResolver (DefaultPModeResolver.DEFAULT_PMODE_RESOLVER);
+      aHandler.setIncomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
+      aHandler.setIncomingSecurityConfiguration (AS4IncomingSecurityConfiguration.createDefaultInstance ());
+
       final IAS4IncomingMessageProcessorSPI aSPI = new IAS4IncomingMessageProcessorSPI ()
       {
         public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
@@ -286,23 +288,23 @@ public final class AS4DumpReader
                                                final boolean bResponsePayloadIsAvailable)
         {}
       };
-      rh.setProcessorSupplier ( () -> new CommonsArrayList <> (aSPI));
-      rh.handleRequest (new NonBlockingByteArrayInputStream (aAS4InData, nHttpEnd, aAS4InData.length - nHttpEnd),
-                        hm,
-                        new IAS4ResponseAbstraction ()
-                        {
-                          public void setStatus (final int nStatusCode)
-                          {}
+      aHandler.setProcessorSupplier ( () -> new CommonsArrayList <> (aSPI));
+      aHandler.handleRequest (new NonBlockingByteArrayInputStream (aAS4InData, nHttpEnd, aAS4InData.length - nHttpEnd),
+                              hm,
+                              new IAS4ResponseAbstraction ()
+                              {
+                                public void setStatus (final int nStatusCode)
+                                {}
 
-                          public void setMimeType (final IMimeType aMimeType)
-                          {}
+                                public void setMimeType (final IMimeType aMimeType)
+                                {}
 
-                          public void setContent (final HttpHeaderMap aHeaderMap, final IHasInputStream aHasIS)
-                          {}
+                                public void setContent (final HttpHeaderMap aHeaderMap, final IHasInputStream aHasIS)
+                                {}
 
-                          public void setContent (final byte [] aResultBytes, final Charset aCharset)
-                          {}
-                        });
+                                public void setContent (final byte [] aResultBytes, final Charset aCharset)
+                                {}
+                              });
     }
     finally
     {

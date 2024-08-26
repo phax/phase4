@@ -361,11 +361,11 @@ public class AS4RequestHandler implements AutoCloseable
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4RequestHandler.class);
 
   private final AS4ResourceHelper m_aResHelper;
-  private final IAS4CryptoFactory m_aCryptoFactorySign;
-  private final IAS4CryptoFactory m_aCryptoFactoryCrypt;
-  private final IPModeResolver m_aPModeResolver;
-  private final IAS4IncomingAttachmentFactory m_aIncomingAttachmentFactory;
-  private final IAS4IncomingSecurityConfiguration m_aIncomingSecurityConfig;
+  private IAS4CryptoFactory m_aCryptoFactorySign;
+  private IAS4CryptoFactory m_aCryptoFactoryCrypt;
+  private IPModeResolver m_aPModeResolver;
+  private IAS4IncomingAttachmentFactory m_aIncomingAttachmentFactory;
+  private IAS4IncomingSecurityConfiguration m_aIncomingSecurityConfig;
   private IAS4IncomingProfileSelector m_aIncomingProfileSelector = AS4IncomingProfileSelectorFromGlobal.INSTANCE;
   private final IAS4IncomingMessageMetadata m_aMessageMetadata;
   private Locale m_aLocale = Locale.US;
@@ -379,26 +379,11 @@ public class AS4RequestHandler implements AutoCloseable
   private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
 
   @ChangePhase4V3 ("See https://github.com/phax/phase4/discussions/265")
-  public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                            @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                            @Nonnull final IPModeResolver aPModeResolver,
-                            @Nonnull final IAS4IncomingAttachmentFactory aIncomingAttachmentFactory,
-                            @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfig,
-                            @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+  public AS4RequestHandler (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
-    ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
-    ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
-    ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
-    ValueEnforcer.notNull (aIncomingAttachmentFactory, "IncomingAttachmentFactory");
-    ValueEnforcer.notNull (aIncomingSecurityConfig, "IncomingSecurityConfig");
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
     // Create dynamically here, to avoid leaving too many streams open
     m_aResHelper = new AS4ResourceHelper ();
-    m_aCryptoFactorySign = aCryptoFactorySign;
-    m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
-    m_aPModeResolver = aPModeResolver;
-    m_aIncomingAttachmentFactory = aIncomingAttachmentFactory;
-    m_aIncomingSecurityConfig = aIncomingSecurityConfig;
     m_aMessageMetadata = aMessageMetadata;
   }
 
@@ -406,6 +391,161 @@ public class AS4RequestHandler implements AutoCloseable
   {
     // Delete all the temporary files etc.
     m_aResHelper.close ();
+  }
+
+  /**
+   * @return The supplier for the {@link IAS4CryptoFactory} for signing. May not
+   *         be <code>null</code>.
+   * @see #getCryptoFactoryCrypt()
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final IAS4CryptoFactory getCryptoFactorySign ()
+  {
+    return m_aCryptoFactorySign;
+  }
+
+  /**
+   * Set the crypto factory for signing. This is a sanity wrapper around
+   * {@link #setCryptoFactorySignSupplier(Supplier)}.
+   *
+   * @param aCryptoFactorySign
+   *        Crypto factory for signing to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @see #setCryptoFactory(IAS4CryptoFactory)
+   * @see #setCryptoFactoryCrypt(IAS4CryptoFactory)
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final AS4RequestHandler setCryptoFactorySign (@Nonnull final IAS4CryptoFactory aCryptoFactorySign)
+  {
+    ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
+    m_aCryptoFactorySign = aCryptoFactorySign;
+    return this;
+  }
+
+  /**
+   * @return The supplier for the {@link IAS4CryptoFactory} for crypting. May
+   *         not be <code>null</code>.
+   * @see #getCryptoFactorySign()
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final IAS4CryptoFactory getCryptoFactoryCrypt ()
+  {
+    return m_aCryptoFactoryCrypt;
+  }
+
+  /**
+   * Set the crypto factory crypting. This is a sanity wrapper around
+   * {@link #setCryptoFactoryCryptSupplier(Supplier)}.
+   *
+   * @param aCryptoFactoryCrypt
+   *        Crypto factory for crypting to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @see #setCryptoFactory(IAS4CryptoFactory)
+   * @see #setCryptoFactorySign(IAS4CryptoFactory)
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final AS4RequestHandler setCryptoFactoryCrypt (@Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt)
+  {
+    ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
+    m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
+    return this;
+  }
+
+  /**
+   * Set the same crypto factory for signing and crypting. This is a sanity
+   * wrapper around {@link #setCryptoFactorySupplier(Supplier)}.
+   *
+   * @param aCryptoFactory
+   *        Crypto factory to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @see #setCryptoFactoryCrypt(IAS4CryptoFactory)
+   * @see #setCryptoFactorySign(IAS4CryptoFactory)
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final AS4RequestHandler setCryptoFactory (@Nonnull final IAS4CryptoFactory aCryptoFactory)
+  {
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    return setCryptoFactorySign (aCryptoFactory).setCryptoFactoryCrypt (aCryptoFactory);
+  }
+
+  /**
+   * @return The {@link IPModeResolver} to be used. Never <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final IPModeResolver getPModeResolver ()
+  {
+    return m_aPModeResolver;
+  }
+
+  /**
+   * @param aPModeResolver
+   *        PMode resolved to be used. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final AS4RequestHandler setPModeResolver (@Nonnull final IPModeResolver aPModeResolver)
+  {
+    ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
+    m_aPModeResolver = aPModeResolver;
+    return this;
+  }
+
+  /**
+   * @return The {@link IAS4IncomingAttachmentFactory} to be used. Never
+   *         <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final IAS4IncomingAttachmentFactory getIncomingAttachmentFactory ()
+  {
+    return m_aIncomingAttachmentFactory;
+  }
+
+  /**
+   * @param aIAF
+   *        The attachment factory for incoming attachments. May not be
+   *        <code>null</code>.
+   * @return this for chaining
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final AS4RequestHandler setIncomingAttachmentFactory (@Nonnull final IAS4IncomingAttachmentFactory aIAF)
+  {
+    ValueEnforcer.notNull (aIAF, "IAF");
+    m_aIncomingAttachmentFactory = aIAF;
+    return this;
+  }
+
+  /**
+   * @return The {@link IAS4IncomingSecurityConfiguration} to be used. Never
+   *         <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final IAS4IncomingSecurityConfiguration getIncomingSecurityConfiguration ()
+  {
+    return m_aIncomingSecurityConfig;
+  }
+
+  /**
+   * @param aICS
+   *        The incoming security configuration. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final AS4RequestHandler setIncomingSecurityConfiguration (@Nonnull final IAS4IncomingSecurityConfiguration aICS)
+  {
+    ValueEnforcer.notNull (aICS, "ICS");
+    m_aIncomingSecurityConfig = aICS;
+    return this;
   }
 
   /**
