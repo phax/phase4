@@ -93,6 +93,7 @@ public final class AS4MimeMessageHelper
       LoggerFactory.getLogger ("root").info (aSB.toString ());
     }
 
+    // Register SOAP 1.2 content handler
     {
       final MailcapCommandMap aCommandMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap ();
       aCommandMap.addMailcap (ESoapVersion.SOAP_12.getMimeType ().getAsStringWithoutParameters () +
@@ -114,7 +115,7 @@ public final class AS4MimeMessageHelper
     ValueEnforcer.notNull (aSoapEnvelope, "SoapEnvelope");
 
     final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
-    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (eSoapVersion);
+    final AS4SoapMimeMultipart aMimeMultipart = new AS4SoapMimeMultipart (eSoapVersion);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
     final String sRootContentType = eSoapVersion.getMimeType (aCharset).getAsString ();
 

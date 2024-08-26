@@ -26,16 +26,17 @@ import jakarta.mail.internet.ParseException;
 
 /**
  * Special {@link MimeMultipart} that modifies the Content-Type to add the
- * "type" parameter with the SOAP versions MIME type.
+ * "type" parameter with the SOAP versions MIME type.<br>
+ * Old name before v3: <code>AS4SoapMimeMultipart</code>.
  *
  * @author Philip Helger
  */
-public class SoapMimeMultipart extends MimeMultipart
+public class AS4SoapMimeMultipart extends MimeMultipart
 {
   private static final String RELATED = "related";
   private static final String CT_PARAM_TYPE = "type";
 
-  public SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion) throws ParseException
+  public AS4SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion) throws ParseException
   {
     super (RELATED);
 

@@ -85,7 +85,7 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.profile.IAS4ProfileValidator;
-import com.helger.phase4.profile.IAS4ProfileValidator.EProfileValidationMode;
+import com.helger.phase4.profile.IAS4ProfileValidator.EAS4ProfileValidationMode;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
@@ -734,7 +734,7 @@ public final class AS4IncomingHandler
           if (aAS4ProfileSelector.validateAgainstProfile ())
           {
             final ErrorList aErrorList = new ErrorList ();
-            aValidator.validatePMode (aPMode, aErrorList, EProfileValidationMode.USER_MESSAGE);
+            aValidator.validatePMode (aPMode, aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
             aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
             aValidator.validateInitiatorIdentity (aEbmsUserMessage,
                                                   aState.getUsedCertificate (),
@@ -779,7 +779,7 @@ public final class AS4IncomingHandler
           {
             final ErrorList aErrorList = new ErrorList ();
             if (aPMode != null)
-              aValidator.validatePMode (aPMode, aErrorList, EProfileValidationMode.SIGNAL_MESSAGE);
+              aValidator.validatePMode (aPMode, aErrorList, EAS4ProfileValidationMode.SIGNAL_MESSAGE);
             aValidator.validateSignalMessage (aEbmsSignalMessage, aErrorList);
             if (aErrorList.isNotEmpty ())
             {

@@ -274,7 +274,7 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
 
   public void validatePMode (@Nonnull final IPMode aPMode,
                              @Nonnull final ErrorList aErrorList,
-                             @Nonnull final EProfileValidationMode eValidationMode)
+                             @Nonnull final EAS4ProfileValidationMode eValidationMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     ValueEnforcer.notNull (aErrorList, "ErrorList");

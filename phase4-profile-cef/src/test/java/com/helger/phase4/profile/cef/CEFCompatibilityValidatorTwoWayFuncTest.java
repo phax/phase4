@@ -48,7 +48,7 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
-import com.helger.phase4.profile.IAS4ProfileValidator.EProfileValidationMode;
+import com.helger.phase4.profile.IAS4ProfileValidator.EAS4ProfileValidationMode;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
@@ -86,7 +86,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
     m_aPMode.setMEP (EMEP.TWO_WAY);
     // Only 2-way push-push allowed
     m_aPMode.setMEPBinding (EMEPBinding.PULL);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP")));
   }
@@ -96,7 +96,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   {
     // SYNC not allowed
     m_aPMode.setMEPBinding (EMEPBinding.SYNC);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP binding")));
   }
@@ -105,7 +105,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   public void testValidatePModeNoLeg ()
   {
     m_aPMode.setLeg1 (null);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[1] is missing")));
   }
 
@@ -113,7 +113,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   public void testValidatePModeNoLeg2 ()
   {
     m_aPMode.setLeg2 (null);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[2] is missing")));
   }
 
@@ -121,7 +121,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   public void testValidatePModeNoProtocol ()
   {
     m_aPMode.setLeg2 (new PModeLeg (null, null, null, null, null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol is missing")));
   }
 
@@ -130,7 +130,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   public void testValidatePModeNoProtocolAddress ()
   {
     m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion (null), null, null, null, null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol is missing")));
   }
 
@@ -142,7 +142,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("AddressProtocol 'ftp' is unsupported")));
   }
@@ -155,7 +155,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("SoapVersion '1.1' is unsupported")));
   }
 
@@ -170,7 +170,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509SignatureCertificate is missing")));
   }
@@ -185,7 +185,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509SignatureAlgorithm is missing")));
   }
 
@@ -200,7 +200,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmSign.RSA_SHA_256.getID ())));
   }
@@ -215,7 +215,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509SignatureHashFunction is missing")));
   }
@@ -230,7 +230,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
   }
@@ -245,7 +245,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("X509EncryptionAlgorithm is missing")));
   }
@@ -260,7 +260,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
   }
@@ -276,7 +276,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.WSSVersion must use the value WSS_111 instead of WSS_10")));
   }
@@ -285,7 +285,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   public void testValidatePModeSecurityPModeAuthorizeMandatory ()
   {
     m_aPMode.getLeg2 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue ("Errors: " + m_aErrorList.toString (),
                 m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.PModeAuthorize is missing")));
@@ -301,7 +301,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
   }
 
@@ -316,7 +316,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Security.SendReceiptReplyPattern must use the value RESPONSE instead of CALLBACK")));
   }
@@ -332,7 +332,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null));
 
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode.Leg[2].ErrorHandling is missing")));
   }
@@ -346,7 +346,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.AsResponse is missing")));
   }
@@ -361,7 +361,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.AsResponse must be 'true'")));
   }
@@ -375,7 +375,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer is missing")));
   }
@@ -390,7 +390,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'")));
   }
@@ -404,7 +404,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer is missing")));
   }
@@ -419,7 +419,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     aErrorHandler,
                                     null,
                                     null));
-    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EProfileValidationMode.USER_MESSAGE);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'")));
   }

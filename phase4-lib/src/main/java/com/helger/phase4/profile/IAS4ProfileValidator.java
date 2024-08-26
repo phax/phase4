@@ -35,7 +35,7 @@ import com.helger.phase4.model.pmode.IPMode;
  */
 public interface IAS4ProfileValidator
 {
-  enum EProfileValidationMode
+  enum EAS4ProfileValidationMode
   {
     USER_MESSAGE,
     SIGNAL_MESSAGE;
@@ -54,7 +54,7 @@ public interface IAS4ProfileValidator
    */
   default void validatePMode (@Nonnull final IPMode aPMode,
                               @Nonnull final ErrorList aErrorList,
-                              @Nonnull final EProfileValidationMode eValidationMode)
+                              @Nonnull final EAS4ProfileValidationMode eValidationMode)
   {}
 
   /**

@@ -53,7 +53,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
-import com.helger.phase4.messaging.mime.SoapMimeMultipart;
+import com.helger.phase4.messaging.mime.AS4SoapMimeMultipart;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
@@ -213,7 +213,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                        s_aResMgr,
                                                                        m_aCryptParams);
 
-    final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMimeMsg.getContent ();
+    final AS4SoapMimeMultipart aMultipart = (AS4SoapMimeMultipart) aMimeMsg.getContent ();
     // Since we want to change the attachment
     final MimeBodyPart aMimeBodyPart = (MimeBodyPart) aMultipart.getBodyPart (1);
     aMimeBodyPart.setContent ("Crappy text".getBytes (StandardCharsets.ISO_8859_1),
@@ -284,7 +284,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                                         .getAsSoapDocument (),
                                                                             aAttachments);
 
-    final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMimeMsg.getContent ();
+    final AS4SoapMimeMultipart aMultipart = (AS4SoapMimeMultipart) aMimeMsg.getContent ();
 
     // Since we want to remove the attachment
     aMultipart.removeBodyPart (1);
