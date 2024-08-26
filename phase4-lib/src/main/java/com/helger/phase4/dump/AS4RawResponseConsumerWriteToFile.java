@@ -38,10 +38,10 @@ import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.client.AS4ClientSentMessage;
-import com.helger.phase4.client.AbstractAS4RawResponseConsumer;
-import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.sender.AbstractAS4RawResponseConsumer;
+import com.helger.phase4.sender.IAS4RawResponseConsumer;
 import com.helger.phase4.util.Phase4Exception;
 
 /**

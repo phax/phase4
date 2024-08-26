@@ -188,6 +188,7 @@ public class AS4ClientSentMessage <T>
   {
     return new ToStringGenerator (this).append ("BuiltMsg", m_aBuiltMsg)
                                        .append ("ResponseStatusLine", m_aResponseStatusLine)
+                                       .append ("ResponseHeaders", m_aResponseHeaders)
                                        .append ("Response", m_aResponseContent)
                                        .append ("SentDateTime", m_aSentDateTime)
                                        .getToString ();

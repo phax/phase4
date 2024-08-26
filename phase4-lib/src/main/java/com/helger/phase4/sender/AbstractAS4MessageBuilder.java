@@ -38,7 +38,6 @@ import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;

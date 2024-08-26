@@ -73,7 +73,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
     return m_aErrorMessages;
   }
 
-  public final boolean isReceiptShouldBeSigned ()
+  public final boolean isErrorShouldBeSigned ()
   {
     return m_bErrorShouldBeSigned;
   }

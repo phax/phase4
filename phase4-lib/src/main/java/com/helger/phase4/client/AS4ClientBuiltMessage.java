@@ -36,7 +36,7 @@ import com.helger.xsds.xmldsig.ReferenceType;
 import jakarta.mail.MessagingException;
 
 /**
- * The client HTTP message and some metadata
+ * The client HTTP message and some metadata.
  *
  * @author Philip Helger
  */

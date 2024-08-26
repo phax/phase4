@@ -38,7 +38,6 @@ import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;

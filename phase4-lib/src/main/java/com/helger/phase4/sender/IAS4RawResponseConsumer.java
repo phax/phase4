@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.client;
+package com.helger.phase4.sender;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
