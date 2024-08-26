@@ -42,6 +42,9 @@ import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.incoming.AS4IncomingProfileSelectorFromGlobal;
+import com.helger.phase4.incoming.AS4RequestHandler;
+import com.helger.phase4.incoming.AS4ServerInitializer;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverCheckData;
@@ -50,9 +53,6 @@ import com.helger.phase4.peppol.servlet.Phase4PeppolServletMessageProcessorSPI;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolCRLDownloader;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
-import com.helger.phase4.servlet.AS4IncomingProfileSelectorFromGlobal;
-import com.helger.phase4.servlet.AS4RequestHandler;
-import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.AS4UnifiedResponse;
 import com.helger.phase4.servlet.AS4XServletHandler;
 import com.helger.phase4.servlet.AS4XServletHandler.IHandlerCustomizer;
@@ -123,16 +123,16 @@ public class ServletConfig
       if (false)
       {
         // Example code to disable PMode validation
-        hdl.setHandlerCustomizer ( (aRequestScope,
-                                    aUnifiedResponse,
-                                    aHandler) -> aHandler.setIncomingProfileSelector (new AS4IncomingProfileSelectorFromGlobal ()
-                                    {
-                                      public boolean validateAgainstProfile ()
-                                      {
-                                        // override;
-                                        return false;
-                                      }
-                                    }));
+        hdl.setHandlerCustomizer ( (aRequestScope, aUnifiedResponse, aHandler) -> aHandler.setIncomingProfileSelector (
+                                                                                                                       new AS4IncomingProfileSelectorFromGlobal ()
+                                                                                                                       {
+                                                                                                                         @Override
+                                                                                                                         public boolean validateAgainstProfile ()
+                                                                                                                         {
+                                                                                                                           // override;
+                                                                                                                           return false;
+                                                                                                                         }
+                                                                                                                       }));
       }
 
       // Example for changing the receiver data based on the source URL
@@ -216,8 +216,8 @@ public class ServletConfig
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ()
-                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
+        null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");

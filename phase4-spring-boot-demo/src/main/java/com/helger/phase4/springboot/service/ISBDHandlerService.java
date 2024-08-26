@@ -24,8 +24,8 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.incoming.IAS4MessageState;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
-import com.helger.phase4.servlet.IAS4MessageState;
 
 @Service
 public interface ISBDHandlerService

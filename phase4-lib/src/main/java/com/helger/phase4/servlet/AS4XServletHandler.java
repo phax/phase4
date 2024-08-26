@@ -29,10 +29,15 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.EHttpMethod;
+import com.helger.commons.http.HttpHeaderMap;
 import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.http.AS4HttpDebug;
+import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.AS4RequestHandler;
+import com.helger.phase4.incoming.IAS4ResponseAbstraction;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
@@ -45,6 +50,7 @@ import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
 
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -454,7 +460,13 @@ public class AS4XServletHandler implements IXServletSimpleHandler
       }
 
       // Main handling
-      aHandler.handleRequest (aRequestScope, aHttpResponse);
+      AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
+
+      final ServletInputStream aServletRequestIS = aRequestScope.getRequest ().getInputStream ();
+      final HttpHeaderMap aHttpHeaders = aRequestScope.headers ().getClone ();
+      final IAS4ResponseAbstraction aResponse = IAS4ResponseAbstraction.wrap (aHttpResponse);
+
+      aHandler.handleRequest (aServletRequestIS, aHttpHeaders, aResponse);
 
       // Customize after handling
       if (aHandlerCustomizer != null)

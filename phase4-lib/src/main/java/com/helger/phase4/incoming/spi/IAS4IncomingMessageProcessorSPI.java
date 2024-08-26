@@ -29,9 +29,9 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.incoming.IAS4MessageState;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
  * Implement this SPI interface to handle incoming messages appropriate.<br/>

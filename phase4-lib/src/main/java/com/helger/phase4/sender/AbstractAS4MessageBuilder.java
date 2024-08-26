@@ -49,10 +49,10 @@ import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.http.IHttpPoster;
+import com.helger.phase4.incoming.AS4IncomingProfileSelectorFromGlobal;
+import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
-import com.helger.phase4.servlet.AS4IncomingProfileSelectorFromGlobal;
-import com.helger.phase4.servlet.IAS4IncomingProfileSelector;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.Phase4Exception;
 

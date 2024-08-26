@@ -46,13 +46,13 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
+import com.helger.phase4.incoming.AS4IncomingHandler;
+import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
-import com.helger.phase4.servlet.AS4IncomingHandler;
-import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
-import com.helger.phase4.servlet.IAS4IncomingProfileSelector;
 import com.helger.phase4.util.Phase4Exception;
 
 import jakarta.mail.MessagingException;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.servlet;
+package com.helger.phase4.incoming;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,5 +38,10 @@ public class AS4IncomingProfileSelectorFromGlobal implements IAS4IncomingProfile
   public String getAS4ProfileID (@Nonnull final IAS4MessageState aState)
   {
     return AS4ProfileSelector.getAS4ProfileID ();
+  }
+
+  public boolean validateAgainstProfile ()
+  {
+    return true;
   }
 }

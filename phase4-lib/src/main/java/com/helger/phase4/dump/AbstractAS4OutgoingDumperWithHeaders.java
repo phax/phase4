@@ -29,9 +29,9 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.traits.IGenericImplTrait;
+import com.helger.phase4.incoming.IAS4MessageState;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
-import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
  * Abstract implementation of {@link IAS4OutgoingDumper} that always adds the

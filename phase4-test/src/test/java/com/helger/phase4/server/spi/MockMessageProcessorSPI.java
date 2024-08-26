@@ -40,6 +40,7 @@ import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.incoming.IAS4MessageState;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
@@ -48,7 +49,6 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.server.MockPModeGenerator;
-import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**

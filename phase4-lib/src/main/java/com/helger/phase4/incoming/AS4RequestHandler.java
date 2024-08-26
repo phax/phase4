@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.servlet;
+package com.helger.phase4.incoming;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,6 +78,7 @@ import com.helger.phase4.http.BasicHttpPoster;
 import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.incoming.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.mgr.AS4IncomingMessageProcessorManager;
 import com.helger.phase4.incoming.soap.SOAPHeaderElementProcessorRegistry;
@@ -104,18 +105,15 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.profile.IAS4Profile;
-import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.photon.io.PhotonWorkerPool;
-import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
 
 import jakarta.mail.MessagingException;
-import jakarta.servlet.ServletInputStream;
 
 /**
  * Process incoming AS4 transmissions. This class is responsible for handling
@@ -125,7 +123,6 @@ import jakarta.servlet.ServletInputStream;
  * @author Martin Bayerl
  * @author Philip Helger
  */
-@ChangePhase4V3 ("Move to package 'incoming'")
 public class AS4RequestHandler implements AutoCloseable
 {
   private interface IAS4ResponseFactory
@@ -1898,39 +1895,5 @@ public class AS4RequestHandler implements AutoCloseable
                                         aRequestHttpHeaders,
                                         aCallback,
                                         m_aIncomingDumper);
-  }
-
-  /**
-   * This is the main handling routine when called from the Servlet API
-   *
-   * @param aRequestScope
-   *        HTTP request. Never <code>null</code>.
-   * @param aHttpResponse
-   *        HTTP response. Never <code>null</code>.
-   * @throws Phase4Exception
-   *         in case the request is missing certain prerequisites. Since 0.9.11
-   * @throws IOException
-   *         In case of IO errors
-   * @throws MessagingException
-   *         MIME related errors
-   * @throws WSSecurityException
-   *         In case of WSS4J errors
-   * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction)
-   *      for a more generic API
-   */
-  @ChangePhase4V3 ("Move to class AS4XServletHandler - should not be in here")
-  public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                             @Nonnull final AS4UnifiedResponse aHttpResponse) throws Phase4Exception,
-                                                                              IOException,
-                                                                              MessagingException,
-                                                                              WSSecurityException
-  {
-    AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
-
-    final ServletInputStream aServletRequestIS = aRequestScope.getRequest ().getInputStream ();
-    final HttpHeaderMap aHttpHeaders = aRequestScope.headers ().getClone ();
-    final IAS4ResponseAbstraction aResponse = IAS4ResponseAbstraction.wrap (aHttpResponse);
-
-    handleRequest (aServletRequestIS, aHttpHeaders, aResponse);
   }
 }

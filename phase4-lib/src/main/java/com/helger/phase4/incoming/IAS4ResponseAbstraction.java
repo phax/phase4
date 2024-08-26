@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.servlet;
+package com.helger.phase4.incoming;
 
 import java.nio.charset.Charset;
 
@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.mime.IMimeType;
-import com.helger.phase4.v3.ChangePhase4V3;
+import com.helger.phase4.servlet.AS4UnifiedResponse;
 
 /**
  * A synthetic wrapper for an AS4 HTTP response. By default
@@ -33,7 +33,6 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  * @since 0.9.6
  */
-@ChangePhase4V3 ("Move to package 'incoming'")
 public interface IAS4ResponseAbstraction
 {
   /**

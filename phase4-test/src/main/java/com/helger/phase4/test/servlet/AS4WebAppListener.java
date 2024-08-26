@@ -25,7 +25,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.httpclient.HttpDebugger;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.servlet.AS4ServerInitializer;
+import com.helger.phase4.incoming.AS4ServerInitializer;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;

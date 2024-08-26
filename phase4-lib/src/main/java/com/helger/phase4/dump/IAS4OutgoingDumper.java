@@ -25,9 +25,9 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.phase4.incoming.IAS4MessageState;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
-import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
  * Interface for dumping outgoing requests
