@@ -34,7 +34,7 @@ import com.helger.phase4.incoming.AS4IncomingMessageState;
  * @author Philip Helger
  */
 @FunctionalInterface
-public interface ISOAPHeaderElementProcessor
+public interface ISoapHeaderElementProcessor
 {
   /**
    * Process the passed header element.

@@ -32,7 +32,7 @@ import com.helger.commons.string.ToStringGenerator;
  * @author Philip Helger
  */
 @NotThreadSafe
-public class AS4SingleSOAPHeader
+public class AS4SingleSoapHeader
 {
   private final Element m_aNode;
   private final QName m_aQName;
@@ -49,7 +49,7 @@ public class AS4SingleSOAPHeader
    *        <code>true</code> if this is a must understand header,
    *        <code>false</code> otherwise.
    */
-  public AS4SingleSOAPHeader (@Nonnull final Element aNode,
+  public AS4SingleSoapHeader (@Nonnull final Element aNode,
                               @Nonnull final QName aQName,
                               final boolean bIsMustUnderstand)
   {

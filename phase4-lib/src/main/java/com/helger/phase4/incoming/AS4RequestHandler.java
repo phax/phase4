@@ -76,7 +76,7 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.mgr.AS4IncomingMessageProcessorManager;
-import com.helger.phase4.incoming.soap.SOAPHeaderElementProcessorRegistry;
+import com.helger.phase4.incoming.soap.SoapHeaderElementProcessorRegistry;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
@@ -1581,7 +1581,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                                                      Phase4Exception
   {
     // Create the SOAP header element processor list
-    final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (m_aPModeResolver,
+    final SoapHeaderElementProcessorRegistry aRegistry = SoapHeaderElementProcessorRegistry.createDefault (m_aPModeResolver,
                                                                                                            m_aCryptoFactorySign,
                                                                                                            m_aCryptoFactoryCrypt,
                                                                                                            (IPMode) null,

@@ -78,12 +78,12 @@ import com.helger.xml.XMLHelper;
  * @author Philip Helger
  * @author bayerlma
  */
-public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
+public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProcessor
 {
   /** The QName for which this processor should be invoked */
   public static final QName QNAME_SECURITY = new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
                                                         "Security");
-  private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (SoapHeaderElementProcessorWSS4J.class);
 
   private final IAS4CryptoFactory m_aCryptoFactorySign;
   private final IAS4CryptoFactory m_aCryptoFactoryCrypt;
@@ -91,7 +91,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   private final Supplier <? extends IPMode> m_aFallbackPModeProvider;
   private final IAS4DecryptParameterModifier m_aDecryptParameterModifier;
 
-  public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+  public SoapHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                           @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                           @Nullable final Provider aSecurityProviderSignVerify,
                                           @Nonnull final Supplier <? extends IPMode> aFallbackPModeProvider,

@@ -45,22 +45,22 @@ import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 /**
  * This class manages the SOAP header element processors. This is used to
  * validate the "must understand" SOAP requirement. It manages all instances of
- * {@link ISOAPHeaderElementProcessor}.
+ * {@link ISoapHeaderElementProcessor}.
  *
  * @author Philip Helger
  * @author Gregor Scholtysik
  */
 @NotThreadSafe
-public class SOAPHeaderElementProcessorRegistry
+public class SoapHeaderElementProcessorRegistry
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorRegistry.class);
-  private final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> m_aMap = new CommonsLinkedHashMap <> ();
+  private static final Logger LOGGER = LoggerFactory.getLogger (SoapHeaderElementProcessorRegistry.class);
+  private final ICommonsOrderedMap <QName, ISoapHeaderElementProcessor> m_aMap = new CommonsLinkedHashMap <> ();
 
-  public SOAPHeaderElementProcessorRegistry ()
+  public SoapHeaderElementProcessorRegistry ()
   {}
 
   public void registerHeaderElementProcessor (@Nonnull final QName aQName,
-                                              @Nonnull final ISOAPHeaderElementProcessor aProcessor)
+                                              @Nonnull final ISoapHeaderElementProcessor aProcessor)
   {
     ValueEnforcer.notNull (aQName, "QName");
     ValueEnforcer.notNull (aProcessor, "Processor");
@@ -74,7 +74,7 @@ public class SOAPHeaderElementProcessorRegistry
   }
 
   @Nullable
-  public ISOAPHeaderElementProcessor getHeaderElementProcessor (@Nullable final QName aQName)
+  public ISoapHeaderElementProcessor getHeaderElementProcessor (@Nullable final QName aQName)
   {
     if (aQName == null)
       return null;
@@ -88,13 +88,13 @@ public class SOAPHeaderElementProcessorRegistry
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> getAllElementProcessors ()
+  public ICommonsOrderedMap <QName, ISoapHeaderElementProcessor> getAllElementProcessors ()
   {
     return m_aMap.getClone ();
   }
 
   @Nonnull
-  public static SOAPHeaderElementProcessorRegistry createDefault (@Nonnull final IPModeResolver aPModeResolver,
+  public static SoapHeaderElementProcessorRegistry createDefault (@Nonnull final IPModeResolver aPModeResolver,
                                                                   @Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                                   @Nullable final IPMode aFallbackPMode,
@@ -103,7 +103,7 @@ public class SOAPHeaderElementProcessorRegistry
   {
     // Register all SOAP header element processors
     // Registration order matches execution order!
-    final SOAPHeaderElementProcessorRegistry ret = new SOAPHeaderElementProcessorRegistry ();
+    final SoapHeaderElementProcessorRegistry ret = new SoapHeaderElementProcessorRegistry ();
 
     // callback notifying a IAS4PModeAwareCryptoFactory about a successful PMode
     // resolution
@@ -122,8 +122,8 @@ public class SOAPHeaderElementProcessorRegistry
     };
 
     // Ebms3Messaging handler first
-    ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING,
-                                        new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver,
+    ret.registerHeaderElementProcessor (SoapHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING,
+                                        new SoapHeaderElementProcessorExtractEbms3Messaging (aPModeResolver,
                                                                                              aPModeConsumer,
                                                                                              aIncomingReceiverConfiguration));
 
@@ -133,8 +133,8 @@ public class SOAPHeaderElementProcessorRegistry
                                                                                                .getSecurityProviderVerify ();
     final Supplier <? extends IPMode> aFallbackPModeProvider = () -> aFallbackPMode;
     final IAS4DecryptParameterModifier aDecryptParameterModifier = aIncomingSecurityConfiguration.getDecryptParameterModifier ();
-    ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,
-                                        new SOAPHeaderElementProcessorWSS4J (aCryptoFactorySign,
+    ret.registerHeaderElementProcessor (SoapHeaderElementProcessorWSS4J.QNAME_SECURITY,
+                                        new SoapHeaderElementProcessorWSS4J (aCryptoFactorySign,
                                                                              aCryptoFactoryCrypt,
                                                                              aSecurityProviderSignVerify,
                                                                              aFallbackPModeProvider,

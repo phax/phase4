@@ -72,9 +72,9 @@ import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
-import com.helger.phase4.incoming.soap.AS4SingleSOAPHeader;
-import com.helger.phase4.incoming.soap.ISOAPHeaderElementProcessor;
-import com.helger.phase4.incoming.soap.SOAPHeaderElementProcessorRegistry;
+import com.helger.phase4.incoming.soap.AS4SingleSoapHeader;
+import com.helger.phase4.incoming.soap.ISoapHeaderElementProcessor;
+import com.helger.phase4.incoming.soap.SoapHeaderElementProcessorRegistry;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessingStatusSPI;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.AS4Helper;
@@ -417,14 +417,14 @@ public final class AS4IncomingHandler
     }
   }
 
-  private static void _processSoapHeaderElements (@Nonnull final SOAPHeaderElementProcessorRegistry aRegistry,
+  private static void _processSoapHeaderElements (@Nonnull final SoapHeaderElementProcessorRegistry aRegistry,
                                                   @Nonnull final Document aSoapDocument,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                   @Nonnull final AS4IncomingMessageState aIncomingState,
                                                   @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws Phase4Exception
   {
     final ESoapVersion eSoapVersion = aIncomingState.getSoapVersion ();
-    final ICommonsList <AS4SingleSOAPHeader> aHeadersInMessage = new CommonsArrayList <> ();
+    final ICommonsList <AS4SingleSoapHeader> aHeadersInMessage = new CommonsArrayList <> ();
     {
       // Find SOAP header
       final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSoapDocument.getDocumentElement (),
@@ -442,21 +442,21 @@ public final class AS4IncomingHandler
         final QName aQName = XMLHelper.getQName (aHeaderChild);
         final String sMustUnderstand = aHeaderChild.getAttributeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
         final boolean bIsMustUnderstand = eSoapVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
-        aHeadersInMessage.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
+        aHeadersInMessage.add (new AS4SingleSoapHeader (aHeaderChild, aQName, bIsMustUnderstand));
       }
     }
 
-    final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> aAllRegisteredProcessors = aRegistry.getAllElementProcessors ();
+    final ICommonsOrderedMap <QName, ISoapHeaderElementProcessor> aAllRegisteredProcessors = aRegistry.getAllElementProcessors ();
     if (aAllRegisteredProcessors.isEmpty ())
       LOGGER.error ("No SOAP Header element processor is registered");
 
     // handle all headers in the order of the registered handlers!
-    for (final Map.Entry <QName, ISOAPHeaderElementProcessor> aEntry : aAllRegisteredProcessors.entrySet ())
+    for (final Map.Entry <QName, ISoapHeaderElementProcessor> aEntry : aAllRegisteredProcessors.entrySet ())
     {
       final QName aQName = aEntry.getKey ();
 
       // Check if this message contains a header for the current handler
-      final AS4SingleSOAPHeader aHeader = aHeadersInMessage.findFirst (x -> aQName.equals (x.getQName ()));
+      final AS4SingleSoapHeader aHeader = aHeadersInMessage.findFirst (x -> aQName.equals (x.getQName ()));
       if (aHeader == null)
       {
         // no header element for current processor
@@ -465,7 +465,7 @@ public final class AS4IncomingHandler
         continue;
       }
 
-      final ISOAPHeaderElementProcessor aProcessor = aEntry.getValue ();
+      final ISoapHeaderElementProcessor aProcessor = aEntry.getValue ();
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
 
@@ -525,7 +525,7 @@ public final class AS4IncomingHandler
     {
       // Now check if all must understand headers were processed
       // Are all must-understand headers processed?
-      for (final AS4SingleSOAPHeader aHeader : aHeadersInMessage)
+      for (final AS4SingleSoapHeader aHeader : aHeadersInMessage)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
           throw new Phase4Exception ("Required SOAP header element " +
                                      aHeader.getQName ().toString () +
@@ -605,7 +605,7 @@ public final class AS4IncomingHandler
   @Nonnull
   public static IAS4IncomingMessageState processEbmsMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                              @Nonnull final Locale aLocale,
-                                                             @Nonnull final SOAPHeaderElementProcessorRegistry aRegistry,
+                                                             @Nonnull final SoapHeaderElementProcessorRegistry aRegistry,
                                                              @Nonnull final HttpHeaderMap aHttpHeaders,
                                                              @Nonnull final Document aSoapDocument,
                                                              @Nonnull final ESoapVersion eSoapVersion,
@@ -848,7 +848,7 @@ public final class AS4IncomingHandler
 
       // Use the sending PMode as fallback, because from the incoming
       // receipt/error it is impossible to detect a PMode
-      final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (aPModeResolver,
+      final SoapHeaderElementProcessorRegistry aRegistry = SoapHeaderElementProcessorRegistry.createDefault (aPModeResolver,
                                                                                                              aCryptoFactorySign,
                                                                                                              aCryptoFactoryCrypt,
                                                                                                              aSendingPMode,

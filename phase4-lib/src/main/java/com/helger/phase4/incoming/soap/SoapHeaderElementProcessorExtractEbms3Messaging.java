@@ -77,13 +77,13 @@ import com.helger.xml.XMLHelper;
  * @author bayerlma
  * @author Gregor Scholtysik
  */
-public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
+public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHeaderElementProcessor
 {
   /** The QName for which this processor should be invoked */
   public static final QName QNAME_MESSAGING = new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
                                                          "Messaging");
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorExtractEbms3Messaging.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (SoapHeaderElementProcessorExtractEbms3Messaging.class);
 
   private final IPModeResolver m_aPModeResolver;
   private final Consumer <? super IPMode> m_aPModeConsumer;
@@ -101,7 +101,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
    *        The incoming receiver configuration. May not be <code>null</code>.
    *        Since v3.0.0.
    */
-  public SOAPHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IPModeResolver aPModeResolver,
+  public SoapHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IPModeResolver aPModeResolver,
                                                           @Nullable final Consumer <? super IPMode> aPModeConsumer,
                                                           @Nonnull final IAS4IncomingReceiverConfiguration aIRC)
   {
