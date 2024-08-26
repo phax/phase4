@@ -41,7 +41,7 @@ import com.helger.phase4.servlet.IAS4MessageState;
  * @author Philip Helger
  * @since 0.9.8
  */
-public class AS4OutgoingDumperSingleUse extends AbstractAS4OutgoingDumperWithHeaders
+public class AS4OutgoingDumperSingleUse extends AbstractAS4OutgoingDumperWithHeaders <AS4OutgoingDumperSingleUse>
 {
   private final AtomicBoolean m_aUsedOS = new AtomicBoolean (false);
   private final OutputStream m_aOS;

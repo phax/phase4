@@ -28,19 +28,24 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Abstract implementation of {@link IAS4OutgoingDumper} that always adds the
  * custom headers
  *
  * @author Philip Helger
+ * @param <IMPLTYPE>
+ *        Implementation type (since v3)
  * @since 0.9.7
  */
-public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4OutgoingDumper
+public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE>>
+                                                           implements
+                                                           IAS4OutgoingDumper,
+                                                           IGenericImplTrait <IMPLTYPE>
 {
   public static final boolean DEFAULT_INCLUDE_HEADERS = true;
 
@@ -63,12 +68,13 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
    * @param b
    *        <code>true</code> to include the headers in the dump,
    *        <code>false</code> if not.
+   * @return this for chaining (since v3)
    * @since 2.5.2
    */
-  @ChangePhase4V3 ("Make chainable")
-  public final void setIncludeHeaders (final boolean b)
+  public final IMPLTYPE setIncludeHeaders (final boolean b)
   {
     m_bIncludeHeaders = b;
+    return thisAsT ();
   }
 
   /**

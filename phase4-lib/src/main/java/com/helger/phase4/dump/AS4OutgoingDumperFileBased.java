@@ -48,7 +48,7 @@ import com.helger.phase4.servlet.IAS4MessageState;
  * @author Philip Helger
  * @since 0.9.3
  */
-public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHeaders
+public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHeaders <AS4OutgoingDumperFileBased>
 {
   @FunctionalInterface
   public interface IFileProvider
