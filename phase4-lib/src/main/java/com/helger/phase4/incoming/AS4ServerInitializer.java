@@ -26,7 +26,6 @@ import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.mgr.AS4DuplicateCleanupJob;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.servlet.AS4Servlet;
 import com.helger.quartz.TriggerKey;
 
 /**
@@ -53,7 +52,7 @@ public final class AS4ServerInitializer
 
   /**
    * Call this method in your AS4 server to initialize everything that is
-   * necessary to use the {@link AS4Servlet}.
+   * necessary to use initialize AS4 message receiving.
    */
   public static void initAS4Server ()
   {

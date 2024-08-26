@@ -109,7 +109,6 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.photon.io.PhotonWorkerPool;
 import com.helger.xml.serialize.write.XMLWriter;
 
@@ -378,7 +377,6 @@ public class AS4RequestHandler implements AutoCloseable
   private Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> m_aProcessorSupplier = AS4IncomingMessageProcessorManager::getAllProcessors;
   private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
 
-  @ChangePhase4V3 ("See https://github.com/phax/phase4/discussions/265")
   public AS4RequestHandler (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
@@ -690,21 +688,6 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set a different processor supplier
-   *
-   * @param aProcessorSupplier
-   *        The processor supplier to be used. May not be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final AS4RequestHandler setProcessorSupplier (@Nonnull final Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> aProcessorSupplier)
-  {
-    ValueEnforcer.notNull (aProcessorSupplier, "ProcessorSupplier");
-    m_aProcessorSupplier = aProcessorSupplier;
-    return this;
-  }
-
-  /**
    * Find the message processor of the specified type.
    *
    * @param aTargetClass
@@ -719,6 +702,21 @@ public class AS4RequestHandler implements AutoCloseable
       if (aTargetClass.isInstance (aEntry))
         return aTargetClass.cast (aEntry);
     return null;
+  }
+
+  /**
+   * Set a different processor supplier
+   *
+   * @param aProcessorSupplier
+   *        The processor supplier to be used. May not be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final AS4RequestHandler setProcessorSupplier (@Nonnull final Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> aProcessorSupplier)
+  {
+    ValueEnforcer.notNull (aProcessorSupplier, "ProcessorSupplier");
+    m_aProcessorSupplier = aProcessorSupplier;
+    return this;
   }
 
   /**

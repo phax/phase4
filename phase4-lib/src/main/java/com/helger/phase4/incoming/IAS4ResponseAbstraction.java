@@ -23,12 +23,9 @@ import javax.annotation.Nonnull;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.mime.IMimeType;
-import com.helger.phase4.servlet.AS4UnifiedResponse;
 
 /**
- * A synthetic wrapper for an AS4 HTTP response. By default
- * {@link AS4UnifiedResponse} is the logical implementation, but the return
- * types are different.
+ * A synthetic wrapper for an AS4 HTTP response.
  *
  * @author Philip Helger
  * @since 0.9.6
@@ -75,41 +72,4 @@ public interface IAS4ResponseAbstraction
    *        The HTTP status code.
    */
   void setStatus (int nStatusCode);
-
-  /**
-   * Create the {@link IAS4ResponseAbstraction} for use with
-   * {@link AS4UnifiedResponse}.
-   *
-   * @param aHttpResponse
-   *        The unified response to be wrapped. May not be <code>null</code>.
-   * @return Never <code>null</code>.
-   */
-  @Nonnull
-  static IAS4ResponseAbstraction wrap (@Nonnull final AS4UnifiedResponse aHttpResponse)
-  {
-    return new IAS4ResponseAbstraction ()
-    {
-      public void setContent (@Nonnull final byte [] aBytes, @Nonnull final Charset aCharset)
-      {
-        aHttpResponse.setContent (aBytes);
-        aHttpResponse.setCharset (aCharset);
-      }
-
-      public void setContent (@Nonnull final HttpHeaderMap aHeaderMap, @Nonnull final IHasInputStream aHasIS)
-      {
-        aHttpResponse.addCustomResponseHeaders (aHeaderMap);
-        aHttpResponse.setContent (aHasIS);
-      }
-
-      public void setMimeType (@Nonnull final IMimeType aMimeType)
-      {
-        aHttpResponse.setMimeType (aMimeType);
-      }
-
-      public void setStatus (final int nStatusCode)
-      {
-        aHttpResponse.setStatus (nStatusCode);
-      }
-    };
-  }
 }

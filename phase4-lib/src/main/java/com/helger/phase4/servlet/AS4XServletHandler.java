@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.servlet;
 
+import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
@@ -28,6 +29,8 @@ import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.io.IHasInputStream;
+import com.helger.commons.mime.IMimeType;
 import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
@@ -137,6 +140,43 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   /**
+   * Create the {@link IAS4ResponseAbstraction} for use with
+   * {@link AS4UnifiedResponse}.
+   *
+   * @param aHttpResponse
+   *        The unified response to be wrapped. May not be <code>null</code>.
+   * @return Never <code>null</code>.
+   */
+  @Nonnull
+  public static IAS4ResponseAbstraction createResponseAbstraction (@Nonnull final AS4UnifiedResponse aHttpResponse)
+  {
+    return new IAS4ResponseAbstraction ()
+    {
+      public void setContent (@Nonnull final byte [] aBytes, @Nonnull final Charset aCharset)
+      {
+        aHttpResponse.setContent (aBytes);
+        aHttpResponse.setCharset (aCharset);
+      }
+
+      public void setContent (@Nonnull final HttpHeaderMap aHeaderMap, @Nonnull final IHasInputStream aHasIS)
+      {
+        aHttpResponse.addCustomResponseHeaders (aHeaderMap);
+        aHttpResponse.setContent (aHasIS);
+      }
+
+      public void setMimeType (@Nonnull final IMimeType aMimeType)
+      {
+        aHttpResponse.setMimeType (aMimeType);
+      }
+
+      public void setStatus (final int nStatusCode)
+      {
+        aHttpResponse.setStatus (nStatusCode);
+      }
+    };
+  }
+
+  /**
    * Handle an incoming request. Compared to
    * {@link #handleRequest(IRequestWebScopeWithoutResponse, UnifiedResponse)}
    * all the member variables are resolved into parameters to make overriding
@@ -185,7 +225,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
 
       final ServletInputStream aServletRequestIS = aRequestScope.getRequest ().getInputStream ();
       final HttpHeaderMap aHttpHeaders = aRequestScope.headers ().getClone ();
-      final IAS4ResponseAbstraction aResponse = IAS4ResponseAbstraction.wrap (aHttpResponse);
+      final IAS4ResponseAbstraction aResponse = createResponseAbstraction (aHttpResponse);
 
       aHandler.handleRequest (aServletRequestIS, aHttpHeaders, aResponse);
 
