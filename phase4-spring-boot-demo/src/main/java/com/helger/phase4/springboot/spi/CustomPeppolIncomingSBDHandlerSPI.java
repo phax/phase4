@@ -76,11 +76,4 @@ public class CustomPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncomingS
     service.handle ();
     LOGGER.info ("Request handled with success.");
   }
-
-  @Override
-  public boolean exceptionTranslatesToAS4Error ()
-  {
-    // If we have an Exception, tell the sender so
-    return true;
-  }
 }

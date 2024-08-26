@@ -20,24 +20,22 @@ import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 
 /**
  * This class contains the "per-request" data of
- * {@link Phase4PeppolServletConfiguration}.
+ * {@link Phase4PeppolDefaultReceiverConfiguration}.
  *
  * @author Philip Helger
  * @since 0.9.13
  */
-@ThreadSafe
-@ChangePhase4V3 ("Rename to Phase4PeppolReceiverConfiguration; remove setter")
-public final class Phase4PeppolReceiverCheckData
+@Immutable
+public final class Phase4PeppolReceiverConfiguration
 {
   private final boolean m_bReceiverCheckEnabled;
   private final ISMPServiceMetadataProvider m_aSMPClient;
@@ -76,14 +74,14 @@ public final class Phase4PeppolReceiverCheckData
    *        performed.
    * @since 2.8.1
    */
-  public Phase4PeppolReceiverCheckData (final boolean bReceiverCheckEnabled,
-                                        @Nullable final ISMPServiceMetadataProvider aSMPClient,
-                                        @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
-                                        @Nullable final String sAS4EndpointURL,
-                                        @Nullable final X509Certificate aAPCertificate,
-                                        final boolean bPerformSBDHValueChecks,
-                                        final boolean bCheckSBDHForMandatoryCountryC1,
-                                        final boolean bCheckSigningCertificateRevocation)
+  public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
+                                            @Nullable final ISMPServiceMetadataProvider aSMPClient,
+                                            @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
+                                            @Nullable final String sAS4EndpointURL,
+                                            @Nullable final X509Certificate aAPCertificate,
+                                            final boolean bPerformSBDHValueChecks,
+                                            final boolean bCheckSBDHForMandatoryCountryC1,
+                                            final boolean bCheckSigningCertificateRevocation)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");

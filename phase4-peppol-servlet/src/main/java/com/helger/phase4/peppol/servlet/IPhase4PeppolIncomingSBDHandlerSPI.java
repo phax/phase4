@@ -28,7 +28,6 @@ import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4MessageState;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This is the interface that must be implemented to handle incoming SBD
@@ -72,9 +71,7 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    *         if this specific exception is thrown, it translates into a
    *         synchronous AS4 error message.
    * @throws Exception
-   *         In case it cannot be processed. If
-   *         {@link #exceptionTranslatesToAS4Error()} returns <code>true</code>
-   *         each Exception is converted into a synchronous AS4 error message.
+   *         In case it cannot be processed.
    */
   void handleIncomingSBD (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
                           @Nonnull HttpHeaderMap aHeaders,
@@ -84,20 +81,4 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
                           @Nonnull PeppolSBDHData aPeppolSBD,
                           @Nonnull IAS4MessageState aState,
                           @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
-
-  /**
-   * Define if an exception from
-   * {@link #handleIncomingSBD(IAS4IncomingMessageMetadata, HttpHeaderMap, Ebms3UserMessage, byte[], StandardBusinessDocument, PeppolSBDHData, IAS4MessageState, ICommonsList)}
-   * results in a negative AS4 response or not. By default it is not.
-   *
-   * @return <code>true</code> to convert an Exception into an AS4 Error,
-   *         <code>false</code> if the Exception should simply be logged and
-   *         than processing should continue.
-   * @since 0.12.2
-   */
-  @ChangePhase4V3 ("Remove Exception handling and force usage of aProcessingErrorMessages")
-  default boolean exceptionTranslatesToAS4Error ()
-  {
-    return false;
-  }
 }

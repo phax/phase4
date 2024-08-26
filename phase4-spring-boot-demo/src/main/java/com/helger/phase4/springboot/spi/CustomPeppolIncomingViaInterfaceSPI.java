@@ -144,11 +144,4 @@ public class CustomPeppolIncomingViaInterfaceSPI implements IPhase4PeppolIncomin
     else
       LOGGER.error ("No handler is registered. Make sure to call 'setIncomingHandler' of this class on application startup");
   }
-
-  @Override
-  public boolean exceptionTranslatesToAS4Error ()
-  {
-    // If we have an Exception, tell the sender so
-    return true;
-  }
 }

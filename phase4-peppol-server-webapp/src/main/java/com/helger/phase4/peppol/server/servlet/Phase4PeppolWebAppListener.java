@@ -59,7 +59,7 @@ import com.helger.phase4.messaging.AS4MessagingHelper;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
-import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
+import com.helger.phase4.peppol.servlet.Phase4PeppolDefaultReceiverConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolCRLDownloader;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
@@ -206,12 +206,12 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
   {
     // Our server expects all SBDH to contain the COUNTRY_C1 element in SBDH
     // (this is the default setting, but added it here for easy modification)
-    Phase4PeppolServletConfiguration.setCheckSBDHForMandatoryCountryC1 (true);
+    Phase4PeppolDefaultReceiverConfiguration.setCheckSBDHForMandatoryCountryC1 (true);
 
     // Our server should check all signing certificates of incoming messages if
     // they are revoked or not
     // (this is the default setting, but added it here for easy modification)
-    Phase4PeppolServletConfiguration.setCheckSigningCertificateRevocation (true);
+    Phase4PeppolDefaultReceiverConfiguration.setCheckSigningCertificateRevocation (true);
 
     // Make sure the download of CRL is using Apache HttpClient and that the
     // provided settings are used. If e.g. a proxy is needed to access outbound
@@ -322,11 +322,11 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     final String sAPURL = AS4Configuration.getThisEndpointAddress ();
     if (StringHelper.hasText (sSMPURL) && StringHelper.hasText (sAPURL))
     {
-      Phase4PeppolServletConfiguration.setReceiverCheckEnabled (true);
-      Phase4PeppolServletConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
-      Phase4PeppolServletConfiguration.setWildcardSelectionMode (Phase4PeppolServletConfiguration.DEFAULT_WILDCARD_SELECTION_MODE);
-      Phase4PeppolServletConfiguration.setAS4EndpointURL (sAPURL);
-      Phase4PeppolServletConfiguration.setAPCertificate (aAPCert);
+      Phase4PeppolDefaultReceiverConfiguration.setReceiverCheckEnabled (true);
+      Phase4PeppolDefaultReceiverConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
+      Phase4PeppolDefaultReceiverConfiguration.setWildcardSelectionMode (Phase4PeppolDefaultReceiverConfiguration.DEFAULT_WILDCARD_SELECTION_MODE);
+      Phase4PeppolDefaultReceiverConfiguration.setAS4EndpointURL (sAPURL);
+      Phase4PeppolDefaultReceiverConfiguration.setAPCertificate (aAPCert);
       LOGGER.info (CAS4.LIB_NAME +
                    " Peppol receiver checks are enabled on SMP '" +
                    sSMPURL +
@@ -336,7 +336,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     }
     else
     {
-      Phase4PeppolServletConfiguration.setReceiverCheckEnabled (false);
+      Phase4PeppolDefaultReceiverConfiguration.setReceiverCheckEnabled (false);
       LOGGER.warn (CAS4.LIB_NAME + " Peppol receiver checks are disabled");
     }
   }

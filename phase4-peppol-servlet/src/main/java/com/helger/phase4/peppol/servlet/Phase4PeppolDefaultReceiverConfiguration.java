@@ -29,7 +29,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
@@ -40,20 +39,19 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
  * {@link Phase4PeppolServletMessageProcessorSPI}. Please note that this class
  * is not thread safe, as the default values are not meant to be modified during
  * runtime.<br>
- * See {@link Phase4PeppolReceiverCheckData} for the "per-request" version of
- * this class.
+ * See {@link Phase4PeppolReceiverConfiguration} for the "per-request" version
+ * of this class.
  *
  * @author Philip Helger
  */
 @NotThreadSafe
-@ChangePhase4V3 ("Rename to Phase4PeppolGlobalReceiverConfiguration")
-public final class Phase4PeppolServletConfiguration
+public final class Phase4PeppolDefaultReceiverConfiguration
 {
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
   public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.WILDCARD_ONLY;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolServletConfiguration.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolDefaultReceiverConfiguration.class);
 
   private static boolean s_bReceiverCheckEnabled = DEFAULT_RECEIVER_CHECK_ENABLED;
   private static ISMPServiceMetadataProvider s_aSMPClient;
@@ -64,7 +62,7 @@ public final class Phase4PeppolServletConfiguration
   private static boolean s_bCheckSBDHForMandatoryCountryC1 = PeppolSBDHDocumentReader.DEFAULT_CHECK_FOR_COUNTRY_C1;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
 
-  private Phase4PeppolServletConfiguration ()
+  private Phase4PeppolDefaultReceiverConfiguration ()
   {}
 
   /**
@@ -283,16 +281,16 @@ public final class Phase4PeppolServletConfiguration
 
   /**
    * Get the statically configured data as a
-   * {@link Phase4PeppolReceiverCheckData} instance. Returns <code>null</code>
-   * if the checks are disabled, or if at least one mandatory field is not
-   * set.<br>
+   * {@link Phase4PeppolReceiverConfiguration} instance. Returns
+   * <code>null</code> if the checks are disabled, or if at least one mandatory
+   * field is not set.<br>
    * Changed to NonNull in 2.8.1
    *
    * @return The instance data or <code>null</code>.
    * @since 0.9.13
    */
   @Nonnull
-  public static Phase4PeppolReceiverCheckData getAsReceiverCheckData ()
+  public static Phase4PeppolReceiverConfiguration getAsReceiverCheckData ()
   {
     final ISMPServiceMetadataProvider aSMPClient = getSMPClient ();
     final String sAS4EndpointURL = getAS4EndpointURL ();
@@ -304,13 +302,13 @@ public final class Phase4PeppolServletConfiguration
     else
       bReceiverCheckEnabled = isReceiverCheckEnabled ();
 
-    return new Phase4PeppolReceiverCheckData (bReceiverCheckEnabled,
-                                              aSMPClient,
-                                              getWildcardSelectionMode (),
-                                              sAS4EndpointURL,
-                                              aAPCertificate,
-                                              isPerformSBDHValueChecks (),
-                                              isCheckSBDHForMandatoryCountryC1 (),
-                                              isCheckSigningCertificateRevocation ());
+    return new Phase4PeppolReceiverConfiguration (bReceiverCheckEnabled,
+                                                  aSMPClient,
+                                                  getWildcardSelectionMode (),
+                                                  sAS4EndpointURL,
+                                                  aAPCertificate,
+                                                  isPerformSBDHValueChecks (),
+                                                  isCheckSBDHForMandatoryCountryC1 (),
+                                                  isCheckSigningCertificateRevocation ());
   }
 }

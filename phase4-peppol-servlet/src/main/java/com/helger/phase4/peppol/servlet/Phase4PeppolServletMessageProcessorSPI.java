@@ -175,7 +175,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
 
   private ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> m_aHandlers;
   private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;
-  private Phase4PeppolReceiverCheckData m_aReceiverCheckData;
+  private Phase4PeppolReceiverConfiguration m_aReceiverCheckData;
 
   /**
    * Constructor. Uses all SPI implementations of
@@ -248,14 +248,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
    * @since 0.9.13
    */
   @Nullable
-  public final Phase4PeppolReceiverCheckData getReceiverCheckData ()
+  public final Phase4PeppolReceiverConfiguration getReceiverCheckData ()
   {
     return m_aReceiverCheckData;
   }
 
   /**
    * Set the receiver check data to be used. If set, it overrides the global one
-   * defined by {@link Phase4PeppolServletConfiguration}.
+   * defined by {@link Phase4PeppolDefaultReceiverConfiguration}.
    *
    * @param aReceiverCheckData
    *        The customer receiver check data to use. May be <code>null</code>.
@@ -263,7 +263,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
    * @since 0.9.13
    */
   @Nonnull
-  public final Phase4PeppolServletMessageProcessorSPI setReceiverCheckData (@Nullable final Phase4PeppolReceiverCheckData aReceiverCheckData)
+  public final Phase4PeppolServletMessageProcessorSPI setReceiverCheckData (@Nullable final Phase4PeppolReceiverConfiguration aReceiverCheckData)
   {
     m_aReceiverCheckData = aReceiverCheckData;
     return this;
@@ -551,8 +551,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     final String sLogPrefix = "[" + sMessageID + "] ";
 
     // Start consistency checks if the receiver is supported or not
-    final Phase4PeppolReceiverCheckData aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
-                                                                                          : Phase4PeppolServletConfiguration.getAsReceiverCheckData ();
+    final Phase4PeppolReceiverConfiguration aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
+                                                                                          : Phase4PeppolDefaultReceiverConfiguration.getAsReceiverCheckData ();
 
     // Debug log
     if (LOGGER.isDebugEnabled ())
@@ -869,23 +869,17 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                              .refToMessageInError (aState.getMessageID ())
                                                              .errorDetail (sDetails, ex)
                                                              .build ());
-
-          // Returned AS4 Error without a custom prefix
           return AS4MessageProcessorResult.createFailure ();
         }
         catch (final Exception ex)
         {
-          LOGGER.error (sLogPrefix + "Error invoking Peppol handler " + aHandler, ex);
-          if (aHandler.exceptionTranslatesToAS4Error ())
-          {
-            final String sDetails = "The incoming Peppol message could not be processed.";
-            LOGGER.error (sLogPrefix + sDetails, ex);
-            aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                               .refToMessageInError (aState.getMessageID ())
-                                                               .errorDetail (sDetails, ex)
-                                                               .build ());
-            return AS4MessageProcessorResult.createFailure ();
-          }
+          final String sDetails = "The incoming Peppol message could not be processed.";
+          LOGGER.error (sLogPrefix + sDetails, ex);
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aState.getMessageID ())
+                                                             .errorDetail (sDetails, ex)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
         }
       }
 
