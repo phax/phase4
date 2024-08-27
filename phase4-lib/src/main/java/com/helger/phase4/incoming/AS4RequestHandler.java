@@ -117,7 +117,8 @@ import jakarta.mail.MessagingException;
 /**
  * Process incoming AS4 transmissions. This class is responsible for handling
  * data in a provider independent way (so e.g. not Servlet specific), only based
- * on InputStream and OutputStream.
+ * on InputStream and OutputStream. For each incoming request, a new instance of
+ * this class is created.
  *
  * @author Martin Bayerl
  * @author Philip Helger
