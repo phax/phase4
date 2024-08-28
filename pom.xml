@@ -80,11 +80,11 @@
     <peppol-commons.version>9.5.1</peppol-commons.version>
     <peppol-reporting.version>3.0.1</peppol-reporting.version>
     <ph-ubl.version>9.0.2</ph-ubl.version>
-    <ph-schematron.version>8.0.2</ph-schematron.version>
+    <ph-schematron.version>8.0.3</ph-schematron.version>
     <ph-web.version>10.1.9</ph-web.version>
     <phive.version>9.2.2</phive.version>
     <phive-rules.version>3.1.12</phive-rules.version>
-    <spring-boot.version>3.3.2</spring-boot.version>
+    <spring-boot.version>3.3.3</spring-boot.version>
   </properties>
 
   <dependencyManagement>
