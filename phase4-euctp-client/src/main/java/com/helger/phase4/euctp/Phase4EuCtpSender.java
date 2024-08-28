@@ -33,25 +33,50 @@ public final class Phase4EuCtpSender
   {}
 
   /**
-   * @return Create a new Builder for AS4 messages if the payload is present.
-   *         Never <code>null</code>.
+   * @return Create a new Builder for AS4 User Messages if the payload is
+   *         present. Never <code>null</code>.
    */
   @Nonnull
-  public static EuCtpUserMessageBuilder builder ()
+  public static EuCtpUserMessageBuilder builderUserMessage ()
   {
-    return new EuCtpUserMessageBuilder();
+    return new EuCtpUserMessageBuilder ();
   }
 
   /**
-   * The builder class for sending AS4 messages using EuCTP profile specifics.
-   * Use {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to
-   * trigger the main transmission.
+   * @return Create a new Builder for AS4 Pull Requests. Never
+   *         <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nonnull
+  public static EuCtpPullRequestBuilder builderPullRequest ()
+  {
+    return new EuCtpPullRequestBuilder ();
+  }
+
+  /**
+   * The builder class for sending AS4 User Messages using EuCTP profile
+   * specifics. Use {@link #sendMessage()} or
+   * {@link #sendMessageAndCheckForReceipt()} to trigger the main transmission.
    *
    * @author Ulrik Stehling
    */
   public static class EuCtpUserMessageBuilder extends AbstractEuCtpUserMessageBuilder <EuCtpUserMessageBuilder>
   {
-    public EuCtpUserMessageBuilder()
+    public EuCtpUserMessageBuilder ()
+    {
+      super ();
+    }
+  }
+
+  /**
+   * The builder class for sending AS4 Pull Requests using EuCTP profile
+   * specifics. Use {@link #sendMessage()} to trigger the main transmission.
+   *
+   * @author Philip Helger
+   */
+  public static class EuCtpPullRequestBuilder extends AbstractEuCtpPullRequestBuilder <EuCtpPullRequestBuilder>
+  {
+    public EuCtpPullRequestBuilder ()
     {
       super ();
     }

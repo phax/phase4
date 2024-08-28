@@ -27,9 +27,19 @@ import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.profile.euctp.AS4EuCtpProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4PullRequestBuilder;
 
-public class EuCtpPullRequestBuilder extends AbstractAS4PullRequestBuilder <EuCtpPullRequestBuilder>
+/**
+ * Abstract EuCTP PullRequest builder class with sanity methods
+ *
+ * @param <IMPLTYPE>
+ *        The implementation type
+ * @author Ulrik Stehling
+ * @author Philip Helger
+ */
+public abstract class AbstractEuCtpPullRequestBuilder <IMPLTYPE extends AbstractEuCtpPullRequestBuilder <IMPLTYPE>>
+                                                      extends
+                                                      AbstractAS4PullRequestBuilder <IMPLTYPE>
 {
-  public EuCtpPullRequestBuilder ()
+  public AbstractEuCtpPullRequestBuilder ()
   {
     try
     {
@@ -43,9 +53,9 @@ public class EuCtpPullRequestBuilder extends AbstractAS4PullRequestBuilder <EuCt
       // Other signing parameters are located in the PMode security part
       signingParams ().setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_SIGN);
       signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
-
       // Use the BST value type "#X509PKIPathv1"
       signingParams ().setUseSingleCertificate (false);
+
     }
     catch (final Exception ex)
     {
@@ -54,8 +64,8 @@ public class EuCtpPullRequestBuilder extends AbstractAS4PullRequestBuilder <EuCt
   }
 
   @Nonnull
-  public EuCtpPullRequestBuilder httpClientFactory (@Nullable final KeyStore aKeyStore,
-                                                    @Nullable final char [] aKeyPassword) throws GeneralSecurityException
+  public IMPLTYPE httpClientFactory (@Nullable final KeyStore aKeyStore, @Nullable final char [] aKeyPassword)
+                                                                                                               throws GeneralSecurityException
   {
     return httpClientFactory (new Phase4EuCtpHttpClientSettings (aKeyStore, aKeyPassword));
   }

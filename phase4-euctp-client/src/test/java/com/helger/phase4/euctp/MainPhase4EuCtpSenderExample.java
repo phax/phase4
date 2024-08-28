@@ -138,30 +138,32 @@ public class MainPhase4EuCtpSenderExample
     }
 
     final List <String> attachmentsAsString = new ArrayList <> ();
-    final ESuccess eSuccess = new EuCtpPullRequestBuilder ().httpClientFactory (aHttpClientSettings)
-                                                            .endpointURL ("https://conformance.customs.ec.europa.eu:8445/domibus/services/msh")
-                                                            .mpc (sMPC)
-                                                            .userMsgConsumer ( (aUserMsg, aMessageMetadata, aState) -> {
-                                                              aUserMessageHolder.set (aUserMsg);
+    final ESuccess eSuccess = Phase4EuCtpSender.builderPullRequest ()
+                                               .httpClientFactory (aHttpClientSettings)
+                                               .endpointURL ("https://conformance.customs.ec.europa.eu:8445/domibus/services/msh")
+                                               .mpc (sMPC)
+                                               .userMsgConsumer ( (aUserMsg, aMessageMetadata, aState) -> {
+                                                 aUserMessageHolder.set (aUserMsg);
 
-                                                              if (aState.hasDecryptedAttachments ())
-                                                              {
-                                                                // Remember all
-                                                                // attachments
-                                                                // here
-                                                                for (final WSS4JAttachment attachment : aState.getDecryptedAttachments ())
-                                                                {
-                                                                  final String parsedFile = StreamHelper.getAllBytesAsString (attachment.getSourceStream (),
-                                                                                                                              StandardCharsets.UTF_8);
-                                                                  attachmentsAsString.add (parsedFile);
-                                                                }
-                                                              }
-                                                            })
-                                                            .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> {
-                                                              aSignalMessageHolder.set (aSignalMsg);
-                                                            })
-                                                            .cryptoFactory (cryptoFactoryProperties)
-                                                            .sendMessage ();
+                                                 if (aState.hasDecryptedAttachments ())
+                                                 {
+                                                   /*
+                                                    * Remember all attachments
+                                                    * here
+                                                    */
+                                                   for (final WSS4JAttachment attachment : aState.getDecryptedAttachments ())
+                                                   {
+                                                     final String parsedFile = StreamHelper.getAllBytesAsString (attachment.getSourceStream (),
+                                                                                                                 StandardCharsets.UTF_8);
+                                                     attachmentsAsString.add (parsedFile);
+                                                   }
+                                                 }
+                                               })
+                                               .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> {
+                                                 aSignalMessageHolder.set (aSignalMsg);
+                                               })
+                                               .cryptoFactory (cryptoFactoryProperties)
+                                               .sendMessage ();
     //
     LOGGER.info ("euctp pull request result: " + eSuccess);
     LOGGER.info ("Pulled User Message: " + aUserMessageHolder.get ());
@@ -175,7 +177,7 @@ public class MainPhase4EuCtpSenderExample
                                            final AS4CryptoFactoryProperties cryptoFactoryProperties)
   {
     EAS4UserMessageSendResult eResult;
-    eResult = Phase4EuCtpSender.builder ()
+    eResult = Phase4EuCtpSender.builderUserMessage ()
                                .httpClientFactory (aHttpClientSettings)
                                .fromPartyID (fromPartyID)
                                .fromPartyIDType (EuCtpPMode.DEFAULT_PARTY_TYPE_ID)
@@ -204,7 +206,7 @@ public class MainPhase4EuCtpSenderExample
 
     final Wrapper <Ebms3SignalMessage> aSignalMsgHolder = new Wrapper <> ();
     EAS4UserMessageSendResult eResult;
-    eResult = Phase4EuCtpSender.builder ()
+    eResult = Phase4EuCtpSender.builderUserMessage ()
                                .httpClientFactory (aHttpClientSettings)
                                .fromPartyID (fromPartyID)
                                .fromPartyIDType (EuCtpPMode.DEFAULT_PARTY_TYPE_ID)
