@@ -897,14 +897,14 @@ public final class Phase4PeppolSender
       // Explicitly remember the old handler
       // Try to do this as close to sending as possible, to avoid that another
       // sendingDateTimConsumer is used
-      final IAS4SendingDateTimeConsumer aExisting = m_aSendingDTConsumer;
+      final IAS4SendingDateTimeConsumer aExistingSendingDTConsumer = m_aSendingDTConsumer;
       sendingDateTimeConsumer (aSendingDT -> {
         // Store in this instance
         m_aEffectiveSendingDT = aSendingDT;
 
         // Call the original handler
-        if (aExisting != null)
-          aExisting.onEffectiveSendingDateTime (aSendingDT);
+        if (aExistingSendingDTConsumer != null)
+          aExistingSendingDTConsumer.onEffectiveSendingDateTime (aSendingDT);
       });
     }
 

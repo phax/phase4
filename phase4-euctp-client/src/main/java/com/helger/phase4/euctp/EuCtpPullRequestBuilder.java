@@ -43,6 +43,7 @@ public class EuCtpPullRequestBuilder extends AbstractAS4PullRequestBuilder <EuCt
       // Other signing parameters are located in the PMode security part
       signingParams ().setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_SIGN);
       signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
+
       // Use the BST value type "#X509PKIPathv1"
       signingParams ().setUseSingleCertificate (false);
     }
