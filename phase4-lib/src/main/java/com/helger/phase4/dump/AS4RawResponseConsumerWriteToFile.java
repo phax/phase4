@@ -158,7 +158,7 @@ public class AS4RawResponseConsumerWriteToFile extends
   {
     final boolean bUseStatusLine = isHandleStatusLine () && aResponseEntity.hasResponseStatusLine ();
     final boolean bUseHttpHeaders = isHandleHttpHeaders () && aResponseEntity.getResponseHeaders ().isNotEmpty ();
-    final boolean bUseBody = aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0;
+    final boolean bUseBody = aResponseEntity.hasResponseContent () && aResponseEntity.getResponseContent ().length > 0;
 
     if (bUseStatusLine || bUseHttpHeaders || bUseBody)
     {
@@ -208,7 +208,7 @@ public class AS4RawResponseConsumerWriteToFile extends
           if (bUseBody)
           {
             // Write the main content
-            aOS.write (aResponseEntity.getResponse ());
+            aOS.write (aResponseEntity.getResponseContent ());
           }
         }
         else

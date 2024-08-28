@@ -116,7 +116,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
                                                          new ResponseHandlerMicroDom (),
                                                          aCallback,
                                                          aOutgoingDumper,
-                                                         aRetryCallback).getResponse ();
+                                                         aRetryCallback).getResponseContent ();
       AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
                                  MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
 

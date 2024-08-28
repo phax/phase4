@@ -20,7 +20,7 @@ import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.hc.core5.http.message.StatusLine;
 
@@ -39,12 +39,12 @@ import com.helger.phase4.mgr.MetaAS4Manager;
  * @param <T>
  *        The response type
  */
-@Immutable
+@NotThreadSafe
 public class AS4ClientSentMessage <T>
 {
   private final AS4ClientBuiltMessage m_aBuiltMsg;
   private final StatusLine m_aResponseStatusLine;
-  private HttpHeaderMap m_aResponseHeaders;
+  private final HttpHeaderMap m_aResponseHeaders;
   private final T m_aResponseContent;
   private final OffsetDateTime m_aSentDateTime;
 
@@ -159,7 +159,7 @@ public class AS4ClientSentMessage <T>
    * @return The response payload. May be <code>null</code>.
    */
   @Nullable
-  public final T getResponse ()
+  public final T getResponseContent ()
   {
     return m_aResponseContent;
   }
@@ -168,7 +168,7 @@ public class AS4ClientSentMessage <T>
    * @return <code>true</code> if a response payload is present,
    *         <code>false</code> if not.
    */
-  public final boolean hasResponse ()
+  public final boolean hasResponseContent ()
   {
     return m_aResponseContent != null;
   }
@@ -189,7 +189,7 @@ public class AS4ClientSentMessage <T>
     return new ToStringGenerator (this).append ("BuiltMsg", m_aBuiltMsg)
                                        .append ("ResponseStatusLine", m_aResponseStatusLine)
                                        .append ("ResponseHeaders", m_aResponseHeaders)
-                                       .append ("Response", m_aResponseContent)
+                                       .append ("ResponseContent", m_aResponseContent)
                                        .append ("SentDateTime", m_aSentDateTime)
                                        .getToString ();
   }

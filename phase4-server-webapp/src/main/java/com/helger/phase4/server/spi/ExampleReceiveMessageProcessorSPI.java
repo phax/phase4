@@ -67,8 +67,7 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4IncomingMessagePro
     // Write formatted SOAP
     {
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
-      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument ()
-                                                                   : aState.getOriginalSoapDocument ();
+      final Document aSoapDoc = aState.getEffectiveDecryptedSoapDocument ();
       final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc,
                                                        new XMLWriterSettings ().setNamespaceContext (Ebms3NamespaceHandler.getInstance ())
                                                                                .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
@@ -113,8 +112,7 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4IncomingMessagePro
       {
         final File aFile = StorageHelper.getStorageFile (aMessageMetadata, "-" + nIndex + ".payload");
         if (StreamHelper.copyInputStreamToOutputStream (aIncomingAttachment.getSourceStream (),
-                                                        FileHelper.getOutputStream (aFile))
-                        .isFailure ())
+                                                        FileHelper.getOutputStream (aFile)).isFailure ())
         {
           LOGGER.error ("Failed to write incoming attachment [" + nIndex + "] to '" + aFile.getAbsolutePath () + "'");
         }

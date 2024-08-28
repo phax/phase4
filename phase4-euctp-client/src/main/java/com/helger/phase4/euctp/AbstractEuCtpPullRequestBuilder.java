@@ -55,7 +55,6 @@ public abstract class AbstractEuCtpPullRequestBuilder <IMPLTYPE extends Abstract
       signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
       // Use the BST value type "#X509PKIPathv1"
       signingParams ().setUseSingleCertificate (false);
-
     }
     catch (final Exception ex)
     {

@@ -68,8 +68,7 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
   {
     // Write formatted SOAP
     {
-      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument () : aState
-                                                                                                                .getOriginalSoapDocument ();
+      final Document aSoapDoc = aState.getEffectiveDecryptedSoapDocument ();
       if (aSoapDoc == null)
         throw new IllegalStateException ("No SOAP Document present");
 

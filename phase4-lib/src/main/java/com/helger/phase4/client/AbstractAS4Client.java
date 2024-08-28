@@ -141,30 +141,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return The currently set crypto factory for crypting. <code>null</code> by
-   *         default.
-   * @since 2.2.0
-   */
-  @Nullable
-  public final IAS4CryptoFactory getAS4CryptoFactoryCrypt ()
-  {
-    return m_aCryptoFactoryCrypt;
-  }
-
-  /**
-   * Set all the crypto properties at once.
-   *
-   * @param aCryptoFactory
-   *        The crypto factory to be used. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE setAS4CryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
-  {
-    return setAS4CryptoFactorySign (aCryptoFactory).setAS4CryptoFactoryCrypt (aCryptoFactory);
-  }
-
-  /**
    * Set the crypto factory to be used for signing.
    *
    * @param aCryptoFactorySign
@@ -181,6 +157,17 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
+   * @return The currently set crypto factory for crypting. <code>null</code> by
+   *         default.
+   * @since 2.2.0
+   */
+  @Nullable
+  public final IAS4CryptoFactory getAS4CryptoFactoryCrypt ()
+  {
+    return m_aCryptoFactoryCrypt;
+  }
+
+  /**
    * Set the crypto factory to be used for crypting.
    *
    * @param aCryptoFactoryCrypt
@@ -194,6 +181,19 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   {
     m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
     return thisAsT ();
+  }
+
+  /**
+   * Set all the crypto properties at once.
+   *
+   * @param aCryptoFactory
+   *        The crypto factory to be used. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE setAS4CryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
+  {
+    return setAS4CryptoFactorySign (aCryptoFactory).setAS4CryptoFactoryCrypt (aCryptoFactory);
   }
 
   /**

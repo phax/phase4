@@ -167,12 +167,12 @@ public final class DropFolderUserMessage
                        aSW.stopAndGetMillis () +
                        " ms");
 
-          if (aResponseEntity.hasResponse ())
+          if (aResponseEntity.hasResponseContent ())
           {
             final String sMessageID = aResponseEntity.getMessageID ();
             final String sFilename = FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) + "-response.xml";
             final File aResponseFile = aIncomingDir.resolve (sFilename).toFile ();
-            if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isSuccess ())
+            if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponseContent ()).isSuccess ())
               LOGGER.info ("Response file was written to '" + aResponseFile.getAbsolutePath () + "'");
             else
               LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
