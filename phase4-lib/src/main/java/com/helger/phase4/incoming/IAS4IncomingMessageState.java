@@ -215,6 +215,22 @@ public interface IAS4IncomingMessageState
   }
 
   /**
+   * @return The effectively decrypted SOAP document.
+   * @since 3.0.0
+   * @see #getDecryptedSoapDocument()
+   * @see #hasDecryptedSoapDocument()
+   * @see #getOriginalSoapDocument()
+   */
+  @Nullable
+  default Document getEffectiveDecryptedSoapDocument ()
+  {
+    Document ret = getDecryptedSoapDocument ();
+    if (ret == null)
+      ret = getOriginalSoapDocument ();
+    return ret;
+  }
+
+  /**
    * @return Getting decrypted attachment, if there were encrypted attachments
    *         to begin with. May be <code>null</code>.
    * @see #getOriginalAttachments()
