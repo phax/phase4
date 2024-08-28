@@ -35,7 +35,7 @@ public interface IAS4SignalMessageConsumer
    * are interested in, because by default they are only available based on
    * temporary files during the processing of the inbound request.
    *
-   * @param aSignalMsg
+   * @param aEbmsSignalMsg
    *        The Signal Message domain object. Never <code>null</code>.
    * @param aIncomingMessageMetadata
    *        The message metadata of the synchronously received message. Never
@@ -46,7 +46,7 @@ public interface IAS4SignalMessageConsumer
    * @throws Phase4Exception
    *         in case of error
    */
-  void handleSignalMessage (@Nonnull Ebms3SignalMessage aSignalMsg,
+  void handleSignalMessage (@Nonnull Ebms3SignalMessage aEbmsSignalMsg,
                             @Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                             @Nonnull IAS4IncomingMessageState aIncomingState) throws Phase4Exception;
 }

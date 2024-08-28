@@ -35,7 +35,7 @@ public interface IAS4UserMessageConsumer
    * interested in, because by default they are only available based on
    * temporary files during the processing of the inbound request.
    *
-   * @param aUserMsg
+   * @param aEbmsUserMsg
    *        The User Message domain object. Never <code>null</code>.
    * @param aIncomingMessageMetadata
    *        The message metadata of the synchronously received message. Never
@@ -46,7 +46,7 @@ public interface IAS4UserMessageConsumer
    * @throws Phase4Exception
    *         in case of error
    */
-  void handleUserMessage (@Nonnull Ebms3UserMessage aUserMsg,
+  void handleUserMessage (@Nonnull Ebms3UserMessage aEbmsUserMsg,
                           @Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                           @Nonnull IAS4IncomingMessageState aIncomingState) throws Phase4Exception;
 }
