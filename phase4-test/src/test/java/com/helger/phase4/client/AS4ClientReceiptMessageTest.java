@@ -126,7 +126,7 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
                                                               .setKeyStorePassword ("test")
                                                               .setKeyAlias ("ph-as4")
                                                               .setKeyPassword ("test");
-    aClient.setAS4CryptoFactory (new AS4CryptoFactoryProperties (aCP));
+    aClient.setCryptoFactory (new AS4CryptoFactoryProperties (aCP));
 
     aClient.signingParams ()
            .setAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT)

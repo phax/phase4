@@ -841,8 +841,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     aUserMsg.setSoapVersion (m_eSoapVersion);
     aUserMsg.setSendingDateTime (m_aSendingDateTime);
     // Set the keystore/truststore parameters
-    aUserMsg.setAS4CryptoFactorySign (m_aCryptoFactorySign);
-    aUserMsg.setAS4CryptoFactoryCrypt (m_aCryptoFactoryCrypt);
+    aUserMsg.setCryptoFactorySign (m_aCryptoFactorySign);
+    aUserMsg.setCryptoFactoryCrypt (m_aCryptoFactoryCrypt);
 
     // Copy all values
     m_aCryptParams.cloneTo (aUserMsg.cryptParams ());

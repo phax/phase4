@@ -177,7 +177,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
                                                               .setKeyStorePassword ("test")
                                                               .setKeyAlias ("ph-as4")
                                                               .setKeyPassword ("test");
-    aClient.setAS4CryptoFactory (new AS4CryptoFactoryProperties (aCP));
+    aClient.setCryptoFactory (new AS4CryptoFactoryProperties (aCP));
     aClient.cryptParams ().setAlias (aCP.getKeyAlias ());
     return aClient;
   }
@@ -253,7 +253,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
     _ensureInvalidState (aClient);
     final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStorePath ("keys/dummy-pw-test.jks");
     final AS4CryptoFactoryProperties aCF = new AS4CryptoFactoryProperties (aCP);
-    aClient.setAS4CryptoFactory (aCF);
+    aClient.setCryptoFactory (aCF);
     _ensureInvalidState (aClient);
     aCF.cryptoProperties ().setKeyStorePassword ("test");
     _ensureInvalidState (aClient);

@@ -124,7 +124,7 @@ public final class DropFolderUserMessage
           aClient.setSoapVersion (ESoapVersion.SOAP_12);
 
           // Keystore data
-          aClient.setAS4CryptoFactory (aCF);
+          aClient.setCryptoFactory (aCF);
 
           aClient.signingParams ().setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_512);
           aClient.signingParams ().setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);

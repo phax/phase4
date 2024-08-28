@@ -290,8 +290,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     aPullRequestMsg.setSoapVersion (m_eSoapVersion);
     aPullRequestMsg.setSendingDateTime (m_aSendingDateTime);
     // Set the keystore/truststore parameters
-    aPullRequestMsg.setAS4CryptoFactorySign (m_aCryptoFactorySign);
-    aPullRequestMsg.setAS4CryptoFactoryCrypt (m_aCryptoFactoryCrypt);
+    aPullRequestMsg.setCryptoFactorySign (m_aCryptoFactorySign);
+    aPullRequestMsg.setCryptoFactoryCrypt (m_aCryptoFactoryCrypt);
 
     // Copy all values
     m_aCryptParams.cloneTo (aPullRequestMsg.cryptParams ());

@@ -135,7 +135,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @since 2.2.0
    */
   @Nullable
-  public final IAS4CryptoFactory getAS4CryptoFactorySign ()
+  public final IAS4CryptoFactory getCryptoFactorySign ()
   {
     return m_aCryptoFactorySign;
   }
@@ -146,11 +146,11 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param aCryptoFactorySign
    *        The crypto factory to be used. May be <code>null</code>.
    * @return this for chaining
-   * @see #setAS4CryptoFactoryCrypt(IAS4CryptoFactory)
+   * @see #setCryptoFactoryCrypt(IAS4CryptoFactory)
    * @since 2.2.0
    */
   @Nonnull
-  public final IMPLTYPE setAS4CryptoFactorySign (@Nullable final IAS4CryptoFactory aCryptoFactorySign)
+  public final IMPLTYPE setCryptoFactorySign (@Nullable final IAS4CryptoFactory aCryptoFactorySign)
   {
     m_aCryptoFactorySign = aCryptoFactorySign;
     return thisAsT ();
@@ -162,7 +162,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @since 2.2.0
    */
   @Nullable
-  public final IAS4CryptoFactory getAS4CryptoFactoryCrypt ()
+  public final IAS4CryptoFactory getCryptoFactoryCrypt ()
   {
     return m_aCryptoFactoryCrypt;
   }
@@ -173,11 +173,11 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param aCryptoFactoryCrypt
    *        The crypto factory to be used. May be <code>null</code>.
    * @return this for chaining
-   * @see #setAS4CryptoFactorySign(IAS4CryptoFactory)
+   * @see #setCryptoFactorySign(IAS4CryptoFactory)
    * @since 2.2.0
    */
   @Nonnull
-  public final IMPLTYPE setAS4CryptoFactoryCrypt (@Nullable final IAS4CryptoFactory aCryptoFactoryCrypt)
+  public final IMPLTYPE setCryptoFactoryCrypt (@Nullable final IAS4CryptoFactory aCryptoFactoryCrypt)
   {
     m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
     return thisAsT ();
@@ -191,9 +191,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE setAS4CryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
+  public final IMPLTYPE setCryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
   {
-    return setAS4CryptoFactorySign (aCryptoFactory).setAS4CryptoFactoryCrypt (aCryptoFactory);
+    return setCryptoFactorySign (aCryptoFactory).setCryptoFactoryCrypt (aCryptoFactory);
   }
 
   /**
