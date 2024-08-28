@@ -24,6 +24,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
@@ -64,14 +65,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    */
   protected AbstractAS4PullRequestBuilder ()
   {
-    try
-    {
-      pmode (pmodeResolver ().findPMode (null, "s", "a", "i", "r", "a", null));
-    }
-    catch (final Exception ex)
-    {
-      // for compatibility reasons ignore if no PMode is found
-    }
+    // No defaults
   }
 
   /**
@@ -171,6 +165,25 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   {
     m_aSignalMsgConsumer = aSignalMsgConsumer;
     return thisAsT ();
+  }
+
+  @Override
+  @Nonnull
+  @OverridingMethodsMustInvokeSuper
+  protected ESuccess finishFields () throws Phase4Exception
+  {
+    if (super.finishFields ().isFailure ())
+      return ESuccess.FAILURE;
+
+    if (m_aPMode == null && pmodeResolver () != null)
+    {
+      // Create a default PMode template
+      m_aPMode = pmodeResolver ().findPMode (null, "s", "a", "i", "r", "a", null);
+      if (m_aPMode == null)
+        LOGGER.warn ("No PMode was provided, and the PMode Resolver delivered a null-PMode as well");
+    }
+
+    return ESuccess.SUCCESS;
   }
 
   @Override
