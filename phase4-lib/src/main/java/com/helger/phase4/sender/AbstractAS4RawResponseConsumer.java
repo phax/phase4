@@ -17,6 +17,7 @@
 package com.helger.phase4.sender;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.traits.IGenericImplTrait;
@@ -30,6 +31,7 @@ import com.helger.commons.traits.IGenericImplTrait;
  * @param <IMPLTYPE>
  *        Implementation type of the derived class
  */
+@NotThreadSafe
 public abstract class AbstractAS4RawResponseConsumer <IMPLTYPE extends AbstractAS4RawResponseConsumer <IMPLTYPE>>
                                                      implements
                                                      IAS4RawResponseConsumer,
