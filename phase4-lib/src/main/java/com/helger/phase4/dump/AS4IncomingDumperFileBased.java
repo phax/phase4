@@ -37,8 +37,7 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 
 /**
- * Simple file based version of {@link IAS4IncomingDumper}. Was moved to this
- * package from <code>com.helger.phase4.servlet.dump</code> in v1.3.0.
+ * Simple file based version of {@link IAS4IncomingDumper}.
  *
  * @author Philip Helger
  * @since 0.9.3

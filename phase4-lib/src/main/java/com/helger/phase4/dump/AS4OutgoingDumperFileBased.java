@@ -42,8 +42,7 @@ import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
 /**
- * File based implementation of {@link IAS4OutgoingDumper}. Was moved to this
- * package from <code>com.helger.phase4.servlet.dump</code> in v1.3.0.
+ * File based implementation of {@link IAS4OutgoingDumper}.
  *
  * @author Philip Helger
  * @since 0.9.3

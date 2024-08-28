@@ -46,8 +46,6 @@ import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Example implementation of {@link IAS4RawResponseConsumer} writing to a file.
- * Was moved to this package from <code>com.helger.phase4.servlet.dump</code> in
- * v1.3.0.
  *
  * @author Philip Helger
  */
