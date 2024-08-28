@@ -62,6 +62,7 @@ public class PModeLegSecurity implements Serializable
    * parameter represents the version of WS-Security to be used.
    */
   private EWSSVersion m_eWSSVersion;
+
   /**
    * The value of this parameter is a list of the names of XML elements (inside
    * the SOAP envelope) that should be signed, as well as whether or not
@@ -74,23 +75,27 @@ public class PModeLegSecurity implements Serializable
    */
   private final ICommonsList <String> m_aX509SignElements = new CommonsArrayList <> ();
   private final ICommonsList <String> m_aX509SignAttachments = new CommonsArrayList <> ();
+
   /**
    * The value of this parameter identifies the public certificate to use when
    * verifying signed data.
    */
   private String m_sX509SignatureCertificate;
+
   /**
    * The value of this parameter identifies the algorithm that is used to
    * compute the digest of the message being signed. The definitions for these
    * values are in the [XMLDSIG] specification.
    */
   private ECryptoAlgorithmSignDigest m_eX509SignatureHashFunction;
+
   /**
    * The value of this parameter identifies the algorithm that is used to
    * compute the value of the digital signature. The definitions for these
    * values are found in the [XMLDSIG] or [XMLENC] specifications.
    */
   private ECryptoAlgorithmSign m_eX509SignatureAlgorithm;
+
   /**
    * The value of this parameter lists the names of XML elements (inside the
    * SOAP envelope) that should be encrypted, as well as whether or not
@@ -107,11 +112,13 @@ public class PModeLegSecurity implements Serializable
    * encrypting data.
    */
   private String m_sX509EncryptionCertificate;
+
   /**
    * The value of this parameter identifies the encryption algorithm to be used.
    * The definitions for these values are found in the [XMLENC] specification.
    */
   private ECryptoAlgorithmCrypt m_eX509EncryptionAlgorithm;
+
   /**
    * The integer value of this parameter describes the effective strength the
    * encryption algorithm MUST provide in terms of "effective" or random bits.
@@ -121,31 +128,37 @@ public class PModeLegSecurity implements Serializable
    * supplied by DES would be reported by setting MinimumStrength to 56.
    */
   private Integer m_aX509EncryptionMinimumStrength;
+
   /**
    * The value of this parameter is the username to include in a WSS Username
    * Token.
    */
   private String m_sUsernameTokenUsername;
+
   /**
    * The value of this parameter is the password to use inside a WSS Username
    * Token.
    */
   private String m_sUsernameTokenPassword;
+
   /**
    * The Boolean value of this parameter indicates whether a password digest
    * should be included in the WSS UsernameToken element.
    */
   private ETriState m_eUsernameTokenDigest = ETriState.UNDEFINED;
+
   /**
    * The Boolean value of this parameter indicates whether the WSS UsernameToken
    * element should contain a Nonce element.
    */
   private ETriState m_eUsernameTokenNonce = ETriState.UNDEFINED;
+
   /**
    * The Boolean value of this parameter indicates whether the WSS UsernameToken
    * element should have a Created timestamp element.
    */
   private ETriState m_eUsernameTokenCreated = ETriState.UNDEFINED;
+
   /**
    * The Boolean value of this parameter indicates whether messages on this MEP
    * leg must be authorized for processing under this P-Mode. If the parameter
@@ -160,11 +173,13 @@ public class PModeLegSecurity implements Serializable
    * (e.g. username/password).
    */
   private ETriState m_ePModeAuthorize = ETriState.UNDEFINED;
+
   /**
    * The Boolean value of this parameter indicates whether a signed receipt
    * (Receipt ebMS signal) containing a digest of the message must be sent back.
    */
   private ETriState m_eSendReceipt = ETriState.UNDEFINED;
+
   /**
    * This parameter indicates whether the Receipt signal is to be sent as a
    * callback (value "callback"), or synchronously in the back-channel response
@@ -172,6 +187,11 @@ public class PModeLegSecurity implements Serializable
    */
   private EPModeSendReceiptReplyPattern m_eSendReceiptReplyPattern;
 
+  /**
+   * This parameter indicates, that if a Receipt signal is to be sent, whether
+   * the Non-Repudiation of receipt information should be included in the
+   * Receipt signal or not.
+   */
   private ETriState m_eSendReceiptNonRepudiation = ETriState.UNDEFINED;
 
   public PModeLegSecurity ()
