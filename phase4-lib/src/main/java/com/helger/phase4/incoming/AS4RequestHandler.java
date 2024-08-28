@@ -1337,8 +1337,9 @@ public class AS4RequestHandler implements AutoCloseable
    *        The processing state of the incoming message. Never
    *        <code>null</code>.
    * @param aSoapDocument
-   *        document which should be used as source for the receipt to convert
-   *        it to non-repudiation information. Can be <code>null</code>.
+   *        Received SOAP document which should be used as source for the
+   *        receipt to convert it to non-repudiation information. Can be
+   *        <code>null</code>.
    * @param eSoapVersion
    *        SOAPVersion which should be used
    * @param aEffectiveLeg
