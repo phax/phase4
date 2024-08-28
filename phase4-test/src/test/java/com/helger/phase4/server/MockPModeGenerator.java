@@ -123,6 +123,7 @@ public final class MockPModeGenerator
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
     aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
+    aPModeLegSecurity.setSendReceipt (true);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
     // Required for compatibility with the Test profile PModes
     aPModeLegSecurity.setPModeAuthorize (false);
