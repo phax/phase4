@@ -17,24 +17,32 @@
 package com.helger.phase4.euctp;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.wrapper.Wrapper;
+import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.client.AS4ClientErrorMessage;
+import com.helger.phase4.client.AS4ClientReceiptMessage;
+import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.dump.AS4DumpManager;
@@ -42,17 +50,22 @@ import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.euctp.Phase4EuCtpSender.EuCtpPullRequestBuilder;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.mpc.MPC;
 import com.helger.phase4.profile.euctp.EEuCtpAction;
 import com.helger.phase4.profile.euctp.EEuCtpService;
 import com.helger.phase4.profile.euctp.EuCtpPMode;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
+import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
+
+import jakarta.mail.MessagingException;
 
 public class MainPhase4EuCtpSenderExample
 {
@@ -129,6 +142,7 @@ public class MainPhase4EuCtpSenderExample
   {
     final Wrapper <Ebms3UserMessage> aUserMessageHolder = new Wrapper <> ();
     final Wrapper <Ebms3SignalMessage> aSignalMessageHolder = new Wrapper <> ();
+    final Wrapper <Document> aSoapDocHolder = new Wrapper <> ();
     final String sMPC = "urn:fdc:ec.europa.eu:2019:eu_ics2_c2t/EORI/" + fromPartyID;
     final IMPCManager aMpcMgr = MetaAS4Manager.getMPCMgr ();
     if (!aMpcMgr.containsWithID (sMPC))
@@ -138,37 +152,100 @@ public class MainPhase4EuCtpSenderExample
     }
 
     final List <String> attachmentsAsString = new ArrayList <> ();
-    final ESuccess eSuccess = Phase4EuCtpSender.builderPullRequest ()
-                                               .httpClientFactory (aHttpClientSettings)
-                                               .endpointURL ("https://conformance.customs.ec.europa.eu:8445/domibus/services/msh")
-                                               .mpc (sMPC)
-                                               .userMsgConsumer ( (aUserMsg, aMessageMetadata, aState) -> {
-                                                 aUserMessageHolder.set (aUserMsg);
-
-                                                 if (aState.hasDecryptedAttachments ())
-                                                 {
-                                                   /*
-                                                    * Remember all attachments
-                                                    * here
-                                                    */
-                                                   for (final WSS4JAttachment attachment : aState.getDecryptedAttachments ())
-                                                   {
-                                                     final String parsedFile = StreamHelper.getAllBytesAsString (attachment.getSourceStream (),
-                                                                                                                 StandardCharsets.UTF_8);
-                                                     attachmentsAsString.add (parsedFile);
-                                                   }
-                                                 }
-                                               })
-                                               .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> {
-                                                 aSignalMessageHolder.set (aSignalMsg);
-                                               })
-                                               .cryptoFactory (cryptoFactoryProperties)
-                                               .sendMessage ();
+    final EuCtpPullRequestBuilder prBuilder = Phase4EuCtpSender.builderPullRequest ()
+                                                               .httpClientFactory (aHttpClientSettings)
+                                                               .endpointURL ("https://conformance.customs.ec.europa.eu:8445/domibus/services/msh")
+                                                               .mpc (sMPC)
+                                                               .userMsgConsumer ( (aEbmsUserMsg,
+                                                                                   aIncomingMessageMetadata,
+                                                                                   aIncomingState) -> {
+                                                                 aUserMessageHolder.set (aEbmsUserMsg);
+                                                                 aSoapDocHolder.set (aIncomingState.getEffectiveDecryptedSoapDocument ());
+                                                                 if (aIncomingState.hasDecryptedAttachments ())
+                                                                 {
+                                                                   /*
+                                                                    * Remember
+                                                                    * all
+                                                                    * attachments
+                                                                    * here
+                                                                    */
+                                                                   for (final WSS4JAttachment attachment : aIncomingState.getDecryptedAttachments ())
+                                                                   {
+                                                                     final String parsedFile = StreamHelper.getAllBytesAsString (attachment.getSourceStream (),
+                                                                                                                                 StandardCharsets.UTF_8);
+                                                                     attachmentsAsString.add (parsedFile);
+                                                                   }
+                                                                 }
+                                                               })
+                                                               .signalMsgConsumer ( (aEbmsSignalMsg,
+                                                                                     aIncomingMessageMetadata,
+                                                                                     aIncomingState) -> {
+                                                                 aSignalMessageHolder.set (aEbmsSignalMsg);
+                                                                 aSoapDocHolder.set (aIncomingState.getEffectiveDecryptedSoapDocument ());
+                                                               })
+                                                               .cryptoFactory (cryptoFactoryProperties);
+    final ESuccess eSuccess = prBuilder.sendMessage ();
     //
     LOGGER.info ("euctp pull request result: " + eSuccess);
     LOGGER.info ("Pulled User Message: " + aUserMessageHolder.get ());
     LOGGER.info ("Pulled Signal Message: " + aSignalMessageHolder.get ());
     LOGGER.info ("Attachments: " + attachmentsAsString);
+
+    if (eSuccess.isSuccess () && aUserMessageHolder.isSet ())
+    {
+      // Send another Receipt
+      final Ebms3UserMessage aUserMessage = aUserMessageHolder.get ();
+      final String sUserMessageID = aUserMessage.getMessageInfo ().getMessageId ();
+      try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+      {
+        final AS4ClientSentMessage <byte []> aSentMessage;
+        // TODO decide what to do
+        if (true)
+        {
+          // receipt
+          final AS4ClientReceiptMessage aReceiptMessage = new AS4ClientReceiptMessage (aResHelper);
+          aReceiptMessage.setRefToMessageID (sUserMessageID);
+          aReceiptMessage.setNonRepudiation (EuCtpPMode.DEFAULT_SEND_RECEIPT_NON_REPUDIATION);
+          aReceiptMessage.setSoapDocument (aSoapDocHolder.get ());
+          aReceiptMessage.setReceiptShouldBeSigned (true);
+          aReceiptMessage.getHttpPoster ().setHttpClientFactory (prBuilder.httpClientFactory ());
+          prBuilder.signingParams ().cloneTo (aReceiptMessage.signingParams ());
+          aSentMessage = aReceiptMessage.sendMessageWithRetries (prBuilder.endpointURL (),
+                                                                 new ResponseHandlerByteArray (),
+                                                                 prBuilder.buildMessageCallback (),
+                                                                 prBuilder.outgoingDumper (),
+                                                                 prBuilder.retryCallback ());
+        }
+        else
+        {
+          // error
+          final AS4ClientErrorMessage aErrorMessage = new AS4ClientErrorMessage (aResHelper);
+          aErrorMessage.errorMessages ()
+                       .add (EEbmsError.EBMS_OTHER.errorBuilder (Locale.US)
+                                                  .refToMessageInError (sUserMessageID)
+                                                  .errorDetail ("This is why it failed")
+                                                  .build ());
+          aErrorMessage.setRefToMessageID (sUserMessageID);
+          aErrorMessage.setErrorShouldBeSigned (true);
+          aErrorMessage.getHttpPoster ().setHttpClientFactory (prBuilder.httpClientFactory ());
+          prBuilder.signingParams ().cloneTo (aErrorMessage.signingParams ());
+          aSentMessage = aErrorMessage.sendMessageWithRetries (prBuilder.endpointURL (),
+                                                               new ResponseHandlerByteArray (),
+                                                               prBuilder.buildMessageCallback (),
+                                                               prBuilder.outgoingDumper (),
+                                                               prBuilder.retryCallback ());
+        }
+
+        if (aSentMessage.hasResponseStatusLine ())
+          LOGGER.info ("Receipt response: " + aSentMessage.getResponseStatusLine ());
+        if (aSentMessage.hasResponseContent ())
+          LOGGER.info ("Receipt content length: " + aSentMessage.getResponseContent ().length);
+      }
+      catch (IOException | WSSecurityException | MessagingException ex)
+      {
+        LOGGER.error ("Failed to send back Error/Receipt", ex);
+      }
+    }
   }
 
   private static void _sendConnectionTest (final Phase4EuCtpHttpClientSettings aHttpClientSettings,
