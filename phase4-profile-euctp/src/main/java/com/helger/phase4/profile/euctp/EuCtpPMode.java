@@ -63,6 +63,9 @@ public final class EuCtpPMode
   public static final String DEFAULT_SERVICE = EEuCtpService.TRADER_TO_CUSTOMS.getValue ();
   public static final String DEFAULT_SERVICE_TYPE = "eu-customs-service-type";
 
+  public static final boolean DEFAULT_SEND_RECEIPT = true;
+  public static final boolean DEFAULT_SEND_RECEIPT_NON_REPUDIATION = true;
+
   private EuCtpPMode ()
   {}
 
@@ -118,8 +121,8 @@ public final class EuCtpPMode
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
     aPModeLegSecurity.setX509EncryptionMinimumStrength (128);
     aPModeLegSecurity.setPModeAuthorize (false);
-    aPModeLegSecurity.setSendReceipt (true);
-    aPModeLegSecurity.setSendReceiptNonRepudiation (true);
+    aPModeLegSecurity.setSendReceipt (DEFAULT_SEND_RECEIPT);
+    aPModeLegSecurity.setSendReceiptNonRepudiation (DEFAULT_SEND_RECEIPT_NON_REPUDIATION);
     aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
     return aPModeLegSecurity;
   }
