@@ -1261,7 +1261,8 @@ public class AS4RequestHandler implements AutoCloseable
     if (aLeg != null && aLeg.hasSecurity ())
     {
       // Note: this is enabled in Default PMode
-      return EPModeSendReceiptReplyPattern.RESPONSE.equals (aLeg.getSecurity ().getSendReceiptReplyPattern ());
+      return aLeg.getSecurity ().isSendReceipt () &&
+             EPModeSendReceiptReplyPattern.RESPONSE.equals (aLeg.getSecurity ().getSendReceiptReplyPattern ());
     }
     // Default behaviour if the value is not set or no security is existing
     return true;
