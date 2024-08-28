@@ -353,6 +353,17 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * @return The specific AS4 message ID to use. May be <code>null</code> if a
+   *         random one should be generated.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String messageID ()
+  {
+    return m_sMessageID;
+  }
+
+  /**
    * Set the optional AS4 message ID. If this field is not set, a random message
    * ID is created.
    *
@@ -365,6 +376,17 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {
     m_sMessageID = sMessageID;
     return thisAsT ();
+  }
+
+  /**
+   * @return The optional AS4 reference to a previous message ID. May be
+   *         <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String refToMessageID ()
+  {
+    return m_sRefToMessageID;
   }
 
   /**
@@ -382,6 +404,16 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {
     m_sRefToMessageID = sRefToMessageID;
     return thisAsT ();
+  }
+
+  /**
+   * @return The optional sending date time. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final OffsetDateTime sendingDateTime ()
+  {
+    return m_aSendingDateTime;
   }
 
   /**
@@ -425,6 +457,16 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * @return The HTTP retry settings to be used. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final HttpRetrySettings httpRetrySettings ()
+  {
+    return m_aHttpRetrySettings;
+  }
+
+  /**
    * Set the HTTP retry settings to be used. If none are set, the default values
    * are used.
    *
@@ -437,6 +479,16 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {
     m_aHttpRetrySettings = a;
     return thisAsT ();
+  }
+
+  /**
+   * @return The locale to be used. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final Locale locale ()
+  {
+    return m_aLocale;
   }
 
   /**
@@ -621,6 +673,17 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * @return The internal message callback. Usually this method is NOT needed.
+   *         Use only when you know what you are doing.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final IAS4ClientBuildMessageCallback buildMessageCallback ()
+  {
+    return m_aBuildMessageCallback;
+  }
+
+  /**
    * Set a internal message callback. Usually this method is NOT needed. Use
    * only when you know what you are doing.
    *
@@ -634,6 +697,17 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {
     m_aBuildMessageCallback = aBuildMessageCallback;
     return thisAsT ();
+  }
+
+  /**
+   * @return The specific outgoing dumper of this builder. May be
+   *         <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final IAS4OutgoingDumper outgoingDumper ()
+  {
+    return m_aOutgoingDumper;
   }
 
   /**
@@ -652,6 +726,17 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * @return The specific incoming dumper of this builder. May be
+   *         <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final IAS4IncomingDumper incomingDumper ()
+  {
+    return m_aIncomingDumper;
+  }
+
+  /**
    * Set a specific incoming dumper for this builder.
    *
    * @param aIncomingDumper
@@ -664,6 +749,16 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {
     m_aIncomingDumper = aIncomingDumper;
     return thisAsT ();
+  }
+
+  /**
+   * @return The decrypting customizing callback. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final IAS4DecryptParameterModifier decryptRequestDataModifier ()
+  {
+    return m_aDecryptParameterModifier;
   }
 
   /**
@@ -684,6 +779,16 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * @return The HTTP retry callback to be invoked. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final IAS4RetryCallback retryCallback ()
+  {
+    return m_aRetryCallback;
+  }
+
+  /**
    * Set an optional handler that is notified if an http sending will be
    * retried. This method is optional and must not be called prior to sending.
    *
@@ -699,9 +804,22 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * @return The optional handler for the received raw response, very similar to
+   *         the dumper. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final IAS4RawResponseConsumer rawResponseConsumer ()
+  {
+    return m_aResponseConsumer;
+  }
+
+  /**
    * Set an optional handler for the synchronous result message received from
    * the other side. This method is optional and must not be called prior to
-   * sending.
+   * sending. This method is very similar to using an
+   * {@link #incomingDumper(IAS4IncomingDumper)} so you usually only need one or
+   * the other.
    *
    * @param aResponseConsumer
    *        The optional response consumer. May be <code>null</code>.

@@ -64,6 +64,17 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   {}
 
   /**
+   * @return The currently set outgoing attachment payload. May be
+   *         <code>null</code>.
+   * @since 2.5.0
+   */
+  @Nullable
+  public final AS4OutgoingAttachment payload ()
+  {
+    return m_aPayload;
+  }
+
+  /**
    * Set the payload to be send out.
    *
    * @param aBuilder
@@ -88,17 +99,6 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   {
     m_aPayload = aPayload;
     return thisAsT ();
-  }
-
-  /**
-   * @return The currently set outgoing attachment payload. May be
-   *         <code>null</code>.
-   * @since 2.5.0
-   */
-  @Nullable
-  public final AS4OutgoingAttachment payload ()
-  {
-    return m_aPayload;
   }
 
   @Override

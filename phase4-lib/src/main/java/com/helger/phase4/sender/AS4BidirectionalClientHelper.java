@@ -152,7 +152,7 @@ public final class AS4BidirectionalClientHelper
       aRawResponseConsumer.handleResponse (aResponseEntity);
 
     // Try interpret result as SignalMessage
-    if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
+    if (aResponseEntity.hasResponseContent () && aResponseEntity.getResponseContent ().length > 0)
     {
       final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
                                                                                      .setRemoteAddr (sURL);
@@ -169,7 +169,7 @@ public final class AS4BidirectionalClientHelper
                                              aLocale,
                                              aMessageMetadata,
                                              aWrappedHttpResponse.get (),
-                                             aResponseEntity.getResponse (),
+                                             aResponseEntity.getResponseContent (),
                                              aIncomingDumper,
                                              aIncomingSecurityConfiguration,
                                              aIncomingReceiverConfiguration,
@@ -238,7 +238,7 @@ public final class AS4BidirectionalClientHelper
       aResponseConsumer.handleResponse (aResponseEntity);
 
     // Try to interpret result as UserMessage or SignalMessage
-    if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
+    if (aResponseEntity.hasResponseContent () && aResponseEntity.getResponseContent ().length > 0)
     {
       final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
                                                                                      .setRemoteAddr (sURL);
@@ -255,7 +255,7 @@ public final class AS4BidirectionalClientHelper
                                            aLocale,
                                            aMessageMetadata,
                                            aWrappedResponse.get (),
-                                           aResponseEntity.getResponse (),
+                                           aResponseEntity.getResponseContent (),
                                            aIncomingDumper,
                                            aIncomingSecurityConfiguration,
                                            aIncomingReceiverConfiguration,
@@ -325,7 +325,7 @@ public final class AS4BidirectionalClientHelper
       aResponseConsumer.handleResponse (aResponseEntity);
 
     // Try to interpret result as UserMessage or SignalMessage
-    if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
+    if (aResponseEntity.hasResponseContent () && aResponseEntity.getResponseContent ().length > 0)
     {
       final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
                                                                                      .setRemoteAddr (sURL);
@@ -342,7 +342,7 @@ public final class AS4BidirectionalClientHelper
                                                    aLocale,
                                                    aMessageMetadata,
                                                    aWrappedResponse.get (),
-                                                   aResponseEntity.getResponse (),
+                                                   aResponseEntity.getResponseContent (),
                                                    aIncomingDumper,
                                                    aIncomingSecurityConfiguration,
                                                    aIncomingReceiverConfiguration,

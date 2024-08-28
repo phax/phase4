@@ -27,6 +27,8 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ESuccess;
@@ -117,6 +119,26 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return The optional "Service" type. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String serviceType ()
+  {
+    return m_sServiceType;
+  }
+
+  /**
+   * @return The "Service" value. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String service ()
+  {
+    return m_sService;
+  }
+
+  /**
    * Set the "Service" value only, leaving the type <code>null</code>.
    *
    * @param sServiceValue
@@ -150,6 +172,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return The "Action" value. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String action ()
+  {
+    return m_sAction;
+  }
+
+  /**
    * Set the "Action" value. It's optional. If the "Action" value is not set, it
    * defaults to the "document type identifier value" (URI encoded).
    *
@@ -165,6 +197,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return The "AgreementRef" value. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String agreementRef ()
+  {
+    return m_sAgreementRef;
+  }
+
+  /**
    * Set the "AgreementRef" value. It's optional.
    *
    * @param sAgreementRef
@@ -176,6 +218,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   {
     m_sAgreementRef = sAgreementRef;
     return thisAsT ();
+  }
+
+  /**
+   * @return The "AgreementRef type" value. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String agreementType ()
+  {
+    return m_sAgreementType;
   }
 
   /**
@@ -218,6 +270,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return The "from party ID type". May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String fromPartyIDType ()
+  {
+    return m_sFromPartyIDType;
+  }
+
+  /**
    * Set the "from party ID type".
    *
    * @param sFromPartyIDType
@@ -229,6 +291,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   {
     m_sFromPartyIDType = sFromPartyIDType;
     return thisAsT ();
+  }
+
+  /**
+   * @return The "from party ID". May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String fromPartyID ()
+  {
+    return m_sFromPartyID;
   }
 
   /**
@@ -246,6 +318,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return The "from party role". May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String fromRole ()
+  {
+    return m_sFromRole;
+  }
+
+  /**
    * Set the "from party role". This is optional
    *
    * @param sFromRole
@@ -257,6 +339,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   {
     m_sFromRole = sFromRole;
     return thisAsT ();
+  }
+
+  /**
+   * @return The "to party ID type". May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String toPartyIDType ()
+  {
+    return m_sToPartyIDType;
   }
 
   /**
@@ -274,6 +366,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return The "to party ID". May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String toPartyID ()
+  {
+    return m_sToPartyID;
+  }
+
+  /**
    * Set the "to party ID".
    *
    * @param sToPartyID
@@ -285,6 +387,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   {
     m_sToPartyID = sToPartyID;
     return thisAsT ();
+  }
+
+  /**
+   * @return The "to party role". May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String toRole ()
+  {
+    return m_sToRole;
   }
 
   /**
@@ -302,6 +414,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return The optional AS4 conversation ID. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String conversationID ()
+  {
+    return m_sConversationID;
+  }
+
+  /**
    * Set the optional AS4 conversation ID. If this field is not set, a random
    * conversation ID is created.
    *
@@ -315,6 +437,20 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   {
     m_sConversationID = sConversationID;
     return thisAsT ();
+  }
+
+  @Nonnull
+  @ReturnsMutableObject
+  public final ICommonsList <MessageProperty> messageProperties ()
+  {
+    return m_aMessageProperties;
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public final ICommonsList <MessageProperty> getAllMessageProperties ()
+  {
+    return m_aMessageProperties.getClone ();
   }
 
   @Nonnull
@@ -418,6 +554,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return The receiver AS4 endpoint URL. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String endpointURL ()
+  {
+    return m_sEndpointURL;
+  }
+
+  /**
    * Set an receiver AS4 endpoint URL, independent of its usability.
    *
    * @param sEndointURL
@@ -429,6 +575,20 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   {
     m_sEndpointURL = sEndointURL;
     return thisAsT ();
+  }
+
+  @Nonnull
+  @ReturnsMutableObject
+  public final ICommonsList <AS4OutgoingAttachment> attachments ()
+  {
+    return m_aAttachments;
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public final ICommonsList <AS4OutgoingAttachment> getAllAttachments ()
+  {
+    return m_aAttachments.getClone ();
   }
 
   /**
@@ -518,6 +678,17 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return <code>true</code> if the message is forced into the MIME format,
+   *         <code>false</code> otherwise.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final boolean forceMimeMessage ()
+  {
+    return m_bForceMimeMessage;
+  }
+
+  /**
    * Enable the enforcement of packaging the AS4 user message in a MIME message.
    *
    * @param b
@@ -531,6 +702,17 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   {
     m_bForceMimeMessage = b;
     return thisAsT ();
+  }
+
+  /**
+   * @return The optional Ebms3 Signal Message Consumer. May be
+   *         <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final IAS4SignalMessageConsumer signalMsgConsumer ()
+  {
+    return m_aSignalMsgConsumer;
   }
 
   /**

@@ -94,6 +94,16 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return <code>true</code> if PMode leg 1 is used, <code>false</code> if leg
+   *         2 is used.
+   * @since 3.0.0
+   */
+  public final boolean useLeg1 ()
+  {
+    return m_bUseLeg1;
+  }
+
+  /**
    * Determine whether to use leg 1 or leg 2 of the PMode.
    *
    * @param bUseLeg1
@@ -106,6 +116,16 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   {
     m_bUseLeg1 = bUseLeg1;
     return thisAsT ();
+  }
+
+  /**
+   * @return The currently set MPC. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String mpc ()
+  {
+    return m_sMPC;
   }
 
   /**
@@ -123,6 +143,17 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return The receiver AS4 endpoint URL currently set. May be
+   *         <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String endpointURL ()
+  {
+    return m_sEndpointURL;
+  }
+
+  /**
    * Set an receiver AS4 endpoint URL, independent of its usability.
    *
    * @param sEndointURL
@@ -134,6 +165,16 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   {
     m_sEndpointURL = sEndointURL;
     return thisAsT ();
+  }
+
+  /**
+   * @return The optional Ebms3 User Message Consumer. May be <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final IAS4UserMessageConsumer userMsgConsumer ()
+  {
+    return m_aUserMsgConsumer;
   }
 
   /**
@@ -149,6 +190,17 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   {
     m_aUserMsgConsumer = aUserMsgConsumer;
     return thisAsT ();
+  }
+
+  /**
+   * @return The optional Ebms3 Signal Message Consumer. May be
+   *         <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nullable
+  public final IAS4SignalMessageConsumer signalMsgConsumer ()
+  {
+    return m_aSignalMsgConsumer;
   }
 
   /**
