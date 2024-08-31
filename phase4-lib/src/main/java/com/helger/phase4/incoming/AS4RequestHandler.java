@@ -417,8 +417,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set the crypto factory for signing. This is a sanity wrapper around
-   * {@link #setCryptoFactorySignSupplier(Supplier)}.
+   * Set the crypto factory for signing.
    *
    * @param aCryptoFactorySign
    *        Crypto factory for signing to use. May not be <code>null</code>.
@@ -448,8 +447,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set the crypto factory crypting. This is a sanity wrapper around
-   * {@link #setCryptoFactoryCryptSupplier(Supplier)}.
+   * Set the crypto factory crypting.
    *
    * @param aCryptoFactoryCrypt
    *        Crypto factory for crypting to use. May not be <code>null</code>.
@@ -468,7 +466,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   /**
    * Set the same crypto factory for signing and crypting. This is a sanity
-   * wrapper around {@link #setCryptoFactorySupplier(Supplier)}.
+   * wrapper around {@link #setCryptoFactory(IAS4CryptoFactory)}.
    *
    * @param aCryptoFactory
    *        Crypto factory to use. May not be <code>null</code>.
@@ -861,9 +859,8 @@ public class AS4RequestHandler implements AutoCloseable
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
-    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId () : aEbmsSignalMessage
-                                                                                                                      .getMessageInfo ()
-                                                                                                                      .getMessageId ();
+    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
+                                             : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
 
     // Get all processors
     final ICommonsList <IAS4IncomingMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
@@ -1086,8 +1083,8 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (
-                                                                                                                       aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
+                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -1838,8 +1835,9 @@ public class AS4RequestHandler implements AutoCloseable
                                                          new ResponseHandlerXml ());
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     (aAsyncResponse == null ? "null" : XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                                                   AS4HttpDebug.getDebugXMLWriterSettings ())));
+                                     (aAsyncResponse == null ? "null"
+                                                             : XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                                          AS4HttpDebug.getDebugXMLWriterSettings ())));
         };
 
         final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
@@ -2057,8 +2055,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager
-                                                                                                                     .getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
+                                                                                 : AS4DumpManager.getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else
