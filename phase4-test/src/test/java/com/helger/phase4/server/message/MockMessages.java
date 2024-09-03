@@ -108,8 +108,8 @@ public final class MockMessages
                                      MessageHelperMethods.createRandomMessageID (),
                                      aEbms3UserMessage,
                                      aUserMessage,
-                                     true)
-                            .setMustUnderstand (true);
+                                     true,
+                                     null).setMustUnderstand (true);
   }
 
   @Nonnull
@@ -168,8 +168,7 @@ public final class MockMessages
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
                                   null,
-                                  eSOAPVersion)
-                         .setMustUnderstand (true);
+                                  eSOAPVersion).setMustUnderstand (true);
   }
 
   @Nonnull
@@ -205,8 +204,7 @@ public final class MockMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSOAPVersion)
-                                              .setMustUnderstand (true);
+                                                       eSOAPVersion).setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 
@@ -241,8 +239,7 @@ public final class MockMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSOAPVersion)
-                                              .setMustUnderstand (true);
+                                                       eSOAPVersion).setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 }

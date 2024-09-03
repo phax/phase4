@@ -82,6 +82,9 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
    *        is true NonRepudiation will be used if the message is signed
    * @param bShouldUseNonRepudiation
    *        If NonRepudiation should be used or not
+   * @param sRefToMessageID
+   *        The reference to the original message, if no UserMessage to respond
+   *        is provided. May be <code>null</code>. Since v3.0.0
    * @return AS4ReceiptMessage
    */
   @Nonnull
@@ -99,9 +102,10 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 
     // Message Info
     {
-      // Always use "now" as date time
       final String sRefToMsgID = aEbms3UserMessageToRespond != null ? aEbms3UserMessageToRespond.getMessageInfo ()
-                                                                                                .getMessageId () : sRefToMessageID;
+                                                                                                .getMessageId ()
+                                                                    : sRefToMessageID;
+      // Always use "now" as date time
       aSignalMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo (sMessageID, sRefToMsgID));
     }
 
