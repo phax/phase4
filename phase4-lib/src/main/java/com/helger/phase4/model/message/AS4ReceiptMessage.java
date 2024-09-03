@@ -89,7 +89,8 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
                                           @Nonnull @Nonempty final String sMessageID,
                                           @Nullable final Ebms3UserMessage aEbms3UserMessageToRespond,
                                           @Nullable final Node aSoapDocument,
-                                          final boolean bShouldUseNonRepudiation)
+                                          final boolean bShouldUseNonRepudiation,
+                                          @Nullable final String sRefToMessageID)
   {
     // Only for signed messages
     final ICommonsList <ReferenceType> aDSRefs = MessageHelperMethods.getAllDSigReferences (aSoapDocument);
@@ -100,7 +101,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     {
       // Always use "now" as date time
       final String sRefToMsgID = aEbms3UserMessageToRespond != null ? aEbms3UserMessageToRespond.getMessageInfo ()
-                                                                                                .getMessageId () : null;
+                                                                                                .getMessageId () : sRefToMessageID;
       aSignalMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo (sMessageID, sRefToMsgID));
     }
 
