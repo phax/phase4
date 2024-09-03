@@ -153,7 +153,8 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
                                                                     sMessageID,
                                                                     m_aEbms3UserMessage,
                                                                     m_aSoapDocument,
-                                                                    m_bNonRepudiation);
+                                                                    m_bNonRepudiation,
+                                                                    getRefToMessageID());
 
     if (aCallback != null)
       aCallback.onAS4Message (aReceiptMsg);
