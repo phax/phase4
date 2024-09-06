@@ -136,20 +136,32 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
       else
         LOGGER.info ("Non-repudiation is disabled, hence returning the source UserMessage in the Receipt");
 
-      // It is not possible to directly contain the original UserMessage,
-      // because the XSD requires
-      // <xsd:any namespace="##other" processContents="lax"
-      // maxOccurs="unbounded"/>
-      // And UserMessage and SignalMessage share the same namespace NS
-      // As the Receipt cannot be empty, it is wrapped in another element
-      // of another namespace instead to work
-      final Document aUserMsgDoc = AS4UserMessage.create (eSoapVersion, aEbms3UserMessageToRespond)
-                                                 .getAsSoapDocument ();
-      final Document aWrappedDoc = XMLFactory.newDocument ();
-      final Element eWrappedRoot = (Element) aWrappedDoc.appendChild (aWrappedDoc.createElementNS ("urn:fdc:phase4:ns:wrapper",
-                                                                                                   "OriginalUserMessage"));
-      eWrappedRoot.appendChild (aWrappedDoc.adoptNode (aUserMsgDoc.getDocumentElement ()));
-      aEbms3Receipt.addAny (eWrappedRoot);
+      // If the original usermessage is not signed, the receipt will contain
+      // the original message part without wss4j security
+
+      if (false)
+      {
+        // It is not possible to directly contain the original UserMessage,
+        // because the XSD requires
+        // <xsd:any namespace="##other" processContents="lax"
+        // maxOccurs="unbounded"/>
+        // And UserMessage and SignalMessage share the same namespace NS
+        aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessageToRespond)
+                                            .getAsSoapDocument ()
+                                            .getDocumentElement ());
+      }
+      else
+      {
+        // As the Receipt cannot be empty, it is wrapped in another element
+        // of another namespace instead to work
+        final Document aUserMsgDoc = AS4UserMessage.create (eSoapVersion, aEbms3UserMessageToRespond)
+                                                   .getAsSoapDocument ();
+        final Document aWrappedDoc = XMLFactory.newDocument ();
+        final Element eWrappedRoot = (Element) aWrappedDoc.appendChild (aWrappedDoc.createElementNS ("urn:fdc:phase4:ns:wrapper",
+                                                                                                     "OriginalUserMessage"));
+        eWrappedRoot.appendChild (aWrappedDoc.adoptNode (aUserMsgDoc.getDocumentElement ()));
+        aEbms3Receipt.addAny (eWrappedRoot);
+      }
     }
     aSignalMessage.setReceipt (aEbms3Receipt);
 
