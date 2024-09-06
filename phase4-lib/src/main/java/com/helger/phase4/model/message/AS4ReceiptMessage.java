@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -34,6 +35,7 @@ import com.helger.phase4.ebms3header.MessagePartNRInformation;
 import com.helger.phase4.ebms3header.NonRepudiationInformation;
 import com.helger.phase4.marshaller.NonRepudiationInformationMarshaller;
 import com.helger.phase4.model.ESoapVersion;
+import com.helger.xml.XMLFactory;
 import com.helger.xsds.xmldsig.ReferenceType;
 
 /**
@@ -134,18 +136,20 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
       else
         LOGGER.info ("Non-repudiation is disabled, hence returning the source UserMessage in the Receipt");
 
-      // This is not possible, because the XSD requires
+      // It is not possible to directly contain the original UserMessage,
+      // because the XSD requires
       // <xsd:any namespace="##other" processContents="lax"
       // maxOccurs="unbounded"/>
       // And UserMessage and SignalMessage share the same namespace NS
-      if (false)
-      {
-        // If the original usermessage is not signed, the receipt will contain
-        // the original message part without wss4j security
-        aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessageToRespond)
-                                            .getAsSoapDocument ()
-                                            .getDocumentElement ());
-      }
+      // As the Receipt cannot be empty, it is wrapped in another element
+      // of another namespace instead to work
+      final Document aUserMsgDoc = AS4UserMessage.create (eSoapVersion, aEbms3UserMessageToRespond)
+                                                 .getAsSoapDocument ();
+      final Document aWrappedDoc = XMLFactory.newDocument ();
+      final Element eWrappedRoot = (Element) aWrappedDoc.appendChild (aWrappedDoc.createElementNS ("urn:fdc:phase4:ns:wrapper",
+                                                                                                   "OriginalUserMessage"));
+      eWrappedRoot.appendChild (aWrappedDoc.adoptNode (aUserMsgDoc.getDocumentElement ()));
+      aEbms3Receipt.addAny (eWrappedRoot);
     }
     aSignalMessage.setReceipt (aEbms3Receipt);
 
