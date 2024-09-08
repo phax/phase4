@@ -33,7 +33,7 @@ public final class AS4ReceiptMessageTest
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ReceiptMessageTest.class);
 
   @Test
-  public void testReadWrite ()
+  public void testReadWriteWithUserMessage ()
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setPartyInfo (MessageHelperMethods.createEbms3PartyInfo ("fromRole",
@@ -55,6 +55,43 @@ public final class AS4ReceiptMessageTest
     final AS4ReceiptMessage aMsg = AS4ReceiptMessage.create (ESoapVersion.AS4_DEFAULT,
                                                              MessageHelperMethods.createRandomMessageID (),
                                                              aUserMessage,
+                                                             null,
+                                                             false,
+                                                             MessageHelperMethods.createRandomMessageID ());
+    final Ebms3SignalMessage aSrcSignal = aMsg.getEbms3SignalMessage ();
+    assertNotNull (aMsg);
+
+    final Document aSoapDoc = aMsg.getAsSoapDocument ();
+    assertNotNull (aSoapDoc);
+
+    final byte [] aSoapBytes = XMLWriter.getNodeAsBytes (aSoapDoc);
+    assertNotNull (aSoapBytes);
+
+    if (false)
+      LOGGER.info (XMLWriter.getNodeAsString (aSoapDoc,
+                                              new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)
+                                                                      .setNamespaceContext (Ebms3NamespaceHandler.getInstance ()
+                                                                                                                 .getClone ()
+                                                                                                                 .addMappings (Soap12NamespaceHandler.getInstance ()))));
+
+    final Soap12Envelope aSoapEnv = new Soap12EnvelopeMarshaller ().read (aSoapDoc);
+    assertNotNull (aSoapEnv);
+
+    final Element e = (Element) aSoapEnv.getHeader ().getAnyAtIndex (0);
+    final Ebms3Messaging aEbms3 = new Ebms3MessagingMarshaller ().read (e);
+    assertNotNull (aEbms3);
+
+    // Does not work, because of "any" content
+    if (false)
+      assertEquals (aSrcSignal, aEbms3.getSignalMessageAtIndex (0));
+  }
+
+  @Test
+  public void testReadWriteWithoutUserMessage ()
+  {
+    final AS4ReceiptMessage aMsg = AS4ReceiptMessage.create (ESoapVersion.AS4_DEFAULT,
+                                                             MessageHelperMethods.createRandomMessageID (),
+                                                             null,
                                                              null,
                                                              false,
                                                              MessageHelperMethods.createRandomMessageID ());
