@@ -28,11 +28,13 @@ import org.w3c.dom.Node;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.phase4.CAS4Version;
 import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.ebms3header.MessagePartNRInformation;
 import com.helger.phase4.ebms3header.NonRepudiationInformation;
+import com.helger.phase4.marshaller.Ebms3UserMessageMarshaller;
 import com.helger.phase4.marshaller.NonRepudiationInformationMarshaller;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.xml.XMLFactory;
@@ -45,6 +47,9 @@ import com.helger.xsds.xmldsig.ReferenceType;
  */
 public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 {
+  private static final String PHASE4_RECEIPT_WRAPPER_NS = "urn:fdc:com.helger.phase4:ns:wrapper";
+  private static final String PHASE4_RECEIPT_INFO_NS = "urn:fdc:com.helger.phase4:ns:info";
+
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ReceiptMessage.class);
 
   private final Ebms3SignalMessage m_aSignalMessage;
@@ -138,31 +143,38 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 
       // If the original usermessage is not signed, the receipt will contain
       // the original message part without wss4j security
-
-      if (false)
+      final Document aWrappedDoc = XMLFactory.newDocument ();
+      if (aEbms3UserMessageToRespond != null)
       {
         // It is not possible to directly contain the original UserMessage,
         // because the XSD requires
         // <xsd:any namespace="##other" processContents="lax"
         // maxOccurs="unbounded"/>
         // And UserMessage and SignalMessage share the same namespace NS
-        aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessageToRespond)
-                                            .getAsSoapDocument ()
-                                            .getDocumentElement ());
+
+        // As the Receipt cannot be empty, it is wrapped in another element
+        // of another namespace instead to work
+        final Element eWrappedRoot = (Element) aWrappedDoc.appendChild (aWrappedDoc.createElementNS (PHASE4_RECEIPT_WRAPPER_NS,
+                                                                                                     "OriginalUserMessage"));
+        eWrappedRoot.appendChild (aWrappedDoc.adoptNode (new Ebms3UserMessageMarshaller ().getAsElement (aEbms3UserMessageToRespond)));
       }
       else
       {
-        // As the Receipt cannot be empty, it is wrapped in another element
-        // of another namespace instead to work
-        final Document aUserMsgDoc = AS4UserMessage.create (eSoapVersion, aEbms3UserMessageToRespond)
-                                                   .getAsSoapDocument ();
-        final Document aWrappedDoc = XMLFactory.newDocument ();
-        final Element eWrappedRoot = (Element) aWrappedDoc.appendChild (aWrappedDoc.createElementNS ("urn:fdc:phase4:ns:wrapper",
-                                                                                                     "OriginalUserMessage"));
-        eWrappedRoot.appendChild (aWrappedDoc.adoptNode (aUserMsgDoc.getDocumentElement ()));
-        aEbms3Receipt.addAny (eWrappedRoot);
+        // No user message provided
+        aWrappedDoc.appendChild (aWrappedDoc.createElementNS (PHASE4_RECEIPT_WRAPPER_NS, "WithoutOriginalUserMessage"));
       }
+      aEbms3Receipt.addAny (aWrappedDoc.getDocumentElement ());
     }
+
+    // Add a small phase4 marker in the Receipt (since v3.0.0)
+    {
+      final Document aDoc = XMLFactory.newDocument ();
+      final Element eRoot = (Element) aDoc.appendChild (aDoc.createElementNS (PHASE4_RECEIPT_INFO_NS, "phase4"));
+      eRoot.setAttributeNS (PHASE4_RECEIPT_INFO_NS, "version", CAS4Version.BUILD_VERSION);
+      eRoot.setAttributeNS (PHASE4_RECEIPT_INFO_NS, "timestamp", CAS4Version.BUILD_TIMESTAMP);
+      aEbms3Receipt.addAny (aDoc.getDocumentElement ());
+    }
+
     aSignalMessage.setReceipt (aEbms3Receipt);
 
     return new AS4ReceiptMessage (eSoapVersion, aSignalMessage);
