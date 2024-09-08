@@ -209,7 +209,6 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     aEbms3UserMessage.setPartyInfo (aEbms3PartyInfo);
     aEbms3UserMessage.setPayloadInfo (aEbms3PayloadInfo);
     aEbms3UserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
-    aEbms3UserMessage.setMessageProperties (MessageHelperMethods.createEbms3MessageProperties (null));
     aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
 
     aEbms3Messaging.addUserMessage (aEbms3UserMessage);
