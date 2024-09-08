@@ -122,11 +122,14 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
       {
         // Creating SOAP 11 Envelope
         final Soap11Envelope aSoapEnv = new Soap11Envelope ();
+
         aSoapEnv.setHeader (new Soap11Header ());
-        aSoapEnv.setBody (new Soap11Body ());
         aSoapEnv.getHeader ().addAny (aEbms3Element);
+
+        aSoapEnv.setBody (new Soap11Body ());
         if (aRealSoapBodyPayload != null)
           aSoapEnv.getBody ().addAny (aRealSoapBodyPayload);
+
         final Document ret = new Soap11EnvelopeMarshaller ().getAsDocument (aSoapEnv);
         if (ret == null)
           throw new IllegalStateException ("Failed to serialize SOAP 1.1 document");
@@ -136,11 +139,14 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
       {
         // Creating SOAP 12 Envelope
         final Soap12Envelope aSoapEnv = new Soap12Envelope ();
+
         aSoapEnv.setHeader (new Soap12Header ());
-        aSoapEnv.setBody (new Soap12Body ());
         aSoapEnv.getHeader ().addAny (aEbms3Element);
+
+        aSoapEnv.setBody (new Soap12Body ());
         if (aRealSoapBodyPayload != null)
           aSoapEnv.getBody ().addAny (aRealSoapBodyPayload);
+
         final Document ret = new Soap12EnvelopeMarshaller ().getAsDocument (aSoapEnv);
         if (ret == null)
           throw new IllegalStateException ("Failed to serialize SOAP 1.2 document");
