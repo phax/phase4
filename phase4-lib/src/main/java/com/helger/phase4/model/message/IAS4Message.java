@@ -64,10 +64,11 @@ public interface IAS4Message
   IAS4Message setMustUnderstand (boolean bMustUnderstand);
 
   /**
-   * Create a SOAP document from this message without a payload.
+   * Create a SOAP document from this message without a SOAP body payload.
    *
    * @return The created DOM document
    * @since v0.9.8
+   * @see #getAsSoapDocument(Node)
    */
   @Nonnull
   default Document getAsSoapDocument ()
@@ -76,14 +77,15 @@ public interface IAS4Message
   }
 
   /**
-   * Create a SOAP document from this message with the specified optional
-   * payload. Attachments are not handled by this method.
+   * Create a SOAP document from this message with the specified optional SOAP
+   * body payload. Attachments are not handled by this method.
    *
    * @param aSoapBodyPayload
    *        The payload to be added into the SOAP body. May be
    *        <code>null</code>.
    * @return The created DOM document.
    * @since v0.9.8
+   * @see #getAsSoapDocument()
    */
   @Nonnull
   Document getAsSoapDocument (@Nullable Node aSoapBodyPayload);
