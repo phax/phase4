@@ -320,7 +320,8 @@ public final class Phase4PeppolSender
 
   /**
    * @return Create a new Builder for AS4 messages if the payload is present and
-   *         the SBDH is always created internally. Never <code>null</code>.
+   *         the SBDH is always created internally by phase4. Never
+   *         <code>null</code>.
    * @see #sbdhBuilder() if you already have a ready Standard Business Document
    * @since 0.9.4
    */
@@ -333,8 +334,9 @@ public final class Phase4PeppolSender
   /**
    * @return Create a new Builder for AS4 messages if the SBDH payload is
    *         already present. This builder is slightly more limited, because it
-   *         doesn't offer validation, as it is expected to be done before.
-   *         Never <code>null</code>.
+   *         doesn't offer validation, as it is expected to be done before. Use
+   *         this builder e.g. for the Peppol Testbed messages. Never
+   *         <code>null</code>.
    * @see #builder() if you want phase4 to create the Standard Business Document
    * @since 0.9.6
    */
