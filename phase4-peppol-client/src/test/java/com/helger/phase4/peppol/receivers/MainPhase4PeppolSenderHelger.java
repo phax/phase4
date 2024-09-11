@@ -31,7 +31,7 @@ import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.peppol.Phase4PeppolSender.Builder;
+import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageBuilder;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.sender.IAS4RawResponseConsumer;
@@ -79,7 +79,7 @@ public final class MainPhase4PeppolSenderHelger
         LOGGER.info ("Response headers:");
         x.getResponseHeaders ().forEachSingleHeader ( (k, v) -> LOGGER.info ("  " + k + "=" + v), false);
       };
-      final Builder aBuilder = Phase4PeppolSender.builder ()
+      final PeppolUserMessageBuilder aBuilder = Phase4PeppolSender.builder ()
                                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))

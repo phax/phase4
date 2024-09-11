@@ -326,9 +326,9 @@ public final class Phase4PeppolSender
    * @since 0.9.4
    */
   @Nonnull
-  public static Builder builder ()
+  public static PeppolUserMessageBuilder builder ()
   {
-    return new Builder ();
+    return new PeppolUserMessageBuilder ();
   }
 
   /**
@@ -341,9 +341,9 @@ public final class Phase4PeppolSender
    * @since 0.9.6
    */
   @Nonnull
-  public static SBDHBuilder sbdhBuilder ()
+  public static PeppolUserMessageSBDHBuilder sbdhBuilder ()
   {
-    return new SBDHBuilder ();
+    return new PeppolUserMessageSBDHBuilder ();
   }
 
   /**
@@ -1006,7 +1006,7 @@ public final class Phase4PeppolSender
    * @since 0.9.4
    */
   @NotThreadSafe
-  public static class Builder extends AbstractPeppolUserMessageBuilder <Builder>
+  public static class PeppolUserMessageBuilder extends AbstractPeppolUserMessageBuilder <PeppolUserMessageBuilder>
   {
     private String m_sSBDHInstanceIdentifier;
     private String m_sSBDHTypeVersion;
@@ -1024,7 +1024,7 @@ public final class Phase4PeppolSender
      * Create a new builder, with the defaults from
      * {@link AbstractPeppolUserMessageBuilder#AbstractPeppolUserMessageBuilder()}
      */
-    public Builder ()
+    public PeppolUserMessageBuilder ()
     {}
 
     /**
@@ -1038,7 +1038,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder sbdhInstanceIdentifier (@Nullable final String sSBDHInstanceIdentifier)
+    public PeppolUserMessageBuilder sbdhInstanceIdentifier (@Nullable final String sSBDHInstanceIdentifier)
     {
       m_sSBDHInstanceIdentifier = sSBDHInstanceIdentifier;
       return this;
@@ -1055,7 +1055,7 @@ public final class Phase4PeppolSender
      * @since 0.13.0
      */
     @Nonnull
-    public Builder sbdhTypeVersion (@Nullable final String sSBDHTypeVersion)
+    public PeppolUserMessageBuilder sbdhTypeVersion (@Nullable final String sSBDHTypeVersion)
     {
       m_sSBDHTypeVersion = sSBDHTypeVersion;
       return this;
@@ -1072,7 +1072,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder payload (@Nonnull final Element aPayloadElement)
+    public PeppolUserMessageBuilder payload (@Nonnull final Element aPayloadElement)
     {
       ValueEnforcer.notNull (aPayloadElement, "Payload");
       ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
@@ -1094,7 +1094,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder payload (@Nonnull final byte [] aPayloadBytes)
+    public PeppolUserMessageBuilder payload (@Nonnull final byte [] aPayloadBytes)
     {
       ValueEnforcer.notNull (aPayloadBytes, "PayloadBytes");
       m_aPayloadElement = null;
@@ -1116,7 +1116,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder payload (@Nonnull final IHasInputStream aPayloadHasIS)
+    public PeppolUserMessageBuilder payload (@Nonnull final IHasInputStream aPayloadHasIS)
     {
       ValueEnforcer.notNull (aPayloadHasIS, "PayloadHasIS");
       m_aPayloadElement = null;
@@ -1141,9 +1141,9 @@ public final class Phase4PeppolSender
      * @since 0.12.1
      */
     @Nonnull
-    public Builder payloadBinaryContent (@Nonnull final byte [] aBinaryPayload,
-                                         @Nonnull final IMimeType aMimeType,
-                                         @Nullable final Charset aCharset)
+    public PeppolUserMessageBuilder payloadBinaryContent (@Nonnull final byte [] aBinaryPayload,
+                                                          @Nonnull final IMimeType aMimeType,
+                                                          @Nullable final Charset aCharset)
     {
       ValueEnforcer.notNull (aBinaryPayload, "BinaryPayload");
       ValueEnforcer.notNull (aMimeType, "MimeType");
@@ -1171,7 +1171,8 @@ public final class Phase4PeppolSender
      * @since 0.12.1
      */
     @Nonnull
-    public Builder payloadTextContent (@Nonnull final String sTextPayload, @Nonnull final IMimeType aMimeType)
+    public PeppolUserMessageBuilder payloadTextContent (@Nonnull final String sTextPayload,
+                                                        @Nonnull final IMimeType aMimeType)
     {
       ValueEnforcer.notNull (sTextPayload, "TextPayload");
       ValueEnforcer.notNull (aMimeType, "MimeType");
@@ -1194,7 +1195,7 @@ public final class Phase4PeppolSender
      * @since 0.10.0
      */
     @Nonnull
-    public Builder sbdDocumentConsumer (@Nullable final Consumer <? super StandardBusinessDocument> aSBDDocumentConsumer)
+    public PeppolUserMessageBuilder sbdDocumentConsumer (@Nullable final Consumer <? super StandardBusinessDocument> aSBDDocumentConsumer)
     {
       m_aSBDDocumentConsumer = aSBDDocumentConsumer;
       return this;
@@ -1209,7 +1210,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder sbdBytesConsumer (@Nullable final Consumer <byte []> aSBDBytesConsumer)
+    public PeppolUserMessageBuilder sbdBytesConsumer (@Nullable final Consumer <byte []> aSBDBytesConsumer)
     {
       m_aSBDBytesConsumer = aSBDBytesConsumer;
       return this;
@@ -1229,7 +1230,7 @@ public final class Phase4PeppolSender
      * @since 0.10.1
      */
     @Nonnull
-    public Builder validationRegistry (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry)
+    public PeppolUserMessageBuilder validationRegistry (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry)
     {
       m_aVESRegistry = aVESRegistry;
       return this;
@@ -1250,7 +1251,7 @@ public final class Phase4PeppolSender
      *      IPhase4PeppolValidationResultHandler)
      */
     @Nonnull
-    public Builder validationConfiguration (@Nullable final VESID aVESID)
+    public PeppolUserMessageBuilder validationConfiguration (@Nullable final VESID aVESID)
     {
       final IPhase4PeppolValidationResultHandler aHdl = aVESID == null ? null
                                                                        : new Phase4PeppolValidatonResultHandler ();
@@ -1273,8 +1274,8 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder validationConfiguration (@Nullable final VESID aVESID,
-                                            @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler)
+    public PeppolUserMessageBuilder validationConfiguration (@Nullable final VESID aVESID,
+                                                             @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler)
     {
       m_aVESID = aVESID;
       m_aValidationResultHandler = aValidationResultHandler;
@@ -1288,7 +1289,7 @@ public final class Phase4PeppolSender
      * @since 2.1.1
      */
     @Nonnull
-    public Builder disableValidation ()
+    public PeppolUserMessageBuilder disableValidation ()
     {
       return validationConfiguration (null, null);
     }
@@ -1410,7 +1411,8 @@ public final class Phase4PeppolSender
    * @since 0.9.6
    */
   @NotThreadSafe
-  public static class SBDHBuilder extends AbstractPeppolUserMessageBuilder <SBDHBuilder>
+  public static class PeppolUserMessageSBDHBuilder extends
+                                                   AbstractPeppolUserMessageBuilder <PeppolUserMessageSBDHBuilder>
   {
     private byte [] m_aPayloadBytes;
 
@@ -1418,7 +1420,7 @@ public final class Phase4PeppolSender
      * Create a new builder with the defaults from
      * {@link AbstractPeppolUserMessageBuilder#AbstractPeppolUserMessageBuilder()}
      */
-    public SBDHBuilder ()
+    public PeppolUserMessageSBDHBuilder ()
     {}
 
     /**
@@ -1437,7 +1439,7 @@ public final class Phase4PeppolSender
      * @see #countryC1(String)
      */
     @Nonnull
-    public SBDHBuilder payload (@Nonnull final byte [] aSBDHBytes)
+    public PeppolUserMessageSBDHBuilder payload (@Nonnull final byte [] aSBDHBytes)
     {
       ValueEnforcer.notNull (aSBDHBytes, "SBDHBytes");
       m_aPayloadBytes = aSBDHBytes;
@@ -1460,7 +1462,7 @@ public final class Phase4PeppolSender
      * @see #countryC1(String)
      */
     @Nonnull
-    public SBDHBuilder payloadAndMetadata (@Nonnull final PeppolSBDHData aSBDH)
+    public PeppolUserMessageSBDHBuilder payloadAndMetadata (@Nonnull final PeppolSBDHData aSBDH)
     {
       ValueEnforcer.notNull (aSBDH, "SBDH");
 
