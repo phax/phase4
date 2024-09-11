@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,8 @@ import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.mime.CMimeType;
+import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.utils.PeppolCertificateHelper;
@@ -43,6 +46,8 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.BDXR2IdentifierFactory;
+import com.helger.peppolid.simple.doctype.SimpleDocumentTypeIdentifier;
+import com.helger.peppolid.simple.process.SimpleProcessIdentifier;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.crypto.ICryptoSessionKeyProvider;
@@ -59,6 +64,7 @@ import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.xhe.v10.CXHE10;
 import com.helger.xhe.v10.XHE10Marshaller;
 import com.helger.xhe.v10.XHE10XHEType;
+import com.helger.xhe.v10.cac.XHE10PayloadType;
 
 /**
  * This class contains all the specifics to send AS4 messages with the
@@ -72,7 +78,9 @@ import com.helger.xhe.v10.XHE10XHEType;
 public final class Phase4DBNAllianceSender
 {
   public static final BDXR2IdentifierFactory IF = BDXR2IdentifierFactory.INSTANCE;
+
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4DBNAllianceSender.class);
+  private static final IMimeType MIME_TYPE = CMimeType.APPLICATION_XML;
 
   private Phase4DBNAllianceSender ()
   {}
@@ -93,7 +101,7 @@ public final class Phase4DBNAllianceSender
 
     final DBNAlliancePayload aPayload = new DBNAlliancePayload (IF);
     // Content type code is mandatory
-    aPayload.setContentTypeCode ("application/xml");
+    aPayload.setContentTypeCode (MIME_TYPE.getAsString ());
     aPayload.setCustomizationID (null, aDocTypeID.getValue ());
     aPayload.setProfileID (aProcID.getScheme (), aProcID.getValue ());
 
@@ -121,6 +129,17 @@ public final class Phase4DBNAllianceSender
   public static DBNAllianceUserMessageBuilder builder ()
   {
     return new DBNAllianceUserMessageBuilder ();
+  }
+
+  /**
+   * @return Create a new Builder for AS4 messages if the XHE message is
+   *         present. Never <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nonnull
+  public static DBNAllianceUserMessageXHEBuilder xheBuilder ()
+  {
+    return new DBNAllianceUserMessageXHEBuilder ();
   }
 
   /**
@@ -574,9 +593,120 @@ public final class Phase4DBNAllianceSender
       // Now we have the main payload
       payload (AS4OutgoingAttachment.builder ()
                                     .data (aXHEBytes)
-                                    .compressionGZIP ()
                                     .mimeTypeXML ()
+                                    .compressionGZIP ()
                                     .charset (StandardCharsets.UTF_8));
+
+      return ESuccess.SUCCESS;
+    }
+  }
+
+  /**
+   * A builder class for sending AS4 messages using DBNAlliance specifics. Use
+   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to
+   * trigger the main transmission.<br>
+   * This builder class assumes, that the XHE was created outside, therefore no
+   * validation can occur.
+   *
+   * @author Philip Helger
+   * @since 3.0.0
+   */
+  @NotThreadSafe
+  public static class DBNAllianceUserMessageXHEBuilder extends
+                                                       AbstractDBNAllianceUserMessageBuilder <DBNAllianceUserMessageXHEBuilder>
+  {
+    private byte [] m_aPayloadBytes;
+
+    /**
+     * Create a new builder with the defaults from
+     * {@link AbstractDBNAllianceUserMessageBuilder#AbstractDBNAllianceUserMessageBuilder()}
+     */
+    public DBNAllianceUserMessageXHEBuilder ()
+    {}
+
+    /**
+     * Set the XHE payload to be used as a byte array. This means, that you need
+     * to pass in all other mandatory fields manually (sender participant ID,
+     * receiver participant ID, document Type ID and process ID).
+     *
+     * @param aXHEBytes
+     *        The XHE bytes to be used. May not be <code>null</code>.
+     * @return this for chaining
+     * @see #senderParticipantID(IParticipantIdentifier)
+     * @see #receiverParticipantID(IParticipantIdentifier)
+     */
+    @Nonnull
+    public DBNAllianceUserMessageXHEBuilder payload (@Nonnull final byte [] aXHEBytes)
+    {
+      ValueEnforcer.notNull (aXHEBytes, "XHEBytes");
+      m_aPayloadBytes = aXHEBytes;
+      return this;
+    }
+
+    /**
+     * Set the payload, the sender participant ID, the receiver participant ID,
+     * the document type ID and the process ID.
+     *
+     * @param aXHE
+     *        The XHE to use. May not be <code>null</code>.
+     * @return this for chaining
+     * @see #payload(byte[])
+     * @see #senderParticipantID(IParticipantIdentifier)
+     * @see #receiverParticipantID(IParticipantIdentifier)
+     */
+    @Nonnull
+    public DBNAllianceUserMessageXHEBuilder payloadAndMetadata (@Nonnull final DBNAllianceXHEData aXHE)
+    {
+      ValueEnforcer.notNull (aXHE, "SBDH");
+
+      // Check with logging
+      if (!aXHE.areAllFieldsSet (true))
+        throw new IllegalArgumentException ("The provided DBNAlliance XHE data is incomplete. See logs for details.");
+
+      final XHE10XHEType aJaxbXHE = aXHE.getAsXHEDocument ();
+      final XHE10PayloadType aJaxbPayload = aJaxbXHE.getPayloads ().hasPayloadEntries () ? aJaxbXHE.getPayloads ()
+                                                                                                   .getPayloadAtIndex (0)
+                                                                                         : null;
+
+      senderParticipantID (aXHE.getFromPartyAsIdentifier ()).receiverParticipantID (aXHE.getToPartyAsIdentifier ());
+      if (aJaxbPayload != null)
+      {
+        if (aJaxbPayload.getCustomizationID () != null)
+          documentTypeID (new SimpleDocumentTypeIdentifier (null, aJaxbPayload.getCustomizationID ().getValue ()));
+
+        if (aJaxbPayload.getProfileID () != null)
+          processID (new SimpleProcessIdentifier (aJaxbPayload.getProfileID ().getSchemeID (),
+                                                  aJaxbPayload.getProfileID ().getValue ()));
+      }
+      return payload (new XHE10Marshaller ().getAsBytes (aJaxbXHE));
+    }
+
+    @Override
+    @OverridingMethodsMustInvokeSuper
+    public boolean isEveryRequiredFieldSet ()
+    {
+      if (!super.isEveryRequiredFieldSet ())
+        return false;
+
+      if (m_aPayloadBytes == null)
+      {
+        LOGGER.warn ("The field 'payloadBytes' is not set");
+        return false;
+      }
+      // All valid
+      return true;
+    }
+
+    @Override
+    @OverridingMethodsMustInvokeSuper
+    protected ESuccess finishFields () throws Phase4Exception
+    {
+      // Perform SMP lookup
+      if (super.finishFields ().isFailure ())
+        return ESuccess.FAILURE;
+
+      // Now we have the main payload
+      payload (AS4OutgoingAttachment.builder ().data (m_aPayloadBytes).mimeTypeXML ().compressionGZIP ());
 
       return ESuccess.SUCCESS;
     }
