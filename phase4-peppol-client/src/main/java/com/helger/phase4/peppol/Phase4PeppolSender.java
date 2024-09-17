@@ -44,7 +44,7 @@ import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
-import com.helger.diver.api.version.VESID;
+import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.peppol.reporting.api.PeppolReportingHelper;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
@@ -281,7 +281,7 @@ public final class Phase4PeppolSender
    */
   private static void _validatePayload (@Nonnull final Element aPayloadElement,
                                         @Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aRegistry,
-                                        @Nullable final VESID aVESID,
+                                        @Nullable final DVRCoordinate aVESID,
                                         @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4PeppolException
   {
     // Client side validation
@@ -1063,7 +1063,7 @@ public final class Phase4PeppolSender
     private Consumer <byte []> m_aSBDBytesConsumer;
 
     private IValidationExecutorSetRegistry <IValidationSourceXML> m_aVESRegistry;
-    private VESID m_aVESID;
+    private DVRCoordinate m_aVESID;
     private IPhase4PeppolValidationResultHandler m_aValidationResultHandler;
 
     /**
@@ -1289,14 +1289,14 @@ public final class Phase4PeppolSender
      *
      * @param aVESID
      *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2023_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
+     *        <code>PeppolValidation2024_05.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
      *        May be <code>null</code>.
      * @return this for chaining
-     * @see #validationConfiguration(VESID,
+     * @see #validationConfiguration(DVRCoordinate,
      *      IPhase4PeppolValidationResultHandler)
      */
     @Nonnull
-    public Builder validationConfiguration (@Nullable final VESID aVESID)
+    public Builder validationConfiguration (@Nullable final DVRCoordinate aVESID)
     {
       final IPhase4PeppolValidationResultHandler aHdl = aVESID == null ? null
                                                                        : new Phase4PeppolValidatonResultHandler ();
@@ -1311,7 +1311,7 @@ public final class Phase4PeppolSender
      *
      * @param aVESID
      *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2023_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
+     *        <code>PeppolValidation2024_05.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
      *        May be <code>null</code>.
      * @param aValidationResultHandler
      *        The validation result handler for positive and negative response
@@ -1319,7 +1319,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder validationConfiguration (@Nullable final VESID aVESID,
+    public Builder validationConfiguration (@Nullable final DVRCoordinate aVESID,
                                             @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler)
     {
       m_aVESID = aVESID;

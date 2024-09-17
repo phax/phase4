@@ -25,12 +25,13 @@ import org.w3c.dom.Element;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.diver.api.version.VESID;
+import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.phive.api.execute.ValidationExecutionManager;
 import com.helger.phive.api.executorset.IValidationExecutorSet;
 import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.api.executorset.ValidationExecutorSetRegistry;
 import com.helger.phive.api.result.ValidationResultList;
+import com.helger.phive.api.validity.IValidityDeterminator;
 import com.helger.phive.peppol.PeppolValidation;
 import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.phive.xml.source.ValidationSourceXML;
@@ -84,8 +85,8 @@ public final class Phase4PeppolValidation
    * @param aXML
    *        The XML element to be validated. May not be <code>null</code>.
    * @param aVESID
-   *        The {@link VESID} to be used. Must be contained in the default
-   *        registry. May not be <code>null</code>.
+   *        The {@link DVRCoordinate} to be used. Must be contained in the
+   *        default registry. May not be <code>null</code>.
    * @param aValidationResultHandler
    *        The validation result handler to be used. May not be
    *        <code>null</code>.
@@ -93,11 +94,11 @@ public final class Phase4PeppolValidation
    *         In case e.g. the validation failed. This usually implies, that the
    *         document will NOT be send out.
    * @see #validateOutgoingBusinessDocument(Element,
-   *      IValidationExecutorSetRegistry, VESID,
+   *      IValidationExecutorSetRegistry, DVRCoordinate,
    *      IPhase4PeppolValidationResultHandler)
    */
   public static void validateOutgoingBusinessDocument (@Nonnull final Element aXML,
-                                                       @Nonnull final VESID aVESID,
+                                                       @Nonnull final DVRCoordinate aVESID,
                                                        @Nonnull final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4PeppolException
   {
     validateOutgoingBusinessDocument (aXML, VES_REGISTRY, aVESID, aValidationResultHandler);
@@ -112,8 +113,8 @@ public final class Phase4PeppolValidation
    * @param aVESRegistry
    *        The VES registry the VESID is looked up in.
    * @param aVESID
-   *        The {@link VESID} to be used. Must be contained in the provided
-   *        registry. May not be <code>null</code>.
+   *        The {@link DVRCoordinate} to be used. Must be contained in the
+   *        provided registry. May not be <code>null</code>.
    * @param aValidationResultHandler
    *        The validation result handler to be used. May not be
    *        <code>null</code>.
@@ -124,7 +125,7 @@ public final class Phase4PeppolValidation
    */
   public static void validateOutgoingBusinessDocument (@Nonnull final Element aXML,
                                                        @Nonnull final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
-                                                       @Nonnull final VESID aVESID,
+                                                       @Nonnull final DVRCoordinate aVESID,
                                                        @Nonnull final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4PeppolException
   {
     ValueEnforcer.notNull (aXML, "XMLElement");
@@ -136,8 +137,10 @@ public final class Phase4PeppolValidation
     if (aVES == null)
       throw new Phase4PeppolException ("The validation executor set ID " + aVESID.getAsSingleID () + " is unknown!");
 
-    final ValidationResultList aValidationResult = ValidationExecutionManager.executeValidation (aVES,
-                                                                                                 ValidationSourceXML.create (null, aXML));
+    final ValidationResultList aValidationResult = ValidationExecutionManager.executeValidation (IValidityDeterminator.createDefault (),
+                                                                                                 aVES,
+                                                                                                 ValidationSourceXML.create (null,
+                                                                                                                             aXML));
     if (aValidationResult.containsAtLeastOneError ())
     {
       aValidationResultHandler.onValidationErrors (aValidationResult);
