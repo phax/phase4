@@ -58,7 +58,7 @@ import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation2023_11;
+import com.helger.phive.peppol.PeppolValidation2024_05;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
 import com.helger.servlet.mock.MockServletContext;
@@ -126,7 +126,7 @@ public final class MainPhase4PeppolSenderQvalia
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidation2023_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
+                                  .validationConfiguration (PeppolValidation2024_05.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .sendMessageAndCheckForReceipt ();
