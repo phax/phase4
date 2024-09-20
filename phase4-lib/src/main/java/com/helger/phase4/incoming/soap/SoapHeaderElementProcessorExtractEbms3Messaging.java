@@ -38,9 +38,9 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.error.IError;
+import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
-import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
@@ -231,17 +231,17 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
     final Locale aLocale = aIncomingState.getLocale ();
 
     // Parse EBMS3 Messaging object
-    final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Ebms3Messaging aMessaging = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH).read (aElement);
+    final ErrorList aErrorList = new ErrorList ();
+    final Ebms3Messaging aMessaging = new Ebms3MessagingMarshaller ().setCollectErrors (aErrorList).read (aElement);
 
     // If the ebms3reader above fails aMessaging will be null => invalid/not
     // wellformed
-    if (aMessaging == null)
+    if (aMessaging == null || aErrorList.containsAtLeastOneError ())
     {
       // Errorcode/Id would be null => not conform with Ebms3ErrorMessage since
       // the message always needs a errorcode =>
       // Invalid Header == not wellformed/invalid xml
-      for (final IError aError : aCVEH.getErrorList ())
+      for (final IError aError : aErrorList)
       {
         final String sDetails = "Header error: " + aError.getAsString (aLocale);
         LOGGER.error (sDetails);

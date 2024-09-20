@@ -33,7 +33,7 @@ import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.peppol.Phase4PeppolSender.Builder;
+import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageBuilder;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.servlet.mock.MockServletContext;
@@ -74,7 +74,7 @@ public final class MainPhase4PeppolSenderHelgerTSR
                        "'");
         }
       };
-      final Builder aBuilder = Phase4PeppolSender.builder ()
+      final PeppolUserMessageBuilder aBuilder = Phase4PeppolSender.builder ()
                                                  .documentTypeID (EPredefinedDocumentTypeIdentifier.TRANSACTIONSTATISTICSREPORT_FDC_PEPPOL_EU_EDEC_TRNS_TRANSACTION_STATISTICS_REPORTING_1_0)
                                                  .processID (EPredefinedProcessIdentifier.urn_fdc_peppol_eu_edec_bis_reporting_1_0)
                                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))

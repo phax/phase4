@@ -253,7 +253,6 @@ public final class MessageHelperMethods
     aMessageInfo.setMessageId (sMessageID);
     if (StringHelper.hasText (sRefToMessageID))
       aMessageInfo.setRefToMessageId (sRefToMessageID);
-
     aMessageInfo.setTimestamp (XMLOffsetDateTime.of (aDateTime));
     return aMessageInfo;
   }
@@ -358,6 +357,15 @@ public final class MessageHelperMethods
     aEbms3PartyInfo.setTo (aEbms3To);
 
     return aEbms3PartyInfo;
+  }
+
+  @Nullable
+  public static Ebms3MessageProperties createEbms3MessageProperties (@Nullable final Ebms3Property... aEbms3Properties)
+  {
+    // MessageProperties may not be empty!
+    if (aEbms3Properties == null || aEbms3Properties.length == 0)
+      return null;
+    return createEbms3MessageProperties (new CommonsArrayList <> (aEbms3Properties));
   }
 
   @Nullable

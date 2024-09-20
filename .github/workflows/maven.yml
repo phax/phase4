@@ -25,6 +25,7 @@ on:
     branches:
       - master
       - '1.x'
+      - '2.x'
 
 jobs:
   build:
@@ -55,6 +56,11 @@ jobs:
 
     - name: Publish to the Maven Central Repository
       run: mvn --batch-mode --update-snapshots deploy
+      if: matrix.Java == 17
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
+    - name: Maven Build
+      run: mvn --batch-mode --update-snapshots install
+      if: matrix.Java != 17

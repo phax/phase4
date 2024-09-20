@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Philip Helger (www.helger.com)
+ * Copyright (C) 2020-2024 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,6 +36,7 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR2;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
@@ -109,6 +110,13 @@ public final class Phase4CEFSender
         as4ProfileID (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID_FOUR_CORNER);
 
         httpClientFactory (new Phase4CEFHttpClientSettings ());
+
+        if (false)
+        {
+          // Sample code for #270
+          cryptParams ().setKeyIdentifierType (ECryptoKeyIdentifierType.SKI_KEY_IDENTIFIER);
+          signingParams ().setKeyIdentifierType (ECryptoKeyIdentifierType.SKI_KEY_IDENTIFIER);
+        }
       }
       catch (final Exception ex)
       {

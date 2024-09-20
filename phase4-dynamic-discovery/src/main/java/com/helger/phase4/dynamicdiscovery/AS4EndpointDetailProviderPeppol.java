@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Philip Helger (www.helger.com)
+ * Copyright (C) 2020-2024 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,7 +57,7 @@ import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
  */
 public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvider
 {
-  public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.WILDCARD_ONLY;
+  public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.BUSDOX_THEN_WILDCARD;
   public static final ISMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4EndpointDetailProviderPeppol.class);
@@ -304,9 +304,10 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (null).append ("ServiceMetadataProvider", m_aServiceMetadataProvider)
+    return new ToStringGenerator (null).append ("ServiceGroupProvider", m_aServiceGroupProvider)
+                                       .append ("ServiceMetadataProvider", m_aServiceMetadataProvider)
+                                       .append ("WildcardSelectionMode", m_eWildcardSelectionMode)
                                        .append ("TransportProfile", m_aTP)
-                                       .append ("EndpointSelectionMode", m_eWildcardSelectionMode)
                                        .appendIfNotNull ("Endpoint", m_aEndpoint)
                                        .getToString ();
   }

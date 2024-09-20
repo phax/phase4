@@ -27,8 +27,9 @@ import com.helger.commons.datetime.XMLOffsetDateTime;
 
 /**
  * Interface for providing time stamps.<br>
- * Since version 1.1.0 the return types of the methods changed from
- * <code>Local(Date|Time|DateTime)</code> to
+ * The precision of all the methods in this class is milliseconds, so that it
+ * stays compatible to XML serialization. Since version 1.1.0 the return types
+ * of the methods changed from <code>Local(Date|Time|DateTime)</code> to
  * <code>Offset(Date|Time|DateTime)</code>
  *
  * @author Philip Helger
@@ -76,6 +77,7 @@ public interface IAS4TimestampManager
   @Nonnull
   static IAS4TimestampManager createDefaultInstance ()
   {
-    return PDTFactory::getCurrentOffsetDateTime;
+    // Limited to milliseconds only
+    return () -> PDTFactory.getWithMillisOnly (PDTFactory.getCurrentOffsetDateTime ());
   }
 }

@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
@@ -53,7 +54,10 @@ import com.helger.phase4.CAS4;
  */
 public class AS4ResourceHelper implements Closeable
 {
+  private static final String TEMP_FILE_PREFIX = "phase4-res-";
+  private static final String TEMP_FILE_SUFFIX = ".tmp";
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ResourceHelper.class);
+
   private static File s_aTempDir;
 
   /**
@@ -110,7 +114,12 @@ public class AS4ResourceHelper implements Closeable
       throw new IllegalStateException ("ResourceManager is already closing/closed!");
 
     // Create
-    final File ret = File.createTempFile ("phase4-res-", ".tmp", s_aTempDir);
+    final File ret = s_aTempDir != null ? Files.createTempFile (s_aTempDir.toPath (),
+                                                                TEMP_FILE_PREFIX,
+                                                                TEMP_FILE_SUFFIX).toFile () : Files.createTempFile (
+                                                                                                                    TEMP_FILE_PREFIX,
+                                                                                                                    TEMP_FILE_SUFFIX)
+                                                                                                   .toFile ();
     // And remember
     m_aRWLock.writeLocked ( () -> m_aTempFiles.add (ret));
 

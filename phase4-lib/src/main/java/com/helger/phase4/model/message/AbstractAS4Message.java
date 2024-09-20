@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.helger.commons.ValueEnforcer;
@@ -108,8 +109,8 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   public final Document getAsSoapDocument (@Nullable final Node aSoapBodyPayload)
   {
     // Convert to DOM Node
-    final Document aEbms3Document = new Ebms3MessagingMarshaller ().getAsDocument (m_aMessaging);
-    if (aEbms3Document == null)
+    final Element aEbms3Element = new Ebms3MessagingMarshaller ().getAsElement (m_aMessaging);
+    if (aEbms3Element == null)
       throw new IllegalStateException ("Failed to write EBMS3 Messaging to XML");
 
     final Node aRealSoapBodyPayload = aSoapBodyPayload instanceof Document ? ((Document) aSoapBodyPayload).getDocumentElement ()
@@ -121,11 +122,14 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
       {
         // Creating SOAP 11 Envelope
         final Soap11Envelope aSoapEnv = new Soap11Envelope ();
+
         aSoapEnv.setHeader (new Soap11Header ());
+        aSoapEnv.getHeader ().addAny (aEbms3Element);
+
         aSoapEnv.setBody (new Soap11Body ());
-        aSoapEnv.getHeader ().addAny (aEbms3Document.getDocumentElement ());
         if (aRealSoapBodyPayload != null)
           aSoapEnv.getBody ().addAny (aRealSoapBodyPayload);
+
         final Document ret = new Soap11EnvelopeMarshaller ().getAsDocument (aSoapEnv);
         if (ret == null)
           throw new IllegalStateException ("Failed to serialize SOAP 1.1 document");
@@ -135,11 +139,14 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
       {
         // Creating SOAP 12 Envelope
         final Soap12Envelope aSoapEnv = new Soap12Envelope ();
+
         aSoapEnv.setHeader (new Soap12Header ());
+        aSoapEnv.getHeader ().addAny (aEbms3Element);
+
         aSoapEnv.setBody (new Soap12Body ());
-        aSoapEnv.getHeader ().addAny (aEbms3Document.getDocumentElement ());
         if (aRealSoapBodyPayload != null)
           aSoapEnv.getBody ().addAny (aRealSoapBodyPayload);
+
         final Document ret = new Soap12EnvelopeMarshaller ().getAsDocument (aSoapEnv);
         if (ret == null)
           throw new IllegalStateException ("Failed to serialize SOAP 1.2 document");

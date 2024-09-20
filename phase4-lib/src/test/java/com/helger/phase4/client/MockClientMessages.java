@@ -114,8 +114,8 @@ final class MockClientMessages
                                                                     MessageHelperMethods.createRandomMessageID (),
                                                                     null,
                                                                     aUserMessage,
-                                                                    true)
-                                                           .setMustUnderstand (true);
+                                                                    true,
+                                                                    null).setMustUnderstand (true);
     final Document aDoc = aReceiptMsg.getAsSoapDocument ();
 
     return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
@@ -162,8 +162,7 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion)
-                                              .setMustUnderstand (true);
+                                                       eSoapVersion).setMustUnderstand (true);
     return aDoc;
   }
 
@@ -199,8 +198,7 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion)
-                                              .setMustUnderstand (true);
+                                                       eSoapVersion).setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 
@@ -235,8 +233,7 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion)
-                                              .setMustUnderstand (true);
+                                                       eSoapVersion).setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 }

@@ -417,8 +417,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set the crypto factory for signing. This is a sanity wrapper around
-   * {@link #setCryptoFactorySignSupplier(Supplier)}.
+   * Set the crypto factory for signing.
    *
    * @param aCryptoFactorySign
    *        Crypto factory for signing to use. May not be <code>null</code>.
@@ -448,8 +447,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set the crypto factory crypting. This is a sanity wrapper around
-   * {@link #setCryptoFactoryCryptSupplier(Supplier)}.
+   * Set the crypto factory crypting.
    *
    * @param aCryptoFactoryCrypt
    *        Crypto factory for crypting to use. May not be <code>null</code>.
@@ -468,7 +466,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   /**
    * Set the same crypto factory for signing and crypting. This is a sanity
-   * wrapper around {@link #setCryptoFactorySupplier(Supplier)}.
+   * wrapper around {@link #setCryptoFactory(IAS4CryptoFactory)}.
    *
    * @param aCryptoFactory
    *        Crypto factory to use. May not be <code>null</code>.
@@ -1365,8 +1363,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                                         sResponseMessageID,
                                                                         aUserMessage,
                                                                         aSoapDocument,
-                                                                        _isSendNonRepudiationInformation (aEffectiveLeg))
-                                                               .setMustUnderstand (true);
+                                                                        _isSendNonRepudiationInformation (aEffectiveLeg),
+                                                                        null).setMustUnderstand (true);
 
     final ESoapVersion eResponseSoapVersion = aEffectiveLeg.getProtocol ().getSoapVersion ();
     if (eResponseSoapVersion != eSoapVersion)

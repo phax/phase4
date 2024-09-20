@@ -44,6 +44,10 @@ public abstract class AbstractAS4ClientSignalMessage <IMPLTYPE extends AbstractA
     super (eMessageType, aResHelper);
   }
 
+  /**
+   * @return The SignalMessage payload, usually from a different namespace URI
+   *         than the main message. Never <code>null</code>.
+   */
   @Nonnull
   @ReturnsMutableObject
   public final ICommonsList <Object> any ()

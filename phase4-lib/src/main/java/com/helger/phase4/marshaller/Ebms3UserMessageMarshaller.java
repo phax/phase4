@@ -19,26 +19,25 @@ package com.helger.phase4.marshaller;
 import javax.xml.namespace.QName;
 
 import com.helger.jaxb.GenericJAXBMarshaller;
-import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.ebms3header.ObjectFactory;
 
 /**
- * Marshaller for {@link Ebms3SignalMessage} objects. This should only simplify
- * the logging of returned signal messages but it is in itself not a valid Ebms3
- * message.
+ * Marshaller for {@link Ebms3UserMessage} objects. This should only simplify
+ * the logging of user messages but it is in itself not a valid Ebms3 message.
  *
  * @author Philip Helger
- * @since 2.7.5
+ * @since 3.0.0
  */
-public class Ebms3SignalMessageMarshaller extends GenericJAXBMarshaller <Ebms3SignalMessage>
+public class Ebms3UserMessageMarshaller extends GenericJAXBMarshaller <Ebms3UserMessage>
 {
   public static final QName ROOT_ELEMENT_QNAME = new QName (ObjectFactory._Messaging_QNAME.getNamespaceURI (),
-                                                            "SignalMessage");
+                                                            "UserMessage");
 
-  public Ebms3SignalMessageMarshaller ()
+  public Ebms3UserMessageMarshaller ()
   {
-    // No XSD, because the "SignalMessage" is not a dedicated element
-    super (Ebms3SignalMessage.class, null, createSimpleJAXBElement (ROOT_ELEMENT_QNAME, Ebms3SignalMessage.class));
+    // No XSD, because the "UserMessage" is not a dedicated element
+    super (Ebms3UserMessage.class, null, createSimpleJAXBElement (ROOT_ELEMENT_QNAME, Ebms3UserMessage.class));
     setNamespaceContext (Ebms3NamespaceHandler.getInstance ());
   }
 }

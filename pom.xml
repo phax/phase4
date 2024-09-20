@@ -75,15 +75,16 @@
     <xmlsec.version>3.0.4</xmlsec.version>
     <wss4j.version>3.0.3</wss4j.version>
     <bctls.version>1.78.1</bctls.version>
-    <log4j.version>2.23.1</log4j.version>
+    <log4j.version>2.24.0</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <peppol-commons.version>9.5.1</peppol-commons.version>
     <peppol-reporting.version>3.0.1</peppol-reporting.version>
+    <ph-commons.version>11.1.8</ph-commons.version>
     <ph-ubl.version>9.0.2</ph-ubl.version>
     <ph-schematron.version>8.0.3</ph-schematron.version>
     <ph-web.version>10.1.9</ph-web.version>
-    <phive.version>9.2.2</phive.version>
-    <phive-rules.version>3.1.12</phive-rules.version>
+    <phive.version>10.0.2</phive.version>
+    <phive-rules.version>3.2.0</phive-rules.version>
     <spring-boot.version>3.3.3</spring-boot.version>
   </properties>
 
@@ -92,7 +93,7 @@
       <dependency>
         <groupId>com.helger.commons</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
-        <version>11.1.6</version>
+        <version>${ph-commons.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
