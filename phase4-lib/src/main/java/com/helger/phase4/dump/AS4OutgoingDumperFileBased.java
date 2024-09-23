@@ -40,6 +40,7 @@ import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * File based implementation of {@link IAS4OutgoingDumper}.
@@ -50,6 +51,7 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHeaders <AS4OutgoingDumperFileBased>
 {
   @FunctionalInterface
+  @ChangePhase4V3 ("Rename and extract")
   public interface IFileProvider
   {
     /** The default file extension to be used */
@@ -160,8 +162,9 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   public static AS4OutgoingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> new File (aBaseDirectory,
-                                                                                      IFileProvider.getFilename (sMessageID,
-                                                                                                                 nTry)));
+    return new AS4OutgoingDumperFileBased ( (eMsgMode,
+                                             sMessageID,
+                                             nTry) -> new File (aBaseDirectory,
+                                                                IFileProvider.getFilename (sMessageID, nTry)));
   }
 }
