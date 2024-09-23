@@ -539,18 +539,21 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
     // Keep the HTTP response status line for external evaluation
     final Wrapper <StatusLine> aStatusLineKeeper = new Wrapper <> ();
+
     // Keep the HTTP response headers for external evaluation
     final HttpHeaderMap aResponseHeaders = new HttpHeaderMap ();
 
-    final HttpClientResponseHandler <T> aRealResponseHandler = x -> {
+    final HttpClientResponseHandler <T> aRealResponseHandler = resp -> {
       // Remember the HTTP response data
-      aStatusLineKeeper.set (new StatusLine (x));
-      final Header [] aHeaders = x.getHeaders ();
+      aStatusLineKeeper.set (new StatusLine (resp));
+
+      final Header [] aHeaders = resp.getHeaders ();
       if (aHeaders != null)
         for (final Header aHeader : aHeaders)
           aResponseHeaders.addHeader (aHeader.getName (), aHeader.getValue ());
+
       // Call the original handler
-      return aResponseHandler.handleResponse (x);
+      return aResponseHandler.handleResponse (resp);
     };
     final T aResponseContent = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
                                                                             aBuiltHttpHeaders,

@@ -152,13 +152,13 @@ public final class DropFolderUserMessage
           final IAS4ClientBuildMessageCallback aCallback = null;
           final IAS4OutgoingDumper aOutgoingDumper = null;
           final IAS4RetryCallback aRetryCallback = null;
-          final AS4ClientSentMessage <byte []> aResponseEntity = aClient.sendMessageWithRetries (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
-                                                                                                 new ResponseHandlerByteArray (),
-                                                                                                 aCallback,
-                                                                                                 aOutgoingDumper,
-                                                                                                 aRetryCallback);
+          final AS4ClientSentMessage <byte []> aClientSentMessage = aClient.sendMessageWithRetries (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
+                                                                                                    new ResponseHandlerByteArray (),
+                                                                                                    aCallback,
+                                                                                                    aOutgoingDumper,
+                                                                                                    aRetryCallback);
           LOGGER.info ("Successfully transmitted document with message ID '" +
-                       aResponseEntity.getMessageID () +
+                       aClientSentMessage.getMessageID () +
                        "' for '" +
                        aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
                        "' to '" +
@@ -167,12 +167,12 @@ public final class DropFolderUserMessage
                        aSW.stopAndGetMillis () +
                        " ms");
 
-          if (aResponseEntity.hasResponseContent ())
+          if (aClientSentMessage.hasResponseContent ())
           {
-            final String sMessageID = aResponseEntity.getMessageID ();
+            final String sMessageID = aClientSentMessage.getMessageID ();
             final String sFilename = FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) + "-response.xml";
             final File aResponseFile = aIncomingDir.resolve (sFilename).toFile ();
-            if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponseContent ()).isSuccess ())
+            if (SimpleFileIO.writeFile (aResponseFile, aClientSentMessage.getResponseContent ()).isSuccess ())
               LOGGER.info ("Response file was written to '" + aResponseFile.getAbsolutePath () + "'");
             else
               LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
