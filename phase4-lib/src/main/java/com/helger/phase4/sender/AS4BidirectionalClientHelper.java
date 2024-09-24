@@ -64,7 +64,7 @@ import jakarta.mail.MessagingException;
  */
 public final class AS4BidirectionalClientHelper
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4BidirectionalClientHelper.class);
+  static final Logger LOGGER = LoggerFactory.getLogger (AS4BidirectionalClientHelper.class);
 
   private AS4BidirectionalClientHelper ()
   {}
@@ -136,12 +136,12 @@ public final class AS4BidirectionalClientHelper
     };
 
     // Main HTTP sending
-    final AS4ClientSentMessage <byte []> aResponseEntity = aClientUserMsg.sendMessageWithRetries (sURL,
-                                                                                                  aHttpResponseHdl,
-                                                                                                  aBuildMessageCallback,
-                                                                                                  aOutgoingDumper,
-                                                                                                  aRetryCallback);
-    final String sRequestMessageID = aResponseEntity.getMessageID ();
+    final AS4ClientSentMessage <byte []> aClientSentMessage = aClientUserMsg.sendMessageWithRetries (sURL,
+                                                                                                     aHttpResponseHdl,
+                                                                                                     aBuildMessageCallback,
+                                                                                                     aOutgoingDumper,
+                                                                                                     aRetryCallback);
+    final String sRequestMessageID = aClientSentMessage.getMessageID ();
     LOGGER.info ("Successfully transmitted AS4 UserMessage with message ID '" +
                  sRequestMessageID +
                  "' to '" +
@@ -149,13 +149,18 @@ public final class AS4BidirectionalClientHelper
                  "'");
 
     if (aRawResponseConsumer != null)
-      aRawResponseConsumer.handleResponse (aResponseEntity);
+      aRawResponseConsumer.handleResponse (aClientSentMessage);
 
     // Try interpret result as SignalMessage
-    if (aResponseEntity.hasResponseContent () && aResponseEntity.getResponseContent ().length > 0)
+    if (aClientSentMessage.hasResponseContent () && aClientSentMessage.getResponseContent ().length > 0)
     {
-      final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
-                                                                                     .setRemoteAddr (sURL);
+      final IAS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+                                                                                             .setRemoteAddr (sURL);
+
+      // Validate the DSSig references between sent and received msg
+      final IAS4SignalMessageConsumer aRealSignalMsgConsumer = new ValidatingAS4SignalMsgConsumer (aClientSentMessage,
+                                                                                                   aSignalMsgConsumer,
+                                                                                                   null);
 
       // Read response as EBMS3 Signal Message
       // Read it in any case to ensure signature validation etc. happens
@@ -167,13 +172,13 @@ public final class AS4BidirectionalClientHelper
                                              aClientUserMsg.getAS4ResourceHelper (),
                                              aClientUserMsg.getPMode (),
                                              aLocale,
-                                             aMessageMetadata,
+                                             aResponseMessageMetadata,
                                              aWrappedHttpResponse.get (),
-                                             aResponseEntity.getResponseContent (),
+                                             aClientSentMessage.getResponseContent (),
                                              aIncomingDumper,
                                              aIncomingSecurityConfiguration,
                                              aIncomingReceiverConfiguration,
-                                             aSignalMsgConsumer);
+                                             aRealSignalMsgConsumer);
     }
     else
       LOGGER.info ("AS4 ResponseEntity is empty");
@@ -222,12 +227,12 @@ public final class AS4BidirectionalClientHelper
     };
 
     // Generic AS4 PullRequest sending
-    final AS4ClientSentMessage <byte []> aResponseEntity = aClientPullRequest.sendMessageWithRetries (sURL,
-                                                                                                      aResponseHdl,
-                                                                                                      aBuildMessageCallback,
-                                                                                                      aOutgoingDumper,
-                                                                                                      aRetryCallback);
-    final String sRequestMessageID = aResponseEntity.getMessageID ();
+    final AS4ClientSentMessage <byte []> aClientSentMessage = aClientPullRequest.sendMessageWithRetries (sURL,
+                                                                                                         aResponseHdl,
+                                                                                                         aBuildMessageCallback,
+                                                                                                         aOutgoingDumper,
+                                                                                                         aRetryCallback);
+    final String sRequestMessageID = aClientSentMessage.getMessageID ();
     LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
                  sRequestMessageID +
                  "' to '" +
@@ -235,13 +240,13 @@ public final class AS4BidirectionalClientHelper
                  "'");
 
     if (aResponseConsumer != null)
-      aResponseConsumer.handleResponse (aResponseEntity);
+      aResponseConsumer.handleResponse (aClientSentMessage);
 
     // Try to interpret result as UserMessage or SignalMessage
-    if (aResponseEntity.hasResponseContent () && aResponseEntity.getResponseContent ().length > 0)
+    if (aClientSentMessage.hasResponseContent () && aClientSentMessage.getResponseContent ().length > 0)
     {
-      final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
-                                                                                     .setRemoteAddr (sURL);
+      final IAS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+                                                                                             .setRemoteAddr (sURL);
 
       // Read response as EBMS3 User Message or Signal Message
       // Read it in any case to ensure signature validation etc. happens
@@ -253,9 +258,9 @@ public final class AS4BidirectionalClientHelper
                                            aClientPullRequest.getAS4ResourceHelper (),
                                            aPMode,
                                            aLocale,
-                                           aMessageMetadata,
+                                           aResponseMessageMetadata,
                                            aWrappedResponse.get (),
-                                           aResponseEntity.getResponseContent (),
+                                           aClientSentMessage.getResponseContent (),
                                            aIncomingDumper,
                                            aIncomingSecurityConfiguration,
                                            aIncomingReceiverConfiguration,
@@ -309,12 +314,12 @@ public final class AS4BidirectionalClientHelper
     };
 
     // Generic AS4 PullRequest sending
-    final AS4ClientSentMessage <byte []> aResponseEntity = aClientPullRequest.sendMessageWithRetries (sURL,
-                                                                                                      aResponseHdl,
-                                                                                                      aBuildMessageCallback,
-                                                                                                      aOutgoingDumper,
-                                                                                                      aRetryCallback);
-    final String sRequestMessageID = aResponseEntity.getMessageID ();
+    final AS4ClientSentMessage <byte []> aClientSentMessage = aClientPullRequest.sendMessageWithRetries (sURL,
+                                                                                                         aResponseHdl,
+                                                                                                         aBuildMessageCallback,
+                                                                                                         aOutgoingDumper,
+                                                                                                         aRetryCallback);
+    final String sRequestMessageID = aClientSentMessage.getMessageID ();
     LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
                  sRequestMessageID +
                  "' to '" +
@@ -322,13 +327,18 @@ public final class AS4BidirectionalClientHelper
                  "'");
 
     if (aResponseConsumer != null)
-      aResponseConsumer.handleResponse (aResponseEntity);
+      aResponseConsumer.handleResponse (aClientSentMessage);
 
     // Try to interpret result as UserMessage or SignalMessage
-    if (aResponseEntity.hasResponseContent () && aResponseEntity.getResponseContent ().length > 0)
+    if (aClientSentMessage.hasResponseContent () && aClientSentMessage.getResponseContent ().length > 0)
     {
-      final IAS4IncomingMessageMetadata aMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
-                                                                                     .setRemoteAddr (sURL);
+      final IAS4IncomingMessageMetadata aResponseMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+                                                                                      .setRemoteAddr (sURL);
+
+      // Validate the DSSig references between sent and received msg
+      final IAS4SignalMessageConsumer aRealSignalMsgConsumer = new ValidatingAS4SignalMsgConsumer (aClientSentMessage,
+                                                                                                   aSignalMsgConsumer,
+                                                                                                   null);
 
       // Read response as EBMS3 User Message or Signal Message
       // Read it in any case to ensure signature validation etc. happens
@@ -340,14 +350,14 @@ public final class AS4BidirectionalClientHelper
                                                    aClientPullRequest.getAS4ResourceHelper (),
                                                    aPMode,
                                                    aLocale,
-                                                   aMessageMetadata,
+                                                   aResponseMetadata,
                                                    aWrappedResponse.get (),
-                                                   aResponseEntity.getResponseContent (),
+                                                   aClientSentMessage.getResponseContent (),
                                                    aIncomingDumper,
                                                    aIncomingSecurityConfiguration,
                                                    aIncomingReceiverConfiguration,
                                                    aUserMsgConsumer,
-                                                   aSignalMsgConsumer);
+                                                   aRealSignalMsgConsumer);
     }
     else
       LOGGER.info ("AS4 ResponseEntity is empty");

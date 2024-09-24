@@ -111,8 +111,8 @@ public class AS4ClientSentMessage <T>
   }
 
   /**
-   * @return The message ID of the sent out message. Neither <code>null</code>
-   *         nor empty. This is a shortcut for
+   * @return The AS4 message ID of the sent out message. Neither
+   *         <code>null</code> nor empty. This is a shortcut for
    *         <code>getBuiltMessage().getMessageID ()</code>.
    */
   @Nonnull
@@ -127,6 +127,7 @@ public class AS4ClientSentMessage <T>
    *         response code and the response reason (if present). May be
    *         <code>null</code>.
    * @since 0.13.0
+   * @see #hasResponseStatusLine()
    */
   @Nullable
   public final StatusLine getResponseStatusLine ()
@@ -138,6 +139,7 @@ public class AS4ClientSentMessage <T>
    * @return <code>true</code> if a response status line is present,
    *         <code>false</code> if not.
    * @since 0.13.0
+   * @see #getResponseStatusLine()
    */
   public final boolean hasResponseStatusLine ()
   {
@@ -157,6 +159,7 @@ public class AS4ClientSentMessage <T>
 
   /**
    * @return The response payload. May be <code>null</code>.
+   * @see #hasResponseContent()
    */
   @Nullable
   public final T getResponseContent ()
@@ -167,6 +170,7 @@ public class AS4ClientSentMessage <T>
   /**
    * @return <code>true</code> if a response payload is present,
    *         <code>false</code> if not.
+   * @see #getResponseContent()
    */
   public final boolean hasResponseContent ()
   {

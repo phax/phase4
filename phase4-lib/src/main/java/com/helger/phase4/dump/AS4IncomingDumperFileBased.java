@@ -35,6 +35,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
+import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Simple file based version of {@link IAS4IncomingDumper}.
@@ -51,6 +52,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    * @since 0.9.8
    */
   @FunctionalInterface
+  @ChangePhase4V3 ("Rename and extract")
   public interface IFileProvider
   {
     /** The default file extension to be used */
@@ -104,9 +106,9 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    */
   public AS4IncomingDumperFileBased ()
   {
-    this ( (aMessageMetadata, aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
-                                                           DEFAULT_BASE_PATH +
-                                                                                                    IFileProvider.getFilename (aMessageMetadata)));
+    this ( (aMessageMetadata,
+            aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
+                                         DEFAULT_BASE_PATH + IFileProvider.getFilename (aMessageMetadata)));
   }
 
   /**
@@ -147,7 +149,8 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   public static AS4IncomingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4IncomingDumperFileBased ( (aMessageMetadata, aHttpHeaderMap) -> new File (aBaseDirectory,
-                                                                                            IFileProvider.getFilename (aMessageMetadata)));
+    return new AS4IncomingDumperFileBased ( (aMessageMetadata,
+                                             aHttpHeaderMap) -> new File (aBaseDirectory,
+                                                                          IFileProvider.getFilename (aMessageMetadata)));
   }
 }
