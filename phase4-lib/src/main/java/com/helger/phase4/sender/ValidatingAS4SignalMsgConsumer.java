@@ -21,9 +21,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.client.AS4ClientSentMessage;
@@ -44,27 +41,8 @@ import com.helger.xsds.xmldsig.ReferenceType;
  */
 public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageConsumer
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (ValidatingAS4SignalMsgConsumer.class);
-
   // The default instance doing some logging only
-  private static final IValidatingAS4SignalMsgConsumerResultHandler DEFAULT_RES_HDL = new IValidatingAS4SignalMsgConsumerResultHandler ()
-  {
-    public void onSuccess ()
-    {
-      LOGGER.info ("All sent DSig references were contained in the AS4 Receipt message - good.");
-    }
-
-    public void onError (final String sErrorMsg)
-    {
-      LOGGER.error (sErrorMsg);
-    }
-
-    public void onNotApplicable ()
-    {
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("The DSig references were not compared, because either the sent and/or the received message did no contain the necessary data elements");
-    }
-  };
+  private static final IValidatingAS4SignalMsgConsumerResultHandler DEFAULT_RES_HDL = new LoggingAS4SignalMsgConsumerResultHandler ();
 
   private final AS4ClientSentMessage <?> m_aClientSetMsg;
   private final IAS4SignalMessageConsumer m_aOriginalConsumer;
