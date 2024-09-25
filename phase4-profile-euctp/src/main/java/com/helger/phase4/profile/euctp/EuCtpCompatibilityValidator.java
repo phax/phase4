@@ -268,7 +268,8 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
     final EMEP eMEP = aPMode.getMEP ();
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
 
-    if (eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH)
+    if (eMEP == EMEP.ONE_WAY
+        && (eMEPBinding == EMEPBinding.PUSH || eMEPBinding == EMEPBinding.PULL))
     {
       // Valid
     }
@@ -278,7 +279,7 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
                                     eMEP +
                                     ") and MEP binding (" +
                                     eMEPBinding +
-                                    ") was specified, only one-way/push is valid."));
+                                    ") was specified, only one-way/push/pull is valid."));
     }
 
     // Leg1 must be present

@@ -251,7 +251,7 @@ public final class EuCtpPMode
                                     EMEP.ONE_WAY,
                                     EMEPBinding.PULL,
                                     generatePModeLeg (sAddress),
-                                    null,
+                                    generatePModeLeg (sAddress),
                                     generatePModePayloadService (),
                                     generatePModeReceptionAwareness ());
 
