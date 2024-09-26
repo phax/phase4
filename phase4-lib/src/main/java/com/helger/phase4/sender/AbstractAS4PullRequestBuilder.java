@@ -59,6 +59,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   protected String m_sEndpointURL;
   protected IAS4UserMessageConsumer m_aUserMsgConsumer;
   protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
+  protected IAS4SignalMessageValidationResultHandler m_aSignalMsgValidationResultHdl;
 
   /**
    * Create a new builder, with the following fields already set:<br>
@@ -365,6 +366,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
                                                                                        m_aResponseConsumer,
                                                                                        m_aUserMsgConsumer,
                                                                                        m_aSignalMsgConsumer,
+                                                                                       m_aSignalMsgValidationResultHdl,
                                                                                        m_aPMode);
     }
     catch (final Phase4Exception ex)

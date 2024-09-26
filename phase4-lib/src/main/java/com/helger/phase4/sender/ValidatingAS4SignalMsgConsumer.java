@@ -42,11 +42,11 @@ import com.helger.xsds.xmldsig.ReferenceType;
 public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageConsumer
 {
   // The default instance doing some logging only
-  private static final IValidatingAS4SignalMsgConsumerResultHandler DEFAULT_RES_HDL = new LoggingAS4SignalMsgConsumerResultHandler ();
+  private static final IAS4SignalMessageValidationResultHandler DEFAULT_RES_HDL = new LoggingAS4SignalMsgValidationResultHandler ();
 
   private final AS4ClientSentMessage <?> m_aClientSetMsg;
   private final IAS4SignalMessageConsumer m_aOriginalConsumer;
-  private final IValidatingAS4SignalMsgConsumerResultHandler m_aResultHandler;
+  private final IAS4SignalMessageValidationResultHandler m_aResultHandler;
 
   /**
    * Constructor
@@ -63,7 +63,7 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
    */
   public ValidatingAS4SignalMsgConsumer (@Nonnull final AS4ClientSentMessage <?> aClientSetMsg,
                                          @Nullable final IAS4SignalMessageConsumer aOriginalConsumer,
-                                         @Nullable final IValidatingAS4SignalMsgConsumerResultHandler aResultHandler)
+                                         @Nullable final IAS4SignalMessageValidationResultHandler aResultHandler)
   {
     ValueEnforcer.notNull (aClientSetMsg, "ClientSetMsg");
     m_aClientSetMsg = aClientSetMsg;

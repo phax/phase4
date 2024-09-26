@@ -85,6 +85,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   protected boolean m_bForceMimeMessage = AS4ClientUserMessage.DEFAULT_FORCE_MIME_MESSAGE;
 
   protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
+  protected IAS4SignalMessageValidationResultHandler m_aSignalMsgValidationResultHdl;
 
   /**
    * Create a new builder
@@ -868,8 +869,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     if (StringHelper.hasText (m_sRefToMessageID))
       aUserMsg.setRefToMessageID (m_sRefToMessageID);
     // Empty conversation ID is okay
-    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID : MessageHelperMethods
-                                                                                                    .createRandomConversationID ());
+    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID
+                                                          : MessageHelperMethods.createRandomConversationID ());
 
     aUserMsg.setFromPartyIDType (m_sFromPartyIDType);
     aUserMsg.setFromPartyID (m_sFromPartyID);
@@ -925,13 +926,11 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     {
       // Store the received signal message
       final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
-      m_aSignalMsgConsumer = aOld == null ? (aSignalMsg, aMMD, aIncomingState) -> aSignalMsgKeeper.set (aSignalMsg) : (
-                                                                                                                       aSignalMsg,
-                                                                                                                       aMMD,
-                                                                                                                       aIncomingState) -> {
-        aSignalMsgKeeper.set (aSignalMsg);
-        aOld.handleSignalMessage (aSignalMsg, aMMD, aIncomingState);
-      };
+      m_aSignalMsgConsumer = aOld == null ? (aSignalMsg, aMMD, aIncomingState) -> aSignalMsgKeeper.set (aSignalMsg)
+                                          : (aSignalMsg, aMMD, aIncomingState) -> {
+                                            aSignalMsgKeeper.set (aSignalMsg);
+                                            aOld.handleSignalMessage (aSignalMsg, aMMD, aIncomingState);
+                                          };
 
       // Main sending
       if (sendMessage ().isFailure ())

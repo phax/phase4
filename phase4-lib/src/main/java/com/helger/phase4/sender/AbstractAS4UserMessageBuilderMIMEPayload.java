@@ -229,7 +229,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
                                                                                  aIncomingReceiverConfiguration,
                                                                                  m_aRetryCallback,
                                                                                  m_aResponseConsumer,
-                                                                                 m_aSignalMsgConsumer);
+                                                                                 m_aSignalMsgConsumer,
+                                                                                 m_aSignalMsgValidationResultHdl);
     }
     catch (final Phase4Exception ex)
     {

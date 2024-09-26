@@ -84,10 +84,11 @@ public final class AS4BidirectionalClientHelper
                                                                    @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                                    @Nullable final IAS4RetryCallback aRetryCallback,
                                                                    @Nullable final IAS4RawResponseConsumer aRawResponseConsumer,
-                                                                   @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws IOException,
-                                                                                                                                 Phase4Exception,
-                                                                                                                                 WSSecurityException,
-                                                                                                                                 MessagingException
+                                                                   @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
+                                                                   @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler) throws IOException,
+                                                                                                                                                               Phase4Exception,
+                                                                                                                                                               WSSecurityException,
+                                                                                                                                                               MessagingException
   {
     LOGGER.info ("Sending AS4 UserMessage to '" +
                  sURL +
@@ -160,7 +161,7 @@ public final class AS4BidirectionalClientHelper
       // Validate the DSSig references between sent and received msg
       final IAS4SignalMessageConsumer aRealSignalMsgConsumer = new ValidatingAS4SignalMsgConsumer (aClientSentMessage,
                                                                                                    aSignalMsgConsumer,
-                                                                                                   null);
+                                                                                                   aSignalMsgValidationResultHandler);
 
       // Read response as EBMS3 Signal Message
       // Read it in any case to ensure signature validation etc. happens
@@ -287,6 +288,7 @@ public final class AS4BidirectionalClientHelper
                                                                          @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                          @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
                                                                          @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
+                                                                         @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler,
                                                                          @Nullable final IPMode aPMode) throws IOException,
                                                                                                         Phase4Exception,
                                                                                                         WSSecurityException,
@@ -338,7 +340,7 @@ public final class AS4BidirectionalClientHelper
       // Validate the DSSig references between sent and received msg
       final IAS4SignalMessageConsumer aRealSignalMsgConsumer = new ValidatingAS4SignalMsgConsumer (aClientSentMessage,
                                                                                                    aSignalMsgConsumer,
-                                                                                                   null);
+                                                                                                   aSignalMsgValidationResultHandler);
 
       // Read response as EBMS3 User Message or Signal Message
       // Read it in any case to ensure signature validation etc. happens

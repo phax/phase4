@@ -21,13 +21,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A logging implementation of
- * {@link IValidatingAS4SignalMsgConsumerResultHandler}.
+ * {@link IAS4SignalMessageValidationResultHandler}.
  *
  * @author Philip Helger
  */
-public class LoggingAS4SignalMsgConsumerResultHandler implements IValidatingAS4SignalMsgConsumerResultHandler
+public class LoggingAS4SignalMsgValidationResultHandler implements IAS4SignalMessageValidationResultHandler
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (LoggingAS4SignalMsgConsumerResultHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (LoggingAS4SignalMsgValidationResultHandler.class);
 
   public void onSuccess ()
   {

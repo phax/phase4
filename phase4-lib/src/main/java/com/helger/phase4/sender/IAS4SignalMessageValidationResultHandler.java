@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
  * @author Philip Helger
  * @since 3.0.0
  */
-public interface IValidatingAS4SignalMsgConsumerResultHandler
+public interface IAS4SignalMessageValidationResultHandler
 {
   /**
    * Called if no issues were found between the sent and the received receipts.
