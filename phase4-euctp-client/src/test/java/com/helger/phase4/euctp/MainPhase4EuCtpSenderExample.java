@@ -62,8 +62,6 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.euctp.EEuCtpAction;
 import com.helger.phase4.profile.euctp.EEuCtpService;
 import com.helger.phase4.profile.euctp.EuCtpPMode;
-import com.helger.phase4.sender.AbstractAS4MessageBuilder;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
@@ -199,11 +197,13 @@ public class MainPhase4EuCtpSenderExample
 
     if (eSuccess.isSuccess () && aUserMessageHolder.isSet ())
     {
-      _sendReceipt(aUserMessageHolder, aSoapDocHolder, prBuilder);
+      _sendReceipt (aUserMessageHolder, aSoapDocHolder, prBuilder);
     }
   }
 
-  private static void _sendReceipt(Wrapper<Ebms3UserMessage> aUserMessageHolder, Wrapper<Document> aSoapDocHolder, EuCtpPullRequestBuilder prBuilder)
+  private static void _sendReceipt (final Wrapper <Ebms3UserMessage> aUserMessageHolder,
+                                    final Wrapper <Document> aSoapDocHolder,
+                                    final EuCtpPullRequestBuilder prBuilder)
   {
     // Send another Receipt
     final Ebms3UserMessage aUserMessage = aUserMessageHolder.get ();
@@ -216,28 +216,30 @@ public class MainPhase4EuCtpSenderExample
       {
         // receipt
         final AS4ClientReceiptMessage aReceiptMessage = new AS4ClientReceiptMessage (aResHelper);
-        aReceiptMessage.setRefToMessageID(sUserMessageID);
-        aReceiptMessage.setNonRepudiation(EuCtpPMode.DEFAULT_SEND_RECEIPT_NON_REPUDIATION);
-        aReceiptMessage.setSoapDocument(aSoapDocHolder.get());
-        aReceiptMessage.setReceiptShouldBeSigned(true);
-        aReceiptMessage.getHttpPoster().setHttpClientFactory(prBuilder.httpClientFactory());
-        aReceiptMessage.setCryptoFactorySign(prBuilder.cryptoFactorySign());
-        aReceiptMessage.setCryptoFactoryCrypt(prBuilder.cryptoFactoryCrypt());
-        aReceiptMessage.setEbms3UserMessage(aUserMessage);
+        aReceiptMessage.setRefToMessageID (sUserMessageID);
+        aReceiptMessage.setNonRepudiation (EuCtpPMode.DEFAULT_SEND_RECEIPT_NON_REPUDIATION);
+        aReceiptMessage.setSoapDocument (aSoapDocHolder.get ());
+        aReceiptMessage.setReceiptShouldBeSigned (true);
+        aReceiptMessage.getHttpPoster ().setHttpClientFactory (prBuilder.httpClientFactory ());
+        aReceiptMessage.setCryptoFactorySign (prBuilder.cryptoFactorySign ());
+        aReceiptMessage.setCryptoFactoryCrypt (prBuilder.cryptoFactoryCrypt ());
+        aReceiptMessage.setEbms3UserMessage (aUserMessage);
 
-        IPMode aPMode = prBuilder.pmode();
+        final IPMode aPMode = prBuilder.pmode ();
         if (aPMode != null)
         {
-          final PModeLeg aEffectiveLeg = prBuilder.useLeg1() ? aPMode.getLeg1() : aPMode.getLeg2();
-          aReceiptMessage.signingParams().setFromPMode(aEffectiveLeg.getSecurity());
+          final PModeLeg aEffectiveLeg = prBuilder.useLeg1 () ? aPMode.getLeg1 () : aPMode.getLeg2 ();
+          aReceiptMessage.signingParams ().setFromPMode (aEffectiveLeg.getSecurity ());
         }
 
-        aReceiptMessage.cryptParams ().setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT);
+        aReceiptMessage.cryptParams ()
+                       .setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT);
         aReceiptMessage.cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
         aReceiptMessage.cryptParams ().setEncryptSymmetricSessionKey (false);
 
         // Other signing parameters are located in the PMode security part
-        aReceiptMessage.signingParams ().setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_SIGN);
+        aReceiptMessage.signingParams ()
+                       .setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_SIGN);
         aReceiptMessage.signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
         // Use the BST value type "#X509PKIPathv1"
         aReceiptMessage.signingParams ().setUseSingleCertificate (false);
@@ -260,22 +262,24 @@ public class MainPhase4EuCtpSenderExample
         aErrorMessage.setRefToMessageID (sUserMessageID);
         aErrorMessage.setErrorShouldBeSigned (true);
         aErrorMessage.getHttpPoster ().setHttpClientFactory (prBuilder.httpClientFactory ());
-        aErrorMessage.setCryptoFactorySign(prBuilder.cryptoFactorySign());
-        aErrorMessage.setCryptoFactoryCrypt(prBuilder.cryptoFactoryCrypt());
+        aErrorMessage.setCryptoFactorySign (prBuilder.cryptoFactorySign ());
+        aErrorMessage.setCryptoFactoryCrypt (prBuilder.cryptoFactoryCrypt ());
 
-        IPMode aPMode = prBuilder.pmode();
+        final IPMode aPMode = prBuilder.pmode ();
         if (aPMode != null)
         {
-          final PModeLeg aEffectiveLeg = prBuilder.useLeg1() ? aPMode.getLeg1() : aPMode.getLeg2();
-          aErrorMessage.signingParams().setFromPMode(aEffectiveLeg.getSecurity());
+          final PModeLeg aEffectiveLeg = prBuilder.useLeg1 () ? aPMode.getLeg1 () : aPMode.getLeg2 ();
+          aErrorMessage.signingParams ().setFromPMode (aEffectiveLeg.getSecurity ());
         }
 
-        aErrorMessage.cryptParams ().setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT);
+        aErrorMessage.cryptParams ()
+                     .setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT);
         aErrorMessage.cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
         aErrorMessage.cryptParams ().setEncryptSymmetricSessionKey (false);
 
         // Other signing parameters are located in the PMode security part
-        aErrorMessage.signingParams ().setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_SIGN);
+        aErrorMessage.signingParams ()
+                     .setKeyIdentifierType (AbstractEuCtpUserMessageBuilder.DEFAULT_KEY_IDENTIFIER_TYPE_SIGN);
         aErrorMessage.signingParams ().setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_EXCL_OMIT_COMMENTS);
         // Use the BST value type "#X509PKIPathv1"
         aErrorMessage.signingParams ().setUseSingleCertificate (false);
