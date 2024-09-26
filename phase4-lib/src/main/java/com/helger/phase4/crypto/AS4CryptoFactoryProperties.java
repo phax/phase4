@@ -30,6 +30,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.security.keystore.KeyStoreHelper;
 
 /**
@@ -39,6 +40,7 @@ import com.helger.security.keystore.KeyStoreHelper;
  * @since 0.11.0
  */
 @Immutable
+@ChangePhase4V3 ("Add a version that takes it from configuration instead")
 public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
 {
   private static final AS4CryptoFactoryProperties DEFAULT_INSTANCE = new AS4CryptoFactoryProperties (AS4CryptoProperties.createFromConfig ());
@@ -133,7 +135,8 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
     {
       ret = m_aKeyStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getKeyStoreType (),
                                                        m_aCryptoProps.getKeyStorePath (),
-                                                       m_aCryptoProps.getKeyStorePassword ()).getKeyStore ();
+                                                       m_aCryptoProps.getKeyStorePassword ())
+                                        .getKeyStore ();
     }
     return ret;
   }
@@ -165,7 +168,8 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
       // Load only once and cache then
       ret = m_aTrustStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getTrustStoreType (),
                                                          m_aCryptoProps.getTrustStorePath (),
-                                                         m_aCryptoProps.getTrustStorePassword ()).getKeyStore ();
+                                                         m_aCryptoProps.getTrustStorePassword ())
+                                          .getKeyStore ();
     }
     return ret;
   }
