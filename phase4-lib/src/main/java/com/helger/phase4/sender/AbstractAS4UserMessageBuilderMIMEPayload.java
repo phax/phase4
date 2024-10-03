@@ -39,8 +39,8 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
- * Abstract builder base class for a user messages that put the payload in a
- * MIME part.
+ * Abstract builder base class for a user messages that puts also the main
+ * payload in a single MIME part and NOT in the SOAP body.
  *
  * @author Philip Helger
  * @param <IMPLTYPE>
@@ -64,6 +64,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   {}
 
   /**
+   * <<<<<<< HEAD
+   *
    * @return The currently set outgoing attachment payload. May be
    *         <code>null</code>.
    * @since 2.5.0
@@ -75,7 +77,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   }
 
   /**
-   * Set the payload to be send out.
+   * Set the payload to be send out. The payload is translated into the first
+   * attachment to the user message.
    *
    * @param aBuilder
    *        The payload builder to be used. May be <code>null</code>.
@@ -182,7 +185,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
         }
       }
 
-      // No payload - only one attachment
+      // No payload in SOAP - only one attachment
       aUserMsg.setPayload (null);
 
       // Add main attachment

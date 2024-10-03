@@ -86,12 +86,12 @@ public final class Phase4DBNAllianceSender
   {}
 
   @Nullable
-  private static XHE10XHEType _createXHE (@Nonnull final IParticipantIdentifier aSenderID,
-                                          @Nonnull final IParticipantIdentifier aReceiverID,
-                                          @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                          @Nonnull final IProcessIdentifier aProcID,
-                                          @Nonnull final Element aPayloadElement,
-                                          final boolean bClonePayloadElement)
+  private static XHE10XHEType _createDBNAllianceXHE (@Nonnull final IParticipantIdentifier aSenderID,
+                                                     @Nonnull final IParticipantIdentifier aReceiverID,
+                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                     @Nonnull final IProcessIdentifier aProcID,
+                                                     @Nonnull final Element aPayloadElement,
+                                                     final boolean bClonePayloadElement) throws Phase4DBNAllianceException
   {
     final DBNAllianceXHEData aData = new DBNAllianceXHEData (IF);
     aData.setFromParty (aSenderID.getScheme (), aSenderID.getValue ());
@@ -116,7 +116,7 @@ public final class Phase4DBNAllianceSender
 
     // check with logging
     if (!aData.areAllFieldsSet (true))
-      throw new IllegalArgumentException ("The DBNAlliance XHE data is incomplete. See logs for details.");
+      throw new Phase4DBNAllianceException ("The DBNAlliance XHE data is incomplete. See logs for details.");
 
     return DBNAllianceXHEDocumentWriter.createExchangeHeaderEnvelope (aData);
   }
@@ -533,9 +533,28 @@ public final class Phase4DBNAllianceSender
      *        The payload element to be used. They payload element MUST have a
      *        namespace URI. May not be <code>null</code>.
      * @return this for chaining
+     * @deprecated in favour of {@link #payloadElement(Element)}
      */
     @Nonnull
+    @Deprecated (forRemoval = true, since = "2.8.6")
     public DBNAllianceUserMessageBuilder payload (@Nonnull final Element aPayloadElement)
+    {
+      return payloadElement (aPayloadElement);
+    }
+
+    /**
+     * Set the payload element to be used, if it is available as a parsed DOM
+     * element. Internally the DOM element will be cloned before sending it out.
+     * If this method is called, it overwrites any other explicitly set payload.
+     *
+     * @param aPayloadElement
+     *        The payload element to be used. They payload element MUST have a
+     *        namespace URI. May not be <code>null</code>.
+     * @return this for chaining
+     * @since 2.8.6
+     */
+    @Nonnull
+    public DBNAllianceUserMessageBuilder payloadElement (@Nonnull final Element aPayloadElement)
     {
       ValueEnforcer.notNull (aPayloadElement, "Payload");
       ValueEnforcer.notEmpty (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
@@ -547,54 +566,57 @@ public final class Phase4DBNAllianceSender
     @OverridingMethodsMustInvokeSuper
     protected ESuccess finishFields () throws Phase4Exception
     {
-      // Ensure a DOM element is present
-      final Element aPayloadElement;
-      final boolean bClonePayloadElement;
-      if (m_aPayloadElement != null)
-      {
-        // Already provided as a DOM element
-        aPayloadElement = m_aPayloadElement;
-        bClonePayloadElement = true;
-      }
-      else
-        throw new IllegalStateException ("Unexpected - element is not present");
-
-      // Consistency check
-      if (CXHE10.NAMESPACE_URI_XHE.equals (aPayloadElement.getNamespaceURI ()))
-        throw new Phase4DBNAllianceException ("You cannot set a Exchange Header Envelope as the payload for the regular builder. The XHE is created automatically inside of this builder.");
-
-      // Optional payload validation
-      // _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID,
-      // m_aValidationResultHandler);
-
       // Perform SMP lookup
       if (super.finishFields ().isFailure ())
         return ESuccess.FAILURE;
 
-      // Created SBDH
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Start creating SBDH for AS4 message");
-
-      final XHE10XHEType aXHE = _createXHE (m_aSenderID,
-                                            m_aReceiverID,
-                                            m_aDocTypeID,
-                                            m_aProcessID,
-                                            aPayloadElement,
-                                            bClonePayloadElement);
-      if (aXHE == null)
+      // Ensure a DOM element is present
+      if (m_aPayloadElement != null)
       {
-        // A log message was already provided
-        return ESuccess.FAILURE;
+        // Ensure only one payload is present
+        if (m_aPayload != null)
+          throw new Phase4DBNAllianceException ("You cannot provide a payload element and a payload together - please pick one.");
+
+        // Already provided as a DOM element
+        final Element aPayloadElement = m_aPayloadElement;
+
+        // Consistency check
+        if (CXHE10.NAMESPACE_URI_XHE.equals (aPayloadElement.getNamespaceURI ()))
+          throw new Phase4DBNAllianceException ("You cannot set an eXchange Header Envelope as the payload for the regular builder. The XHE is created automatically inside of this builder.");
+
+        // Created SBDH
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Start creating XHE for AS4 message");
+
+        final boolean bClonePayloadElement = true;
+        final XHE10XHEType aXHE = _createDBNAllianceXHE (m_aSenderID,
+                                                         m_aReceiverID,
+                                                         m_aDocTypeID,
+                                                         m_aProcessID,
+                                                         aPayloadElement,
+                                                         bClonePayloadElement);
+        if (aXHE == null)
+        {
+          // A log message was already provided
+          return ESuccess.FAILURE;
+        }
+
+        final byte [] aXHEBytes = new XHE10Marshaller ().getAsBytes (aXHE);
+
+        // Now we have the main payload
+        payload (AS4OutgoingAttachment.builder ()
+                                      .data (aXHEBytes)
+                                      .compressionGZIP ()
+                                      .mimeTypeXML ()
+                                      .charset (StandardCharsets.UTF_8));
       }
 
-      final byte [] aXHEBytes = new XHE10Marshaller ().getAsBytes (aXHE);
-
-      // Now we have the main payload
-      payload (AS4OutgoingAttachment.builder ()
-                                    .data (aXHEBytes)
-                                    .mimeTypeXML ()
-                                    .compressionGZIP ()
-                                    .charset (StandardCharsets.UTF_8));
+      // Make sure a payload is present
+      if (m_aPayload == null)
+      {
+        LOGGER.error ("No payload was provided to the DBNAlliance UserMessage builder");
+        return ESuccess.FAILURE;
+      }
 
       return ESuccess.SUCCESS;
     }

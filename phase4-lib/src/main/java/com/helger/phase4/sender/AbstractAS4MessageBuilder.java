@@ -853,10 +853,11 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Check if all required fields of the builder are set.
+   * Check if all mandatory fields are set. This method is called after
+   * {@link #finishFields()} and before {@link #customizeBeforeSending()}
    *
-   * @return <code>true</code> if all required fields are set,
-   *         <code>false</code> if not.
+   * @return <code>true</code> if all mandatory fields are set, and sending can
+   *         continue.
    */
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
@@ -912,7 +913,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   /**
    * Internal method that is invoked after the required fields are checked but
    * before sending takes place. This is e.g. the perfect place to add custom
-   * message properties. This is called after {@link #isEveryRequiredFieldSet()}
+   * message properties. This method is called after
+   * {@link #isEveryRequiredFieldSet()} and before {@link #mainSendMessage()}.
    *
    * @throws Phase4Exception
    *         if something goes wrong
