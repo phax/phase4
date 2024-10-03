@@ -519,7 +519,6 @@ public final class Phase4DBNAllianceSender
   public static class DBNAllianceUserMessageBuilder extends
                                                     AbstractDBNAllianceUserMessageBuilder <DBNAllianceUserMessageBuilder>
   {
-
     private Element m_aPayloadElement;
 
     public DBNAllianceUserMessageBuilder ()
