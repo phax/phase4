@@ -25,10 +25,15 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.builder.IBuilder;
+import com.helger.commons.collection.impl.CommonsLinkedHashMap;
+import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.io.ByteArrayWrapper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.model.message.MessageHelperMethods;
 
@@ -48,6 +53,7 @@ public class AS4OutgoingAttachment
   private final IMimeType m_aMimeType;
   private final EAS4CompressionMode m_eCompressionMode;
   private final Charset m_aCharset;
+  private final ICommonsOrderedMap <String, String> m_aCustomProperties;
 
   protected AS4OutgoingAttachment (@Nullable final ByteArrayWrapper aDataBytes,
                                    @Nullable final File aDataFile,
@@ -55,7 +61,8 @@ public class AS4OutgoingAttachment
                                    @Nullable final String sFilename,
                                    @Nonnull final IMimeType aMimeType,
                                    @Nullable final EAS4CompressionMode eCompressionMode,
-                                   @Nullable final Charset aCharset)
+                                   @Nullable final Charset aCharset,
+                                   @Nullable final ICommonsOrderedMap <String, String> aCustomProperties)
   {
     ValueEnforcer.isTrue (aDataBytes != null || aDataFile != null, "SrcData or SrcFile must be present");
     ValueEnforcer.isFalse (aDataBytes != null && aDataFile != null,
@@ -68,6 +75,8 @@ public class AS4OutgoingAttachment
     m_aMimeType = aMimeType;
     m_eCompressionMode = eCompressionMode;
     m_aCharset = aCharset;
+    // Create a clone
+    m_aCustomProperties = aCustomProperties != null ? aCustomProperties.getClone () : new CommonsLinkedHashMap <> ();
   }
 
   /**
@@ -160,6 +169,28 @@ public class AS4OutgoingAttachment
     return m_aCharset;
   }
 
+  /**
+   * @return All custom properties contained. Never <code>null</code>.
+   * @since 2.8.6
+   */
+  @Nonnull
+  @ReturnsMutableObject
+  public final ICommonsOrderedMap <String, String> customProperties ()
+  {
+    return m_aCustomProperties;
+  }
+
+  /**
+   * @return All custom properties contained. Never <code>null</code>.
+   * @since 2.8.6
+   */
+  @Nonnull
+  @ReturnsMutableCopy
+  public final ICommonsOrderedMap <String, String> getAllCustomProperties ()
+  {
+    return m_aCustomProperties.getClone ();
+  }
+
   @Override
   public String toString ()
   {
@@ -170,6 +201,7 @@ public class AS4OutgoingAttachment
                                        .append ("MimeType", m_aMimeType)
                                        .append ("CompressionMode", m_eCompressionMode)
                                        .append ("Charset", m_aCharset)
+                                       .append ("CustomProperties", m_aCustomProperties)
                                        .getToString ();
   }
 
@@ -199,6 +231,7 @@ public class AS4OutgoingAttachment
     private IMimeType m_aMimeType;
     private EAS4CompressionMode m_eCompressionMode;
     private Charset m_aCharset;
+    private final ICommonsOrderedMap <String, String> m_aCustomProperties = new CommonsLinkedHashMap <> ();
 
     public Builder ()
     {}
@@ -296,6 +329,81 @@ public class AS4OutgoingAttachment
       return this;
     }
 
+    /**
+     * Add a single custom property.
+     *
+     * @param sKey
+     *        They property key. May be <code>null</code>. Only properties with
+     *        a non-<code>null</code> key are considered.
+     * @param sValue
+     *        The value to use. May be <code>null</code>.
+     * @return this for chaining
+     * @since 2.8.6
+     */
+    @Nonnull
+    public Builder addCustomProperty (@Nullable final String sKey, @Nullable final String sValue)
+    {
+      if (StringHelper.hasText (sKey))
+        m_aCustomProperties.put (sKey, sValue);
+      return this;
+    }
+
+    /**
+     * Add the provided map of custom properties. Existing custom properties are
+     * not changed, but may be overwritten.
+     *
+     * @param a
+     *        The key-value-pairs to be added as custom properties. May be
+     *        <code>null</code>.
+     * @return this for chaining
+     * @since 2.8.6
+     */
+    @Nonnull
+    public Builder addCustomProperties (@Nullable final ICommonsOrderedMap <String, String> a)
+    {
+      m_aCustomProperties.addAll (a);
+      return this;
+    }
+
+    /**
+     * Remove all existing custom properties and only use the provided one.
+     *
+     * @param sKey
+     *        They property key. May be <code>null</code>. Only properties with
+     *        a non-<code>null</code> key are considered.
+     * @param sValue
+     *        The value to use. May be <code>null</code>.
+     * @return this for chaining
+     * @since 2.8.6
+     */
+    @Nonnull
+    public Builder customProperty (@Nullable final String sKey, @Nullable final String sValue)
+    {
+      if (StringHelper.hasText (sKey))
+      {
+        m_aCustomProperties.clear ();
+        m_aCustomProperties.put (sKey, sValue);
+      }
+      return this;
+    }
+
+    /**
+     * Use the provided map of custom properties. All existing custom properties
+     * are removed.
+     *
+     * @param a
+     *        The key-value-pairs to use as custom properties. May be
+     *        <code>null</code>.
+     * @return this for chaining
+     * @since 2.8.6
+     */
+    @Nonnull
+    public Builder customProperties (@Nullable final ICommonsOrderedMap <String, String> a)
+    {
+      m_aCustomProperties.setAll (a);
+      return this;
+    }
+
     @OverridingMethodsMustInvokeSuper
     protected void checkConsistency ()
     {
@@ -315,7 +423,8 @@ public class AS4OutgoingAttachment
                                         m_sFilename,
                                         m_aMimeType,
                                         m_eCompressionMode,
-                                        m_aCharset);
+                                        m_aCharset,
+                                        m_aCustomProperties);
     }
   }
 }
