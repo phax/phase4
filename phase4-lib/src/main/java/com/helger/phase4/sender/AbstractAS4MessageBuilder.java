@@ -750,6 +750,13 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     return ESuccess.SUCCESS;
   }
 
+  /**
+   * Check if all mandatory fields are set. This method is called after
+   * {@link #finishFields()} and before {@link #customizeBeforeSending()}
+   *
+   * @return <code>true</code> if all mandatory fields are set, and sending can
+   *         continue.
+   */
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
   {
@@ -804,7 +811,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   /**
    * Internal method that is invoked after the required fields are checked but
    * before sending takes place. This is e.g. the perfect place to add custom
-   * message properties.
+   * message properties. This method is called after
+   * {@link #isEveryRequiredFieldSet()} and before {@link #mainSendMessage()}.
    *
    * @throws Phase4Exception
    *         if something goes wrong
@@ -823,9 +831,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected abstract void mainSendMessage () throws Phase4Exception;
 
   /**
-   * Internal method that is invoked after successful sending took place. This
-   * can e.g. be used to fulfill reporting requirements etc. This method must
-   * not throw an exception!
+   * Internal method that is invoked after successful sending took place, so
+   * after {@link #mainSendMessage()}. This can e.g. be used to fulfill
+   * reporting requirements etc. This method must not throw an exception!
    *
    * @since 2.2.2
    */
