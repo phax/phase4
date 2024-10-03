@@ -342,25 +342,29 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     if (aAttachment.hasDataBytes ())
     {
       // Byte array
-      return createOutgoingFileAttachment (aAttachment.getDataBytes ().bytes (),
-                                           aAttachment.getContentID (),
-                                           aAttachment.getFilename (),
-                                           aAttachment.getMimeType (),
-                                           aAttachment.getCompressionMode (),
-                                           aAttachment.getCharset (),
-                                           aResHelper);
+      final WSS4JAttachment ret = createOutgoingFileAttachment (aAttachment.getDataBytes ().bytes (),
+                                                                aAttachment.getContentID (),
+                                                                aAttachment.getFilename (),
+                                                                aAttachment.getMimeType (),
+                                                                aAttachment.getCompressionMode (),
+                                                                aAttachment.getCharset (),
+                                                                aResHelper);
+      ret.customPartProperties ().addAll (aAttachment.customProperties ());
+      return ret;
     }
 
     if (aAttachment.hasDataFile ())
     {
       // File based
-      return createOutgoingFileAttachment (aAttachment.getDataFile (),
-                                           aAttachment.getContentID (),
-                                           aAttachment.getFilename (),
-                                           aAttachment.getMimeType (),
-                                           aAttachment.getCompressionMode (),
-                                           aAttachment.getCharset (),
-                                           aResHelper);
+      final WSS4JAttachment ret = createOutgoingFileAttachment (aAttachment.getDataFile (),
+                                                                aAttachment.getContentID (),
+                                                                aAttachment.getFilename (),
+                                                                aAttachment.getMimeType (),
+                                                                aAttachment.getCompressionMode (),
+                                                                aAttachment.getCharset (),
+                                                                aResHelper);
+      ret.customPartProperties ().addAll (aAttachment.customProperties ());
+      return ret;
     }
 
     // Must be one of the 2 variants

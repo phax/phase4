@@ -194,6 +194,7 @@ public final class Phase4ENTSOGSender
                                                     @Nonnull final AS4ResourceHelper aResHelper) throws IOException
     {
       final WSS4JAttachment aPayloadAttachment = WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);
+
       if (m_aPayloadParams != null)
       {
         if (m_aPayloadParams.getDocumentType () != null)
