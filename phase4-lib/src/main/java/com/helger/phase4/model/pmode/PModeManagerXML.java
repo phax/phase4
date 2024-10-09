@@ -40,11 +40,11 @@ import com.helger.photon.security.object.BusinessObjectHelper;
  * @author Philip Helger
  */
 @ThreadSafe
-public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> implements IPModeManager
+public class PModeManagerXML extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> implements IPModeManager
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (PModeManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (PModeManagerXML.class);
 
-  public PModeManager (@Nullable final String sFilename) throws DAOException
+  public PModeManagerXML (@Nullable final String sFilename) throws DAOException
   {
     super (PMode.class, sFilename);
   }

@@ -25,7 +25,7 @@ import org.junit.rules.TestRule;
 
 import com.helger.dao.DAOException;
 import com.helger.phase4.model.pmode.PMode;
-import com.helger.phase4.model.pmode.PModeManager;
+import com.helger.phase4.model.pmode.PModeManagerXML;
 import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.profile.entsog.ENTSOGPMode;
 
@@ -37,7 +37,7 @@ public final class Issue118Test
   @Test
   public void test () throws DAOException
   {
-    final PModeManager pModeManager = new PModeManager (null);
+    final PModeManagerXML pModeManager = new PModeManagerXML (null);
 
     final PMode pMode = ENTSOGPMode.createENTSOGPMode ("SenderX",
                                                        "ResponderY",

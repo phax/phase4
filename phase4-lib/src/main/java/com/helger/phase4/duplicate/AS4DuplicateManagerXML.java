@@ -28,7 +28,6 @@ import com.helger.commons.state.EChange;
 import com.helger.commons.state.EContinue;
 import com.helger.commons.string.StringHelper;
 import com.helger.dao.DAOException;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.photon.io.dao.AbstractPhotonMapBasedWALDAO;
 
 /**
@@ -37,11 +36,11 @@ import com.helger.photon.io.dao.AbstractPhotonMapBasedWALDAO;
  * @author Philip Helger
  */
 @ThreadSafe
-@ChangePhase4V3 ("Renamed to include XML")
-public class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4DuplicateItem, AS4DuplicateItem> implements
-                                 IAS4DuplicateManager
+public class AS4DuplicateManagerXML extends AbstractPhotonMapBasedWALDAO <IAS4DuplicateItem, AS4DuplicateItem>
+                                    implements
+                                    IAS4DuplicateManager
 {
-  public AS4DuplicateManager (@Nullable final String sFilename) throws DAOException
+  public AS4DuplicateManagerXML (@Nullable final String sFilename) throws DAOException
   {
     super (AS4DuplicateItem.class, sFilename);
   }

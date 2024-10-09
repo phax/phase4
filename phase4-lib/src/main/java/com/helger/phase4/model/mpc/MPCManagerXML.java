@@ -34,9 +34,9 @@ import com.helger.photon.security.object.BusinessObjectHelper;
  * @author Philip Helger
  */
 @ThreadSafe
-public class MPCManager extends AbstractPhotonMapBasedWALDAO <IMPC, MPC> implements IMPCManager
+public class MPCManagerXML extends AbstractPhotonMapBasedWALDAO <IMPC, MPC> implements IMPCManager
 {
-  public MPCManager (@Nullable final String sFilename) throws DAOException
+  public MPCManagerXML (@Nullable final String sFilename) throws DAOException
   {
     super (MPC.class, sFilename);
   }

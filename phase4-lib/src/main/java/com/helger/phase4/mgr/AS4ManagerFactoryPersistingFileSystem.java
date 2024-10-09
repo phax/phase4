@@ -19,12 +19,12 @@ package com.helger.phase4.mgr;
 import javax.annotation.Nonnull;
 
 import com.helger.dao.DAOException;
-import com.helger.phase4.duplicate.AS4DuplicateManager;
+import com.helger.phase4.duplicate.AS4DuplicateManagerXML;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
-import com.helger.phase4.model.mpc.MPCManager;
+import com.helger.phase4.model.mpc.MPCManagerXML;
 import com.helger.phase4.model.pmode.IPModeManager;
-import com.helger.phase4.model.pmode.PModeManager;
+import com.helger.phase4.model.pmode.PModeManagerXML;
 import com.helger.phase4.profile.AS4ProfileManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.phase4.util.Phase4Exception;
@@ -47,7 +47,7 @@ public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
   {
     try
     {
-      return new MPCManager (MPC_XML);
+      return new MPCManagerXML (MPC_XML);
     }
     catch (final DAOException ex)
     {
@@ -60,7 +60,7 @@ public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
   {
     try
     {
-      return new PModeManager (PMODE_XML);
+      return new PModeManagerXML (PMODE_XML);
     }
     catch (final DAOException ex)
     {
@@ -73,7 +73,7 @@ public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
   {
     try
     {
-      return new AS4DuplicateManager (INCOMING_DUPLICATE_XML);
+      return new AS4DuplicateManagerXML (INCOMING_DUPLICATE_XML);
     }
     catch (final DAOException ex)
     {
