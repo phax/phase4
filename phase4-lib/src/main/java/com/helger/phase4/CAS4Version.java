@@ -44,12 +44,12 @@ public final class CAS4Version
   {
     String sProjectVersion = null;
     String sProjectTimestamp = null;
-    final ICommonsMap <String, String> p = PropertiesHelper.loadProperties (new ClassPathResource ("phase4-version.properties",
-                                                                                                   CAS4Version.class.getClassLoader ()));
-    if (p != null)
+    final ICommonsMap <String, String> aProps = PropertiesHelper.loadProperties (new ClassPathResource ("phase4-version.properties",
+                                                                                                        CAS4Version.class.getClassLoader ()));
+    if (aProps != null)
     {
-      sProjectVersion = p.get ("version");
-      sProjectTimestamp = p.get ("timestamp");
+      sProjectVersion = aProps.get ("version");
+      sProjectTimestamp = aProps.get ("timestamp");
     }
     if (sProjectVersion == null)
     {
