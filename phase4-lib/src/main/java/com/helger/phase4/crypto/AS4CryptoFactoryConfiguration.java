@@ -69,6 +69,9 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
     return DEFAULT_INSTANCE;
   }
 
+  private final IAS4KeyStoreDescriptor m_aKeyStoreDesc;
+  private final IAS4TrustStoreDescriptor m_aTrustStorDesc;
+
   /**
    * This constructor takes the configuration object and uses the default prefix
    * for backwards compatibility. This is kind of the default constructor.
@@ -81,7 +84,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
     this (aConfig, DEFAULT_CONFIG_PREFIX);
   }
 
-  @Nullable
+  @Nonnull
   private static IAS4KeyStoreDescriptor _loadKeyStore (@Nonnull final IConfigWithFallback aConfig,
                                                        @Nonnull @Nonempty final String sConfigPrefix)
   {
@@ -112,16 +115,20 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
   private static IAS4TrustStoreDescriptor _loadTrustStore (@Nonnull final IConfigWithFallback aConfig,
                                                            @Nonnull @Nonempty final String sConfigPrefix)
   {
+    // Load the trust store - may be null
     final IAS4TrustStoreDescriptor aDescriptor = AS4TrustStoreDescriptor.createFromConfig (aConfig,
                                                                                            sConfigPrefix,
                                                                                            null);
-    final LoadedKeyStore aLTS = aDescriptor.loadTrustStore ();
-    if (aLTS.getKeyStore () == null)
+    if (aDescriptor != null)
     {
-      LOGGER.error ("Failed to load the trust store from the properties starting with '" +
-                    sConfigPrefix +
-                    "': " +
-                    aLTS.getErrorText (Locale.ROOT));
+      final LoadedKeyStore aLTS = aDescriptor.loadTrustStore ();
+      if (aLTS.getKeyStore () == null)
+      {
+        LOGGER.error ("Failed to load the trust store from the properties starting with '" +
+                      sConfigPrefix +
+                      "': " +
+                      aLTS.getErrorText (Locale.ROOT));
+      }
     }
     return aDescriptor;
   }
@@ -139,6 +146,33 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
   public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig,
                                         @Nonnull @Nonempty final String sConfigPrefix)
   {
-    super (_loadKeyStore (aConfig, sConfigPrefix), _loadTrustStore (aConfig, sConfigPrefix));
+    this (_loadKeyStore (aConfig, sConfigPrefix), _loadTrustStore (aConfig, sConfigPrefix));
+  }
+
+  private AS4CryptoFactoryConfiguration (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
+                                         @Nonnull final IAS4TrustStoreDescriptor aTrustStorDesc)
+  {
+    super (aKeyStoreDesc, aTrustStorDesc);
+    m_aKeyStoreDesc = aKeyStoreDesc;
+    m_aTrustStorDesc = aTrustStorDesc;
+  }
+
+  /**
+   * @return The descriptor used to load the key store. Never <code>null</code>.
+   */
+  @Nonnull
+  public IAS4KeyStoreDescriptor getKeyStoreDescriptor ()
+  {
+    return m_aKeyStoreDesc;
+  }
+
+  /**
+   * @return The descriptor used to load the trust store. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public IAS4TrustStoreDescriptor getTrustStoreDescriptor ()
+  {
+    return m_aTrustStorDesc;
   }
 }

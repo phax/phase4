@@ -25,6 +25,7 @@ import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.io.resource.FileSystemResource;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.AS4CryptoProperties;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
 
 /**
@@ -55,12 +56,13 @@ public final class MainDecipherAS4In
     if (aBytes == null)
       throw new IllegalStateException ("Failed to read file content as byte array");
 
-    final AS4CryptoFactoryProperties aCryptoFactory = new AS4CryptoFactoryProperties (aCP);
+    final IAS4CryptoFactory aCryptoFactory = new AS4CryptoFactoryProperties (aCP);
     AS4DumpReader.decryptAS4In (aBytes,
                                 aCryptoFactory,
                                 aCryptoFactory,
                                 null,
-                                (nIndex, aDecryptedBytes) -> SimpleFileIO.writeFile (new File (folder,
+                                (nIndex, aDecryptedBytes) -> SimpleFileIO.writeFile (
+                                                                                     new File (folder,
                                                                                                "payload-" +
                                                                                                        nIndex +
                                                                                                        ".decrypted"),

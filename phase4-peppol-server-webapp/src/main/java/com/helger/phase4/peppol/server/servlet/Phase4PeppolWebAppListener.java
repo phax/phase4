@@ -48,8 +48,7 @@ import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
-import com.helger.phase4.crypto.AS4CryptoProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
@@ -139,8 +138,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
-        null)
+    if (CommandMap.getDefaultCommandMap ()
+                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -187,8 +186,9 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
         final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".metadata");
         if (SimpleFileIO.writeFile (aFile,
                                     AS4IncomingHelper.getIncomingMetadataAsJson (aMessageMetadata)
-                                                      .getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
-                                    StandardCharsets.UTF_8).isFailure ())
+                                                     .getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
+                                    StandardCharsets.UTF_8)
+                        .isFailure ())
           LOGGER.error ("Failed to write metadata to '" + aFile.getAbsolutePath () + "'");
         else
           LOGGER.info ("Wrote metadata to '" + aFile.getAbsolutePath () + "'");
@@ -196,10 +196,11 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     });
 
     // Store the outgoings file as well
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> StorageHelper
-                                                                                                                    .getStorageFile (sMessageID,
-                                                                                                                                     nTry,
-                                                                                                                                     ".as4out")));
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode,
+                                                                        sMessageID,
+                                                                        nTry) -> StorageHelper.getStorageFile (sMessageID,
+                                                                                                               nTry,
+                                                                                                               ".as4out")));
   }
 
   private static void _initPeppolAS4 ()
@@ -222,15 +223,14 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                        AS4Configuration.getConfig ().getAsInt ("http.proxy.port")));
     PeppolCRLDownloader.setAsDefaultCRLCache (aHCS);
 
-    final AS4CryptoFactoryProperties aCF = AS4CryptoFactoryProperties.getDefaultInstance ();
-    final AS4CryptoProperties aCP = aCF.cryptoProperties ();
+    final AS4CryptoFactoryConfiguration aCF = AS4CryptoFactoryConfiguration.getDefaultInstance ();
 
     // Check if crypto properties are okay - fail early if something is
     // misconfigured
     LOGGER.info ("Trying to load configured key store (type=" +
-                 aCP.getKeyStoreType () +
+                 aCF.getKeyStoreDescriptor ().getKeyStoreType () +
                  ", path=" +
-                 aCP.getKeyStorePath () +
+                 aCF.getKeyStoreDescriptor ().getKeyStorePath () +
                  ")");
     final KeyStore aKS = aCF.getKeyStore ();
     if (aKS == null)
@@ -250,7 +250,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
         try
         {
           final KeyStore.Entry aEntry = aKS.getEntry (sAlias,
-                                                      new KeyStore.PasswordProtection (aCP.getKeyPasswordCharArray ()));
+                                                      new KeyStore.PasswordProtection (aCF.getKeyStoreDescriptor ()
+                                                                                          .getKeyPassword ()));
           if (aEntry instanceof KeyStore.PrivateKeyEntry)
             sType = "private-key";
           else
@@ -283,7 +284,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
     // Check if the key configuration is okay - fail early if something is
     // misconfigured
-    LOGGER.info ("Trying to load configured private key (alias=" + aCP.getKeyAlias () + ")");
+    LOGGER.info ("Trying to load configured private key (alias=" + aCF.getKeyAlias () + ")");
     final PrivateKeyEntry aPKE = aCF.getPrivateKeyEntry ();
     if (aPKE == null)
       throw new InitializationException ("Failed to load configured private key");

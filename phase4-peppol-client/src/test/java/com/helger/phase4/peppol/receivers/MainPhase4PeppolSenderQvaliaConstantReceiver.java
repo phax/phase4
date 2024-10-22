@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
 
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
@@ -78,7 +78,7 @@ public final class MainPhase4PeppolSenderQvaliaConstantReceiver
         }
       };
 
-      final IAS4CryptoFactory cf = AS4CryptoFactoryProperties.getDefaultInstance ();
+      final IAS4CryptoFactory cf = AS4CryptoFactoryConfiguration.getDefaultInstance ();
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))

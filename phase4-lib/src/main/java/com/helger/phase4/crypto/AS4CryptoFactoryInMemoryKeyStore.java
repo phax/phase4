@@ -54,15 +54,17 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    * @param aKeyStoreDesc
    *        The key store descriptor. May not be <code>null</code>.
    * @param aTrustStoreDesc
-   *        The trust store descriptor. May not be <code>null</code>.
+   *        The trust store descriptor. May be <code>null</code> in which case
+   *        the global JRE CA certs list will be used.
+   * @since 3.0.0
    */
-  protected AS4CryptoFactoryInMemoryKeyStore (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
-                                              @Nonnull final IAS4TrustStoreDescriptor aTrustStoreDesc)
+  public AS4CryptoFactoryInMemoryKeyStore (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
+                                           @Nonnull final IAS4TrustStoreDescriptor aTrustStoreDesc)
   {
     this (aKeyStoreDesc.loadKeyStore ().getKeyStore (),
           aKeyStoreDesc.getKeyAlias (),
           aKeyStoreDesc.getKeyPassword (),
-          aTrustStoreDesc.loadTrustStore ().getKeyStore ());
+          aTrustStoreDesc == null ? null : aTrustStoreDesc.loadTrustStore ().getKeyStore ());
   }
 
   /**

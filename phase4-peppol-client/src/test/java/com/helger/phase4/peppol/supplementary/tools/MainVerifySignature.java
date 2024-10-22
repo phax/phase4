@@ -42,7 +42,7 @@ import com.helger.commons.mutable.MutableInt;
 import com.helger.commons.state.ESuccess;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
@@ -172,7 +172,7 @@ public class MainVerifySignature
         throw new IllegalStateException ("Failed to read the payload as XML. Maybe it is a MIME message? MIME messages are unfortunately not yet supported.");
 
       // Main action
-      final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
+      final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryConfiguration.getDefaultInstance ();
       final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
       _verifyAndDecrypt (aResHelper,
                          aCryptoFactory,

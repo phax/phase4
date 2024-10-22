@@ -43,10 +43,12 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientErrorMessage;
 import com.helger.phase4.client.AS4ClientReceiptMessage;
 import com.helger.phase4.client.AS4ClientSentMessage;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
-import com.helger.phase4.crypto.AS4CryptoProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
+import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
+import com.helger.phase4.crypto.AS4TrustStoreDescriptor;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
@@ -76,20 +78,23 @@ public class MainPhase4EuCtpSenderExample
   private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4EuCtpSenderExample.class);
 
   @Nonnull
-  private static AS4CryptoProperties _buildAs4CryptoProperties ()
+  private static IAS4CryptoFactory _buildAs4CryptoFactory ()
   {
-    final AS4CryptoProperties ret = new AS4CryptoProperties ();
-    ret.setKeyStorePath (System.getenv ("AS4_SIGNING_KEYSTORE_PATH"));
-    ret.setKeyStoreType (EKeyStoreType.PKCS12);
-    ret.setKeyStorePassword (System.getenv ("AS4_SIGNING_KEYSTORE_PASSWORD"));
-    ret.setKeyAlias (System.getenv ("AS4_SIGNING_KEY_ALIAS"));
-    ret.setKeyPassword (System.getenv ("AS4_SIGNING_KEY_PASSWORD"));
-
-    // must include the Taxud CA and intermediate certificates
-    ret.setTrustStorePath (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PATH"));
-    ret.setTrustStoreType (EKeyStoreType.PKCS12);
-    ret.setTrustStorePassword (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PASSWORD"));
-    return ret;
+    return new AS4CryptoFactoryInMemoryKeyStore (AS4KeyStoreDescriptor.builder ()
+                                                                      .type (EKeyStoreType.PKCS12)
+                                                                      .path (System.getenv ("AS4_SIGNING_KEYSTORE_PATH"))
+                                                                      .password (System.getenv ("AS4_SIGNING_KEYSTORE_PASSWORD"))
+                                                                      .keyAlias (System.getenv ("AS4_SIGNING_KEY_ALIAS"))
+                                                                      .keyPassword (System.getenv ("AS4_SIGNING_KEY_PASSWORD"))
+                                                                      .build (),
+                                                 // must include the Taxud CA
+                                                 // and intermediate
+                                                 // certificates
+                                                 AS4TrustStoreDescriptor.builder ()
+                                                                        .type (EKeyStoreType.PKCS12)
+                                                                        .path (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PATH"))
+                                                                        .password (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PASSWORD"))
+                                                                        .build ());
   }
 
   public static void main (final String [] args)
@@ -113,8 +118,7 @@ public class MainPhase4EuCtpSenderExample
       final Phase4EuCtpHttpClientSettings aHttpClientSettings = new Phase4EuCtpHttpClientSettings (aSslKeyStore,
                                                                                                    aKeyStorePassword);
 
-      final AS4CryptoProperties as4CryptoProperties = _buildAs4CryptoProperties ();
-      final AS4CryptoFactoryProperties cryptoFactoryProperties = new AS4CryptoFactoryProperties (as4CryptoProperties);
+      final IAS4CryptoFactory cryptoFactoryProperties = _buildAs4CryptoFactory ();
 
       // configured on the STI
       final String fromPartyID = System.getenv ("AS4_FROM_PARTY_ID");
@@ -142,7 +146,7 @@ public class MainPhase4EuCtpSenderExample
 
   private static void _sendPullRequest (final Phase4EuCtpHttpClientSettings aHttpClientSettings,
                                         final String fromPartyID,
-                                        final AS4CryptoFactoryProperties cryptoFactoryProperties) throws Phase4Exception
+                                        final IAS4CryptoFactory cryptoFactory) throws Phase4Exception
   {
     final Wrapper <Ebms3UserMessage> aUserMessageHolder = new Wrapper <> ();
     final Wrapper <Ebms3SignalMessage> aSignalMessageHolder = new Wrapper <> ();
@@ -187,7 +191,7 @@ public class MainPhase4EuCtpSenderExample
                                                                  aSignalMessageHolder.set (aEbmsSignalMsg);
                                                                  aSoapDocHolder.set (aIncomingState.getEffectiveDecryptedSoapDocument ());
                                                                })
-                                                               .cryptoFactory (cryptoFactoryProperties);
+                                                               .cryptoFactory (cryptoFactory);
     final ESuccess eSuccess = prBuilder.sendMessage ();
     //
     LOGGER.info ("euctp pull request result: " + eSuccess);
@@ -305,7 +309,7 @@ public class MainPhase4EuCtpSenderExample
   private static void _sendConnectionTest (final Phase4EuCtpHttpClientSettings aHttpClientSettings,
                                            final String fromPartyID,
                                            final Wrapper <Ebms3SignalMessage> aSignalMsgHolder,
-                                           final AS4CryptoFactoryProperties cryptoFactoryProperties)
+                                           final IAS4CryptoFactory cryptoFactory)
   {
     EAS4UserMessageSendResult eResult;
     eResult = Phase4EuCtpSender.builderUserMessage ()
@@ -320,7 +324,7 @@ public class MainPhase4EuCtpSenderExample
                                .service ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service")
                                .action (EuCtpPMode.ACTION_TEST)
                                .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> aSignalMsgHolder.set (aSignalMsg))
-                               .cryptoFactory (cryptoFactoryProperties)
+                               .cryptoFactory (cryptoFactory)
                                // .payload(new
                                // AS4OutgoingAttachment.Builder().data(aPayloadBytes).mimeTypeXML())
                                .sendMessageAndCheckForReceipt ();
@@ -330,7 +334,7 @@ public class MainPhase4EuCtpSenderExample
 
   private static void _sendENSFilling (final Phase4EuCtpHttpClientSettings aHttpClientSettings,
                                        final String fromPartyID,
-                                       final AS4CryptoFactoryProperties cryptoFactoryProperties)
+                                       final IAS4CryptoFactory cryptoFactory)
   {
     // Read XML payload to send
     final byte [] aPayloadBytes = StreamHelper.getAllBytes (new ClassPathResource ("/external/examples/base-example.xml"));
@@ -349,7 +353,7 @@ public class MainPhase4EuCtpSenderExample
                                .service (EuCtpPMode.DEFAULT_SERVICE_TYPE, EEuCtpService.TRADER_TO_CUSTOMS)
                                .action (EEuCtpAction.IE3F26)
                                .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> aSignalMsgHolder.set (aSignalMsg))
-                               .cryptoFactory (cryptoFactoryProperties)
+                               .cryptoFactory (cryptoFactory)
                                .conversationID (UUID.randomUUID ().toString ())
                                .payload (new AS4OutgoingAttachment.Builder ().compressionGZIP ()
                                                                              .data (aPayloadBytes)

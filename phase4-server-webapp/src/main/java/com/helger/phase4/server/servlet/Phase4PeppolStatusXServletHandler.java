@@ -36,7 +36,7 @@ import com.helger.commons.system.SystemProperties;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
 import com.helger.phase4.CAS4Version;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -64,7 +64,7 @@ public class Phase4PeppolStatusXServletHandler implements IXServletSimpleHandler
     aStatusData.add ("phase4.version", CAS4Version.BUILD_VERSION);
     aStatusData.add ("phase4.build-timestamp", CAS4Version.BUILD_TIMESTAMP);
 
-    final IAS4CryptoFactory aCF = AS4CryptoFactoryProperties.getDefaultInstance ();
+    final IAS4CryptoFactory aCF = AS4CryptoFactoryConfiguration.getDefaultInstance ();
     final KeyStore aKS = aCF.getKeyStore ();
     aStatusData.add ("phase4.keystore.loaded", aKS != null);
     if (aKS != null)

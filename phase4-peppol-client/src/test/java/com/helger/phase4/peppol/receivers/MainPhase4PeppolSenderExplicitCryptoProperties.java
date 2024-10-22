@@ -23,9 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.sml.ESML;
+import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.IParticipantIdentifier;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
-import com.helger.phase4.crypto.AS4CryptoProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
+import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
+import com.helger.phase4.crypto.AS4TrustStoreDescriptor;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
@@ -56,20 +58,24 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Manual information - don't use crypto.properties
-      final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStoreType (EKeyStoreType.PKCS12)
-                                                                .setKeyStorePath ("test-ap.p12")
-                                                                .setKeyStorePassword ("peppol")
-                                                                .setKeyAlias ("openpeppol aisbl id von pop000306")
-                                                                .setKeyPassword ("peppol")
-                                                                .setTrustStoreType (EKeyStoreType.JKS)
-                                                                .setTrustStorePath ("complete-truststore.jks")
-                                                                .setTrustStorePassword ("peppol");
+      final AS4KeyStoreDescriptor aKSD = AS4KeyStoreDescriptor.builder ()
+                                                              .type (EKeyStoreType.PKCS12)
+                                                              .path ("test-ap.p12")
+                                                              .password ("peppol")
+                                                              .keyAlias ("openpeppol aisbl id von pop000306")
+                                                              .keyPassword ("peppol")
+                                                              .build ();
+      final AS4TrustStoreDescriptor aTSD = AS4TrustStoreDescriptor.builder ()
+                                                                  .type (PeppolKeyStoreHelper.TRUSTSTORE_TYPE)
+                                                                  .path (PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PILOT_CLASSPATH)
+                                                                  .password (PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
+                                                                  .build ();
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
-                                  .cryptoFactory (new AS4CryptoFactoryProperties (aCP))
+                                  .cryptoFactory (new AS4CryptoFactoryInMemoryKeyStore (aKSD, aTSD))
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))

@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
+import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.config.fallback.IConfigWithFallback;
@@ -109,10 +110,10 @@ public class AS4TrustStoreDescriptor implements IAS4TrustStoreDescriptor
    * @param aProvider
    *        The Java security provider for loading the trust store. May be
    *        <code>null</code> to use the default.
-   * @return A new {@link AS4TrustStoreDescriptor} object and never
-   *         <code>null</code>.
+   * @return A new {@link AS4TrustStoreDescriptor} object or <code>null</code>
+   *         if path or password are not present.
    */
-  @Nonnull
+  @Nullable
   public static AS4TrustStoreDescriptor createFromConfig (@Nonnull final IConfigWithFallback aConfig,
                                                           @Nonnull @Nonempty final String sConfigPrefix,
                                                           @Nullable final Provider aProvider)
@@ -128,6 +129,83 @@ public class AS4TrustStoreDescriptor implements IAS4TrustStoreDescriptor
     final String sPath = aConfig.getAsString (sConfigPrefix + "truststore.file");
     final char [] aPassword = aConfig.getAsCharArray (sConfigPrefix + "truststore.password");
 
+    // No trust store configured
+    if (StringHelper.hasNoText (sPath) || aPassword == null)
+      return null;
+
     return new AS4TrustStoreDescriptor (aType, sPath, aPassword, aProvider);
+  }
+
+  /**
+   * @return A new builder for {@link AS4TrustStoreDescriptor} objects. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public static AS4TrustStoreDescriptorBuilder builder ()
+  {
+    return new AS4TrustStoreDescriptorBuilder ();
+  }
+
+  /**
+   * Builder class for class {@link AS4TrustStoreDescriptor}.
+   *
+   * @author Philip Helger
+   */
+  public static class AS4TrustStoreDescriptorBuilder implements IBuilder <AS4TrustStoreDescriptor>
+  {
+    private IKeyStoreType m_aType;
+    private String m_sPath;
+    private char [] m_aPassword;
+    private Provider m_aProvider;
+
+    public AS4TrustStoreDescriptorBuilder ()
+    {}
+
+    @Nonnull
+    public AS4TrustStoreDescriptorBuilder type (@Nullable final IKeyStoreType a)
+    {
+      m_aType = a;
+      return this;
+    }
+
+    @Nonnull
+    public AS4TrustStoreDescriptorBuilder path (@Nullable final String s)
+    {
+      m_sPath = s;
+      return this;
+    }
+
+    @Nonnull
+    public AS4TrustStoreDescriptorBuilder password (@Nullable final String s)
+    {
+      return password (s == null ? null : s.toCharArray ());
+    }
+
+    @Nonnull
+    public AS4TrustStoreDescriptorBuilder password (@Nullable final char [] a)
+    {
+      m_aPassword = a;
+      return this;
+    }
+
+    @Nonnull
+    public AS4TrustStoreDescriptorBuilder provider (@Nullable final Provider a)
+    {
+      m_aProvider = a;
+      return this;
+    }
+
+    @Nonnull
+    public AS4TrustStoreDescriptor build ()
+    {
+      if (m_aType == null)
+        throw new IllegalStateException ("Type is missing");
+      if (StringHelper.hasNoText (m_sPath))
+        throw new IllegalStateException ("Path is empty");
+      if (m_aPassword == null)
+        throw new IllegalStateException ("Password is missing");
+      // Provider may be null
+      return new AS4TrustStoreDescriptor (m_aType, m_sPath, m_aPassword, m_aProvider);
+    }
   }
 }

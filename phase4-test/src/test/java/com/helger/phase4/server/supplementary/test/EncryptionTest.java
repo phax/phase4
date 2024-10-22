@@ -40,7 +40,7 @@ import org.w3c.dom.Document;
 
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.crypto.ECryptoMode;
@@ -78,7 +78,7 @@ public final class EncryptionTest
 
   private static String _prettyDocumentToString (final Document doc) throws TransformerException
   {
-    try (NonBlockingByteArrayOutputStream baos = new NonBlockingByteArrayOutputStream ())
+    try (final NonBlockingByteArrayOutputStream baos = new NonBlockingByteArrayOutputStream ())
     {
       XMLUtils.elementToStream (doc.getDocumentElement (), baos);
       return baos.getAsString (StandardCharsets.UTF_8);
@@ -96,7 +96,7 @@ public final class EncryptionTest
   @Test
   public void testEncryptionDecryptionAES128GCM () throws Exception
   {
-    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryConfiguration.getDefaultInstance ();
 
     final Document aSoapDoc = _getSoapEnvelope11 ();
     final WSSecHeader aSecHeader = new WSSecHeader (aSoapDoc);
@@ -129,7 +129,7 @@ public final class EncryptionTest
   @Test
   public void testAES128GCM () throws Exception
   {
-    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryConfiguration.getDefaultInstance ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);

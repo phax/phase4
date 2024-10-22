@@ -48,7 +48,7 @@ import com.helger.httpclient.HttpClientHelper;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
 import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
@@ -73,7 +73,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 
   protected static AS4ResourceHelper s_aResMgr;
 
-  protected final IAS4CryptoFactory m_aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
+  protected final IAS4CryptoFactory m_aCryptoFactory = AS4CryptoFactoryConfiguration.getDefaultInstance ();
   protected final AS4CryptParams m_aCryptParams = AS4CryptParams.createDefault ().setAlias ("ph-as4");
   private final int m_nRetries;
 
@@ -194,12 +194,13 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
       else
       {
         // 200, 400 or 500
-        assertTrue ("Server responded with StatusCode=" + nStatusCode + ". Response:\n" + sResponse,
+        assertTrue ("Server responded with StatusCode=" +
+                    nStatusCode +
+                    ". Response:\n" +
+                    sResponse,
                     nStatusCode == CHttp.HTTP_OK ||
-                                                                                                     nStatusCode ==
-                                                    CHttp.HTTP_BAD_REQUEST ||
-                                                                                                     nStatusCode ==
-                                                                              CHttp.HTTP_INTERNAL_SERVER_ERROR);
+                               nStatusCode == CHttp.HTTP_BAD_REQUEST ||
+                               nStatusCode == CHttp.HTTP_INTERNAL_SERVER_ERROR);
         assertTrue ("Server responded with different error message than expected (" +
                     sExecptedResponseContent +
                     ")." +

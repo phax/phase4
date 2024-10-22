@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
+import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.config.fallback.IConfigWithFallback;
@@ -176,5 +177,104 @@ public class AS4KeyStoreDescriptor implements IAS4KeyStoreDescriptor
     final char [] aKeyPassword = aConfig.getAsCharArray (sConfigPrefix + "keystore.private.password");
 
     return new AS4KeyStoreDescriptor (aType, sPath, aPassword, aProvider, sKeyAlias, aKeyPassword);
+  }
+
+  /**
+   * @return A new builder for {@link AS4KeyStoreDescriptor} objects. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public static AS4KeyStoreDescriptorBuilder builder ()
+  {
+    return new AS4KeyStoreDescriptorBuilder ();
+  }
+
+  /**
+   * Builder class for class {@link AS4KeyStoreDescriptor}.
+   *
+   * @author Philip Helger
+   */
+  public static class AS4KeyStoreDescriptorBuilder implements IBuilder <AS4KeyStoreDescriptor>
+  {
+    private IKeyStoreType m_aType;
+    private String m_sPath;
+    private char [] m_aPassword;
+    private Provider m_aProvider;
+    private String m_sKeyAlias;
+    private char [] m_aKeyPassword;
+
+    public AS4KeyStoreDescriptorBuilder ()
+    {}
+
+    @Nonnull
+    public AS4KeyStoreDescriptorBuilder type (@Nullable final IKeyStoreType a)
+    {
+      m_aType = a;
+      return this;
+    }
+
+    @Nonnull
+    public AS4KeyStoreDescriptorBuilder path (@Nullable final String s)
+    {
+      m_sPath = s;
+      return this;
+    }
+
+    @Nonnull
+    public AS4KeyStoreDescriptorBuilder password (@Nullable final String s)
+    {
+      return password (s == null ? null : s.toCharArray ());
+    }
+
+    @Nonnull
+    public AS4KeyStoreDescriptorBuilder password (@Nullable final char [] a)
+    {
+      m_aPassword = a;
+      return this;
+    }
+
+    @Nonnull
+    public AS4KeyStoreDescriptorBuilder provider (@Nullable final Provider a)
+    {
+      m_aProvider = a;
+      return this;
+    }
+
+    @Nonnull
+    public AS4KeyStoreDescriptorBuilder keyAlias (@Nullable final String s)
+    {
+      m_sKeyAlias = s;
+      return this;
+    }
+
+    @Nonnull
+    public AS4KeyStoreDescriptorBuilder keyPassword (@Nullable final String s)
+    {
+      return keyPassword (s == null ? null : s.toCharArray ());
+    }
+
+    @Nonnull
+    public AS4KeyStoreDescriptorBuilder keyPassword (@Nullable final char [] a)
+    {
+      m_aKeyPassword = a;
+      return this;
+    }
+
+    @Nonnull
+    public AS4KeyStoreDescriptor build ()
+    {
+      if (m_aType == null)
+        throw new IllegalStateException ("Type is missing");
+      if (StringHelper.hasNoText (m_sPath))
+        throw new IllegalStateException ("Path is empty");
+      if (m_aPassword == null)
+        throw new IllegalStateException ("Password is missing");
+      // Provider may be null
+      if (StringHelper.hasNoText (m_sKeyAlias))
+        throw new IllegalStateException ("KeyAlias is empty");
+      if (m_aKeyPassword == null)
+        throw new IllegalStateException ("KeyPassword is missing");
+      return new AS4KeyStoreDescriptor (m_aType, m_sPath, m_aPassword, m_aProvider, m_sKeyAlias, m_aKeyPassword);
+    }
   }
 }

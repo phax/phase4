@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
 import com.helger.phase4.dump.AS4DumpReader.IDecryptedPayloadConsumer;
@@ -50,14 +50,14 @@ public final class MainDecipherAS4In
     if (aBytes == null)
       throw new IllegalStateException ("Failed to read file content as byte array");
 
-    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryConfiguration.getDefaultInstance ();
     // What to do with the decrypted payload
-    final IDecryptedPayloadConsumer aDecryptedConsumer = (idx, aDecryptedBytes) -> SimpleFileIO.writeFile (new File (
-                                                                                                                     aFile.getParentFile (),
-                                                                                                                     "payload-" +
-                                                                                                                                             idx +
-                                                                                                                                             ".decrypted"),
-                                                                                                           aDecryptedBytes);
+    final IDecryptedPayloadConsumer aDecryptedConsumer = (idx,
+                                                          aDecryptedBytes) -> SimpleFileIO.writeFile (new File (aFile.getParentFile (),
+                                                                                                                "payload-" +
+                                                                                                                                        idx +
+                                                                                                                                        ".decrypted"),
+                                                                                                      aDecryptedBytes);
 
     // Do it
     AS4DumpReader.decryptAS4In (aBytes, aCryptoFactory, aCryptoFactory, null, aDecryptedConsumer);

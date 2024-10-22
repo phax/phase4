@@ -31,7 +31,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -70,7 +70,7 @@ public final class MockMessages
                                                   @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = createUserMessageNotSigned (eSOAPVersion, aPayload, aAttachments);
-    return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
+    return AS4Signer.createSignedMessage (AS4CryptoFactoryConfiguration.getDefaultInstance (),
                                           aMsg.getAsSoapDocument (aPayload),
                                           eSOAPVersion,
                                           aMsg.getMessagingID (),
@@ -89,7 +89,7 @@ public final class MockMessages
                                                                                                              .build ());
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList)
                                                      .setMustUnderstand (true);
-    return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
+    return AS4Signer.createSignedMessage (AS4CryptoFactoryConfiguration.getDefaultInstance (),
                                           aErrorMsg.getAsSoapDocument (),
                                           eSOAPVersion,
                                           aErrorMsg.getMessagingID (),
@@ -109,7 +109,8 @@ public final class MockMessages
                                      aEbms3UserMessage,
                                      aUserMessage,
                                      true,
-                                     null).setMustUnderstand (true);
+                                     null)
+                            .setMustUnderstand (true);
   }
 
   @Nonnull
@@ -168,7 +169,8 @@ public final class MockMessages
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
                                   null,
-                                  eSOAPVersion).setMustUnderstand (true);
+                                  eSOAPVersion)
+                         .setMustUnderstand (true);
   }
 
   @Nonnull
@@ -204,7 +206,8 @@ public final class MockMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSOAPVersion).setMustUnderstand (true);
+                                                       eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 
@@ -239,7 +242,8 @@ public final class MockMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSOAPVersion).setMustUnderstand (true);
+                                                       eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 }

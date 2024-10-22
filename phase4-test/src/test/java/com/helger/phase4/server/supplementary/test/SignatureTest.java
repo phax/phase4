@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
@@ -78,7 +78,7 @@ public final class SignatureTest
   @Test
   public void testX509SignatureIS () throws Exception
   {
-    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryConfiguration.getDefaultInstance ();
 
     final Document aDoc = _getSoapEnvelope11 ();
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);

@@ -28,8 +28,8 @@ import org.w3c.dom.Node;
 
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
-import com.helger.phase4.crypto.AS4CryptoProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
+import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.model.ESoapVersion;
@@ -121,12 +121,14 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
     aClient.setNonRepudiation (true);
     aClient.setReceiptShouldBeSigned (true);
 
-    final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStoreType (EKeyStoreType.JKS)
-                                                              .setKeyStorePath ("keys/dummy-pw-test.jks")
-                                                              .setKeyStorePassword ("test")
-                                                              .setKeyAlias ("ph-as4")
-                                                              .setKeyPassword ("test");
-    aClient.setCryptoFactory (new AS4CryptoFactoryProperties (aCP));
+    aClient.setCryptoFactory (new AS4CryptoFactoryInMemoryKeyStore (AS4KeyStoreDescriptor.builder ()
+                                                                                         .type (EKeyStoreType.JKS)
+                                                                                         .path ("keys/dummy-pw-test.jks")
+                                                                                         .password ("test")
+                                                                                         .keyAlias ("ph-as4")
+                                                                                         .keyPassword ("test")
+                                                                                         .build (),
+                                                                    null));
 
     aClient.signingParams ()
            .setAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT)
