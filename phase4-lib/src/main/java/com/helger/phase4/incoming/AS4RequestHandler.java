@@ -109,6 +109,7 @@ import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.photon.io.PhotonWorkerPool;
 import com.helger.xml.serialize.write.XMLWriter;
 
@@ -297,6 +298,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @author Philip Helger
    * @since 0.13.1
    */
+  @ChangePhase4V3 ("Rename")
   public interface ISoapProcessingFinalizedCallback
   {
     /**
@@ -799,7 +801,9 @@ public class AS4RequestHandler implements AutoCloseable
   /**
    * Set an optional error consumer that is invoked with all errors determined
    * during message processing. The consumed list MUST NOT be modified.<br>
-   * Note: the error consumer is ONLY called if the error list is non-empty.
+   * Note: the error consumer is ONLY called if the error list is non-empty.<br>
+   * Note: the AS4 error message is sent back automatically - this is just
+   * informational.
    *
    * @param aErrorConsumer
    *        The consumer to be used. May be <code>null</code>.
@@ -859,9 +863,8 @@ public class AS4RequestHandler implements AutoCloseable
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
-    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId () : aEbmsSignalMessage
-                                                                                                                      .getMessageInfo ()
-                                                                                                                      .getMessageId ();
+    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
+                                             : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
 
     // Get all processors
     final ICommonsList <IAS4IncomingMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
@@ -1084,8 +1087,8 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (
-                                                                                                                       aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
+                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -1364,7 +1367,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                                         aUserMessage,
                                                                         aSoapDocument,
                                                                         _isSendNonRepudiationInformation (aEffectiveLeg),
-                                                                        null).setMustUnderstand (true);
+                                                                        null)
+                                                               .setMustUnderstand (true);
 
     final ESoapVersion eResponseSoapVersion = aEffectiveLeg.getProtocol ().getSoapVersion ();
     if (eResponseSoapVersion != eSoapVersion)
@@ -1836,8 +1840,9 @@ public class AS4RequestHandler implements AutoCloseable
                                                          new ResponseHandlerXml ());
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     (aAsyncResponse == null ? "null" : XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                                                   AS4HttpDebug.getDebugXMLWriterSettings ())));
+                                     (aAsyncResponse == null ? "null"
+                                                             : XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                                          AS4HttpDebug.getDebugXMLWriterSettings ())));
         };
 
         final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
@@ -2055,8 +2060,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager
-                                                                                                                     .getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
+                                                                                 : AS4DumpManager.getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else
