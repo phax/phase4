@@ -29,8 +29,8 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4OutgoingDumperFileBased.IFileProvider;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
+import com.helger.phase4.dump.IAS4OutgoingDumperFileProvider;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
@@ -74,7 +74,7 @@ public final class MainPhase4PeppolSenderACube
                                                                      ESML.DIGIT_TEST))
                                   .sbdBytesConsumer (x -> SimpleFileIO.writeFile (new File (AS4Configuration.getDumpBasePathFile (),
                                                                                             com.helger.phase4.dump.AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH +
-                                                                                                                                     IFileProvider.getFilename ("",
+                                                                                                                                     IAS4OutgoingDumperFileProvider.getDefaultDirectoryAndFilename ("",
                                                                                                                                                                 1) +
                                                                                                                                      ".sbdh"),
                                                                                   x))

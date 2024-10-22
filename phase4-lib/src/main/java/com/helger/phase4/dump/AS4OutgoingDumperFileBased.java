@@ -19,7 +19,6 @@ package com.helger.phase4.dump;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -32,15 +31,10 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
-import com.helger.commons.io.file.FilenameHelper;
-import com.helger.commons.string.StringHelper;
-import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.EAS4MessageMode;
-import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * File based implementation of {@link IAS4OutgoingDumper}.
@@ -50,58 +44,13 @@ import com.helger.phase4.v3.ChangePhase4V3;
  */
 public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHeaders <AS4OutgoingDumperFileBased>
 {
-  @FunctionalInterface
-  @ChangePhase4V3 ("Rename and extract")
-  public interface IFileProvider
-  {
-    /** The default file extension to be used */
-    String DEFAULT_FILE_EXTENSION = ".as4out";
-
-    /**
-     * Get the {@link File} to write the dump to. The filename must be globally
-     * unique. The resulting file should be an absolute path.
-     *
-     * @param eMsgMode
-     *        Are we dumping a request or a response? Never <code>null</code>.
-     *        Added in v1.2.0.
-     * @param sAS4MessageID
-     *        The AS4 message ID that was send out. Neither <code>null</code>
-     *        nor empty.
-     * @param nTry
-     *        The number of the try to send the message. The initial try has
-     *        value 0, the first retry has value 1 etc.
-     * @return A non-<code>null</code> {@link File}.
-     * @see AS4Configuration#getDumpBasePath()
-     */
-    @Nonnull
-    File getFile (@Nonnull EAS4MessageMode eMsgMode, @Nonnull @Nonempty String sAS4MessageID, @Nonnegative int nTry);
-
-    @Nonnull
-    static String getFilename (@Nonnull @Nonempty final String sAS4MessageID, @Nonnegative final int nTry)
-    {
-      final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-      return aNow.getYear () +
-             "/" +
-             StringHelper.getLeadingZero (aNow.getMonthValue (), 2) +
-             "/" +
-             StringHelper.getLeadingZero (aNow.getDayOfMonth (), 2) +
-             "/" +
-             PDTIOHelper.getTimeForFilename (aNow.toLocalTime ()) +
-             "-" +
-             FilenameHelper.getAsSecureValidASCIIFilename (sAS4MessageID) +
-             "-" +
-             nTry +
-             DEFAULT_FILE_EXTENSION;
-    }
-  }
-
   /**
    * The default relative path for outgoing messages.
    */
   public static final String DEFAULT_BASE_PATH = "outgoing/";
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4OutgoingDumperFileBased.class);
 
-  private final IFileProvider m_aFileProvider;
+  private final IAS4OutgoingDumperFileProvider m_aFileProvider;
 
   /**
    * Default constructor. Writes the files to the AS4 configured data path +
@@ -112,7 +61,7 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   public AS4OutgoingDumperFileBased ()
   {
     this ( (eMsgMode, sMessageID, nTry) -> new File (AS4Configuration.getDumpBasePathFile (),
-                                                     DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID, nTry)));
+                                                     DEFAULT_BASE_PATH + IAS4OutgoingDumperFileProvider.getDefaultDirectoryAndFilename (sMessageID, nTry)));
   }
 
   /**
@@ -122,14 +71,14 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
    *        The file provider that defines where to store the files. May not be
    *        <code>null</code>.
    */
-  public AS4OutgoingDumperFileBased (@Nonnull final IFileProvider aFileProvider)
+  public AS4OutgoingDumperFileBased (@Nonnull final IAS4OutgoingDumperFileProvider aFileProvider)
   {
     ValueEnforcer.notNull (aFileProvider, "FileProvider");
     m_aFileProvider = aFileProvider;
   }
 
   @Nonnull
-  protected final IFileProvider getFileProvider ()
+  protected final IAS4OutgoingDumperFileProvider getFileProvider ()
   {
     return m_aFileProvider;
   }
@@ -165,6 +114,6 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
     return new AS4OutgoingDumperFileBased ( (eMsgMode,
                                              sMessageID,
                                              nTry) -> new File (aBaseDirectory,
-                                                                IFileProvider.getFilename (sMessageID, nTry)));
+                                                                IAS4OutgoingDumperFileProvider.getDefaultDirectoryAndFilename (sMessageID, nTry)));
   }
 }
