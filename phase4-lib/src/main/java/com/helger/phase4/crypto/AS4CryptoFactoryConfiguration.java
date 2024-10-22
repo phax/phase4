@@ -54,8 +54,6 @@ import com.helger.security.keystore.LoadedKeyStore;
 @Immutable
 public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeyStore
 {
-  public static final String DEFAULT_CONFIG_PREFIX = "org.apache.wss4j.crypto.merlin.";
-
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptoFactoryConfiguration.class);
   private static final AS4CryptoFactoryConfiguration DEFAULT_INSTANCE = new AS4CryptoFactoryConfiguration (AS4Configuration.getConfig ());
 
@@ -81,7 +79,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    */
   public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig)
   {
-    this (aConfig, DEFAULT_CONFIG_PREFIX);
+    this (aConfig, CAS4Crypto.DEFAULT_CONFIG_PREFIX);
   }
 
   @Nonnull
@@ -149,8 +147,17 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
     this (_loadKeyStore (aConfig, sConfigPrefix), _loadTrustStore (aConfig, sConfigPrefix));
   }
 
-  private AS4CryptoFactoryConfiguration (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
-                                         @Nonnull final IAS4TrustStoreDescriptor aTrustStorDesc)
+  /**
+   * Constructor using the key store and trust store descriptors.
+   *
+   * @param aKeyStoreDesc
+   *        The key store descriptor. May not be <code>null</code>.
+   * @param aTrustStoreDesc
+   *        The trust store descriptor. May be <code>null</code> in which case
+   *        the global JRE CA certs list will be used.
+   */
+  public AS4CryptoFactoryConfiguration (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
+                                        @Nonnull final IAS4TrustStoreDescriptor aTrustStorDesc)
   {
     super (aKeyStoreDesc, aTrustStorDesc);
     m_aKeyStoreDesc = aKeyStoreDesc;

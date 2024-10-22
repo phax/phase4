@@ -22,9 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.commons.io.resource.FileSystemResource;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
-import com.helger.phase4.crypto.AS4CryptoProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
+import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
+import com.helger.phase4.crypto.AS4TrustStoreDescriptor;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
 
@@ -47,16 +47,22 @@ public final class MainDecipherAS4In
     if (!f.exists ())
       throw new IllegalStateException ();
 
-    final AS4CryptoProperties aCP = new AS4CryptoProperties (new FileSystemResource (folder, "crypto.properties"));
-    aCP.setKeyStorePath (folder.getAbsolutePath () + "/" + aCP.getKeyStorePath ());
-    aCP.setTrustStorePath (folder.getAbsolutePath () + "/" + aCP.getTrustStorePath ());
+    // Change path of key store and trust store
+    AS4KeyStoreDescriptor aKSD = AS4KeyStoreDescriptor.createFromConfig ();
+    aKSD = AS4KeyStoreDescriptor.builder (aKSD)
+                                .path (folder.getAbsolutePath () + "/" + aKSD.getKeyStorePath ())
+                                .build ();
+    AS4TrustStoreDescriptor aTSD = AS4TrustStoreDescriptor.createFromConfig ();
+    aTSD = AS4TrustStoreDescriptor.builder (aTSD)
+                                  .path (folder.getAbsolutePath () + "/" + aTSD.getTrustStorePath ())
+                                  .build ();
+    final IAS4CryptoFactory aCryptoFactory = new AS4CryptoFactoryConfiguration (aKSD, aTSD);
 
     LOGGER.info ("Reading " + f.getName ());
     final byte [] aBytes = SimpleFileIO.getAllFileBytes (f);
     if (aBytes == null)
       throw new IllegalStateException ("Failed to read file content as byte array");
 
-    final IAS4CryptoFactory aCryptoFactory = new AS4CryptoFactoryProperties (aCP);
     AS4DumpReader.decryptAS4In (aBytes,
                                 aCryptoFactory,
                                 aCryptoFactory,

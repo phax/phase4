@@ -13,6 +13,7 @@ import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.config.fallback.IConfigWithFallback;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.IKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
@@ -133,6 +134,28 @@ public class AS4KeyStoreDescriptor implements IAS4KeyStoreDescriptor
   }
 
   /**
+   * Create the key store descriptor from the default configuration item. The
+   * following configuration properties are used, relative to the default
+   * configuration prefix:
+   * <ul>
+   * <li><code>keystore.type</code> - the key store type</li>
+   * <li><code>keystore.file</code> - the key store path</li>
+   * <li><code>keystore.password</code> - the key store password</li>
+   * <li><code>keystore.alias</code> - the key store alias</li>
+   * <li><code>keystore.private.password</code> - the key store key
+   * password</li>
+   * </ul>
+   *
+   * @return A new {@link AS4KeyStoreDescriptor} object and never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public static AS4KeyStoreDescriptor createFromConfig ()
+  {
+    return createFromConfig (AS4Configuration.getConfig (), CAS4Crypto.DEFAULT_CONFIG_PREFIX, null);
+  }
+
+  /**
    * Create the key store descriptor from the provided configuration item. The
    * following configuration properties are used, relative to the configuration
    * prefix:
@@ -190,6 +213,20 @@ public class AS4KeyStoreDescriptor implements IAS4KeyStoreDescriptor
   }
 
   /**
+   * Create a new builder using the provided descriptor.
+   *
+   * @param a
+   *        The existing descriptor. May not be <code>null</code>.
+   * @return A new builder for {@link AS4KeyStoreDescriptor} objects. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public static AS4KeyStoreDescriptorBuilder builder (@Nonnull final AS4KeyStoreDescriptor a)
+  {
+    return new AS4KeyStoreDescriptorBuilder (a);
+  }
+
+  /**
    * Builder class for class {@link AS4KeyStoreDescriptor}.
    *
    * @author Philip Helger
@@ -206,55 +243,64 @@ public class AS4KeyStoreDescriptor implements IAS4KeyStoreDescriptor
     public AS4KeyStoreDescriptorBuilder ()
     {}
 
+    public AS4KeyStoreDescriptorBuilder (@Nonnull final AS4KeyStoreDescriptor a)
+    {
+      type (a.m_aType).path (a.m_sPath)
+                      .password (a.m_aPassword)
+                      .provider (m_aProvider)
+                      .keyAlias (m_sKeyAlias)
+                      .keyPassword (m_aKeyPassword);
+    }
+
     @Nonnull
-    public AS4KeyStoreDescriptorBuilder type (@Nullable final IKeyStoreType a)
+    public final AS4KeyStoreDescriptorBuilder type (@Nullable final IKeyStoreType a)
     {
       m_aType = a;
       return this;
     }
 
     @Nonnull
-    public AS4KeyStoreDescriptorBuilder path (@Nullable final String s)
+    public final AS4KeyStoreDescriptorBuilder path (@Nullable final String s)
     {
       m_sPath = s;
       return this;
     }
 
     @Nonnull
-    public AS4KeyStoreDescriptorBuilder password (@Nullable final String s)
+    public final AS4KeyStoreDescriptorBuilder password (@Nullable final String s)
     {
       return password (s == null ? null : s.toCharArray ());
     }
 
     @Nonnull
-    public AS4KeyStoreDescriptorBuilder password (@Nullable final char [] a)
+    public final AS4KeyStoreDescriptorBuilder password (@Nullable final char [] a)
     {
       m_aPassword = a;
       return this;
     }
 
     @Nonnull
-    public AS4KeyStoreDescriptorBuilder provider (@Nullable final Provider a)
+    public final AS4KeyStoreDescriptorBuilder provider (@Nullable final Provider a)
     {
       m_aProvider = a;
       return this;
     }
 
     @Nonnull
-    public AS4KeyStoreDescriptorBuilder keyAlias (@Nullable final String s)
+    public final AS4KeyStoreDescriptorBuilder keyAlias (@Nullable final String s)
     {
       m_sKeyAlias = s;
       return this;
     }
 
     @Nonnull
-    public AS4KeyStoreDescriptorBuilder keyPassword (@Nullable final String s)
+    public final AS4KeyStoreDescriptorBuilder keyPassword (@Nullable final String s)
     {
       return keyPassword (s == null ? null : s.toCharArray ());
     }
 
     @Nonnull
-    public AS4KeyStoreDescriptorBuilder keyPassword (@Nullable final char [] a)
+    public final AS4KeyStoreDescriptorBuilder keyPassword (@Nullable final char [] a)
     {
       m_aKeyPassword = a;
       return this;

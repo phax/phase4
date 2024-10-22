@@ -42,8 +42,6 @@ import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
-import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
@@ -239,33 +237,6 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
     aClient.ebms3Properties ().setAll (new CommonsArrayList <> ());
     _ensureValidState (aClient);
     aClient.ebms3Properties ().setAll (AS4TestConstants.getEBMSProperties ());
-    _ensureValidState (aClient);
-  }
-
-  @Test
-  public void testBuildMessageKeyStoreCheckFailure () throws Exception
-  {
-    final AS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
-
-    // Set sign attributes, to get to the check, the check only gets called if
-    // sign or encrypt needs to be done for the usermessage
-    aClient.signingParams ()
-           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
-           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
-
-    // No Keystore attributes set
-    _ensureInvalidState (aClient);
-    final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStorePath ("keys/dummy-pw-test.jks");
-    final AS4CryptoFactoryProperties aCF = new AS4CryptoFactoryProperties (aCP);
-    aClient.setCryptoFactory (aCF);
-    _ensureInvalidState (aClient);
-    aCF.cryptoProperties ().setKeyStorePassword ("test");
-    _ensureInvalidState (aClient);
-    aCF.cryptoProperties ().setKeyStoreType (EKeyStoreType.JKS);
-    _ensureInvalidState (aClient);
-    aCF.cryptoProperties ().setKeyAlias ("ph-as4");
-    _ensureInvalidState (aClient);
-    aCF.cryptoProperties ().setKeyPassword ("test");
     _ensureValidState (aClient);
   }
 

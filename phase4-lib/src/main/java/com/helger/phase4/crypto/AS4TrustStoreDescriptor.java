@@ -12,6 +12,7 @@ import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.config.fallback.IConfigWithFallback;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.IKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
@@ -92,6 +93,26 @@ public class AS4TrustStoreDescriptor implements IAS4TrustStoreDescriptor
   }
 
   /**
+   * Create the trust store descriptor from the default configuration item. The
+   * following configuration properties are used, relative to the default
+   * configuration prefix:
+   * <ul>
+   * <li><code>truststore.type</code> - the trust store type</li>
+   * <li><code>truststore.file</code> - the trust store path</li>
+   * <li><code>truststore.password</code> - the trust store password</li>
+   * password</li>
+   * </ul>
+   *
+   * @return A new {@link AS4TrustStoreDescriptor} object or <code>null</code>
+   *         if path or password are not present.
+   */
+  @Nullable
+  public static AS4TrustStoreDescriptor createFromConfig ()
+  {
+    return createFromConfig (AS4Configuration.getConfig (), CAS4Crypto.DEFAULT_CONFIG_PREFIX, null);
+  }
+
+  /**
    * Create the trust store descriptor from the provided configuration item. The
    * following configuration properties are used, relative to the configuration
    * prefix:
@@ -147,6 +168,20 @@ public class AS4TrustStoreDescriptor implements IAS4TrustStoreDescriptor
   }
 
   /**
+   * Create a new builder using the provided descriptor.
+   *
+   * @param a
+   *        The existing descriptor. May not be <code>null</code>.
+   * @return A new builder for {@link AS4TrustStoreDescriptor} objects. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public static AS4TrustStoreDescriptorBuilder builder (@Nonnull final AS4TrustStoreDescriptor a)
+  {
+    return new AS4TrustStoreDescriptorBuilder (a);
+  }
+
+  /**
    * Builder class for class {@link AS4TrustStoreDescriptor}.
    *
    * @author Philip Helger
@@ -161,35 +196,40 @@ public class AS4TrustStoreDescriptor implements IAS4TrustStoreDescriptor
     public AS4TrustStoreDescriptorBuilder ()
     {}
 
+    public AS4TrustStoreDescriptorBuilder (@Nonnull final AS4TrustStoreDescriptor a)
+    {
+      type (a.m_aType).path (a.m_sPath).password (a.m_aPassword).provider (m_aProvider);
+    }
+
     @Nonnull
-    public AS4TrustStoreDescriptorBuilder type (@Nullable final IKeyStoreType a)
+    public final AS4TrustStoreDescriptorBuilder type (@Nullable final IKeyStoreType a)
     {
       m_aType = a;
       return this;
     }
 
     @Nonnull
-    public AS4TrustStoreDescriptorBuilder path (@Nullable final String s)
+    public final AS4TrustStoreDescriptorBuilder path (@Nullable final String s)
     {
       m_sPath = s;
       return this;
     }
 
     @Nonnull
-    public AS4TrustStoreDescriptorBuilder password (@Nullable final String s)
+    public final AS4TrustStoreDescriptorBuilder password (@Nullable final String s)
     {
       return password (s == null ? null : s.toCharArray ());
     }
 
     @Nonnull
-    public AS4TrustStoreDescriptorBuilder password (@Nullable final char [] a)
+    public final AS4TrustStoreDescriptorBuilder password (@Nullable final char [] a)
     {
       m_aPassword = a;
       return this;
     }
 
     @Nonnull
-    public AS4TrustStoreDescriptorBuilder provider (@Nullable final Provider a)
+    public final AS4TrustStoreDescriptorBuilder provider (@Nullable final Provider a)
     {
       m_aProvider = a;
       return this;

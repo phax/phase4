@@ -14,6 +14,7 @@ public final class CAS4Crypto
 {
   public static final EKeyStoreType DEFAULT_KEY_STORE_TYPE = EKeyStoreType.JKS;
   public static final EKeyStoreType DEFAULT_TRUST_STORE_TYPE = EKeyStoreType.JKS;
+  public static final String DEFAULT_CONFIG_PREFIX = "org.apache.wss4j.crypto.merlin.";
 
   private CAS4Crypto ()
   {}
