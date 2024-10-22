@@ -33,7 +33,7 @@ import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.mime.IMimeType;
 import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.AS4RequestHandler;
@@ -206,7 +206,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     try (final AS4RequestHandler aHandler = new AS4RequestHandler (aMessageMetadata))
     {
       // Set default values in handler
-      aHandler.setCryptoFactory (AS4CryptoFactoryProperties.getDefaultInstance ());
+      aHandler.setCryptoFactory (AS4CryptoFactoryConfiguration.getDefaultInstance ());
       aHandler.setPModeResolver (DefaultPModeResolver.DEFAULT_PMODE_RESOLVER);
       aHandler.setIncomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
       aHandler.setIncomingSecurityConfiguration (AS4IncomingSecurityConfiguration.createDefaultInstance ());

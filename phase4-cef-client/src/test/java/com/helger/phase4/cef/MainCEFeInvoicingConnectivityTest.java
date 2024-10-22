@@ -80,7 +80,7 @@ public class MainCEFeInvoicingConnectivityTest
       throw new InitializationException ("TrustStore error: " + aLTS.getErrorText (Locale.US));
 
     TRUST_STORE = aLTS.getKeyStore ();
-    CF = new AS4CryptoFactoryInMemoryKeyStore (aLKS.getKeyStore (), YOUR_ID, "test123", TRUST_STORE);
+    CF = new AS4CryptoFactoryInMemoryKeyStore (aLKS.getKeyStore (), YOUR_ID, "test123".toCharArray (), TRUST_STORE);
   }
 
   public static void main (final String [] args)
@@ -122,51 +122,51 @@ public class MainCEFeInvoicingConnectivityTest
       // XXX The message ID to use in the UI
       final String sAS4MessageID = "36999089-662a-441f-95fd-470bec2b538e-100@phase4";
       final EAS4UserMessageSendResult eRes = Phase4CEFSender.builder ()
-                                                               .cryptoFactory (CF)
-                                                               .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
-                                                               .action ("TC1Leg1")
-                                                               .service ("tc1", "bdx:noprocess")
-                                                               .senderParticipantID (new SimpleParticipantIdentifier ("connectivity-partid-qns",
-                                                                                                                      YOUR_ID))
-                                                               .receiverParticipantID (new SimpleParticipantIdentifier ("connectivity-partid-qns",
-                                                                                                                        "domibus-gitb"))
-                                                               .fromPartyIDType ("urn:oasis:names:tc:ebcore:partyid-type:unregistered")
-                                                               .fromPartyID (YOUR_ID)
-                                                               .fromRole (CAS4.DEFAULT_INITIATOR_URL)
-                                                               .toPartyIDType ("urn:oasis:names:tc:ebcore:partyid-type:unregistered")
-                                                               .toPartyID ("domibus-gitb")
-                                                               .toRole (CAS4.DEFAULT_RESPONDER_URL)
-                                                               .messageID (sAS4MessageID)
-                                                               .payload (AS4OutgoingAttachment.builder ()
-                                                                                              .data (aPayloadBytes)
-                                                                                              .filename ("businessContentPayload")
-                                                                                              .compressionGZIP ()
-                                                                                              .mimeType (CMimeType.TEXT_XML)
-                                                                                              .contentID ("message")
-                                                                                              .build ())
-                                                               .buildMessageCallback (x1)
-                                                               .endpointDetailProvider (new AS4EndpointDetailProviderConstant (CertificateHelper.convertStringToCertficateOrNull ("-----BEGIN CERTIFICATE-----\r\n" +
-                                                                                                                                                                                  "MIIDOzCCAiOgAwIBAgIJAKbwaKpEwNTKMA0GCSqGSIb3DQEBCwUAMDQxDTALBgNV\r\n" +
-                                                                                                                                                                                  "BAoMBEdJVEIxDTALBgNVBAsMBEdJVEIxFDASBgNVBAMMC2dpdGItZW5naW5lMB4X\r\n" +
-                                                                                                                                                                                  "DTE0MTIyNDEzMjIzNFoXDTI0MTIyMTEzMjIzNFowNDENMAsGA1UECgwER0lUQjEN\r\n" +
-                                                                                                                                                                                  "MAsGA1UECwwER0lUQjEUMBIGA1UEAwwLZ2l0Yi1lbmdpbmUwggEiMA0GCSqGSIb3\r\n" +
-                                                                                                                                                                                  "DQEBAQUAA4IBDwAwggEKAoIBAQCpNuRRMhpd2SvNKsZe/WTxm4zuX2Zc5by3zGcm\r\n" +
-                                                                                                                                                                                  "uzwePdMCnCXk2FAUH67qS9r5VBa4USfiB7l1piyLrNwYWGRDo5OeWIz6Q821/1v7\r\n" +
-                                                                                                                                                                                  "UHq7FfB0LFPcJ+mOwrDqS+VL0MjcSW4pocJHrpFwObWHTY/R4WmW2xwGOKVh0OUL\r\n" +
-                                                                                                                                                                                  "UhqQsHDnDhCzFaEWhS8n1lUw3GRipwKLyYvXK8XgLceEmh+j0+cdmIj4a1L4oza/\r\n" +
-                                                                                                                                                                                  "UgBnCqSob+vowgClyZnGVihE9K8eLLwCSLlIiD+bXWf0VJPLXBNLdNIkRRC0QO0j\r\n" +
-                                                                                                                                                                                  "T9TuE5TF3SknkA5D0NFp023Alz7jieI0D6JE78QyNQN6y6QRAgMBAAGjUDBOMB0G\r\n" +
-                                                                                                                                                                                  "A1UdDgQWBBQpAkry20hAcvlw+4poxQC8TI+EgTAfBgNVHSMEGDAWgBQpAkry20hA\r\n" +
-                                                                                                                                                                                  "cvlw+4poxQC8TI+EgTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBS\r\n" +
-                                                                                                                                                                                  "dfmT3E9uvhiEgVefdwXkkxqlXLQQxfjaqVRVzPTHLqdVs/nBK+iQNhqg+6eLcaGQ\r\n" +
-                                                                                                                                                                                  "yyDy88vwQ85rqwOFbZd05esIFXYl0pgl1pVsb7HmMNmKT3UPay3HDlHX45ZoexDU\r\n" +
-                                                                                                                                                                                  "pza4OcrauEM8Yg/5i9dCIPC1GiHebJpYusMVfP78b+5DAyARrHtcb0EJ8rOLxHh6\r\n" +
-                                                                                                                                                                                  "K2S4EHI6sqQkGHEt1z4m66LyK+vnkLGaq3y6MWEufh78eICDyyVz0DhdIhr18ZHX\r\n" +
-                                                                                                                                                                                  "dpcsH2VOkE36KnWSo0spEXa6ZtP8MqQ60kJgBt4XcuArKfjIGC6vB6dE0NzXngBD\r\n" +
-                                                                                                                                                                                  "PHgMfmHJW018/6eN/f0q\r\n" +
-                                                                                                                                                                                  "-----END CERTIFICATE-----"),
-                                                                                                                               "https://www.itb.ec.europa.eu/cef/domibus/services/msh"))
-                                                               .sendMessageAndCheckForReceipt ();
+                                                            .cryptoFactory (CF)
+                                                            .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
+                                                            .action ("TC1Leg1")
+                                                            .service ("tc1", "bdx:noprocess")
+                                                            .senderParticipantID (new SimpleParticipantIdentifier ("connectivity-partid-qns",
+                                                                                                                   YOUR_ID))
+                                                            .receiverParticipantID (new SimpleParticipantIdentifier ("connectivity-partid-qns",
+                                                                                                                     "domibus-gitb"))
+                                                            .fromPartyIDType ("urn:oasis:names:tc:ebcore:partyid-type:unregistered")
+                                                            .fromPartyID (YOUR_ID)
+                                                            .fromRole (CAS4.DEFAULT_INITIATOR_URL)
+                                                            .toPartyIDType ("urn:oasis:names:tc:ebcore:partyid-type:unregistered")
+                                                            .toPartyID ("domibus-gitb")
+                                                            .toRole (CAS4.DEFAULT_RESPONDER_URL)
+                                                            .messageID (sAS4MessageID)
+                                                            .payload (AS4OutgoingAttachment.builder ()
+                                                                                           .data (aPayloadBytes)
+                                                                                           .filename ("businessContentPayload")
+                                                                                           .compressionGZIP ()
+                                                                                           .mimeType (CMimeType.TEXT_XML)
+                                                                                           .contentID ("message")
+                                                                                           .build ())
+                                                            .buildMessageCallback (x1)
+                                                            .endpointDetailProvider (new AS4EndpointDetailProviderConstant (CertificateHelper.convertStringToCertficateOrNull ("-----BEGIN CERTIFICATE-----\r\n" +
+                                                                                                                                                                               "MIIDOzCCAiOgAwIBAgIJAKbwaKpEwNTKMA0GCSqGSIb3DQEBCwUAMDQxDTALBgNV\r\n" +
+                                                                                                                                                                               "BAoMBEdJVEIxDTALBgNVBAsMBEdJVEIxFDASBgNVBAMMC2dpdGItZW5naW5lMB4X\r\n" +
+                                                                                                                                                                               "DTE0MTIyNDEzMjIzNFoXDTI0MTIyMTEzMjIzNFowNDENMAsGA1UECgwER0lUQjEN\r\n" +
+                                                                                                                                                                               "MAsGA1UECwwER0lUQjEUMBIGA1UEAwwLZ2l0Yi1lbmdpbmUwggEiMA0GCSqGSIb3\r\n" +
+                                                                                                                                                                               "DQEBAQUAA4IBDwAwggEKAoIBAQCpNuRRMhpd2SvNKsZe/WTxm4zuX2Zc5by3zGcm\r\n" +
+                                                                                                                                                                               "uzwePdMCnCXk2FAUH67qS9r5VBa4USfiB7l1piyLrNwYWGRDo5OeWIz6Q821/1v7\r\n" +
+                                                                                                                                                                               "UHq7FfB0LFPcJ+mOwrDqS+VL0MjcSW4pocJHrpFwObWHTY/R4WmW2xwGOKVh0OUL\r\n" +
+                                                                                                                                                                               "UhqQsHDnDhCzFaEWhS8n1lUw3GRipwKLyYvXK8XgLceEmh+j0+cdmIj4a1L4oza/\r\n" +
+                                                                                                                                                                               "UgBnCqSob+vowgClyZnGVihE9K8eLLwCSLlIiD+bXWf0VJPLXBNLdNIkRRC0QO0j\r\n" +
+                                                                                                                                                                               "T9TuE5TF3SknkA5D0NFp023Alz7jieI0D6JE78QyNQN6y6QRAgMBAAGjUDBOMB0G\r\n" +
+                                                                                                                                                                               "A1UdDgQWBBQpAkry20hAcvlw+4poxQC8TI+EgTAfBgNVHSMEGDAWgBQpAkry20hA\r\n" +
+                                                                                                                                                                               "cvlw+4poxQC8TI+EgTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBS\r\n" +
+                                                                                                                                                                               "dfmT3E9uvhiEgVefdwXkkxqlXLQQxfjaqVRVzPTHLqdVs/nBK+iQNhqg+6eLcaGQ\r\n" +
+                                                                                                                                                                               "yyDy88vwQ85rqwOFbZd05esIFXYl0pgl1pVsb7HmMNmKT3UPay3HDlHX45ZoexDU\r\n" +
+                                                                                                                                                                               "pza4OcrauEM8Yg/5i9dCIPC1GiHebJpYusMVfP78b+5DAyARrHtcb0EJ8rOLxHh6\r\n" +
+                                                                                                                                                                               "K2S4EHI6sqQkGHEt1z4m66LyK+vnkLGaq3y6MWEufh78eICDyyVz0DhdIhr18ZHX\r\n" +
+                                                                                                                                                                               "dpcsH2VOkE36KnWSo0spEXa6ZtP8MqQ60kJgBt4XcuArKfjIGC6vB6dE0NzXngBD\r\n" +
+                                                                                                                                                                               "PHgMfmHJW018/6eN/f0q\r\n" +
+                                                                                                                                                                               "-----END CERTIFICATE-----"),
+                                                                                                                            "https://www.itb.ec.europa.eu/cef/domibus/services/msh"))
+                                                            .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Sending AS4 message to CEF with result " + eRes);
     }
     finally

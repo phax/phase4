@@ -78,18 +78,18 @@ public class MainPhase4EuCtpSenderExample
   @Nonnull
   private static AS4CryptoProperties _buildAs4CryptoProperties ()
   {
-    final AS4CryptoProperties as4SigningProperties = new AS4CryptoProperties ();
-    as4SigningProperties.setKeyStorePath (System.getenv ("AS4_SIGNING_KEYSTORE_PATH"));
-    as4SigningProperties.setKeyStoreType (EKeyStoreType.PKCS12);
-    as4SigningProperties.setKeyStorePassword (System.getenv ("AS4_SIGNING_KEYSTORE_PASSWORD"));
-    as4SigningProperties.setKeyAlias (System.getenv ("AS4_SIGNING_KEY_ALIAS"));
-    as4SigningProperties.setKeyPassword (System.getenv ("AS4_SIGNING_KEY_PASSWORD"));
+    final AS4CryptoProperties ret = new AS4CryptoProperties ();
+    ret.setKeyStorePath (System.getenv ("AS4_SIGNING_KEYSTORE_PATH"));
+    ret.setKeyStoreType (EKeyStoreType.PKCS12);
+    ret.setKeyStorePassword (System.getenv ("AS4_SIGNING_KEYSTORE_PASSWORD"));
+    ret.setKeyAlias (System.getenv ("AS4_SIGNING_KEY_ALIAS"));
+    ret.setKeyPassword (System.getenv ("AS4_SIGNING_KEY_PASSWORD"));
 
     // must include the Taxud CA and intermediate certificates
-    as4SigningProperties.setTrustStorePath (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PATH"));
-    as4SigningProperties.setTrustStoreType (EKeyStoreType.PKCS12);
-    as4SigningProperties.setTrustStorePassword (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PASSWORD"));
-    return as4SigningProperties;
+    ret.setTrustStorePath (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PATH"));
+    ret.setTrustStoreType (EKeyStoreType.PKCS12);
+    ret.setTrustStorePassword (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PASSWORD"));
+    return ret;
   }
 
   public static void main (final String [] args)
@@ -113,8 +113,8 @@ public class MainPhase4EuCtpSenderExample
       final Phase4EuCtpHttpClientSettings aHttpClientSettings = new Phase4EuCtpHttpClientSettings (aSslKeyStore,
                                                                                                    aKeyStorePassword);
 
-      final AS4CryptoProperties as4SigningProperties = _buildAs4CryptoProperties ();
-      final AS4CryptoFactoryProperties cryptoFactoryProperties = new AS4CryptoFactoryProperties (as4SigningProperties);
+      final AS4CryptoProperties as4CryptoProperties = _buildAs4CryptoProperties ();
+      final AS4CryptoFactoryProperties cryptoFactoryProperties = new AS4CryptoFactoryProperties (as4CryptoProperties);
 
       // configured on the STI
       final String fromPartyID = System.getenv ("AS4_FROM_PARTY_ID");

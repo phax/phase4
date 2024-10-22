@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.peppol.sml.ESML;
+import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -62,13 +63,10 @@ public final class MainPhase4PeppolSenderInMemoryKeyStore
       final KeyStore aKS = KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.PKCS12, "test-ap.p12", "peppol");
       if (aKS == null)
         throw new IllegalStateException ();
-      final KeyStore aTS = KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.JKS, "complete-truststore.jks", "peppol");
-      if (aTS == null)
-        throw new IllegalStateException ();
       final IAS4CryptoFactory aInMemoryCryptoFactory = new AS4CryptoFactoryInMemoryKeyStore (aKS,
                                                                                              "openpeppol aisbl id von pop000306",
-                                                                                             "peppol",
-                                                                                             aTS);
+                                                                                             "peppol".toCharArray (),
+                                                                                             PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PILOT);
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))

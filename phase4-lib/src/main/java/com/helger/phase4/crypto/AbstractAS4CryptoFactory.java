@@ -21,7 +21,6 @@ import java.security.cert.X509Certificate;
 
 import javax.annotation.Nullable;
 
-import com.helger.commons.collection.ArrayHelper;
 import com.helger.security.keystore.KeyStoreHelper;
 
 /**
@@ -51,12 +50,8 @@ public abstract class AbstractAS4CryptoFactory implements IAS4CryptoFactory
       return null;
 
     final String sKeyAlias = getKeyAlias ();
-    final String sKeyPassword = getKeyPasswordPerAlias (sKeyAlias);
-    return KeyStoreHelper.loadPrivateKey (aKeyStore,
-                                          "phase4 CryptoFactory KeyStore",
-                                          sKeyAlias,
-                                          sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY
-                                                               : sKeyPassword.toCharArray ())
+    final char [] aKeyPassword = getKeyPasswordPerAliasCharArray (sKeyAlias);
+    return KeyStoreHelper.loadPrivateKey (aKeyStore, "phase4 CryptoFactory KeyStore", sKeyAlias, aKeyPassword)
                          .getKeyEntry ();
   }
 

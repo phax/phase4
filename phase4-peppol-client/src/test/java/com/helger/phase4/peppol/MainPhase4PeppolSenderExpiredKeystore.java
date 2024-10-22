@@ -77,7 +77,7 @@ public final class MainPhase4PeppolSenderExpiredKeystore
                                                                                                             "peppol-expired-ap-cert-pw-peppol.p12",
                                                                                                             "peppol"),
                                                                          "cert",
-                                                                         "peppol",
+                                                                         "peppol".toCharArray (),
                                                                          KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
                                                                                                       PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PILOT_CLASSPATH,
                                                                                                       PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)

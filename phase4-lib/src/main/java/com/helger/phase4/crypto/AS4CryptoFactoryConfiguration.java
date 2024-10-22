@@ -16,22 +16,23 @@
  */
 package com.helger.phase4.crypto;
 
-import java.security.KeyStore;
+import java.security.KeyStore.PrivateKeyEntry;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
-import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.Merlin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.string.StringHelper;
 import com.helger.config.IConfig;
+import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.security.keystore.EKeyStoreType;
-import com.helger.security.keystore.KeyStoreHelper;
+import com.helger.security.keystore.LoadedKey;
+import com.helger.security.keystore.LoadedKeyStore;
 
 /**
  * phase4 crypto factory settings based on {@link IConfig}. It can do the same
@@ -51,11 +52,11 @@ import com.helger.security.keystore.KeyStoreHelper;
  */
 @SuppressWarnings ("javadoc")
 @Immutable
-public class AS4CryptoFactoryConfiguration extends AbstractAS4CryptoFactory
+public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeyStore
 {
-  public static final EKeyStoreType DEFAULT_KEYSTORE_TYPE = EKeyStoreType.JKS;
-  public static final EKeyStoreType DEFAULT_TRUSTSTORE_TYPE = EKeyStoreType.JKS;
+  public static final String DEFAULT_CONFIG_PREFIX = "org.apache.wss4j.crypto.merlin.";
 
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptoFactoryConfiguration.class);
   private static final AS4CryptoFactoryConfiguration DEFAULT_INSTANCE = new AS4CryptoFactoryConfiguration (AS4Configuration.getConfig ());
 
   /**
@@ -68,22 +69,6 @@ public class AS4CryptoFactoryConfiguration extends AbstractAS4CryptoFactory
     return DEFAULT_INSTANCE;
   }
 
-  private final EKeyStoreType m_eKeyStoreType;
-  private final String m_sKeyStorePath;
-  private final String m_sKeyStorePassword;
-
-  private final String m_sKeyAlias;
-  private final String m_sKeyPassword;
-
-  private final EKeyStoreType m_eTrustStoreType;
-  private final String m_sTrustStorePath;
-  private final String m_sTrustStorePassword;
-
-  // Lazy initialized
-  private Merlin m_aCrypto;
-  private KeyStore m_aKeyStore;
-  private KeyStore m_aTrustStore;
-
   /**
    * This constructor takes the configuration object and uses the default prefix
    * for backwards compatibility. This is kind of the default constructor.
@@ -91,9 +76,54 @@ public class AS4CryptoFactoryConfiguration extends AbstractAS4CryptoFactory
    * @param aConfig
    *        The configuration object to be used. May not be <code>null</code>.
    */
-  public AS4CryptoFactoryConfiguration (@Nonnull final IConfig aConfig)
+  public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig)
   {
-    this (aConfig, "org.apache.wss4j.crypto.merlin.");
+    this (aConfig, DEFAULT_CONFIG_PREFIX);
+  }
+
+  @Nullable
+  private static IAS4KeyStoreDescriptor _loadKeyStore (@Nonnull final IConfigWithFallback aConfig,
+                                                       @Nonnull @Nonempty final String sConfigPrefix)
+  {
+    final IAS4KeyStoreDescriptor aDescriptor = AS4KeyStoreDescriptor.createFromConfig (aConfig, sConfigPrefix, null);
+    final LoadedKeyStore aLKS = aDescriptor.loadKeyStore ();
+    if (aLKS.getKeyStore () == null)
+    {
+      LOGGER.error ("Failed to load the key store from the properties starting with '" +
+                    sConfigPrefix +
+                    "': " +
+                    aLKS.getErrorText (Locale.ROOT));
+    }
+    else
+    {
+      final LoadedKey <PrivateKeyEntry> aLK = aDescriptor.loadKey ();
+      if (aLK.getKeyEntry () == null)
+      {
+        LOGGER.error ("Failed to load the prvate key from the key store properties starting with '" +
+                      sConfigPrefix +
+                      "': " +
+                      aLK.getErrorText (Locale.ROOT));
+      }
+    }
+    return aDescriptor;
+  }
+
+  @Nullable
+  private static IAS4TrustStoreDescriptor _loadTrustStore (@Nonnull final IConfigWithFallback aConfig,
+                                                           @Nonnull @Nonempty final String sConfigPrefix)
+  {
+    final IAS4TrustStoreDescriptor aDescriptor = AS4TrustStoreDescriptor.createFromConfig (aConfig,
+                                                                                           sConfigPrefix,
+                                                                                           null);
+    final LoadedKeyStore aLTS = aDescriptor.loadTrustStore ();
+    if (aLTS.getKeyStore () == null)
+    {
+      LOGGER.error ("Failed to load the trust store from the properties starting with '" +
+                    sConfigPrefix +
+                    "': " +
+                    aLTS.getErrorText (Locale.ROOT));
+    }
+    return aDescriptor;
   }
 
   /**
@@ -106,111 +136,9 @@ public class AS4CryptoFactoryConfiguration extends AbstractAS4CryptoFactory
    *        The configuration prefix to be used. May neither be
    *        <code>null</code> nor empty and must end with a dot ('.').
    */
-  public AS4CryptoFactoryConfiguration (@Nonnull final IConfig aConfig, @Nonnull @Nonempty final String sConfigPrefix)
+  public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig,
+                                        @Nonnull @Nonempty final String sConfigPrefix)
   {
-    ValueEnforcer.notNull (aConfig, "Config");
-    ValueEnforcer.notEmpty (sConfigPrefix, "ConfigPrefix");
-    ValueEnforcer.isTrue ( () -> StringHelper.endsWith (sConfigPrefix, '.'), "ConfigPrefix must end with a dot");
-
-    // Key Store
-    m_eKeyStoreType = EKeyStoreType.getFromIDCaseInsensitiveOrDefault (aConfig.getAsString (sConfigPrefix +
-                                                                                            "keystore.type"),
-                                                                       DEFAULT_KEYSTORE_TYPE);
-    m_sKeyStorePath = aConfig.getAsString (sConfigPrefix + "keystore.file");
-    m_sKeyStorePassword = aConfig.getAsString (sConfigPrefix + "keystore.password");
-
-    // Key Store Key
-    m_sKeyAlias = aConfig.getAsString (sConfigPrefix + "keystore.alias");
-    m_sKeyPassword = aConfig.getAsString (sConfigPrefix + "keystore.private.password");
-
-    // Trust Store
-    m_eTrustStoreType = EKeyStoreType.getFromIDCaseInsensitiveOrDefault (aConfig.getAsString (sConfigPrefix +
-                                                                                              "truststore.type"),
-                                                                         DEFAULT_KEYSTORE_TYPE);
-    m_sTrustStorePath = aConfig.getAsString (sConfigPrefix + "truststore.file");
-    m_sTrustStorePassword = aConfig.getAsString (sConfigPrefix + "truststore.password");
-  }
-
-  /**
-   * Helper method to create a WSS4J {@link Merlin} instance based on the
-   * configured keystore and truststore.
-   *
-   * @return A new {@link Merlin} object.
-   * @throws IllegalStateException
-   *         if creation failed
-   */
-  @Nonnull
-  public Merlin createMerlin ()
-  {
-    try
-    {
-      final Merlin ret = new Merlin ();
-      ret.setKeyStore (getKeyStore ());
-      ret.setTrustStore (getTrustStore ());
-      return ret;
-    }
-    catch (final RuntimeException ex)
-    {
-      throw new IllegalStateException ("Failed to create Merlin object", ex);
-    }
-  }
-
-  /**
-   * Lazily create a {@link Merlin} instance using the configured keystore and
-   * truststore.
-   */
-  @Nonnull
-  public final Crypto getCrypto (@Nonnull final ECryptoMode eCryptoMode)
-  {
-    Merlin ret = m_aCrypto;
-    if (ret == null)
-    {
-      // Create only once and cache
-      ret = m_aCrypto = createMerlin ();
-    }
-    return ret;
-  }
-
-  @Nullable
-  public final KeyStore getKeyStore ()
-  {
-    KeyStore ret = m_aKeyStore;
-    if (ret == null)
-    {
-      ret = m_aKeyStore = KeyStoreHelper.loadKeyStore (m_eKeyStoreType, m_sKeyStorePath, m_sKeyStorePassword)
-                                        .getKeyStore ();
-    }
-    return ret;
-  }
-
-  @Nullable
-  public final String getKeyAlias ()
-  {
-    return m_sKeyAlias;
-  }
-
-  @Nullable
-  public String getKeyPasswordPerAlias (@Nullable final String sSearchKeyAlias)
-  {
-    final String sKeyAlias = m_sKeyAlias;
-
-    // Use case insensitive compare, depends on the keystore type
-    if (sKeyAlias != null && sSearchKeyAlias != null && sKeyAlias.equalsIgnoreCase (sSearchKeyAlias))
-      return m_sKeyPassword;
-
-    return null;
-  }
-
-  @Nullable
-  public final KeyStore getTrustStore ()
-  {
-    KeyStore ret = m_aTrustStore;
-    if (ret == null)
-    {
-      // Load only once and cache then
-      ret = m_aTrustStore = KeyStoreHelper.loadKeyStore (m_eTrustStoreType, m_sTrustStorePath, m_sTrustStorePassword)
-                                          .getKeyStore ();
-    }
-    return ret;
+    super (_loadKeyStore (aConfig, sConfigPrefix), _loadTrustStore (aConfig, sConfigPrefix));
   }
 }

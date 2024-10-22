@@ -106,7 +106,7 @@ public final class MainPhase4PeppolSenderQvalia
                                                                                                                    "invalid-keystore-pw-peppol.jks",
                                                                                                                    "peppol"),
                                                                                 "1",
-                                                                                "peppol",
+                                                                                "peppol".toCharArray (),
                                                                                 KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
                                                                                                              PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PRODUCTION_CLASSPATH,
                                                                                                              PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)

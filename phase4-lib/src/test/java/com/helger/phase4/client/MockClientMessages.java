@@ -31,7 +31,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -71,7 +71,7 @@ final class MockClientMessages
                                                   @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
   {
     final AS4UserMessage aMsg = createUserMessageNotSigned (eSoapVersion, aPayload, aAttachments);
-    return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
+    return AS4Signer.createSignedMessage (AS4CryptoFactoryConfiguration.getDefaultInstance (),
                                           aMsg.getAsSoapDocument (aPayload),
                                           eSoapVersion,
                                           aMsg.getMessagingID (),
@@ -90,7 +90,7 @@ final class MockClientMessages
                                                                                                              .build ());
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion, "srcmsgid", aEbms3ErrorList)
                                                      .setMustUnderstand (true);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryConfiguration.getDefaultInstance (),
                                                                aErrorMsg.getAsSoapDocument (),
                                                                eSoapVersion,
                                                                aErrorMsg.getMessagingID (),
@@ -115,10 +115,11 @@ final class MockClientMessages
                                                                     null,
                                                                     aUserMessage,
                                                                     true,
-                                                                    null).setMustUnderstand (true);
+                                                                    null)
+                                                           .setMustUnderstand (true);
     final Document aDoc = aReceiptMsg.getAsSoapDocument ();
 
-    return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
+    return AS4Signer.createSignedMessage (AS4CryptoFactoryConfiguration.getDefaultInstance (),
                                           aDoc,
                                           eSoapVersion,
                                           aReceiptMsg.getMessagingID (),
@@ -162,7 +163,8 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion).setMustUnderstand (true);
+                                                       eSoapVersion)
+                                              .setMustUnderstand (true);
     return aDoc;
   }
 
@@ -198,7 +200,8 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion).setMustUnderstand (true);
+                                                       eSoapVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 
@@ -233,7 +236,8 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion).setMustUnderstand (true);
+                                                       eSoapVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 }

@@ -76,8 +76,8 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   /** Truststore password */
   public static final String TRUSTSTORE_PASSWORD = "org.apache.wss4j.crypto.merlin.truststore.password";
 
-  public static final EKeyStoreType DEFAULT_KEYSTORE_TYPE = EKeyStoreType.JKS;
-  public static final EKeyStoreType DEFAULT_TRUSTSTORE_TYPE = EKeyStoreType.JKS;
+  public static final EKeyStoreType DEFAULT_KEYSTORE_TYPE = CAS4Crypto.DEFAULT_KEY_STORE_TYPE;
+  public static final EKeyStoreType DEFAULT_TRUSTSTORE_TYPE = CAS4Crypto.DEFAULT_TRUST_STORE_TYPE;
 
   private NonBlockingProperties m_aProps;
 

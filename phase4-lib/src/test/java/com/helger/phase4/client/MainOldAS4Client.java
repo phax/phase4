@@ -46,7 +46,7 @@ import com.helger.httpclient.response.ResponseHandlerString;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4CryptParams;
-import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
@@ -117,7 +117,7 @@ public final class MainOldAS4Client
         final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
         final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
         final ESoapVersion eSoapVersion = ESoapVersion.SOAP_12;
-        final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
+        final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryConfiguration.getDefaultInstance ();
 
         switch (4)
         {

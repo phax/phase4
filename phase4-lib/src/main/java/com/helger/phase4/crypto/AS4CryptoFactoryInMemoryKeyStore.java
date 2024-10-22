@@ -42,11 +42,28 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
 {
   private final KeyStore m_aKeyStore;
   private final String m_sKeyAlias;
-  private final String m_sKeyPassword;
+  private final char [] m_aKeyPassword;
   private final KeyStore m_aTrustStore;
 
   // Lazy initialized
   private Merlin m_aCrypto;
+
+  /**
+   * Constructor using the key store and trust store descriptors.
+   *
+   * @param aKeyStoreDesc
+   *        The key store descriptor. May not be <code>null</code>.
+   * @param aTrustStoreDesc
+   *        The trust store descriptor. May not be <code>null</code>.
+   */
+  protected AS4CryptoFactoryInMemoryKeyStore (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
+                                              @Nonnull final IAS4TrustStoreDescriptor aTrustStoreDesc)
+  {
+    this (aKeyStoreDesc.loadKeyStore ().getKeyStore (),
+          aKeyStoreDesc.getKeyAlias (),
+          aKeyStoreDesc.getKeyPassword (),
+          aTrustStoreDesc.loadTrustStore ().getKeyStore ());
+  }
 
   /**
    * Default constructor.
@@ -56,7 +73,7 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    * @param sKeyAlias
    *        The key alias to be used. May neither be <code>null</code> nor
    *        empty.
-   * @param sKeyPassword
+   * @param aKeyPassword
    *        The key password to be used. May not be <code>null</code> but maybe
    *        empty.
    * @param aTrustStore
@@ -65,15 +82,15 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    */
   public AS4CryptoFactoryInMemoryKeyStore (@Nonnull final KeyStore aKeyStore,
                                            @Nonnull @Nonempty final String sKeyAlias,
-                                           @Nonnull final String sKeyPassword,
+                                           @Nonnull final char [] aKeyPassword,
                                            @Nullable final KeyStore aTrustStore)
   {
     ValueEnforcer.notNull (aKeyStore, "KeyStore");
     ValueEnforcer.notEmpty (sKeyAlias, "KeyAlias");
-    ValueEnforcer.notNull (sKeyPassword, "KeyPassword");
+    ValueEnforcer.notNull (aKeyPassword, "KeyPassword");
     m_aKeyStore = aKeyStore;
     m_sKeyAlias = sKeyAlias;
-    m_sKeyPassword = sKeyPassword;
+    m_aKeyPassword = aKeyPassword;
     m_aTrustStore = aTrustStore;
   }
 
@@ -109,11 +126,11 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
   }
 
   @Nullable
-  public String getKeyPasswordPerAlias (@Nullable final String sSearchKeyAlias)
+  public char [] getKeyPasswordPerAliasCharArray (@Nullable final String sSearchKeyAlias)
   {
     // Use case insensitive compare, depends on the keystore type
     if (m_sKeyAlias != null && sSearchKeyAlias != null && m_sKeyAlias.equalsIgnoreCase (sSearchKeyAlias))
-      return m_sKeyPassword;
+      return m_aKeyPassword;
 
     return null;
   }

@@ -26,8 +26,8 @@ import org.apache.wss4j.common.crypto.Crypto;
 /**
  * The basic phase4 crypto interface.
  * <ul>
- * <li>See {@link AS4CryptoFactoryProperties} for an implementation of this
- * interface using a properties based approach</li>
+ * <li>See {@link AS4CryptoFactoryConfiguration} for an implementation of this
+ * interface based on the global configuration</li>
  * </ul>
  *
  * @author Philip Helger
@@ -73,10 +73,27 @@ public interface IAS4CryptoFactory
    * @return The password for the key represented by the provided by the alias
    *         or <code>null</code> if the factory doesn't have a password for the
    *         key.
+   * @since 3.0.0
+   */
+  @Nullable
+  char [] getKeyPasswordPerAliasCharArray (@Nullable String sSearchKeyAlias);
+
+  /**
+   * Returns the password for the key represented by the provided alias.
+   *
+   * @param sSearchKeyAlias
+   *        The alias of the key whose password is to be retrieved.
+   * @return The password for the key represented by the provided by the alias
+   *         or <code>null</code> if the factory doesn't have a password for the
+   *         key.
    * @since 1.4.1
    */
   @Nullable
-  String getKeyPasswordPerAlias (@Nullable String sSearchKeyAlias);
+  default String getKeyPasswordPerAlias (@Nullable final String sSearchKeyAlias)
+  {
+    final char [] ret = getKeyPasswordPerAliasCharArray (sSearchKeyAlias);
+    return ret == null ? null : new String (ret);
+  }
 
   /**
    * @return The trust store to be used or <code>null</code> if none is

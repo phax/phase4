@@ -31,9 +31,10 @@ import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resourceprovider.ReadableResourceProviderChain;
 import com.helger.commons.string.StringParser;
-import com.helger.config.Config;
 import com.helger.config.ConfigFactory;
 import com.helger.config.IConfig;
+import com.helger.config.fallback.ConfigWithFallback;
+import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.config.source.EConfigSourceType;
 import com.helger.config.source.MultiConfigurationValueProvider;
 import com.helger.config.source.res.ConfigurationSourceProperties;
@@ -109,9 +110,9 @@ public final class AS4Configuration
   }
 
   private static final MultiConfigurationValueProvider VP = createPhase4ValueProvider ();
-  private static final IConfig DEFAULT_INSTANCE = Config.create (VP);
+  private static final IConfigWithFallback DEFAULT_INSTANCE = new ConfigWithFallback (VP);
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
-  private static IConfig s_aConfig = DEFAULT_INSTANCE;
+  private static IConfigWithFallback s_aConfig = DEFAULT_INSTANCE;
 
   private AS4Configuration ()
   {}
@@ -120,7 +121,7 @@ public final class AS4Configuration
    * @return The current global configuration. Never <code>null</code>.
    */
   @Nonnull
-  public static IConfig getConfig ()
+  public static IConfigWithFallback getConfig ()
   {
     // Inline for performance
     RW_LOCK.readLock ().lock ();
@@ -142,10 +143,10 @@ public final class AS4Configuration
    * @return The old value of {@link IConfig}. Never <code>null</code>.
    */
   @Nonnull
-  public static IConfig setConfig (@Nonnull final IConfig aNewConfig)
+  public static IConfigWithFallback setConfig (@Nonnull final IConfigWithFallback aNewConfig)
   {
     ValueEnforcer.notNull (aNewConfig, "NewConfig");
-    final IConfig ret;
+    final IConfigWithFallback ret;
     RW_LOCK.writeLock ().lock ();
     try
     {

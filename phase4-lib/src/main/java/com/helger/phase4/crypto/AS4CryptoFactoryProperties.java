@@ -149,13 +149,16 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
   }
 
   @Nullable
-  public String getKeyPasswordPerAlias (@Nullable final String sSearchKeyAlias)
+  public char [] getKeyPasswordPerAliasCharArray (@Nullable final String sSearchKeyAlias)
   {
     final String sKeyAlias = getKeyAlias ();
 
     // Use case insensitive compare, depends on the keystore type
     if (sKeyAlias != null && sSearchKeyAlias != null && sKeyAlias.equalsIgnoreCase (sSearchKeyAlias))
-      return m_aCryptoProps.getKeyPassword ();
+    {
+      final String ret = m_aCryptoProps.getKeyPassword ();
+      return ret == null ? null : ret.toCharArray ();
+    }
 
     return null;
   }

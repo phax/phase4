@@ -23,8 +23,9 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.IStringMap;
 import com.helger.commons.io.resource.FileSystemResource;
 import com.helger.commons.io.resource.IReadableResource;
-import com.helger.config.Config;
 import com.helger.config.IConfig;
+import com.helger.config.fallback.ConfigWithFallback;
+import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.config.source.EConfigSourceType;
 import com.helger.config.source.MultiConfigurationValueProvider;
 import com.helger.config.source.appl.ConfigurationSourceFunction;
@@ -42,9 +43,9 @@ public final class ScopedAS4Configuration implements AutoCloseable
 {
   private static final String TEST_CONFIG_FILE = "src/test/resources/test-phase4.properties";
 
-  private final IConfig m_aOldConfig;
+  private final IConfigWithFallback m_aOldConfig;
 
-  private ScopedAS4Configuration (@Nonnull final IConfig aConfig)
+  private ScopedAS4Configuration (@Nonnull final IConfigWithFallback aConfig)
   {
     m_aOldConfig = AS4Configuration.setConfig (aConfig);
   }
@@ -61,7 +62,7 @@ public final class ScopedAS4Configuration implements AutoCloseable
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
     aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString),
                                 EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
-    return new ScopedAS4Configuration (new Config (aVP));
+    return new ScopedAS4Configuration (new ConfigWithFallback (aVP));
   }
 
   @Nonnull
@@ -74,7 +75,7 @@ public final class ScopedAS4Configuration implements AutoCloseable
     // By default priority must be higher than the default
     aVP.addConfigurationSource (new ConfigurationSourceProperties (aRes),
                                 EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
-    return new ScopedAS4Configuration (new Config (aVP));
+    return new ScopedAS4Configuration (new ConfigWithFallback (aVP));
   }
 
   @Nonnull
@@ -91,6 +92,6 @@ public final class ScopedAS4Configuration implements AutoCloseable
                                 EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
     aVP.addConfigurationSource (new ConfigurationSourceProperties (new FileSystemResource (TEST_CONFIG_FILE)),
                                 EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
-    return new ScopedAS4Configuration (new Config (aVP));
+    return new ScopedAS4Configuration (new ConfigWithFallback (aVP));
   }
 }
