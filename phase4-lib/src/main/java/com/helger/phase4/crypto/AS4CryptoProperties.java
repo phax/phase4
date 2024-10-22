@@ -42,8 +42,11 @@ import com.helger.security.keystore.EKeyStoreType;
  *
  * @author bayerlma
  * @author Philip Helger
+ * @deprecated Use {@link AS4CryptoFactoryConfiguration} instead. This class
+ *             will be removed in the next major release.
  */
 @Immutable
+@Deprecated (forRemoval = true, since = "3.0.0")
 public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoProperties>
 {
   /**

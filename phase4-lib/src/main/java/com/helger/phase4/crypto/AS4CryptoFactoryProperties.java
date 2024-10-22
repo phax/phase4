@@ -30,7 +30,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.security.keystore.KeyStoreHelper;
 
 /**
@@ -38,9 +37,11 @@ import com.helger.security.keystore.KeyStoreHelper;
  *
  * @author Philip Helger
  * @since 0.11.0
+ * @deprecated Use {@link AS4CryptoFactoryConfiguration} instead. This class
+ *             will be removed in the next major release.
  */
 @Immutable
-@ChangePhase4V3 ("Add a version that takes it from configuration instead")
+@Deprecated (forRemoval = true, since = "3.0.0")
 public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
 {
   private static final AS4CryptoFactoryProperties DEFAULT_INSTANCE = new AS4CryptoFactoryProperties (AS4CryptoProperties.createFromConfig ());
