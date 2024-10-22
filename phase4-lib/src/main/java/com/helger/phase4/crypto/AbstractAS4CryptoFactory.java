@@ -39,6 +39,9 @@ public abstract class AbstractAS4CryptoFactory implements IAS4CryptoFactory
    * @return The underlying private key entry from the keystore or
    *         <code>null</code> if none is available (the reasons depend on the
    *         used implementation).
+   * @see #getKeyStore()
+   * @see #getKeyAlias()
+   * @see #getKeyPasswordPerAlias(String)
    */
   @Nullable
   public KeyStore.PrivateKeyEntry getPrivateKeyEntry ()
@@ -52,14 +55,15 @@ public abstract class AbstractAS4CryptoFactory implements IAS4CryptoFactory
     return KeyStoreHelper.loadPrivateKey (aKeyStore,
                                           "phase4 CryptoFactory KeyStore",
                                           sKeyAlias,
-                                          sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY : sKeyPassword
-                                                                                                            .toCharArray ())
+                                          sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY
+                                                               : sKeyPassword.toCharArray ())
                          .getKeyEntry ();
   }
 
   /**
    * @return The public certificate of the private key entry or
    *         <code>null</code> if the private key entry could not be loaded.
+   * @see #getPrivateKeyEntry()
    */
   @Nullable
   public X509Certificate getCertificate ()
