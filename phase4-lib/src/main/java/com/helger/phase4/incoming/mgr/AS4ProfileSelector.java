@@ -74,7 +74,7 @@ public final class AS4ProfileSelector
     {
       // Fall back to the configuration file
       // The profile ID from the configuration file is optional
-      ret = AS4Configuration.getAS4ProfileID ();
+      ret = AS4Configuration.getDefaultAS4ProfileID ();
       if (ret == null)
       {
         // Fall back to the default profile ID

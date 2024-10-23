@@ -237,9 +237,9 @@ public final class AS4Configuration
    */
   @Nullable
   @ChangePhase4V3 ("Use configuration property and global setter together")
-  public static String getAS4ProfileID ()
+  public static String getDefaultAS4ProfileID ()
   {
-    return getConfig ().getAsString ("phase4.profile");
+    return getConfig ().getAsStringOrFallback ("phase4.default.profile", "phase4.profile");
   }
 
   /**
