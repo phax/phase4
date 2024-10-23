@@ -156,8 +156,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    *        The trust store descriptor. May be <code>null</code> in which case
    *        the global JRE CA certs list will be used.
    */
-  public AS4CryptoFactoryConfiguration (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
-                                        @Nonnull final IAS4TrustStoreDescriptor aTrustStorDesc)
+  private AS4CryptoFactoryConfiguration (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
+                                         @Nonnull final IAS4TrustStoreDescriptor aTrustStorDesc)
   {
     super (aKeyStoreDesc, aTrustStorDesc);
     m_aKeyStoreDesc = aKeyStoreDesc;

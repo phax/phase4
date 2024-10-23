@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
+import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
 import com.helger.phase4.crypto.AS4TrustStoreDescriptor;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -56,7 +56,7 @@ public final class MainDecipherAS4In
     aTSD = AS4TrustStoreDescriptor.builder (aTSD)
                                   .path (folder.getAbsolutePath () + "/" + aTSD.getTrustStorePath ())
                                   .build ();
-    final IAS4CryptoFactory aCryptoFactory = new AS4CryptoFactoryConfiguration (aKSD, aTSD);
+    final IAS4CryptoFactory aCryptoFactory = new AS4CryptoFactoryInMemoryKeyStore (aKSD, aTSD);
 
     LOGGER.info ("Reading " + f.getName ());
     final byte [] aBytes = SimpleFileIO.getAllFileBytes (f);
