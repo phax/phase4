@@ -25,6 +25,8 @@ import javax.annotation.concurrent.Immutable;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableObject;
@@ -44,6 +46,7 @@ import com.helger.security.keystore.KeyStoreHelper;
 @Deprecated (forRemoval = true, since = "3.0.0")
 public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptoFactoryProperties.class);
   private static final AS4CryptoFactoryProperties DEFAULT_INSTANCE = new AS4CryptoFactoryProperties (AS4CryptoProperties.createFromConfig ());
 
   /**
@@ -195,8 +198,18 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
     {
       // Uses crypto.properties => needs exact name crypto.properties
       aCryptoProps = new AS4CryptoProperties (new ClassPathResource ("private-crypto.properties"));
-      if (!aCryptoProps.isRead ())
+      if (aCryptoProps.isRead ())
+      {
+        LOGGER.error ("Usage of the file 'private-crypto.properties' is deprecated. Please move all your configuration properties into application.properties or provide them as environment variables or as Java system properties");
+      }
+      else
+      {
         aCryptoProps = new AS4CryptoProperties (new ClassPathResource ("crypto.properties"));
+        if (aCryptoProps.isRead ())
+        {
+          LOGGER.error ("Usage of the file 'crypto.properties' is deprecated. Please move all your configuration properties into application.properties or provide them as environment variables or as Java system properties");
+        }
+      }
     }
     else
     {
