@@ -38,8 +38,8 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
 
 /**
- * Example class that provides the configuration items "inline" to avoid the
- * need for "crypto.properties" file.
+ * Example class that provides the configuration items "inline" and not from
+ * configuration.
  *
  * @author Philip Helger
  */
@@ -57,7 +57,6 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
       if (aPayloadBytes == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
 
-      // Manual information - don't use crypto.properties
       final AS4KeyStoreDescriptor aKSD = AS4KeyStoreDescriptor.builder ()
                                                               .type (EKeyStoreType.PKCS12)
                                                               .path ("test-ap.p12")
