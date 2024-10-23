@@ -109,7 +109,6 @@ import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.photon.io.PhotonWorkerPool;
 import com.helger.xml.serialize.write.XMLWriter;
 
@@ -272,11 +271,15 @@ public class AS4RequestHandler implements AutoCloseable
           if (aDumpOS != null)
             try
             {
-              StreamHelper.copyInputStreamToOutputStream (aContent.getBufferedInputStream (), aDumpOS);
+              StreamHelper.copyByteStream ()
+                          .from (aContent.getBufferedInputStream ())
+                          .closeFrom (true)
+                          .to (aDumpOS)
+                          .closeTo (true)
+                          .build ();
             }
             finally
             {
-              StreamHelper.close (aDumpOS);
               aOutgoingDumper.onEndRequest (EAS4MessageMode.RESPONSE,
                                             m_aIncomingMessageMetadata,
                                             m_aIncomingState,
@@ -290,25 +293,6 @@ public class AS4RequestHandler implements AutoCloseable
         }
       }
     }
-  }
-
-  /**
-   * Callback interface to indicate finalization of async processing.
-   *
-   * @author Philip Helger
-   * @since 0.13.1
-   */
-  @ChangePhase4V3 ("Rename")
-  public interface ISoapProcessingFinalizedCallback
-  {
-    /**
-     * Indicate that processing has finished.
-     *
-     * @param bWasSynchronous
-     *        <code>true</code> if it was synchronous, <code>false</code> if it
-     *        was asynchronous.
-     */
-    void onProcessingFinalized (boolean bWasSynchronous);
   }
 
   private static final class SPIInvocationResult implements ISuccessIndicator
@@ -376,7 +360,7 @@ public class AS4RequestHandler implements AutoCloseable
   private IAS4IncomingDumper m_aIncomingDumper;
   private IAS4OutgoingDumper m_aOutgoingDumper;
   private IAS4RetryCallback m_aRetryCallback;
-  private ISoapProcessingFinalizedCallback m_aSoapProcessingFinalizedCB;
+  private IAS4SoapProcessingFinalizedCallback m_aSoapProcessingFinalizedCB;
 
   /** By default get all message processors from the global SPI registry */
   private Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> m_aProcessorSupplier = AS4IncomingMessageProcessorManager::getAllProcessors;
@@ -722,7 +706,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @since 0.13.1
    */
   @Nullable
-  public final ISoapProcessingFinalizedCallback getSoapProcessingFinalizedCallback ()
+  public final IAS4SoapProcessingFinalizedCallback getSoapProcessingFinalizedCallback ()
   {
     return m_aSoapProcessingFinalizedCB;
   }
@@ -740,7 +724,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @since 0.13.1
    */
   @Nonnull
-  public final AS4RequestHandler setSoapProcessingFinalizedCallback (@Nullable final ISoapProcessingFinalizedCallback aSoapProcessingFinalizedCB)
+  public final AS4RequestHandler setSoapProcessingFinalizedCallback (@Nullable final IAS4SoapProcessingFinalizedCallback aSoapProcessingFinalizedCB)
   {
     m_aSoapProcessingFinalizedCB = aSoapProcessingFinalizedCB;
     return this;
