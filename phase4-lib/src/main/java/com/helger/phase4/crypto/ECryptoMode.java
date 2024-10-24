@@ -25,6 +25,9 @@ package com.helger.phase4.crypto;
  */
 public enum ECryptoMode
 {
+  /** For encryption and signing */
   ENCRYPT_SIGN,
+
+  /** For decryption and signature verification */
   DECRYPT_VERIFY
 }

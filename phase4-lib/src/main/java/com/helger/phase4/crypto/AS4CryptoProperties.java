@@ -38,7 +38,10 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.security.keystore.EKeyStoreType;
 
 /**
- * Wrapper around the crypto properties file.
+ * Wrapper around the crypto properties file.<br>
+ * Deprecated since v3. Please use {@link AS4KeyStoreDescriptor} and
+ * {@link AS4TrustStoreDescriptor} in combination with
+ * {@link AS4CryptoFactoryInMemoryKeyStore} instead.
  *
  * @author bayerlma
  * @author Philip Helger

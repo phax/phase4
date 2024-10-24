@@ -98,10 +98,11 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
 
   /**
    * Lazily create a {@link Crypto} instance using the key store and trust store
-   * from the constructor.
+   * from the constructor. Removed "final" in v3 to allow users to use a
+   * different {@link Crypto} implementation if needed.
    */
   @Nonnull
-  public final Crypto getCrypto (@Nonnull final ECryptoMode eCryptoMode)
+  public Crypto getCrypto (@Nonnull final ECryptoMode eCryptoMode)
   {
     Merlin ret = m_aCrypto;
     if (ret == null)
