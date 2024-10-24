@@ -18,6 +18,7 @@ package com.helger.phase4.incoming;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.config.AS4Configuration;
@@ -28,13 +29,14 @@ import com.helger.phase4.config.AS4Configuration;
  * @author Philip Helger
  * @since 3.0.0
  */
+@NotThreadSafe
 public class AS4IncomingReceiverConfiguration implements IAS4IncomingReceiverConfiguration
 {
   private String m_sReceiverEndpointAddress;
 
   public AS4IncomingReceiverConfiguration ()
   {
-    // Set default values
+    // Set default value from configuration
     setReceiverEndpointAddress (AS4Configuration.getThisEndpointAddress ());
   }
 
