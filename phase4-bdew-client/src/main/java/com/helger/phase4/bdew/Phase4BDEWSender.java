@@ -100,12 +100,6 @@ public final class Phase4BDEWSender
         cryptParams ().setKeyEncAlgorithm (ECryptoKeyEncryptionAlgorithm.ECDH_ES_KEYWRAP_AES_128);
         cryptParams ().setEncryptSymmetricSessionKey (false);
 
-        /**
-         * Assumption: the BST "ValueType" attribute is set to
-         * "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509PKIPathv1"
-         * by WSS4J automatically (see WSSecSignature#addBST)
-         */
-
         // See BDEW specs 2.2.6.2
         // Other signing parameters are located in the PMode security part
         signingParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE_SIGN);
