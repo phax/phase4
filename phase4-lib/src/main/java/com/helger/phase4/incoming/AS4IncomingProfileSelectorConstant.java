@@ -18,48 +18,39 @@ package com.helger.phase4.incoming;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 
 /**
- * Default implementation of {@link IAS4IncomingProfileSelector} taking the AS4
- * profile ID from the global {@link AS4ProfileSelector}.
+ * Implementation of {@link IAS4IncomingProfileSelector} taking a constant AS4
+ * profile ID.
  *
  * @author Philip Helger
- * @since 0.13.0
+ * @since 3.0.0
  */
-public class AS4IncomingProfileSelectorFromGlobal implements IAS4IncomingProfileSelector
+@Immutable
+public class AS4IncomingProfileSelectorConstant implements IAS4IncomingProfileSelector
 {
-  public static final AS4IncomingProfileSelectorFromGlobal INSTANCE = new AS4IncomingProfileSelectorFromGlobal ();
-
+  private final String m_sAS4ProfileID;
   private final boolean m_bValidateAgainstProfile;
 
-  /**
-   * Default constructor with validation enabled
-   */
-  public AS4IncomingProfileSelectorFromGlobal ()
+  public AS4IncomingProfileSelectorConstant (@Nullable final String sAS4ProfileID)
   {
-    this (DEFAULT_VALIDATE_AGAINST_PROFILE);
+    this (sAS4ProfileID, DEFAULT_VALIDATE_AGAINST_PROFILE);
   }
 
-  /**
-   * Constructor
-   *
-   * @param bValidateAgainstProfile
-   *        <code>true</code> to enable validation, <code>false</code> to
-   *        disable validation against the profile
-   * @since 3.0.0
-   */
-  public AS4IncomingProfileSelectorFromGlobal (final boolean bValidateAgainstProfile)
+  public AS4IncomingProfileSelectorConstant (@Nullable final String sAS4ProfileID,
+                                             final boolean bValidateAgainstProfile)
   {
+    m_sAS4ProfileID = sAS4ProfileID;
     m_bValidateAgainstProfile = bValidateAgainstProfile;
   }
 
   @Nullable
   public String getAS4ProfileID (@Nonnull final IAS4IncomingMessageState aIncomingState)
   {
-    return AS4ProfileSelector.getDefaultAS4ProfileID ();
+    return m_sAS4ProfileID;
   }
 
   public boolean validateAgainstProfile ()
@@ -70,6 +61,8 @@ public class AS4IncomingProfileSelectorFromGlobal implements IAS4IncomingProfile
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("ValidateAgainstProfile", m_bValidateAgainstProfile).getToString ();
+    return new ToStringGenerator (null).append ("AS4ProfileID", m_sAS4ProfileID)
+                                       .append ("ValidateAgainstProfile", m_bValidateAgainstProfile)
+                                       .getToString ();
   }
 }

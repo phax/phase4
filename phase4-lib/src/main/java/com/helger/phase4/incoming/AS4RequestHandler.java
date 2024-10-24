@@ -355,7 +355,7 @@ public class AS4RequestHandler implements AutoCloseable
   private IAS4IncomingAttachmentFactory m_aIncomingAttachmentFactory;
   private IAS4IncomingSecurityConfiguration m_aIncomingSecurityConfig;
   private IAS4IncomingReceiverConfiguration m_aIncomingReceiverConfig;
-  private IAS4IncomingProfileSelector m_aIncomingProfileSelector = AS4IncomingProfileSelectorFromGlobal.INSTANCE;
+  private IAS4IncomingProfileSelector m_aIncomingProfileSelector;
   private Locale m_aLocale = Locale.US;
   private IAS4IncomingDumper m_aIncomingDumper;
   private IAS4OutgoingDumper m_aOutgoingDumper;
@@ -469,8 +469,8 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The {@link IAS4PModeResolver} to be used. May be <code>null</code> if
-   *         not initialized.
+   * @return The {@link IAS4PModeResolver} to be used. May be <code>null</code>
+   *         if not initialized.
    * @since 3.0.0
    */
   @Nullable

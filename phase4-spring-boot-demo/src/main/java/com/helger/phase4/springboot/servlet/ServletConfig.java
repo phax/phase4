@@ -42,7 +42,7 @@ import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.incoming.AS4IncomingProfileSelectorFromGlobal;
+import com.helger.phase4.incoming.AS4IncomingProfileSelectorConstant;
 import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.incoming.AS4ServerInitializer;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
@@ -106,15 +106,9 @@ public class ServletConfig
           // Example code to disable PMode validation
           if (false)
           {
-            aRequestHandler.setIncomingProfileSelector (new AS4IncomingProfileSelectorFromGlobal ()
-            {
-              @Override
-              public boolean validateAgainstProfile ()
-              {
-                // override;
-                return false;
-              }
-            });
+            // Note: API is for 3.0.0 only
+            aRequestHandler.setIncomingProfileSelector (new AS4IncomingProfileSelectorConstant (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID,
+                                                                                                false));
           }
 
           // Example for changing the Peppol receiver data based on the source
@@ -156,7 +150,9 @@ public class ServletConfig
         public void customizeAfterHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                                             @Nonnull final AS4UnifiedResponse aUnifiedResponse,
                                             @Nonnull final AS4RequestHandler aRequestHandler)
-        {}
+        {
+          // empty
+        }
       });
 
       // HTTP POST only

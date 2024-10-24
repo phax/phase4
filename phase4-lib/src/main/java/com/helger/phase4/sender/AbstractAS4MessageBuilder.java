@@ -46,7 +46,7 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
-import com.helger.phase4.incoming.AS4IncomingProfileSelectorFromGlobal;
+import com.helger.phase4.incoming.AS4IncomingProfileSelectorConstant;
 import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.messaging.http.IHttpPoster;
@@ -104,7 +104,6 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * {@link #cryptoFactory(IAS4CryptoFactory)}<br>
    * {@link #soapVersion(ESoapVersion)}
    * {@link #incomingAttachmentFactory(IAS4IncomingAttachmentFactory)}<br>
-   * {@link #incomingProfileSelector(IAS4IncomingProfileSelector)}<br>
    */
   protected AbstractAS4MessageBuilder ()
   {
@@ -116,7 +115,6 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       cryptoFactory (AS4CryptoFactoryConfiguration.getDefaultInstance ());
       soapVersion (ESoapVersion.SOAP_12);
       incomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
-      incomingProfileSelector (AS4IncomingProfileSelectorFromGlobal.INSTANCE);
     }
     catch (final Exception ex)
     {
@@ -841,8 +839,13 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   @OverridingMethodsMustInvokeSuper
   protected ESuccess finishFields () throws Phase4Exception
   {
-    if (m_aPModeResolver == null && StringHelper.hasText (m_sAS4ProfileID))
-      pmodeResolver (new AS4DefaultPModeResolver (m_sAS4ProfileID));
+    if (StringHelper.hasText (m_sAS4ProfileID))
+    {
+      if (m_aPModeResolver == null)
+        pmodeResolver (new AS4DefaultPModeResolver (m_sAS4ProfileID));
+      if (m_aIncomingProfileSelector == null)
+        incomingProfileSelector (new AS4IncomingProfileSelectorConstant (m_sAS4ProfileID));
+    }
 
     return ESuccess.SUCCESS;
   }

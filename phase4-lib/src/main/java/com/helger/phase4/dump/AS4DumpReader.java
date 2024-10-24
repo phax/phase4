@@ -49,6 +49,7 @@ import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.AS4IncomingProfileSelectorConstant;
 import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
@@ -235,6 +236,7 @@ public final class AS4DumpReader
       aHandler.setCryptoFactorySign (aCryptoFactorySign);
       aHandler.setCryptoFactoryCrypt (aCryptoFactoryCrypt);
       aHandler.setPModeResolver (new AS4DefaultPModeResolver (sAS4ProfileID));
+      aHandler.setIncomingProfileSelector (new AS4IncomingProfileSelectorConstant (sAS4ProfileID));
       aHandler.setIncomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
       aHandler.setIncomingSecurityConfiguration (AS4IncomingSecurityConfiguration.createDefaultInstance ());
       aHandler.setIncomingReceiverConfiguration (new AS4IncomingReceiverConfiguration ());

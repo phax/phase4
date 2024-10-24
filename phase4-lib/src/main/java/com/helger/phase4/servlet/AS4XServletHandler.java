@@ -35,6 +35,7 @@ import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.AS4IncomingProfileSelectorConstant;
 import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
@@ -205,10 +206,13 @@ public class AS4XServletHandler implements IXServletSimpleHandler
 
     try (final AS4RequestHandler aHandler = new AS4RequestHandler (aMessageMetadata))
     {
+      // No specific AS4 profile is available here
+      final String sAS4ProfileID = AS4ProfileSelector.getDefaultAS4ProfileID ();
+
       // Set default values in handler
       aHandler.setCryptoFactory (AS4CryptoFactoryConfiguration.getDefaultInstance ());
-      // No specific AS4 profile is available here
-      aHandler.setPModeResolver (new AS4DefaultPModeResolver (AS4ProfileSelector.getDefaultAS4ProfileID ()));
+      aHandler.setPModeResolver (new AS4DefaultPModeResolver (sAS4ProfileID));
+      aHandler.setIncomingProfileSelector (new AS4IncomingProfileSelectorConstant (sAS4ProfileID, true));
       aHandler.setIncomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
       aHandler.setIncomingSecurityConfiguration (AS4IncomingSecurityConfiguration.createDefaultInstance ());
       aHandler.setIncomingReceiverConfiguration (new AS4IncomingReceiverConfiguration ());

@@ -19,17 +19,16 @@ package com.helger.phase4.incoming;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.phase4.v3.ChangePhase4V3;
-
 /**
  * Callback interface to determine the used AS4 profile of an incoming message.
  *
  * @author Philip Helger
  * @since 0.13.0
  */
-@ChangePhase4V3 ("As the AS4 profile ID is part of the sending process, reuse it for receiving")
 public interface IAS4IncomingProfileSelector
 {
+  boolean DEFAULT_VALIDATE_AGAINST_PROFILE = true;
+
   /**
    * Try to determine the AS4 profile to be used for an incoming message. This
    * method is only called after the SOAP headers were processed successfully.
@@ -38,7 +37,6 @@ public interface IAS4IncomingProfileSelector
    *        The message state of processing. Never <code>null</code>.
    * @return The AS4 profile ID or <code>null</code> if none was found.
    */
-  // TODO remove?
   @Nullable
   String getAS4ProfileID (@Nonnull IAS4IncomingMessageState aIncomingState);
 
