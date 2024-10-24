@@ -77,7 +77,6 @@ public final class AS4BDEWProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                 false,
                                                 true);
     aRegistrar.registerProfile (aProfile);
-    aRegistrar.setDefaultProfile (aProfile);
   }
 
 }

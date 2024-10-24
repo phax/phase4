@@ -104,7 +104,7 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
-import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
@@ -351,7 +351,7 @@ public class AS4RequestHandler implements AutoCloseable
   private final IAS4IncomingMessageMetadata m_aMessageMetadata;
   private IAS4CryptoFactory m_aCryptoFactorySign;
   private IAS4CryptoFactory m_aCryptoFactoryCrypt;
-  private IPModeResolver m_aPModeResolver;
+  private IAS4PModeResolver m_aPModeResolver;
   private IAS4IncomingAttachmentFactory m_aIncomingAttachmentFactory;
   private IAS4IncomingSecurityConfiguration m_aIncomingSecurityConfig;
   private IAS4IncomingReceiverConfiguration m_aIncomingReceiverConfig;
@@ -469,12 +469,12 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The {@link IPModeResolver} to be used. May be <code>null</code> if
+   * @return The {@link IAS4PModeResolver} to be used. May be <code>null</code> if
    *         not initialized.
    * @since 3.0.0
    */
   @Nullable
-  public final IPModeResolver getPModeResolver ()
+  public final IAS4PModeResolver getPModeResolver ()
   {
     return m_aPModeResolver;
   }
@@ -486,7 +486,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @since 3.0.0
    */
   @Nonnull
-  public final AS4RequestHandler setPModeResolver (@Nonnull final IPModeResolver aPModeResolver)
+  public final AS4RequestHandler setPModeResolver (@Nonnull final IAS4PModeResolver aPModeResolver)
   {
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     m_aPModeResolver = aPModeResolver;

@@ -19,38 +19,39 @@ package com.helger.phase4.model.pmode.resolve;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.model.pmode.DefaultPMode;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.profile.IAS4Profile;
-import com.helger.phase4.profile.IAS4ProfileManager;
 
 /**
- * Default implementation of {@link IPModeResolver} using the fixed ID only. If
- * no ID is provided the default PMode is used.
+ * Default implementation of {@link IAS4PModeResolver} based on an AS4 Profile
+ * ID. If no PMode is present, the respective PMode template from the selected
+ * AS4 profile is used instead.
  *
  * @author bayerlma
  * @author Philip Helger
  */
-public class DefaultPModeResolver implements IPModeResolver
+public class AS4DefaultPModeResolver implements IAS4PModeResolver
 {
-  public static boolean DEFAULT_CREATE_DEFAULT_PMODE = false;
-
-  public static final IPModeResolver DEFAULT_PMODE_RESOLVER = new DefaultPModeResolver (null,
-                                                                                        DEFAULT_CREATE_DEFAULT_PMODE);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4DefaultPModeResolver.class);
 
   private final String m_sAS4ProfileID;
-  private final boolean m_bUseDefaultAsFallback;
+  private final IAS4Profile m_aAS4Profile;
 
-  public DefaultPModeResolver (@Nullable final String sAS4ProfileID, final boolean bUseDefaultAsFallback)
+  public AS4DefaultPModeResolver (@Nullable final String sAS4ProfileID)
   {
     m_sAS4ProfileID = sAS4ProfileID;
-    m_bUseDefaultAsFallback = bUseDefaultAsFallback;
+    m_aAS4Profile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sAS4ProfileID);
+    if (m_aAS4Profile == null && StringHelper.hasText (sAS4ProfileID))
+      LOGGER.error ("Failed to resolved the AS4 profile ID '" + sAS4ProfileID + "'");
   }
 
   /**
@@ -65,12 +66,14 @@ public class DefaultPModeResolver implements IPModeResolver
   }
 
   /**
-   * @return <code>true</code> if a "dummy default PMode" should be created, if
-   *         no other options worked.
+   * @return The resolved AS4 profile based on the ID provided in the
+   *         constructor. May be <code>null</code>.
+   * @since 3.0.0
    */
-  public final boolean isUseDefaultAsFallback ()
+  @Nullable
+  protected final IAS4Profile getAS4Profile ()
   {
-    return m_bUseDefaultAsFallback;
+    return m_aAS4Profile;
   }
 
   @Nullable
@@ -79,30 +82,14 @@ public class DefaultPModeResolver implements IPModeResolver
                                        @Nonnull @Nonempty final String sResponderID,
                                        @Nullable final String sAddress)
   {
-    // Use default pmode based on profile
-    final IAS4ProfileManager aProfileMgr = MetaAS4Manager.getProfileMgr ();
-    IAS4Profile aProfile = null;
-    if (StringHelper.hasText (m_sAS4ProfileID))
+    if (m_aAS4Profile != null)
     {
-      // Try to resolve ID from constructor
-      aProfile = aProfileMgr.getProfileOfID (m_sAS4ProfileID);
-    }
-    if (aProfile == null)
-    {
-      // ID not provided or non-existing - use default
-      aProfile = aProfileMgr.getDefaultProfileOrNull ();
-    }
-    if (aProfile != null)
-      return aProfile.createPModeTemplate (sInitiatorID, sResponderID, sAddress);
-
-    if (!m_bUseDefaultAsFallback)
-    {
-      // Not found and no default -> null
-      return null;
+      // Create a default PMode template
+      return m_aAS4Profile.createPModeTemplate (sInitiatorID, sResponderID, sAddress);
     }
 
-    // 2. Default default PMode
-    return DefaultPMode.getOrCreateDefaultPMode (sInitiatorID, sResponderID, sAddress, true);
+    // Nothing to create
+    return null;
   }
 
   @Nullable
@@ -115,6 +102,7 @@ public class DefaultPModeResolver implements IPModeResolver
                            @Nullable final String sAddress)
   {
     final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+
     IPMode ret = null;
     if (StringHelper.hasText (sPModeID))
     {
@@ -124,12 +112,13 @@ public class DefaultPModeResolver implements IPModeResolver
         return ret;
     }
 
-    // the PMode id field is empty or null (or invalid)
-    // try a combination of service and action
+    // the PMode ID field is empty or null or invalid
+    // try a combination of Service and Action
     ret = aPModeMgr.getPModeOfServiceAndAction (sService, sAction);
     if (ret != null)
       return ret;
 
+    // No existing PMode was found
     // Try to resolve a default PMode from the other parameters
     return createDefaultPMode (sInitiatorID, sResponderID, sAddress);
   }
@@ -137,8 +126,6 @@ public class DefaultPModeResolver implements IPModeResolver
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (null).append ("AS4ProfileID", m_sAS4ProfileID)
-                                       .append ("UseDefaultAsFallback", m_bUseDefaultAsFallback)
-                                       .getToString ();
+    return new ToStringGenerator (null).append ("AS4ProfileID", m_sAS4ProfileID).getToString ();
   }
 }

@@ -81,7 +81,7 @@ import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.profile.IAS4ProfileValidator.EAS4ProfileValidationMode;
@@ -824,7 +824,7 @@ public final class AS4IncomingHandler
   @Nullable
   private static IAS4IncomingMessageState _parseMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                          @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                         @Nonnull final IPModeResolver aPModeResolver,
+                                                         @Nonnull final IAS4PModeResolver aPModeResolver,
                                                          @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                          @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                          @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
@@ -910,7 +910,7 @@ public final class AS4IncomingHandler
   @Nullable
   public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                        @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                       @Nonnull final IPModeResolver aPModeResolver,
+                                                       @Nonnull final IAS4PModeResolver aPModeResolver,
                                                        @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                        @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                        @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
@@ -965,7 +965,7 @@ public final class AS4IncomingHandler
   @Nullable
   public static Ebms3UserMessage parseUserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                    @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                   @Nonnull final IPModeResolver aPModeResolver,
+                                                   @Nonnull final IAS4PModeResolver aPModeResolver,
                                                    @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                    @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
@@ -1019,7 +1019,7 @@ public final class AS4IncomingHandler
   @Nonnull
   public static ESuccess parseUserOrSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                    @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                   @Nonnull final IPModeResolver aPModeResolver,
+                                                   @Nonnull final IAS4PModeResolver aPModeResolver,
                                                    @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                    @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,

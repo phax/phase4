@@ -21,21 +21,16 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
 import com.helger.commons.concurrent.SimpleReadWriteLock;
+import com.helger.commons.string.StringHelper;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.profile.IAS4Profile;
-import com.helger.phase4.profile.IAS4ProfileManager;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
- * Static helper class to make the AS4 profile selection more deterministic and
- * flexible.
+ * Static helper class for the fallback AS4 profile selection.
  *
  * @author Philip Helger
  * @since 0.9.13
  */
 @ThreadSafe
-@ChangePhase4V3 ("this class looks a bit superflowous and global. Think about a better solution")
 public final class AS4ProfileSelector
 {
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
@@ -45,43 +40,48 @@ public final class AS4ProfileSelector
   private AS4ProfileSelector ()
   {}
 
+  /**
+   * @return The custom default AS4 profile ID. Defaults to <code>null</code>.
+   */
   @Nullable
-  public static String getCustomAS4ProfileID ()
+  public static String getCustomDefaultAS4ProfileID ()
   {
     return RW_LOCK.readLockedGet ( () -> s_sAS4ProfileID);
   }
 
-  public static void setCustomAS4ProfileID (@Nullable final String sAS4ProfileID)
+  /**
+   * Set the custom default AS4 profile ID. This has precedence over the
+   * configured AS4 default profile ID, to allow for a runtime change.
+   *
+   * @param sAS4ProfileID
+   *        The AS4 profile ID to set. May be <code>null</code>.
+   */
+  public static void setCustomDefaultAS4ProfileID (@Nullable final String sAS4ProfileID)
   {
     RW_LOCK.writeLocked ( () -> s_sAS4ProfileID = sAS4ProfileID);
   }
 
   /**
-   * Get the AS4 profile ID to be used in the following order:
+   * Get the default AS4 profile ID to be used in the following order:
    * <ol>
-   * <li>From {@link #getCustomAS4ProfileID()}</li>
-   * <li>from the configuration properties</li>
-   * <li>from the current {@link IAS4ProfileManager} (since v2.3.0)</li>
+   * <li>From {@link #getCustomDefaultAS4ProfileID()}</li>
+   * <li>from the configuration properties.</li>
    * </ol>
    *
    * @return The AS4 profile ID to be used. May be <code>null</code>.
    */
   @Nullable
-  public static String getAS4ProfileID ()
+  public static String getDefaultAS4ProfileID ()
   {
-    String ret = getCustomAS4ProfileID ();
-    if (ret == null)
+    // Is a custom default provided?
+    String ret = getCustomDefaultAS4ProfileID ();
+    if (StringHelper.hasNoText (ret))
     {
       // Fall back to the configuration file
       // The profile ID from the configuration file is optional
+      // This should be the only place, where this method is called for
+      // evaluation - all other occurrences should use this method instead.
       ret = AS4Configuration.getDefaultAS4ProfileID ();
-      if (ret == null)
-      {
-        // Fall back to the default profile ID
-        final IAS4Profile aDefProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfileOrNull ();
-        if (aDefProfile != null)
-          ret = aDefProfile.getID ();
-      }
     }
     return ret;
   }

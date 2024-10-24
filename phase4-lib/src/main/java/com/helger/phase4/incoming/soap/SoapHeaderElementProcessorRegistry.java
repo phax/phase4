@@ -40,7 +40,7 @@ import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 
 /**
  * This class manages the SOAP header element processors. This is used to
@@ -94,7 +94,7 @@ public class SoapHeaderElementProcessorRegistry
   }
 
   @Nonnull
-  public static SoapHeaderElementProcessorRegistry createDefault (@Nonnull final IPModeResolver aPModeResolver,
+  public static SoapHeaderElementProcessorRegistry createDefault (@Nonnull final IAS4PModeResolver aPModeResolver,
                                                                   @Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                                   @Nullable final IPMode aFallbackPMode,

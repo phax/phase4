@@ -31,9 +31,7 @@ import com.helger.commons.collection.impl.CommonsHashMap;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
-import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.lang.ServiceLoaderHelper;
-import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
@@ -50,15 +48,12 @@ public class AS4ProfileManager implements IAS4ProfileManager
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("m_aRWLock")
-  private final ICommonsMap <String, IAS4Profile> m_aMap = new CommonsHashMap <> ();
-  @GuardedBy ("m_aRWLock")
-  private IAS4Profile m_aDefaultProfile;
+  private final ICommonsMap <String, IAS4Profile> m_aProfiles = new CommonsHashMap <> ();
 
   private void _registerAll ()
   {
     m_aRWLock.writeLocked ( () -> {
-      m_aMap.clear ();
-      m_aDefaultProfile = null;
+      m_aProfiles.clear ();
     });
     for (final IAS4ProfileRegistrarSPI aSPI : ServiceLoaderHelper.getAllSPIImplementations (IAS4ProfileRegistrarSPI.class))
       aSPI.registerAS4Profile (this);
@@ -79,13 +74,13 @@ public class AS4ProfileManager implements IAS4ProfileManager
   @ReturnsMutableCopy
   public ICommonsList <IAS4Profile> getAllProfiles ()
   {
-    return m_aRWLock.readLockedGet (m_aMap::copyOfValues);
+    return m_aRWLock.readLockedGet (m_aProfiles::copyOfValues);
   }
 
   @Nonnegative
   public final int getProfileCount ()
   {
-    return m_aRWLock.readLockedInt (m_aMap::size);
+    return m_aRWLock.readLockedInt (m_aProfiles::size);
   }
 
   @Nullable
@@ -94,7 +89,7 @@ public class AS4ProfileManager implements IAS4ProfileManager
     if (StringHelper.hasNoText (sID))
       return null;
 
-    return m_aRWLock.readLockedGet ( () -> m_aMap.get (sID));
+    return m_aRWLock.readLockedGet ( () -> m_aProfiles.get (sID));
   }
 
   public void registerProfile (@Nonnull final IAS4Profile aAS4Profile)
@@ -103,77 +98,13 @@ public class AS4ProfileManager implements IAS4ProfileManager
 
     final String sID = aAS4Profile.getID ();
     m_aRWLock.writeLocked ( () -> {
-      if (m_aMap.containsKey (sID))
+      if (m_aProfiles.containsKey (sID))
         throw new IllegalStateException ("An AS4 profile with ID '" + sID + "' is already registered!");
-      m_aMap.put (sID, aAS4Profile);
-
-      // Make the first the default as fallback
-      if (m_aMap.size () == 1)
-        m_aDefaultProfile = aAS4Profile;
+      m_aProfiles.put (sID, aAS4Profile);
     });
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registered" + (aAS4Profile.isDeprecated () ? " deprecated" : "") + " AS4 profile '" + sID + "'");
-  }
-
-  public boolean hasDefaultProfile ()
-  {
-    return m_aRWLock.readLockedBoolean ( () -> m_aDefaultProfile != null);
-  }
-
-  @Nullable
-  public IAS4Profile getDefaultProfileOrNull ()
-  {
-    return m_aRWLock.readLockedGet ( () -> {
-      IAS4Profile ret = m_aDefaultProfile;
-      if (ret == null)
-      {
-        final int nCount = m_aMap.size ();
-        if (nCount == 1)
-          ret = m_aMap.getFirstValue ();
-      }
-      return ret;
-    });
-  }
-
-  @Nonnull
-  public IAS4Profile getDefaultProfile ()
-  {
-    return m_aRWLock.readLockedGet ( () -> {
-      IAS4Profile ret = m_aDefaultProfile;
-      if (ret == null)
-      {
-        final int nCount = m_aMap.size ();
-        if (nCount == 1)
-          ret = m_aMap.getFirstValue ();
-        else
-        {
-          if (nCount == 0)
-            throw new IllegalStateException ("No AS4 profile is present, so no default profile can be determined!");
-          throw new IllegalStateException (nCount + " AS4 profiles are present, but none is declared default!");
-        }
-      }
-      return ret;
-    });
-  }
-
-  public void setDefaultProfile (@Nullable final IAS4Profile aAS4Profile)
-  {
-    final EChange eChanged = m_aRWLock.writeLockedGet ( () -> {
-      if (EqualsHelper.equals (aAS4Profile, m_aDefaultProfile))
-        return EChange.UNCHANGED;
-      m_aDefaultProfile = aAS4Profile;
-      return EChange.CHANGED;
-    });
-
-    if (eChanged.isChanged ())
-      if (aAS4Profile == null)
-        LOGGER.info ("Removed the default AS4 profile");
-      else
-        LOGGER.info ("Set the default AS4 profile to '" +
-                     aAS4Profile.getID () +
-                     "'" +
-                     (aAS4Profile.isDeprecated () ? " which is deprecated" : ""));
   }
 
   public void reloadAll ()
@@ -184,8 +115,6 @@ public class AS4ProfileManager implements IAS4ProfileManager
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("Map", m_aMap)
-                                       .append ("DefaultProfile", m_aDefaultProfile)
-                                       .getToString ();
+    return new ToStringGenerator (this).append ("Profiles", m_aProfiles).getToString ();
   }
 }

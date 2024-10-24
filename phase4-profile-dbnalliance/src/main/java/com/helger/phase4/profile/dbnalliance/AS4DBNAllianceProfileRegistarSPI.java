@@ -63,6 +63,5 @@ public final class AS4DBNAllianceProfileRegistarSPI implements IAS4ProfileRegist
                                                 false,
                                                 false);
     aRegistrar.registerProfile (aProfile);
-    aRegistrar.setDefaultProfile (aProfile);
   }
 }

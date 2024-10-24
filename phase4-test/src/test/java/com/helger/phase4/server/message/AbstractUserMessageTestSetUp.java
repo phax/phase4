@@ -50,10 +50,10 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
 import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
-import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
@@ -92,12 +92,13 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   {
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
-    MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT);
+    AS4ProfileSelector.setCustomDefaultAS4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT);
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
+    AS4ProfileSelector.setCustomDefaultAS4ProfileID (null);
     // s_aResMgr is closed by MockJettySetup
     s_aResMgr = null;
     MockJettySetup.shutDownServer ();

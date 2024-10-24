@@ -52,7 +52,7 @@ import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
 import com.helger.phase4.incoming.IAS4UserMessageConsumer;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.util.Phase4Exception;
 
 import jakarta.mail.MessagingException;
@@ -71,7 +71,7 @@ public final class AS4BidirectionalClientHelper
 
   public static void sendAS4UserMessageAndReceiveAS4SignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                                    @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                                   @Nonnull final IPModeResolver aPModeResolver,
+                                                                   @Nonnull final IAS4PModeResolver aPModeResolver,
                                                                    @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                                    @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
                                                                    @Nonnull final AS4ClientUserMessage aClientUserMsg,
@@ -187,7 +187,7 @@ public final class AS4BidirectionalClientHelper
 
   public static void sendAS4PullRequestAndReceiveAS4UserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                                  @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                                 @Nonnull final IPModeResolver aPModeResolver,
+                                                                 @Nonnull final IAS4PModeResolver aPModeResolver,
                                                                  @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                                  @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
                                                                  @Nonnull final AS4ClientPullRequestMessage aClientPullRequest,
@@ -273,7 +273,7 @@ public final class AS4BidirectionalClientHelper
 
   public static void sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                                          @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                                         @Nonnull final IPModeResolver aPModeResolver,
+                                                                         @Nonnull final IAS4PModeResolver aPModeResolver,
                                                                          @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                                          @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
                                                                          @Nonnull final AS4ClientPullRequestMessage aClientPullRequest,

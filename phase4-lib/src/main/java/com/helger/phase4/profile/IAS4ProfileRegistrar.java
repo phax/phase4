@@ -17,7 +17,6 @@
 package com.helger.phase4.profile;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Base interface for AS4 profile registrar
@@ -33,12 +32,4 @@ public interface IAS4ProfileRegistrar
    *        The AS4 profile to be registered. May not be <code>null</code>.
    */
   void registerProfile (@Nonnull IAS4Profile aAS4Profile);
-
-  /**
-   * Set the provided AS4 profile as the default
-   *
-   * @param aAS4Profile
-   *        The default AS4 profile to be used. May be <code>null</code>.
-   */
-  void setDefaultProfile (@Nullable IAS4Profile aAS4Profile);
 }

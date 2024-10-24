@@ -59,7 +59,7 @@ import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
+import com.helger.phase4.model.pmode.resolve.AS4DefaultPModeResolver;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -97,7 +97,7 @@ public final class AS4DumpReader
   /**
    * Utility method to just read and consume the leading HTTP headers from a
    * dump. Usually this method is not called explicitly but invoked directly by
-   * {@link #decryptAS4In(byte[], IAS4CryptoFactory, IAS4CryptoFactory, Consumer, IDecryptedPayloadConsumer)}
+   * {@link #decryptAS4In(String, byte[], IAS4CryptoFactory, IAS4CryptoFactory, Consumer, IDecryptedPayloadConsumer)}
    *
    * @param aAS4InData
    *        The byte array with the dump. May not be <code>null</code>.
@@ -169,6 +169,9 @@ public final class AS4DumpReader
    * Note: this method was mainly created for internal use and does not win the
    * prize for the most sexy piece of software in the world ;-)
    *
+   * @param sAS4ProfileID
+   *        The AS4 profile ID to use. May neither be <code>null</code> nor
+   *        empty.
    * @param aAS4InData
    *        The byte array with the dumped data.
    * @param aCryptoFactorySign
@@ -191,7 +194,8 @@ public final class AS4DumpReader
    * @throws MessagingException
    *         In case of error
    */
-  public static void decryptAS4In (@Nonnull final byte [] aAS4InData,
+  public static void decryptAS4In (@Nonnull @Nonempty final String sAS4ProfileID,
+                                   @Nonnull final byte [] aAS4InData,
                                    @Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                    @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                    @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
@@ -200,6 +204,12 @@ public final class AS4DumpReader
                                                                                                 IOException,
                                                                                                 MessagingException
   {
+    ValueEnforcer.notEmpty (sAS4ProfileID, "AS4ProfileID");
+    ValueEnforcer.notNull (aAS4InData, "AS4InData");
+    ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
+    ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
+    ValueEnforcer.notNull (aDecryptedConsumer, "DecryptedConsumer");
+
     final HttpHeaderMap hm = new HttpHeaderMap ();
     final MutableInt aHttpEndIndex = new MutableInt (-1);
     readAndSkipInitialHttpHeaders (aAS4InData, hm::setAllHeaders, aHttpEndIndex::set);
@@ -219,12 +229,12 @@ public final class AS4DumpReader
     }
 
     try (final WebScoped w = new WebScoped ();
-         final AS4RequestHandler aHandler = new AS4RequestHandler (AS4IncomingMessageMetadata.createForRequest ()))
+        final AS4RequestHandler aHandler = new AS4RequestHandler (AS4IncomingMessageMetadata.createForRequest ()))
     {
       // Set default values in handler
       aHandler.setCryptoFactorySign (aCryptoFactorySign);
       aHandler.setCryptoFactoryCrypt (aCryptoFactoryCrypt);
-      aHandler.setPModeResolver (DefaultPModeResolver.DEFAULT_PMODE_RESOLVER);
+      aHandler.setPModeResolver (new AS4DefaultPModeResolver (sAS4ProfileID));
       aHandler.setIncomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
       aHandler.setIncomingSecurityConfiguration (AS4IncomingSecurityConfiguration.createDefaultInstance ());
       aHandler.setIncomingReceiverConfiguration (new AS4IncomingReceiverConfiguration ());

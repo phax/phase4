@@ -40,8 +40,9 @@ import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4ResponseAbstraction;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
+import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
-import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
+import com.helger.phase4.model.pmode.resolve.AS4DefaultPModeResolver;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScope;
@@ -181,8 +182,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * Handle an incoming request. Compared to
    * {@link #handleRequest(IRequestWebScopeWithoutResponse, UnifiedResponse)}
    * all the member variables are resolved into parameters to make overriding
-   * simpler and also avoid the risk of race conditions on members that use the
-   * Supplier pattern.
+   * simpler.
    *
    * @param aRequestScope
    *        The request scope. May not be <code>null</code>.
@@ -207,7 +207,8 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     {
       // Set default values in handler
       aHandler.setCryptoFactory (AS4CryptoFactoryConfiguration.getDefaultInstance ());
-      aHandler.setPModeResolver (DefaultPModeResolver.DEFAULT_PMODE_RESOLVER);
+      // No specific AS4 profile is available here
+      aHandler.setPModeResolver (new AS4DefaultPModeResolver (AS4ProfileSelector.getDefaultAS4ProfileID ()));
       aHandler.setIncomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
       aHandler.setIncomingSecurityConfiguration (AS4IncomingSecurityConfiguration.createDefaultInstance ());
       aHandler.setIncomingReceiverConfiguration (new AS4IncomingReceiverConfiguration ());

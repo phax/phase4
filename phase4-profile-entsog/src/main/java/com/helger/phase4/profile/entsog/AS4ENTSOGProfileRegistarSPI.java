@@ -65,6 +65,5 @@ public final class AS4ENTSOGProfileRegistarSPI implements IAS4ProfileRegistrarSP
                                                 false,
                                                 false);
     aRegistrar.registerProfile (aProfile);
-    aRegistrar.setDefaultProfile (aProfile);
   }
 }

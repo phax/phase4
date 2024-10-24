@@ -28,7 +28,7 @@ import com.helger.phase4.model.pmode.IPMode;
  * @author Philip Helger
  */
 @FunctionalInterface
-public interface IPModeResolver
+public interface IAS4PModeResolver
 {
   /**
    * Get the PMode from the passed parameters.
@@ -42,14 +42,16 @@ public interface IPModeResolver
    *        The action as specified in the EBMS CollaborationInformation. May
    *        not be <code>null</code>.
    * @param sInitiatorID
-   *        Initiator ID from user message
+   *        Initiator ID from user message. May neither be <code>null</code> nor
+   *        empty.
    * @param sResponderID
-   *        Responder ID from user message
+   *        Responder ID from user message. May neither be <code>null</code> nor
+   *        empty.
    * @param sAgreementRef
    *        The agreement reference from the user message. May be
    *        <code>null</code>.
    * @param sAddress
-   *        Endpoint address
+   *        Endpoint address. May be <code>null</code>.
    * @return <code>null</code> if resolution failed.
    */
   @Nullable

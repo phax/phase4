@@ -40,7 +40,7 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
 @IsSPIImplementation
 public final class AS4TestProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
-  public static final String AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT = "test";
+  public static final String AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT = "phase4-unitest";
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4TestProfileRegistarSPI.class);
 
@@ -62,7 +62,5 @@ public final class AS4TestProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                     false,
                                                     false);
     aRegistrar.registerProfile (aTestProfile);
-
-    aRegistrar.setDefaultProfile (aTestProfile);
   }
 }

@@ -51,8 +51,8 @@ import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.messaging.http.IHttpPoster;
 import com.helger.phase4.model.ESoapVersion;
-import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
-import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.model.pmode.resolve.AS4DefaultPModeResolver;
+import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
@@ -85,7 +85,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected Locale m_aLocale = DEFAULT_LOCALE;
   protected String m_sAS4ProfileID;
 
-  private IPModeResolver m_aPModeResolver;
+  private IAS4PModeResolver m_aPModeResolver;
   private IAS4IncomingAttachmentFactory m_aIAF;
   private IAS4IncomingProfileSelector m_aIncomingProfileSelector;
   private IAS4SenderInterrupt m_aSenderInterrupt;
@@ -103,7 +103,6 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * {@link #httpClientFactory(HttpClientFactory)}<br>
    * {@link #cryptoFactory(IAS4CryptoFactory)}<br>
    * {@link #soapVersion(ESoapVersion)}
-   * {@link #pmodeResolver(IPModeResolver)}<br>
    * {@link #incomingAttachmentFactory(IAS4IncomingAttachmentFactory)}<br>
    * {@link #incomingProfileSelector(IAS4IncomingProfileSelector)}<br>
    */
@@ -116,7 +115,6 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       // By default set the same for sign and crypt
       cryptoFactory (AS4CryptoFactoryConfiguration.getDefaultInstance ());
       soapVersion (ESoapVersion.SOAP_12);
-      pmodeResolver (DefaultPModeResolver.DEFAULT_PMODE_RESOLVER);
       incomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
       incomingProfileSelector (AS4IncomingProfileSelectorFromGlobal.INSTANCE);
     }
@@ -508,8 +506,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The selected AS4 profile to use. May be <code>null</code> to
-   *         indicate the default profile.
+   * @return The selected AS4 profile to use. May be <code>null</code>.
    * @since 2.8.2
    */
   @Nullable
@@ -519,30 +516,26 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the AS4 profile to be used.
+   * Set the AS4 profile to be used. Must be provided for the builder to work.
    *
    * @param sAS4ProfileID
-   *        The AS4 profile to be used. May be <code>null</code> to indicate the
-   *        usage of the default profile. This internally changes the PMode
-   *        resolver!
+   *        The AS4 profile ID to be used.
    * @return this for chaining
-   * @see #pmodeResolver(IPModeResolver)
    * @since 2.8.2
    */
   @Nonnull
   public final IMPLTYPE as4ProfileID (@Nullable final String sAS4ProfileID)
   {
     m_sAS4ProfileID = sAS4ProfileID;
-    return pmodeResolver (StringHelper.hasNoText (sAS4ProfileID) ? DefaultPModeResolver.DEFAULT_PMODE_RESOLVER
-                                                                 : new DefaultPModeResolver (sAS4ProfileID, false));
+    return thisAsT ();
   }
 
   /**
-   * @return The currently set {@link IPModeResolver}. May not be
+   * @return The currently set {@link IAS4PModeResolver}. May be
    *         <code>null</code>.
    */
-  @Nonnull
-  public final IPModeResolver pmodeResolver ()
+  @Nullable
+  public final IAS4PModeResolver pmodeResolver ()
   {
     return m_aPModeResolver;
   }
@@ -552,13 +545,12 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * of an eventually received synchronous response message.
    *
    * @param aPModeResolver
-   *        The PMode resolver to be used. May not be <code>null</code>.
+   *        The PMode resolver to be used. May be <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE pmodeResolver (@Nonnull final IPModeResolver aPModeResolver)
+  public final IMPLTYPE pmodeResolver (@Nullable final IAS4PModeResolver aPModeResolver)
   {
-    ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     m_aPModeResolver = aPModeResolver;
     return thisAsT ();
   }
@@ -849,6 +841,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   @OverridingMethodsMustInvokeSuper
   protected ESuccess finishFields () throws Phase4Exception
   {
+    if (m_aPModeResolver == null && StringHelper.hasText (m_sAS4ProfileID))
+      pmodeResolver (new AS4DefaultPModeResolver (m_sAS4ProfileID));
+
     return ESuccess.SUCCESS;
   }
 
@@ -883,7 +878,11 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       LOGGER.warn ("The field 'locale' is not set");
       return false;
     }
-    // m_sAS4ProfileID may be null
+    if (StringHelper.hasNoText (m_sAS4ProfileID))
+    {
+      LOGGER.warn ("The field 'as4ProfileID' is not set");
+      return false;
+    }
 
     if (m_aPModeResolver == null)
     {

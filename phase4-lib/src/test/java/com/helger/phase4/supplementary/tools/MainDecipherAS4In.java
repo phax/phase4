@@ -63,7 +63,8 @@ public final class MainDecipherAS4In
     if (aBytes == null)
       throw new IllegalStateException ("Failed to read file content as byte array");
 
-    AS4DumpReader.decryptAS4In (aBytes,
+    AS4DumpReader.decryptAS4In ("as4-profileid",
+                                aBytes,
                                 aCryptoFactory,
                                 aCryptoFactory,
                                 null,

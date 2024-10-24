@@ -53,6 +53,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4PullRequestBuilder.class);
 
   protected IPMode m_aPMode;
+  protected String m_sPModeID;
   private boolean m_bUseLeg1 = true;
 
   protected String m_sMPC;
@@ -91,6 +92,32 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     if (aPMode == null)
       LOGGER.warn ("A null PMode was supplied");
     m_aPMode = aPMode;
+    return thisAsT ();
+  }
+
+  /**
+   * @return the current PMode ID. May be <code>null</code>.
+   * @see #pmodeID(String)
+   * @since 3.0.0
+   */
+  @Nullable
+  public final String pmodeID ()
+  {
+    return m_sPModeID;
+  }
+
+  /**
+   * Set the optional PMode ID for packaging in the pull request.
+   *
+   * @param s
+   *        PMode ID. May be <code>null</code>.
+   * @return this for chaining
+   * @since 3.0.0
+   */
+  @Nonnull
+  public final IMPLTYPE pmodeID (@Nullable final String s)
+  {
+    m_sPModeID = s;
     return thisAsT ();
   }
 
@@ -231,7 +258,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     if (m_aPMode == null && pmodeResolver () != null)
     {
       // Create a default PMode template
-      m_aPMode = pmodeResolver ().findPMode (null, "s", "a", "i", "r", "a", null);
+      m_aPMode = pmodeResolver ().findPMode (m_sPModeID, "s", "a", "i", "r", "a", null);
       if (m_aPMode == null)
         LOGGER.warn ("No PMode was provided, and the PMode Resolver delivered a null-PMode as well");
     }

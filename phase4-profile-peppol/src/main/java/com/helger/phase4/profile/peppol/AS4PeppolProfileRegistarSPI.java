@@ -62,6 +62,5 @@ public final class AS4PeppolProfileRegistarSPI implements IAS4ProfileRegistrarSP
                                                 false,
                                                 false);
     aRegistrar.registerProfile (aProfile);
-    aRegistrar.setDefaultProfile (aProfile);
   }
 }

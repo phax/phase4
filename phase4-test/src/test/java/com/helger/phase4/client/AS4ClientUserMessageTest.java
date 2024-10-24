@@ -47,8 +47,8 @@ import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
+import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
-import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.AbstractAS4TestSetUp;
@@ -83,12 +83,13 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   {
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
-    MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT);
+    AS4ProfileSelector.setCustomDefaultAS4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT);
   }
 
   @AfterClass
   public static void afterClass () throws Exception
   {
+    AS4ProfileSelector.setCustomDefaultAS4ProfileID (null);
     s_aResMgr = null;
     MockJettySetup.shutDownServer ();
   }

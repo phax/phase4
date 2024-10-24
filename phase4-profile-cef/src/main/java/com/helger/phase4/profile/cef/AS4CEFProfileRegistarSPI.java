@@ -75,8 +75,5 @@ public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                          false,
                                                          false);
     aRegistrar.registerProfile (aProfileTwoCorner);
-
-    // The four corner profile is the default
-    aRegistrar.setDefaultProfile (aProfileFourCorner);
   }
 }

@@ -37,7 +37,7 @@ public class AS4IncomingProfileSelectorFromGlobal implements IAS4IncomingProfile
   @Nullable
   public String getAS4ProfileID (@Nonnull final IAS4IncomingMessageState aIncomingState)
   {
-    return AS4ProfileSelector.getAS4ProfileID ();
+    return AS4ProfileSelector.getDefaultAS4ProfileID ();
   }
 
   public boolean validateAgainstProfile ()

@@ -93,14 +93,14 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
     // Default MessageProperties for testing
     m_aEbms3UserMessage.setMessageProperties (createDefaultProperties ());
 
-    AS4ProfileSelector.setCustomAS4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT);
+    AS4ProfileSelector.setCustomDefaultAS4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT);
   }
 
   @After
   public void after ()
   {
     // Reset to default
-    AS4ProfileSelector.setCustomAS4ProfileID (null);
+    AS4ProfileSelector.setCustomDefaultAS4ProfileID (null);
   }
 
   @Test

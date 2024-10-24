@@ -67,7 +67,7 @@ import com.helger.phase4.model.mpc.IMPC;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.xml.XMLHelper;
 
 /**
@@ -85,7 +85,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
 
   private static final Logger LOGGER = LoggerFactory.getLogger (SoapHeaderElementProcessorExtractEbms3Messaging.class);
 
-  private final IPModeResolver m_aPModeResolver;
+  private final IAS4PModeResolver m_aPModeResolver;
   private final Consumer <? super IPMode> m_aPModeConsumer;
   private final IAS4IncomingReceiverConfiguration m_aIncomingReceiverConfiguration;
 
@@ -101,7 +101,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
    *        The incoming receiver configuration. May not be <code>null</code>.
    *        Since v3.0.0.
    */
-  public SoapHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IPModeResolver aPModeResolver,
+  public SoapHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IAS4PModeResolver aPModeResolver,
                                                           @Nullable final Consumer <? super IPMode> aPModeConsumer,
                                                           @Nonnull final IAS4IncomingReceiverConfiguration aIRC)
   {
@@ -345,6 +345,8 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
       {
         // Find PMode
         String sPModeID = null;
+        final String sService = aCollaborationInfo.getService ().getValue ();
+        final String sAction = aCollaborationInfo.getAction ();
         String sAgreementRef = null;
         if (aCollaborationInfo.getAgreementRef () != null)
         {
@@ -356,8 +358,8 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
         final String sAddress = m_aIncomingReceiverConfiguration.getReceiverEndpointAddress ();
 
         aPMode = m_aPModeResolver.findPMode (sPModeID,
-                                             aCollaborationInfo.getService ().getValue (),
-                                             aCollaborationInfo.getAction (),
+                                             sService,
+                                             sAction,
                                              sInitiatorID,
                                              sResponderID,
                                              sAgreementRef,
@@ -366,7 +368,22 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
         // Should be screened by the XSD conversion already
         if (aPMode == null)
         {
-          final String sDetails = "Failed to resolve PMode '" + sPModeID + "' using resolver " + m_aPModeResolver;
+          final String sDetails = "Failed to resolve PMode '" +
+                                  sPModeID +
+                                  "' / '" +
+                                  sService +
+                                  "' / '" +
+                                  sAction +
+                                  "' / '" +
+                                  sInitiatorID +
+                                  "' / '" +
+                                  sResponderID +
+                                  "' / '" +
+                                  sAgreementRef +
+                                  "' / '" +
+                                  sAddress +
+                                  "' using resolver " +
+                                  m_aPModeResolver;
           LOGGER.error (sDetails);
           aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.errorBuilder (aLocale)
                                                                                       .errorDetail (sDetails)

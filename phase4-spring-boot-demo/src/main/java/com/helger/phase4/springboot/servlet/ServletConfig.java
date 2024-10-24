@@ -226,7 +226,7 @@ public class ServletConfig
   private static void _initAS4 ()
   {
     // Enforce Peppol profile usage
-    AS4ProfileSelector.setCustomAS4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
+    AS4ProfileSelector.setCustomDefaultAS4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
 
     AS4ServerInitializer.initAS4Server ();
   }

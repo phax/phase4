@@ -47,44 +47,4 @@ public interface IAS4ProfileManager extends IAS4ProfileRegistrar
    */
   @Nullable
   IAS4Profile getProfileOfID (@Nullable String sID);
-
-  /**
-   * @return <code>true</code> if an explicit default profile is present,
-   *         <code>false</code> if not.
-   */
-  boolean hasDefaultProfile ();
-
-  /**
-   * @return The default profile. If none is set, and exactly one profile is
-   *         present, it is used. <code>null</code> if no default is present and
-   *         more than one profile is registered
-   */
-  @Nullable
-  IAS4Profile getDefaultProfileOrNull ();
-
-  /**
-   * @return The default profile. If none is set, and exactly one profile is
-   *         present, it is used. If no default profile is present and more than
-   *         one profile is present an Exception is thrown.
-   * @throws IllegalStateException
-   *         If no default is present and more than one profile is registered
-   */
-  @Nonnull
-  IAS4Profile getDefaultProfile ();
-
-  /**
-   * Set the default profile to be used.
-   *
-   * @param sDefaultProfileID
-   *        The ID of the default profile. May be <code>null</code>.
-   * @return <code>null</code> if no such profile is registered, the resolve
-   *         profile otherwise.
-   */
-  @Nullable
-  default IAS4Profile setDefaultProfileID (@Nullable final String sDefaultProfileID)
-  {
-    final IAS4Profile aDefault = getProfileOfID (sDefaultProfileID);
-    setDefaultProfile (aDefault);
-    return aDefault;
-  }
 }

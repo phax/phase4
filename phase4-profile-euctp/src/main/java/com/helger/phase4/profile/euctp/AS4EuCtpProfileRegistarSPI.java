@@ -65,7 +65,6 @@ public final class AS4EuCtpProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                     false,
                                                     false);
     aRegistrar.registerProfile (aPushProfile);
-    aRegistrar.setDefaultProfile (aPushProfile);
 
     // pull
     final IAS4ProfilePModeProvider aPullPModeProvider = (i, r, a) -> EuCtpPMode.createEuCtpPullPMode (i,

@@ -26,6 +26,7 @@ import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
 import com.helger.phase4.dump.AS4DumpReader.IDecryptedPayloadConsumer;
+import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 
 /**
  * This is a small tool that demonstrates how the "as4in" files can be decrypted
@@ -60,6 +61,11 @@ public final class MainDecipherAS4In
                                                                                                       aDecryptedBytes);
 
     // Do it
-    AS4DumpReader.decryptAS4In (aBytes, aCryptoFactory, aCryptoFactory, null, aDecryptedConsumer);
+    AS4DumpReader.decryptAS4In (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID,
+                                aBytes,
+                                aCryptoFactory,
+                                aCryptoFactory,
+                                null,
+                                aDecryptedConsumer);
   }
 }
