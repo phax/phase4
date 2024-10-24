@@ -59,7 +59,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
 
   /**
    * @return The default instance, created by reading the default properties
-   *         from the configuration sources.
+   *         from the configuration sources (application.properties, environment
+   *         variables and Java system properties).
    */
   @Nonnull
   public static AS4CryptoFactoryConfiguration getDefaultInstance ()
