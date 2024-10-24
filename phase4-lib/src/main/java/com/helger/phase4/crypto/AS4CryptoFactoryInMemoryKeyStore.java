@@ -59,7 +59,7 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    * @since 3.0.0
    */
   public AS4CryptoFactoryInMemoryKeyStore (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
-                                           @Nonnull final IAS4TrustStoreDescriptor aTrustStoreDesc)
+                                           @Nullable final IAS4TrustStoreDescriptor aTrustStoreDesc)
   {
     this (aKeyStoreDesc.loadKeyStore ().getKeyStore (),
           aKeyStoreDesc.getKeyAlias (),
