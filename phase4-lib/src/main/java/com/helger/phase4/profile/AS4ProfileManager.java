@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.CommonsHashMap;
+import com.helger.commons.collection.impl.CommonsTreeMap;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
@@ -48,7 +48,7 @@ public class AS4ProfileManager implements IAS4ProfileManager
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("m_aRWLock")
-  private final ICommonsMap <String, IAS4Profile> m_aProfiles = new CommonsHashMap <> ();
+  private final ICommonsMap <String, IAS4Profile> m_aProfiles = new CommonsTreeMap <> ();
 
   private void _registerAll ()
   {
@@ -62,7 +62,9 @@ public class AS4ProfileManager implements IAS4ProfileManager
     if (nCount == 0)
       LOGGER.warn ("No AS4 profile is registered. This is most likely a configuration problem. Please make sure that at least one of the 'phase4-profile-*' modules is on the classpath.");
     else
-      LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered"));
+      LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered") +
+                   ": " +
+                   m_aProfiles.keySet ());
   }
 
   public AS4ProfileManager ()
