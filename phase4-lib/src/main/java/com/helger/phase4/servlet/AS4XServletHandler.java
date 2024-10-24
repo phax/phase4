@@ -206,7 +206,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
 
     try (final AS4RequestHandler aHandler = new AS4RequestHandler (aMessageMetadata))
     {
-      // No specific AS4 profile is available here
+      // No specific AS4 profile is available here - choose the default one
       final String sAS4ProfileID = AS4ProfileSelector.getDefaultAS4ProfileID ();
 
       // Set default values in handler
