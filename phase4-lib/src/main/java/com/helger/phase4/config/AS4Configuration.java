@@ -38,7 +38,6 @@ import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.config.source.EConfigSourceType;
 import com.helger.config.source.MultiConfigurationValueProvider;
 import com.helger.config.source.res.ConfigurationSourceProperties;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This class contains the central phase4 configuration. <br>
@@ -233,10 +232,10 @@ public final class AS4Configuration
 
   /**
    * @return The AS4 profile to use, taken from the configuration item
-   *         <code>phase4.profile</code>. May be <code>null</code>.
+   *         <code>phase4.default.profile</code> (changed in 3.0.0; was
+   *         <code>phase4.profile</code> before). May be <code>null</code>.
    */
   @Nullable
-  @ChangePhase4V3 ("Use configuration property and global setter together")
   public static String getDefaultAS4ProfileID ()
   {
     return getConfig ().getAsStringOrFallback ("phase4.default.profile", "phase4.profile");
