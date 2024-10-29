@@ -64,22 +64,24 @@ public class Phase4PeppolStatusXServletHandler implements IXServletSimpleHandler
     aStatusData.add ("phase4.version", CAS4Version.BUILD_VERSION);
     aStatusData.add ("phase4.build-timestamp", CAS4Version.BUILD_TIMESTAMP);
 
-    final IAS4CryptoFactory aCF = AS4CryptoFactoryConfiguration.getDefaultInstance ();
-    final KeyStore aKS = aCF.getKeyStore ();
-    aStatusData.add ("phase4.keystore.loaded", aKS != null);
-    if (aKS != null)
+    final IAS4CryptoFactory aCF = AS4CryptoFactoryConfiguration.getDefaultInstanceOrNull ();
+    if (aCF != null)
     {
-      aStatusData.add ("phase4.keystore.key.alias", aCF.getKeyAlias ());
-      final KeyStore.PrivateKeyEntry aPKE = aCF.getPrivateKeyEntry ();
-      aStatusData.add ("phase4.keystore.key.loaded", aPKE != null);
-      if (aPKE != null)
+      final KeyStore aKS = aCF.getKeyStore ();
+      aStatusData.add ("phase4.keystore.loaded", aKS != null);
+      if (aKS != null)
       {
-        final X509Certificate aCert = (X509Certificate) aPKE.getCertificate ();
-        aStatusData.add ("phase4.keystore.key.issuer", aCert.getIssuerX500Principal ().getName ());
-        aStatusData.add ("phase4.keystore.key.subject", aCert.getSubjectX500Principal ().getName ());
+        aStatusData.add ("phase4.keystore.key.alias", aCF.getKeyAlias ());
+        final KeyStore.PrivateKeyEntry aPKE = aCF.getPrivateKeyEntry ();
+        aStatusData.add ("phase4.keystore.key.loaded", aPKE != null);
+        if (aPKE != null)
+        {
+          final X509Certificate aCert = (X509Certificate) aPKE.getCertificate ();
+          aStatusData.add ("phase4.keystore.key.issuer", aCert.getIssuerX500Principal ().getName ());
+          aStatusData.add ("phase4.keystore.key.subject", aCert.getSubjectX500Principal ().getName ());
+        }
       }
     }
-
     return aStatusData;
   }
 

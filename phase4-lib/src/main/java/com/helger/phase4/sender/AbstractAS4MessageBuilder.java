@@ -112,7 +112,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     {
       httpClientFactory (new HttpClientFactory ());
       // By default set the same for sign and crypt
-      cryptoFactory (AS4CryptoFactoryConfiguration.getDefaultInstance ());
+      cryptoFactory (AS4CryptoFactoryConfiguration.getDefaultInstanceOrNull ());
       soapVersion (ESoapVersion.SOAP_12);
       incomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
     }
@@ -237,7 +237,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   /**
    * Set the crypto factory to be used for crypting. The default crypto factory
    * is set in the constructor to
-   * {@link AS4CryptoFactoryConfiguration#getDefaultInstance()}.
+   * {@link AS4CryptoFactoryConfiguration#getDefaultInstanceOrNull()}.
    *
    * @param aCryptoFactoryCrypt
    *        The crypto factory to be used. May be <code>null</code>.
@@ -254,7 +254,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   /**
    * Set the crypto factory to be used for signing and crypting. The default
    * crypto factory is set in the constructor to
-   * {@link AS4CryptoFactoryConfiguration#getDefaultInstance()}.
+   * {@link AS4CryptoFactoryConfiguration#getDefaultInstanceOrNullOrNull()}.
    *
    * @param aCryptoFactory
    *        The crypto factory to be used. May be <code>null</code>.

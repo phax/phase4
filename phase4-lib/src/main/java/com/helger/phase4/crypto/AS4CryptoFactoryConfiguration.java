@@ -60,6 +60,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    * @return The default instance, created by reading the default properties
    *         from the configuration sources (application.properties, environment
    *         variables and Java system properties).
+   * @throws RuntimeException
+   *         if one of the mandatory configuration parameters is not present.
    */
   @Nonnull
   public static AS4CryptoFactoryConfiguration getDefaultInstance ()
@@ -67,6 +69,28 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
     // Don't store this in a static variable, because it may fail if the
     // respective configuration properties are not present
     return new AS4CryptoFactoryConfiguration (AS4Configuration.getConfig ());
+  }
+
+  /**
+   * Same as {@link #getDefaultInstance()} just that it returns
+   * <code>null</code> instead of throwing a RuntimeException.
+   *
+   * @return <code>null</code> in case of error.
+   */
+  @Nullable
+  public static AS4CryptoFactoryConfiguration getDefaultInstanceOrNull ()
+  {
+    try
+    {
+      return getDefaultInstance ();
+    }
+    catch (final RuntimeException ex)
+    {
+      // Use debug level only, as this is used in many default scenarios
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Failed to create AS4CryptoFactoryConfiguration default instance", ex);
+      return null;
+    }
   }
 
   private final IAS4KeyStoreDescriptor m_aKeyStoreDesc;

@@ -138,8 +138,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ()
-                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
+        null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -187,8 +187,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
         if (SimpleFileIO.writeFile (aFile,
                                     AS4IncomingHelper.getIncomingMetadataAsJson (aMessageMetadata)
                                                      .getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
-                                    StandardCharsets.UTF_8)
-                        .isFailure ())
+                                    StandardCharsets.UTF_8).isFailure ())
           LOGGER.error ("Failed to write metadata to '" + aFile.getAbsolutePath () + "'");
         else
           LOGGER.info ("Wrote metadata to '" + aFile.getAbsolutePath () + "'");
@@ -196,11 +195,10 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     });
 
     // Store the outgoings file as well
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode,
-                                                                        sMessageID,
-                                                                        nTry) -> StorageHelper.getStorageFile (sMessageID,
-                                                                                                               nTry,
-                                                                                                               ".as4out")));
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> StorageHelper
+                                                                                                                    .getStorageFile (sMessageID,
+                                                                                                                                     nTry,
+                                                                                                                                     ".as4out")));
   }
 
   private static void _initPeppolAS4 ()
@@ -223,6 +221,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                        AS4Configuration.getConfig ().getAsInt ("http.proxy.port")));
     PeppolCRLDownloader.setAsDefaultCRLCache (aHCS);
 
+    // Throws an exception if configuration parameters are missing
     final AS4CryptoFactoryConfiguration aCF = AS4CryptoFactoryConfiguration.getDefaultInstance ();
 
     // Check if crypto properties are okay - fail early if something is

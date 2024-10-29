@@ -210,7 +210,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
       final String sAS4ProfileID = AS4ProfileSelector.getDefaultAS4ProfileID ();
 
       // Set default values in handler
-      aHandler.setCryptoFactory (AS4CryptoFactoryConfiguration.getDefaultInstance ());
+      aHandler.setCryptoFactory (AS4CryptoFactoryConfiguration.getDefaultInstanceOrNull ());
       aHandler.setPModeResolver (new AS4DefaultPModeResolver (sAS4ProfileID));
       aHandler.setIncomingProfileSelector (new AS4IncomingProfileSelectorConstant (sAS4ProfileID, true));
       aHandler.setIncomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
