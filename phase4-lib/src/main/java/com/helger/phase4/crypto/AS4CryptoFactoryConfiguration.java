@@ -55,7 +55,6 @@ import com.helger.security.keystore.LoadedKeyStore;
 public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeyStore
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptoFactoryConfiguration.class);
-  private static final AS4CryptoFactoryConfiguration DEFAULT_INSTANCE = new AS4CryptoFactoryConfiguration (AS4Configuration.getConfig ());
 
   /**
    * @return The default instance, created by reading the default properties
@@ -65,7 +64,9 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
   @Nonnull
   public static AS4CryptoFactoryConfiguration getDefaultInstance ()
   {
-    return DEFAULT_INSTANCE;
+    // Don't store this in a static variable, because it may fail if the
+    // respective configuration properties are not present
+    return new AS4CryptoFactoryConfiguration (AS4Configuration.getConfig ());
   }
 
   private final IAS4KeyStoreDescriptor m_aKeyStoreDesc;
