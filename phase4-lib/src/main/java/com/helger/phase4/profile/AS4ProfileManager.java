@@ -52,9 +52,7 @@ public class AS4ProfileManager implements IAS4ProfileManager
 
   private void _registerAll ()
   {
-    m_aRWLock.writeLocked ( () -> {
-      m_aProfiles.clear ();
-    });
+    m_aRWLock.writeLocked ( () -> { m_aProfiles.clear (); });
     for (final IAS4ProfileRegistrarSPI aSPI : ServiceLoaderHelper.getAllSPIImplementations (IAS4ProfileRegistrarSPI.class))
       aSPI.registerAS4Profile (this);
 
@@ -62,7 +60,7 @@ public class AS4ProfileManager implements IAS4ProfileManager
     if (nCount == 0)
       LOGGER.warn ("No AS4 profile is registered. This is most likely a configuration problem. Please make sure that at least one of the 'phase4-profile-*' modules is on the classpath.");
     else
-      LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered") +
+      LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered" : nCount + " AS4 profiles are registered") +
                    ": " +
                    m_aProfiles.keySet ());
   }
