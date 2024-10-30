@@ -74,12 +74,12 @@
     <ph-jaxb-plugin.version>4.0.3</ph-jaxb-plugin.version>
     <xmlsec.version>3.0.4</xmlsec.version>
     <wss4j.version>3.0.3</wss4j.version>
-    <bctls.version>1.78.1</bctls.version>
+    <bctls.version>1.79</bctls.version>
     <log4j.version>2.24.1</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <peppol-commons.version>9.5.1</peppol-commons.version>
     <peppol-reporting.version>3.0.1</peppol-reporting.version>
-    <ph-commons.version>11.1.8</ph-commons.version>
+    <ph-commons.version>11.1.9</ph-commons.version>
     <ph-ubl.version>9.0.3</ph-ubl.version>
     <ph-schematron.version>8.0.3</ph-schematron.version>
     <ph-web.version>10.1.9</ph-web.version>
