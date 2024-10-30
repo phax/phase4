@@ -50,6 +50,7 @@ public final class MainPhase4PeppolSenderCisboxXRechnung
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderCisboxXRechnung.class);
 
+  @SuppressWarnings ("deprecation")
   public static void main (final String [] args)
   {
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
