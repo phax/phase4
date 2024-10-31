@@ -311,10 +311,12 @@ public final class Phase4PeppolSender
 
     if (eCertCheckResult.isInvalid ())
     {
-      throw new Phase4PeppolException ("The configured receiver AP certificate is not valid (at " +
-                                       aNow +
-                                       ") and cannot be used for sending. Aborting. Reason: " +
-                                       eCertCheckResult.getReason ());
+      final String sMsg = "The configured receiver AP certificate is not valid (at " +
+                          aNow +
+                          ") and cannot be used for sending. Aborting. Reason: " +
+                          eCertCheckResult.getReason ();
+      LOGGER.error (sMsg);
+      throw new Phase4PeppolException (sMsg);
     }
   }
 
@@ -798,7 +800,10 @@ public final class Phase4PeppolSender
       // Certificate from e.g. SMP lookup (may throw an exception)
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
       if (m_bCheckReceiverAPCertificate)
+      {
+        // Throws Phase4PeppolException in case of error
         _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer, ETriState.UNDEFINED, null);
+      }
       else
       {
         LOGGER.warn ("The check of the receiver's Peppol AP certificate was explicitly disabled.");
