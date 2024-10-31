@@ -1083,11 +1083,11 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the payload to be used as a byte array. It will be parsed internally
-     * to a DOM element. Compared to {@link #payload(Element)} the read DOM
-     * element will not be cloned internally, so this option is less memory
-     * intensive. If this method is called, it overwrites any other explicitly
-     * set payload.
+     * Set the XML payload to be used as a byte array. It will be parsed
+     * internally to a DOM element. Compared to {@link #payload(Element)} the
+     * read DOM element will not be cloned internally, so this option is less
+     * memory intensive. If this method is called, it overwrites any other
+     * explicitly set payload.
      *
      * @param aPayloadBytes
      *        The payload bytes to be used. May not be <code>null</code>.
@@ -1104,10 +1104,10 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the payload to be used as an InputStream provider. It will be parsed
-     * internally to a DOM element. Compared to {@link #payload(Element)} the
-     * read DOM element will not be cloned internally, so this option is less
-     * memory intensive. If this method is called, it overwrites any other
+     * Set the XML payload to be used as an InputStream provider. It will be
+     * parsed internally to a DOM element. Compared to {@link #payload(Element)}
+     * the read DOM element will not be cloned internally, so this option is
+     * less memory intensive. If this method is called, it overwrites any other
      * explicitly set payload.
      *
      * @param aPayloadHasIS
@@ -1126,8 +1126,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Use the provided byte array as the binary content of the Peppol SBDH
-     * message. Internally the data will be wrapped in a predefined
+     * Use the provided byte array as the binary (non-XML) content of the Peppol
+     * SBDH message. Internally the data will be wrapped in a predefined
      * "BinaryContent" element.
      *
      * @param aBinaryPayload
@@ -1159,9 +1159,9 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Use the provided byte array as the binary content of the Peppol SBDH
-     * message. Internally the data will be wrapped in a predefined
-     * "BinaryContent" element.
+     * Use the provided byte array as the text (non-XML) content of the Peppol
+     * SBDH message. Internally the data will be wrapped in a predefined
+     * "TextContent" element.
      *
      * @param sTextPayload
      *        The text to be wrapped. May not be <code>null</code>.
