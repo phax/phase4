@@ -105,7 +105,7 @@ public class AS4KeyStoreDescriptor implements IAS4KeyStoreDescriptor
   {
     LoadedKeyStore ret = m_aLKS;
     if (ret == null)
-      ret = m_aLKS = KeyStoreHelper.loadKeyStore (m_aType, m_sPath, new String (m_aPassword), m_aProvider);
+      ret = m_aLKS = KeyStoreHelper.loadKeyStore (m_aType, m_sPath, m_aPassword, m_aProvider);
     return ret;
   }
 

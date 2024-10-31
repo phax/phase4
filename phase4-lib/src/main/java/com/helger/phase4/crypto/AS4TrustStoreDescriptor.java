@@ -94,7 +94,7 @@ public class AS4TrustStoreDescriptor implements IAS4TrustStoreDescriptor
   {
     LoadedKeyStore ret = m_aLTS;
     if (ret == null)
-      ret = m_aLTS = KeyStoreHelper.loadKeyStore (m_aType, m_sPath, new String (m_aPassword), m_aProvider);
+      ret = m_aLTS = KeyStoreHelper.loadKeyStore (m_aType, m_sPath, m_aPassword, m_aProvider);
     return ret;
   }
 

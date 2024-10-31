@@ -104,12 +104,12 @@ public final class MainPhase4PeppolSenderQvalia
       final IAS4CryptoFactory cf = true ? AS4CryptoFactoryConfiguration.getDefaultInstance ()
                                         : new AS4CryptoFactoryInMemoryKeyStore (KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.JKS,
                                                                                                                    "invalid-keystore-pw-peppol.jks",
-                                                                                                                   "peppol"),
+                                                                                                                   "peppol".toCharArray ()),
                                                                                 "1",
                                                                                 "peppol".toCharArray (),
                                                                                 KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
                                                                                                              PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PRODUCTION_CLASSPATH,
-                                                                                                             PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
+                                                                                                             PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD.toCharArray ())
                                                                                               .getKeyStore ());
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()

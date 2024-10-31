@@ -60,7 +60,9 @@ public final class MainPhase4PeppolSenderInMemoryKeyStore
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:atu68241501");
-      final KeyStore aKS = KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.PKCS12, "test-ap.p12", "peppol");
+      final KeyStore aKS = KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.PKCS12,
+                                                              "test-ap.p12",
+                                                              "peppol".toCharArray ());
       if (aKS == null)
         throw new IllegalStateException ();
       final IAS4CryptoFactory aInMemoryCryptoFactory = new AS4CryptoFactoryInMemoryKeyStore (aKS,

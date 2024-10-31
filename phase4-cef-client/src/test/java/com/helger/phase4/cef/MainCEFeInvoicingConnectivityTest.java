@@ -71,11 +71,15 @@ public class MainCEFeInvoicingConnectivityTest
 
   static
   {
-    final LoadedKeyStore aLKS = KeyStoreHelper.loadKeyStore (EKeyStoreType.JKS, YOUR_ID + "keystore.jks", "test123");
+    final LoadedKeyStore aLKS = KeyStoreHelper.loadKeyStore (EKeyStoreType.JKS,
+                                                             YOUR_ID + "keystore.jks",
+                                                             "test123".toCharArray ());
     if (aLKS.isFailure ())
       throw new InitializationException ("KeyStore error: " + aLKS.getErrorText (Locale.US));
 
-    final LoadedKeyStore aLTS = KeyStoreHelper.loadKeyStore (EKeyStoreType.JKS, "gateway_truststore.jks", "test123");
+    final LoadedKeyStore aLTS = KeyStoreHelper.loadKeyStore (EKeyStoreType.JKS,
+                                                             "gateway_truststore.jks",
+                                                             "test123".toCharArray ());
     if (aLTS.isFailure ())
       throw new InitializationException ("TrustStore error: " + aLTS.getErrorText (Locale.US));
 
