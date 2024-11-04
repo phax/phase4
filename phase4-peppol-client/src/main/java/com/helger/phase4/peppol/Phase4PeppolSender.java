@@ -801,6 +801,7 @@ public final class Phase4PeppolSender
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
       if (m_bCheckReceiverAPCertificate)
       {
+        // CHeck if the received certificate is a valid Peppol AP certificate
         // Throws Phase4PeppolException in case of error
         _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer, ETriState.UNDEFINED, null);
       }
