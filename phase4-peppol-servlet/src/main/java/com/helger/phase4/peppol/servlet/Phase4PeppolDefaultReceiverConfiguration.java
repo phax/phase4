@@ -293,9 +293,26 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   @Nonnull
   public static Phase4PeppolReceiverConfiguration getAsReceiverCheckData ()
   {
+    return getAsReceiverCheckData (getAPCertificate ());
+  }
+
+  /**
+   * Get the statically configured data as a
+   * {@link Phase4PeppolReceiverConfiguration} instance. Returns
+   * <code>null</code> if the checks are disabled, or if at least one mandatory
+   * field is not set.<br>
+   * Changed to NonNull in 2.8.1
+   *
+   * @param aAPCertificate
+   *        The AP certificate to use. May be <code>null</code>.
+   * @return The instance data or <code>null</code>.
+   * @since 3.0.0
+   */
+  @Nonnull
+  public static Phase4PeppolReceiverConfiguration getAsReceiverCheckData (@Nullable final X509Certificate aAPCertificate)
+  {
     final ISMPServiceMetadataProvider aSMPClient = getSMPClient ();
     final String sAS4EndpointURL = getAS4EndpointURL ();
-    final X509Certificate aAPCertificate = getAPCertificate ();
 
     final boolean bReceiverCheckEnabled;
     if (aSMPClient == null || StringHelper.hasNoText (sAS4EndpointURL) || aAPCertificate == null)
