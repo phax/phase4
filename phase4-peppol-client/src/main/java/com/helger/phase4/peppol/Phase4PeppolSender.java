@@ -271,7 +271,7 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * Get the receiver certificate from the specified SMP endpoint.
+   * Check if the provided certificate is a valid Peppol AP certificate.
    *
    * @param aReceiverCert
    *        The determined receiver AP certificate to check. Never
