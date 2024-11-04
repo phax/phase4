@@ -346,23 +346,26 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
                                         @Nonnull final Element aSecurityNode,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
-                                        @Nonnull final AS4MessageState aState,
+                                        @Nonnull final AS4MessageState aIncomingState,
                                         @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
-    IPMode aPMode = aState.getPMode ();
+    // Remember the crypto factories used for this message
+    aIncomingState.setCryptoFactorySign (m_aCryptoFactorySign);
+    aIncomingState.setCryptoFactoryCrypt (m_aCryptoFactoryCrypt);
+
+    // Make sure a PMode is selected
+    IPMode aPMode = aIncomingState.getPMode ();
     if (aPMode == null)
       aPMode = m_aFallbackPModeProvider.get ();
-
-    // Safety Check
     if (aPMode == null)
       throw new IllegalStateException ("No PMode contained in AS4 state - seems like Ebms3 Messaging header is missing!");
 
     // Default is Leg 1, gets overwritten when a reference to a message id
     // exists and then uses leg2
-    final Locale aLocale = aState.getLocale ();
+    final Locale aLocale = aIncomingState.getLocale ();
 
     PModeLeg aPModeLeg = aPMode.getLeg1 ();
-    final Ebms3UserMessage aUserMessage = aState.getEbmsUserMessage ();
+    final Ebms3UserMessage aUserMessage = aIncomingState.getEbmsUserMessage ();
     if (aUserMessage != null && StringHelper.hasText (aUserMessage.getMessageInfo ().getRefToMessageId ()))
       aPModeLeg = aPMode.getLeg2 ();
 
@@ -423,7 +426,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       // Check attachment validity only if a PartInfo element is available
       if (aUserMessage != null)
       {
-        final boolean bBodyPayloadPresent = aState.isSoapBodyPayloadPresent ();
+        final boolean bBodyPayloadPresent = aIncomingState.isSoapBodyPayloadPresent ();
 
         // Check if Attachment IDs are the same
         for (int i = 0; i < aAttachments.size (); i++)
@@ -501,7 +504,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // Use static WSSConfig creation
         eSuccess = WSSSynchronizer.call ( () -> _verifyAndDecrypt (aSOAPDoc,
                                                                    aAttachments,
-                                                                   aState,
+                                                                   aIncomingState,
                                                                    aProcessingErrorMessagesTarget,
                                                                    WSSConfigManager::createStaticWSSConfig));
       }
@@ -510,7 +513,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // Use instance WSSConfig creation
         eSuccess = _verifyAndDecrypt (aSOAPDoc,
                                       aAttachments,
-                                      aState,
+                                      aIncomingState,
                                       aProcessingErrorMessagesTarget,
                                       WSSConfigManager.getInstance ()::createWSSConfig);
       }
