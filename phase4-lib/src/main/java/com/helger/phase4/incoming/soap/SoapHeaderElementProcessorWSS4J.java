@@ -349,11 +349,14 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
                                         @Nonnull final AS4IncomingMessageState aIncomingState,
                                         @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
+    // Remember the crypto factories used for this message
+    aIncomingState.setCryptoFactorySign (m_aCryptoFactorySign);
+    aIncomingState.setCryptoFactoryCrypt (m_aCryptoFactoryCrypt);
+
+    // Make sure a PMode is selected
     IPMode aPMode = aIncomingState.getPMode ();
     if (aPMode == null)
       aPMode = m_aFallbackPModeProvider.get ();
-
-    // Safety Check
     if (aPMode == null)
       throw new IllegalStateException ("No PMode contained in AS4 state - seems like Ebms3 Messaging header is missing!");
 

@@ -34,6 +34,7 @@ import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.ebms3header.Ebms3PullRequest;
@@ -485,4 +486,25 @@ public interface IAS4IncomingMessageState
    * @since v0.9.7
    */
   boolean isSoapHeaderElementProcessingSuccessful ();
+
+  /**
+   * @return The crypto factory that was used to verify an eventually contained
+   *         signature. May be <code>null</code>. If this is
+   *         non-<code>null</code> it is NO indicator, whether a message was
+   *         signed or not.
+   * @see #isSoapSignatureChecked()
+   * @since 3.0.0-beta6
+   */
+  @Nullable
+  IAS4CryptoFactory getCryptoFactorySign ();
+
+  /**
+   * @return The crypto factory that was used to decrypt an eventually encrypted
+   *         message. May be <code>null</code>. If this is non-<code>null</code>
+   *         it is NO indicator, whether a message was encrypted or not.
+   * @see #isSoapDecrypted()
+   * @since 3.0.0-beta6
+   */
+  @Nullable
+  IAS4CryptoFactory getCryptoFactoryCrypt ();
 }

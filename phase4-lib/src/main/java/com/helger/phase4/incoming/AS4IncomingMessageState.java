@@ -40,6 +40,7 @@ import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.ESoapVersion;
@@ -85,7 +86,9 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   private static final String KEY_AS4_MESSAGE_TIMESTAMP = "phase4.message.timestamp";
   private static final String KEY_IS_PING_MESSAGE = "phase4.is.ping.message";
   private static final String KEY_SOAP_BODY_PAYLOAD_NODE = "phase4.soap.body.first.child";
-  private static final String KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL = "phase4.soap.header.element.processing.successful";
+  private static final String KEY_SOAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL = "phase4.soap.header.element.processing.successful";
+  private static final String KEY_CRYPTO_FACTORY_SIGN = "phase4.crypto-factory.sign";
+  private static final String KEY_CRYPTO_FACTORY_CRYPT = "phase4.crypto-factory.crypt";
 
   private final OffsetDateTime m_aReceiptDT;
   private final ESoapVersion m_eSoapVersion;
@@ -409,12 +412,36 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
 
   public boolean isSoapHeaderElementProcessingSuccessful ()
   {
-    return getAsBoolean (KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL, false);
+    return getAsBoolean (KEY_SOAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL, false);
   }
 
   public void setSoapHeaderElementProcessingSuccessful (final boolean bSuccess)
   {
-    putIn (KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL, bSuccess);
+    putIn (KEY_SOAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL, bSuccess);
+  }
+
+  @Nullable
+  public IAS4CryptoFactory getCryptoFactorySign ()
+  {
+    return getCastedValue (KEY_CRYPTO_FACTORY_SIGN);
+  }
+
+  @Nullable
+  public void setCryptoFactorySign (@Nullable final IAS4CryptoFactory aCryptoFactorySign)
+  {
+    putIn (KEY_CRYPTO_FACTORY_SIGN, aCryptoFactorySign);
+  }
+
+  @Nullable
+  public IAS4CryptoFactory getCryptoFactoryCrypt ()
+  {
+    return getCastedValue (KEY_CRYPTO_FACTORY_CRYPT);
+  }
+
+  @Nullable
+  public void setCryptoFactoryCrypt (@Nullable final IAS4CryptoFactory aCryptoFactoryCrypt)
+  {
+    putIn (KEY_CRYPTO_FACTORY_CRYPT, aCryptoFactoryCrypt);
   }
 
   @Override
