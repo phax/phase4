@@ -23,6 +23,8 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.builder.IBuilder;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
@@ -181,5 +183,143 @@ public final class Phase4PeppolReceiverConfiguration
                                        .append ("CheckSigningCertificateRevocation",
                                                 m_bCheckSigningCertificateRevocation)
                                        .getToString ();
+  }
+
+  /**
+   * @return An empty builder instance. Never <code>null</code>.
+   */
+  @Nonnull
+  public static Phase4PeppolReceiverConfigurationBuilder builder ()
+  {
+    return new Phase4PeppolReceiverConfigurationBuilder ();
+  }
+
+  /**
+   * Create a builder instance with the data of the provided object already
+   * filled in.
+   *
+   * @param aSrc
+   *        The source {@link Phase4PeppolReceiverConfiguration} to take the
+   *        data from. May not be <code>null</code>.
+   * @return A non-<code>null</code> filled builder instance.
+   */
+  @Nonnull
+  public static Phase4PeppolReceiverConfigurationBuilder builder (@Nonnull final Phase4PeppolReceiverConfiguration aSrc)
+  {
+    return new Phase4PeppolReceiverConfigurationBuilder (aSrc);
+  }
+
+  /**
+   * A builder for class {@link Phase4PeppolReceiverConfiguration}.
+   *
+   * @author Philip Helger
+   * @since 3.0.0 Beta7
+   */
+  public static class Phase4PeppolReceiverConfigurationBuilder implements IBuilder <Phase4PeppolReceiverConfiguration>
+  {
+    private boolean m_bReceiverCheckEnabled;
+    private ISMPServiceMetadataProvider m_aSMPClient;
+    private PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
+    private String m_sAS4EndpointURL;
+    private X509Certificate m_aAPCertificate;
+    private boolean m_bPerformSBDHValueChecks;
+    private boolean m_bCheckSBDHForMandatoryCountryC1;
+    private boolean m_bCheckSigningCertificateRevocation;
+
+    public Phase4PeppolReceiverConfigurationBuilder ()
+    {}
+
+    public Phase4PeppolReceiverConfigurationBuilder (@Nonnull final Phase4PeppolReceiverConfiguration aSrc)
+    {
+      ValueEnforcer.notNull (aSrc, "Src");
+      receiverCheckEnabled (aSrc.isReceiverCheckEnabled ()).serviceMetadataProvider (aSrc.getSMPClient ())
+                                                           .wildcardSelectionMode (aSrc.getWildcardSelectionMode ())
+                                                           .as4EndpointUrl (aSrc.getAS4EndpointURL ())
+                                                           .apCertificate (aSrc.getAPCertificate ())
+                                                           .performSBDHValueChecks (aSrc.isPerformSBDHValueChecks ())
+                                                           .checkSBDHForMandatoryCountryC1 (aSrc.isCheckSBDHForMandatoryCountryC1 ())
+                                                           .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ());
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder receiverCheckEnabled (final boolean b)
+    {
+      m_bReceiverCheckEnabled = b;
+      return this;
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder serviceMetadataProvider (@Nullable final ISMPServiceMetadataProvider a)
+    {
+      m_aSMPClient = a;
+      return this;
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder wildcardSelectionMode (@Nullable final PeppolWildcardSelector.EMode e)
+    {
+      m_eWildcardSelectionMode = e;
+      return this;
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder as4EndpointUrl (@Nullable final String s)
+    {
+      m_sAS4EndpointURL = s;
+      return this;
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder apCertificate (@Nullable final X509Certificate a)
+    {
+      m_aAPCertificate = a;
+      return this;
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder performSBDHValueChecks (final boolean b)
+    {
+      m_bPerformSBDHValueChecks = b;
+      return this;
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder checkSBDHForMandatoryCountryC1 (final boolean b)
+    {
+      m_bCheckSBDHForMandatoryCountryC1 = b;
+      return this;
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder checkSigningCertificateRevocation (final boolean b)
+    {
+      m_bCheckSigningCertificateRevocation = b;
+      return this;
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfiguration build ()
+    {
+      if (m_bReceiverCheckEnabled)
+      {
+        if (m_aSMPClient == null)
+          throw new IllegalStateException ("The SMP Client must be provided");
+        if (StringHelper.hasNoText (m_sAS4EndpointURL))
+          throw new IllegalStateException ("Our AS4 Endpoint URL must be provided");
+        if (m_aAPCertificate == null)
+          throw new IllegalStateException ("Our AS4 AP certificate must be provided");
+      }
+      if (m_eWildcardSelectionMode == null)
+        throw new IllegalStateException ("The Wildcard Selection Mode must be provided");
+
+      return new Phase4PeppolReceiverConfiguration (m_bReceiverCheckEnabled,
+                                                    m_aSMPClient,
+                                                    m_eWildcardSelectionMode,
+                                                    m_sAS4EndpointURL,
+                                                    m_aAPCertificate,
+                                                    m_bPerformSBDHValueChecks,
+                                                    m_bCheckSBDHForMandatoryCountryC1,
+                                                    m_bCheckSigningCertificateRevocation);
+    }
   }
 }

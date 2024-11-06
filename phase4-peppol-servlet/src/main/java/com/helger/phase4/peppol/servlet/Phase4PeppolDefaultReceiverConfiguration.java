@@ -29,6 +29,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverConfiguration.Phase4PeppolReceiverConfigurationBuilder;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
@@ -282,37 +283,18 @@ public final class Phase4PeppolDefaultReceiverConfiguration
 
   /**
    * Get the statically configured data as a
-   * {@link Phase4PeppolReceiverConfiguration} instance. Returns
-   * <code>null</code> if the checks are disabled, or if at least one mandatory
-   * field is not set.<br>
-   * Changed to NonNull in 2.8.1
+   * {@link Phase4PeppolReceiverConfigurationBuilder} instance. This allows for
+   * modification before building the final object.
    *
-   * @return The instance data or <code>null</code>.
-   * @since 0.9.13
+   * @return Completely filled builder. Never <code>null</code>.
+   * @since 3.0.0 Beta7
    */
   @Nonnull
-  public static Phase4PeppolReceiverConfiguration getAsReceiverCheckData ()
-  {
-    return getAsReceiverCheckData (getAPCertificate ());
-  }
-
-  /**
-   * Get the statically configured data as a
-   * {@link Phase4PeppolReceiverConfiguration} instance. Returns
-   * <code>null</code> if the checks are disabled, or if at least one mandatory
-   * field is not set.<br>
-   * Changed to NonNull in 2.8.1
-   *
-   * @param aAPCertificate
-   *        The AP certificate to use. May be <code>null</code>.
-   * @return The instance data or <code>null</code>.
-   * @since 3.0.0
-   */
-  @Nonnull
-  public static Phase4PeppolReceiverConfiguration getAsReceiverCheckData (@Nullable final X509Certificate aAPCertificate)
+  public static Phase4PeppolReceiverConfigurationBuilder getAsReceiverCheckDataBuilder ()
   {
     final ISMPServiceMetadataProvider aSMPClient = getSMPClient ();
     final String sAS4EndpointURL = getAS4EndpointURL ();
+    final X509Certificate aAPCertificate = getAPCertificate ();
 
     final boolean bReceiverCheckEnabled;
     if (aSMPClient == null || StringHelper.hasNoText (sAS4EndpointURL) || aAPCertificate == null)
@@ -320,13 +302,27 @@ public final class Phase4PeppolDefaultReceiverConfiguration
     else
       bReceiverCheckEnabled = isReceiverCheckEnabled ();
 
-    return new Phase4PeppolReceiverConfiguration (bReceiverCheckEnabled,
-                                                  aSMPClient,
-                                                  getWildcardSelectionMode (),
-                                                  sAS4EndpointURL,
-                                                  aAPCertificate,
-                                                  isPerformSBDHValueChecks (),
-                                                  isCheckSBDHForMandatoryCountryC1 (),
-                                                  isCheckSigningCertificateRevocation ());
+    return Phase4PeppolReceiverConfiguration.builder ()
+                                            .receiverCheckEnabled (bReceiverCheckEnabled)
+                                            .serviceMetadataProvider (aSMPClient)
+                                            .wildcardSelectionMode (getWildcardSelectionMode ())
+                                            .as4EndpointUrl (sAS4EndpointURL)
+                                            .apCertificate (aAPCertificate)
+                                            .performSBDHValueChecks (isPerformSBDHValueChecks ())
+                                            .checkSBDHForMandatoryCountryC1 (isCheckSBDHForMandatoryCountryC1 ())
+                                            .checkSigningCertificateRevocation (isCheckSigningCertificateRevocation ());
+  }
+
+  /**
+   * Get the statically configured data as a
+   * {@link Phase4PeppolReceiverConfiguration} instance.
+   *
+   * @return The instance data and never <code>null</code>.
+   * @since 0.9.13
+   */
+  @Nonnull
+  public static Phase4PeppolReceiverConfiguration getAsReceiverCheckData ()
+  {
+    return getAsReceiverCheckDataBuilder ().build ();
   }
 }
