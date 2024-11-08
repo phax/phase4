@@ -79,7 +79,7 @@
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <peppol-commons.version>9.5.1</peppol-commons.version>
     <peppol-reporting.version>3.0.1</peppol-reporting.version>
-    <ph-commons.version>11.1.9</ph-commons.version>
+    <ph-commons.version>11.1.10</ph-commons.version>
     <ph-ubl.version>9.0.3</ph-ubl.version>
     <ph-schematron.version>8.0.3</ph-schematron.version>
     <ph-web.version>10.1.9</ph-web.version>
