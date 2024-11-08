@@ -254,7 +254,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   /**
    * Set the crypto factory to be used for signing and crypting. The default
    * crypto factory is set in the constructor to
-   * {@link AS4CryptoFactoryConfiguration#getDefaultInstanceOrNullOrNull()}.
+   * {@link AS4CryptoFactoryConfiguration#getDefaultInstanceOrNull()}.
    *
    * @param aCryptoFactory
    *        The crypto factory to be used. May be <code>null</code>.
