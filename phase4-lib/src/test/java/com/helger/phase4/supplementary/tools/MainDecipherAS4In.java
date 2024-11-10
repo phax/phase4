@@ -27,6 +27,8 @@ import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
 import com.helger.phase4.crypto.AS4TrustStoreDescriptor;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
+import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
+import com.helger.security.keystore.TrustStoreDescriptor;
 
 /**
  * This is a small tool that demonstrates how the "as4in" files can be decrypted
@@ -48,14 +50,14 @@ public final class MainDecipherAS4In
       throw new IllegalStateException ();
 
     // Change path of key store and trust store
-    AS4KeyStoreDescriptor aKSD = AS4KeyStoreDescriptor.createFromConfig ();
-    aKSD = AS4KeyStoreDescriptor.builder (aKSD)
-                                .path (folder.getAbsolutePath () + "/" + aKSD.getKeyStorePath ())
-                                .build ();
-    AS4TrustStoreDescriptor aTSD = AS4TrustStoreDescriptor.createFromConfig ();
-    aTSD = AS4TrustStoreDescriptor.builder (aTSD)
-                                  .path (folder.getAbsolutePath () + "/" + aTSD.getTrustStorePath ())
-                                  .build ();
+    KeyStoreAndKeyDescriptor aKSD = AS4KeyStoreDescriptor.createFromConfig ();
+    aKSD = KeyStoreAndKeyDescriptor.builder (aKSD)
+                                   .path (folder.getAbsolutePath () + "/" + aKSD.getKeyStorePath ())
+                                   .build ();
+    TrustStoreDescriptor aTSD = AS4TrustStoreDescriptor.createFromConfig ();
+    aTSD = TrustStoreDescriptor.builder (aTSD)
+                               .path (folder.getAbsolutePath () + "/" + aTSD.getTrustStorePath ())
+                               .build ();
     final IAS4CryptoFactory aCryptoFactory = new AS4CryptoFactoryInMemoryKeyStore (aKSD, aTSD);
 
     LOGGER.info ("Reading " + f.getName ());

@@ -28,6 +28,8 @@ import org.apache.wss4j.common.crypto.Merlin;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.security.keystore.IKeyStoreAndKeyDescriptor;
+import com.helger.security.keystore.ITrustStoreDescriptor;
 
 /**
  * This class contains an implementation of {@link IAS4CryptoFactory} in which
@@ -58,8 +60,8 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    *        the global JRE CA certs list will be used.
    * @since 3.0.0
    */
-  public AS4CryptoFactoryInMemoryKeyStore (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
-                                           @Nullable final IAS4TrustStoreDescriptor aTrustStoreDesc)
+  public AS4CryptoFactoryInMemoryKeyStore (@Nonnull final IKeyStoreAndKeyDescriptor aKeyStoreDesc,
+                                           @Nullable final ITrustStoreDescriptor aTrustStoreDesc)
   {
     this (aKeyStoreDesc.loadKeyStore ().getKeyStore (),
           aKeyStoreDesc.getKeyAlias (),

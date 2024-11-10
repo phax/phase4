@@ -31,6 +31,8 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.config.IConfig;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.security.keystore.IKeyStoreAndKeyDescriptor;
+import com.helger.security.keystore.ITrustStoreDescriptor;
 import com.helger.security.keystore.LoadedKey;
 import com.helger.security.keystore.LoadedKeyStore;
 
@@ -93,8 +95,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
     }
   }
 
-  private final IAS4KeyStoreDescriptor m_aKeyStoreDesc;
-  private final IAS4TrustStoreDescriptor m_aTrustStorDesc;
+  private final IKeyStoreAndKeyDescriptor m_aKeyStoreDesc;
+  private final ITrustStoreDescriptor m_aTrustStorDesc;
 
   /**
    * This constructor takes the configuration object and uses the default prefix
@@ -109,10 +111,10 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
   }
 
   @Nonnull
-  private static IAS4KeyStoreDescriptor _loadKeyStore (@Nonnull final IConfigWithFallback aConfig,
-                                                       @Nonnull @Nonempty final String sConfigPrefix)
+  private static IKeyStoreAndKeyDescriptor _loadKeyStore (@Nonnull final IConfigWithFallback aConfig,
+                                                          @Nonnull @Nonempty final String sConfigPrefix)
   {
-    final IAS4KeyStoreDescriptor aDescriptor = AS4KeyStoreDescriptor.createFromConfig (aConfig, sConfigPrefix, null);
+    final IKeyStoreAndKeyDescriptor aDescriptor = AS4KeyStoreDescriptor.createFromConfig (aConfig, sConfigPrefix, null);
     final LoadedKeyStore aLKS = aDescriptor.loadKeyStore ();
     if (aLKS.getKeyStore () == null)
     {
@@ -136,13 +138,11 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
   }
 
   @Nullable
-  private static IAS4TrustStoreDescriptor _loadTrustStore (@Nonnull final IConfigWithFallback aConfig,
-                                                           @Nonnull @Nonempty final String sConfigPrefix)
+  private static ITrustStoreDescriptor _loadTrustStore (@Nonnull final IConfigWithFallback aConfig,
+                                                        @Nonnull @Nonempty final String sConfigPrefix)
   {
     // Load the trust store - may be null
-    final IAS4TrustStoreDescriptor aDescriptor = AS4TrustStoreDescriptor.createFromConfig (aConfig,
-                                                                                           sConfigPrefix,
-                                                                                           null);
+    final ITrustStoreDescriptor aDescriptor = AS4TrustStoreDescriptor.createFromConfig (aConfig, sConfigPrefix, null);
     if (aDescriptor != null)
     {
       final LoadedKeyStore aLTS = aDescriptor.loadTrustStore ();
@@ -182,8 +182,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    *        The trust store descriptor. May be <code>null</code> in which case
    *        the global JRE CA certs list will be used.
    */
-  private AS4CryptoFactoryConfiguration (@Nonnull final IAS4KeyStoreDescriptor aKeyStoreDesc,
-                                         @Nonnull final IAS4TrustStoreDescriptor aTrustStorDesc)
+  private AS4CryptoFactoryConfiguration (@Nonnull final IKeyStoreAndKeyDescriptor aKeyStoreDesc,
+                                         @Nonnull final ITrustStoreDescriptor aTrustStorDesc)
   {
     super (aKeyStoreDesc, aTrustStorDesc);
     m_aKeyStoreDesc = aKeyStoreDesc;
@@ -194,7 +194,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    * @return The descriptor used to load the key store. Never <code>null</code>.
    */
   @Nonnull
-  public IAS4KeyStoreDescriptor getKeyStoreDescriptor ()
+  public IKeyStoreAndKeyDescriptor getKeyStoreDescriptor ()
   {
     return m_aKeyStoreDesc;
   }
@@ -204,7 +204,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    *         <code>null</code>.
    */
   @Nonnull
-  public IAS4TrustStoreDescriptor getTrustStoreDescriptor ()
+  public ITrustStoreDescriptor getTrustStoreDescriptor ()
   {
     return m_aTrustStorDesc;
   }

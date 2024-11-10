@@ -29,7 +29,6 @@ import org.w3c.dom.Node;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
-import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.model.ESoapVersion;
@@ -38,6 +37,7 @@ import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.message.MockMessages;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.security.keystore.EKeyStoreType;
+import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -121,13 +121,13 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
     aClient.setNonRepudiation (true);
     aClient.setReceiptShouldBeSigned (true);
 
-    aClient.setCryptoFactory (new AS4CryptoFactoryInMemoryKeyStore (AS4KeyStoreDescriptor.builder ()
-                                                                                         .type (EKeyStoreType.JKS)
-                                                                                         .path ("keys/dummy-pw-test.jks")
-                                                                                         .password ("test")
-                                                                                         .keyAlias ("ph-as4")
-                                                                                         .keyPassword ("test")
-                                                                                         .build (),
+    aClient.setCryptoFactory (new AS4CryptoFactoryInMemoryKeyStore (KeyStoreAndKeyDescriptor.builder ()
+                                                                                            .type (EKeyStoreType.JKS)
+                                                                                            .path ("keys/dummy-pw-test.jks")
+                                                                                            .password ("test")
+                                                                                            .keyAlias ("ph-as4")
+                                                                                            .keyPassword ("test")
+                                                                                            .build (),
                                                                     null));
 
     aClient.signingParams ()

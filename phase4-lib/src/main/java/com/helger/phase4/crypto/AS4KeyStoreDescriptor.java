@@ -16,138 +16,31 @@
  */
 package com.helger.phase4.crypto;
 
-import java.security.KeyStore.PrivateKeyEntry;
 import java.security.Provider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.security.keystore.EKeyStoreType;
-import com.helger.security.keystore.IKeyStoreType;
-import com.helger.security.keystore.KeyStoreHelper;
-import com.helger.security.keystore.LoadedKey;
-import com.helger.security.keystore.LoadedKeyStore;
+import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
 
 /**
- * The default implementation of {@link IAS4KeyStoreDescriptor}.
+ * A specific helper for {@link KeyStoreAndKeyDescriptor}
  *
  * @author Philip Helger
  * @since 3.0.0
  */
-public class AS4KeyStoreDescriptor implements IAS4KeyStoreDescriptor
+@Immutable
+public final class AS4KeyStoreDescriptor
 {
-  private final IKeyStoreType m_aType;
-  private final String m_sPath;
-  private final char [] m_aPassword;
-  private final Provider m_aProvider;
-  private final String m_sKeyAlias;
-  private final char [] m_aKeyPassword;
-  // Lazily initialized
-  private LoadedKeyStore m_aLKS;
-  private LoadedKey <PrivateKeyEntry> m_aLK;
-
-  public AS4KeyStoreDescriptor (@Nonnull final IKeyStoreType aType,
-                                @Nonnull @Nonempty final String sPath,
-                                @Nonnull final char [] aPassword,
-                                @Nullable final Provider aProvider,
-                                @Nonnull @Nonempty final String sKeyAlias,
-                                @Nonnull final char [] aKeyPassword)
-  {
-    ValueEnforcer.notNull (aType, "Type");
-    ValueEnforcer.notEmpty (sPath, "Path");
-    ValueEnforcer.notNull (aPassword, "Password");
-    ValueEnforcer.notEmpty (sKeyAlias, "KeyAlias");
-    ValueEnforcer.notNull (aKeyPassword, "KeyPassword");
-    m_aType = aType;
-    m_sPath = sPath;
-    m_aPassword = aPassword;
-    m_aProvider = aProvider;
-    m_sKeyAlias = sKeyAlias;
-    m_aKeyPassword = aKeyPassword;
-  }
-
-  @Nonnull
-  public IKeyStoreType getKeyStoreType ()
-  {
-    return m_aType;
-  }
-
-  @Nonnull
-  @Nonempty
-  public String getKeyStorePath ()
-  {
-    return m_sPath;
-  }
-
-  @Nonnull
-  @ReturnsMutableObject
-  public char [] getKeyStorePassword ()
-  {
-    return m_aPassword;
-  }
-
-  @Nullable
-  public Provider getProvider ()
-  {
-    return m_aProvider;
-  }
-
-  @Nonnull
-  public LoadedKeyStore loadKeyStore ()
-  {
-    LoadedKeyStore ret = m_aLKS;
-    if (ret == null)
-      ret = m_aLKS = KeyStoreHelper.loadKeyStore (m_aType, m_sPath, m_aPassword, m_aProvider);
-    return ret;
-  }
-
-  @Nonnull
-  @Nonempty
-  public String getKeyAlias ()
-  {
-    return m_sKeyAlias;
-  }
-
-  @Nonnull
-  @ReturnsMutableObject
-  public char [] getKeyPassword ()
-  {
-    return m_aKeyPassword;
-  }
-
-  @Nonnull
-  public LoadedKey <PrivateKeyEntry> loadKey ()
-  {
-    LoadedKey <PrivateKeyEntry> ret = m_aLK;
-    if (ret == null)
-    {
-      ret = m_aLK = KeyStoreHelper.loadPrivateKey (loadKeyStore ().getKeyStore (),
-                                                   m_sPath,
-                                                   m_sKeyAlias,
-                                                   m_aKeyPassword);
-    }
-    return ret;
-  }
-
-  @Override
-  public String toString ()
-  {
-    return new ToStringGenerator (null).append ("Type", m_aType)
-                                       .append ("Path", m_sPath)
-                                       .appendPassword ("Password")
-                                       .appendIfNotNull ("Provider", m_aProvider)
-                                       .append ("KeyAlias", m_sKeyAlias)
-                                       .appendPassword ("KeyPassword")
-                                       .getToString ();
-  }
+  private AS4KeyStoreDescriptor ()
+  {}
 
   /**
    * Create the key store descriptor from the default configuration item. The
@@ -162,11 +55,11 @@ public class AS4KeyStoreDescriptor implements IAS4KeyStoreDescriptor
    * password</li>
    * </ul>
    *
-   * @return A new {@link AS4KeyStoreDescriptor} object and never
+   * @return A new {@link KeyStoreAndKeyDescriptor} object and never
    *         <code>null</code>.
    */
   @Nonnull
-  public static AS4KeyStoreDescriptor createFromConfig ()
+  public static KeyStoreAndKeyDescriptor createFromConfig ()
   {
     return createFromConfig (AS4Configuration.getConfig (), CAS4Crypto.DEFAULT_CONFIG_PREFIX, null);
   }
@@ -192,13 +85,13 @@ public class AS4KeyStoreDescriptor implements IAS4KeyStoreDescriptor
    * @param aProvider
    *        The Java security provider for loading the key store. May be
    *        <code>null</code> to use the default.
-   * @return A new {@link AS4KeyStoreDescriptor} object and never
+   * @return A new {@link KeyStoreAndKeyDescriptor} object and never
    *         <code>null</code>.
    */
   @Nonnull
-  public static AS4KeyStoreDescriptor createFromConfig (@Nonnull final IConfigWithFallback aConfig,
-                                                        @Nonnull @Nonempty final String sConfigPrefix,
-                                                        @Nullable final Provider aProvider)
+  public static KeyStoreAndKeyDescriptor createFromConfig (@Nonnull final IConfigWithFallback aConfig,
+                                                           @Nonnull @Nonempty final String sConfigPrefix,
+                                                           @Nullable final Provider aProvider)
   {
     ValueEnforcer.notNull (aConfig, "Config");
     ValueEnforcer.notEmpty (sConfigPrefix, "ConfigPrefix");
@@ -215,128 +108,6 @@ public class AS4KeyStoreDescriptor implements IAS4KeyStoreDescriptor
     final String sKeyAlias = aConfig.getAsString (sConfigPrefix + "keystore.alias");
     final char [] aKeyPassword = aConfig.getAsCharArray (sConfigPrefix + "keystore.private.password");
 
-    return new AS4KeyStoreDescriptor (aType, sPath, aPassword, aProvider, sKeyAlias, aKeyPassword);
-  }
-
-  /**
-   * @return A new builder for {@link AS4KeyStoreDescriptor} objects. Never
-   *         <code>null</code>.
-   */
-  @Nonnull
-  public static AS4KeyStoreDescriptorBuilder builder ()
-  {
-    return new AS4KeyStoreDescriptorBuilder ();
-  }
-
-  /**
-   * Create a new builder using the provided descriptor.
-   *
-   * @param a
-   *        The existing descriptor. May not be <code>null</code>.
-   * @return A new builder for {@link AS4KeyStoreDescriptor} objects. Never
-   *         <code>null</code>.
-   */
-  @Nonnull
-  public static AS4KeyStoreDescriptorBuilder builder (@Nonnull final AS4KeyStoreDescriptor a)
-  {
-    return new AS4KeyStoreDescriptorBuilder (a);
-  }
-
-  /**
-   * Builder class for class {@link AS4KeyStoreDescriptor}.
-   *
-   * @author Philip Helger
-   */
-  public static class AS4KeyStoreDescriptorBuilder implements IBuilder <AS4KeyStoreDescriptor>
-  {
-    private IKeyStoreType m_aType;
-    private String m_sPath;
-    private char [] m_aPassword;
-    private Provider m_aProvider;
-    private String m_sKeyAlias;
-    private char [] m_aKeyPassword;
-
-    public AS4KeyStoreDescriptorBuilder ()
-    {}
-
-    public AS4KeyStoreDescriptorBuilder (@Nonnull final AS4KeyStoreDescriptor a)
-    {
-      type (a.m_aType).path (a.m_sPath)
-                      .password (a.m_aPassword)
-                      .provider (m_aProvider)
-                      .keyAlias (m_sKeyAlias)
-                      .keyPassword (m_aKeyPassword);
-    }
-
-    @Nonnull
-    public final AS4KeyStoreDescriptorBuilder type (@Nullable final IKeyStoreType a)
-    {
-      m_aType = a;
-      return this;
-    }
-
-    @Nonnull
-    public final AS4KeyStoreDescriptorBuilder path (@Nullable final String s)
-    {
-      m_sPath = s;
-      return this;
-    }
-
-    @Nonnull
-    public final AS4KeyStoreDescriptorBuilder password (@Nullable final String s)
-    {
-      return password (s == null ? null : s.toCharArray ());
-    }
-
-    @Nonnull
-    public final AS4KeyStoreDescriptorBuilder password (@Nullable final char [] a)
-    {
-      m_aPassword = a;
-      return this;
-    }
-
-    @Nonnull
-    public final AS4KeyStoreDescriptorBuilder provider (@Nullable final Provider a)
-    {
-      m_aProvider = a;
-      return this;
-    }
-
-    @Nonnull
-    public final AS4KeyStoreDescriptorBuilder keyAlias (@Nullable final String s)
-    {
-      m_sKeyAlias = s;
-      return this;
-    }
-
-    @Nonnull
-    public final AS4KeyStoreDescriptorBuilder keyPassword (@Nullable final String s)
-    {
-      return keyPassword (s == null ? null : s.toCharArray ());
-    }
-
-    @Nonnull
-    public final AS4KeyStoreDescriptorBuilder keyPassword (@Nullable final char [] a)
-    {
-      m_aKeyPassword = a;
-      return this;
-    }
-
-    @Nonnull
-    public AS4KeyStoreDescriptor build ()
-    {
-      if (m_aType == null)
-        throw new IllegalStateException ("Type is missing");
-      if (StringHelper.hasNoText (m_sPath))
-        throw new IllegalStateException ("Path is empty");
-      if (m_aPassword == null)
-        throw new IllegalStateException ("Password is missing");
-      // Provider may be null
-      if (StringHelper.hasNoText (m_sKeyAlias))
-        throw new IllegalStateException ("KeyAlias is empty");
-      if (m_aKeyPassword == null)
-        throw new IllegalStateException ("KeyPassword is missing");
-      return new AS4KeyStoreDescriptor (m_aType, m_sPath, m_aPassword, m_aProvider, m_sKeyAlias, m_aKeyPassword);
-    }
+    return new KeyStoreAndKeyDescriptor (aType, sPath, aPassword, aProvider, sKeyAlias, aKeyPassword);
   }
 }

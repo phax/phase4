@@ -44,8 +44,6 @@ import com.helger.phase4.client.AS4ClientErrorMessage;
 import com.helger.phase4.client.AS4ClientReceiptMessage;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
-import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
-import com.helger.phase4.crypto.AS4TrustStoreDescriptor;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -68,6 +66,8 @@ import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.keystore.EKeyStoreType;
+import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
+import com.helger.security.keystore.TrustStoreDescriptor;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 
@@ -80,21 +80,21 @@ public class MainPhase4EuCtpSenderExample
   @Nonnull
   private static IAS4CryptoFactory _buildAs4CryptoFactory ()
   {
-    return new AS4CryptoFactoryInMemoryKeyStore (AS4KeyStoreDescriptor.builder ()
-                                                                      .type (EKeyStoreType.PKCS12)
-                                                                      .path (System.getenv ("AS4_SIGNING_KEYSTORE_PATH"))
-                                                                      .password (System.getenv ("AS4_SIGNING_KEYSTORE_PASSWORD"))
-                                                                      .keyAlias (System.getenv ("AS4_SIGNING_KEY_ALIAS"))
-                                                                      .keyPassword (System.getenv ("AS4_SIGNING_KEY_PASSWORD"))
-                                                                      .build (),
+    return new AS4CryptoFactoryInMemoryKeyStore (KeyStoreAndKeyDescriptor.builder ()
+                                                                         .type (EKeyStoreType.PKCS12)
+                                                                         .path (System.getenv ("AS4_SIGNING_KEYSTORE_PATH"))
+                                                                         .password (System.getenv ("AS4_SIGNING_KEYSTORE_PASSWORD"))
+                                                                         .keyAlias (System.getenv ("AS4_SIGNING_KEY_ALIAS"))
+                                                                         .keyPassword (System.getenv ("AS4_SIGNING_KEY_PASSWORD"))
+                                                                         .build (),
                                                  // must include the Taxud CA
                                                  // and intermediate
                                                  // certificates
-                                                 AS4TrustStoreDescriptor.builder ()
-                                                                        .type (EKeyStoreType.PKCS12)
-                                                                        .path (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PATH"))
-                                                                        .password (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PASSWORD"))
-                                                                        .build ());
+                                                 TrustStoreDescriptor.builder ()
+                                                                     .type (EKeyStoreType.PKCS12)
+                                                                     .path (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PATH"))
+                                                                     .password (System.getenv ("AS4_SIGNING_TRUST_KEYSTORE_PASSWORD"))
+                                                                     .build ());
   }
 
   public static void main (final String [] args)

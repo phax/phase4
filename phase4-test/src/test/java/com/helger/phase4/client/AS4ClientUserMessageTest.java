@@ -42,7 +42,6 @@ import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
-import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
@@ -57,6 +56,8 @@ import com.helger.phase4.server.spi.MockAS4IncomingMessageProcessingStatusSPI;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.security.keystore.EKeyStoreType;
+import com.helger.security.keystore.IKeyStoreAndKeyDescriptor;
+import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.serialize.read.DOMReader;
@@ -173,13 +174,13 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Nonnull
   private static AS4ClientUserMessage _setKeyStoreTestData (@Nonnull final AS4ClientUserMessage aClient)
   {
-    final AS4KeyStoreDescriptor aKSD = AS4KeyStoreDescriptor.builder ()
-                                                            .type (EKeyStoreType.JKS)
-                                                            .path ("keys/dummy-pw-test.jks")
-                                                            .password ("test")
-                                                            .keyAlias ("ph-as4")
-                                                            .keyPassword ("test")
-                                                            .build ();
+    final IKeyStoreAndKeyDescriptor aKSD = KeyStoreAndKeyDescriptor.builder ()
+                                                                   .type (EKeyStoreType.JKS)
+                                                                   .path ("keys/dummy-pw-test.jks")
+                                                                   .password ("test")
+                                                                   .keyAlias ("ph-as4")
+                                                                   .keyPassword ("test")
+                                                                   .build ();
     aClient.setCryptoFactory (new AS4CryptoFactoryInMemoryKeyStore (aKSD, null));
     aClient.cryptParams ().setAlias (aKSD.getKeyAlias ());
     return aClient;
