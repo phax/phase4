@@ -37,6 +37,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.DevelopersNote;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.mime.CMimeType;
@@ -625,6 +626,7 @@ public final class Phase4PeppolSender
      * @see #receiverEndpointDetails(X509Certificate, String)
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
+    @SuppressWarnings ("removal")
     @Nonnull
     public final IMPLTYPE smpClient (@Nonnull final SMPClientReadOnly aSMPClient)
     {
@@ -648,6 +650,8 @@ public final class Phase4PeppolSender
      * @since 2.8.1
      */
     @Nonnull
+    @Deprecated (forRemoval = true, since = "3.0.0")
+    @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
     public final IMPLTYPE smpClient (@Nonnull final SMPClientReadOnly aSMPClient,
                                      @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
     {

@@ -26,11 +26,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.DevelopersNote;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverConfiguration.Phase4PeppolReceiverConfigurationBuilder;
-import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
 
@@ -50,13 +51,17 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
 public final class Phase4PeppolDefaultReceiverConfiguration
 {
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
+  @Deprecated (forRemoval = true, since = "3.0.0")
+  @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
   public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.WILDCARD_ONLY;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolDefaultReceiverConfiguration.class);
 
   private static boolean s_bReceiverCheckEnabled = DEFAULT_RECEIVER_CHECK_ENABLED;
-  private static ISMPServiceMetadataProvider s_aSMPClient;
+  private static ISMPExtendedServiceMetadataProvider s_aSMPClient;
+  @Deprecated (forRemoval = true, since = "3.0.0")
+  @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
   private static PeppolWildcardSelector.EMode s_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
@@ -84,11 +89,12 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @param bReceiverCheckEnabled
    *        <code>true</code> to enable the checks, <code>false</code> to
    *        disable them.
-   * @see #setSMPClient(ISMPServiceMetadataProvider)
+   * @see #setSMPClient(ISMPExtendedServiceMetadataProvider)
    * @see #setWildcardSelectionMode(EMode)
    * @see #setAS4EndpointURL(String)
    * @see #setAPCertificate(X509Certificate)
    */
+  @SuppressWarnings ("javadoc")
   public static void setReceiverCheckEnabled (final boolean bReceiverCheckEnabled)
   {
     s_bReceiverCheckEnabled = bReceiverCheckEnabled;
@@ -101,7 +107,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *         configured.
    */
   @Nullable
-  public static ISMPServiceMetadataProvider getSMPClient ()
+  public static ISMPExtendedServiceMetadataProvider getSMPClient ()
   {
     return s_aSMPClient;
   }
@@ -113,7 +119,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @param aSMPClient
    *        The SMP metadata provider to be used. May be <code>null</code>.
    */
-  public static void setSMPClient (@Nullable final ISMPServiceMetadataProvider aSMPClient)
+  public static void setSMPClient (@Nullable final ISMPExtendedServiceMetadataProvider aSMPClient)
   {
     s_aSMPClient = aSMPClient;
   }
@@ -126,6 +132,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @since 2.7.3
    */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "3.0.0")
+  @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
   public static PeppolWildcardSelector.EMode getWildcardSelectionMode ()
   {
     return s_eWildcardSelectionMode;
@@ -140,6 +148,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *        <code>null</code>.
    * @since 2.7.3
    */
+  @Deprecated (forRemoval = true, since = "3.0.0")
+  @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
   public static void setWildcardSelectionMode (@Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
   {
     ValueEnforcer.notNull (eWildcardSelectionMode, "WildcardSlectionMode");
@@ -289,10 +299,11 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return Completely filled builder. Never <code>null</code>.
    * @since 3.0.0 Beta7
    */
+  @SuppressWarnings ("removal")
   @Nonnull
   public static Phase4PeppolReceiverConfigurationBuilder getAsReceiverCheckDataBuilder ()
   {
-    final ISMPServiceMetadataProvider aSMPClient = getSMPClient ();
+    final ISMPExtendedServiceMetadataProvider aSMPClient = getSMPClient ();
     final String sAS4EndpointURL = getAS4EndpointURL ();
     final X509Certificate aAPCertificate = getAPCertificate ();
 

@@ -86,7 +86,7 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
-import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.write.XMLWriter;
@@ -269,9 +269,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     return this;
   }
 
+  @SuppressWarnings ({ "deprecation", "removal" })
   @Nullable
   private EndpointType _getReceiverEndpoint (@Nonnull final String sLogPrefix,
-                                             @Nonnull final ISMPServiceMetadataProvider aSMPClient,
+                                             @Nonnull final ISMPExtendedServiceMetadataProvider aSMPClient,
                                              @Nullable final IParticipantIdentifier aRecipientID,
                                              @Nullable final IDocumentTypeIdentifier aDocTypeID,
                                              @Nullable final IProcessIdentifier aProcessID,
@@ -530,6 +531,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                   @Nonnull final IAS4IncomingMessageState aState)
   {}
 
+  @SuppressWarnings ("removal")
   @Nonnull
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                           @Nonnull final HttpHeaderMap aHttpHeaders,

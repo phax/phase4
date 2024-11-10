@@ -23,10 +23,11 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.DevelopersNote;
 import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 
 /**
@@ -41,7 +42,9 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector;
 public final class Phase4PeppolReceiverConfiguration
 {
   private final boolean m_bReceiverCheckEnabled;
-  private final ISMPServiceMetadataProvider m_aSMPClient;
+  private final ISMPExtendedServiceMetadataProvider m_aSMPClient;
+  @Deprecated (forRemoval = true, since = "3.0.0")
+  @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
   private final PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
@@ -77,8 +80,9 @@ public final class Phase4PeppolReceiverConfiguration
    *        performed.
    * @since 2.8.1
    */
+  @SuppressWarnings ("deprecation")
   public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
-                                            @Nullable final ISMPServiceMetadataProvider aSMPClient,
+                                            @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
                                             @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
                                             @Nullable final String sAS4EndpointURL,
                                             @Nullable final X509Certificate aAPCertificate,
@@ -116,7 +120,7 @@ public final class Phase4PeppolReceiverConfiguration
    * @see #isReceiverCheckEnabled()
    */
   @Nullable
-  public ISMPServiceMetadataProvider getSMPClient ()
+  public ISMPExtendedServiceMetadataProvider getSMPClient ()
   {
     return m_aSMPClient;
   }
@@ -126,6 +130,8 @@ public final class Phase4PeppolReceiverConfiguration
    * @since 2.7.3
    */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "3.0.0")
+  @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
   public PeppolWildcardSelector.EMode getWildcardSelectionMode ()
   {
     return m_eWildcardSelectionMode;
@@ -218,7 +224,9 @@ public final class Phase4PeppolReceiverConfiguration
   public static class Phase4PeppolReceiverConfigurationBuilder implements IBuilder <Phase4PeppolReceiverConfiguration>
   {
     private boolean m_bReceiverCheckEnabled;
-    private ISMPServiceMetadataProvider m_aSMPClient;
+    private ISMPExtendedServiceMetadataProvider m_aSMPClient;
+    @Deprecated (forRemoval = true, since = "3.0.0")
+    @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
     private PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
@@ -249,13 +257,15 @@ public final class Phase4PeppolReceiverConfiguration
     }
 
     @Nonnull
-    public Phase4PeppolReceiverConfigurationBuilder serviceMetadataProvider (@Nullable final ISMPServiceMetadataProvider a)
+    public Phase4PeppolReceiverConfigurationBuilder serviceMetadataProvider (@Nullable final ISMPExtendedServiceMetadataProvider a)
     {
       m_aSMPClient = a;
       return this;
     }
 
     @Nonnull
+    @Deprecated (forRemoval = true, since = "3.0.0")
+    @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
     public Phase4PeppolReceiverConfigurationBuilder wildcardSelectionMode (@Nullable final PeppolWildcardSelector.EMode e)
     {
       m_eWildcardSelectionMode = e;

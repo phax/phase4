@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.DevelopersNote;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.datetime.PDTFactory;
@@ -39,6 +40,7 @@ import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.exception.SMPClientException;
+import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.ISMPServiceGroupProvider;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
@@ -57,19 +59,21 @@ import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
  */
 public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvider
 {
+  @Deprecated (forRemoval = true, since = "3.0.0")
   public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.BUSDOX_THEN_WILDCARD;
   public static final ISMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4EndpointDetailProviderPeppol.class);
 
   private final ISMPServiceGroupProvider m_aServiceGroupProvider;
-  private final ISMPServiceMetadataProvider m_aServiceMetadataProvider;
+  private final ISMPExtendedServiceMetadataProvider m_aServiceMetadataProvider;
+  @Deprecated (forRemoval = true, since = "3.0.0")
   private PeppolWildcardSelector.EMode m_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private ISMPTransportProfile m_aTP = DEFAULT_TRANSPORT_PROFILE;
   private EndpointType m_aEndpoint;
 
   public AS4EndpointDetailProviderPeppol (@Nonnull final ISMPServiceGroupProvider aServiceGroupProvider,
-                                          @Nonnull final ISMPServiceMetadataProvider aServiceMetadataProvider)
+                                          @Nonnull final ISMPExtendedServiceMetadataProvider aServiceMetadataProvider)
   {
     ValueEnforcer.notNull (aServiceGroupProvider, "ServiceGroupProvider");
     ValueEnforcer.notNull (aServiceMetadataProvider, "ServiceMetadataProvider");
@@ -103,6 +107,8 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
    *         Defaults to {@link #DEFAULT_WILDCARD_SELECTION_MODE}.
    */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "3.0.0")
+  @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
   public final PeppolWildcardSelector.EMode getWildcardSelectionMode ()
   {
     return m_eWildcardSelectionMode;
@@ -120,6 +126,8 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
    * @return this for chaining.
    */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "3.0.0")
+  @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
   public final AS4EndpointDetailProviderPeppol setWildcardSelectionMode (@Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
   {
     ValueEnforcer.notNull (eWildcardSelectionMode, "WildcardSlectionMode");
@@ -175,6 +183,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
     return m_aServiceMetadataProvider.getServiceMetadata (aReceiverID, aDocTypeID);
   }
 
+  @SuppressWarnings ("removal")
   @Nullable
   @OverrideOnDemand
   protected SignedServiceMetadataType resolvedWildcardServiceMetadata (@Nonnull final IParticipantIdentifier aReceiverID,
