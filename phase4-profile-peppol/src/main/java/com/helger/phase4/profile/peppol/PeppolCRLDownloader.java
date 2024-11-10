@@ -26,7 +26,7 @@ import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.peppol.utils.CRLCache;
 import com.helger.peppol.utils.CRLDownloader;
-import com.helger.peppol.utils.CertificateRevocationChecker;
+import com.helger.peppol.utils.CertificateRevocationCheckerDefaults;
 
 /**
  * The Peppol specific CRL downloader using the {@link HttpClientUrlDownloader}
@@ -82,7 +82,7 @@ public class PeppolCRLDownloader extends CRLDownloader
     ValueEnforcer.notNull (aHCS, "HttpClientSettings");
 
     LOGGER.info ("Installing the PeppolCRLDownloader as the default CRL cache using HttpClientSettings " + aHCS);
-    CertificateRevocationChecker.setDefaultCRLCache (new CRLCache (new PeppolCRLDownloader (aHCS),
-                                                                   CRLCache.DEFAULT_CACHING_DURATION));
+    CertificateRevocationCheckerDefaults.setDefaultCRLCache (new CRLCache (new PeppolCRLDownloader (aHCS),
+                                                                           CRLCache.DEFAULT_CACHING_DURATION));
   }
 }

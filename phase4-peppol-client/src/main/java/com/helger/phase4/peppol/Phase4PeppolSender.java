@@ -57,9 +57,9 @@ import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
 import com.helger.peppol.sbdh.spec12.BinaryContentType;
 import com.helger.peppol.sbdh.spec12.TextContentType;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
-import com.helger.peppol.utils.CertificateRevocationChecker;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.ERevocationCheckMode;
+import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
@@ -274,6 +274,9 @@ public final class Phase4PeppolSender
   /**
    * Check if the provided certificate is a valid Peppol AP certificate.
    *
+   * @param aCAChecker
+   *        The Peppol CA checker to be used to verify the Peppol AP
+   *        certificate. May not be <code>null</code>.
    * @param aReceiverCert
    *        The determined receiver AP certificate to check. Never
    *        <code>null</code>.
@@ -292,7 +295,8 @@ public final class Phase4PeppolSender
    * @throws Phase4PeppolException
    *         in case of error
    */
-  private static void _checkReceiverAPCert (@Nullable final X509Certificate aReceiverCert,
+  private static void _checkReceiverAPCert (@Nonnull final PeppolCAChecker aCAChecker,
+                                            @Nullable final X509Certificate aReceiverCert,
                                             @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
                                             @Nonnull final ETriState eCacheOSCResult,
                                             @Nullable final ERevocationCheckMode eCheckMode) throws Phase4PeppolException
@@ -301,10 +305,10 @@ public final class Phase4PeppolSender
       LOGGER.debug ("Using the following receiver AP certificate from the SMP: " + aReceiverCert);
 
     final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-    final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
-                                                                                                              aNow,
-                                                                                                              eCacheOSCResult,
-                                                                                                              eCheckMode);
+    final EPeppolCertificateCheckResult eCertCheckResult = aCAChecker.checkCertificate (aReceiverCert,
+                                                                                        aNow,
+                                                                                        eCacheOSCResult,
+                                                                                        eCheckMode);
 
     // Interested in the certificate?
     if (aCertificateConsumer != null)
@@ -377,10 +381,12 @@ public final class Phase4PeppolSender
     protected boolean m_bCompressPayload;
     protected String m_sPayloadContentID;
 
+    // This value is set for backwards compatibility reasons
     protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private Consumer <String> m_aAPEndpointURLConsumer;
     private boolean m_bCheckReceiverAPCertificate;
+    protected PeppolCAChecker m_aCAChecker;
 
     // Status var
     private OffsetDateTime m_aEffectiveSendingDT;
@@ -405,7 +411,10 @@ public final class Phase4PeppolSender
         toRole (CAS4.DEFAULT_RESPONDER_URL);
         payloadMimeType (CMimeType.APPLICATION_XML);
         compressPayload (DEFAULT_COMPRESS_PAYLOAD);
+
         checkReceiverAPCertificate (DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE);
+        // This value is set for backwards compatibility reasons
+        peppolAP_CAChecker (PeppolCertificateChecker.peppolAllAP ());
       }
       catch (final Exception ex)
       {
@@ -749,6 +758,28 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Set a custom Peppol AP certificate CA checker. This is e.g. needed when a
+     * non-standard AP certificate (as for Peppol France PoC or Peppol eB2B) is
+     * needed. This CA checker checks the certificate provided by the endpoint
+     * detail provider (see below). This checker is only used, if
+     * {@link #checkReceiverAPCertificate(boolean)} was called with
+     * <code>true</code>.
+     *
+     * @param aCAChecker
+     *        The Certificate CA checker to be used. May not be
+     *        <code>null</code>.
+     * @return this for chaining
+     * @since 3.0.0-rc1
+     */
+    @Nonnull
+    public final IMPLTYPE peppolAP_CAChecker (@Nonnull final PeppolCAChecker aCAChecker)
+    {
+      ValueEnforcer.notNull (aCAChecker, "CAChecker");
+      m_aCAChecker = aCAChecker;
+      return thisAsT ();
+    }
+
+    /**
      * The effective sending date time of the message. That is set only if
      * message sending takes place.
      *
@@ -805,9 +836,9 @@ public final class Phase4PeppolSender
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
       if (m_bCheckReceiverAPCertificate)
       {
-        // CHeck if the received certificate is a valid Peppol AP certificate
+        // Check if the received certificate is a valid Peppol AP certificate
         // Throws Phase4PeppolException in case of error
-        _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer, ETriState.UNDEFINED, null);
+        _checkReceiverAPCert (m_aCAChecker, aReceiverCert, m_aCertificateConsumer, ETriState.UNDEFINED, null);
       }
       else
       {

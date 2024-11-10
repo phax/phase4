@@ -45,6 +45,7 @@ import com.helger.smpclient.peppol.ISMPServiceGroupProvider;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
+import com.helger.smpclient.peppol.Pfuoi420;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helger.xsds.peppol.smp1.ServiceGroupType;
@@ -175,6 +176,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
 
   @Nullable
   @OverrideOnDemand
+  @Pfuoi420
   protected SignedServiceMetadataType resolvedBusdoxServiceMetadata (@Nonnull final IParticipantIdentifier aReceiverID,
                                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID) throws SMPClientException
   {
@@ -183,9 +185,9 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
     return m_aServiceMetadataProvider.getServiceMetadata (aReceiverID, aDocTypeID);
   }
 
-  @SuppressWarnings ("removal")
   @Nullable
   @OverrideOnDemand
+  @Pfuoi420
   protected SignedServiceMetadataType resolvedWildcardServiceMetadata (@Nonnull final IParticipantIdentifier aReceiverID,
                                                                        @Nonnull final IDocumentTypeIdentifier aDocTypeID) throws SMPClientException
   {

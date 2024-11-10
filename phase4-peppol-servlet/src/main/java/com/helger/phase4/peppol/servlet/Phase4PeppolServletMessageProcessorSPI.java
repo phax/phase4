@@ -88,6 +88,7 @@ import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
+import com.helger.smpclient.peppol.Pfuoi420;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.peppol.smp1.EndpointType;
@@ -269,7 +270,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     return this;
   }
 
-  @SuppressWarnings ({ "deprecation", "removal" })
   @Nullable
   private EndpointType _getReceiverEndpoint (@Nonnull final String sLogPrefix,
                                              @Nonnull final ISMPExtendedServiceMetadataProvider aSMPClient,
@@ -305,6 +305,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       if (bWildcard)
       {
         // Wildcard lookup
+        @Pfuoi420
         final SignedServiceMetadataType aSSM = aSMPClient.getWildcardServiceMetadataOrNull (aRecipientID,
                                                                                             aDocTypeID,
                                                                                             eWildcardSelectionMode);

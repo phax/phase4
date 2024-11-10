@@ -23,12 +23,12 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.DevelopersNote;
 import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
+import com.helger.smpclient.peppol.Pfuoi420;
 
 /**
  * This class contains the "per-request" data of
@@ -43,8 +43,7 @@ public final class Phase4PeppolReceiverConfiguration
 {
   private final boolean m_bReceiverCheckEnabled;
   private final ISMPExtendedServiceMetadataProvider m_aSMPClient;
-  @Deprecated (forRemoval = true, since = "3.0.0")
-  @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
+  @Pfuoi420
   private final PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
@@ -80,7 +79,6 @@ public final class Phase4PeppolReceiverConfiguration
    *        performed.
    * @since 2.8.1
    */
-  @SuppressWarnings ("deprecation")
   public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
                                             @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
                                             @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
@@ -130,8 +128,7 @@ public final class Phase4PeppolReceiverConfiguration
    * @since 2.7.3
    */
   @Nonnull
-  @Deprecated (forRemoval = true, since = "3.0.0")
-  @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
+  @Pfuoi420
   public PeppolWildcardSelector.EMode getWildcardSelectionMode ()
   {
     return m_eWildcardSelectionMode;
@@ -225,8 +222,7 @@ public final class Phase4PeppolReceiverConfiguration
   {
     private boolean m_bReceiverCheckEnabled;
     private ISMPExtendedServiceMetadataProvider m_aSMPClient;
-    @Deprecated (forRemoval = true, since = "3.0.0")
-    @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
+    @Pfuoi420
     private PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
@@ -264,8 +260,7 @@ public final class Phase4PeppolReceiverConfiguration
     }
 
     @Nonnull
-    @Deprecated (forRemoval = true, since = "3.0.0")
-    @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
+    @Pfuoi420
     public Phase4PeppolReceiverConfigurationBuilder wildcardSelectionMode (@Nullable final PeppolWildcardSelector.EMode e)
     {
       m_eWildcardSelectionMode = e;
