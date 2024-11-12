@@ -85,6 +85,17 @@ public final class AS4IncomingHelper
       if (aArray.isNotEmpty ())
         aMap.addJson ("Cookies", aArray);
     }
+    {
+      final IJsonArray aArray = new JsonArray ();
+      for (final var aHeader : aMessageMetadata.getAllHttpHeaders ())
+      {
+        final IJsonObject aObj = new JsonObject ();
+        aObj.add (aHeader.getKey (), new JsonArray ().addAll (aHeader.getValue ()));
+        aArray.add (aObj);
+      }
+      if (aArray.isNotEmpty ())
+        aMap.addJson ("HttpHeaders", aArray);
+    }
     return aMap;
   }
 }
