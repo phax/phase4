@@ -338,7 +338,7 @@
     <module>phase4-peppol-servlet</module>
     <module>phase4-peppol-server-webapp</module>
   </modules>
-
+<!--
   <build>
     <plugins>
       <plugin>
@@ -351,4 +351,5 @@
       </plugin>
     </plugins>
   </build>
+-->
 </project>

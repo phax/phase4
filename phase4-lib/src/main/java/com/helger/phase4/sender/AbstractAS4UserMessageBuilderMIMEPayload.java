@@ -64,7 +64,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   {}
 
   /**
-   * <<<<<<< HEAD
+   * Get the payload to be send out.
    *
    * @return The currently set outgoing attachment payload. May be
    *         <code>null</code>.

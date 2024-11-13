@@ -50,7 +50,6 @@ public final class AS4TrustStoreDescriptor
    * <li><code>truststore.type</code> - the trust store type</li>
    * <li><code>truststore.file</code> - the trust store path</li>
    * <li><code>truststore.password</code> - the trust store password</li>
-   * password</li>
    * </ul>
    *
    * @return A new {@link TrustStoreDescriptor} object or <code>null</code> if
@@ -70,7 +69,6 @@ public final class AS4TrustStoreDescriptor
    * <li><code>truststore.type</code> - the trust store type</li>
    * <li><code>truststore.file</code> - the trust store path</li>
    * <li><code>truststore.password</code> - the trust store password</li>
-   * password</li>
    * </ul>
    *
    * @param aConfig
