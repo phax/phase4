@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.datetime.PDTWebDateHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.json.IJsonArray;
@@ -89,8 +90,13 @@ public final class AS4IncomingHelper
       final IJsonArray aArray = new JsonArray ();
       for (final var aHeader : aMessageMetadata.getAllHttpHeaders ())
       {
+        final ICommonsList <String> aHeaderValues = aHeader.getValue ();
+
         final IJsonObject aObj = new JsonObject ();
-        aObj.add (aHeader.getKey (), new JsonArray ().addAll (aHeader.getValue ()));
+        if (aHeaderValues.size () != 1)
+          aObj.add (aHeader.getKey (), new JsonArray ().addAll (aHeaderValues));
+        else
+          aObj.add (aHeader.getKey (), aHeaderValues.getFirstOrNull ());
         aArray.add (aObj);
       }
       if (aArray.isNotEmpty ())
