@@ -39,7 +39,7 @@ import com.helger.phase4.server.message.UserMessageSoapBodyPayloadTest;
 public final class HolodeckOnlineTestSuite
 {
   /** The default URL where Holodeck is supposed to run */
-  // TODO will be changed soon
+  // TODO change to whatever you use
   public static final String DEFAULT_HOLODECK_URI = "http://localhost:8080/msh";
 
   private static ScopedAS4Configuration s_aSC;
