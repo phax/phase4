@@ -35,6 +35,8 @@ import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageBuilder;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.sender.IAS4RawResponseConsumer;
+import com.helger.phase4.sender.IAS4SignalMessageValidationResultHandler;
+import com.helger.phase4.sender.LoggingAS4SignalMsgValidationResultHandler;
 import com.helger.phive.peppol.PeppolValidation2024_05;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -79,6 +81,7 @@ public final class MainPhase4PeppolSenderHelger
         LOGGER.info ("Response headers:");
         x.getResponseHeaders ().forEachSingleHeader ( (k, v) -> LOGGER.info ("  " + k + "=" + v), false);
       };
+      final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHdl = new LoggingAS4SignalMsgValidationResultHandler ();
       final PeppolUserMessageBuilder aBuilder = Phase4PeppolSender.builder ()
                                                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
@@ -94,6 +97,7 @@ public final class MainPhase4PeppolSenderHelger
                                                                   .validationConfiguration (PeppolValidation2024_05.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                                                             new Phase4PeppolValidatonResultHandler ())
                                                                   .buildMessageCallback (aBuildMessageCallback)
+                                                                  .signalMsgValidationResultHdl (aSignalMsgValidationResultHdl)
                                                                   .rawResponseConsumer (aRRC);
       final EAS4UserMessageSendResult eResult;
       eResult = aBuilder.sendMessageAndCheckForReceipt ();
