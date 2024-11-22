@@ -732,6 +732,35 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     return thisAsT ();
   }
 
+  /**
+   * @return The optional Ebms3 Signal Message validation result handled. May be
+   *         <code>null</code>.
+   * @since 3.0.1
+   */
+  @Nullable
+  public final IAS4SignalMessageValidationResultHandler signalMsgValidationResultHdl ()
+  {
+    return m_aSignalMsgValidationResultHdl;
+  }
+
+  /**
+   * Set an optional Ebms3 Signal Message validation result handler. This
+   * handler is invoked, after the synchronous signal message references were
+   * evaluated. This handler cannot modify any message flow - it is an
+   * informational callback only.
+   *
+   * @param aSignalMsgValidationResultHdl
+   *        The optional signal message consumer. May be <code>null</code>.
+   * @return this for chaining
+   * @since 3.0.1
+   */
+  @Nonnull
+  public final IMPLTYPE signalMsgValidationResultHdl (@Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHdl)
+  {
+    m_aSignalMsgValidationResultHdl = aSignalMsgValidationResultHdl;
+    return thisAsT ();
+  }
+
   @Override
   @Nonnull
   @OverridingMethodsMustInvokeSuper
