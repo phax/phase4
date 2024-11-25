@@ -50,7 +50,6 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.ServiceLoaderHelper;
-import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.reporting.api.CPeppolReporting;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
@@ -532,7 +531,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                   @Nonnull final IAS4IncomingMessageState aState)
   {}
 
-  @SuppressWarnings ("removal")
   @Nonnull
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                           @Nonnull final HttpHeaderMap aHttpHeaders,
@@ -614,10 +612,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       // Check if signing AP certificate is revoked
       // * Use global caching setting
       // * Use global certificate check mode
-      final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aSenderCert,
-                                                                                                                aNow,
-                                                                                                                ETriState.UNDEFINED,
-                                                                                                                null);
+      final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.peppolAllAP ()
+                                                                                     .checkCertificate (aSenderCert,
+                                                                                                        aNow);
       if (eCertCheckResult.isInvalid ())
       {
         final String sDetails = "The received Peppol message is signed with a Peppol AP certificate invalid at " +
@@ -637,7 +634,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       LOGGER.warn (sLogPrefix + "The revocation check of the received signing certificate is disabled.");
     }
 
-    // Read all attachments
+    // Read all attachments and copy them into local objects. That eventually
+    // includes decompressing them.
     final ICommonsList <ReadAttachment> aReadAttachments = new CommonsArrayList <> ();
     if (aIncomingAttachments != null)
     {
@@ -650,8 +648,12 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         a.m_sUncompressedMimeType = aIncomingAttachment.getUncompressedMimeType ();
         a.m_aCharset = aIncomingAttachment.getCharset ();
         a.m_eCompressionMode = aIncomingAttachment.getCompressionMode ();
+
+        // This stream is decompressing if needed
         try (final InputStream aSIS = aIncomingAttachment.getSourceStream ())
         {
+          // Get a decompressed copy
+          // And yes, for very large files, this is not a good idea
           final NonBlockingByteArrayOutputStream aBAOS = new NonBlockingByteArrayOutputStream ();
           if (StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aSIS, aBAOS).isSuccess ())
           {
@@ -694,6 +696,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
           }
           else
           {
+            // Add all SBDH errors to the output
             for (final IError aError : aSBDHErrors)
             {
               final String sDetails = "Peppol SBDH Issue: " + aError.getAsString (aDisplayLocale);
@@ -708,6 +711,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
           return AS4MessageProcessorResult.createFailure ();
         }
 
+        // We found a valid attachment - remember it
         aReadAttachments.add (a);
 
         if (LOGGER.isDebugEnabled ())
@@ -746,8 +750,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     // The one and only
     final ReadAttachment aReadAttachment = aReadAttachments.getFirstOrNull ();
 
-    // Extract Peppol values from SBD
-    final PeppolSBDHData aPeppolSBD;
+    // Extract Peppol values from SBDH
+    final PeppolSBDHData aPeppolSBDH;
     try
     {
       if (LOGGER.isDebugEnabled ())
@@ -761,7 +765,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       final PeppolSBDHDocumentReader aReader = new PeppolSBDHDocumentReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerformValueChecks)
                                                                                                               .setCheckForCountryC1 (bCheckForCountryC1);
 
-      aPeppolSBD = aReader.extractData (aReadAttachment.standardBusinessDocument ());
+      aPeppolSBDH = aReader.extractData (aReadAttachment.standardBusinessDocument ());
 
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug (sLogPrefix +
@@ -779,6 +783,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       return AS4MessageProcessorResult.createFailure ();
     }
 
+    // If the receiver checks are activated, run them now
     if (aReceiverCheckData.isReceiverCheckEnabled ())
     {
       LOGGER.info (sLogPrefix + "Performing checks if the received data is registered in our SMP");
@@ -787,9 +792,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       {
         // Get the endpoint information required from the recipient
         // Check if an endpoint is registered
-        final IParticipantIdentifier aReceiverID = aPeppolSBD.getReceiverAsIdentifier ();
-        final IDocumentTypeIdentifier aDocTypeID = aPeppolSBD.getDocumentTypeAsIdentifier ();
-        final IProcessIdentifier aProcessID = aPeppolSBD.getProcessAsIdentifier ();
+        final IParticipantIdentifier aReceiverID = aPeppolSBDH.getReceiverAsIdentifier ();
+        final IDocumentTypeIdentifier aDocTypeID = aPeppolSBDH.getDocumentTypeAsIdentifier ();
+        final IProcessIdentifier aProcessID = aPeppolSBDH.getProcessAsIdentifier ();
         final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
                                                                      aReceiverCheckData.getSMPClient (),
                                                                      aReceiverID,
@@ -860,7 +865,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                       aUserMessage.clone (),
                                       aReadAttachment.payloadBytes (),
                                       aReadAttachment.standardBusinessDocument (),
-                                      aPeppolSBD,
+                                      aPeppolSBDH,
                                       aState,
                                       aProcessingErrorMessages);
         }
@@ -877,7 +882,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       }
 
       // Trigger post-processing, e.g. for reporting
-      afterSuccessfulPeppolProcessing (aUserMessage, aPeppolSBD, aState);
+      afterSuccessfulPeppolProcessing (aUserMessage, aPeppolSBDH, aState);
     }
 
     return AS4MessageProcessorResult.createSuccess ();
