@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Default implementation of {@link IAS4IncomingSecurityConfiguration}.
@@ -30,7 +29,6 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @since 2.1.3
  */
 @NotThreadSafe
-@ChangePhase4V3 ("Move to package 'incoming.crypto'")
 public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityConfiguration
 {
   private AS4SigningParams m_aSigningParams;

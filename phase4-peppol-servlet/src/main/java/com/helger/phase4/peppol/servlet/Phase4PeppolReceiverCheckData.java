@@ -25,7 +25,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 
@@ -37,7 +36,6 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector;
  * @since 0.9.13
  */
 @NotThreadSafe
-@ChangePhase4V3 ("Rename to Phase4PeppolReceiverConfiguration; remove setter")
 public class Phase4PeppolReceiverCheckData
 {
   private final boolean m_bReceiverCheckEnabled;

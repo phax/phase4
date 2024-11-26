@@ -39,7 +39,6 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -54,7 +53,6 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class AS4XServletHandler implements IXServletSimpleHandler
 {
-  @ChangePhase4V3 ("Rename to IAS4ServletRequestHandlerCustomizer")
   public interface IHandlerCustomizer
   {
     /**
@@ -83,7 +81,6 @@ public class AS4XServletHandler implements IXServletSimpleHandler
      *        The main handler doing the hard work. Never <code>null</code>.
      * @since 0.9.5
      */
-    @ChangePhase4V3 ("Remove default")
     default void customizeAfterHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                                          @Nonnull final AS4UnifiedResponse aUnifiedResponse,
                                          @Nonnull final AS4RequestHandler aHandler)
@@ -359,7 +356,6 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @return The additional customizer. May be <code>null</code>.
    */
   @Nullable
-  @ChangePhase4V3 ("Rename to getRequestHandlerCustomizer")
   public final IHandlerCustomizer getHandlerCustomizer ()
   {
     return m_aRequestHandlerCustomizer;
@@ -373,7 +369,6 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @return this for chaining
    */
   @Nonnull
-  @ChangePhase4V3 ("Rename to setRequestHandlerCustomizer")
   public final AS4XServletHandler setHandlerCustomizer (@Nullable final IHandlerCustomizer aHandlerCustomizer)
   {
     m_aRequestHandlerCustomizer = aHandlerCustomizer;
@@ -519,7 +514,6 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   // Don't make this final, so that subclasses can call the other handleRequest
-  @ChangePhase4V3 ("Make final and require usage of 'IHandlerCustomizer' instead")
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                              @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {

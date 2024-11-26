@@ -32,7 +32,6 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.servlet.IAS4MessageState;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Implement this SPI interface to handle incoming messages appropriate.
@@ -40,7 +39,6 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  */
 @IsSPIInterface
-@ChangePhase4V3 ("Rename to 'IAS4IncomingMessageProcessorSPI'; move to package 'incoming.spi'")
 public interface IAS4ServletMessageProcessorSPI
 {
   /**
@@ -141,7 +139,6 @@ public interface IAS4ServletMessageProcessorSPI
    *        in the originally returned message.
    * @since v0.9.8
    */
-  @ChangePhase4V3 ("Remove default")
   default void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                           @Nonnull final IAS4MessageState aState,
                                           @Nonnull @Nonempty final String sResponseMessageID,

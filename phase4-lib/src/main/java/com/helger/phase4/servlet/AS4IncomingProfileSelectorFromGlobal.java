@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Default implementation of {@link IAS4IncomingProfileSelector} taking the AS4
@@ -29,7 +28,6 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  * @since 0.13.0
  */
-@ChangePhase4V3 ("Find a better solution for this")
 public class AS4IncomingProfileSelectorFromGlobal implements IAS4IncomingProfileSelector
 {
   public static final AS4IncomingProfileSelectorFromGlobal INSTANCE = new AS4IncomingProfileSelectorFromGlobal ();

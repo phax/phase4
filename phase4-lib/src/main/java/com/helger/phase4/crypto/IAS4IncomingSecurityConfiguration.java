@@ -19,15 +19,12 @@ package com.helger.phase4.crypto;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.phase4.v3.ChangePhase4V3;
-
 /**
  * Interface to configure the security configuration for incoming messages.
  *
  * @author Philip Helger
  * @since 2.1.3
  */
-@ChangePhase4V3 ("Move to package 'incoming.crypto'")
 public interface IAS4IncomingSecurityConfiguration
 {
   /**

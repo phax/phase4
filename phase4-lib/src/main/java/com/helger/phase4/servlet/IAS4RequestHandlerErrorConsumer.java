@@ -22,7 +22,6 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.messaging.domain.AS4ErrorMessage;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * A callback interface to be notified about returned errors.
@@ -30,7 +29,6 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  * @since 0.9.10
  */
-@ChangePhase4V3 ("Move to package 'incoming'")
 public interface IAS4RequestHandlerErrorConsumer
 {
   /**

@@ -26,7 +26,6 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Generic AS4 profile validator
@@ -44,7 +43,6 @@ public interface IAS4ProfileValidator
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
    */
-  @ChangePhase4V3 ("add parameter if for UserMessage or SignalMessage")
   default void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {}
 

@@ -68,7 +68,6 @@ import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.servlet.AS4MessageState;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.phase4.wss.WSSSynchronizer;
 import com.helger.xml.XMLHelper;
@@ -79,7 +78,6 @@ import com.helger.xml.XMLHelper;
  * @author Philip Helger
  * @author bayerlma
  */
-@ChangePhase4V3 ("Move to package 'incoming.soap'")
 public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
 {
   /** The QName for which this processor should be invoked */

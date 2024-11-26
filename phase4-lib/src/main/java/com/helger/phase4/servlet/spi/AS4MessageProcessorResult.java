@@ -32,7 +32,6 @@ import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This class represents the result of a message processor SPI
@@ -42,7 +41,6 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  */
 @Immutable
-@ChangePhase4V3 ("move to package 'incoming'")
 public class AS4MessageProcessorResult implements ISuccessIndicator
 {
   private final ESuccess m_eSuccess;

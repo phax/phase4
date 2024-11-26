@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Resolve PMode from ID
@@ -54,7 +53,6 @@ public interface IPModeResolver
    * @return <code>null</code> if resolution failed.
    */
   @Nullable
-  @ChangePhase4V3 ("Rename to findPMode")
   IPMode getPModeOfID (@Nullable String sPModeID,
                        @Nonnull String sService,
                        @Nonnull String sAction,

@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Implement this SPI interface to handle incoming pull request appropriately
@@ -32,7 +31,6 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  */
 @IsSPIInterface
-@ChangePhase4V3 ("Rename to 'IAS4IncomingPullRequestProcessorSPI'; move to package 'incoming.spi'")
 public interface IAS4ServletPullRequestProcessorSPI
 {
   /**

@@ -31,7 +31,6 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Abstract implementation of {@link IAS4OutgoingDumper} that always adds the
@@ -65,7 +64,6 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
    *        <code>false</code> if not.
    * @since 2.5.2
    */
-  @ChangePhase4V3 ("Make chainable")
   public final void setIncludeHeaders (final boolean b)
   {
     m_bIncludeHeaders = b;

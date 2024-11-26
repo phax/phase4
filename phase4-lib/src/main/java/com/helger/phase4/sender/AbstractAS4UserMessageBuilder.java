@@ -45,7 +45,6 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Abstract builder base class for a user message.
@@ -715,7 +714,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *
    * @author Philip Helger
    */
-  @ChangePhase4V3 ("Moved to top-level and rename")
   public enum ESimpleUserMessageSendResult implements IHasID <String>, ISuccessIndicator
   {
     /**

@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * Interface for dumping incoming requests
@@ -65,7 +64,6 @@ public interface IAS4IncomingDumper
    *        Message metadata. Never <code>null</code>.
    * @since v0.9.9
    */
-  @ChangePhase4V3 ("Make non default; add caught exception as Nullable")
   default void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
   {}
 }

@@ -90,7 +90,6 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.phase4.v3.ChangePhase4V3;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
@@ -107,7 +106,6 @@ import jakarta.mail.internet.MimeBodyPart;
  * @author Philip Helger
  * @since v0.9.7
  */
-@ChangePhase4V3 ("Move to package 'incoming'")
 public final class AS4IncomingHandler
 {
   /**

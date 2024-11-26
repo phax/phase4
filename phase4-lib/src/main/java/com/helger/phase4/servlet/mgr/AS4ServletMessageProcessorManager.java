@@ -29,7 +29,6 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
-import com.helger.phase4.v3.ChangePhase4V3;
 
 /**
  * This class manages all the {@link IAS4ServletMessageProcessorSPI} SPI
@@ -38,7 +37,6 @@ import com.helger.phase4.v3.ChangePhase4V3;
  * @author Philip Helger
  */
 @ThreadSafe
-@ChangePhase4V3 ("Move to package 'incoming.mgr'; rename to AS4IncomingMessageProcessorManager")
 public final class AS4ServletMessageProcessorManager
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServletMessageProcessorManager.class);
