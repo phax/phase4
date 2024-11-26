@@ -16,13 +16,14 @@
  */
 package com.helger.phase4.dbnalliance;
 
-import com.helger.peppolid.bdxr.smp2.participant.BDXR2ParticipantIdentifier;
-import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
+import com.helger.peppolid.bdxr.smp2.participant.BDXR2ParticipantIdentifier;
+import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
@@ -33,7 +34,6 @@ import com.helger.smpclient.dbna.EDBNASML;
 import com.helger.smpclient.url.DBNAURLProviderSMP;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
-import org.w3c.dom.Element;
 
 public class MainPhase4DBNAllianceSenderExample
 {
@@ -52,24 +52,28 @@ public class MainPhase4DBNAllianceSenderExample
     {
       // Read XML payload to send
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/base-example.xml"))
-                                             .getDocumentElement ();
+                                               .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read file to be send");
 
-        // Start configuring here
-      final BDXR2ParticipantIdentifier aReceiver = Phase4DBNAllianceSender.IF.createParticipantIdentifier ("us:ein", "365060483");
-      BDXR2ClientReadOnly aSMPClient = new BDXR2ClientReadOnly (DBNAURLProviderSMP.INSTANCE.getSMPURIOfParticipant (aReceiver, 
-                                                                                   EDBNASML.TEST.getZoneName()));
+      // Start configuring here
+      final BDXR2ParticipantIdentifier aReceiver = Phase4DBNAllianceSender.IF.createParticipantIdentifier ("us:ein",
+                                                                                                           "365060483");
+      final BDXR2ClientReadOnly aSMPClient = new BDXR2ClientReadOnly (DBNAURLProviderSMP.INSTANCE.getSMPURIOfParticipant (aReceiver,
+                                                                                                                          EDBNASML.TEST.getZoneName ()));
       aSMPClient.setVerifySignature (false);
-      
+
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4DBNAllianceSender.builder ()
-                                       .documentTypeID (SimpleIdentifierFactory.INSTANCE.createDocumentTypeIdentifier ("bdx-docid-qns", "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##DBNAlliance-1.0-data-Core"))
-                                       .processID (Phase4DBNAllianceSender.IF.createProcessIdentifier(null, "bdx:noprocess"))
-                                       .senderParticipantID (Phase4DBNAllianceSender.IF.createParticipantIdentifier ("us:ein", "365060483"))
+                                       .documentTypeID (SimpleIdentifierFactory.INSTANCE.createDocumentTypeIdentifier ("bdx-docid-qns",
+                                                                                                                       "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##DBNAlliance-1.0-data-Core"))
+                                       .processID (Phase4DBNAllianceSender.IF.createProcessIdentifier (null,
+                                                                                                       "bdx:noprocess"))
+                                       .senderParticipantID (Phase4DBNAllianceSender.IF.createParticipantIdentifier ("us:ein",
+                                                                                                                     "365060483"))
                                        .receiverParticipantID (aReceiver)
-                                       .fromPartyID("365060483")
-                                       .payload (aPayloadElement)
+                                       .fromPartyID ("365060483")
+                                       .payloadElement (aPayloadElement)
                                        .smpClient (aSMPClient)
                                        .sendMessageAndCheckForReceipt ();
       LOGGER.info ("DBNAlliance send result: " + eResult);
