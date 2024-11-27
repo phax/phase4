@@ -476,7 +476,7 @@ public interface IAS4MessageState
    *         non-<code>null</code> it is NO indicator, whether a message was
    *         signed or not.
    * @see #isSoapSignatureChecked()
-   * @since 3.0.0-beta6
+   * @since 2.9.0
    */
   @Nullable
   IAS4CryptoFactory getCryptoFactorySign ();
@@ -486,7 +486,7 @@ public interface IAS4MessageState
    *         message. May be <code>null</code>. If this is non-<code>null</code>
    *         it is NO indicator, whether a message was encrypted or not.
    * @see #isSoapDecrypted()
-   * @since 3.0.0-beta6
+   * @since 2.9.0
    */
   @Nullable
   IAS4CryptoFactory getCryptoFactoryCrypt ();
