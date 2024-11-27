@@ -39,6 +39,7 @@ import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.exception.SMPClientException;
+import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.ISMPServiceGroupProvider;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
@@ -63,13 +64,13 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4EndpointDetailProviderPeppol.class);
 
   private final ISMPServiceGroupProvider m_aServiceGroupProvider;
-  private final ISMPServiceMetadataProvider m_aServiceMetadataProvider;
+  private final ISMPExtendedServiceMetadataProvider m_aServiceMetadataProvider;
   private PeppolWildcardSelector.EMode m_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private ISMPTransportProfile m_aTP = DEFAULT_TRANSPORT_PROFILE;
   private EndpointType m_aEndpoint;
 
   public AS4EndpointDetailProviderPeppol (@Nonnull final ISMPServiceGroupProvider aServiceGroupProvider,
-                                          @Nonnull final ISMPServiceMetadataProvider aServiceMetadataProvider)
+                                          @Nonnull final ISMPExtendedServiceMetadataProvider aServiceMetadataProvider)
   {
     ValueEnforcer.notNull (aServiceGroupProvider, "ServiceGroupProvider");
     ValueEnforcer.notNull (aServiceMetadataProvider, "ServiceMetadataProvider");

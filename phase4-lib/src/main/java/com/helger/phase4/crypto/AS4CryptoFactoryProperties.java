@@ -130,8 +130,7 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
     {
       ret = m_aKeyStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getKeyStoreType (),
                                                        m_aCryptoProps.getKeyStorePath (),
-                                                       m_aCryptoProps.getKeyStorePassword ())
-                                        .getKeyStore ();
+                                                       m_aCryptoProps.getKeyStorePasswordCharArray ()).getKeyStore ();
     }
     return ret;
   }
@@ -169,7 +168,7 @@ public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
     {
       ret = m_aTrustStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getTrustStoreType (),
                                                          m_aCryptoProps.getTrustStorePath (),
-                                                         m_aCryptoProps.getTrustStorePassword ())
+                                                         m_aCryptoProps.getTrustStorePasswordCharArray ())
                                           .getKeyStore ();
     }
     return ret;

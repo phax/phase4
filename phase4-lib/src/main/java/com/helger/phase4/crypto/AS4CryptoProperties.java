@@ -216,6 +216,13 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
     return _getProperty (KEYSTORE_PASSWORD);
   }
 
+  @Nullable
+  public char [] getKeyStorePasswordCharArray ()
+  {
+    final String ret = getKeyStorePassword ();
+    return ret == null ? null : ret.toCharArray ();
+  }
+
   @Nonnull
   public final AS4CryptoProperties setKeyStorePassword (@Nullable final String sKeyStorePassword)
   {
@@ -314,6 +321,13 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   public String getTrustStorePassword ()
   {
     return _getProperty (TRUSTSTORE_PASSWORD);
+  }
+
+  @Nullable
+  public char [] getTrustStorePasswordCharArray ()
+  {
+    final String ret = getTrustStorePassword ();
+    return ret == null ? null : ret.toCharArray ();
   }
 
   @Nonnull

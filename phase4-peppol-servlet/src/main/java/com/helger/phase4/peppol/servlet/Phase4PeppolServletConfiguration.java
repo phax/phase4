@@ -29,7 +29,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.phase4.CAS4;
-import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
 
@@ -54,7 +54,7 @@ public final class Phase4PeppolServletConfiguration
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolServletConfiguration.class);
 
   private static boolean s_bReceiverCheckEnabled = DEFAULT_RECEIVER_CHECK_ENABLED;
-  private static ISMPServiceMetadataProvider s_aSMPClient;
+  private static ISMPExtendedServiceMetadataProvider s_aSMPClient;
   private static PeppolWildcardSelector.EMode s_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
@@ -82,7 +82,7 @@ public final class Phase4PeppolServletConfiguration
    * @param bReceiverCheckEnabled
    *        <code>true</code> to enable the checks, <code>false</code> to
    *        disable them.
-   * @see #setSMPClient(ISMPServiceMetadataProvider)
+   * @see #setSMPClient(ISMPExtendedServiceMetadataProvider)
    * @see #setWildcardSelectionMode(EMode)
    * @see #setAS4EndpointURL(String)
    * @see #setAPCertificate(X509Certificate)
@@ -99,7 +99,7 @@ public final class Phase4PeppolServletConfiguration
    *         configured.
    */
   @Nullable
-  public static ISMPServiceMetadataProvider getSMPClient ()
+  public static ISMPExtendedServiceMetadataProvider getSMPClient ()
   {
     return s_aSMPClient;
   }
@@ -111,7 +111,7 @@ public final class Phase4PeppolServletConfiguration
    * @param aSMPClient
    *        The SMP metadata provider to be used. May be <code>null</code>.
    */
-  public static void setSMPClient (@Nullable final ISMPServiceMetadataProvider aSMPClient)
+  public static void setSMPClient (@Nullable final ISMPExtendedServiceMetadataProvider aSMPClient)
   {
     s_aSMPClient = aSMPClient;
   }
@@ -292,7 +292,7 @@ public final class Phase4PeppolServletConfiguration
   @Nonnull
   public static Phase4PeppolReceiverCheckData getAsReceiverCheckData ()
   {
-    final ISMPServiceMetadataProvider aSMPClient = getSMPClient ();
+    final ISMPExtendedServiceMetadataProvider aSMPClient = getSMPClient ();
     final String sAS4EndpointURL = getAS4EndpointURL ();
     final X509Certificate aAPCertificate = getAPCertificate ();
 

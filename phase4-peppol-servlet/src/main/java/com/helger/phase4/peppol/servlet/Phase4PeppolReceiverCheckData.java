@@ -25,7 +25,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 
 /**
@@ -39,7 +39,7 @@ import com.helger.smpclient.peppol.PeppolWildcardSelector;
 public class Phase4PeppolReceiverCheckData
 {
   private final boolean m_bReceiverCheckEnabled;
-  private final ISMPServiceMetadataProvider m_aSMPClient;
+  private final ISMPExtendedServiceMetadataProvider m_aSMPClient;
   private final PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
@@ -63,7 +63,7 @@ public class Phase4PeppolReceiverCheckData
    *        <code>null</code>. Added in 2.7.3.
    */
   @Deprecated (since = "2.8.1", forRemoval = true)
-  public Phase4PeppolReceiverCheckData (@Nonnull final ISMPServiceMetadataProvider aSMPClient,
+  public Phase4PeppolReceiverCheckData (@Nonnull final ISMPExtendedServiceMetadataProvider aSMPClient,
                                         @Nonnull @Nonempty final String sAS4EndpointURL,
                                         @Nonnull final X509Certificate aAPCertificate,
                                         @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
@@ -107,7 +107,7 @@ public class Phase4PeppolReceiverCheckData
    * @since 2.8.1
    */
   public Phase4PeppolReceiverCheckData (final boolean bReceiverCheckEnabled,
-                                        @Nullable final ISMPServiceMetadataProvider aSMPClient,
+                                        @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
                                         @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
                                         @Nullable final String sAS4EndpointURL,
                                         @Nullable final X509Certificate aAPCertificate,
@@ -145,7 +145,7 @@ public class Phase4PeppolReceiverCheckData
    * @see #isReceiverCheckEnabled()
    */
   @Nullable
-  public ISMPServiceMetadataProvider getSMPClient ()
+  public ISMPExtendedServiceMetadataProvider getSMPClient ()
   {
     return m_aSMPClient;
   }

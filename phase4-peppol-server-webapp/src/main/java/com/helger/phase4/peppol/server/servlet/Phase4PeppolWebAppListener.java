@@ -305,11 +305,12 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // if something is misconfigured
     // * Do not cache result
     // * Use the global checking mode or provide a new one
-    final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
-                                                                                                          MetaAS4Manager.getTimestampMgr ()
-                                                                                                                        .getCurrentDateTime (),
-                                                                                                          ETriState.FALSE,
-                                                                                                          null);
+    final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.peppolAllAP ()
+                                                                               .checkCertificate (aAPCert,
+                                                                                                  MetaAS4Manager.getTimestampMgr ()
+                                                                                                                .getCurrentDateTime (),
+                                                                                                  ETriState.FALSE,
+                                                                                                  null);
     if (eCheckResult.isInvalid ())
       throw new InitializationException ("The provided certificate is not a valid Peppol AP certificate. Check result: " +
                                          eCheckResult);

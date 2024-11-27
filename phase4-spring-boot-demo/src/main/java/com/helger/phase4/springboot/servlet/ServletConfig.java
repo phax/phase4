@@ -123,16 +123,15 @@ public class ServletConfig
       if (false)
       {
         // Example code to disable PMode validation
-        hdl.setHandlerCustomizer ( (aRequestScope,
-                                    aUnifiedResponse,
-                                    aHandler) -> aHandler.setIncomingProfileSelector (new AS4IncomingProfileSelectorFromGlobal ()
-                                    {
-                                      public boolean validateAgainstProfile ()
-                                      {
-                                        // override;
-                                        return false;
-                                      }
-                                    }));
+        hdl.setHandlerCustomizer ( (aRequestScope, aUnifiedResponse, aHandler) -> aHandler.setIncomingProfileSelector (
+                                                                                                                       new AS4IncomingProfileSelectorFromGlobal ()
+                                                                                                                       {
+                                                                                                                         public boolean validateAgainstProfile ()
+                                                                                                                         {
+                                                                                                                           // override;
+                                                                                                                           return false;
+                                                                                                                         }
+                                                                                                                       }));
       }
 
       // Example for changing the receiver data based on the source URL
@@ -216,8 +215,8 @@ public class ServletConfig
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ()
-                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
+        null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -283,11 +282,12 @@ public class ServletConfig
       // Check that your Peppol AP certificate is valid
       // * No caching
       // * Use global certificate check mode
-      final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
-                                                                                                            MetaAS4Manager.getTimestampMgr ()
-                                                                                                                          .getCurrentDateTime (),
-                                                                                                            ETriState.FALSE,
-                                                                                                            null);
+      final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.peppolAllAP ()
+                                                                                 .checkCertificate (aAPCert,
+                                                                                                    MetaAS4Manager.getTimestampMgr ()
+                                                                                                                  .getCurrentDateTime (),
+                                                                                                    ETriState.FALSE,
+                                                                                                    null);
       if (eCheckResult.isInvalid ())
         throw new InitializationException ("The provided certificate is not a Peppol certificate. Check result: " +
                                            eCheckResult);

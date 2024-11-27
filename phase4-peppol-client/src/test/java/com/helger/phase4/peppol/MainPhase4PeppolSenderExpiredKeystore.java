@@ -75,12 +75,12 @@ public final class MainPhase4PeppolSenderExpiredKeystore
       // Expired Peppol AP certificate that was valid until 2021
       final IAS4CryptoFactory cf = new AS4CryptoFactoryInMemoryKeyStore (KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.PKCS12,
                                                                                                             "peppol-expired-ap-cert-pw-peppol.p12",
-                                                                                                            "peppol"),
+                                                                                                            "peppol".toCharArray ()),
                                                                          "cert",
                                                                          "peppol",
                                                                          KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
                                                                                                       PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PILOT_CLASSPATH,
-                                                                                                      PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
+                                                                                                      PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD.toCharArray ())
                                                                                        .getKeyStore ());
 
       final ESimpleUserMessageSendResult eResult;

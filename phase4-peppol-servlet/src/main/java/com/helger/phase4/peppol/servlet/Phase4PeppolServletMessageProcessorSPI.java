@@ -86,7 +86,7 @@ import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
-import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.write.XMLWriter;
@@ -317,7 +317,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
 
   @Nullable
   private EndpointType _getReceiverEndpoint (@Nonnull final String sLogPrefix,
-                                             @Nonnull final ISMPServiceMetadataProvider aSMPClient,
+                                             @Nonnull final ISMPExtendedServiceMetadataProvider aSMPClient,
                                              @Nullable final IParticipantIdentifier aRecipientID,
                                              @Nullable final IDocumentTypeIdentifier aDocTypeID,
                                              @Nullable final IProcessIdentifier aProcessID,
@@ -657,10 +657,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       // Check if signing AP certificate is revoked
       // * Use global caching setting
       // * Use global certificate check mode
-      final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aSenderCert,
-                                                                                                                aNow,
-                                                                                                                ETriState.UNDEFINED,
-                                                                                                                null);
+      final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.peppolAllAP ()
+                                                                                     .checkCertificate (aSenderCert,
+                                                                                                        aNow);
       if (eCertCheckResult.isInvalid ())
       {
         final String sDetails = "The received Peppol message is signed with a Peppol AP certificate invalid at " +

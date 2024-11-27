@@ -56,7 +56,6 @@ import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
 import com.helger.peppol.sbdh.spec12.BinaryContentType;
 import com.helger.peppol.sbdh.spec12.TextContentType;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
-import com.helger.peppol.utils.CertificateRevocationChecker;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.ERevocationCheckMode;
 import com.helger.peppol.utils.PeppolCertificateChecker;
@@ -343,10 +342,11 @@ public final class Phase4PeppolSender
       LOGGER.debug ("Using the following receiver AP certificate from the SMP: " + aReceiverCert);
 
     final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-    final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
-                                                                                                              aNow,
-                                                                                                              eCacheOSCResult,
-                                                                                                              eCheckMode);
+    final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.peppolAllAP ()
+                                                                                   .checkCertificate (aReceiverCert,
+                                                                                                      aNow,
+                                                                                                      eCacheOSCResult,
+                                                                                                      eCheckMode);
 
     // Interested in the certificate?
     if (aCertificateConsumer != null)

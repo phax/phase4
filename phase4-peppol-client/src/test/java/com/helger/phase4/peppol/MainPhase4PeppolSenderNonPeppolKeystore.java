@@ -75,12 +75,12 @@ public final class MainPhase4PeppolSenderNonPeppolKeystore
       // Invalid certificate is valid until 2029
       final IAS4CryptoFactory cf = new AS4CryptoFactoryInMemoryKeyStore (KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.JKS,
                                                                                                             "invalid-keystore-pw-peppol.jks",
-                                                                                                            "peppol"),
+                                                                                                            "peppol".toCharArray ()),
                                                                          "1",
                                                                          "peppol",
                                                                          KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
                                                                                                       PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PILOT_CLASSPATH,
-                                                                                                      PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
+                                                                                                      PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD.toCharArray ())
                                                                                        .getKeyStore ());
 
       final ESimpleUserMessageSendResult eResult;
