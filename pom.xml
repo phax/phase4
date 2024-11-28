@@ -78,7 +78,7 @@
     <log4j.version>2.24.1</log4j.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <peppol-commons.version>9.6.0</peppol-commons.version>
-    <peppol-reporting.version>3.0.2</peppol-reporting.version>
+    <peppol-reporting.version>3.0.3</peppol-reporting.version>
     <ph-commons.version>11.1.10</ph-commons.version>
     <ph-ubl.version>9.0.3</ph-ubl.version>
     <ph-schematron.version>8.0.3</ph-schematron.version>
