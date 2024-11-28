@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import org.apache.wss4j.common.crypto.AlgorithmSuite;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.AttachmentUtils;
 import org.apache.wss4j.dom.WSConstants;
@@ -151,6 +152,25 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       aRequestData.setDecCrypto (m_aCryptoFactoryCrypt.getCrypto (ECryptoMode.DECRYPT_VERIFY));
       aRequestData.setWssConfig (aWSSConfig);
       aRequestData.setSignatureProvider (m_aSecurityProviderSignVerify);
+
+      // Undocumented property "phase4.decrypt.verify.algorithm" - set to
+      // "false" to disable this check
+      if (AS4Configuration.getConfig ().getAsBoolean ("phase4.decrypt.verify.algorithm", true))
+      {
+        // Add a test that only the algorithm from the PMode is effectively
+        // delivered
+        final PModeLeg aPModeLeg = aIncomingState.getEffectivePModeLeg ();
+        if (aPModeLeg != null && aPModeLeg.getSecurity () != null)
+        {
+          final String sAlgorithmURI = aPModeLeg.getSecurity ().getX509EncryptionAlgorithm ().getAlgorithmURI ();
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Testing that the received message was encrypted with algorithm '" + sAlgorithmURI + "'");
+
+          final AlgorithmSuite aAlgorithmSuite = new AlgorithmSuite ();
+          aAlgorithmSuite.addEncryptionMethod (sAlgorithmURI);
+          aRequestData.setAlgorithmSuite (aAlgorithmSuite);
+        }
+      }
 
       // Enable CRL checking
       if (false)
@@ -319,7 +339,12 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
        */
 
       // Decryption or Signature check failed
-      final String sDetails = "Error processing the WSSSecurity Header";
+      String sDetails = "Error processing the WSSSecurity Header";
+      if (ex instanceof WSSecurityException)
+      {
+        sDetails += " (WS Security error: " + ((WSSecurityException) ex).getErrorCode () + ")";
+      }
+
       LOGGER.error (sDetails, ex);
       // TODO we need a way to differentiate signature and decrypt
       // WSSecurityException provides no such thing
