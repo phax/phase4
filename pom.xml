@@ -26,7 +26,7 @@
   </parent>
   <groupId>com.helger.phase4</groupId>
   <artifactId>phase4-parent-pom</artifactId>
-  <version>2.9.0</version>
+  <version>2.9.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phase4-parent-pom</name>
   <description>Base POM to build the phase4 projects</description>
