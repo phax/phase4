@@ -47,6 +47,18 @@ public interface ICryptoSessionKeyProvider
     }
   };
 
+  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_128_GCM = () -> {
+    try
+    {
+      final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_128_GCM);
+      return aKeyGen.generateKey ();
+    }
+    catch (final WSSecurityException ex)
+    {
+      throw new IllegalStateException ("Failed to create session key (AES-128-GCM)", ex);
+    }
+  };
+
   ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_256 = () -> {
     try
     {
@@ -56,6 +68,18 @@ public interface ICryptoSessionKeyProvider
     catch (final WSSecurityException ex)
     {
       throw new IllegalStateException ("Failed to create session key (AES-256)", ex);
+    }
+  };
+
+  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_256_GCM = () -> {
+    try
+    {
+      final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_256_GCM);
+      return aKeyGen.generateKey ();
+    }
+    catch (final WSSecurityException ex)
+    {
+      throw new IllegalStateException ("Failed to create session key (AES-256-GCM)", ex);
     }
   };
 }
