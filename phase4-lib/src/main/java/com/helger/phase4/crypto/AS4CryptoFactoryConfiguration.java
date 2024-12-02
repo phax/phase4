@@ -31,6 +31,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.config.IConfig;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.util.Phase4RuntimeException;
 import com.helger.security.keystore.IKeyStoreAndKeyDescriptor;
 import com.helger.security.keystore.ITrustStoreDescriptor;
 import com.helger.security.keystore.LoadedKey;
@@ -62,11 +63,11 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    * @return The default instance, created by reading the default properties
    *         from the configuration sources (application.properties, environment
    *         variables and Java system properties).
-   * @throws RuntimeException
+   * @throws Phase4RuntimeException
    *         if one of the mandatory configuration parameters is not present.
    */
   @Nonnull
-  public static AS4CryptoFactoryConfiguration getDefaultInstance ()
+  public static AS4CryptoFactoryConfiguration getDefaultInstance () throws Phase4RuntimeException
   {
     // Don't store this in a static variable, because it may fail if the
     // respective configuration properties are not present
@@ -86,7 +87,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
     {
       return getDefaultInstance ();
     }
-    catch (final RuntimeException ex)
+    catch (final Phase4RuntimeException ex)
     {
       // Use debug level only, as this is used in many default scenarios
       if (LOGGER.isDebugEnabled ())
@@ -104,36 +105,51 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    *
    * @param aConfig
    *        The configuration object to be used. May not be <code>null</code>.
+   * @throws Phase4RuntimeException
+   *         If loading the key store configuration from configuration fails.
    */
-  public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig)
+  public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig) throws Phase4RuntimeException
   {
     this (aConfig, CAS4Crypto.DEFAULT_CONFIG_PREFIX);
   }
 
   @Nonnull
   private static IKeyStoreAndKeyDescriptor _loadKeyStore (@Nonnull final IConfigWithFallback aConfig,
-                                                          @Nonnull @Nonempty final String sConfigPrefix)
+                                                          @Nonnull @Nonempty final String sConfigPrefix) throws Phase4RuntimeException
   {
+    // Load the keystore - may be null
     final IKeyStoreAndKeyDescriptor aDescriptor = AS4KeyStoreDescriptor.createFromConfig (aConfig, sConfigPrefix, null);
+    if (aDescriptor == null)
+    {
+      final String sMsg = "Failed to load the key store configuration from properties starting with '" +
+                          sConfigPrefix +
+                          "'";
+      LOGGER.error (sMsg);
+      throw new Phase4RuntimeException (sMsg);
+    }
+
     final LoadedKeyStore aLKS = aDescriptor.loadKeyStore ();
     if (aLKS.getKeyStore () == null)
     {
-      LOGGER.error ("Failed to load the key store from the properties starting with '" +
-                    sConfigPrefix +
-                    "': " +
-                    aLKS.getErrorText (Locale.ROOT));
+      final String sMsg = "Failed to load the key store from the properties starting with '" +
+                          sConfigPrefix +
+                          "': " +
+                          aLKS.getErrorText (Locale.ROOT);
+      LOGGER.error (sMsg);
+      throw new Phase4RuntimeException (sMsg);
     }
-    else
+
+    final LoadedKey <PrivateKeyEntry> aLK = aDescriptor.loadKey ();
+    if (aLK.getKeyEntry () == null)
     {
-      final LoadedKey <PrivateKeyEntry> aLK = aDescriptor.loadKey ();
-      if (aLK.getKeyEntry () == null)
-      {
-        LOGGER.error ("Failed to load the prvate key from the key store properties starting with '" +
-                      sConfigPrefix +
-                      "': " +
-                      aLK.getErrorText (Locale.ROOT));
-      }
+      final String sMsg = "Failed to load the private key from the key store properties starting with '" +
+                          sConfigPrefix +
+                          "': " +
+                          aLK.getErrorText (Locale.ROOT);
+      LOGGER.error (sMsg);
+      throw new Phase4RuntimeException (sMsg);
     }
+
     return aDescriptor;
   }
 
@@ -166,9 +182,11 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    * @param sConfigPrefix
    *        The configuration prefix to be used. May neither be
    *        <code>null</code> nor empty and must end with a dot ('.').
+   * @throws Phase4RuntimeException
+   *         If loading the key store configuration from configuration fails.
    */
   public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig,
-                                        @Nonnull @Nonempty final String sConfigPrefix)
+                                        @Nonnull @Nonempty final String sConfigPrefix) throws Phase4RuntimeException
   {
     this (_loadKeyStore (aConfig, sConfigPrefix), _loadTrustStore (aConfig, sConfigPrefix));
   }
@@ -183,11 +201,11 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    *        the global JRE CA certs list will be used.
    */
   private AS4CryptoFactoryConfiguration (@Nonnull final IKeyStoreAndKeyDescriptor aKeyStoreDesc,
-                                         @Nonnull final ITrustStoreDescriptor aTrustStorDesc)
+                                         @Nullable final ITrustStoreDescriptor aTrustStoreDesc)
   {
-    super (aKeyStoreDesc, aTrustStorDesc);
+    super (aKeyStoreDesc, aTrustStoreDesc);
     m_aKeyStoreDesc = aKeyStoreDesc;
-    m_aTrustStorDesc = aTrustStorDesc;
+    m_aTrustStorDesc = aTrustStoreDesc;
   }
 
   /**
