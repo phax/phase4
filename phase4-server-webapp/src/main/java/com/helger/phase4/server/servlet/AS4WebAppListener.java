@@ -199,8 +199,8 @@ public final class AS4WebAppListener extends WebAppListener
   protected void initManagers ()
   {
     _initAS4 ();
-    // Throws an exception if configuration parameters are missing
-    DropFolderUserMessage.init (AS4CryptoFactoryConfiguration.getDefaultInstance ());
+    // The initialization of the crypto factory was checked before
+    DropFolderUserMessage.init (AS4CryptoFactoryConfiguration.getDefaultInstanceOrNull ());
   }
 
   @Override
