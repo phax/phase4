@@ -55,10 +55,10 @@ public final class AS4KeyStoreDescriptor
    * password</li>
    * </ul>
    *
-   * @return A new {@link KeyStoreAndKeyDescriptor} object and never
-   *         <code>null</code>.
+   * @return A new {@link KeyStoreAndKeyDescriptor} object or <code>null</code>
+   *         if a mandatory element is missing.
    */
-  @Nonnull
+  @Nullable
   public static KeyStoreAndKeyDescriptor createFromConfig ()
   {
     return createFromConfig (AS4Configuration.getConfig (), CAS4Crypto.DEFAULT_CONFIG_PREFIX, null);
@@ -85,10 +85,10 @@ public final class AS4KeyStoreDescriptor
    * @param aProvider
    *        The Java security provider for loading the key store. May be
    *        <code>null</code> to use the default.
-   * @return A new {@link KeyStoreAndKeyDescriptor} object and never
-   *         <code>null</code>.
+   * @return A new {@link KeyStoreAndKeyDescriptor} object or <code>null</code>
+   *         if a mandatory element is missing.
    */
-  @Nonnull
+  @Nullable
   public static KeyStoreAndKeyDescriptor createFromConfig (@Nonnull final IConfigWithFallback aConfig,
                                                            @Nonnull @Nonempty final String sConfigPrefix,
                                                            @Nullable final Provider aProvider)
@@ -102,11 +102,19 @@ public final class AS4KeyStoreDescriptor
     final EKeyStoreType aType = EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sType,
                                                                                  CAS4Crypto.DEFAULT_KEY_STORE_TYPE);
     final String sPath = aConfig.getAsString (sConfigPrefix + "keystore.file");
+    if (StringHelper.hasNoText (sPath))
+      return null;
     final char [] aPassword = aConfig.getAsCharArray (sConfigPrefix + "keystore.password");
+    if (aPassword == null)
+      return null;
 
     // Key Store Key
     final String sKeyAlias = aConfig.getAsString (sConfigPrefix + "keystore.alias");
+    if (StringHelper.hasNoText (sKeyAlias))
+      return null;
     final char [] aKeyPassword = aConfig.getAsCharArray (sConfigPrefix + "keystore.private.password");
+    if (aKeyPassword == null)
+      return null;
 
     return new KeyStoreAndKeyDescriptor (aType, sPath, aPassword, aProvider, sKeyAlias, aKeyPassword);
   }

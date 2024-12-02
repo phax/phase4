@@ -96,10 +96,11 @@ public final class AS4TrustStoreDescriptor
     final EKeyStoreType aType = EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sType,
                                                                                  CAS4Crypto.DEFAULT_TRUST_STORE_TYPE);
     final String sPath = aConfig.getAsString (sConfigPrefix + "truststore.file");
-    final char [] aPassword = aConfig.getAsCharArray (sConfigPrefix + "truststore.password");
+    if (StringHelper.hasNoText (sPath))
+      return null;
 
-    // No trust store configured
-    if (StringHelper.hasNoText (sPath) || aPassword == null)
+    final char [] aPassword = aConfig.getAsCharArray (sConfigPrefix + "truststore.password");
+    if (aPassword == null)
       return null;
 
     return new TrustStoreDescriptor (aType, sPath, aPassword, aProvider);
