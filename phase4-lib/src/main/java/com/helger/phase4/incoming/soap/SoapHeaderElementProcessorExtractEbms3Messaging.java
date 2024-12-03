@@ -368,7 +368,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
         // Should be screened by the XSD conversion already
         if (aPMode == null)
         {
-          final String sDetails = "Failed to resolve PMode '" +
+          final String sDetails = "Failed to resolve PMode for UserMessage '" +
                                   sPModeID +
                                   "' / '" +
                                   sService +
