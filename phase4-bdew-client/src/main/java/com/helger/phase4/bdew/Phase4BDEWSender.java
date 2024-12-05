@@ -252,6 +252,9 @@ public final class Phase4BDEWSender
         if (m_aPayloadParams.getSubjectPartyRole () != null)
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWSubjectPartyRole", m_aPayloadParams.getSubjectPartyRole ());
+        if (m_aPayloadParams.getApplicationReference () != null)
+          aPayloadAttachment.customPartProperties ()
+                            .put ("BDEWApplicationReference", m_aPayloadParams.getApplicationReference ());
       }
       return aPayloadAttachment;
     }
@@ -283,6 +286,7 @@ public final class Phase4BDEWSender
     private LocalDate m_aFulfillmentDate;
     private String m_sSubjectPartyID;
     private String m_sSubjectPartyRole;
+    private String m_sApplicationReference;
 
     /**
      * @return BDEW payload document type for payload identifier
@@ -447,6 +451,31 @@ public final class Phase4BDEWSender
       return this;
     }
 
+
+    /**
+     * @return BDEW payload application reference for payload identifier
+     *         <code>BDEWApplicationReference</code>
+     */
+    @Nullable
+    public String getApplicationReference ()
+    {
+      return m_sApplicationReference;
+    }
+
+    /**
+     * BDEW payload application reference
+     *
+     * @param sApplicationReference
+     *        Application reference to use. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public BDEWPayloadParams setApplicationReference (@Nullable final String sApplicationReference)
+    {
+      m_sApplicationReference = sApplicationReference;
+      return this;
+    }
+
     @Override
     public String toString ()
     {
@@ -456,6 +485,7 @@ public final class Phase4BDEWSender
                                          .append ("FulfillmentDate", m_aFulfillmentDate)
                                          .append ("SubjectPartyID", m_sSubjectPartyID)
                                          .append ("SubjectPartyRole", m_sSubjectPartyRole)
+                                         .append ("ApplicationReference", m_sApplicationReference)
                                          .getToString ();
     }
   }
