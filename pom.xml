@@ -79,7 +79,7 @@
     <wss4j.version>3.0.4</wss4j.version>
     <peppol-commons.version>9.6.0</peppol-commons.version>
     <peppol-reporting.version>3.0.3</peppol-reporting.version>
-    <ph-commons.version>11.1.10</ph-commons.version>
+    <ph-commons.version>11.1.11</ph-commons.version>
     <ph-schematron.version>8.0.3</ph-schematron.version>
     <ph-ubl.version>9.0.3</ph-ubl.version>
     <ph-web.version>10.1.9</ph-web.version>
