@@ -26,6 +26,7 @@ import org.apache.hc.core5.http.message.StatusLine;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -162,6 +163,7 @@ public class AS4ClientSentMessage <T>
    * @see #hasResponseContent()
    */
   @Nullable
+  @ReturnsMutableObject
   public final T getResponseContent ()
   {
     return m_aResponseContent;
