@@ -64,7 +64,7 @@ import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
-import com.helger.peppolid.factory.SimpleIdentifierFactory;
+import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
@@ -594,6 +594,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                                      .build ());
       return AS4MessageProcessorResult.createFailure ();
     }
+
     if (!aState.isSoapSignatureChecked ())
     {
       final String sDetails = "The received Peppol message seems not to be signed (properly).";
@@ -758,12 +759,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         LOGGER.debug (sLogPrefix + "Now evaluating the SBDH against Peppol rules");
 
       // Interpret as Peppol SBDH and eventually perform consistency checks
+      final IIdentifierFactory aIdentifierFactory = aReceiverCheckData.getSBDHIdentifierFactory ();
       final boolean bPerformValueChecks = aReceiverCheckData.isPerformSBDHValueChecks ();
       final boolean bCheckForCountryC1 = aReceiverCheckData.isCheckSBDHForMandatoryCountryC1 ();
-      // Read with SimpleIdentifierFactory - accepts more the
-      // PeppolIdentifierFactory
-      final PeppolSBDHDocumentReader aReader = new PeppolSBDHDocumentReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerformValueChecks)
-                                                                                                              .setCheckForCountryC1 (bCheckForCountryC1);
+      final PeppolSBDHDocumentReader aReader = new PeppolSBDHDocumentReader (aIdentifierFactory).setPerformValueChecks (bPerformValueChecks)
+                                                                                                .setCheckForCountryC1 (bCheckForCountryC1);
 
       aPeppolSBDH = aReader.extractData (aReadAttachment.standardBusinessDocument ());
 

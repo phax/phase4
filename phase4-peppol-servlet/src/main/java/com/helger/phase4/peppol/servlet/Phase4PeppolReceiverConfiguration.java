@@ -26,6 +26,9 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.peppolid.factory.IIdentifierFactory;
+import com.helger.peppolid.factory.PeppolIdentifierFactory;
+import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.Pfuoi420;
@@ -47,6 +50,7 @@ public final class Phase4PeppolReceiverConfiguration
   private final PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
+  private final IIdentifierFactory m_aSBDHIdentifierFactory;
   private final boolean m_bPerformSBDHValueChecks;
   private final boolean m_bCheckSBDHForMandatoryCountryC1;
   private final boolean m_bCheckSigningCertificateRevocation;
@@ -69,6 +73,9 @@ public final class Phase4PeppolReceiverConfiguration
    * @param aAPCertificate
    *        The AP certificate to be used for compatibility. May not be
    *        <code>null</code> if receiver checks are enabled.
+   * @param aSBDHIdentifierFactory
+   *        The identifier factory to be used for SBDH parsing. May not be
+   *        <code>null</code>.
    * @param bPerformSBDHValueChecks
    *        <code>true</code> if SBDH value checks should be performed.
    * @param bCheckSBDHForMandatoryCountryC1
@@ -84,6 +91,7 @@ public final class Phase4PeppolReceiverConfiguration
                                             @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
                                             @Nullable final String sAS4EndpointURL,
                                             @Nullable final X509Certificate aAPCertificate,
+                                            @Nonnull final IIdentifierFactory aSBDHIdentifierFactory,
                                             final boolean bPerformSBDHValueChecks,
                                             final boolean bCheckSBDHForMandatoryCountryC1,
                                             final boolean bCheckSigningCertificateRevocation)
@@ -95,11 +103,13 @@ public final class Phase4PeppolReceiverConfiguration
       ValueEnforcer.notEmpty (sAS4EndpointURL, "AS4EndpointURL");
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aAPCertificate, "APCertificate");
+    ValueEnforcer.notNull (aSBDHIdentifierFactory, "SBDHIdentifierFactory");
     m_bReceiverCheckEnabled = bReceiverCheckEnabled;
     m_aSMPClient = aSMPClient;
     m_eWildcardSelectionMode = eWildcardSelectionMode;
     m_sAS4EndpointURL = sAS4EndpointURL;
     m_aAPCertificate = aAPCertificate;
+    m_aSBDHIdentifierFactory = aSBDHIdentifierFactory;
     m_bPerformSBDHValueChecks = bPerformSBDHValueChecks;
     m_bCheckSBDHForMandatoryCountryC1 = bCheckSBDHForMandatoryCountryC1;
     m_bCheckSigningCertificateRevocation = bCheckSigningCertificateRevocation;
@@ -158,6 +168,16 @@ public final class Phase4PeppolReceiverConfiguration
     return m_aAPCertificate;
   }
 
+  /**
+   * @return The identifier factory to be used for SBDH parsing.
+   * @since 3.0.1
+   */
+  @Nonnull
+  public IIdentifierFactory getSBDHIdentifierFactory ()
+  {
+    return m_aSBDHIdentifierFactory;
+  }
+
   public boolean isPerformSBDHValueChecks ()
   {
     return m_bPerformSBDHValueChecks;
@@ -181,6 +201,7 @@ public final class Phase4PeppolReceiverConfiguration
                                        .append ("WildcardSelectionMode", m_eWildcardSelectionMode)
                                        .append ("AS4EndpointURL", m_sAS4EndpointURL)
                                        .append ("APCertificate", m_aAPCertificate)
+                                       .append ("SBDHIdentifierFactory", m_aSBDHIdentifierFactory)
                                        .append ("PerformSBDHValueChecks", m_bPerformSBDHValueChecks)
                                        .append ("CheckSBDHForMandatoryCountryC1", m_bCheckSBDHForMandatoryCountryC1)
                                        .append ("CheckSigningCertificateRevocation",
@@ -226,6 +247,7 @@ public final class Phase4PeppolReceiverConfiguration
     private PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
+    private IIdentifierFactory m_aSBDHIdentifierFactory;
     private boolean m_bPerformSBDHValueChecks;
     private boolean m_bCheckSBDHForMandatoryCountryC1;
     private boolean m_bCheckSigningCertificateRevocation;
@@ -240,6 +262,7 @@ public final class Phase4PeppolReceiverConfiguration
                                                            .wildcardSelectionMode (aSrc.getWildcardSelectionMode ())
                                                            .as4EndpointUrl (aSrc.getAS4EndpointURL ())
                                                            .apCertificate (aSrc.getAPCertificate ())
+                                                           .sbdhIdentifierFactory (aSrc.getSBDHIdentifierFactory ())
                                                            .performSBDHValueChecks (aSrc.isPerformSBDHValueChecks ())
                                                            .checkSBDHForMandatoryCountryC1 (aSrc.isCheckSBDHForMandatoryCountryC1 ())
                                                            .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ());
@@ -282,6 +305,25 @@ public final class Phase4PeppolReceiverConfiguration
     }
 
     @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder sbdhIdentifierFactorySimple ()
+    {
+      return sbdhIdentifierFactory (SimpleIdentifierFactory.INSTANCE);
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder sbdhIdentifierFactoryPeppol ()
+    {
+      return sbdhIdentifierFactory (PeppolIdentifierFactory.INSTANCE);
+    }
+
+    @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder sbdhIdentifierFactory (@Nullable final IIdentifierFactory a)
+    {
+      m_aSBDHIdentifierFactory = a;
+      return this;
+    }
+
+    @Nonnull
     public Phase4PeppolReceiverConfigurationBuilder performSBDHValueChecks (final boolean b)
     {
       m_bPerformSBDHValueChecks = b;
@@ -316,12 +358,15 @@ public final class Phase4PeppolReceiverConfiguration
       }
       if (m_eWildcardSelectionMode == null)
         throw new IllegalStateException ("The Wildcard Selection Mode must be provided");
+      if (m_aSBDHIdentifierFactory == null)
+        throw new IllegalStateException ("The SBDH Identifier Factory must be provided");
 
       return new Phase4PeppolReceiverConfiguration (m_bReceiverCheckEnabled,
                                                     m_aSMPClient,
                                                     m_eWildcardSelectionMode,
                                                     m_sAS4EndpointURL,
                                                     m_aAPCertificate,
+                                                    m_aSBDHIdentifierFactory,
                                                     m_bPerformSBDHValueChecks,
                                                     m_bCheckSBDHForMandatoryCountryC1,
                                                     m_bCheckSigningCertificateRevocation);

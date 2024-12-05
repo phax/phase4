@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
+import com.helger.peppolid.factory.IIdentifierFactory;
+import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverConfiguration.Phase4PeppolReceiverConfigurationBuilder;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
@@ -50,6 +52,7 @@ import com.helger.smpclient.peppol.Pfuoi420;
 @NotThreadSafe
 public final class Phase4PeppolDefaultReceiverConfiguration
 {
+  public static final IIdentifierFactory DEFAULT_SBDH_IDENTIFIER_FACTORY = SimpleIdentifierFactory.INSTANCE;
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
   @Pfuoi420
   public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.WILDCARD_ONLY;
@@ -63,6 +66,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   private static PeppolWildcardSelector.EMode s_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
+  private static IIdentifierFactory s_aSBDHIdentifierFactory = DEFAULT_SBDH_IDENTIFIER_FACTORY;
   private static boolean s_bPerformSBDHValueChecks = PeppolSBDHDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
   private static boolean s_bCheckSBDHForMandatoryCountryC1 = PeppolSBDHDocumentReader.DEFAULT_CHECK_FOR_COUNTRY_C1;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
@@ -92,7 +96,6 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @see #setAS4EndpointURL(String)
    * @see #setAPCertificate(X509Certificate)
    */
-  @SuppressWarnings ("javadoc")
   public static void setReceiverCheckEnabled (final boolean bReceiverCheckEnabled)
   {
     s_bReceiverCheckEnabled = bReceiverCheckEnabled;
@@ -195,6 +198,30 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   public static void setAPCertificate (@Nullable final X509Certificate aAPCertificate)
   {
     s_aAPCertificate = aAPCertificate;
+  }
+
+  /**
+   * @return The default identifier factory used to parse SBDH data. Never
+   *         <code>null</code>.
+   * @since 3.0.1
+   */
+  @Nonnull
+  public static IIdentifierFactory getSBDHIdentifierFactory ()
+  {
+    return s_aSBDHIdentifierFactory;
+  }
+
+  /**
+   * Set the default identifier factory used to parse SBDH data.
+   *
+   * @param a
+   *        The identifier factory to use. May not be <code>null</code>.
+   * @since 3.0.1
+   */
+  public static void setSBDHIdentifierFactory (@Nonnull final IIdentifierFactory a)
+  {
+    ValueEnforcer.notNull (a, "SBDHIdentifierFactory");
+    s_aSBDHIdentifierFactory = a;
   }
 
   /**
@@ -314,6 +341,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
                                             .wildcardSelectionMode (getWildcardSelectionMode ())
                                             .as4EndpointUrl (sAS4EndpointURL)
                                             .apCertificate (aAPCertificate)
+                                            .sbdhIdentifierFactory (getSBDHIdentifierFactory ())
                                             .performSBDHValueChecks (isPerformSBDHValueChecks ())
                                             .checkSBDHForMandatoryCountryC1 (isCheckSBDHForMandatoryCountryC1 ())
                                             .checkSigningCertificateRevocation (isCheckSigningCertificateRevocation ());
