@@ -29,6 +29,12 @@
     <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
     <cbc:AccountingCost>4025:123:4343</cbc:AccountingCost>
     <cbc:BuyerReference>0150abc</cbc:BuyerReference>
+    <cac:AdditionalDocumentReference>
+      <cbc:ID>Doc2</cbc:ID>
+      <cac:Attachment>
+        <cbc:EmbeddedDocumentBinaryObject mimeCode="text/csv" filename="Hours-spend.csv">UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi</cbc:EmbeddedDocumentBinaryObject>
+      </cac:Attachment>
+    </cac:AdditionalDocumentReference>
     <cac:AccountingSupplierParty>
         <cac:Party>
             <cbc:EndpointID schemeID="9915">phase4-test-sender</cbc:EndpointID>
