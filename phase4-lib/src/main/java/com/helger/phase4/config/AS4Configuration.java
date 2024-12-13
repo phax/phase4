@@ -297,6 +297,7 @@ public final class AS4Configuration
   public static boolean isIncludeStackTraceInErrorMessages ()
   {
     // Defaults to true for backwards compatibility reason
-    return getConfig ().getAsBoolean ("phase4.errormsg.include.stacktraces", true);
+    // Changed default to false in v3.0.2
+    return getConfig ().getAsBoolean ("phase4.errormsg.include.stacktraces", false);
   }
 }
