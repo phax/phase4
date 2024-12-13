@@ -22,8 +22,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -292,10 +290,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void testNoResponderInMessageInvalidShouldReturnErrorMessage () throws Exception
   {
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    domFactory.setNamespaceAware (true); // never forget this!
-    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
-    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/NoResponder.xml").getInputStream ());
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/NoResponder.xml"));
 
     sendPlainMessage (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()),
                       false,

@@ -22,8 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.Test;
@@ -103,10 +101,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Test
   public void testTwoUserMessagesShouldFail () throws Exception
   {
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    domFactory.setNamespaceAware (true); // never forget this!
-    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
-    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/TwoUserMessages.xml").getInputStream ());
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/TwoUserMessages.xml"));
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
@@ -116,10 +111,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Test
   public void testUserMessageWithNoPartyIDShouldFail () throws Exception
   {
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    domFactory.setNamespaceAware (true); // never forget this!
-    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
-    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/UserMessageNoPartyID.xml").getInputStream ());
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/UserMessageNoPartyID.xml"));
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
@@ -278,11 +270,11 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                     s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                            MockMessages.createUserMessageNotSigned (m_eSoapVersion,
-                                                                                                                     null,
-                                                                                                                     aAttachments)
-                                                                                        .getAsSoapDocument (),
-                                                                            aAttachments);
+                                                                              MockMessages.createUserMessageNotSigned (m_eSoapVersion,
+                                                                                                                       null,
+                                                                                                                       aAttachments)
+                                                                                          .getAsSoapDocument (),
+                                                                              aAttachments);
 
     final AS4SoapMimeMultipart aMultipart = (AS4SoapMimeMultipart) aMimeMsg.getContent ();
 
@@ -350,10 +342,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Test
   public void testUserMessageWrongSigningAlgorithm () throws Exception
   {
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    domFactory.setNamespaceAware (true); // never forget this!
-    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
-    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/WrongSigningAlgorithm.xml").getInputStream ());
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/WrongSigningAlgorithm.xml"));
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
@@ -363,10 +352,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Test
   public void testUserMessageWrongSigningDigestAlgorithm () throws Exception
   {
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    domFactory.setNamespaceAware (true); // never forget this!
-    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
-    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/WrongSigningDigestAlgorithm.xml").getInputStream ());
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/WrongSigningDigestAlgorithm.xml"));
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,

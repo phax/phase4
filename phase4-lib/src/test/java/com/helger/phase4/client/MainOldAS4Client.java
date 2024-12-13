@@ -16,14 +16,7 @@
  */
 package com.helger.phase4.client;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -34,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -67,25 +59,12 @@ public final class MainOldAS4Client
   private MainOldAS4Client ()
   {}
 
-  @Nullable
-  public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
-                                                                                IOException,
-                                                                                ParserConfigurationException
-  {
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    // never forget this!
-    domFactory.setNamespaceAware (true);
-    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
-    return builder.parse (new ClassPathResource (sPath).getInputStream ());
-  }
-
   /**
    * Starting point for the SAAJ - SOAP Client Testing
    *
    * @param args
    *        ignored
    */
-  @SuppressWarnings ("resource")
   public static void main (final String [] args)
   {
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())

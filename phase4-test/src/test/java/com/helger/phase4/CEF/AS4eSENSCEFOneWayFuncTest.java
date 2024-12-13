@@ -21,8 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.hc.core5.http.NoHttpResponseException;
 import org.junit.Test;
@@ -70,6 +68,7 @@ import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.MockPModeGenerator;
+import com.helger.xml.serialize.read.DOMReader;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -103,11 +102,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void testEsens_TA01 () throws Exception
   {
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                        createTestSignedUserMessage (m_eSoapVersion,
-                                                                                                     m_aPayload,
-                                                                                                     null,
-                                                                                                     s_aResMgr),
-                                                                        null);
+                                                                          createTestSignedUserMessage (m_eSoapVersion,
+                                                                                                       m_aPayload,
+                                                                                                       null,
+                                                                                                       s_aResMgr),
+                                                                          null);
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -196,11 +195,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     s_aResMgr));
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                        createTestSignedUserMessage (m_eSoapVersion,
-                                                                                                     m_aPayload,
-                                                                                                     aAttachments,
-                                                                                                     s_aResMgr),
-                                                                        aAttachments);
+                                                                          createTestSignedUserMessage (m_eSoapVersion,
+                                                                                                       m_aPayload,
+                                                                                                       aAttachments,
+                                                                                                       s_aResMgr),
+                                                                          aAttachments);
 
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
 
@@ -239,11 +238,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     s_aResMgr));
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                        createTestSignedUserMessage (m_eSoapVersion,
-                                                                                                     m_aPayload,
-                                                                                                     aAttachments,
-                                                                                                     s_aResMgr),
-                                                                        aAttachments);
+                                                                          createTestSignedUserMessage (m_eSoapVersion,
+                                                                                                       m_aPayload,
+                                                                                                       aAttachments,
+                                                                                                       s_aResMgr),
+                                                                          aAttachments);
 
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
 
@@ -291,11 +290,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     s_aResMgr));
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                        createTestSignedUserMessage (m_eSoapVersion,
-                                                                                                     m_aPayload,
-                                                                                                     aAttachments,
-                                                                                                     s_aResMgr),
-                                                                        aAttachments);
+                                                                          createTestSignedUserMessage (m_eSoapVersion,
+                                                                                                       m_aPayload,
+                                                                                                       aAttachments,
+                                                                                                       s_aResMgr),
+                                                                          aAttachments);
 
     final Multipart aMultipart = (Multipart) aMsg.getContent ();
     // 3 attachments + 1 Main/Bodypart
@@ -339,11 +338,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     s_aResMgr));
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                        createTestSignedUserMessage (m_eSoapVersion,
-                                                                                                     m_aPayload,
-                                                                                                     aAttachments,
-                                                                                                     s_aResMgr),
-                                                                        aAttachments);
+                                                                          createTestSignedUserMessage (m_eSoapVersion,
+                                                                                                       m_aPayload,
+                                                                                                       aAttachments,
+                                                                                                       s_aResMgr),
+                                                                          aAttachments);
 
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
 
@@ -386,9 +385,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     // Would throw an error in our implementation since the user would have said
     // there is a payload (With the hyperlink reference) but nothing is
     // attached.
-    final DocumentBuilderFactory aDbfac = DocumentBuilderFactory.newInstance ();
-    final DocumentBuilder aDocBuilder = aDbfac.newDocumentBuilder ();
-    final Document aDoc = aDocBuilder.parse (ClassPathResource.getAsFile ("attachment/HyperlinkPayload.xml"));
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("attachment/HyperlinkPayload.xml"));
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
@@ -469,11 +466,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
       {
         // send message
         final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                            createTestSignedUserMessage (m_eSoapVersion,
-                                                                                                         m_aPayload,
-                                                                                                         null,
-                                                                                                         s_aResMgr),
-                                                                            null);
+                                                                              createTestSignedUserMessage (m_eSoapVersion,
+                                                                                                           m_aPayload,
+                                                                                                           null,
+                                                                                                           s_aResMgr),
+                                                                              null);
         sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
       }
       finally
@@ -543,11 +540,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
       {
         // send message
         final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                            createTestSignedUserMessage (m_eSoapVersion,
-                                                                                                         m_aPayload,
-                                                                                                         null,
-                                                                                                         s_aResMgr),
-                                                                            null);
+                                                                              createTestSignedUserMessage (m_eSoapVersion,
+                                                                                                           m_aPayload,
+                                                                                                           null,
+                                                                                                           s_aResMgr),
+                                                                              null);
         sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
       }
       finally
@@ -723,11 +720,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
       {
         // send message
         final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                            createTestSignedUserMessage (m_eSoapVersion,
-                                                                                                         m_aPayload,
-                                                                                                         null,
-                                                                                                         s_aResMgr),
-                                                                            null);
+                                                                              createTestSignedUserMessage (m_eSoapVersion,
+                                                                                                           m_aPayload,
+                                                                                                           null,
+                                                                                                           s_aResMgr),
+                                                                              null);
         sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
       }
       finally
