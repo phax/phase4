@@ -23,13 +23,15 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.error.level.EErrorLevel;
 import com.helger.commons.error.level.IErrorLevel;
 import com.helger.commons.error.level.IHasErrorLevelComparable;
+import com.helger.commons.id.IHasID;
+import com.helger.commons.lang.EnumHelper;
 
 /**
  * EBMS error severity with mapping to {@link IErrorLevel}.
  *
  * @author Philip Helger
  */
-public enum EEbmsErrorSeverity implements IHasErrorLevelComparable <EEbmsErrorSeverity>
+public enum EEbmsErrorSeverity implements IHasID <String>, IHasErrorLevelComparable <EEbmsErrorSeverity>
 {
   FAILURE ("failure", EErrorLevel.ERROR),
   WARNING ("warning", EErrorLevel.WARN);
@@ -48,6 +50,16 @@ public enum EEbmsErrorSeverity implements IHasErrorLevelComparable <EEbmsErrorSe
    */
   @Nonnull
   @Nonempty
+  public String getID ()
+  {
+    return m_sSeverity;
+  }
+
+  /**
+   * @return The token for the EBMS3 message
+   */
+  @Nonnull
+  @Nonempty
   public String getSeverity ()
   {
     return m_sSeverity;
@@ -57,6 +69,12 @@ public enum EEbmsErrorSeverity implements IHasErrorLevelComparable <EEbmsErrorSe
   public IErrorLevel getErrorLevel ()
   {
     return m_aErrorLevel;
+  }
+
+  @Nullable
+  public static EEbmsErrorSeverity getFromIDOrNull (@Nullable final String sID)
+  {
+    return EnumHelper.getFromIDOrNull (EEbmsErrorSeverity.class, sID);
   }
 
   @Nullable
