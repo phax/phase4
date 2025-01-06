@@ -27,7 +27,7 @@ import org.apache.wss4j.common.util.KeyUtils;
 public interface ICryptoSessionKeyProvider
 {
   /**
-   * Get or create a new symmetric session key. This method may only throws
+   * Get or create a new symmetric session key. This method may only throw
    * unchecked exceptions.
    *
    * @return A new session key. Must not be <code>null</code>.
@@ -35,6 +35,9 @@ public interface ICryptoSessionKeyProvider
   @Nonnull
   SecretKey getSessionKey ();
 
+  /**
+   * Session key provider for AES-128 keys that can be used e.g. for AES-128-CBC or AES-128-GCM
+   */
   ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_128 = () -> {
     try
     {
@@ -47,18 +50,12 @@ public interface ICryptoSessionKeyProvider
     }
   };
 
-  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_128_GCM = () -> {
-    try
-    {
-      final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_128_GCM);
-      return aKeyGen.generateKey ();
-    }
-    catch (final WSSecurityException ex)
-    {
-      throw new IllegalStateException ("Failed to create session key (AES-128-GCM)", ex);
-    }
-  };
+  @Deprecated (forRemoval = true, since = "3.0.2")
+  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_128_GCM = INSTANCE_RANDOM_AES_128;
 
+  /**
+   * Session key provider for AES-256 keys that can be used e.g. for AES-256-CBC or AES-256-GCM
+   */
   ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_256 = () -> {
     try
     {
@@ -71,15 +68,7 @@ public interface ICryptoSessionKeyProvider
     }
   };
 
-  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_256_GCM = () -> {
-    try
-    {
-      final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_256_GCM);
-      return aKeyGen.generateKey ();
-    }
-    catch (final WSSecurityException ex)
-    {
-      throw new IllegalStateException ("Failed to create session key (AES-256-GCM)", ex);
-    }
-  };
+  @Deprecated (forRemoval = true, since = "3.0.2")
+  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_256_GCM = INSTANCE_RANDOM_AES_256;
+
 }
