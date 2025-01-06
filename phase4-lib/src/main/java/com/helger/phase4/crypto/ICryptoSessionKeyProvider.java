@@ -50,6 +50,9 @@ public interface ICryptoSessionKeyProvider
     }
   };
 
+  @Deprecated (forRemoval = true, since = "3.0.2")
+  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_128_GCM = INSTANCE_RANDOM_AES_128;
+
   /**
    * Session key provider for AES-256 keys that can be used e.g. for AES-256-CBC or AES-256-GCM
    */
@@ -64,5 +67,8 @@ public interface ICryptoSessionKeyProvider
       throw new IllegalStateException ("Failed to create session key (AES-256)", ex);
     }
   };
+
+  @Deprecated (forRemoval = true, since = "3.0.2")
+  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_256_GCM = INSTANCE_RANDOM_AES_256;
 
 }
