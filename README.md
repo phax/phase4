@@ -11,6 +11,8 @@ phase4 is part of my Peppol solution stack. See https://github.com/phax/peppol f
 
 Please see the **[Wiki](https://github.com/phax/phase4/wiki)** for the full documentation.
 
+Please see [phase4-pepol-standalone](https://github.com/phax/phase4-peppol-standalone) for a standalone example application with the Peppol profile.
+
 If you like the project, a star on GitHub is always appreciated.
 
 If you need commercial support, please reach out to me by email (see file `pom.xml` if you don't have it).
