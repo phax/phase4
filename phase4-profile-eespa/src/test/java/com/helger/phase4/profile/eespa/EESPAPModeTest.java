@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2024 OpusCapita
+ * Copyright (C) 2020-2025 OpusCapita
  * Copyright (C) 2022 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
