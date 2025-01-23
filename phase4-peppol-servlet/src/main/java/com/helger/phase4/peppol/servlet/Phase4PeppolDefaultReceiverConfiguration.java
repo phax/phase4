@@ -73,7 +73,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   private static boolean s_bPerformSBDHValueChecks = PeppolSBDHDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
   private static boolean s_bCheckSBDHForMandatoryCountryC1 = PeppolSBDHDocumentReader.DEFAULT_CHECK_FOR_COUNTRY_C1;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
-  private static PeppolCAChecker s_aPeppolAPCAChecker = DEFAULT_PEPPOL_AP_CA_CHECKER;
+  private static PeppolCAChecker s_aAPCAChecker = DEFAULT_PEPPOL_AP_CA_CHECKER;
 
   private Phase4PeppolDefaultReceiverConfiguration ()
   {}
@@ -323,9 +323,9 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @since 3.0.3
    */
   @Nonnull
-  public static PeppolCAChecker getPeppolAPCAChecker ()
+  public static PeppolCAChecker getAPCAChecker ()
   {
-    return s_aPeppolAPCAChecker;
+    return s_aAPCAChecker;
   }
 
   /**
@@ -335,12 +335,12 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *        The Peppol CA checker to be used. May not be <code>null</code>.
    * @since 3.0.3
    */
-  public static void setPeppolAPCAChecker (@Nonnull final PeppolCAChecker a)
+  public static void setAPCAChecker (@Nonnull final PeppolCAChecker a)
   {
-    ValueEnforcer.notNull (a, "PeppolAPCAChecker");
+    ValueEnforcer.notNull (a, "APCAChecker");
 
-    final boolean bChange = a != s_aPeppolAPCAChecker;
-    s_aPeppolAPCAChecker = a;
+    final boolean bChange = a != s_aAPCAChecker;
+    s_aAPCAChecker = a;
     if (bChange)
     {
       LOGGER.info (CAS4.LIB_NAME + " Peppol AP CA Checker is set to " + a);
@@ -378,7 +378,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
                                             .performSBDHValueChecks (isPerformSBDHValueChecks ())
                                             .checkSBDHForMandatoryCountryC1 (isCheckSBDHForMandatoryCountryC1 ())
                                             .checkSigningCertificateRevocation (isCheckSigningCertificateRevocation ())
-                                            .apCAChecker (getPeppolAPCAChecker ());
+                                            .apCAChecker (getAPCAChecker ());
   }
 
   /**
