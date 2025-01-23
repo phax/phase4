@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
+import com.helger.peppol.utils.PeppolCAChecker;
+import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.CAS4;
@@ -57,6 +59,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   @Pfuoi420
   public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.WILDCARD_ONLY;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
+  public static final PeppolCAChecker DEFAULT_PEPPOL_AP_CA_CHECKER = PeppolCertificateChecker.peppolAllAP ();
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolDefaultReceiverConfiguration.class);
 
@@ -70,6 +73,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   private static boolean s_bPerformSBDHValueChecks = PeppolSBDHDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
   private static boolean s_bCheckSBDHForMandatoryCountryC1 = PeppolSBDHDocumentReader.DEFAULT_CHECK_FOR_COUNTRY_C1;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
+  private static PeppolCAChecker s_aPeppolAPCAChecker = DEFAULT_PEPPOL_AP_CA_CHECKER;
 
   private Phase4PeppolDefaultReceiverConfiguration ()
   {}
@@ -315,6 +319,35 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
+   * @return The Peppol AP CA checker to be used. Never <code>null</code>.
+   * @since 3.0.3
+   */
+  @Nonnull
+  public static PeppolCAChecker getPeppolAPCAChecker ()
+  {
+    return s_aPeppolAPCAChecker;
+  }
+
+  /**
+   * Set the Peppol CA checker to be used.
+   *
+   * @param a
+   *        The Peppol CA checker to be used. May not be <code>null</code>.
+   * @since 3.0.3
+   */
+  public static void setPeppolAPCAChecker (@Nonnull final PeppolCAChecker a)
+  {
+    ValueEnforcer.notNull (a, "PeppolAPCAChecker");
+
+    final boolean bChange = a != s_aPeppolAPCAChecker;
+    s_aPeppolAPCAChecker = a;
+    if (bChange)
+    {
+      LOGGER.info (CAS4.LIB_NAME + " Peppol AP CA Checker is set to " + a);
+    }
+  }
+
+  /**
    * Get the statically configured data as a
    * {@link Phase4PeppolReceiverConfigurationBuilder} instance. This allows for
    * modification before building the final object.
@@ -344,7 +377,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
                                             .sbdhIdentifierFactory (getSBDHIdentifierFactory ())
                                             .performSBDHValueChecks (isPerformSBDHValueChecks ())
                                             .checkSBDHForMandatoryCountryC1 (isCheckSBDHForMandatoryCountryC1 ())
-                                            .checkSigningCertificateRevocation (isCheckSigningCertificateRevocation ());
+                                            .checkSigningCertificateRevocation (isCheckSigningCertificateRevocation ())
+                                            .apCAChecker (getPeppolAPCAChecker ());
   }
 
   /**

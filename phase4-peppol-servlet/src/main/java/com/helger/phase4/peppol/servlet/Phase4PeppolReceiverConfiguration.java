@@ -26,6 +26,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
@@ -54,6 +55,7 @@ public final class Phase4PeppolReceiverConfiguration
   private final boolean m_bPerformSBDHValueChecks;
   private final boolean m_bCheckSBDHForMandatoryCountryC1;
   private final boolean m_bCheckSigningCertificateRevocation;
+  private final PeppolCAChecker m_aAPCAChecker;
 
   /**
    * Constructor
@@ -86,6 +88,7 @@ public final class Phase4PeppolReceiverConfiguration
    *        performed.
    * @since 2.8.1
    */
+  @Deprecated (forRemoval = true, since = "3.0.3")
   public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
                                             @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
                                             @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
@@ -95,6 +98,62 @@ public final class Phase4PeppolReceiverConfiguration
                                             final boolean bPerformSBDHValueChecks,
                                             final boolean bCheckSBDHForMandatoryCountryC1,
                                             final boolean bCheckSigningCertificateRevocation)
+  {
+    this (bReceiverCheckEnabled,
+          aSMPClient,
+          eWildcardSelectionMode,
+          sAS4EndpointURL,
+          aAPCertificate,
+          aSBDHIdentifierFactory,
+          bPerformSBDHValueChecks,
+          bCheckSBDHForMandatoryCountryC1,
+          bCheckSigningCertificateRevocation,
+          Phase4PeppolDefaultReceiverConfiguration.DEFAULT_PEPPOL_AP_CA_CHECKER);
+  }
+
+  /**
+   * Constructor
+   *
+   * @param bReceiverCheckEnabled
+   *        <code>true</code> if the receiver checks are enabled,
+   *        <code>false</code> otherwise
+   * @param aSMPClient
+   *        The SMP metadata provider to be used. May not be <code>null</code>
+   *        if receiver checks are enabled.
+   * @param eWildcardSelectionMode
+   *        The wildcard selection mode to use for the SMP. May not be
+   *        <code>null</code>
+   * @param sAS4EndpointURL
+   *        The endpoint URL to check against. May neither be <code>null</code>
+   *        nor empty if receiver checks are enabled.
+   * @param aAPCertificate
+   *        The AP certificate to be used for compatibility. May not be
+   *        <code>null</code> if receiver checks are enabled.
+   * @param aSBDHIdentifierFactory
+   *        The identifier factory to be used for SBDH parsing. May not be
+   *        <code>null</code>.
+   * @param bPerformSBDHValueChecks
+   *        <code>true</code> if SBDH value checks should be performed.
+   * @param bCheckSBDHForMandatoryCountryC1
+   *        <code>true</code> if SBDH value checks should be performed for
+   *        mandatory C1 country code.
+   * @param bCheckSigningCertificateRevocation
+   *        <code>true</code> if signing certificate revocation checks should be
+   *        performed.
+   * @param aAPCAChecker
+   *        The Peppol AP CA checker. May not be <code>null</code>.
+   * @since 3.0.3
+   */
+  public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
+                                            @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
+                                            @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
+                                            @Nullable final String sAS4EndpointURL,
+                                            @Nullable final X509Certificate aAPCertificate,
+                                            @Nonnull final IIdentifierFactory aSBDHIdentifierFactory,
+                                            final boolean bPerformSBDHValueChecks,
+                                            final boolean bCheckSBDHForMandatoryCountryC1,
+                                            final boolean bCheckSigningCertificateRevocation,
+                                            @Nonnull final PeppolCAChecker aAPCAChecker)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -113,6 +172,7 @@ public final class Phase4PeppolReceiverConfiguration
     m_bPerformSBDHValueChecks = bPerformSBDHValueChecks;
     m_bCheckSBDHForMandatoryCountryC1 = bCheckSBDHForMandatoryCountryC1;
     m_bCheckSigningCertificateRevocation = bCheckSigningCertificateRevocation;
+    m_aAPCAChecker = aAPCAChecker;
   }
 
   public boolean isReceiverCheckEnabled ()
@@ -193,6 +253,16 @@ public final class Phase4PeppolReceiverConfiguration
     return m_bCheckSigningCertificateRevocation;
   }
 
+  /**
+   * @return The Peppol CA checker to be used. Must not be <code>null</code>.
+   * @since 3.0.3
+   */
+  @Nonnull
+  public PeppolCAChecker getAPCAChecker ()
+  {
+    return m_aAPCAChecker;
+  }
+
   @Override
   public String toString ()
   {
@@ -206,6 +276,7 @@ public final class Phase4PeppolReceiverConfiguration
                                        .append ("CheckSBDHForMandatoryCountryC1", m_bCheckSBDHForMandatoryCountryC1)
                                        .append ("CheckSigningCertificateRevocation",
                                                 m_bCheckSigningCertificateRevocation)
+                                       .append ("APCAChecker", m_aAPCAChecker)
                                        .getToString ();
   }
 
@@ -251,6 +322,7 @@ public final class Phase4PeppolReceiverConfiguration
     private boolean m_bPerformSBDHValueChecks;
     private boolean m_bCheckSBDHForMandatoryCountryC1;
     private boolean m_bCheckSigningCertificateRevocation;
+    private PeppolCAChecker m_aAPCAChecker;
 
     public Phase4PeppolReceiverConfigurationBuilder ()
     {}
@@ -265,7 +337,8 @@ public final class Phase4PeppolReceiverConfiguration
                                                            .sbdhIdentifierFactory (aSrc.getSBDHIdentifierFactory ())
                                                            .performSBDHValueChecks (aSrc.isPerformSBDHValueChecks ())
                                                            .checkSBDHForMandatoryCountryC1 (aSrc.isCheckSBDHForMandatoryCountryC1 ())
-                                                           .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ());
+                                                           .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ())
+                                                           .apCAChecker (aSrc.getAPCAChecker ());
     }
 
     @Nonnull
@@ -345,6 +418,13 @@ public final class Phase4PeppolReceiverConfiguration
     }
 
     @Nonnull
+    public Phase4PeppolReceiverConfigurationBuilder apCAChecker (@Nullable final PeppolCAChecker a)
+    {
+      m_aAPCAChecker = a;
+      return this;
+    }
+
+    @Nonnull
     public Phase4PeppolReceiverConfiguration build ()
     {
       if (m_bReceiverCheckEnabled)
@@ -360,6 +440,8 @@ public final class Phase4PeppolReceiverConfiguration
         throw new IllegalStateException ("The Wildcard Selection Mode must be provided");
       if (m_aSBDHIdentifierFactory == null)
         throw new IllegalStateException ("The SBDH Identifier Factory must be provided");
+      if (m_aAPCAChecker == null)
+        throw new IllegalStateException ("The Peppol AP CA checker must be provided");
 
       return new Phase4PeppolReceiverConfiguration (m_bReceiverCheckEnabled,
                                                     m_aSMPClient,
@@ -369,7 +451,8 @@ public final class Phase4PeppolReceiverConfiguration
                                                     m_aSBDHIdentifierFactory,
                                                     m_bPerformSBDHValueChecks,
                                                     m_bCheckSBDHForMandatoryCountryC1,
-                                                    m_bCheckSigningCertificateRevocation);
+                                                    m_bCheckSigningCertificateRevocation,
+                                                    m_aAPCAChecker);
     }
   }
 }

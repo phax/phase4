@@ -59,7 +59,6 @@ import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
-import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -613,9 +612,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       // Check if signing AP certificate is revoked
       // * Use global caching setting
       // * Use global certificate check mode
-      final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.peppolAllAP ()
-                                                                                     .checkCertificate (aSenderCert,
-                                                                                                        aNow);
+      final EPeppolCertificateCheckResult eCertCheckResult = aReceiverCheckData.getAPCAChecker ()
+                                                                               .checkCertificate (aSenderCert, aNow);
       if (eCertCheckResult.isInvalid ())
       {
         final String sDetails = "The received Peppol message is signed with a Peppol AP certificate invalid at " +
