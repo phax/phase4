@@ -65,7 +65,7 @@ public final class MainPhase4PeppolSenderLDIXR23
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
 
-      final String sReceiverID = "0204:07-49849849499-27";
+      final String sReceiverID = "0204:07-testbehoerdekober-96";
       final StopWatch aSW = StopWatch.createdStarted ();
       final ICommonsMap <String, String> aRcvToMsgIDMap = new CommonsLinkedHashMap <> ();
       try
