@@ -53,7 +53,6 @@ import com.helger.security.keystore.LoadedKeyStore;
  * @author Philip Helger
  * @since 3.0.0
  */
-@SuppressWarnings ("javadoc")
 @Immutable
 public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeyStore
 {
@@ -71,7 +70,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
   {
     // Don't store this in a static variable, because it may fail if the
     // respective configuration properties are not present
-    return new AS4CryptoFactoryConfiguration (AS4Configuration.getConfig ());
+    return new AS4CryptoFactoryConfiguration (AS4Configuration.getConfig (), CAS4Crypto.DEFAULT_CONFIG_PREFIX, false);
   }
 
   /**
@@ -115,7 +114,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
 
   @Nonnull
   private static IKeyStoreAndKeyDescriptor _loadKeyStore (@Nonnull final IConfigWithFallback aConfig,
-                                                          @Nonnull @Nonempty final String sConfigPrefix) throws Phase4RuntimeException
+                                                          @Nonnull @Nonempty final String sConfigPrefix,
+                                                          final boolean bLogError) throws Phase4RuntimeException
   {
     // Load the keystore - may be null
     final IKeyStoreAndKeyDescriptor aDescriptor = AS4KeyStoreDescriptor.createFromConfig (aConfig, sConfigPrefix, null);
@@ -124,7 +124,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
       final String sMsg = "Failed to load the key store configuration from properties starting with '" +
                           sConfigPrefix +
                           "'";
-      LOGGER.error (sMsg);
+      if (bLogError)
+        LOGGER.error (sMsg);
       throw new Phase4RuntimeException (sMsg);
     }
 
@@ -135,7 +136,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
                           sConfigPrefix +
                           "': " +
                           aLKS.getErrorText (Locale.ROOT);
-      LOGGER.error (sMsg);
+      if (bLogError)
+        LOGGER.error (sMsg);
       throw new Phase4RuntimeException (sMsg);
     }
 
@@ -146,7 +148,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
                           sConfigPrefix +
                           "': " +
                           aLK.getErrorText (Locale.ROOT);
-      LOGGER.error (sMsg);
+      if (bLogError)
+        LOGGER.error (sMsg);
       throw new Phase4RuntimeException (sMsg);
     }
 
@@ -155,7 +158,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
 
   @Nullable
   private static ITrustStoreDescriptor _loadTrustStore (@Nonnull final IConfigWithFallback aConfig,
-                                                        @Nonnull @Nonempty final String sConfigPrefix)
+                                                        @Nonnull @Nonempty final String sConfigPrefix,
+                                                        final boolean bLogError)
   {
     // Load the trust store - may be null
     final ITrustStoreDescriptor aDescriptor = AS4TrustStoreDescriptor.createFromConfig (aConfig, sConfigPrefix, null);
@@ -164,10 +168,11 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
       final LoadedKeyStore aLTS = aDescriptor.loadTrustStore ();
       if (aLTS.getKeyStore () == null)
       {
-        LOGGER.error ("Failed to load the trust store from the properties starting with '" +
-                      sConfigPrefix +
-                      "': " +
-                      aLTS.getErrorText (Locale.ROOT));
+        if (bLogError)
+          LOGGER.error ("Failed to load the trust store from the properties starting with '" +
+                        sConfigPrefix +
+                        "': " +
+                        aLTS.getErrorText (Locale.ROOT));
       }
     }
     return aDescriptor;
@@ -188,7 +193,29 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
   public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig,
                                         @Nonnull @Nonempty final String sConfigPrefix) throws Phase4RuntimeException
   {
-    this (_loadKeyStore (aConfig, sConfigPrefix), _loadTrustStore (aConfig, sConfigPrefix));
+    // Log warning for backward compatibility reasons
+    this (aConfig, sConfigPrefix, true);
+  }
+
+  /**
+   * This constructor takes the configuration object and uses the provided
+   * configuration prefix. This is kind of the default constructor.
+   *
+   * @param aConfig
+   *        The configuration object to be used. May not be <code>null</code>.
+   * @param sConfigPrefix
+   *        The configuration prefix to be used. May neither be
+   *        <code>null</code> nor empty and must end with a dot ('.').
+   * @param bLogError
+   *        <code>true</code> if errors should be logged if loading fails.
+   * @throws Phase4RuntimeException
+   *         If loading the key store configuration from configuration fails.
+   */
+  public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig,
+                                        @Nonnull @Nonempty final String sConfigPrefix,
+                                        final boolean bLogError) throws Phase4RuntimeException
+  {
+    this (_loadKeyStore (aConfig, sConfigPrefix, bLogError), _loadTrustStore (aConfig, sConfigPrefix, bLogError));
   }
 
   /**
