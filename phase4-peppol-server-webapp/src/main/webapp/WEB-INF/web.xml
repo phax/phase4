@@ -31,7 +31,16 @@
   <listener>
     <listener-class>com.helger.phase4.peppol.server.servlet.Phase4PeppolWebAppListener</listener-class>
   </listener>
-  
+
+  <servlet>
+    <servlet-name>PhotonAPIServlet</servlet-name>
+    <servlet-class>com.helger.photon.api.servlet.PhotonAPIServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PhotonAPIServlet</servlet-name>
+    <url-pattern>/api/*</url-pattern>
+  </servlet-mapping>
+
   <servlet>
     <servlet-name>Phase4PeppolServlet</servlet-name>
     <servlet-class>com.helger.phase4.servlet.AS4Servlet</servlet-class>

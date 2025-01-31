@@ -76,6 +76,10 @@
       <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-peppol-servlet</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.helger.phase4</groupId>
+      <artifactId>phase4-peppol-client</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>

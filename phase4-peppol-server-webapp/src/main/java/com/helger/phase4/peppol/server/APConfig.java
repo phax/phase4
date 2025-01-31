@@ -48,6 +48,12 @@ public final class APConfig
   }
 
   @Nullable
+  public static String getPhase4ApiRequiredToken ()
+  {
+    return _getConfig ().getAsString ("phase4.api.requiredtoken");
+  }
+
+  @Nullable
   public static String getHttpProxyHost ()
   {
     return _getConfig ().getAsString ("http.proxy.host");
