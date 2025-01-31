@@ -69,6 +69,11 @@ import com.helger.servlet.response.UnifiedResponse;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
+/**
+ * API to send a document via Peppol. Requires a ready Peppol SBDH as input.
+ *
+ * @author Philip Helger
+ */
 public final class APIPostSendSBDH extends AbstractAPIExecutor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (APIPostSendSBDH.class);
@@ -110,7 +115,8 @@ public final class APIPostSendSBDH extends AbstractAPIExecutor
       aJson.add ("sendingSuccess", false);
       aJson.add ("overallSuccess", false);
       aUnifiedResponse.setContentAndCharset (aJson.getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
-                                             StandardCharsets.UTF_8).disableCaching ();
+                                             StandardCharsets.UTF_8)
+                      .disableCaching ();
       return;
     }
 
@@ -293,6 +299,7 @@ public final class APIPostSendSBDH extends AbstractAPIExecutor
 
     // Return result JSON
     aUnifiedResponse.setContentAndCharset (aJson.getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
-                                           StandardCharsets.UTF_8).disableCaching ();
+                                           StandardCharsets.UTF_8)
+                    .disableCaching ();
   }
 }

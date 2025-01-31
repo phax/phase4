@@ -24,7 +24,12 @@ import com.helger.photon.api.APIPath;
 import com.helger.photon.api.IAPIExceptionMapper;
 import com.helger.photon.api.IAPIRegistry;
 
-public final class PPAPI
+/**
+ * This class contains the API registration and global parameters.
+ *
+ * @author Philip Helger
+ */
+public final class Phase4API
 {
   public static final String PARAM_SENDER_ID = "senderId";
   public static final String PARAM_RECEIVER_ID = "receiverId";
@@ -32,7 +37,7 @@ public final class PPAPI
   public static final String PARAM_PROCESS_ID = "processId";
   public static final String PARAM_COUNTRY_CODE_C1 = "countryC1";
 
-  private PPAPI ()
+  private Phase4API ()
   {}
 
   public static void init (@Nonnull final IAPIRegistry aAPIRegistry)
@@ -50,7 +55,8 @@ public final class PPAPI
                                                                        PARAM_PROCESS_ID +
                                                                        "}/{" +
                                                                        PARAM_COUNTRY_CODE_C1 +
-                                                                       "}"), new APIPostSendDocument (EStageType.TEST));
+                                                                       "}"),
+                                                         new APIPostSendDocument (EStageType.TEST));
       aSendTest.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendTest);
     }
@@ -72,7 +78,7 @@ public final class PPAPI
     }
     {
       final APIDescriptor aSendTestSbdh = new APIDescriptor (APIPath.post ("/sendtestsbdh"),
-                                                         new APIPostSendDocument (EStageType.TEST));
+                                                             new APIPostSendDocument (EStageType.TEST));
       aSendTestSbdh.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendTestSbdh);
     }

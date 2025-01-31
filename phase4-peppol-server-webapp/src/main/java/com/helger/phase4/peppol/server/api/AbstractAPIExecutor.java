@@ -15,6 +15,11 @@ import com.helger.photon.api.IAPIExecutor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
+/**
+ * Abstract API executor class. Contains the token check.
+ *
+ * @author Philip Helger
+ */
 public abstract class AbstractAPIExecutor implements IAPIExecutor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAPIExecutor.class);

@@ -16,6 +16,11 @@
  */
 package com.helger.phase4.peppol.server.api;
 
+/**
+ * Special exception for API parameter violations
+ *
+ * @author Philip Helger
+ */
 public class APIParamException extends RuntimeException
 {
   public APIParamException (final String sMsg)

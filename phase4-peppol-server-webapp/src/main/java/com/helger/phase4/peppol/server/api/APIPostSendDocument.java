@@ -69,6 +69,11 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.read.DOMReader;
 
+/**
+ * API to send a document via Peppol. The SBDH is created internally.
+ *
+ * @author Philip Helger
+ */
 public final class APIPostSendDocument extends AbstractAPIExecutor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (APIPostSendDocument.class);
@@ -87,11 +92,11 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
                                     @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                                     @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
-    final String sSenderID = aPathVariables.get (PPAPI.PARAM_SENDER_ID);
-    final String sReceiverID = aPathVariables.get (PPAPI.PARAM_RECEIVER_ID);
-    final String sDocTypeID = aPathVariables.get (PPAPI.PARAM_DOC_TYPE_ID);
-    final String sProcessID = aPathVariables.get (PPAPI.PARAM_PROCESS_ID);
-    final String sCountryCodeC1 = aPathVariables.get (PPAPI.PARAM_COUNTRY_CODE_C1);
+    final String sSenderID = aPathVariables.get (Phase4API.PARAM_SENDER_ID);
+    final String sReceiverID = aPathVariables.get (Phase4API.PARAM_RECEIVER_ID);
+    final String sDocTypeID = aPathVariables.get (Phase4API.PARAM_DOC_TYPE_ID);
+    final String sProcessID = aPathVariables.get (Phase4API.PARAM_PROCESS_ID);
+    final String sCountryCodeC1 = aPathVariables.get (Phase4API.PARAM_COUNTRY_CODE_C1);
     final byte [] aPayloadBytes = StreamHelper.getAllBytes (aRequestScope.getRequest ().getInputStream ());
 
     // Check parameters
@@ -295,6 +300,7 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
 
     // Return result JSON
     aUnifiedResponse.setContentAndCharset (aJson.getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
-                                           StandardCharsets.UTF_8).disableCaching ();
+                                           StandardCharsets.UTF_8)
+                    .disableCaching ();
   }
 }
