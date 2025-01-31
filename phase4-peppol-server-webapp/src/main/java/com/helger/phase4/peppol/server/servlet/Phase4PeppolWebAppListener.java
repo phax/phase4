@@ -45,6 +45,7 @@ import com.helger.commons.url.URLHelper;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
+import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
@@ -57,6 +58,8 @@ import com.helger.phase4.incoming.AS4ServerInitializer;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.peppol.server.APConfig;
+import com.helger.phase4.peppol.server.EStageType;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.Phase4PeppolDefaultReceiverConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
@@ -138,8 +141,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ()
-                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
+        null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -187,8 +190,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
         if (SimpleFileIO.writeFile (aFile,
                                     AS4IncomingHelper.getIncomingMetadataAsJson (aMessageMetadata)
                                                      .getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
-                                    StandardCharsets.UTF_8)
-                        .isFailure ())
+                                    StandardCharsets.UTF_8).isFailure ())
           LOGGER.error ("Failed to write metadata to '" + aFile.getAbsolutePath () + "'");
         else
           LOGGER.info ("Wrote metadata to '" + aFile.getAbsolutePath () + "'");
@@ -196,14 +198,12 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     });
 
     // Store the outgoings file as well
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode,
-                                                                        sMessageID,
-                                                                        nTry) -> StorageHelper.getStorageFile (sMessageID,
-                                                                                                               nTry,
-                                                                                                               ".as4out")));
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> StorageHelper
+                                                                                                                    .getStorageFile (sMessageID,
+                                                                                                                                     nTry,
+                                                                                                                                     ".as4out")));
   }
 
-  @SuppressWarnings ("removal")
   private static void _initPeppolAS4 ()
   {
     // Our server expects all SBDH to contain the COUNTRY_C1 element in SBDH
@@ -220,8 +220,10 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // resources, it can be configured here
     final Phase4PeppolHttpClientSettings aHCS = new Phase4PeppolHttpClientSettings ();
     if (false)
-      aHCS.setProxyHost (new HttpHost (AS4Configuration.getConfig ().getAsString ("http.proxy.host"),
-                                       AS4Configuration.getConfig ().getAsInt ("http.proxy.port")));
+    {
+      // TODO enable when you use a proxy
+      aHCS.setProxyHost (new HttpHost (APConfig.getHttpProxyHost (), APConfig.getHttpProxyPort ()));
+    }
     PeppolCRLDownloader.setAsDefaultCRLCache (aHCS);
 
     // Throws an exception if configuration parameters are missing
@@ -309,11 +311,16 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // if something is misconfigured
     // * Do not cache result
     // * Use the global checking mode or provide a new one
-    final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
-                                                                                                          MetaAS4Manager.getTimestampMgr ()
-                                                                                                                        .getCurrentDateTime (),
-                                                                                                          ETriState.FALSE,
-                                                                                                          null);
+
+    // TODO separate to test and production
+    final EStageType eStage = EStageType.TEST;
+    final PeppolCAChecker aAPCAChecker = eStage.isTest () ? PeppolCertificateChecker.peppolTestAP ()
+                                                          : PeppolCertificateChecker.peppolProductionAP ();
+    final EPeppolCertificateCheckResult eCheckResult = aAPCAChecker.checkCertificate (aAPCert,
+                                                                                      MetaAS4Manager.getTimestampMgr ()
+                                                                                                    .getCurrentDateTime (),
+                                                                                      ETriState.FALSE,
+                                                                                      null);
     if (eCheckResult.isInvalid ())
       throw new InitializationException ("The provided certificate is not a valid Peppol AP certificate. Check result: " +
                                          eCheckResult);
@@ -321,7 +328,9 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
     // Enable or disable, if upon receival, the received should be checked or
     // not
-    final String sSMPURL = AS4Configuration.getConfig ().getAsString ("smp.url");
+    Phase4PeppolDefaultReceiverConfiguration.setAPCAChecker (aAPCAChecker);
+
+    final String sSMPURL = APConfig.getMySmpUrl ();
     final String sAPURL = AS4Configuration.getThisEndpointAddress ();
     if (StringHelper.hasText (sSMPURL) && StringHelper.hasText (sAPURL))
     {
