@@ -218,8 +218,8 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       aSecurityEngine.setWssConfig (aWSSConfig);
 
       // This starts the main verification - throws an exception
-      final WSHandlerResult aHdlRes = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
-      final List <WSSecurityEngineResult> aResults = aHdlRes.getResults ();
+      final WSHandlerResult aVerifyDecryptResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
+      final List <WSSecurityEngineResult> aResults = aVerifyDecryptResults.getResults ();
 
       LOGGER.info ("phase4 --- verify-decrypt:end");
 
