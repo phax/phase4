@@ -29,7 +29,6 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation2024_05;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
 import com.helger.servlet.mock.MockServletContext;
@@ -59,18 +58,19 @@ public final class MainPhase4PeppolSenderInMemoryKeyStore
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:atu68241501");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
       final KeyStore aKS = KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.PKCS12,
-                                                              "test-ap.p12",
+                                                              "test-ap-2023.p12",
                                                               "peppol".toCharArray ());
       if (aKS == null)
         throw new IllegalStateException ();
       final IAS4CryptoFactory aInMemoryCryptoFactory = new AS4CryptoFactoryInMemoryKeyStore (aKS,
-                                                                                             "openpeppol aisbl id von pop000306",
+                                                                                             "cert",
                                                                                              "peppol".toCharArray (),
                                                                                              PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PILOT);
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
+                                  .cryptoFactory (aInMemoryCryptoFactory)
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
@@ -81,9 +81,7 @@ public final class MainPhase4PeppolSenderInMemoryKeyStore
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
-                                  .validationConfiguration (PeppolValidation2024_05.VID_OPENPEPPOL_INVOICE_UBL_V3,
-                                                            new Phase4PeppolValidatonResultHandler ())
-                                  .cryptoFactory (aInMemoryCryptoFactory)
+                                  .disableValidation ()
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
