@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.datetime.PDTWebDateHelper;
 import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
@@ -87,6 +88,10 @@ public final class APIPostSendSBDH extends AbstractAPIExecutor
                                     @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     final byte [] aPayloadBytes = StreamHelper.getAllBytes (aRequestScope.getRequest ().getInputStream ());
+
+    // Check parameters
+    if (ArrayHelper.isEmpty (aPayloadBytes))
+      throw new APIParamException ("API call retrieved an empty payload");
 
     final PeppolSBDHData aData;
     try
