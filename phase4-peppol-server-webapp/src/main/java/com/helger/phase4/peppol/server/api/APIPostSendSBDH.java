@@ -24,15 +24,13 @@ import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.datetime.PDTWebDateHelper;
+import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.StackTraceHelper;
-import com.helger.commons.string.StringHelper;
 import com.helger.commons.system.EJavaVersion;
 import com.helger.commons.timing.StopWatch;
 import com.helger.commons.wrapper.Wrapper;
@@ -41,13 +39,15 @@ import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
 import com.helger.json.serialize.JsonWriterSettings;
+import com.helger.peppol.sbdh.PeppolSBDHData;
+import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
+import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.IParticipantIdentifier;
-import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
@@ -56,7 +56,7 @@ import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageBuilder;
+import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageSBDHBuilder;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.EStageType;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
@@ -67,15 +67,14 @@ import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
-import com.helger.xml.serialize.read.DOMReader;
 
-public final class APIPostSendDocument extends AbstractAPIExecutor
+public final class APIPostSendSBDH extends AbstractAPIExecutor
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (APIPostSendDocument.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (APIPostSendSBDH.class);
 
   private final EStageType m_eStage;
 
-  public APIPostSendDocument (@Nonnull final EStageType eStage)
+  public APIPostSendSBDH (@Nonnull final EStageType eStage)
   {
     m_eStage = eStage;
   }
@@ -87,30 +86,36 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
                                     @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                                     @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
-    final String sSenderID = aPathVariables.get (PPAPI.PARAM_SENDER_ID);
-    final String sReceiverID = aPathVariables.get (PPAPI.PARAM_RECEIVER_ID);
-    final String sDocTypeID = aPathVariables.get (PPAPI.PARAM_DOC_TYPE_ID);
-    final String sProcessID = aPathVariables.get (PPAPI.PARAM_PROCESS_ID);
-    final String sCountryCodeC1 = aPathVariables.get (PPAPI.PARAM_COUNTRY_CODE_C1);
     final byte [] aPayloadBytes = StreamHelper.getAllBytes (aRequestScope.getRequest ().getInputStream ());
 
-    // Check parameters
-    if (StringHelper.hasNoText (sSenderID))
-      throw new APIParamException ("API call retrieved an empty Sender ID");
-    if (StringHelper.hasNoText (sReceiverID))
-      throw new APIParamException ("API call retrieved an empty Receiver ID");
-    if (StringHelper.hasNoText (sDocTypeID))
-      throw new APIParamException ("API call retrieved an empty Document Type ID");
-    if (StringHelper.hasNoText (sProcessID))
-      throw new APIParamException ("API call retrieved an empty Process ID");
-    if (StringHelper.hasNoText (sCountryCodeC1))
-      throw new APIParamException ("API call retrieved an empty Country Code C1");
-    if (ArrayHelper.isEmpty (aPayloadBytes))
-      throw new APIParamException ("API call retrieved an empty payload");
+    final PeppolSBDHData aData;
+    try
+    {
+      aData = new PeppolSBDHDocumentReader (PeppolIdentifierFactory.INSTANCE).extractData (new NonBlockingByteArrayInputStream (aPayloadBytes));
+    }
+    catch (final PeppolSBDHDocumentReadException ex)
+    {
+      // TODO This error handling might be improved to return a status error
+      // instead
+      final IJsonObject aJson = new JsonObject ();
+      aJson.add ("sbdhParsingException",
+                 new JsonObject ().add ("class", ex.getClass ().getName ())
+                                  .add ("message", ex.getMessage ())
+                                  .add ("stackTrace", StackTraceHelper.getStackAsString (ex)));
+      aJson.add ("sendingSuccess", false);
+      aJson.add ("overallSuccess", false);
+      aUnifiedResponse.setContentAndCharset (aJson.getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
+                                             StandardCharsets.UTF_8).disableCaching ();
+      return;
+    }
 
-    LOGGER.info ("Trying to send Peppol " +
-                 (m_eStage.isTest () ? "Test" : "Production") +
-                 " message from '" +
+    final String sSenderID = aData.getSenderAsIdentifier ().getURIEncoded ();
+    final String sReceiverID = aData.getReceiverAsIdentifier ().getURIEncoded ();
+    final String sDocTypeID = aData.getDocumentTypeAsIdentifier ().getURIEncoded ();
+    final String sProcessID = aData.getProcessAsIdentifier ().getURIEncoded ();
+    final String sCountryCodeC1 = aData.getCountryC1 ();
+
+    LOGGER.info ("Trying to send Peppol Test SBDH message from '" +
                  sSenderID +
                  "' to '" +
                  sReceiverID +
@@ -122,7 +127,6 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
                  sCountryCodeC1 +
                  "'");
 
-    final IIdentifierFactory aIF = PeppolIdentifierFactory.INSTANCE;
     final ISMLInfo aSmlInfo = m_eStage.isTest () ? ESML.DIGIT_TEST : ESML.DIGIT_PRODUCTION;
     final PeppolCAChecker aAPCAChecker = m_eStage.isTest () ? PeppolCertificateChecker.peppolTestAP ()
                                                             : PeppolCertificateChecker.peppolProductionAP ();
@@ -143,13 +147,8 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
     final StopWatch aSW = StopWatch.createdStarted ();
     try
     {
-      // Payload must be XML - even for Text and Binary content
-      final Document aDoc = DOMReader.readXMLDOM (aPayloadBytes);
-      if (aDoc == null)
-        throw new IllegalStateException ("Failed to read provided payload as XML");
-
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = aIF.createParticipantIdentifierWithDefaultScheme (sReceiverID);
+      final IParticipantIdentifier aReceiverID = aData.getReceiverAsIdentifier ();
 
       final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                   aReceiverID,
@@ -169,22 +168,17 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
       final Phase4PeppolHttpClientSettings aHCS = new Phase4PeppolHttpClientSettings ();
       // TODO Add AP outbound proxy settings here
 
-      final PeppolUserMessageBuilder aBuilder;
-      aBuilder = Phase4PeppolSender.builder ()
+      final PeppolUserMessageSBDHBuilder aBuilder;
+      aBuilder = Phase4PeppolSender.sbdhBuilder ()
                                    .httpClientFactory (aHCS)
-                                   .documentTypeID (aIF.createDocumentTypeIdentifierWithDefaultScheme (sDocTypeID))
-                                   .processID (aIF.createProcessIdentifierWithDefaultScheme (sProcessID))
-                                   .senderParticipantID (aIF.createParticipantIdentifierWithDefaultScheme (sSenderID))
-                                   .receiverParticipantID (aReceiverID)
+                                   .payloadAndMetadata (aData)
                                    .senderPartyID (sMyPeppolSeatID)
-                                   .countryC1 (sCountryCodeC1)
-                                   .payload (aDoc.getDocumentElement ())
                                    .peppolAP_CAChecker (aAPCAChecker)
                                    .smpClient (aSMPClient)
                                    .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                   .endpointURLConsumer (endpointUrl -> {
+                                   .endpointURLConsumer (sEndpointUrl -> {
                                      // Determined by SMP lookup
-                                     aJson.add ("c3EndpointUrl", endpointUrl);
+                                     aJson.add ("c3EndpointUrl", sEndpointUrl);
                                    })
                                    .certificateConsumer ( (aAPCertificate, aCheckDT, eCertCheckResult) -> {
                                      // Determined by SMP lookup
@@ -214,36 +208,35 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
 
                                      if (aSignalMsg.hasErrorEntries ())
                                      {
+                                       aJson.add ("as4ResponseError", true);
                                        final IJsonArray aErrors = new JsonArray ();
-                                       for (final Ebms3Error err : aSignalMsg.getError ())
+                                       for (final Ebms3Error aError : aSignalMsg.getError ())
                                        {
                                          final IJsonObject aErrorDetails = new JsonObject ();
-                                         if (err.getDescription () != null)
-                                           aErrorDetails.add ("description", err.getDescriptionValue ());
-                                         if (err.getErrorDetail () != null)
-                                           aErrorDetails.add ("errorDetails", err.getErrorDetail ());
-                                         if (err.getCategory () != null)
-                                           aErrorDetails.add ("category", err.getCategory ());
-                                         if (err.getRefToMessageInError () != null)
-                                           aErrorDetails.add ("refToMessageInError", err.getRefToMessageInError ());
-                                         if (err.getErrorCode () != null)
-                                           aErrorDetails.add ("errorCode", err.getErrorCode ());
-                                         if (err.getOrigin () != null)
-                                           aErrorDetails.add ("origin", err.getOrigin ());
-                                         if (err.getSeverity () != null)
-                                           aErrorDetails.add ("severity", err.getSeverity ());
-                                         if (err.getShortDescription () != null)
-                                           aErrorDetails.add ("shortDescription", err.getShortDescription ());
+                                         if (aError.getDescription () != null)
+                                           aErrorDetails.add ("description", aError.getDescriptionValue ());
+                                         if (aError.getErrorDetail () != null)
+                                           aErrorDetails.add ("errorDetails", aError.getErrorDetail ());
+                                         if (aError.getCategory () != null)
+                                           aErrorDetails.add ("category", aError.getCategory ());
+                                         if (aError.getRefToMessageInError () != null)
+                                           aErrorDetails.add ("refToMessageInError", aError.getRefToMessageInError ());
+                                         if (aError.getErrorCode () != null)
+                                           aErrorDetails.add ("errorCode", aError.getErrorCode ());
+                                         if (aError.getOrigin () != null)
+                                           aErrorDetails.add ("origin", aError.getOrigin ());
+                                         if (aError.getSeverity () != null)
+                                           aErrorDetails.add ("severity", aError.getSeverity ());
+                                         if (aError.getShortDescription () != null)
+                                           aErrorDetails.add ("shortDescription", aError.getShortDescription ());
                                          aErrors.add (aErrorDetails);
                                          LOGGER.warn ("AS4 error received: " + aErrorDetails.getAsJsonString ());
                                        }
                                        aJson.add ("as4ResponseErrors", aErrors);
-                                       aJson.add ("as4ResponseError", true);
                                      }
                                      else
                                        aJson.add ("as4ResponseError", false);
-                                   })
-                                   .disableValidation ();
+                                   });
       final Wrapper <Phase4Exception> aCaughtEx = new Wrapper <> ();
       eResult = aBuilder.sendMessageAndCheckForReceipt (aCaughtEx::set);
       LOGGER.info ("Peppol client send result: " + eResult);

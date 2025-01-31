@@ -70,5 +70,11 @@ public final class PPAPI
       aSendProd.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendProd);
     }
+    {
+      final APIDescriptor aSendTestSbdh = new APIDescriptor (APIPath.post ("/sendtestsbdh"),
+                                                         new APIPostSendDocument (EStageType.TEST));
+      aSendTestSbdh.setExceptionMapper (aExceptionMapper);
+      aAPIRegistry.registerAPI (aSendTestSbdh);
+    }
   }
 }
