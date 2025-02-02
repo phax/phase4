@@ -64,11 +64,11 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
   private static final Logger LOGGER = LoggerFactory.getLogger (StoringServletMessageProcessorSPI.class);
 
   private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                 @Nonnull final IAS4IncomingMessageState aState)
+                                 @Nonnull final IAS4IncomingMessageState aIncomingState)
   {
     // Write formatted SOAP
     {
-      final Document aSoapDoc = aState.getEffectiveDecryptedSoapDocument ();
+      final Document aSoapDoc = aIncomingState.getEffectiveDecryptedSoapDocument ();
       if (aSoapDoc == null)
         throw new IllegalStateException ("No SOAP Document present");
 
@@ -89,12 +89,12 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
       }
     }
 
-    if (aState.hasUsedCertificate ())
+    if (aIncomingState.hasUsedCertificate ())
     {
       // Dump the senders certificate as PEM file
       // That can usually extracted from the Binary Security Token of the SOAP
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".pem");
-      final X509Certificate aUsedCert = aState.getUsedCertificate ();
+      final X509Certificate aUsedCert = aIncomingState.getUsedCertificate ();
       final String sPEM = CertificateHelper.getPEMEncodedCertificate (aUsedCert);
       final byte [] aBytes = sPEM.getBytes (StandardCharsets.US_ASCII);
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
@@ -156,12 +156,12 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nonnull final IAS4IncomingMessageState aState,
+                                                          @Nonnull final IAS4IncomingMessageState aIncomingState,
                                                           @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     LOGGER.info ("Received AS4 UserMessage");
 
-    _dumpSoap (aMessageMetadata, aState);
+    _dumpSoap (aMessageMetadata, aIncomingState);
 
     // Dump all incoming attachments (but only if they are repeatable)
     if (aIncomingAttachments != null)
@@ -184,7 +184,7 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
                                                                   @Nonnull final HttpHeaderMap aHttpHeaders,
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
-                                                                  @Nonnull final IAS4IncomingMessageState aState,
+                                                                  @Nonnull final IAS4IncomingMessageState aIncomingState,
                                                                   @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     LOGGER.info ("Received AS4 SignalMessage");
@@ -193,7 +193,7 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
     {
       // Receipt - just acknowledge
       LOGGER.info ("Received AS4 Receipt");
-      _dumpSoap (aMessageMetadata, aState);
+      _dumpSoap (aMessageMetadata, aIncomingState);
       LOGGER.info ("Finished receiving AS4 Receipt");
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
@@ -202,7 +202,7 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
     {
       // Error - just acknowledge
       LOGGER.info ("Received AS4 Error");
-      _dumpSoap (aMessageMetadata, aState);
+      _dumpSoap (aMessageMetadata, aIncomingState);
       LOGGER.info ("Finished receiving AS4 Error");
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
@@ -211,18 +211,18 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
     {
       // Must be a pull-request
       LOGGER.info ("Received AS4 PullRequest");
-      _dumpSoap (aMessageMetadata, aState);
+      _dumpSoap (aMessageMetadata, aIncomingState);
       LOGGER.info ("Finished receiving AS4 PullRequest");
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
     LOGGER.warn ("Received an unexpected AS4 SignalMessage - see file");
-    _dumpSoap (aMessageMetadata, aState);
+    _dumpSoap (aMessageMetadata, aIncomingState);
     return AS4SignalMessageProcessorResult.createSuccess ();
   }
 
   public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                         @Nonnull final IAS4IncomingMessageState aState,
+                                         @Nonnull final IAS4IncomingMessageState aIncomingState,
                                          @Nonnull @Nonempty final String sResponseMessageID,
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
