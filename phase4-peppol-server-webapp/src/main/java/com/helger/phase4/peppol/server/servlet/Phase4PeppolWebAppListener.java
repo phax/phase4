@@ -307,15 +307,15 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       LOGGER.error ("Failed to do a reverse search of the certificate", ex);
     }
 
+    // TODO separate to test and production
+    final EStageType eStage = APConfig.getPeppolStage ();
+    final PeppolCAChecker aAPCAChecker = eStage.isTest () ? PeppolCertificateChecker.peppolTestAP ()
+                                                          : PeppolCertificateChecker.peppolProductionAP ();
+
     // Check if the certificate is really a Peppol AP certificate - fail early
     // if something is misconfigured
     // * Do not cache result
     // * Use the global checking mode or provide a new one
-
-    // TODO separate to test and production
-    final EStageType eStage = EStageType.TEST;
-    final PeppolCAChecker aAPCAChecker = eStage.isTest () ? PeppolCertificateChecker.peppolTestAP ()
-                                                          : PeppolCertificateChecker.peppolProductionAP ();
     final EPeppolCertificateCheckResult eCheckResult = aAPCAChecker.checkCertificate (aAPCert,
                                                                                       MetaAS4Manager.getTimestampMgr ()
                                                                                                     .getCurrentDateTime (),
@@ -326,7 +326,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                          eCheckResult);
     LOGGER.info ("Successfully checked that the provided certificate is a valid Peppol AP certificate.");
 
-    // Enable or disable, if upon receival, the received should be checked or
+    // Enable or disable, if upon reception, the received should be checked or
     // not
     Phase4PeppolDefaultReceiverConfiguration.setAPCAChecker (aAPCAChecker);
 

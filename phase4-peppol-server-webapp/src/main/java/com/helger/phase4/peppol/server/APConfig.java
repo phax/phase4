@@ -35,6 +35,16 @@ public final class APConfig
     return AS4Configuration.getConfig ();
   }
 
+  @Nonnull
+  public static EStageType getPeppolStage ()
+  {
+    final String sStageID = _getConfig ().getAsString ("peppol.stage");
+    final EStageType ret = EStageType.getFromIDOrNull (sStageID);
+    if (ret == null)
+      throw new IllegalStateException ("Failed to determine peppol stage from value '" + sStageID + "'");
+    return ret;
+  }
+
   @Nullable
   public static String getMyPeppolSeatID ()
   {
