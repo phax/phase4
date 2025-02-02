@@ -31,12 +31,14 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.sbdh.PeppolSBDHData;
+import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.model.error.EEbmsError;
+import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI;
 
@@ -59,6 +61,19 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
                                  @Nonnull final IAS4IncomingMessageState aState,
                                  @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception
   {
+    final String sMyPeppolSeatID = APConfig.getMyPeppolSeatID ();
+
+    // Example code snippets how to get data
+    LOGGER.info ("Received a new Peppol Message");
+    LOGGER.info ("  C1 = " + aPeppolSBD.getSenderAsIdentifier ().getURIEncoded ());
+    LOGGER.info ("  C2 = " + PeppolCertificateHelper.getSubjectCN (aState.getUsedCertificate ()));
+    LOGGER.info ("  C3 = " + sMyPeppolSeatID);
+    LOGGER.info ("  C4 = " + aPeppolSBD.getReceiverAsIdentifier ().getURIEncoded ());
+    LOGGER.info ("  DocType = " + aPeppolSBD.getDocumentTypeAsIdentifier ().getURIEncoded ());
+    LOGGER.info ("  Process = " + aPeppolSBD.getProcessAsIdentifier ().getURIEncoded ());
+    LOGGER.info ("  CountryC1 = " + aPeppolSBD.getCountryC1 ());
+
+    // Example got that stores the data to disk
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".sbd");
     LOGGER.info ("Now writing SBD to '" + aFile.getAbsolutePath () + "' (" + aSBDBytes.length + " bytes)");
 
