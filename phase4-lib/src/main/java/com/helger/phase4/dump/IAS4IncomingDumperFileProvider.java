@@ -58,12 +58,12 @@ public interface IAS4IncomingDumperFileProvider
   @Nonnull
   static String getDefaultDirectoryName (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
-    final OffsetDateTime aLDT = aMessageMetadata.getIncomingDT ();
-    return aLDT.getYear () +
+    final OffsetDateTime aODT = aMessageMetadata.getIncomingDT ();
+    return aODT.getYear () +
            "/" +
-           StringHelper.getLeadingZero (aLDT.getMonthValue (), 2) +
+           StringHelper.getLeadingZero (aODT.getMonthValue (), 2) +
            "/" +
-           StringHelper.getLeadingZero (aLDT.getDayOfMonth (), 2);
+           StringHelper.getLeadingZero (aODT.getDayOfMonth (), 2);
   }
 
   @Nonnull
