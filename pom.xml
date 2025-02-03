@@ -85,7 +85,7 @@
     <ph-web.version>10.3.0</ph-web.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <phive.version>10.1.0</phive.version>
-    <phive-rules.version>3.2.4</phive-rules.version>
+    <phive-rules.version>3.2.5</phive-rules.version>
   </properties>
 
   <dependencyManagement>
