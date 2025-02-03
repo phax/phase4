@@ -25,20 +25,20 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.url.IURLDownloader;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
-import com.helger.peppol.utils.IUrlDownloader;
 
 /**
- * Special implementation of {@link IUrlDownloader} to download CRL data using
+ * Special implementation of {@link IURLDownloader} to download CRL data using
  * Apache HttpClient via GET and the provided {@link HttpClientSettings}.
  *
  * @author Philip Helger
  * @since 2.7.4
  */
-public class HttpClientUrlDownloader implements IUrlDownloader
+public class HttpClientUrlDownloader implements IURLDownloader
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (HttpClientUrlDownloader.class);
 

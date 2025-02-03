@@ -54,8 +54,8 @@ import com.helger.commons.string.StringHelper;
 import com.helger.peppol.reporting.api.CPeppolReporting;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.sbdh.PeppolSBDHData;
-import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
-import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
+import com.helger.peppol.sbdh.PeppolSBDHDataReadException;
+import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
@@ -760,8 +760,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       final IIdentifierFactory aIdentifierFactory = aReceiverCheckData.getSBDHIdentifierFactory ();
       final boolean bPerformValueChecks = aReceiverCheckData.isPerformSBDHValueChecks ();
       final boolean bCheckForCountryC1 = aReceiverCheckData.isCheckSBDHForMandatoryCountryC1 ();
-      final PeppolSBDHDocumentReader aReader = new PeppolSBDHDocumentReader (aIdentifierFactory).setPerformValueChecks (bPerformValueChecks)
-                                                                                                .setCheckForCountryC1 (bCheckForCountryC1);
+      final PeppolSBDHDataReader aReader = new PeppolSBDHDataReader (aIdentifierFactory).setPerformValueChecks (bPerformValueChecks)
+                                                                                        .setCheckForCountryC1 (bCheckForCountryC1);
 
       aPeppolSBDH = aReader.extractData (aReadAttachment.standardBusinessDocument ());
 
@@ -770,7 +770,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                       "The provided SBDH is valid according to Peppol rules, with value checks being " +
                       (bPerformValueChecks ? "enabled" : "disabled"));
     }
-    catch (final PeppolSBDHDocumentReadException ex)
+    catch (final PeppolSBDHDataReadException ex)
     {
       final String sMsg = "Failed to extract the Peppol data from SBDH.";
       LOGGER.error (sLogPrefix + sMsg, ex);

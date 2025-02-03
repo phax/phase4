@@ -52,13 +52,12 @@ import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHData;
+import com.helger.peppol.sbdh.PeppolSBDHDataWriter;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadBinaryMarshaller;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
 import com.helger.peppol.sbdh.spec12.BinaryContentType;
 import com.helger.peppol.sbdh.spec12.TextContentType;
-import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
-import com.helger.peppol.utils.ERevocationCheckMode;
 import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppol.utils.PeppolCertificateHelper;
@@ -87,6 +86,7 @@ import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.sbdh.CSBDH;
 import com.helger.sbdh.SBDMarshaller;
+import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.IPeppolURLProvider;
@@ -177,7 +177,7 @@ public final class Phase4PeppolSender
     if (!aData.areAllFieldsSet (true))
       throw new IllegalArgumentException ("The Peppol SBDH data is incomplete. See logs for details.");
 
-    return new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
+    return new PeppolSBDHDataWriter ().createStandardBusinessDocument (aData);
   }
 
   /**
@@ -1511,7 +1511,7 @@ public final class Phase4PeppolSender
       if (!aSBDH.areAllFieldsSet (true))
         throw new IllegalArgumentException ("The provided Peppol SBDH data is incomplete. See logs for details.");
 
-      final StandardBusinessDocument aJaxbSbdh = new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aSBDH);
+      final StandardBusinessDocument aJaxbSbdh = new PeppolSBDHDataWriter ().createStandardBusinessDocument (aSBDH);
       return senderParticipantID (aSBDH.getSenderAsIdentifier ()).receiverParticipantID (aSBDH.getReceiverAsIdentifier ())
                                                                  .documentTypeID (aSBDH.getDocumentTypeAsIdentifier ())
                                                                  .processID (aSBDH.getProcessAsIdentifier ())
