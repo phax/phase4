@@ -17,7 +17,6 @@
 package com.helger.phase4.peppol.server.api;
 
 import java.nio.charset.StandardCharsets;
-import java.time.OffsetDateTime;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -28,42 +27,33 @@ import org.w3c.dom.Document;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.ArrayHelper;
-import com.helger.commons.datetime.PDTFactory;
-import com.helger.commons.datetime.PDTWebDateHelper;
 import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.system.EJavaVersion;
 import com.helger.commons.timing.StopWatch;
 import com.helger.commons.wrapper.Wrapper;
-import com.helger.json.IJsonArray;
-import com.helger.json.IJsonObject;
-import com.helger.json.JsonArray;
-import com.helger.json.JsonObject;
-import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppol.utils.PeppolCertificateChecker;
-import com.helger.peppol.utils.PeppolCertificateHelper;
+import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
+import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
-import com.helger.phase4.ebms3header.Ebms3Error;
-import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageBuilder;
+import com.helger.phase4.peppol.Phase4PeppolSendingReport;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.api.IAPIDescriptor;
-import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -132,16 +122,10 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
     final PeppolCAChecker aAPCAChecker = m_eStage.isTest () ? PeppolCertificateChecker.peppolTestAP ()
                                                             : PeppolCertificateChecker.peppolProductionAP ();
     final String sMyPeppolSeatID = APConfig.getMyPeppolSeatID ();
-    final OffsetDateTime aNowUTC = PDTFactory.getCurrentOffsetDateTimeUTC ();
 
-    final IJsonObject aJson = new JsonObject ();
-    aJson.add ("currentDateTimeUTC", PDTWebDateHelper.getAsStringXSD (aNowUTC));
-    aJson.add ("senderId", sSenderID);
-    aJson.add ("receiverId", sReceiverID);
-    aJson.add ("docTypeId", sDocTypeID);
-    aJson.add ("processId", sProcessID);
-    aJson.add ("countryC1", sCountryCodeC1);
-    aJson.add ("senderPartyId", sMyPeppolSeatID);
+    final Phase4PeppolSendingReport aSendingReport = new Phase4PeppolSendingReport (aSmlInfo);
+    aSendingReport.setCountryC1 (sCountryCodeC1);
+    aSendingReport.setSenderPartyID (sMyPeppolSeatID);
 
     EAS4UserMessageSendResult eResult = null;
     boolean bExceptionCaught = false;
@@ -154,7 +138,26 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
         throw new IllegalStateException ("Failed to read provided payload as XML");
 
       // Start configuring here
+      final IParticipantIdentifier aSenderID = aIF.createParticipantIdentifierWithDefaultScheme (sSenderID);
+      aSendingReport.setSenderID (aSenderID);
+
       final IParticipantIdentifier aReceiverID = aIF.createParticipantIdentifierWithDefaultScheme (sReceiverID);
+      aSendingReport.setReceiverID (aReceiverID);
+
+      IDocumentTypeIdentifier aDocTypeID = aIF.parseDocumentTypeIdentifier (sDocTypeID);
+      if (aDocTypeID == null)
+      {
+        // Fallback to default scheme
+        aDocTypeID = aIF.createDocumentTypeIdentifierWithDefaultScheme (sDocTypeID);
+      }
+      aSendingReport.setDocTypeID (aDocTypeID);
+      IProcessIdentifier aProcessID = aIF.parseProcessIdentifier (sProcessID);
+      if (aProcessID == null)
+      {
+        // Fallback to default scheme
+        aProcessID = aIF.createProcessIdentifierWithDefaultScheme (sProcessID);
+      }
+      aSendingReport.setProcessID (aProcessID);
 
       final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                   aReceiverID,
@@ -177,9 +180,9 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
       final PeppolUserMessageBuilder aBuilder;
       aBuilder = Phase4PeppolSender.builder ()
                                    .httpClientFactory (aHCS)
-                                   .documentTypeID (aIF.createDocumentTypeIdentifierWithDefaultScheme (sDocTypeID))
-                                   .processID (aIF.createProcessIdentifierWithDefaultScheme (sProcessID))
-                                   .senderParticipantID (aIF.createParticipantIdentifierWithDefaultScheme (sSenderID))
+                                   .documentTypeID (aDocTypeID)
+                                   .processID (aProcessID)
+                                   .senderParticipantID (aSenderID)
                                    .receiverParticipantID (aReceiverID)
                                    .senderPartyID (sMyPeppolSeatID)
                                    .countryC1 (sCountryCodeC1)
@@ -187,17 +190,21 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
                                    .peppolAP_CAChecker (aAPCAChecker)
                                    .smpClient (aSMPClient)
                                    .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
+                                   .sbdDocumentConsumer (sbdDoc -> {
+                                     // The created SBDH Instance Identifier
+                                     aSendingReport.setSBDHInstanceIdentifier (sbdDoc.getStandardBusinessDocumentHeader ()
+                                                                                     .getDocumentIdentification ()
+                                                                                     .getInstanceIdentifier ());
+                                   })
                                    .endpointURLConsumer (endpointUrl -> {
                                      // Determined by SMP lookup
-                                     aJson.add ("c3EndpointUrl", endpointUrl);
+                                     aSendingReport.setC3EndpointURL (endpointUrl);
                                    })
                                    .certificateConsumer ( (aAPCertificate, aCheckDT, eCertCheckResult) -> {
                                      // Determined by SMP lookup
-                                     aJson.add ("c3Cert", CertificateHelper.getPEMEncodedCertificate (aAPCertificate));
-                                     aJson.add ("c3CertSubjectCN",
-                                                PeppolCertificateHelper.getSubjectCN (aAPCertificate));
-                                     aJson.add ("c3CertCheckDT", PDTWebDateHelper.getAsStringXSD (aCheckDT));
-                                     aJson.add ("c3CertCheckResult", eCertCheckResult);
+                                     aSendingReport.setC3Cert (aAPCertificate);
+                                     aSendingReport.setC3CertCheckDT (aCheckDT);
+                                     aSendingReport.setC3CertCheckResult (eCertCheckResult);
                                    })
                                    .buildMessageCallback (new IAS4ClientBuildMessageCallback ()
                                    {
@@ -205,48 +212,16 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
                                      {
                                        // Created AS4 fields
                                        final AS4UserMessage aUserMsg = (AS4UserMessage) aMsg;
-                                       aJson.add ("as4MessageId",
-                                                  aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ());
-                                       aJson.add ("as4ConversationId",
-                                                  aUserMsg.getEbms3UserMessage ()
-                                                          .getCollaborationInfo ()
-                                                          .getConversationId ());
+                                       aSendingReport.setAS4MessageID (aUserMsg.getEbms3UserMessage ()
+                                                                               .getMessageInfo ()
+                                                                               .getMessageId ());
+                                       aSendingReport.setAS4ConversationID (aUserMsg.getEbms3UserMessage ()
+                                                                                    .getCollaborationInfo ()
+                                                                                    .getConversationId ());
                                      }
                                    })
                                    .signalMsgConsumer ( (aSignalMsg, aMessageMetadata, aState) -> {
-                                     aJson.add ("as4ReceivedSignalMsg",
-                                                new Ebms3SignalMessageMarshaller ().getAsString (aSignalMsg));
-
-                                     if (aSignalMsg.hasErrorEntries ())
-                                     {
-                                       final IJsonArray aErrors = new JsonArray ();
-                                       for (final Ebms3Error err : aSignalMsg.getError ())
-                                       {
-                                         final IJsonObject aErrorDetails = new JsonObject ();
-                                         if (err.getDescription () != null)
-                                           aErrorDetails.add ("description", err.getDescriptionValue ());
-                                         if (err.getErrorDetail () != null)
-                                           aErrorDetails.add ("errorDetails", err.getErrorDetail ());
-                                         if (err.getCategory () != null)
-                                           aErrorDetails.add ("category", err.getCategory ());
-                                         if (err.getRefToMessageInError () != null)
-                                           aErrorDetails.add ("refToMessageInError", err.getRefToMessageInError ());
-                                         if (err.getErrorCode () != null)
-                                           aErrorDetails.add ("errorCode", err.getErrorCode ());
-                                         if (err.getOrigin () != null)
-                                           aErrorDetails.add ("origin", err.getOrigin ());
-                                         if (err.getSeverity () != null)
-                                           aErrorDetails.add ("severity", err.getSeverity ());
-                                         if (err.getShortDescription () != null)
-                                           aErrorDetails.add ("shortDescription", err.getShortDescription ());
-                                         aErrors.add (aErrorDetails);
-                                         LOGGER.warn ("AS4 error received: " + aErrorDetails.getAsJsonString ());
-                                       }
-                                       aJson.add ("as4ResponseErrors", aErrors);
-                                       aJson.add ("as4ResponseError", true);
-                                     }
-                                     else
-                                       aJson.add ("as4ResponseError", false);
+                                     aSendingReport.setAS4ReceivedSignalMsg (aSignalMsg);
                                    })
                                    .disableValidation ();
       final Wrapper <Phase4Exception> aCaughtEx = new Wrapper <> ();
@@ -264,16 +239,13 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
           aBuilder.createAndStorePeppolReportingItemAfterSending (sEndUserID);
       }
 
-      aJson.add ("sendingResult", eResult);
+      aSendingReport.setAS4SendingResult (eResult);
 
       if (aCaughtEx.isSet ())
       {
         final Phase4Exception ex = aCaughtEx.get ();
         LOGGER.error ("Error sending Peppol message via AS4", ex);
-        aJson.add ("sendingException",
-                   new JsonObject ().add ("class", ex.getClass ().getName ())
-                                    .add ("message", ex.getMessage ())
-                                    .add ("stackTrace", StackTraceHelper.getStackAsString (ex)));
+        aSendingReport.setAS4SendingException (ex);
         bExceptionCaught = true;
       }
     }
@@ -281,26 +253,21 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
     {
       // Mostly errors on HTTP level
       LOGGER.error ("Error sending Peppol message via AS4", ex);
-      aJson.add ("sendingException",
-                 new JsonObject ().add ("class", ex.getClass ().getName ())
-                                  .add ("message", ex.getMessage ())
-                                  .add ("stackTrace", StackTraceHelper.getStackAsString (ex)));
+      aSendingReport.setAS4SendingException (ex);
       bExceptionCaught = true;
     }
     finally
     {
       aSW.stop ();
-      aJson.add ("overallDurationMillis", aSW.getMillis ());
+      aSendingReport.setOverallDurationMillis (aSW.getMillis ());
     }
 
     // Result may be null
     final boolean bSendingSuccess = eResult != null && eResult.isSuccess ();
-    aJson.add ("sendingSuccess", bSendingSuccess);
-    aJson.add ("overallSuccess", bSendingSuccess && !bExceptionCaught);
+    aSendingReport.setSendingSuccess (bSendingSuccess);
+    aSendingReport.setOverallSuccess (bSendingSuccess && !bExceptionCaught);
 
     // Return result JSON
-    aUnifiedResponse.setContentAndCharset (aJson.getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
-                                           StandardCharsets.UTF_8)
-                    .disableCaching ();
+    aUnifiedResponse.setContentAndCharset (aSendingReport.getAsJsonString (), StandardCharsets.UTF_8).disableCaching ();
   }
 }
