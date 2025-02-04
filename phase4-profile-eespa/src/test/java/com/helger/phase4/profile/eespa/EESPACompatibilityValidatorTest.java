@@ -61,6 +61,7 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
  *
  * @author Philip Helger
  */
+@Deprecated (forRemoval = true, since = "3.0.5")
 public final class EESPACompatibilityValidatorTest
 {
   @ClassRule
@@ -146,7 +147,8 @@ public final class EESPACompatibilityValidatorTest
   @Test
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11),
+    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com",
+                                                          ESoapVersion.SOAP_11),
                                     null,
                                     null,
                                     null,

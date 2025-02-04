@@ -53,7 +53,9 @@ import com.helger.phase4.wss.EWSSVersion;
  * Validate certain requirements imposed by the EESPA project.
  *
  * @author OpusCapita
+ * @deprecated As GENA will leverage the Peppol Network
  */
+@Deprecated (forRemoval = true, since = "3.0.5")
 public class EESPACompatibilityValidator implements IAS4ProfileValidator
 {
   public EESPACompatibilityValidator ()

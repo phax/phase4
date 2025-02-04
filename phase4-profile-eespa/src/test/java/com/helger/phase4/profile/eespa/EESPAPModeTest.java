@@ -31,6 +31,7 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
  *
  * @author Philip Helger
  */
+@Deprecated (forRemoval = true, since = "3.0.5")
 public final class EESPAPModeTest
 {
   @ClassRule

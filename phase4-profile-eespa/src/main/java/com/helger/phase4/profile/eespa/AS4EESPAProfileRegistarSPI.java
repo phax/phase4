@@ -33,8 +33,10 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
  * Library specific implementation of {@link IAS4ProfileRegistrarSPI}.
  *
  * @author OpusCapita
+ * @deprecated As GENA will leverage the Peppol Network
  */
 @IsSPIImplementation
+@Deprecated (forRemoval = true, since = "3.0.5")
 public final class AS4EESPAProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
   // The IDs are unchanged for backwards compatibility

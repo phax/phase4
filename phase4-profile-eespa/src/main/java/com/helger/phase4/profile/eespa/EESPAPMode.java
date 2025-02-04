@@ -50,6 +50,7 @@ import com.helger.phase4.wss.EWSSVersion;
  *
  * @author OpusCapita
  */
+@Deprecated (forRemoval = true, since = "3.0.5")
 @Immutable
 public final class EESPAPMode
 {
