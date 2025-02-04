@@ -61,7 +61,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
  * @author Philip Helger
  * @since 3.0.5
  */
-public final class Phase4PeppolSendingReport
+public class Phase4PeppolSendingReport
 {
   // State params
   private final OffsetDateTime m_aCurrentDateTimeUTC;
