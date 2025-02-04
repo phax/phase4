@@ -18,7 +18,7 @@ package com.helger.phase4.peppol.server.api;
 
 import javax.annotation.Nonnull;
 
-import com.helger.phase4.peppol.server.EStageType;
+import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.photon.api.APIDescriptor;
 import com.helger.photon.api.APIPath;
 import com.helger.photon.api.IAPIExceptionMapper;
@@ -56,7 +56,7 @@ public final class Phase4API
                                                                        "}/{" +
                                                                        PARAM_COUNTRY_CODE_C1 +
                                                                        "}"),
-                                                         new APIPostSendDocument (EStageType.TEST));
+                                                         new APIPostSendDocument (EPeppolNetwork.TEST));
       aSendTest.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendTest);
     }
@@ -72,13 +72,13 @@ public final class Phase4API
                                                                        "}/{" +
                                                                        PARAM_COUNTRY_CODE_C1 +
                                                                        "}"),
-                                                         new APIPostSendDocument (EStageType.PRODUCTION));
+                                                         new APIPostSendDocument (EPeppolNetwork.PRODUCTION));
       aSendProd.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendProd);
     }
     {
       final APIDescriptor aSendTestSbdh = new APIDescriptor (APIPath.post ("/sendtestsbdh"),
-                                                             new APIPostSendDocument (EStageType.TEST));
+                                                             new APIPostSendDocument (EPeppolNetwork.TEST));
       aSendTestSbdh.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendTestSbdh);
     }

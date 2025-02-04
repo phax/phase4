@@ -43,6 +43,7 @@ import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.PeppolSBDHDataReadException;
 import com.helger.peppol.sbdh.PeppolSBDHDataReader;
+import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.utils.PeppolCAChecker;
@@ -59,7 +60,6 @@ import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageSBDHBuilder;
 import com.helger.phase4.peppol.server.APConfig;
-import com.helger.phase4.peppol.server.EStageType;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
@@ -78,9 +78,9 @@ public final class APIPostSendSBDH extends AbstractAPIExecutor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (APIPostSendSBDH.class);
 
-  private final EStageType m_eStage;
+  private final EPeppolNetwork m_eStage;
 
-  public APIPostSendSBDH (@Nonnull final EStageType eStage)
+  public APIPostSendSBDH (@Nonnull final EPeppolNetwork eStage)
   {
     m_eStage = eStage;
   }

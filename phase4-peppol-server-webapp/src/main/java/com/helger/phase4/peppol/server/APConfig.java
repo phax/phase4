@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.config.fallback.IConfigWithFallback;
+import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.phase4.config.AS4Configuration;
 
 @Immutable
@@ -36,10 +37,10 @@ public final class APConfig
   }
 
   @Nonnull
-  public static EStageType getPeppolStage ()
+  public static EPeppolNetwork getPeppolStage ()
   {
     final String sStageID = _getConfig ().getAsString ("peppol.stage");
-    final EStageType ret = EStageType.getFromIDOrNull (sStageID);
+    final EPeppolNetwork ret = EPeppolNetwork.getFromIDOrNull (sStageID);
     if (ret == null)
       throw new IllegalStateException ("Failed to determine peppol stage from value '" + sStageID + "'");
     return ret;

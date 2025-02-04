@@ -44,6 +44,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.URLHelper;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.json.serialize.JsonWriterSettings;
+import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppol.utils.PeppolCertificateChecker;
@@ -59,7 +60,6 @@ import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.peppol.server.APConfig;
-import com.helger.phase4.peppol.server.EStageType;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.Phase4PeppolDefaultReceiverConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
@@ -141,8 +141,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
-        null)
+    if (CommandMap.getDefaultCommandMap ()
+                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -190,7 +190,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
         if (SimpleFileIO.writeFile (aFile,
                                     AS4IncomingHelper.getIncomingMetadataAsJson (aMessageMetadata)
                                                      .getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
-                                    StandardCharsets.UTF_8).isFailure ())
+                                    StandardCharsets.UTF_8)
+                        .isFailure ())
           LOGGER.error ("Failed to write metadata to '" + aFile.getAbsolutePath () + "'");
         else
           LOGGER.info ("Wrote metadata to '" + aFile.getAbsolutePath () + "'");
@@ -198,10 +199,11 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     });
 
     // Store the outgoings file as well
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> StorageHelper
-                                                                                                                    .getStorageFile (sMessageID,
-                                                                                                                                     nTry,
-                                                                                                                                     ".as4out")));
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode,
+                                                                        sMessageID,
+                                                                        nTry) -> StorageHelper.getStorageFile (sMessageID,
+                                                                                                               nTry,
+                                                                                                               ".as4out")));
   }
 
   private static void _initPeppolAS4 ()
@@ -308,7 +310,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     }
 
     // TODO separate to test and production
-    final EStageType eStage = APConfig.getPeppolStage ();
+    final EPeppolNetwork eStage = APConfig.getPeppolStage ();
     final PeppolCAChecker aAPCAChecker = eStage.isTest () ? PeppolCertificateChecker.peppolTestAP ()
                                                           : PeppolCertificateChecker.peppolProductionAP ();
 

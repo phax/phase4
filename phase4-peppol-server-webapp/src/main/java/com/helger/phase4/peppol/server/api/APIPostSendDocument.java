@@ -41,6 +41,7 @@ import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
 import com.helger.json.serialize.JsonWriterSettings;
+import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.utils.PeppolCAChecker;
@@ -58,7 +59,6 @@ import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageBuilder;
 import com.helger.phase4.peppol.server.APConfig;
-import com.helger.phase4.peppol.server.EStageType;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
@@ -78,9 +78,9 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (APIPostSendDocument.class);
 
-  private final EStageType m_eStage;
+  private final EPeppolNetwork m_eStage;
 
-  public APIPostSendDocument (@Nonnull final EStageType eStage)
+  public APIPostSendDocument (@Nonnull final EPeppolNetwork eStage)
   {
     m_eStage = eStage;
   }
