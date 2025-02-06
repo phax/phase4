@@ -60,11 +60,13 @@ import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.peppol.server.APConfig;
+import com.helger.phase4.peppol.server.api.Phase4API;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.Phase4PeppolDefaultReceiverConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolCRLDownloader;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
+import com.helger.photon.api.IAPIRegistry;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
@@ -358,6 +360,12 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
   {
     _initAS4 ();
     _initPeppolAS4 ();
+  }
+
+  @Override
+  protected void initAPI (@Nonnull final IAPIRegistry aAPIRegistry)
+  {
+    Phase4API.init (aAPIRegistry);
   }
 
   @Override
