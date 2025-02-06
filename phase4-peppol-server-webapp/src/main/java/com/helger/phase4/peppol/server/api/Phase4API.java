@@ -19,6 +19,7 @@ package com.helger.phase4.peppol.server.api;
 import javax.annotation.Nonnull;
 
 import com.helger.peppol.servicedomain.EPeppolNetwork;
+import com.helger.phase4.peppol.server.APConfig;
 import com.helger.photon.api.APIDescriptor;
 import com.helger.photon.api.APIPath;
 import com.helger.photon.api.IAPIExceptionMapper;
@@ -44,8 +45,10 @@ public final class Phase4API
   {
     final IAPIExceptionMapper aExceptionMapper = new APIExceptionMapper ();
 
+    final EPeppolNetwork eStage = APConfig.getPeppolStage ();
+
     {
-      final APIDescriptor aSendTest = new APIDescriptor (APIPath.post ("/sendtest/{" +
+      final APIDescriptor aSendTest = new APIDescriptor (APIPath.post ("/sendas4/{" +
                                                                        PARAM_SENDER_ID +
                                                                        "}/{" +
                                                                        PARAM_RECEIVER_ID +
@@ -55,30 +58,12 @@ public final class Phase4API
                                                                        PARAM_PROCESS_ID +
                                                                        "}/{" +
                                                                        PARAM_COUNTRY_CODE_C1 +
-                                                                       "}"),
-                                                         new APIPostSendDocument (EPeppolNetwork.TEST));
+                                                                       "}"), new APIPostSendDocument (eStage));
       aSendTest.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendTest);
     }
     {
-      final APIDescriptor aSendProd = new APIDescriptor (APIPath.post ("/sendprod/{" +
-                                                                       PARAM_SENDER_ID +
-                                                                       "}/{" +
-                                                                       PARAM_RECEIVER_ID +
-                                                                       "}/{" +
-                                                                       PARAM_DOC_TYPE_ID +
-                                                                       "}/{" +
-                                                                       PARAM_PROCESS_ID +
-                                                                       "}/{" +
-                                                                       PARAM_COUNTRY_CODE_C1 +
-                                                                       "}"),
-                                                         new APIPostSendDocument (EPeppolNetwork.PRODUCTION));
-      aSendProd.setExceptionMapper (aExceptionMapper);
-      aAPIRegistry.registerAPI (aSendProd);
-    }
-    {
-      final APIDescriptor aSendTestSbdh = new APIDescriptor (APIPath.post ("/sendtestsbdh"),
-                                                             new APIPostSendDocument (EPeppolNetwork.TEST));
+      final APIDescriptor aSendTestSbdh = new APIDescriptor (APIPath.post ("/sendsbdh"), new APIPostSendSBDH (eStage));
       aSendTestSbdh.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendTestSbdh);
     }
