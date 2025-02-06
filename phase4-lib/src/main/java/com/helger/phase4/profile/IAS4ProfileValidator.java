@@ -62,7 +62,7 @@ public interface IAS4ProfileValidator
    *
    * @param aUserMsg
    *        The message to use for comparison. May not be <code>null</code>.
-   * @param aSigCert
+   * @param aSignCert
    *        The signature certificate used to sign the message. Can be
    *        <code>null</code>.
    * @param aMessageMetadata
@@ -73,7 +73,7 @@ public interface IAS4ProfileValidator
    * @since 2.5.0
    */
   default void validateInitiatorIdentity (@Nonnull final Ebms3UserMessage aUserMsg,
-                                          @Nullable final X509Certificate aSigCert,
+                                          @Nullable final X509Certificate aSignCert,
                                           @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                           @Nonnull final ErrorList aErrorList)
   {}
