@@ -349,6 +349,8 @@ public interface IAS4IncomingMessageState
    * @return The first provided certificate in the incoming message. Usually the
    *         certificate that was used for signing. May be <code>null</code>.
    * @see #hasUsedCertificate()
+   * @see #getSigningCertificate()
+   * @see #getDecryptingCertificate()
    */
   @Nullable
   @Deprecated (forRemoval = true, since = "3.0.5")
@@ -358,6 +360,8 @@ public interface IAS4IncomingMessageState
    * @return <code>true</code> if a certificate is provided, <code>false</code>
    *         if not.
    * @see #getUsedCertificate()
+   * @see #hasSigningCertificate()
+   * @see #hasDecryptingCertificate()
    */
   @Deprecated (forRemoval = true, since = "3.0.5")
   default boolean hasUsedCertificate ()
