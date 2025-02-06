@@ -23,6 +23,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -61,6 +62,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
  * @author Philip Helger
  * @since 3.0.5
  */
+@NotThreadSafe
 public class Phase4PeppolSendingReport
 {
   // State params
