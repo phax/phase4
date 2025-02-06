@@ -71,7 +71,7 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
     // Example code snippets how to get data
     LOGGER.info ("Received a new Peppol Message");
     LOGGER.info ("  C1 = " + aPeppolSBD.getSenderAsIdentifier ().getURIEncoded ());
-    LOGGER.info ("  C2 = " + PeppolCertificateHelper.getSubjectCN (aIncomingState.getUsedCertificate ()));
+    LOGGER.info ("  C2 = " + PeppolCertificateHelper.getSubjectCN (aIncomingState.getSigningCertificate ()));
     LOGGER.info ("  C3 = " + sMyPeppolSeatID);
     LOGGER.info ("  C4 = " + aPeppolSBD.getReceiverAsIdentifier ().getURIEncoded ());
     LOGGER.info ("  DocType = " + aPeppolSBD.getDocumentTypeAsIdentifier ().getURIEncoded ());

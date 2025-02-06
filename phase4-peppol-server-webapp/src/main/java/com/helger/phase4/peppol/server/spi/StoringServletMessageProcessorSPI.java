@@ -89,13 +89,13 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
       }
     }
 
-    if (aIncomingState.hasUsedCertificate ())
+    if (aIncomingState.hasSigningCertificate ())
     {
       // Dump the senders certificate as PEM file
       // That can usually extracted from the Binary Security Token of the SOAP
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".pem");
-      final X509Certificate aUsedCert = aIncomingState.getUsedCertificate ();
-      final String sPEM = CertificateHelper.getPEMEncodedCertificate (aUsedCert);
+      final X509Certificate aSigningCert = aIncomingState.getSigningCertificate ();
+      final String sPEM = CertificateHelper.getPEMEncodedCertificate (aSigningCert);
       final byte [] aBytes = sPEM.getBytes (StandardCharsets.US_ASCII);
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
       {

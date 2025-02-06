@@ -77,13 +77,13 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4IncomingMessagePro
         LOGGER.info ("Wrote SOAP to '" + aFile.getAbsolutePath () + "'");
     }
 
-    if (aState.hasUsedCertificate ())
+    if (aState.hasSigningCertificate ())
     {
       // Dump the senders certificate as PEM file
       // That can usually extracted from the Binary Security Token of the SOAP
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".pem");
-      final X509Certificate aUsedCert = aState.getUsedCertificate ();
-      final String sPEM = CertificateHelper.getPEMEncodedCertificate (aUsedCert);
+      final X509Certificate aSigningCert = aState.getSigningCertificate ();
+      final String sPEM = CertificateHelper.getPEMEncodedCertificate (aSigningCert);
       final byte [] aBytes = sPEM.getBytes (StandardCharsets.US_ASCII);
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
         LOGGER.error ("Failed to write certificate to '" + aFile.getAbsolutePath () + "'");

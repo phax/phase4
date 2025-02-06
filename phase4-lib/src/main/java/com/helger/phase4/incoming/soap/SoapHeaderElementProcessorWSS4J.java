@@ -108,6 +108,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
     m_aDecryptParameterModifier = aDecryptParameterModifier;
   }
 
+  @SuppressWarnings ("removal")
   @Nonnull
   private ESuccess _verifyAndDecrypt (@Nonnull final Document aSOAPDoc,
                                       @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
@@ -225,8 +226,10 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
       // Collect all unique used certificates
       final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
-      // Preferred certificate from BinarySecurityToken
-      X509Certificate aPreferredCert = null;
+      // The certificate used for signing
+      X509Certificate aSigningCert = null;
+      // The certificate used for decrypting
+      X509Certificate aDecryptingCert = null;
       int nWSS4JSecurityActions = 0;
       for (final WSSecurityEngineResult aResult : aResults)
       {
@@ -241,36 +244,31 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         if (aCert != null)
         {
           aCertSet.add (aCert);
-          if (nAction == WSConstants.BST && aPreferredCert == null)
-            aPreferredCert = aCert;
+          if (nAction == WSConstants.SIGN)
+          {
+            if (aSigningCert == null)
+              aSigningCert = aCert;
+            else
+              if (aSigningCert != aCert)
+                LOGGER.warn ("Found a second signing certificate");
+          }
+          if (nAction == WSConstants.ENCR)
+          {
+            if (aDecryptingCert == null)
+              aDecryptingCert = aCert;
+            else
+              if (aDecryptingCert != aCert)
+                LOGGER.warn ("Found a second decryption certificate");
+          }
         }
       }
       // this determines if a signature check or a decryption happened
       aIncomingState.setSoapWSS4JSecurityActions (nWSS4JSecurityActions);
 
-      final X509Certificate aUsedCert;
-      if (aCertSet.size () > 1)
-      {
-        if (aPreferredCert == null)
-        {
-          LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message. Using the first one.");
-          if (LOGGER.isDebugEnabled ())
-            LOGGER.debug ("All gathered certificates: " + aCertSet);
-          aUsedCert = aCertSet.getAtIndex (0);
-        }
-        else
-          aUsedCert = aPreferredCert;
-      }
-      else
-      {
-        if (aCertSet.size () == 1)
-          aUsedCert = aCertSet.getAtIndex (0);
-        else
-          aUsedCert = null;
-      }
-
       // Remember in State
-      aIncomingState.setUsedCertificate (aUsedCert);
+      aIncomingState.setUsedCertificate (aSigningCert);
+      aIncomingState.setSigningCertificate (aSigningCert);
+      aIncomingState.setDecryptingCertificate (aDecryptingCert);
       aIncomingState.setDecryptedSoapDocument (aSOAPDoc);
 
       LOGGER.info ("phase4 --- attachment.storetemp:start");
@@ -305,7 +303,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
     catch (final IndexOutOfBoundsException | IllegalStateException | WSSecurityException ex)
     {
       /**
-       * Error processing the WSSSecurity Header
+       * Error processing the WSSecurity Header
        *
        * <pre>
        * java.lang.IndexOutOfBoundsException: null
@@ -331,7 +329,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       at com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorWSS4J._verifyAndDecrypt(SOAPHeaderElementProcessorWSS4J.java:187) ~[classes/:?]
        * </pre>
        *
-       * Error processing the WSSSecurity Header
+       * Error processing the WSSecurity Header
        *
        * <pre>
       org.apache.wss4j.common.ext.WSSecurityException: Error during certificate path validation: No trusted certs found
@@ -359,7 +357,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
        */
 
       // Decryption or Signature check failed
-      String sDetails = "Error processing the WSSSecurity Header";
+      String sDetails = "Error processing the WSSecurity Header";
       if (ex instanceof WSSecurityException)
       {
         sDetails += " (WS Security error: " + ((WSSecurityException) ex).getErrorCode () + ")";

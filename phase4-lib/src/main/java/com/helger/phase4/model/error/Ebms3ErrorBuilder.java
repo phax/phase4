@@ -95,14 +95,14 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   public Ebms3ErrorBuilder errorDetail (@Nullable final String s, @Nullable final Throwable t)
   {
     // Be able to allow disabling sending stack traces (see #225)
+    String sErrorDetail = s;
     final Throwable aLogT = AS4Configuration.isIncludeStackTraceInErrorMessages () ? t : null;
-    return errorDetail (StringHelper.getConcatenatedOnDemand (s,
-                                                              ": ",
-                                                              aLogT == null ? "" : "Technical details: " +
-                                                                                   StringHelper.getConcatenatedOnDemand (aLogT.getClass ()
-                                                                                                                              .getName (),
-                                                                                                                         " - ",
-                                                                                                                         aLogT.getMessage ())));
+    if (aLogT != null)
+    {
+      sErrorDetail += ": Technical details: " +
+                      StringHelper.getConcatenatedOnDemand (aLogT.getClass ().getName (), " - ", aLogT.getMessage ());
+    }
+    return errorDetail (sErrorDetail);
   }
 
   @Nonnull

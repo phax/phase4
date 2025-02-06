@@ -476,7 +476,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     }
 
     // Incoming message signed by C2
-    final String sC2ID = PeppolCertificateHelper.getSubjectCN (aState.getUsedCertificate ());
+    final String sC2ID = PeppolCertificateHelper.getSubjectCN (aState.getSigningCertificate ());
 
     try
     {
@@ -608,12 +608,13 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     if (aReceiverCheckData.isCheckSigningCertificateRevocation ())
     {
       final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-      final X509Certificate aSenderCert = aState.getUsedCertificate ();
+      final X509Certificate aSenderSigningCert = aState.getSigningCertificate ();
       // Check if signing AP certificate is revoked
       // * Use global caching setting
       // * Use global certificate check mode
       final EPeppolCertificateCheckResult eCertCheckResult = aReceiverCheckData.getAPCAChecker ()
-                                                                               .checkCertificate (aSenderCert, aNow);
+                                                                               .checkCertificate (aSenderSigningCert,
+                                                                                                  aNow);
       if (eCertCheckResult.isInvalid ())
       {
         final String sDetails = "The received Peppol message is signed with a Peppol AP certificate invalid at " +

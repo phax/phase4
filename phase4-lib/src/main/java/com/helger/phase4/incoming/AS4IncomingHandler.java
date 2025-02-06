@@ -179,8 +179,8 @@ public final class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
+                                                                                                             .getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -477,8 +477,7 @@ public final class AS4IncomingHandler
                                              aHeader.getNode (),
                                              aIncomingAttachments,
                                              aIncomingState,
-                                             aProcessingErrorMessagesTarget)
-                      .isSuccess ())
+                                             aProcessingErrorMessagesTarget).isSuccess ())
         {
           // Mark header as processed (for mustUnderstand check)
           aHeader.setProcessed (true);
@@ -740,7 +739,7 @@ public final class AS4IncomingHandler
             aValidator.validatePMode (aPMode, aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
             aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
             aValidator.validateInitiatorIdentity (aEbmsUserMessage,
-                                                  aIncomingState.getUsedCertificate (),
+                                                  aIncomingState.getSigningCertificate (),
                                                   aMessageMetadata,
                                                   aErrorList);
             if (aErrorList.isNotEmpty ())
