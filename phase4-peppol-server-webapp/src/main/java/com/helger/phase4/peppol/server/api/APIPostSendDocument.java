@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.mime.CMimeType;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.system.EJavaVersion;
 import com.helger.commons.timing.StopWatch;
@@ -268,6 +269,8 @@ public final class APIPostSendDocument extends AbstractAPIExecutor
     aSendingReport.setOverallSuccess (bSendingSuccess && !bExceptionCaught);
 
     // Return result JSON
-    aUnifiedResponse.setContentAndCharset (aSendingReport.getAsJsonString (), StandardCharsets.UTF_8).disableCaching ();
+    aUnifiedResponse.setContentAndCharset (aSendingReport.getAsJsonString (), StandardCharsets.UTF_8)
+                    .setMimeType (CMimeType.APPLICATION_JSON)
+                    .disableCaching ();
   }
 }
