@@ -118,7 +118,8 @@ public interface IAS4MessageState
   default Ebms3Error getEbmsError ()
   {
     final Ebms3SignalMessage aEbmsSignalMessage = getEbmsSignalMessage ();
-    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
+    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0)
+                                                                               : null;
   }
 
   /**
@@ -328,7 +329,9 @@ public interface IAS4MessageState
    * @return The first provided certificate in the incoming message. Usually the
    *         certificate that was used for signing. May be <code>null</code>.
    * @see #hasUsedCertificate()
+   * @deprecated Since v1.4.6. Use {@link #getSigningCertificate()} instead
    */
+  @Deprecated
   @Nullable
   X509Certificate getUsedCertificate ();
 
@@ -336,10 +339,52 @@ public interface IAS4MessageState
    * @return <code>true</code> if a certificate is provided, <code>false</code>
    *         if not.
    * @see #getUsedCertificate()
+   * @deprecated Since v1.4.6. Use {@link #hasSigningCertificate()} instead
    */
+  @Deprecated
   default boolean hasUsedCertificate ()
   {
     return getUsedCertificate () != null;
+  }
+
+  /**
+   * @return The signing certificate in the incoming message. May be
+   *         <code>null</code>.
+   * @see #hasSigningCertificate()
+   * @since 1.4.6
+   */
+  @Nullable
+  X509Certificate getSigningCertificate ();
+
+  /**
+   * @return <code>true</code> if a signing certificate is provided,
+   *         <code>false</code> if not.
+   * @see #getSigningCertificate()
+   * @since 1.4.6
+   */
+  default boolean hasSigningCertificate ()
+  {
+    return getSigningCertificate () != null;
+  }
+
+  /**
+   * @return The decrypting certificate in the incoming message. May be
+   *         <code>null</code>.
+   * @see #hasDecryptingCertificate()
+   * @since 1.4.6
+   */
+  @Nullable
+  X509Certificate getDecryptingCertificate ();
+
+  /**
+   * @return <code>true</code> if a decrypting certificate is provided,
+   *         <code>false</code> if not.
+   * @see #getDecryptingCertificate()
+   * @since 1.4.6
+   */
+  default boolean hasDecryptingCertificate ()
+  {
+    return getDecryptingCertificate () != null;
   }
 
   /**
