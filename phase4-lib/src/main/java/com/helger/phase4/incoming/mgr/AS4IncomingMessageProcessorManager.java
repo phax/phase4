@@ -55,7 +55,7 @@ public final class AS4IncomingMessageProcessorManager
   {
     final ICommonsList <IAS4IncomingMessageProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4IncomingMessageProcessorSPI.class);
     if (aProcessorSPIs.isEmpty ())
-      LOGGER.warn ("No AS4 message processor is registered. All incoming messages will be discarded!");
+      LOGGER.warn ("No AS4 message processor is registered. All incoming messages will be positively responded and discarded on the receiver side!");
     else
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Found " + aProcessorSPIs.size () + " AS4 message processors");
