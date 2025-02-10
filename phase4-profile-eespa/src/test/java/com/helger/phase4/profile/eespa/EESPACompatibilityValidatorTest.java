@@ -247,7 +247,6 @@ public final class EESPACompatibilityValidatorTest
                                                 .contains (ECryptoAlgorithmCrypt.AES_256_GCM.getID ())));
   }
 
-  @SuppressWarnings ("deprecation")
   @Test
   public void testValidatePModeSecurityWrongWSSVersion ()
   {
