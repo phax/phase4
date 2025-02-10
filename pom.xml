@@ -71,7 +71,7 @@
     <!-- wss4j 2.2.5 requires xmlsec 2.1.5 -->
     <!-- wss4j 2.3.0 requires xmlsec 2.2.0 -->
     <!-- wss4j 2.4.0 requires xmlsec 2.3.0 -->
-    <xmlsec.version>2.3.4</xmlsec.version>
+    <xmlsec.version>2.3.5</xmlsec.version>
     <wss4j.version>2.4.3</wss4j.version>
     <log4j.version>2.24.3</log4j.version>
     <ph-xsds.version>2.6.0</ph-xsds.version>
