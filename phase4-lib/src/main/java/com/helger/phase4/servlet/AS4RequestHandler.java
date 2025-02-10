@@ -43,6 +43,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.callback.IThrowingRunnable;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
@@ -670,7 +671,18 @@ public class AS4RequestHandler implements AutoCloseable
                     aAllProcessors);
 
     if (aAllProcessors.isEmpty ())
+    {
       LOGGER.error ("No IAS4ServletMessageProcessorSPI is available to process an incoming message");
+      if (GlobalDebug.isProductionMode ())
+      {
+        // This error is only in production mode
+        aErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
+                                                                         sMessageID,
+                                                                         "The phase4 implementation is marked as in production, but has no capabilities to process an incoming message." +
+                                                                                     " Unfortunately, the message needs to be rejected for that reason."));
+        return;
+      }
+    }
 
     // Invoke ALL non-null SPIs
     for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
