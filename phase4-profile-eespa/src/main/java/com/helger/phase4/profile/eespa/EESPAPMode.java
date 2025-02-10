@@ -49,8 +49,10 @@ import com.helger.phase4.wss.EWSSVersion;
  * PMode creation code.
  *
  * @author OpusCapita
+ * @deprecated For removal since 1.4.6
  */
 @Immutable
+@Deprecated
 public final class EESPAPMode
 {
   public static final String DEFAULT_AGREEMENT_ID_ACCEPTANCE = "urn:fdc:eespa.eu:2018:agreements:mifa:test";
@@ -128,7 +130,11 @@ public final class EESPAPMode
     final int nMaxRetries = 1;
     final long nRetryIntervalMS = 10_000;
     final ETriState eDuplicateDetection = ETriState.TRUE;
-    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness,
+                                        eRetry,
+                                        nMaxRetries,
+                                        nRetryIntervalMS,
+                                        eDuplicateDetection);
   }
 
   @Nonnull

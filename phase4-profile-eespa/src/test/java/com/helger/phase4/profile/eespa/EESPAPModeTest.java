@@ -30,7 +30,9 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
  * Test class for class {@link EESPAPMode}.
  *
  * @author Philip Helger
+ * @deprecated For removal since 1.4.6
  */
+@Deprecated
 public final class EESPAPModeTest
 {
   @ClassRule

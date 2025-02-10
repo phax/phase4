@@ -25,6 +25,8 @@ import com.helger.commons.traits.IGenericImplTrait;
  * Abstract base implementation of <code>IAS4RawResponseConsumer</code> to
  * provide basic customizability.
  *
+ * @param <IMPLTYPE>
+ *        Implementation type
  * @author Philip Helger
  * @since 0.13.0
  */
