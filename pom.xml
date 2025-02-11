@@ -84,7 +84,7 @@
     <ph-schematron.version>8.0.5</ph-schematron.version>
     <ph-web.version>10.3.0</ph-web.version>
     <phive.version>10.1.0</phive.version>
-    <phive-rules.version>3.2.5</phive-rules.version>
+    <phive-rules.version>3.2.6</phive-rules.version>
     <spring-boot.version>3.4.2</spring-boot.version>
   </properties>
 
