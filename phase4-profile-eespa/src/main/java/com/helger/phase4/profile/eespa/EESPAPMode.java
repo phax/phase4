@@ -51,6 +51,7 @@ import com.helger.phase4.wss.EWSSVersion;
  * @author OpusCapita
  */
 @Immutable
+@Deprecated (forRemoval = true, since = "2.9.1")
 public final class EESPAPMode
 {
   public static final String DEFAULT_AGREEMENT_ID_ACCEPTANCE = "urn:fdc:eespa.eu:2018:agreements:mifa:test";

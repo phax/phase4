@@ -54,6 +54,7 @@ import com.helger.phase4.wss.EWSSVersion;
  *
  * @author OpusCapita
  */
+@Deprecated (forRemoval = true, since = "2.9.1")
 public class EESPACompatibilityValidator implements IAS4ProfileValidator
 {
   public EESPACompatibilityValidator ()
@@ -111,7 +112,10 @@ public class EESPACompatibilityValidator implements IAS4ProfileValidator
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
       if (!eSOAPVersion.isAS4Default ())
       {
-        aErrorList.add (_createError (sFieldPrefix + "SoapVersion '" + eSOAPVersion.getVersion () + "' is unsupported"));
+        aErrorList.add (_createError (sFieldPrefix +
+                                      "SoapVersion '" +
+                                      eSOAPVersion.getVersion () +
+                                      "' is unsupported"));
       }
     }
 
@@ -233,7 +237,8 @@ public class EESPACompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyConsumer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
       }
       else
       {
@@ -243,7 +248,8 @@ public class EESPACompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyProducerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyProducer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
       }
       else
       {
