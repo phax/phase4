@@ -41,6 +41,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.callback.IThrowingRunnable;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
@@ -682,9 +683,8 @@ public class AS4RequestHandler implements AutoCloseable
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
-    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId () : aEbmsSignalMessage
-                                                                                                                      .getMessageInfo ()
-                                                                                                                      .getMessageId ();
+    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
+                                             : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
 
     // Get all processors
     final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
@@ -698,7 +698,19 @@ public class AS4RequestHandler implements AutoCloseable
                     aAllProcessors);
 
     if (aAllProcessors.isEmpty ())
+    {
       LOGGER.error ("No IAS4ServletMessageProcessorSPI is available to process an incoming message");
+      if (GlobalDebug.isProductionMode ())
+      {
+        // This error is only in production mode
+        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (m_aLocale)
+                                                           .refToMessageInError (sMessageID)
+                                                           .errorDetail ("The phase4 implementation is marked as in production, but has no capabilities to process an incoming message." +
+                                                                         " Unfortunately, the message needs to be rejected for that reason.")
+                                                           .build ());
+        return;
+      }
+    }
 
     // Invoke ALL non-null SPIs
     for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
@@ -907,8 +919,8 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (
-                                                                                                                       aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
+                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -1656,8 +1668,9 @@ public class AS4RequestHandler implements AutoCloseable
                                                          new ResponseHandlerXml ());
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     (aAsyncResponse == null ? "null" : XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                                                   AS4HttpDebug.getDebugXMLWriterSettings ())));
+                                     (aAsyncResponse == null ? "null"
+                                                             : XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                                          AS4HttpDebug.getDebugXMLWriterSettings ())));
         };
 
         final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
@@ -1875,8 +1888,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager
-                                                                                                                     .getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
+                                                                                 : AS4DumpManager.getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else

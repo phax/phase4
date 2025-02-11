@@ -74,7 +74,10 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private static final String KEY_SOAP_BODY_PAYLOAD_PRESENT = "phase4.soap.body.payload.present";
   private static final String KEY_INITIATOR_ID = "phase4.initiator.id";
   private static final String KEY_RESPONDER_ID = "phase4.responder.id";
+  @Deprecated (forRemoval = true, since = "2.9.1")
   private static final String KEY_USED_CERTIFICATE = "phase4.used.certificate";
+  private static final String KEY_SIGNING_CERTIFICATE = "phase4.signing.certificate";
+  private static final String KEY_DECRYPTING_CERTIFICATE = "phase4.decryting.certificate";
   private static final String KEY_EFFECTIVE_PMODE_LEG = "phase4.pmode.effective.leg";
   private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "phase4.pmode.effective.leg.number";
   private static final String KEY_WSS4J_SECURITY_ACTIONS = "phase4.soap.wss4j-security-actions";
@@ -255,14 +258,38 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   }
 
   @Nullable
+  @Deprecated (forRemoval = true, since = "2.9.1")
   public X509Certificate getUsedCertificate ()
   {
     return getCastedValue (KEY_USED_CERTIFICATE);
   }
 
+  @Deprecated (forRemoval = true, since = "2.9.1")
   public void setUsedCertificate (@Nullable final X509Certificate aCert)
   {
     putIn (KEY_USED_CERTIFICATE, aCert);
+  }
+
+  @Nullable
+  public X509Certificate getSigningCertificate ()
+  {
+    return getCastedValue (KEY_SIGNING_CERTIFICATE);
+  }
+
+  public void setSigningCertificate (@Nullable final X509Certificate aCert)
+  {
+    putIn (KEY_SIGNING_CERTIFICATE, aCert);
+  }
+
+  @Nullable
+  public X509Certificate getDecryptingCertificate ()
+  {
+    return getCastedValue (KEY_DECRYPTING_CERTIFICATE);
+  }
+
+  public void setDecryptingCertificate (@Nullable final X509Certificate aCert)
+  {
+    putIn (KEY_DECRYPTING_CERTIFICATE, aCert);
   }
 
   @Nullable

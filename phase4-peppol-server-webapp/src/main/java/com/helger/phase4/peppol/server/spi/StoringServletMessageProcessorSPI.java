@@ -68,8 +68,8 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
   {
     // Write formatted SOAP
     {
-      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument () : aState
-                                                                                                                .getOriginalSoapDocument ();
+      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument ()
+                                                                   : aState.getOriginalSoapDocument ();
       if (aSoapDoc == null)
         throw new IllegalStateException ("No SOAP Document present");
 
@@ -90,12 +90,12 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
       }
     }
 
-    if (aState.hasUsedCertificate ())
+    if (aState.hasSigningCertificate ())
     {
       // Dump the senders certificate as PEM file
       // That can usually extracted from the Binary Security Token of the SOAP
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".pem");
-      final X509Certificate aUsedCert = aState.getUsedCertificate ();
+      final X509Certificate aUsedCert = aState.getSigningCertificate ();
       final String sPEM = CertificateHelper.getPEMEncodedCertificate (aUsedCert);
       final byte [] aBytes = sPEM.getBytes (StandardCharsets.US_ASCII);
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())

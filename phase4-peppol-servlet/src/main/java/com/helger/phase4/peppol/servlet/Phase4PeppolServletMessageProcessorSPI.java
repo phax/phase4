@@ -44,6 +44,7 @@ import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.datetime.XMLOffsetDateTime;
+import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -55,8 +56,8 @@ import com.helger.commons.string.StringHelper;
 import com.helger.peppol.reporting.api.CPeppolReporting;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.sbdh.PeppolSBDHData;
-import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
-import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
+import com.helger.peppol.sbdh.PeppolSBDHDataReadException;
+import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
@@ -283,8 +284,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   @Deprecated (since = "2.8.1", forRemoval = true)
   public final ETriState getCheckSigningCertificateRevocation ()
   {
-    return m_aReceiverCheckData != null ? ETriState.valueOf (m_aReceiverCheckData
-                                                                                 .isCheckSigningCertificateRevocation ())
+    return m_aReceiverCheckData != null ? ETriState.valueOf (m_aReceiverCheckData.isCheckSigningCertificateRevocation ())
                                         : ETriState.UNDEFINED;
   }
 
@@ -522,7 +522,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     }
 
     // Incoming message signed by C2
-    final String sC2ID = PeppolCertificateHelper.getSubjectCN (aState.getUsedCertificate ());
+    final String sC2ID = PeppolCertificateHelper.getSubjectCN (aState.getSigningCertificate ());
 
     try
     {
@@ -653,7 +653,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     if (aReceiverCheckData.isCheckSigningCertificateRevocation ())
     {
       final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-      final X509Certificate aSenderCert = aState.getUsedCertificate ();
+      final X509Certificate aSenderCert = aState.getSigningCertificate ();
       // Check if signing AP certificate is revoked
       // * Use global caching setting
       // * Use global certificate check mode
@@ -800,8 +800,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       final boolean bCheckForCountryC1 = aReceiverCheckData.isCheckSBDHForMandatoryCountryC1 ();
       // Read with SimpleIdentifierFactory - accepts more the
       // PeppolIdentifierFactory
-      final PeppolSBDHDocumentReader aReader = new PeppolSBDHDocumentReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerformValueChecks)
-                                                                                                              .setCheckForCountryC1 (bCheckForCountryC1);
+      final PeppolSBDHDataReader aReader = new PeppolSBDHDataReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerformValueChecks)
+                                                                                                      .setCheckForCountryC1 (bCheckForCountryC1);
 
       aPeppolSBD = aReader.extractData (aReadAttachment.standardBusinessDocument ());
 
@@ -810,7 +810,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                       "The provided SBDH is valid according to Peppol rules, with value checks being " +
                       (bPerformValueChecks ? "enabled" : "disabled"));
     }
-    catch (final PeppolSBDHDocumentReadException ex)
+    catch (final PeppolSBDHDataReadException ex)
     {
       final String sMsg = "Failed to extract the Peppol data from SBDH.";
       LOGGER.error (sLogPrefix + sMsg, ex);
@@ -887,6 +887,16 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     {
       // Oops - programming error
       LOGGER.error (sLogPrefix + "No SPI handler is present - the message is unhandled and discarded!");
+      if (GlobalDebug.isProductionMode ())
+      {
+        // This error is only in production mode
+        // It will trigger a rejection on AS4 level
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .errorDetail ("The phase4 implementation is marked as in production, but has no capabilities to process an incoming Peppol message." +
+                                                                         " Unfortunately, the Peppol message needs to be rejected for that reason.")
+                                                           .build ());
+      }
     }
     else
     {

@@ -334,6 +334,7 @@ public interface IAS4MessageState
    * @see #hasUsedCertificate()
    */
   @Nullable
+  @Deprecated (forRemoval = true, since = "2.9.1")
   X509Certificate getUsedCertificate ();
 
   /**
@@ -341,9 +342,50 @@ public interface IAS4MessageState
    *         if not.
    * @see #getUsedCertificate()
    */
+  @Deprecated (forRemoval = true, since = "2.9.1")
   default boolean hasUsedCertificate ()
   {
     return getUsedCertificate () != null;
+  }
+
+  /**
+   * @return The signing certificate in the incoming message. May be
+   *         <code>null</code>.
+   * @see #hasSigningCertificate()
+   * @since 2.9.1
+   */
+  @Nullable
+  X509Certificate getSigningCertificate ();
+
+  /**
+   * @return <code>true</code> if a signing certificate is provided,
+   *         <code>false</code> if not.
+   * @see #getSigningCertificate()
+   * @since 2.9.1
+   */
+  default boolean hasSigningCertificate ()
+  {
+    return getSigningCertificate () != null;
+  }
+
+  /**
+   * @return The decrypting certificate in the incoming message. May be
+   *         <code>null</code>.
+   * @see #hasDecryptingCertificate()
+   * @since 2.9.1
+   */
+  @Nullable
+  X509Certificate getDecryptingCertificate ();
+
+  /**
+   * @return <code>true</code> if a decrypting certificate is provided,
+   *         <code>false</code> if not.
+   * @see #getDecryptingCertificate()
+   * @since 2.9.1
+   */
+  default boolean hasDecryptingCertificate ()
+  {
+    return getDecryptingCertificate () != null;
   }
 
   /**

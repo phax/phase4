@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
-import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
+import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.phase4.CAS4;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
@@ -58,8 +58,8 @@ public final class Phase4PeppolServletConfiguration
   private static PeppolWildcardSelector.EMode s_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
-  private static boolean s_bPerformSBDHValueChecks = PeppolSBDHDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
-  private static boolean s_bCheckSBDHForMandatoryCountryC1 = PeppolSBDHDocumentReader.DEFAULT_CHECK_FOR_COUNTRY_C1;
+  private static boolean s_bPerformSBDHValueChecks = PeppolSBDHDataReader.DEFAULT_PERFORM_VALUE_CHECKS;
+  private static boolean s_bCheckSBDHForMandatoryCountryC1 = PeppolSBDHDataReader.DEFAULT_CHECK_FOR_COUNTRY_C1;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
 
   private Phase4PeppolServletConfiguration ()

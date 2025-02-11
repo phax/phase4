@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
-import com.helger.peppol.utils.CRLCache;
-import com.helger.peppol.utils.CRLDownloader;
-import com.helger.peppol.utils.CertificateRevocationCheckerDefaults;
+import com.helger.security.crl.CRLCache;
+import com.helger.security.crl.CRLDownloader;
+import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 
 /**
  * The Peppol specific CRL downloader using the {@link HttpClientUrlDownloader}
