@@ -451,10 +451,10 @@ public final class Phase4BDEWSender
       return this;
     }
 
-
     /**
      * @return BDEW payload application reference for payload identifier
      *         <code>BDEWApplicationReference</code>
+     * @since 2.9.2
      */
     @Nullable
     public String getApplicationReference ()
@@ -468,6 +468,7 @@ public final class Phase4BDEWSender
      * @param sApplicationReference
      *        Application reference to use. May be <code>null</code>.
      * @return this for chaining
+     * @since 2.9.2
      */
     @Nonnull
     public BDEWPayloadParams setApplicationReference (@Nullable final String sApplicationReference)
