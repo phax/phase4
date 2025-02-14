@@ -103,6 +103,7 @@ public final class APIPostSendSBDH extends AbstractAPIExecutor
       aSendingReport.setSendingSuccess (false);
       aSendingReport.setOverallSuccess (false);
       aUnifiedResponse.setContentAndCharset (aSendingReport.getAsJsonString (), StandardCharsets.UTF_8)
+                      .setMimeType (CMimeType.APPLICATION_JSON)
                       .disableCaching ();
       return;
     }
