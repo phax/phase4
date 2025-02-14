@@ -21,10 +21,12 @@ import java.time.OffsetDateTime;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.datetime.PDTFactory;
@@ -116,6 +118,13 @@ public class Phase4PeppolSendingReport
     return m_aSBDHParseException != null;
   }
 
+  /**
+   * Remember any specific exception that occurred during parsing of a provided
+   * SBDH.
+   *
+   * @param e
+   *        The exception that was caught. May be <code>null</code>.
+   */
   public void setSBDHParseException (@Nullable final Exception e)
   {
     m_aSBDHParseException = e;
@@ -126,6 +135,12 @@ public class Phase4PeppolSendingReport
     return m_aSenderID != null;
   }
 
+  /**
+   * Remember the senders Peppol Participant ID (C1 ID).
+   *
+   * @param a
+   *        Peppol Participant ID. May be <code>null</code>.
+   */
   public void setSenderID (@Nullable final IParticipantIdentifier a)
   {
     m_aSenderID = a;
@@ -136,6 +151,12 @@ public class Phase4PeppolSendingReport
     return m_aReceiverID != null;
   }
 
+  /**
+   * Remember the receivers Peppol Participant ID (C4 ID).
+   *
+   * @param a
+   *        Peppol Participant ID. May be <code>null</code>.
+   */
   public void setReceiverID (@Nullable final IParticipantIdentifier a)
   {
     m_aReceiverID = a;
@@ -146,6 +167,12 @@ public class Phase4PeppolSendingReport
     return m_aDocTypeID != null;
   }
 
+  /**
+   * Remember the Peppol Document Type ID that was exchanged.
+   *
+   * @param a
+   *        Document Type ID. May be <code>null</code>.
+   */
   public void setDocTypeID (@Nullable final IDocumentTypeIdentifier a)
   {
     m_aDocTypeID = a;
@@ -156,6 +183,12 @@ public class Phase4PeppolSendingReport
     return m_aProcessID != null;
   }
 
+  /**
+   * Remember the Peppol Process ID that was exchanged.
+   *
+   * @param a
+   *        Process ID. May be <code>null</code>.
+   */
   public void setProcessID (@Nullable final IProcessIdentifier a)
   {
     m_aProcessID = a;
@@ -166,6 +199,12 @@ public class Phase4PeppolSendingReport
     return StringHelper.hasText (m_sCountryC1);
   }
 
+  /**
+   * Remember the senders (C1) Country Code (2 letter code).
+   *
+   * @param s
+   *        C1 country code. May be <code>null</code>.
+   */
   public void setCountryC1 (@Nullable final String s)
   {
     m_sCountryC1 = s;
@@ -176,6 +215,12 @@ public class Phase4PeppolSendingReport
     return StringHelper.hasText (m_sSenderPartyID);
   }
 
+  /**
+   * Remember the sender party ID (the ID of C3).
+   *
+   * @param s
+   *        Sender party ID. May be <code>null</code>.
+   */
   public void setSenderPartyID (@Nullable final String s)
   {
     m_sSenderPartyID = s;
@@ -186,6 +231,14 @@ public class Phase4PeppolSendingReport
     return StringHelper.hasText (m_sSBDHInstanceIdentifier);
   }
 
+  /**
+   * Remember the SBDH Instance Identifier. That is the identifier, that
+   * uniquely identifies the specific transmission and is referred to by MLR and
+   * MLS.
+   *
+   * @param s
+   *        SBDH instance identifier. May be <code>null</code>.
+   */
   public void setSBDHInstanceIdentifier (@Nullable final String s)
   {
     m_sSBDHInstanceIdentifier = s;
@@ -196,6 +249,12 @@ public class Phase4PeppolSendingReport
     return StringHelper.hasText (m_sC3EndpointURL);
   }
 
+  /**
+   * Remember the AP endpoint URL of C3 determined by the SMP lookup.
+   *
+   * @param s
+   *        C3 endpoint URL. May be <code>null</code>.
+   */
   public void setC3EndpointURL (@Nullable final String s)
   {
     m_sC3EndpointURL = s;
@@ -211,6 +270,13 @@ public class Phase4PeppolSendingReport
     return StringHelper.hasText (m_sC3CertSubjectCN);
   }
 
+  /**
+   * Remember the public Peppol AP certificate of C3 determined by the SMP
+   * lookup.
+   *
+   * @param a
+   *        C3 public Peppol AP certificate. May be <code>null</code>.
+   */
   public void setC3Cert (@Nullable final X509Certificate a)
   {
     m_aC3Cert = a;
@@ -222,6 +288,13 @@ public class Phase4PeppolSendingReport
     return m_aC3CertCheckDT != null;
   }
 
+  /**
+   * Remember the date and time, when the Peppol AP certificate of C3, as
+   * retrieved from the SMP, was checked for revocation.
+   *
+   * @param a
+   *        The Peppol AP Certificate check date time. May be <code>null</code>.
+   */
   public void setC3CertCheckDT (@Nullable final OffsetDateTime a)
   {
     m_aC3CertCheckDT = a;
@@ -232,6 +305,13 @@ public class Phase4PeppolSendingReport
     return m_eC3CertCheckResult != null;
   }
 
+  /**
+   * Remember the result of checking the Peppol AP certificate of C3, as
+   * retrieved from the SMP, for validity.
+   *
+   * @param e
+   *        The Peppol AP Certificate check result. May be <code>null</code>.
+   */
   public void setC3CertCheckResult (@Nullable final EPeppolCertificateCheckResult e)
   {
     m_eC3CertCheckResult = e;
@@ -242,6 +322,12 @@ public class Phase4PeppolSendingReport
     return StringHelper.hasText (m_sAS4MessageID);
   }
 
+  /**
+   * Remember the AS4 Message ID used to send out the message.
+   *
+   * @param s
+   *        The AS4 Message ID. May be <code>null</code>.
+   */
   public void setAS4MessageID (@Nullable final String s)
   {
     m_sAS4MessageID = s;
@@ -252,6 +338,12 @@ public class Phase4PeppolSendingReport
     return StringHelper.hasText (m_sAS4ConversationID);
   }
 
+  /**
+   * Remember the AS4 Conversation ID used to send out the message.
+   *
+   * @param s
+   *        The AS4 Conversation ID. May be <code>null</code>.
+   */
   public void setAS4ConversationID (@Nullable final String s)
   {
     m_sAS4ConversationID = s;
@@ -267,6 +359,12 @@ public class Phase4PeppolSendingReport
     return m_aAS4ResponseErrors != null && m_aAS4ResponseErrors.isNotEmpty ();
   }
 
+  /**
+   * Remember the synchronously received AS4 Signal Message from C3.
+   *
+   * @param a
+   *        The parsed AS4 Signal Message. May be <code>null</code>.
+   */
   public void setAS4ReceivedSignalMsg (@Nullable final Ebms3SignalMessage a)
   {
     m_aAS4ReceivedSignalMsg = a;
@@ -292,6 +390,12 @@ public class Phase4PeppolSendingReport
     return m_eAS4SendingResult != null;
   }
 
+  /**
+   * Remember the overall AS4 sending result.
+   *
+   * @param e
+   *        The AS4 sending result. May be <code>null</code>.
+   */
   public void setAS4SendingResult (@Nullable final EAS4UserMessageSendResult e)
   {
     m_eAS4SendingResult = e;
@@ -302,29 +406,62 @@ public class Phase4PeppolSendingReport
     return m_aAS4SendingException != null;
   }
 
+  /**
+   * Remember any exception that eventually occurred on AS4 sending.
+   *
+   * @param e
+   *        The exception from AS4 sending. May be <code>null</code>.
+   */
   public void setAS4SendingException (@Nullable final Exception e)
   {
     m_aAS4SendingException = e;
   }
 
-  public void setOverallDurationMillis (final long n)
+  /**
+   * Remember the overall duration it took to perform the lookup and sending
+   * process.
+   *
+   * @param n
+   *        The overall milliseconds needed. Must be &ge; 0.
+   */
+  public void setOverallDurationMillis (@Nonnegative final long n)
   {
     m_nOverallDurationMillis = n;
   }
 
+  /**
+   * Remember the overall sending success.
+   *
+   * @param b
+   *        <code>true</code> on success, <code>false</code> on failure.
+   */
   public void setSendingSuccess (final boolean b)
   {
     m_bSendingSuccess = b;
   }
 
+  /**
+   * Remember the overall success. This may differ from the sending success, if
+   * e.g. sending succeeded but storing the record for Peppol recording failed.
+   *
+   * @param b
+   *        <code>true</code> on success, <code>false</code> on failure.
+   */
   public void setOverallSuccess (final boolean b)
   {
     m_bOverallSuccess = b;
   }
 
+  /**
+   * Get the whole report as one big JSON structure. Only elements that were
+   * provided, are contained in the report.
+   *
+   * @return The sending report as a JSON object. May not be <code>null</code>.
+   */
   @Nonnull
   public IJsonObject getAsJsonObject ()
   {
+    // Function to convert Exception to JSON
     final Function <Exception, IJsonObject> fEx = ex -> new JsonObject ().add ("class", ex.getClass ().getName ())
                                                                          .add ("message", ex.getMessage ())
                                                                          .add ("stackTrace",
@@ -409,20 +546,42 @@ public class Phase4PeppolSendingReport
     return aJson;
   }
 
+  /**
+   * @return The JSON representation of the sending report, as a formatted
+   *         string. Never <code>null</code>.
+   */
   @Nonnull
   public String getAsJsonString ()
   {
     return getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED);
   }
 
+  /**
+   * @param aJWS
+   *        The JSON writer settings to use. May not be <code>null</code>.
+   * @return The JSON representation of the sending report, as a string. Never
+   *         <code>null</code>.
+   */
   @Nonnull
   public String getAsJsonString (@Nonnull final IJsonWriterSettings aJWS)
   {
     return getAsJsonObject ().getAsJsonString (aJWS);
   }
 
+  /**
+   * Get the sending report as a MicroDOM element. Only elements that were
+   * provided, are contained in the report.
+   *
+   * @param sNamespaceURI
+   *        The namespace URI to be used. May be <code>null</code>.
+   * @param sTagName
+   *        The tag name to use for the root element. May neither be
+   *        <code>null</code> nor empty.
+   * @return The created micro element and never <code>null</code>.
+   */
   @Nonnull
-  public IMicroElement getAsMicroElement (@Nullable final String sNamespaceURI, @Nonnull final String sTagName)
+  public IMicroElement getAsMicroElement (@Nullable final String sNamespaceURI,
+                                          @Nonnull @Nonempty final String sTagName)
   {
     final BiFunction <Exception, String, IMicroElement> fEx = (ex, tag) -> {
       final IMicroElement ret = new MicroElement (sNamespaceURI, tag);
