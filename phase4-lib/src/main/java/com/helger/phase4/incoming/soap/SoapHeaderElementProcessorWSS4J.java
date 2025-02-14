@@ -45,9 +45,7 @@ import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.StreamHelper;
@@ -224,8 +222,6 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
       LOGGER.info ("phase4 --- verify-decrypt:end");
 
-      // Collect all unique used certificates
-      final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
       // The certificate used for signing
       X509Certificate aSigningCert = null;
       // The certificate used for decrypting
@@ -243,7 +239,6 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         final X509Certificate aCert = (X509Certificate) aResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
         if (aCert != null)
         {
-          aCertSet.add (aCert);
           if (nAction == WSConstants.SIGN)
           {
             if (aSigningCert == null)
@@ -252,14 +247,15 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
               if (aSigningCert != aCert)
                 LOGGER.warn ("Found a second signing certificate");
           }
-          if (nAction == WSConstants.ENCR)
-          {
-            if (aDecryptingCert == null)
-              aDecryptingCert = aCert;
-            else
-              if (aDecryptingCert != aCert)
-                LOGGER.warn ("Found a second decryption certificate");
-          }
+          else
+            if (nAction == WSConstants.ENCR)
+            {
+              if (aDecryptingCert == null)
+                aDecryptingCert = aCert;
+              else
+                if (aDecryptingCert != aCert)
+                  LOGGER.warn ("Found a second decryption certificate");
+            }
         }
       }
       // this determines if a signature check or a decryption happened

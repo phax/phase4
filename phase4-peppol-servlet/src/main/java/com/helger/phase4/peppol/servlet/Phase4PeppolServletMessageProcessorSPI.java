@@ -44,6 +44,7 @@ import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.datetime.XMLOffsetDateTime;
+import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -849,6 +850,16 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     {
       // Oops - programming error
       LOGGER.error (sLogPrefix + "No SPI handler is present - the message is unhandled and discarded!");
+      if (GlobalDebug.isProductionMode ())
+      {
+        // This error is only in production mode
+        // It will trigger a rejection on AS4 level
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .errorDetail ("The phase4 implementation is marked as in production, but has no capabilities to process an incoming Peppol message." +
+                                                                         " Unfortunately, the Peppol message needs to be rejected for that reason.")
+                                                           .build ());
+      }
     }
     else
     {
