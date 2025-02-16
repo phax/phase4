@@ -31,7 +31,7 @@ public final class APConfig
   {}
 
   @Nonnull
-  private static IConfigWithFallback _getConfig ()
+  public static IConfigWithFallback getConfig ()
   {
     return AS4Configuration.getConfig ();
   }
@@ -39,7 +39,7 @@ public final class APConfig
   @Nonnull
   public static EPeppolNetwork getPeppolStage ()
   {
-    final String sStageID = _getConfig ().getAsString ("peppol.stage");
+    final String sStageID = getConfig ().getAsString ("peppol.stage");
     final EPeppolNetwork ret = EPeppolNetwork.getFromIDOrNull (sStageID);
     if (ret == null)
       throw new IllegalStateException ("Failed to determine peppol stage from value '" + sStageID + "'");
@@ -49,29 +49,29 @@ public final class APConfig
   @Nullable
   public static String getMyPeppolSeatID ()
   {
-    return _getConfig ().getAsString ("peppol.seatid");
+    return getConfig ().getAsString ("peppol.seatid");
   }
 
   @Nullable
   public static String getMySmpUrl ()
   {
-    return _getConfig ().getAsString ("smp.url");
+    return getConfig ().getAsString ("smp.url");
   }
 
   @Nullable
   public static String getPhase4ApiRequiredToken ()
   {
-    return _getConfig ().getAsString ("phase4.api.requiredtoken");
+    return getConfig ().getAsString ("phase4.api.requiredtoken");
   }
 
   @Nullable
   public static String getHttpProxyHost ()
   {
-    return _getConfig ().getAsString ("http.proxy.host");
+    return getConfig ().getAsString ("http.proxy.host");
   }
 
   public static int getHttpProxyPort ()
   {
-    return _getConfig ().getAsInt ("http.proxy.port");
+    return getConfig ().getAsInt ("http.proxy.port");
   }
 }

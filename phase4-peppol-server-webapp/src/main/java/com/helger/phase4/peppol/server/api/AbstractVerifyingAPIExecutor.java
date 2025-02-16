@@ -32,13 +32,14 @@ import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 /**
- * Abstract API executor class. Contains the token check.
+ * Abstract API executor class. Contains the check for the "X-Token" HTTP
+ * header.
  *
  * @author Philip Helger
  */
-public abstract class AbstractAPIExecutor implements IAPIExecutor
+public abstract class AbstractVerifyingAPIExecutor implements IAPIExecutor
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAPIExecutor.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractVerifyingAPIExecutor.class);
 
   protected abstract void verifiedInvokeAPI (@Nonnull IAPIDescriptor aAPIDescriptor,
                                              @Nonnull @Nonempty String sPath,

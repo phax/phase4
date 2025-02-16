@@ -63,7 +63,7 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
  *
  * @author Philip Helger
  */
-public final class APIPostSendSBDH extends AbstractAPIExecutor
+public final class APIPostSendSBDH extends AbstractVerifyingAPIExecutor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (APIPostSendSBDH.class);
 

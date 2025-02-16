@@ -65,7 +65,7 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class APIPostSendDocument extends AbstractAPIExecutor
+public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (APIPostSendDocument.class);
 

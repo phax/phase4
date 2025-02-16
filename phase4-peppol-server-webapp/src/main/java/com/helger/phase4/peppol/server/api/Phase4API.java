@@ -38,6 +38,9 @@ public final class Phase4API
   public static final String PARAM_PROCESS_ID = "processId";
   public static final String PARAM_COUNTRY_CODE_C1 = "countryC1";
 
+  public static final String PARAM_YEAR = "year";
+  public static final String PARAM_MONTH = "month";
+
   private Phase4API ()
   {}
 
@@ -62,10 +65,31 @@ public final class Phase4API
       aSendTest.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendTest);
     }
+
     {
       final APIDescriptor aSendTestSbdh = new APIDescriptor (APIPath.post ("/sendsbdh"), new APIPostSendSBDH (eStage));
       aSendTestSbdh.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendTestSbdh);
+    }
+
+    {
+      final APIDescriptor aCreateTSR = new APIDescriptor (APIPath.get ("/create-tsr/{" +
+                                                                       PARAM_YEAR +
+                                                                       "}/{" +
+                                                                       PARAM_MONTH +
+                                                                       "}"), new APIGetCreateTSR ());
+      aCreateTSR.setExceptionMapper (aExceptionMapper);
+      aAPIRegistry.registerAPI (aCreateTSR);
+    }
+
+    {
+      final APIDescriptor aCreateEUSR = new APIDescriptor (APIPath.get ("/create-eusr/{" +
+                                                                        PARAM_YEAR +
+                                                                        "}/{" +
+                                                                        PARAM_MONTH +
+                                                                        "}"), new APIGetCreateEUSR ());
+      aCreateEUSR.setExceptionMapper (aExceptionMapper);
+      aAPIRegistry.registerAPI (aCreateEUSR);
     }
   }
 }
