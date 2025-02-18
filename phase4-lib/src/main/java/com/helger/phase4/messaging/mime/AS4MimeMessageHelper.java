@@ -116,6 +116,11 @@ public final class AS4MimeMessageHelper
 
     final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
     final AS4SoapMimeMultipart aMimeMultipart = new AS4SoapMimeMultipart (eSoapVersion);
+    /*
+     * RFC 1341, section 5 states: If an entity is of type "multipart" or
+     * "message", the Content-Transfer-Encoding is not permitted to have any
+     * value other than a bit width (e.g., "7bit", "8bit", etc.) or "binary".
+     */
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
     final String sRootContentType = eSoapVersion.getMimeType (aCharset).getAsString ();
 
