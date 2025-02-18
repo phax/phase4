@@ -33,8 +33,8 @@ import jakarta.mail.internet.ParseException;
  */
 public class AS4SoapMimeMultipart extends MimeMultipart
 {
-  private static final String RELATED = "related";
-  private static final String CT_PARAM_TYPE = "type";
+  public static final String RELATED = "related";
+  public static final String CT_PARAM_TYPE = "type";
 
   public AS4SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion) throws ParseException
   {
