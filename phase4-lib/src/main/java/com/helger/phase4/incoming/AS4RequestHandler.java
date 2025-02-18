@@ -44,6 +44,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.http.CHttp;
+import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
@@ -51,6 +52,7 @@ import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
+import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
 import com.helger.httpclient.response.ResponseHandlerXml;
@@ -257,7 +259,12 @@ public class AS4RequestHandler implements AutoCloseable
         }
       });
       aHttpResponse.setContent (m_aHttpHeaders, aContent);
-      aHttpResponse.setMimeType (MT_MULTIPART_RELATED);
+
+      // If the response HTTP headers already contain the "Content-Type" than
+      // use it. Otherwise the "boundary" parameters will be lost
+      final String sContentType = m_aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
+      final IMimeType aMimeType = MimeTypeParser.safeParseMimeType (sContentType);
+      aHttpResponse.setMimeType (aMimeType != null ? aMimeType : MT_MULTIPART_RELATED);
 
       if (aOutgoingDumper != null)
       {
@@ -848,8 +855,9 @@ public class AS4RequestHandler implements AutoCloseable
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
-    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
-                                             : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
+    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId () : aEbmsSignalMessage
+                                                                                                                      .getMessageInfo ()
+                                                                                                                      .getMessageId ();
 
     // Get all processors
     final ICommonsList <IAS4IncomingMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
@@ -1084,8 +1092,8 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
-                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (
+                                                                                                                       aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -1364,8 +1372,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                         aUserMessage,
                                                                         aSoapDocument,
                                                                         _isSendNonRepudiationInformation (aEffectiveLeg),
-                                                                        null)
-                                                               .setMustUnderstand (true);
+                                                                        null).setMustUnderstand (true);
 
     final ESoapVersion eResponseSoapVersion = aEffectiveLeg.getProtocol ().getSoapVersion ();
     if (eResponseSoapVersion != eSoapVersion)
@@ -1383,6 +1390,23 @@ public class AS4RequestHandler implements AutoCloseable
                                                        aResponseDoc,
                                                        eResponseSoapVersion,
                                                        aReceiptMessage.getMessagingID ());
+
+    if (false)
+    {
+      // This is just demo code, to show how to squeeze an AS4 Receipt into a
+      // MIME message
+      try
+      {
+        final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion,
+                                                                                  aSignedDoc,
+                                                                                  aResponseAttachments);
+        return new AS4ResponseFactoryMIME (m_aMessageMetadata, aIncomingState, sResponseMessageID, aMimeMsg);
+      }
+      catch (final MessagingException ex)
+      {
+        // fall through
+      }
+    }
 
     // Return the signed receipt
     return new AS4ResponseFactoryXML (m_aMessageMetadata,
@@ -1453,6 +1477,24 @@ public class AS4RequestHandler implements AutoCloseable
         LOGGER.debug ("Cannot sign AS4 Error response, because no PMode Leg was provided");
     }
 
+    if (false)
+    {
+      // This is just demo code, to show how to squeeze an AS4 Error into a MIME
+      // message
+      try
+      {
+        final ICommonsList <WSS4JAttachment> aResponseAttachments = null;
+        final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion,
+                                                                                  aResponseDoc,
+                                                                                  aResponseAttachments);
+        return new AS4ResponseFactoryMIME (m_aMessageMetadata, aIncomingState, sResponseMessageID, aMimeMsg);
+      }
+      catch (final MessagingException ex)
+      {
+        // fall through
+      }
+    }
+
     return new AS4ResponseFactoryXML (m_aMessageMetadata,
                                       aIncomingState,
                                       sResponseMessageID,
@@ -1486,6 +1528,7 @@ public class AS4RequestHandler implements AutoCloseable
     final AS4MimeMessage aMimeMsg;
     if (aCryptParms.isCryptEnabled (LOGGER::warn))
     {
+      // Encryption is enabled
       if (aResponseAttachments.isNotEmpty ())
       {
         final boolean bMustUnderstand = true;
@@ -1505,6 +1548,7 @@ public class AS4RequestHandler implements AutoCloseable
     }
     else
     {
+      // Encryption is not enabled
       aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion, aResponseDoc, aResponseAttachments);
     }
     if (aMimeMsg == null)
@@ -1573,6 +1617,32 @@ public class AS4RequestHandler implements AutoCloseable
     return ret;
   }
 
+  /**
+   * This message is called, independent if the source message was sent as a
+   * MIME message or as a SOAP message.
+   *
+   * @param aHttpHeaders
+   *        The HTTP headers used. Never <code>null</code>.
+   * @param aSoapDocument
+   *        The SOAP XML document retrieved. Never <code>null</code>.
+   * @param eSoapVersion
+   *        The SOAP version used. Never <code>null</code>.
+   * @param aIncomingAttachments
+   *        A list of additional attachments submitted together with the SOAP
+   *        message. This list MUST be empty when a SOAP message was received,
+   *        and MAY contain something when a MIME message was received. Never
+   *        <code>null</code>.
+   * @param aEbmsErrorMessagesTarget
+   *        The list of EBMS error messages to be filled from within. Never
+   *        <code>null</code>.
+   * @return The processing result producer - may be <code>null</code>.
+   * @throws WSSecurityException
+   *         On message encryption / signature issues.
+   * @throws MessagingException
+   *         On MIME issues.
+   * @throws Phase4Exception
+   *         On phase4 issues.
+   */
   @Nullable
   private IAS4ResponseFactory _handleSoapMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
                                                   @Nonnull final Document aSoapDocument,
@@ -1813,10 +1883,9 @@ public class AS4RequestHandler implements AutoCloseable
                                   sResponseMessageID);
 
           // invoke client with new document
-          final BasicHttpPoster aSender = new BasicHttpPoster ();
           final Document aAsyncResponse;
-          if (true)
           {
+            final BasicHttpPoster aSender = new BasicHttpPoster ();
             final HttpHeaderMap aResponseHttpHeaders = null;
             // TODO make async send parameters customizable
             final HttpRetrySettings aRetrySettings = new HttpRetrySettings ();
@@ -1829,17 +1898,9 @@ public class AS4RequestHandler implements AutoCloseable
                                                                     m_aOutgoingDumper,
                                                                     m_aRetryCallback);
           }
-          else
-          {
-            aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
-                                                         null,
-                                                         aHttpEntity,
-                                                         new ResponseHandlerXml ());
-          }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     (aAsyncResponse == null ? "null"
-                                                             : XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                                          AS4HttpDebug.getDebugXMLWriterSettings ())));
+                                     (aAsyncResponse == null ? "null" : XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                                                   AS4HttpDebug.getDebugXMLWriterSettings ())));
         };
 
         final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
@@ -2057,8 +2118,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
-                                                                                 : AS4DumpManager.getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager
+                                                                                                                     .getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else
