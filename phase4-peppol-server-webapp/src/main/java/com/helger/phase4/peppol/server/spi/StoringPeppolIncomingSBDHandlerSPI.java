@@ -35,6 +35,7 @@ import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.utils.PeppolCertificateHelper;
+import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Property;
@@ -46,6 +47,7 @@ import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletMessageProcessorSPI;
+import com.helger.photon.io.PhotonWorkerPool;
 
 /**
  * Logging implementation of {@link IPhase4PeppolIncomingSBDHandlerSPI}.
@@ -104,20 +106,23 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
     }
 
     // Last action in this method
-    new Thread ( () -> {
-      // TODO If you have a way to determine the real end user of the message
-      // here, this might be a good opportunity to store the data for Peppol
-      // Reporting (do this asynchronously as the last activity)
-      // Note: this is a separate thread so that it does not block the sending
-      // of the positive receipt message
+    PhotonWorkerPool.getInstance ().run (CAS4.LIB_NAME + " Handle Peppol Reporting for Peppol incoming message", () -> {
+      // TODO If you have a way to determine the real end user
+      // of the message here, this might be a good opportunity
+      // to store the data for Peppol Reporting (do this
+      // asynchronously as the last activity)
+      // Note: this is a separate thread so that it does not
+      // block the sending of the positive receipt message
 
-      // TODO Peppol Reporting - enable if possible to be done in here
+      // TODO Peppol Reporting - enable if possible to be done
+      // in here
       if (false)
         try
         {
           LOGGER.info ("Creating Peppol Reporting Item and storing it");
 
-          // TODO determine correct values for the next three fields
+          // TODO determine correct values for the next three
+          // fields
           final String sC3ID = sMyPeppolSeatID;
           final String sC4CountryCode = "AT";
           final String sEndUserID = "EndUserID";
@@ -137,6 +142,6 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
           LOGGER.error ("Failed to store Peppol Reporting Item", ex);
           // TODO improve error handling
         }
-    }).start ();
+    });
   }
 }
