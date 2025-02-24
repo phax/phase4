@@ -213,22 +213,22 @@ public final class Phase4BDEWSender
 
       if (m_aPayloadParams != null)
       {
-        if (m_aPayloadParams.getDocumentType () != null)
+        if (m_aPayloadParams.getDocumentType () != null && !m_aPayloadParams.getDocumentType ().isEmpty ())
           aPayloadAttachment.customPartProperties ().put ("BDEWDocumentType", m_aPayloadParams.getDocumentType ());
         if (m_aPayloadParams.getDocumentDate () != null)
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWDocumentDate", m_aPayloadParams.getDocumentDate ().toString ());
-        if (m_aPayloadParams.getDocumentNumber () != null)
+        if (m_aPayloadParams.getDocumentNumber () != null && !m_aPayloadParams.getDocumentNumber ().isEmpty ())
           aPayloadAttachment.customPartProperties ().put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ());
         if (m_aPayloadParams.getFulfillmentDate () != null)
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWFulfillmentDate", m_aPayloadParams.getFulfillmentDate ().toString ());
-        if (m_aPayloadParams.getSubjectPartyId () != null)
+        if (m_aPayloadParams.getSubjectPartyId () != null && !m_aPayloadParams.getSubjectPartyId ().isEmpty ())
           aPayloadAttachment.customPartProperties ().put ("BDEWSubjectPartyID", m_aPayloadParams.getSubjectPartyId ());
-        if (m_aPayloadParams.getSubjectPartyRole () != null)
+        if (m_aPayloadParams.getSubjectPartyRole () != null && !m_aPayloadParams.getSubjectPartyRole ().isEmpty ())
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWSubjectPartyRole", m_aPayloadParams.getSubjectPartyRole ());
-        if (m_aPayloadParams.getApplicationReference () != null)
+        if (m_aPayloadParams.getApplicationReference () != null && !m_aPayloadParams.getApplicationReference ().isEmpty ())
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWApplicationReference", m_aPayloadParams.getApplicationReference ());
       }
