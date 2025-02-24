@@ -31,6 +31,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -213,22 +214,28 @@ public final class Phase4BDEWSender
 
       if (m_aPayloadParams != null)
       {
-        if (m_aPayloadParams.getDocumentType () != null && !m_aPayloadParams.getDocumentType ().isEmpty ())
+        if (StringHelper.hasText (m_aPayloadParams.getDocumentType ()))
           aPayloadAttachment.customPartProperties ().put ("BDEWDocumentType", m_aPayloadParams.getDocumentType ());
+
         if (m_aPayloadParams.getDocumentDate () != null)
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWDocumentDate", m_aPayloadParams.getDocumentDate ().toString ());
-        if (m_aPayloadParams.getDocumentNumber () != null && !m_aPayloadParams.getDocumentNumber ().isEmpty ())
+
+        if (StringHelper.hasText (m_aPayloadParams.getDocumentNumber ()))
           aPayloadAttachment.customPartProperties ().put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ());
+
         if (m_aPayloadParams.getFulfillmentDate () != null)
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWFulfillmentDate", m_aPayloadParams.getFulfillmentDate ().toString ());
-        if (m_aPayloadParams.getSubjectPartyId () != null && !m_aPayloadParams.getSubjectPartyId ().isEmpty ())
+
+        if (StringHelper.hasText (m_aPayloadParams.getSubjectPartyId ()))
           aPayloadAttachment.customPartProperties ().put ("BDEWSubjectPartyID", m_aPayloadParams.getSubjectPartyId ());
-        if (m_aPayloadParams.getSubjectPartyRole () != null && !m_aPayloadParams.getSubjectPartyRole ().isEmpty ())
+
+        if (StringHelper.hasText (m_aPayloadParams.getSubjectPartyRole ()))
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWSubjectPartyRole", m_aPayloadParams.getSubjectPartyRole ());
-        if (m_aPayloadParams.getApplicationReference () != null && !m_aPayloadParams.getApplicationReference ().isEmpty ())
+
+        if (StringHelper.hasText (m_aPayloadParams.getApplicationReference ()))
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWApplicationReference", m_aPayloadParams.getApplicationReference ());
       }
