@@ -318,7 +318,7 @@ public final class Phase4PeppolSender
     {
       final String sMsg = "The configured receiver AP certificate is not valid (at " +
                           aNow +
-                          ") and cannot be used for sending. Aborting. Reason: " +
+                          ") and cannot be used for sending towards. Aborting. Reason: " +
                           eCertCheckResult.getReason ();
       LOGGER.error (sMsg);
       throw new Phase4PeppolException (sMsg);
