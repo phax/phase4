@@ -94,7 +94,8 @@ public final class APIGetCreateEUSR extends AbstractVerifyingAPIExecutor
                         .setMimeType (CMimeType.APPLICATION_XML)
                         .disableCaching ();
       }
-      throw new IllegalStateException ("Failed to read Peppol Reporting backend data");
+      else
+        throw new IllegalStateException ("Failed to read Peppol Reporting backend data");
     }
     catch (final PeppolReportingBackendException ex)
     {
