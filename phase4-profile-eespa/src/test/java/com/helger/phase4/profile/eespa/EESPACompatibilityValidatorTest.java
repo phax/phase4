@@ -55,9 +55,8 @@ import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
 /**
- * All essentials need to be set and need to be not null since they are getting
- * checked, when a PMode is introduced into the system and these null checks
- * would be redundant in the profiles.
+ * All essentials need to be set and need to be not null since they are getting checked, when a
+ * PMode is introduced into the system and these null checks would be redundant in the profiles.
  *
  * @author Philip Helger
  */
@@ -147,8 +146,7 @@ public final class EESPACompatibilityValidatorTest
   @Test
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com",
-                                                          ESoapVersion.SOAP_11),
+    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11),
                                     null,
                                     null,
                                     null,
@@ -247,7 +245,6 @@ public final class EESPACompatibilityValidatorTest
                                                 .contains (ECryptoAlgorithmCrypt.AES_256_GCM.getID ())));
   }
 
-  @SuppressWarnings ("deprecation")
   @Test
   public void testValidatePModeSecurityWrongWSSVersion ()
   {
