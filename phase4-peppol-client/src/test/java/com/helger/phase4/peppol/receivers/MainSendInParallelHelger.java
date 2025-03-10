@@ -43,7 +43,7 @@ public class MainSendInParallelHelger
       final StopWatch aSW = StopWatch.createdStarted ();
       final ExecutorService aES = Executors.newFixedThreadPool (10);
 
-      for (int i = 0; i < 50; ++i)
+      for (int i = 0; i < 1_000; ++i)
         aES.submit (MainPhase4PeppolSenderHelger::send);
 
       aES.shutdown ();

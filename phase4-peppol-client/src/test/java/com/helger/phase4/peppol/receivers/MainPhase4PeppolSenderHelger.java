@@ -32,12 +32,10 @@ import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageBuilder;
-import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.sender.IAS4RawResponseConsumer;
 import com.helger.phase4.sender.IAS4SignalMessageValidationResultHandler;
 import com.helger.phase4.sender.LoggingAS4SignalMsgValidationResultHandler;
-import com.helger.phive.peppol.PeppolValidation2024_05;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -94,13 +92,11 @@ public final class MainPhase4PeppolSenderHelger
                                                                                                      aReceiverID,
                                                                                                      ESML.DIGIT_TEST))
                                                                   .checkReceiverAPCertificate (true)
-                                                                  .validationConfiguration (PeppolValidation2024_05.VID_OPENPEPPOL_INVOICE_UBL_V3,
-                                                                                            new Phase4PeppolValidatonResultHandler ())
+                                                                  .disableValidation ()
                                                                   .buildMessageCallback (aBuildMessageCallback)
                                                                   .signalMsgValidationResultHdl (aSignalMsgValidationResultHdl)
                                                                   .rawResponseConsumer (aRRC);
-      final EAS4UserMessageSendResult eResult;
-      eResult = aBuilder.sendMessageAndCheckForReceipt ();
+      final EAS4UserMessageSendResult eResult = aBuilder.sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
 
       if (eResult.isSuccess ())
