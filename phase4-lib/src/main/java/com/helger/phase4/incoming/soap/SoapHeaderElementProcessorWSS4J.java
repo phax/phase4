@@ -195,11 +195,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       if (false)
         aRequestData.setEnableRevocation (true);
 
-      // TODO workaround to avoid the warning (if CRL checking is enabled)
-      // No Subject DN Certificate Constraints were defined. This could be a
-      // security issue
-      if (false)
-        aRequestData.setSubjectCertConstraints (new CommonsArrayList <> (RegExCache.getPattern (".*")));
+      aRequestData.setSubjectCertConstraints (m_aCryptoFactorySign.getSignatureSubjectCertConstraints());
 
       if (m_aDecryptParameterModifier != null)
       {

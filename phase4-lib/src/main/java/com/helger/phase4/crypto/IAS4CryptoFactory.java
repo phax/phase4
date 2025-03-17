@@ -17,10 +17,14 @@
 package com.helger.phase4.crypto;
 
 import java.security.KeyStore;
+import java.util.Collection;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.regex.RegExCache;
 import org.apache.wss4j.common.crypto.Crypto;
 
 /**
@@ -102,4 +106,16 @@ public interface IAS4CryptoFactory
    */
   @Nullable
   KeyStore getTrustStore ();
+
+  /**
+   * Returns the signature subject certificate constraints as regular expressions
+   *
+   * @return The signature subject certificate constraints as regular expressions
+   * @since 3.0.7
+   */
+  default Collection<Pattern> getSignatureSubjectCertConstraints ()
+  {
+    return new CommonsArrayList<>(RegExCache.getPattern (".*"));
+  }
+
 }
