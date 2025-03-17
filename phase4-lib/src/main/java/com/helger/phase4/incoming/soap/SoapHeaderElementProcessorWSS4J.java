@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -195,7 +197,11 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       if (false)
         aRequestData.setEnableRevocation (true);
 
-      aRequestData.setSubjectCertConstraints (m_aCryptoFactorySign.getSignatureSubjectCertConstraints());
+      Collection<Pattern> signatureSubjectCertConstraints = m_aCryptoFactorySign.getSignatureSubjectCertConstraints();
+      if (signatureSubjectCertConstraints != null)
+      {
+        aRequestData.setSubjectCertConstraints (signatureSubjectCertConstraints);
+      }
 
       if (m_aDecryptParameterModifier != null)
       {
