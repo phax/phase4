@@ -16,12 +16,13 @@
  */
 package com.helger.phase4.crypto;
 
-import java.security.KeyStore;
+import org.apache.wss4j.common.crypto.Crypto;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.apache.wss4j.common.crypto.Crypto;
+import java.security.KeyStore;
+import java.util.Collection;
+import java.util.regex.Pattern;
 
 /**
  * The basic phase4 crypto interface.
@@ -102,4 +103,17 @@ public interface IAS4CryptoFactory
    */
   @Nullable
   KeyStore getTrustStore ();
+
+  /**
+   * Returns the signature subject certificate constraints as regular expressions
+   *
+   * @return The signature subject certificate constraints as regular expressions or <code>null</code> if no checks should be performed.
+   * @since 3.0.7
+   */
+  @Nullable
+  default Collection<Pattern> getSignatureSubjectCertConstraints ()
+  {
+    return null;
+  }
+
 }
