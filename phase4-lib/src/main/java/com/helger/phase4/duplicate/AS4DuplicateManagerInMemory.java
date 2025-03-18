@@ -35,6 +35,7 @@ import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.state.EChange;
 import com.helger.commons.state.EContinue;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.string.ToStringGenerator;
 
 /**
  * This is the duplicate checker for avoiding duplicate messages.
@@ -142,5 +143,11 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   public ICommonsList <IAS4DuplicateItem> getAll ()
   {
     return m_aRWLock.readLockedGet ( () -> new CommonsArrayList <> (m_aMap.values ()));
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (null).append ("Map", m_aMap).getToString ();
   }
 }
