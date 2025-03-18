@@ -343,6 +343,21 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   }
 
   /**
+   * Sets the signature subject certificate constraints as regular expressions.
+   *
+   * @param aSubjectCertConstraints
+   *        The array of regular expression patterns to check. May be <code>null</code> or empty.
+   * @return this for chaining
+   * @since 3.0.7
+   */
+  @Nonnull
+  public final AS4SigningParams setSubjectCertConstraints (@Nullable final Pattern... aSubjectCertConstraints)
+  {
+    return setSubjectCertConstraints (aSubjectCertConstraints == null || aSubjectCertConstraints.length == 0 ? null
+                                                                                                             : new CommonsArrayList <> (aSubjectCertConstraints));
+  }
+
+  /**
    * This method calls {@link #setAlgorithmSign(ECryptoAlgorithmSign)} and
    * {@link #setAlgorithmSignDigest(ECryptoAlgorithmSignDigest)} based on the PMode parameters. If
    * the PMode parameter is <code>null</code> both values will be set to <code>null</code>.
