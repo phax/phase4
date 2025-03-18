@@ -16,48 +16,18 @@
  */
 package com.helger.phase4.incoming.soap;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.Provider;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.xml.namespace.QName;
-
-import org.apache.wss4j.common.crypto.AlgorithmSuite;
-import org.apache.wss4j.common.ext.WSSecurityException;
-import org.apache.wss4j.common.util.AttachmentUtils;
-import org.apache.wss4j.dom.WSConstants;
-import org.apache.wss4j.dom.engine.WSSConfig;
-import org.apache.wss4j.dom.engine.WSSecurityEngine;
-import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
-import org.apache.wss4j.dom.handler.RequestData;
-import org.apache.wss4j.dom.handler.WSHandlerResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.regex.RegExCache;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.ECryptoMode;
@@ -72,6 +42,33 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.phase4.wss.WSSSynchronizer;
 import com.helger.xml.XMLHelper;
+import org.apache.wss4j.common.crypto.AlgorithmSuite;
+import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.common.util.AttachmentUtils;
+import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.dom.engine.WSSConfig;
+import org.apache.wss4j.dom.engine.WSSecurityEngine;
+import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
+import org.apache.wss4j.dom.handler.RequestData;
+import org.apache.wss4j.dom.handler.WSHandlerResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.xml.namespace.QName;
+import java.io.File;
+import java.io.IOException;
+import java.security.Provider;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 /**
  * This class manages the WSS4J SOAP header
@@ -91,12 +88,14 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
   private final Provider m_aSecurityProviderSignVerify;
   private final Supplier <? extends IPMode> m_aFallbackPModeProvider;
   private final IAS4DecryptParameterModifier m_aDecryptParameterModifier;
+  private final AS4SigningParams m_aSigningParams;
 
-  public SoapHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+    public SoapHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                           @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                           @Nullable final Provider aSecurityProviderSignVerify,
                                           @Nonnull final Supplier <? extends IPMode> aFallbackPModeProvider,
-                                          @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier)
+                                          @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier,
+                                          @Nullable final AS4SigningParams aSigningParams)
   {
     ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
     ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
@@ -106,6 +105,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
     m_aSecurityProviderSignVerify = aSecurityProviderSignVerify;
     m_aFallbackPModeProvider = aFallbackPModeProvider;
     m_aDecryptParameterModifier = aDecryptParameterModifier;
+    m_aSigningParams = aSigningParams;
   }
 
   @SuppressWarnings ("removal")
@@ -197,7 +197,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       if (false)
         aRequestData.setEnableRevocation (true);
 
-      Collection<Pattern> signatureSubjectCertConstraints = m_aCryptoFactorySign.getSignatureSubjectCertConstraints();
+      Collection<Pattern> signatureSubjectCertConstraints = m_aSigningParams.getSubjectCertConstraints();
       if (signatureSubjectCertConstraints != null)
       {
         aRequestData.setSubjectCertConstraints (signatureSubjectCertConstraints);
