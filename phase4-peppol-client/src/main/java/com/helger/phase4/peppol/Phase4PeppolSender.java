@@ -42,7 +42,6 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
-import com.helger.commons.regex.RegExCache;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
@@ -414,7 +413,7 @@ public final class Phase4PeppolSender
 
         // Peppol uses its own root certificate, so no checks needed - this is only to quiet the
         // warning
-        signingParams ().setSubjectCertConstraints (RegExCache.getPattern ("^.+$"));
+        signingParams ().setSubjectCertConstraints (PeppolPMode.CERTIFICATE_SUBJECT_CONSTRAINT_PATTERN);
       }
       catch (final Exception ex)
       {

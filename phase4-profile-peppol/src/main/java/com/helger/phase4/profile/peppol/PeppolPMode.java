@@ -16,11 +16,14 @@
  */
 package com.helger.phase4.profile.peppol;
 
+import java.util.regex.Pattern;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.regex.RegExCache;
 import com.helger.commons.state.ETriState;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
@@ -54,6 +57,7 @@ public final class PeppolPMode
 {
   public static final String DEFAULT_AGREEMENT_ID = "urn:fdc:peppol.eu:2017:agreements:tia:ap_provider";
   public static final String DEFAULT_PARTY_TYPE_ID = "urn:fdc:peppol.eu:2017:identifiers:ap";
+  public static final Pattern CERTIFICATE_SUBJECT_CONSTRAINT_PATTERN = RegExCache.getPattern ("^.+$");
 
   private PeppolPMode ()
   {}
@@ -166,8 +170,8 @@ public final class PeppolPMode
    * @param aPModeIDProvider
    *        PMode ID provider. May not be <code>null</code>.
    * @param bPersist
-   *        <code>true</code> to persist the PMode in the PModeManager,
-   *        <code>false</code> to have it only in memory.
+   *        <code>true</code> to persist the PMode in the PModeManager, <code>false</code> to have
+   *        it only in memory.
    * @return New PMode and never <code>null</code>.
    */
   @Nonnull
