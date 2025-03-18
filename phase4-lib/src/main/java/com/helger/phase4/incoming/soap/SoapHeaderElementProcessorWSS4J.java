@@ -16,6 +16,35 @@
  */
 package com.helger.phase4.incoming.soap;
 
+import java.io.File;
+import java.io.IOException;
+import java.security.Provider;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.xml.namespace.QName;
+
+import org.apache.wss4j.common.crypto.AlgorithmSuite;
+import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.common.util.AttachmentUtils;
+import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.dom.engine.WSSConfig;
+import org.apache.wss4j.dom.engine.WSSecurityEngine;
+import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
+import org.apache.wss4j.dom.handler.RequestData;
+import org.apache.wss4j.dom.handler.WSHandlerResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.file.FileHelper;
@@ -42,33 +71,6 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.phase4.wss.WSSSynchronizer;
 import com.helger.xml.XMLHelper;
-import org.apache.wss4j.common.crypto.AlgorithmSuite;
-import org.apache.wss4j.common.ext.WSSecurityException;
-import org.apache.wss4j.common.util.AttachmentUtils;
-import org.apache.wss4j.dom.WSConstants;
-import org.apache.wss4j.dom.engine.WSSConfig;
-import org.apache.wss4j.dom.engine.WSSecurityEngine;
-import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
-import org.apache.wss4j.dom.handler.RequestData;
-import org.apache.wss4j.dom.handler.WSHandlerResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.IOException;
-import java.security.Provider;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
 
 /**
  * This class manages the WSS4J SOAP header
@@ -90,7 +92,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
   private final IAS4DecryptParameterModifier m_aDecryptParameterModifier;
   private final AS4SigningParams m_aSigningParams;
 
-    public SoapHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
+  public SoapHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                           @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                           @Nullable final Provider aSecurityProviderSignVerify,
                                           @Nonnull final Supplier <? extends IPMode> aFallbackPModeProvider,
@@ -197,10 +199,14 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       if (false)
         aRequestData.setEnableRevocation (true);
 
-      Collection<Pattern> signatureSubjectCertConstraints = m_aSigningParams.getSubjectCertConstraints();
-      if (signatureSubjectCertConstraints != null)
+      final Collection <Pattern> aSignatureSubjectCertConstraints = m_aSigningParams != null &&
+                                                                    m_aSigningParams.hasSubjectCertConstraints () ? m_aSigningParams.getAllSubjectCertConstraints ()
+                                                                                                                  : null;
+      if (aSignatureSubjectCertConstraints != null)
       {
-        aRequestData.setSubjectCertConstraints (signatureSubjectCertConstraints);
+        if (LOGGER.isTraceEnabled ())
+          LOGGER.trace ("Applying setSubjectCertConstraints");
+        aRequestData.setSubjectCertConstraints (aSignatureSubjectCertConstraints);
       }
 
       if (m_aDecryptParameterModifier != null)

@@ -16,20 +16,22 @@
  */
 package com.helger.phase4.crypto;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.lang.ICloneable;
-import com.helger.commons.string.ToStringGenerator;
-import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
+import java.security.Provider;
+import java.util.Collection;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.NotThreadSafe;
-import java.security.Provider;
-import java.util.Collection;
-import java.util.regex.Pattern;
+
+import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.lang.ICloneable;
+import com.helger.commons.string.ToStringGenerator;
+import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 
 /**
  * AS4 signing parameters
@@ -52,7 +54,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   private Provider m_aSecurityProviderVerify;
   private boolean m_bUseSingleCertificate = DEFAULT_USE_SINGLE_CERTIFICATE;
   private IWSSecSignatureCustomizer m_aWSSecSignatureCustomizer;
-  private Collection<Pattern> m_aSubjectCertConstraints;
+  private Collection <Pattern> m_aSubjectCertConstraints;
 
   public AS4SigningParams ()
   {}
@@ -76,8 +78,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   }
 
   /**
-   * Set the key identifier type to use. That defines how the information about
-   * the signing certificate is transmitted.
+   * Set the key identifier type to use. That defines how the information about the signing
+   * certificate is transmitted.
    *
    * @param eKeyIdentifierType
    *        The key identifier type to use. May not be <code>null</code>.
@@ -153,15 +155,12 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   }
 
   /**
-   * Set the canonicalization algorithm to be used. By default "Exclusive
-   * without comments" is used as suggested by the WS Security SOAP Message
-   * Security Version 1.1.1 spec, chapter 8.1.<br>
-   * Source:
-   * http://docs.oasis-open.org/wss-m/wss/v1.1.1/wss-SOAPMessageSecurity-v1.1.1.doc
+   * Set the canonicalization algorithm to be used. By default "Exclusive without comments" is used
+   * as suggested by the WS Security SOAP Message Security Version 1.1.1 spec, chapter 8.1.<br>
+   * Source: http://docs.oasis-open.org/wss-m/wss/v1.1.1/wss-SOAPMessageSecurity-v1.1.1.doc
    *
    * @param eAlgorithmC14N
-   *        the canonicalization algorithm that should be set. May not be
-   *        <code>null</code>.
+   *        the canonicalization algorithm that should be set. May not be <code>null</code>.
    * @return this for chaining
    * @since 0.10.6
    */
@@ -174,8 +173,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   }
 
   /**
-   * @return The security provider for signing (not for verification) to be
-   *         used. May be <code>null</code>.
+   * @return The security provider for signing (not for verification) to be used. May be
+   *         <code>null</code>.
    * @since 2.4.0
    */
   @Nullable
@@ -200,8 +199,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   }
 
   /**
-   * @return The security provider for verification (not for signing) to be
-   *         used. May be <code>null</code>.
+   * @return The security provider for verification (not for signing) to be used. May be
+   *         <code>null</code>.
    * @since 2.4.0
    */
   @Nullable
@@ -240,8 +239,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   }
 
   /**
-   * @return <code>true</code> to use the BST ValueType "#X509v3",
-   *         <code>false</code> to use the BST value type "#X509PKIPathv1".
+   * @return <code>true</code> to use the BST ValueType "#X509v3", <code>false</code> to use the BST
+   *         value type "#X509PKIPathv1".
    * @since 2.1.5
    */
   public final boolean isUseSingleCertificate ()
@@ -254,8 +253,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * {@value #DEFAULT_USE_SINGLE_CERTIFICATE}.
    *
    * @param bUseSingleCertificate
-   *        <code>true</code> maps to "#X509v3" (e.g. for Peppol) and
-   *        <code>false</code> maps to "#X509PKIPathv1".
+   *        <code>true</code> maps to "#X509v3" (e.g. for Peppol) and <code>false</code> maps to
+   *        "#X509PKIPathv1".
    * @return this for chaining
    * @since 2.1.5
    */
@@ -285,46 +284,68 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   }
 
   /**
-   * Sets the signature subject certificate constraints as regular expressions
-   *
-   * @return this for chaining
-   * @since 3.0.7
-   */
-  @Nonnull
-  public final AS4SigningParams setSubjectCertConstraints (@Nullable final Collection<Pattern> subjectCertConstraints)
-  {
-    m_aSubjectCertConstraints = subjectCertConstraints;
-    return this;
-  }
-
-  /**
    * Returns the signature subject certificate constraints as regular expressions
    *
-   * @return The signature subject certificate constraints as regular expressions or <code>null</code> if no checks should be performed.
+   * @return The signature subject certificate constraints as regular expressions or
+   *         <code>null</code> if no checks should be performed.
    * @since 3.0.7
    */
   @Nullable
-  public final Collection<Pattern> getSubjectCertConstraints ()
+  @ReturnsMutableObject
+  public final Collection <Pattern> getSubjectCertConstraints ()
   {
     return m_aSubjectCertConstraints;
   }
 
   /**
-   * Returns wether signature subject certificate constraints exists
+   * Returns the signature subject certificate constraints as regular expressions
    *
-   * @return Returns <code>true</false> if signature subject certificate constraints exists, <code>false</false> otherwise.
+   * @return The signature subject certificate constraints as regular expressions as a copy. Never
+   *         <code>null</code>.
+   * @since 3.0.7
+   */
+  @Nonnull
+  @ReturnsMutableCopy
+  public final Collection <Pattern> getAllSubjectCertConstraints ()
+  {
+    // Create a copy
+    return new CommonsArrayList <> (m_aSubjectCertConstraints);
+  }
+
+  /**
+   * Returns whether signature subject certificate constraints exists
+   *
+   * @return Returns <code>true</false> if signature subject certificate constraints exists,
+   *         <code>false</false> otherwise.
    * @since 3.0.7
    */
   public final boolean hasSubjectCertConstraints ()
   {
-    return m_aSubjectCertConstraints != null;
+    return m_aSubjectCertConstraints != null && !m_aSubjectCertConstraints.isEmpty ();
+  }
+
+  /**
+   * Sets the signature subject certificate constraints as regular expressions.<br>
+   * Please note: {@link Pattern} does not implement equals/hashCode, so using a Set as a parameter
+   * is not really helpful. However, please make sure to add each pattern only once.
+   *
+   * @param aSubjectCertConstraints
+   *        The collection of regular expression patterns to check. May be <code>null</code> or
+   *        empty.
+   * @return this for chaining
+   * @since 3.0.7
+   */
+  @Nonnull
+  public final AS4SigningParams setSubjectCertConstraints (@Nullable final Collection <Pattern> aSubjectCertConstraints)
+  {
+    m_aSubjectCertConstraints = aSubjectCertConstraints;
+    return this;
   }
 
   /**
    * This method calls {@link #setAlgorithmSign(ECryptoAlgorithmSign)} and
-   * {@link #setAlgorithmSignDigest(ECryptoAlgorithmSignDigest)} based on the
-   * PMode parameters. If the PMode parameter is <code>null</code> both values
-   * will be set to <code>null</code>.
+   * {@link #setAlgorithmSignDigest(ECryptoAlgorithmSignDigest)} based on the PMode parameters. If
+   * the PMode parameter is <code>null</code> both values will be set to <code>null</code>.
    *
    * @param aSecurity
    *        The PMode security stuff to use. May be <code>null</code>.
@@ -385,8 +406,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   }
 
   /**
-   * @return A non-<code>null</code> {@link AS4SigningParams} object with
-   *         default values assigned.
+   * @return A non-<code>null</code> {@link AS4SigningParams} object with default values assigned.
    * @see #setAlgorithmSign(ECryptoAlgorithmSign)
    * @see #setAlgorithmSignDigest(ECryptoAlgorithmSignDigest)
    * @see #setAlgorithmC14N(ECryptoAlgorithmC14N)
