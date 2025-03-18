@@ -138,7 +138,8 @@ public class SoapHeaderElementProcessorRegistry
                                                                              aCryptoFactoryCrypt,
                                                                              aSecurityProviderSignVerify,
                                                                              aFallbackPModeProvider,
-                                                                             aDecryptParameterModifier));
+                                                                             aDecryptParameterModifier,
+                                                                             aSigningParams));
     return ret;
   }
 }

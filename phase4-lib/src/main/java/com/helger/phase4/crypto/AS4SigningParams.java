@@ -16,19 +16,20 @@
  */
 package com.helger.phase4.crypto;
 
-import java.security.Provider;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.lang.ICloneable;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
+import javax.annotation.concurrent.NotThreadSafe;
+import java.security.Provider;
+import java.util.Collection;
+import java.util.regex.Pattern;
 
 /**
  * AS4 signing parameters
@@ -51,6 +52,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   private Provider m_aSecurityProviderVerify;
   private boolean m_bUseSingleCertificate = DEFAULT_USE_SINGLE_CERTIFICATE;
   private IWSSecSignatureCustomizer m_aWSSecSignatureCustomizer;
+  private Collection<Pattern> m_aSubjectCertConstraints;
 
   public AS4SigningParams ()
   {}
@@ -280,6 +282,42 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   {
     m_aWSSecSignatureCustomizer = a;
     return this;
+  }
+
+  /**
+   * Sets the signature subject certificate constraints as regular expressions
+   *
+   * @return this for chaining
+   * @since 3.0.7
+   */
+  @Nonnull
+  public final AS4SigningParams setSubjectCertConstraints (@Nullable final Collection<Pattern> subjectCertConstraints)
+  {
+    m_aSubjectCertConstraints = subjectCertConstraints;
+    return this;
+  }
+
+  /**
+   * Returns the signature subject certificate constraints as regular expressions
+   *
+   * @return The signature subject certificate constraints as regular expressions or <code>null</code> if no checks should be performed.
+   * @since 3.0.7
+   */
+  @Nullable
+  public final Collection<Pattern> getSubjectCertConstraints ()
+  {
+    return m_aSubjectCertConstraints;
+  }
+
+  /**
+   * Returns wether signature subject certificate constraints exists
+   *
+   * @return Returns <code>true</false> if signature subject certificate constraints exists, <code>false</false> otherwise.
+   * @since 3.0.7
+   */
+  public final boolean hasSubjectCertConstraints ()
+  {
+    return m_aSubjectCertConstraints != null;
   }
 
   /**
