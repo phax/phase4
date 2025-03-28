@@ -43,6 +43,7 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
+import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.http.HttpHeaderMap;
@@ -742,12 +743,27 @@ public final class AS4IncomingHandler
                                                   aIncomingState.getSigningCertificate (),
                                                   aMessageMetadata,
                                                   aErrorList);
-            if (aErrorList.isNotEmpty ())
+            if (aErrorList.containsAtLeastOneError ())
             {
-              throw new Phase4Exception ("Error validating incoming AS4 UserMessage with the profile " +
-                                         aProfile.getDisplayName () +
-                                         "\n following errors are present: " +
-                                         aErrorList.getAllErrors ().getAllTexts (aLocale));
+              LOGGER.error ("Error validating incoming AS4 UserMessage with the profile '" +
+                            aProfile.getDisplayName () +
+                            "'");
+
+              for (final IError aError : aErrorList)
+              {
+                final String sDetails = aError.getAsString (aLocale);
+                if (aError.isError ())
+                {
+                  LOGGER.error (sDetails);
+                  aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.errorBuilder (aLocale)
+                                                                                        .refToMessageInError (aIncomingState.getMessageID ())
+                                                                                        .errorDetail (sDetails,
+                                                                                                      aError.getLinkedException ())
+                                                                                        .build ());
+                }
+                else
+                  LOGGER.warn (sDetails);
+              }
             }
           }
           else
@@ -783,12 +799,26 @@ public final class AS4IncomingHandler
             if (aPMode != null)
               aValidator.validatePMode (aPMode, aErrorList, EAS4ProfileValidationMode.SIGNAL_MESSAGE);
             aValidator.validateSignalMessage (aEbmsSignalMessage, aErrorList);
-            if (aErrorList.isNotEmpty ())
+            if (aErrorList.containsAtLeastOneError ())
             {
-              throw new Phase4Exception ("Error validating incoming AS4 SignalMessage with the profile " +
-                                         aProfile.getDisplayName () +
-                                         "\n following errors are present: " +
-                                         aErrorList.getAllErrors ().getAllTexts (aLocale));
+              LOGGER.error ("Error validating incoming AS4 SignalMessage with the profile '" +
+                            aProfile.getDisplayName () +
+                            "'");
+
+              for (final IError aError : aErrorList)
+              {
+                final String sDetails = aError.getAsString (aLocale);
+                if (aError.isError ())
+                {
+                  LOGGER.error (sDetails);
+                  aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.errorBuilder (aLocale)
+                                                                                        .refToMessageInError (aIncomingState.getMessageID ())
+                                                                                        .errorDetail (sDetails)
+                                                                                        .build ());
+                }
+                else
+                  LOGGER.warn (sDetails);
+              }
             }
           }
           else
