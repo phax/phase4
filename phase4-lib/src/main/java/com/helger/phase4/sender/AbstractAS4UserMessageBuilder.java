@@ -92,7 +92,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    */
   protected AbstractAS4UserMessageBuilder ()
   {
-    super ();
     // No additional default values here
   }
 
@@ -153,10 +152,9 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set the "Service" value consisting of type and value. It's optional. If the
-   * "Service" value is not set, it the "service type" defaults to the "process
-   * identifier scheme" and the "service value" defaults to the "process
-   * identifier value".
+   * Set the "Service" value consisting of type and value. It's optional. If the "Service" value is
+   * not set, it the "service type" defaults to the "process identifier scheme" and the "service
+   * value" defaults to the "process identifier value".
    *
    * @param sServiceType
    *        Service type. May be <code>null</code>.
@@ -183,8 +181,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set the "Action" value. It's optional. If the "Action" value is not set, it
-   * defaults to the "document type identifier value" (URI encoded).
+   * Set the "Action" value. It's optional. If the "Action" value is not set, it defaults to the
+   * "document type identifier value" (URI encoded).
    *
    * @param sAction
    *        Action value. May be <code>null</code>.
@@ -425,12 +423,11 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set the optional AS4 conversation ID. If this field is not set, a random
-   * conversation ID is created.
+   * Set the optional AS4 conversation ID. If this field is not set, a random conversation ID is
+   * created.
    *
    * @param sConversationID
-   *        The optional AS4 conversation ID to be used. May be
-   *        <code>null</code>.
+   *        The optional AS4 conversation ID to be used. May be <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
@@ -511,13 +508,11 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set the receiver certificate used to encrypt the message with. This is the
-   * full certificate. This method overwrites any receiver certificate alias
-   * configuration (the later call "wins").
+   * Set the receiver certificate used to encrypt the message with. This is the full certificate.
+   * This method overwrites any receiver certificate alias configuration (the later call "wins").
    *
    * @param aCertificate
-   *        The certificate of the receiver to be used. May be
-   *        <code>null</code>.
+   *        The certificate of the receiver to be used. May be <code>null</code>.
    * @return this for chaining
    * @see #receiverCertificateAlias(String)
    */
@@ -532,14 +527,12 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set the receiver certificate alias into the CryptoFactory keystore used to
-   * encrypt the message with. This is only the alias or name of the entry. This
-   * method overwrites any receiver certificate configuration (the later call
-   * "wins").
+   * Set the receiver certificate alias into the CryptoFactory keystore used to encrypt the message
+   * with. This is only the alias or name of the entry. This method overwrites any receiver
+   * certificate configuration (the later call "wins").
    *
    * @param sAlias
-   *        The certificate alias of the receiver to be used. May be
-   *        <code>null</code>.
+   *        The certificate alias of the receiver to be used. May be <code>null</code>.
    * @return this for chaining
    * @see #receiverCertificate(X509Certificate)
    * @since 2.1.4
@@ -679,8 +672,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * @return <code>true</code> if the message is forced into the MIME format,
-   *         <code>false</code> otherwise.
+   * @return <code>true</code> if the message is forced into the MIME format, <code>false</code>
+   *         otherwise.
    * @since 3.0.0
    */
   @Nullable
@@ -693,8 +686,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * Enable the enforcement of packaging the AS4 user message in a MIME message.
    *
    * @param b
-   *        <code>true</code> to enforce it, <code>false</code> to make it
-   *        dynamic.
+   *        <code>true</code> to enforce it, <code>false</code> to make it dynamic.
    * @return this for chaining
    * @since 2.5.1
    */
@@ -706,8 +698,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * @return The optional Ebms3 Signal Message Consumer. May be
-   *         <code>null</code>.
+   * @return The optional Ebms3 Signal Message Consumer. May be <code>null</code>.
    * @since 3.0.0
    */
   @Nullable
@@ -717,9 +708,9 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set an optional Ebms3 Signal Message Consumer. If this consumer is set, the
-   * response is trying to be parsed as a Signal Message. This method is
-   * optional and must not be called prior to sending.
+   * Set an optional Ebms3 Signal Message Consumer. If this consumer is set, the response is trying
+   * to be parsed as a Signal Message. This method is optional and must not be called prior to
+   * sending.
    *
    * @param aSignalMsgConsumer
    *        The optional signal message consumer. May be <code>null</code>.
@@ -733,8 +724,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * @return The optional Ebms3 Signal Message validation result handled. May be
-   *         <code>null</code>.
+   * @return The optional Ebms3 Signal Message validation result handled. May be <code>null</code>.
    * @since 3.0.1
    */
   @Nullable
@@ -744,10 +734,9 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set an optional Ebms3 Signal Message validation result handler. This
-   * handler is invoked, after the synchronous signal message references were
-   * evaluated. This handler cannot modify any message flow - it is an
-   * informational callback only.
+   * Set an optional Ebms3 Signal Message validation result handler. This handler is invoked, after
+   * the synchronous signal message references were evaluated. This handler cannot modify any
+   * message flow - it is an informational callback only.
    *
    * @param aSignalMsgValidationResultHdl
    *        The optional signal message consumer. May be <code>null</code>.
@@ -843,12 +832,10 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * This method applies all builder parameters onto the user message, except
-   * the attachments.
+   * This method applies all builder parameters onto the user message, except the attachments.
    *
    * @param aUserMsg
-   *        The user message the parameters should be applied to. May not be
-   *        <code>null</code>.
+   *        The user message the parameters should be applied to. May not be <code>null</code>.
    */
   @OverridingMethodsMustInvokeSuper
   protected void applyToUserMessage (@Nonnull final AS4ClientUserMessage aUserMsg)
@@ -898,8 +885,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     if (StringHelper.hasText (m_sRefToMessageID))
       aUserMsg.setRefToMessageID (m_sRefToMessageID);
     // Empty conversation ID is okay
-    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID
-                                                          : MessageHelperMethods.createRandomConversationID ());
+    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID : MessageHelperMethods
+                                                                                                    .createRandomConversationID ());
 
     aUserMsg.setFromPartyIDType (m_sFromPartyIDType);
     aUserMsg.setFromPartyID (m_sFromPartyID);
@@ -916,14 +903,14 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * This is a sanity method that encapsulates all the sending checks that are
-   * necessary to determine overall sending success or error.<br>
-   * Note: this method is not thread-safe, because it changes the signal message
-   * consumer internally.
+   * This is a sanity method that encapsulates all the sending checks that are necessary to
+   * determine overall sending success or error.<br>
+   * Note: this method is not thread-safe, because it changes the signal message consumer
+   * internally.
    *
-   * @return {@link EAS4UserMessageSendResult#SUCCESS} only if all parameters
-   *         are correct, HTTP transmission was successful and if a positive AS4
-   *         Receipt was returned. Never <code>null</code>.
+   * @return {@link EAS4UserMessageSendResult#SUCCESS} only if all parameters are correct, HTTP
+   *         transmission was successful and if a positive AS4 Receipt was returned. Never
+   *         <code>null</code>.
    * @since 0.13.0
    */
   @Nonnull
@@ -934,32 +921,40 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * This is a sanity method that encapsulates all the sending checks that are
-   * necessary to determine overall sending success or error.<br>
-   * Note: this method is not thread-safe, because it changes the signal message
-   * consumer internally.
+   * This is a sanity method that encapsulates all the sending checks that are necessary to
+   * determine overall sending success or error.<br>
+   * Note: this method is not thread-safe, because it changes the signal message consumer
+   * internally.
    *
    * @param aExceptionConsumer
-   *        An optional Consumer that takes an eventually thrown
-   *        {@link Phase4Exception}. May be <code>null</code>.
-   * @return {@link EAS4UserMessageSendResult#SUCCESS} only if all parameters
-   *         are correct, HTTP transmission was successful and if a positive AS4
-   *         Receipt was returned. Never <code>null</code>.
+   *        An optional Consumer that takes an eventually thrown {@link Phase4Exception}. May be
+   *        <code>null</code>.
+   * @return {@link EAS4UserMessageSendResult#SUCCESS} only if all parameters are correct, HTTP
+   *         transmission was successful and if a positive AS4 Receipt was returned. Never
+   *         <code>null</code>.
    * @since 1.0.0-rc1
    */
   @Nonnull
   public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer)
   {
-    final IAS4SignalMessageConsumer aOld = m_aSignalMsgConsumer;
+    final IAS4SignalMessageConsumer aOriginalSignalMsgConsumer = m_aSignalMsgConsumer;
     try
     {
       // Store the received signal message
       final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
-      m_aSignalMsgConsumer = aOld == null ? (aSignalMsg, aMMD, aIncomingState) -> aSignalMsgKeeper.set (aSignalMsg)
-                                          : (aSignalMsg, aMMD, aIncomingState) -> {
-                                            aSignalMsgKeeper.set (aSignalMsg);
-                                            aOld.handleSignalMessage (aSignalMsg, aMMD, aIncomingState);
-                                          };
+      if (aOriginalSignalMsgConsumer == null)
+      {
+        // Just store the message
+        m_aSignalMsgConsumer = (aSignalMsg, aMMD, aIncomingState) -> aSignalMsgKeeper.set (aSignalMsg);
+      }
+      else
+      {
+        // Call the original handler and store the message
+        m_aSignalMsgConsumer = (aSignalMsg, aMMD, aIncomingState) -> {
+          aSignalMsgKeeper.set (aSignalMsg);
+          aOriginalSignalMsgConsumer.handleSignalMessage (aSignalMsg, aMMD, aIncomingState);
+        };
+      }
 
       // Main sending
       if (sendMessage ().isFailure ())
@@ -1013,7 +1008,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     finally
     {
       // Restore the original value
-      m_aSignalMsgConsumer = aOld;
+      m_aSignalMsgConsumer = aOriginalSignalMsgConsumer;
     }
   }
 }
