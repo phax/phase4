@@ -58,7 +58,6 @@ import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.IAS4RetryCallback;
-import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -119,9 +118,8 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletInputStream;
 
 /**
- * Process incoming AS4 transmissions. This class is responsible for handling
- * data in a provider independent way, only based on InputStream and
- * OutputStream.
+ * Process incoming AS4 transmissions. This class is responsible for handling data in a provider
+ * independent way, only based on InputStream and OutputStream.
  *
  * @author Martin Bayerl
  * @author Philip Helger
@@ -303,8 +301,7 @@ public class AS4RequestHandler implements AutoCloseable
      * Indicate that processing has finished.
      *
      * @param bWasSynchronous
-     *        <code>true</code> if it was synchronous, <code>false</code> if it
-     *        was asynchronous.
+     *        <code>true</code> if it was synchronous, <code>false</code> if it was asynchronous.
      */
     void onProcessingFinalized (boolean bWasSynchronous);
   }
@@ -433,8 +430,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The current AS4 profile selector for incoming messages. Never
-   *         <code>null</code>.
+   * @return The current AS4 profile selector for incoming messages. Never <code>null</code>.
    * @since 0.13.0
    */
   @Nonnull
@@ -460,8 +456,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The specific dumper for incoming messages. May be
-   *         <code>null</code>.
+   * @return The specific dumper for incoming messages. May be <code>null</code>.
    * @since v0.9.7
    */
   @Nullable
@@ -471,8 +466,8 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set the specific dumper for incoming messages. If none is set, the global
-   * incoming dumper is used.
+   * Set the specific dumper for incoming messages. If none is set, the global incoming dumper is
+   * used.
    *
    * @param aIncomingDumper
    *        The specific incoming dumper. May be <code>null</code>.
@@ -487,8 +482,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The specific dumper for outgoing messages. May be
-   *         <code>null</code>.
+   * @return The specific dumper for outgoing messages. May be <code>null</code>.
    * @since v0.9.9
    */
   @Nullable
@@ -498,8 +492,8 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set the specific dumper for outgoing messages. If none is set, the global
-   * outgoing dumper is used.
+   * Set the specific dumper for outgoing messages. If none is set, the global outgoing dumper is
+   * used.
    *
    * @param aOutgoingDumper
    *        The specific outgoing dumper. May be <code>null</code>.
@@ -514,8 +508,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The HTTP retry callback for outgoing messages. May be
-   *         <code>null</code>.
+   * @return The HTTP retry callback for outgoing messages. May be <code>null</code>.
    * @since v0.9.14
    */
   @Nullable
@@ -592,8 +585,8 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set an optional error consumer that is invoked with all errors determined
-   * during message processing. The consumed list MUST NOT be modified.<br>
+   * Set an optional error consumer that is invoked with all errors determined during message
+   * processing. The consumed list MUST NOT be modified.<br>
    * Note: the error consumer is ONLY called if the error list is non-empty.
    *
    * @param aErrorConsumer
@@ -609,8 +602,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @return The internal SOAP processing finalized callback. <code>null</code>
-   *         by default.
+   * @return The internal SOAP processing finalized callback. <code>null</code> by default.
    * @since 0.13.1
    */
   @Nullable
@@ -620,14 +612,13 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set the internal SOAP processing finalized callback. Only use when you know
-   * what you are doing. This callback is invoked both in the synchronous AND
-   * the asynchronous processing. A simple way to await the finalization could
-   * e.g. be a <code>java.util.concurrent.CountDownLatch</code>.
+   * Set the internal SOAP processing finalized callback. Only use when you know what you are doing.
+   * This callback is invoked both in the synchronous AND the asynchronous processing. A simple way
+   * to await the finalization could e.g. be a <code>java.util.concurrent.CountDownLatch</code>.
    *
    * @param aSoapProcessingFinalizedCB
-   *        The callback to be invoked. May be <code>null</code>. Only
-   *        non-<code>null</code> callbacks are invoked ;-)
+   *        The callback to be invoked. May be <code>null</code>. Only non-<code>null</code>
+   *        callbacks are invoked ;-)
    * @return this for chaining
    * @since 0.13.1
    */
@@ -644,14 +635,12 @@ public class AS4RequestHandler implements AutoCloseable
    * @param aHttpHeaders
    *        The received HTTP headers. Never <code>null</code>.
    * @param aEbmsUserMessage
-   *        Current user message. Either this OR signal message must be
-   *        non-<code>null</code>.
+   *        Current user message. Either this OR signal message must be non-<code>null</code>.
    * @param aEbmsSignalMessage
-   *        The signal message to use. Either this OR user message must be
-   *        non-<code>null</code>.
+   *        The signal message to use. Either this OR user message must be non-<code>null</code>.
    * @param aPayloadNode
-   *        Optional SOAP body payload (only if direct SOAP msg, not for MIME).
-   *        May be <code>null</code>.
+   *        Optional SOAP body payload (only if direct SOAP msg, not for MIME). May be
+   *        <code>null</code>.
    * @param aDecryptedAttachments
    *        Original attachments from source message. May be <code>null</code>.
    * @param aPMode
@@ -659,11 +648,10 @@ public class AS4RequestHandler implements AutoCloseable
    * @param aState
    *        The current state. Never <code>null</<code></code>.
    * @param aEbmsErrorMessagesTarget
-   *        The list of error messages to be filled if something goes wrong.
-   *        Never <code>null</code>.
-   * @param aResponseAttachmentsTarget
-   *        The list of attachments to be added to the response. Never
+   *        The list of error messages to be filled if something goes wrong. Never
    *        <code>null</code>.
+   * @param aResponseAttachmentsTarget
+   *        The list of attachments to be added to the response. Never <code>null</code>.
    * @param aSPIResult
    *        The result object to be filled. May not be <code>null</code>.
    */
@@ -684,8 +672,9 @@ public class AS4RequestHandler implements AutoCloseable
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
-    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
-                                             : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
+    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId () : aEbmsSignalMessage
+                                                                                                                      .getMessageInfo ()
+                                                                                                                      .getMessageId ();
 
     // Get all processors
     final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
@@ -895,37 +884,9 @@ public class AS4RequestHandler implements AutoCloseable
                                                                              .build ());
           return;
         }
-        catch (final RuntimeException ex)
-        {
-          if (AS4Configuration.isIncludeStackTraceInErrorMessages ())
-          {
-            // Re-throw
-            throw ex;
-          }
-
-          final String sDetails = "Error processing incoming AS4 message with processor " +
-                                  aProcessor +
-                                  ". Technical details: " +
-                                  ex.getClass ().getName () +
-                                  " - " +
-                                  ex.getMessage ();
-          LOGGER.error (sDetails, ex);
-          aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (m_aLocale)
-                                                             .refToMessageInError (sMessageID)
-                                                             .errorDetail (sDetails, ex)
-                                                             .build ());
-          return;
-        }
         catch (final Exception ex)
         {
-          String sDetails = "Error processing incoming AS4 message with processor " + aProcessor;
-          if (AS4Configuration.isIncludeStackTraceInErrorMessages ())
-          {
-            // Just throw as an exception
-            throw new IllegalStateException (sDetails, ex);
-          }
-
-          sDetails += ". Technical details: " + ex.getClass ().getName () + " - " + ex.getMessage ();
+          final String sDetails = "Error processing incoming AS4 message with processor '" + aProcessor + "'";
           LOGGER.error (sDetails, ex);
           aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (m_aLocale)
                                                              .refToMessageInError (sMessageID)
@@ -949,8 +910,8 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
-                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (
+                                                                                                                       aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -1014,9 +975,8 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Takes an UserMessage and switches properties to reverse the direction. So
-   * previously it was C1 => C4, now its C4 => C1 Also adds attachments if there
-   * are some that should be added.
+   * Takes an UserMessage and switches properties to reverse the direction. So previously it was C1
+   * => C4, now its C4 => C1 Also adds attachments if there are some that should be added.
    *
    * @param eSoapVersion
    *        of the message
@@ -1131,8 +1091,8 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * If the PModeLegSecurity has set a Sign and Digest Algorithm the message
-   * will be signed, else the message will be returned as it is.
+   * If the PModeLegSecurity has set a Sign and Digest Algorithm the message will be signed, else
+   * the message will be returned as it is.
    *
    * @param aResponseAttachments
    *        attachment that are added
@@ -1144,8 +1104,8 @@ public class AS4RequestHandler implements AutoCloseable
    *        SOAPVersion that is used
    * @param sMessagingID
    *        The messaging ID to be used for signing
-   * @return returns the signed response or just the input document if no
-   *         X509SignatureAlgorithm and no X509SignatureHashFunction was set.
+   * @return returns the signed response or just the input document if no X509SignatureAlgorithm and
+   *         no X509SignatureHashFunction was set.
    * @throws WSSecurityException
    *         if something in the signing process goes wrong from WSS4j
    */
@@ -1196,18 +1156,17 @@ public class AS4RequestHandler implements AutoCloseable
 
   /**
    * @param aIncomingState
-   *        The processing state of the incoming message. Never
-   *        <code>null</code>.
+   *        The processing state of the incoming message. Never <code>null</code>.
    * @param aSoapDocument
-   *        document which should be used as source for the receipt to convert
-   *        it to non-repudiation information. Can be <code>null</code>.
+   *        document which should be used as source for the receipt to convert it to non-repudiation
+   *        information. Can be <code>null</code>.
    * @param eSoapVersion
    *        SOAPVersion which should be used
    * @param aEffectiveLeg
    *        the leg that is used to determined, how the receipt should be build
    * @param aUserMessage
-   *        used if no non-repudiation information is needed, prints the
-   *        usermessage in receipt. Can be <code>null</code>.
+   *        used if no non-repudiation information is needed, prints the usermessage in receipt. Can
+   *        be <code>null</code>.
    * @param aResponseAttachments
    *        that should be sent back if needed. Can be <code>null</code>.
    * @throws WSSecurityException
@@ -1323,8 +1282,8 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Returns the MimeMessage with encrypted attachment or without depending on
-   * what is configured in the PMode within Leg2.
+   * Returns the MimeMessage with encrypted attachment or without depending on what is configured in
+   * the PMode within Leg2.
    *
    * @param aResponseDoc
    *        the document that contains the user message
@@ -1375,8 +1334,8 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * With this method it is possible to send a usermessage back, the method will
-   * check if signing is needed and if the message needs to be a mime message.
+   * With this method it is possible to send a usermessage back, the method will check if signing is
+   * needed and if the message needs to be a mime message.
    *
    * @param aState
    *        The state of the incoming message. Never <code>null</code>.
@@ -1698,9 +1657,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                          new ResponseHandlerXml ());
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     (aAsyncResponse == null ? "null"
-                                                             : XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                                          AS4HttpDebug.getDebugXMLWriterSettings ())));
+                                     (aAsyncResponse == null ? "null" : XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                                                   AS4HttpDebug.getDebugXMLWriterSettings ())));
         };
 
         final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
@@ -1877,17 +1835,14 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * This is the main handling routine when called from an abstract
-   * (non-Servlet) API
+   * This is the main handling routine when called from an abstract (non-Servlet) API
    *
    * @param aRequestInputStream
-   *        The input stream with the raw AS4 request data. May not be
-   *        <code>null</code>.
+   *        The input stream with the raw AS4 request data. May not be <code>null</code>.
    * @param aRequestHttpHeaders
    *        The HTTP headers of the request. May not be <code>null</code>.
    * @param aHttpResponse
-   *        The AS4 response abstraction to be filled. May not be
-   *        <code>null</code>.
+   *        The AS4 response abstraction to be filled. May not be <code>null</code>.
    * @throws Phase4Exception
    *         in case the request is missing certain prerequisites. Since 0.9.11
    * @throws IOException
@@ -1896,8 +1851,7 @@ public class AS4RequestHandler implements AutoCloseable
    *         MIME related errors
    * @throws WSSecurityException
    *         In case of WSS4J errors
-   * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction)
-   *      for a more generic API
+   * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction) for a more generic API
    */
   public void handleRequest (@Nonnull @WillClose final InputStream aRequestInputStream,
                              @Nonnull final HttpHeaderMap aRequestHttpHeaders,
@@ -1918,8 +1872,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
-                                                                                 : AS4DumpManager.getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager
+                                                                                                                     .getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else
@@ -1953,8 +1907,7 @@ public class AS4RequestHandler implements AutoCloseable
    *         MIME related errors
    * @throws WSSecurityException
    *         In case of WSS4J errors
-   * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction)
-   *      for a more generic API
+   * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction) for a more generic API
    */
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                              @Nonnull final AS4UnifiedResponse aHttpResponse) throws Phase4Exception,

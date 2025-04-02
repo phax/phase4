@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.builder.IBuilder;
 import com.helger.commons.error.level.IErrorLevel;
+import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Description;
@@ -93,14 +94,20 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   public Ebms3ErrorBuilder errorDetail (@Nullable final String s, @Nullable final Throwable t)
   {
     // Be able to allow disabling sending stack traces (see #225)
-    final Throwable aLogT = AS4Configuration.isIncludeStackTraceInErrorMessages () ? t : null;
-    return errorDetail (StringHelper.getConcatenatedOnDemand (s,
-                                                              ": ",
-                                                              aLogT == null ? "" : "Technical details: " +
-                                                                                   StringHelper.getConcatenatedOnDemand (aLogT.getClass ()
-                                                                                                                              .getName (),
-                                                                                                                         " - ",
-                                                                                                                         aLogT.getMessage ())));
+    final StringBuilder sErrorDetail = new StringBuilder ().append (s);
+    if (t != null)
+    {
+      // Add the exception header
+      sErrorDetail.append (": Technical details: ")
+                  .append (StringHelper.getConcatenatedOnDemand (t.getClass ().getName (), " - ", t.getMessage ()));
+
+      // Be able to allow disabling sending stack traces (see #225)
+      if (AS4Configuration.isIncludeStackTraceInErrorMessages ())
+      {
+        sErrorDetail.append ("\n").append (StackTraceHelper.getStackAsString (t));
+      }
+    }
+    return errorDetail (sErrorDetail.toString ());
   }
 
   @Nonnull
