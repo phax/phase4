@@ -61,7 +61,6 @@ import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.IAS4RetryCallback;
-import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -1053,37 +1052,9 @@ public class AS4RequestHandler implements AutoCloseable
                                                                              .build ());
           return;
         }
-        catch (final RuntimeException ex)
-        {
-          if (AS4Configuration.isIncludeStackTraceInErrorMessages ())
-          {
-            // Re-throw
-            throw ex;
-          }
-
-          final String sDetails = "Error processing incoming AS4 message with processor " +
-                                  aProcessor +
-                                  ". Technical details: " +
-                                  ex.getClass ().getName () +
-                                  " - " +
-                                  ex.getMessage ();
-          LOGGER.error (sDetails, ex);
-          aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (m_aLocale)
-                                                             .refToMessageInError (sMessageID)
-                                                             .errorDetail (sDetails, ex)
-                                                             .build ());
-          return;
-        }
         catch (final Exception ex)
         {
-          String sDetails = "Error processing incoming AS4 message with processor " + aProcessor;
-          if (AS4Configuration.isIncludeStackTraceInErrorMessages ())
-          {
-            // Just throw as an exception
-            throw new IllegalStateException (sDetails, ex);
-          }
-
-          sDetails += ". Technical details: " + ex.getClass ().getName () + " - " + ex.getMessage ();
+          final String sDetails = "Error processing incoming AS4 message with processor '" + aProcessor + "'";
           LOGGER.error (sDetails, ex);
           aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (m_aLocale)
                                                              .refToMessageInError (sMessageID)

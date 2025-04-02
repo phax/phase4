@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.client;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -46,6 +47,7 @@ import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
+import com.helger.phase4.incoming.AS4IncomingHandler;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
 import com.helger.phase4.model.ESoapVersion;
@@ -53,6 +55,7 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.spi.MockAS4IncomingMessageProcessingStatusSPI;
+import com.helger.phase4.server.spi.MockMessageProcessorSPI;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.security.keystore.EKeyStoreType;
@@ -132,8 +135,8 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   }
 
   /**
-   * To reduce the amount of code in each test, this method sets the basic
-   * attributes that are needed for a successful message to build. <br>
+   * To reduce the amount of code in each test, this method sets the basic attributes that are
+   * needed for a successful message to build. <br>
    * Only needed for positive messages.
    *
    * @return the AS4Client with the set attributes to continue
@@ -164,8 +167,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   }
 
   /**
-   * Sets the keystore attributes, it uses the dummy keystore
-   * keys/dummy-pw-test.jks
+   * Sets the keystore attributes, it uses the dummy keystore keys/dummy-pw-test.jks
    *
    * @param aClient
    *        the client on which these attributes should be set
@@ -514,5 +516,36 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
 
     assertTrue (EntityUtils.toString (aClient.buildMessage (sMessageID, null).getHttpEntity ())
                            .contains (sMessageIDPrefix));
+  }
+
+  @Test
+  public void testSendAndExpectServerSideException () throws Exception
+  {
+    final TestClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
+
+    // This property forces a crash
+    aClient.ebms3Properties ().add (MessageHelperMethods.createEbms3Property ("Exception", "anything"));
+
+    // Keystore
+    _setKeyStoreTestData (aClient);
+
+    // Sign specific
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    // Encrypt specific
+    aClient.cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final String sResponseXML = MicroWriter.getNodeAsString (aDoc);
+    if (false)
+      LOGGER.info (sResponseXML);
+    // Check for error
+    assertFalse (sResponseXML.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    // Check for exception text
+    assertTrue (sResponseXML.contains (MockMessageProcessorSPI.SENDER_EXPECTED_EXCEPTION_TEXT));
+    // Check that no stacktrace is contained
+    assertFalse (sResponseXML.contains (AS4IncomingHandler.class.getName ()));
   }
 }

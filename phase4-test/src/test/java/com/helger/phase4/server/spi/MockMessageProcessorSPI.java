@@ -19,10 +19,13 @@ package com.helger.phase4.server.spi;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -59,9 +62,11 @@ import com.helger.xml.serialize.read.DOMReader;
 @IsSPIImplementation
 public class MockMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
 {
+  public static final String SENDER_EXPECTED_EXCEPTION_TEXT = "Sender expected exception";
   public static final String MPC_FAILURE = "failure";
   public static final String MPC_EMPTY = "empty";
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
+  private static final Logger LOGGER = LoggerFactory.getLogger (MockMessageProcessorSPI.class);
 
   @Nonnull
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
@@ -73,6 +78,14 @@ public class MockMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
                                                           @Nonnull final IAS4IncomingMessageState aState,
                                                           @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
+    // Is a MessageProperty with name "Exception" present?
+    if (CollectionHelper.containsAny (aUserMessage.getMessageProperties ().getProperty (),
+                                      x -> x.getName ().equals ("Exception")))
+    {
+      LOGGER.warn ("Found the UserMessage MessageProperty named 'Exception' so will throw an Exception");
+      throw new IllegalStateException (SENDER_EXPECTED_EXCEPTION_TEXT);
+    }
+
     if (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PUSH))
     {
       // Passing the incoming attachments as response attachments is ONLY
