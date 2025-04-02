@@ -46,14 +46,15 @@ import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
 import com.helger.smpclient.peppol.Pfuoi420;
+import com.helger.smpclient.peppol.Pfuoi430;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helger.xsds.peppol.smp1.ServiceGroupType;
 import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
 
 /**
- * Implementation of {@link IAS4EndpointDetailProvider} using a Peppol SMP
- * Client to determine this information from an endpoint.
+ * Implementation of {@link IAS4EndpointDetailProvider} using a Peppol SMP Client to determine this
+ * information from an endpoint.
  *
  * @author Philip Helger
  * @since 0.10.6
@@ -72,6 +73,8 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   private PeppolWildcardSelector.EMode m_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private ISMPTransportProfile m_aTP = DEFAULT_TRANSPORT_PROFILE;
   private EndpointType m_aEndpoint;
+  // Mandatory per May 15th, 2025
+  private boolean m_bUsePFUOI430 = false;
 
   public AS4EndpointDetailProviderPeppol (@Nonnull final ISMPServiceGroupProvider aServiceGroupProvider,
                                           @Nonnull final ISMPExtendedServiceMetadataProvider aServiceMetadataProvider)
@@ -83,8 +86,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * @return The service group provider passed in the constructor. Never
-   *         <code>null</code>.
+   * @return The service group provider passed in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final ISMPServiceGroupProvider getServiceGroupProvider ()
@@ -93,8 +95,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * @return The service metadata provider passed in the constructor. Never
-   *         <code>null</code>.
+   * @return The service metadata provider passed in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final ISMPServiceMetadataProvider getServiceMetadataProvider ()
@@ -103,11 +104,36 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * @return The Peppol SMP wildcard selection to be used for document type
-   *         resolution, if a wildcard document type identifier is used.
-   *         Defaults to {@link #DEFAULT_WILDCARD_SELECTION_MODE}.
+   * @return <code>true</code> to use Peppol Policy for use of Identifiers v4.3.0 logic,
+   *         <code>false</code> to use v4.2.0 logic.
+   * @since 3.0.7
+   */
+  public final boolean isUsePFUOI430 ()
+  {
+    return m_bUsePFUOI430;
+  }
+
+  /**
+   * @param b
+   *        <code>true</code> to use Peppol Policy for use of Identifiers v4.3.0 logic,
+   *        <code>false</code> to use v4.2.0 logic.
+   * @return this for chaining
+   * @since 3.0.7
    */
   @Nonnull
+  public final AS4EndpointDetailProviderPeppol setUsePFUOI430 (final boolean b)
+  {
+    m_bUsePFUOI430 = b;
+    return this;
+  }
+
+  /**
+   * @return The Peppol SMP wildcard selection to be used for document type resolution, if a
+   *         wildcard document type identifier is used. Defaults to
+   *         {@link #DEFAULT_WILDCARD_SELECTION_MODE}.
+   */
+  @Nonnull
+  @Pfuoi420
   @Deprecated (forRemoval = true, since = "3.0.0")
   @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
   public final PeppolWildcardSelector.EMode getWildcardSelectionMode ()
@@ -116,17 +142,16 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * Change the Peppol SMP wildcard selection to be used for document type
-   * resolution, if a wildcard document type identifier is used. This only has
-   * an effect if it is called prior to
+   * Change the Peppol SMP wildcard selection to be used for document type resolution, if a wildcard
+   * document type identifier is used. This only has an effect if it is called prior to
    * {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}.
    *
    * @param eWildcardSelectionMode
-   *        The wildcard selection mode to be used. May not be
-   *        <code>null</code>.
+   *        The wildcard selection mode to be used. May not be <code>null</code>.
    * @return this for chaining.
    */
   @Nonnull
+  @Pfuoi420
   @Deprecated (forRemoval = true, since = "3.0.0")
   @DevelopersNote ("This was valid for Policy for use of Identifiers 4.2.0. This is no longer valid with PFUOI 4.3.0 from May 15th 2025")
   public final AS4EndpointDetailProviderPeppol setWildcardSelectionMode (@Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
@@ -137,8 +162,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * @return The transport profile to be used. Defaults to
-   *         {@link #DEFAULT_TRANSPORT_PROFILE}.
+   * @return The transport profile to be used. Defaults to {@link #DEFAULT_TRANSPORT_PROFILE}.
    */
   @Nonnull
   public final ISMPTransportProfile getTransportProfile ()
@@ -147,8 +171,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * Change the transport profile to be used. This only has an effect if it is
-   * called prior to
+   * Change the transport profile to be used. This only has an effect if it is called prior to
    * {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}.
    *
    * @param aTP
@@ -165,8 +188,8 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
 
   /**
    * @return The endpoint resolved. May only be non-<code>null</code> after
-   *         {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}
-   *         was called.
+   *         {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)} was
+   *         called.
    */
   @Nullable
   public final EndpointType getEndpoint ()
@@ -200,6 +223,16 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
                                                                         m_eWildcardSelectionMode);
   }
 
+  @Nullable
+  @OverrideOnDemand
+  @Pfuoi430
+  protected SignedServiceMetadataType resolvedSchemeSpecificServiceMetadata (@Nonnull final IParticipantIdentifier aReceiverID,
+                                                                             @Nonnull final IDocumentTypeIdentifier aDocTypeID) throws SMPClientException
+  {
+    // Resolve per scheme
+    return m_aServiceMetadataProvider.getSchemeSpecificServiceMetadataOrNull (aReceiverID, aDocTypeID);
+  }
+
   public void init (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
                     @Nonnull final IProcessIdentifier aProcID,
                     @Nonnull final IParticipantIdentifier aReceiverID) throws Phase4Exception
@@ -226,17 +259,31 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
       // Perform SMP lookup
       try
       {
+        final boolean bWildcard;
         final SignedServiceMetadataType aSSM;
-        final boolean bWildcard = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
-        if (bWildcard)
+        if (m_bUsePFUOI430)
         {
-          // Best match
-          aSSM = resolvedWildcardServiceMetadata (aReceiverID, aDocTypeID);
+          // PFUOI 4.3.0
+          aSSM = resolvedSchemeSpecificServiceMetadata (aReceiverID, aDocTypeID);
+          // This is just a heuristic, because it is only evaluated in logging
+          bWildcard = aSSM != null &&
+                      PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ()) &&
+                      aDocTypeID.getValue ().indexOf (PeppolIdentifierHelper.DOCUMENT_TYPE_WILDCARD_INDICATOR) >= 0;
         }
         else
         {
-          // Exact match
-          aSSM = resolvedBusdoxServiceMetadata (aReceiverID, aDocTypeID);
+          // PFUOI 4.2.0
+          bWildcard = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
+          if (bWildcard)
+          {
+            // Best match
+            aSSM = resolvedWildcardServiceMetadata (aReceiverID, aDocTypeID);
+          }
+          else
+          {
+            // Exact match
+            aSSM = resolvedBusdoxServiceMetadata (aReceiverID, aDocTypeID);
+          }
         }
 
         if (aSSM != null)
@@ -324,8 +371,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * Create a new {@link AS4EndpointDetailProviderPeppol} based on the provided
-   * SMP client.
+   * Create a new {@link AS4EndpointDetailProviderPeppol} based on the provided SMP client.
    *
    * @param aSMPClient
    *        The SMP client to use. May not be <code>null</code>
