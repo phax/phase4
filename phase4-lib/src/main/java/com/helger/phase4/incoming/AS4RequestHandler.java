@@ -1739,9 +1739,10 @@ public class AS4RequestHandler implements AutoCloseable
       if (aPMode == null ||
           aPMode.getMEPBinding ().isSynchronous () ||
           aPMode.getMEPBinding ().isAsynchronousInitiator () ||
-          aIncomingState.getEffectivePModeLegNumber () <= 0)
+          aIncomingState.getEffectivePModeLegNumber () <= 0 ||
+          (aPMode.getMEPBinding () == EMEPBinding.PUSH_PUSH && aIncomingState.getEffectivePModeLegNumber () == 2))
       {
-        // Call synchronous
+        // Invoke SPIs synchronously
 
         // Might add to aErrorMessages
         // Might add to aResponseAttachments
@@ -1768,7 +1769,7 @@ public class AS4RequestHandler implements AutoCloseable
       }
       else
       {
-        // Call asynchronous
+        // Invoke SPIs asynchronously
         // this should only apply to MEP binding PUSH_PUSH Leg 1
 
         // Only leg1 can be async!

@@ -55,17 +55,15 @@ import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.util.MultiOutputStream;
 
 /**
- * A generic HTTP POST wrapper based on {@link IHttpClientProvider} and
- * {@link HttpPost}. Since 0.13.0 this is a standalone class which is injected
- * as a member into the respective AS4 clients.
+ * A generic HTTP POST wrapper based on {@link IHttpClientProvider} and {@link HttpPost}. Since
+ * 0.13.0 this is a standalone class which is injected as a member into the respective AS4 clients.
  *
  * @author Philip Helger
  */
 public class BasicHttpPoster implements IHttpPoster
 {
   /**
-   * @return The default {@link HttpClientFactory} to be used. Never
-   *         <code>null</code>.
+   * @return The default {@link HttpClientFactory} to be used. Never <code>null</code>.
    * @since 0.8.3
    */
   @Nonnull
@@ -125,9 +123,8 @@ public class BasicHttpPoster implements IHttpPoster
   }
 
   /**
-   * Send an arbitrary HTTP POST message to the provided URL, using the
-   * contained HttpClientFactory as well as the customizer. Additionally the AS4
-   * HTTP debugging is invoked in here.<br>
+   * Send an arbitrary HTTP POST message to the provided URL, using the contained HttpClientFactory
+   * as well as the customizer. Additionally the AS4 HTTP debugging is invoked in here.<br>
    * This method does NOT retry
    *
    * @param <T>
@@ -135,13 +132,12 @@ public class BasicHttpPoster implements IHttpPoster
    * @param sURL
    *        The URL to send to. May neither be <code>null</code> nor empty.
    * @param aCustomHttpHeaders
-   *        An optional http header map that should be applied. May be
-   *        <code>null</code>.
+   *        An optional http header map that should be applied. May be <code>null</code>.
    * @param aHttpEntity
    *        The HTTP entity to be send. May not be <code>null</code>.
    * @param aResponseHandler
-   *        The Http response handler that should be used to convert the HTTP
-   *        response to a domain object.
+   *        The Http response handler that should be used to convert the HTTP response to a domain
+   *        object.
    * @return The HTTP response. May be <code>null</code>.
    * @throws IOException
    *         In case of IO error
@@ -208,12 +204,19 @@ public class BasicHttpPoster implements IHttpPoster
     finally
     {
       aSW.stop ();
-      LOGGER.info ((aCaughtException != null ? "Failed" : "Finished") +
-                   " transmitting AS4 Message to '" +
-                   sURL +
-                   "' after " +
-                   aSW.getMillis () +
-                   " ms");
+      if (aCaughtException != null)
+      {
+        LOGGER.warn ("Failed to transmit AS4 Message to '" +
+                     sURL +
+                     "' after " +
+                     aSW.getMillis () +
+                     " ms. Technical details: " +
+                     aCaughtException.getClass ().getName () +
+                     " - " +
+                     aCaughtException.getMessage ());
+      }
+      else
+        LOGGER.info ("Finished transmitting AS4 Message to '" + sURL + "' after " + aSW.getMillis () + " ms");
     }
   }
 

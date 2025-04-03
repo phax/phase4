@@ -743,6 +743,7 @@ public final class AS4IncomingHandler
                                                   aIncomingState.getSigningCertificate (),
                                                   aMessageMetadata,
                                                   aErrorList);
+
             if (aErrorList.containsAtLeastOneError ())
             {
               LOGGER.error ("Error validating incoming AS4 UserMessage with the profile '" +
@@ -764,6 +765,9 @@ public final class AS4IncomingHandler
                 else
                   LOGGER.warn (sDetails);
               }
+
+              // Was previously a thrown exception - that's why we break heer
+              return aIncomingState;
             }
           }
           else
@@ -799,6 +803,7 @@ public final class AS4IncomingHandler
             if (aPMode != null)
               aValidator.validatePMode (aPMode, aErrorList, EAS4ProfileValidationMode.SIGNAL_MESSAGE);
             aValidator.validateSignalMessage (aEbmsSignalMessage, aErrorList);
+
             if (aErrorList.containsAtLeastOneError ())
             {
               LOGGER.error ("Error validating incoming AS4 SignalMessage with the profile '" +
@@ -819,6 +824,9 @@ public final class AS4IncomingHandler
                 else
                   LOGGER.warn (sDetails);
               }
+
+              // Was previously a thrown exception - that's why we break heer
+              return aIncomingState;
             }
           }
           else

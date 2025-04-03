@@ -95,11 +95,10 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
    * @param aPModeResolver
    *        The PMode resolver to be used. May not be <code>null</code>.
    * @param aPModeConsumer
-   *        An optional consumer that is invoked every time a PMode was
-   *        successfully resolved. May be <code>null</code>.
+   *        An optional consumer that is invoked every time a PMode was successfully resolved. May
+   *        be <code>null</code>.
    * @param aIRC
-   *        The incoming receiver configuration. May not be <code>null</code>.
-   *        Since v3.0.0.
+   *        The incoming receiver configuration. May not be <code>null</code>. Since v3.0.0.
    */
   public SoapHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IAS4PModeResolver aPModeResolver,
                                                           @Nullable final Consumer <? super IPMode> aPModeConsumer,
@@ -120,8 +119,9 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
    */
   private static boolean _isUseLeg1 (@Nonnull final Ebms3UserMessage aUserMessage)
   {
-    final String sThisMessageID = aUserMessage.getMessageInfo ().getMessageId ();
-    final String sRefToMessageID = aUserMessage.getMessageInfo ().getRefToMessageId ();
+    final Ebms3MessageInfo aMessageInfo = aUserMessage.getMessageInfo ();
+    final String sThisMessageID = aMessageInfo.getMessageId ();
+    final String sRefToMessageID = aMessageInfo.getRefToMessageId ();
 
     if (StringHelper.hasText (sRefToMessageID))
       if (sThisMessageID.equals (sRefToMessageID))
@@ -232,11 +232,11 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
 
     // Parse EBMS3 Messaging object
     final ErrorList aErrorList = new ErrorList ();
-    final Ebms3Messaging aMessaging = new Ebms3MessagingMarshaller ().setCollectErrors (aErrorList).read (aElement);
+    final Ebms3Messaging aJaxbMessaging = new Ebms3MessagingMarshaller ().setCollectErrors (aErrorList).read (aElement);
 
     // If the ebms3reader above fails aMessaging will be null => invalid/not
     // wellformed
-    if (aMessaging == null || aErrorList.containsAtLeastOneError ())
+    if (aJaxbMessaging == null || aErrorList.containsAtLeastOneError ())
     {
       // Errorcode/Id would be null => not conform with Ebms3ErrorMessage since
       // the message always needs a errorcode =>
@@ -255,10 +255,10 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
     }
 
     // Remember in state
-    aIncomingState.setMessaging (aMessaging);
+    aIncomingState.setMessaging (aJaxbMessaging);
 
     // 0 or 1 are allowed
-    final int nUserMessages = aMessaging.getUserMessageCount ();
+    final int nUserMessages = aJaxbMessaging.getUserMessageCount ();
     if (nUserMessages > 1)
     {
       final String sDetails = "Too many UserMessage objects (" + nUserMessages + ") contained.";
@@ -270,7 +270,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
     }
 
     // 0 or 1 are allowed
-    final int nSignalMessages = aMessaging.getSignalMessageCount ();
+    final int nSignalMessages = aJaxbMessaging.getSignalMessageCount ();
     if (nSignalMessages > 1)
     {
       final String sDetails = "Too many SignalMessage objects (" + nSignalMessages + ") contained.";
@@ -281,7 +281,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
       return ESuccess.FAILURE;
     }
 
-    if (nUserMessages + nSignalMessages == 0)
+    if ((nUserMessages + nSignalMessages) == 0)
     {
       // No Message was found
       final String sDetails = "Neither UserMessage nor SignalMessage object contained.";
@@ -293,7 +293,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
     }
 
     // Check if the usermessage has a PMode in the collaboration info
-    final Ebms3UserMessage aUserMessage = CollectionHelper.getAtIndex (aMessaging.getUserMessage (), 0);
+    final Ebms3UserMessage aUserMessage = CollectionHelper.getAtIndex (aJaxbMessaging.getUserMessage (), 0);
     if (aUserMessage != null)
     {
       final Ebms3MessageInfo aMsgInfo = aUserMessage.getMessageInfo ();
@@ -364,8 +364,6 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
                                              sResponderID,
                                              sAgreementRef,
                                              sAddress);
-
-        // Should be screened by the XSD conversion already
         if (aPMode == null)
         {
           final String sDetails = "Failed to resolve PMode for UserMessage '" +
@@ -410,7 +408,8 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
 
         // if the two - way is selected, check if it requires two legs and if
         // both are present
-        if (aPMode.getMEPBinding ().getRequiredLegs () == 2 && aPModeLeg2 == null)
+        final boolean bNeeds2Legs = aPMode.getMEPBinding ().getRequiredLegs () == 2;
+        if (bNeeds2Legs && aPModeLeg2 == null)
         {
           final String sDetails = "Error processing the UserMessage, PMode does not contain leg 2.";
           LOGGER.error (sDetails);
@@ -423,6 +422,12 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
         final boolean bUseLeg1 = _isUseLeg1 (aUserMessage);
         final PModeLeg aEffectiveLeg = bUseLeg1 ? aPModeLeg1 : aPModeLeg2;
         final int nLegNum = bUseLeg1 ? 1 : 2;
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Using leg " +
+                        nLegNum +
+                        " for Conversation ID '" +
+                        aUserMessage.getCollaborationInfo ().getConversationId () +
+                        "'");
         if (aEffectiveLeg == null)
         {
           final String sDetails = "Error processing the UserMessage, PMode does not contain effective leg " +
@@ -644,7 +649,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
     {
       // Must be a SignalMessage
       // all vars stay null
-      final Ebms3SignalMessage aSignalMessage = aMessaging.getSignalMessageAtIndex (0);
+      final Ebms3SignalMessage aSignalMessage = aJaxbMessaging.getSignalMessageAtIndex (0);
 
       final Ebms3MessageInfo aMsgInfo = aSignalMessage.getMessageInfo ();
       if (aMsgInfo != null)
@@ -723,9 +728,8 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
             for (final Ebms3Error aError : aSignalMessage.getError ())
             {
               /*
-               * Ebms 3 spec 6.2.6: This OPTIONAL attribute indicates the
-               * MessageId of the message in error, for which this error is
-               * raised.
+               * Ebms 3 spec 6.2.6: This OPTIONAL attribute indicates the MessageId of the message
+               * in error, for which this error is raised.
                */
               if (false)
                 if (StringHelper.hasNoText (aError.getRefToMessageInError ()))
