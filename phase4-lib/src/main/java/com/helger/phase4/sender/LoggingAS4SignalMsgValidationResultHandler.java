@@ -16,12 +16,15 @@
  */
 package com.helger.phase4.sender;
 
+import javax.annotation.Nonnull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.annotation.Nonempty;
+
 /**
- * A logging implementation of
- * {@link IAS4SignalMessageValidationResultHandler}.
+ * A logging implementation of {@link IAS4SignalMessageValidationResultHandler}.
  *
  * @author Philip Helger
  */
@@ -34,7 +37,7 @@ public class LoggingAS4SignalMsgValidationResultHandler implements IAS4SignalMes
     LOGGER.info ("All sent DSig references were contained in the AS4 Receipt message - good.");
   }
 
-  public void onError (final String sErrorMsg)
+  public void onError (@Nonnull @Nonempty final String sErrorMsg)
   {
     LOGGER.error (sErrorMsg);
   }
