@@ -16,25 +16,30 @@
  */
 package com.helger.phase4.sender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.equals.EqualsHelper;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.ebms3header.MessagePartNRInformation;
 import com.helger.phase4.ebms3header.NonRepudiationInformation;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.xsds.xmldsig.ReferenceType;
+import com.helger.xsds.xmldsig.TransformType;
 
 /**
- * Specific wrapped {@link IAS4SignalMessageConsumer} that verifies the DSig
- * References between the sent message and received Receipt is identical.
+ * Specific wrapped {@link IAS4SignalMessageConsumer} that verifies the DSig References between the
+ * sent message and received Receipt is identical.
  *
  * @author Philip Helger
  * @since 3.0.0
@@ -52,14 +57,14 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
    * Constructor
    *
    * @param aClientSetMsg
-   *        The original message sent, that contains the DSig references in the
-   *        built message. Non-<code>null</code>.
+   *        The original message sent, that contains the DSig references in the built message.
+   *        Non-<code>null</code>.
    * @param aOriginalConsumer
-   *        The original signal message consumer to be invoked after the
-   *        reference check. May be null.
+   *        The original signal message consumer to be invoked after the reference check. May be
+   *        null.
    * @param aResultHandler
-   *        The result handler to be invoked. May be <code>null</code> in which
-   *        case some default messages will be logged.
+   *        The result handler to be invoked. May be <code>null</code> in which case some default
+   *        messages will be logged.
    */
   public ValidatingAS4SignalMsgConsumer (@Nonnull final AS4ClientSentMessage <?> aClientSetMsg,
                                          @Nullable final IAS4SignalMessageConsumer aOriginalConsumer,
@@ -69,6 +74,80 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
     m_aClientSetMsg = aClientSetMsg;
     m_aOriginalConsumer = aOriginalConsumer;
     m_aResultHandler = aResultHandler != null ? aResultHandler : DEFAULT_RES_HDL;
+  }
+
+  /**
+   * This method compares XMLDSig references based on the following parameters:
+   * <ul>
+   * <li>Reference URI</li>
+   * <li>Transform Algorithms (count and algorithms)</li>
+   * <li>DigestMethod Algorithm</li>
+   * <li>DigestValue</li>
+   * </ul>
+   * <br>
+   * This is based on a real world problem, where the outbound message used
+   *
+   * <pre>
+  <ds:Reference URI="#my-msg-6311136f-ff8e-4d84-9ca4-6ba68939680e">
+   <ds:Transforms>
+    <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+     <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="S12"/>
+    </ds:Transform>
+   </ds:Transforms>
+   <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+   <ds:DigestValue>LceN50/wXDPAvAvitk+EtQHANOxac2zVrWTCHm3P2UA=</ds:DigestValue>
+  </ds:Reference>
+   * </pre>
+   *
+   * but the returned reference looked like this:
+   *
+   * <pre>
+  <ns4:Reference URI="#my-msg-6311136f-ff8e-4d84-9ca4-6ba68939680e">
+    <ns4:Transforms>
+        <ns4:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    </ns4:Transforms>
+    <ns4:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+    <ns4:DigestValue>LceN50/wXDPAvAvitk+EtQHANOxac2zVrWTCHm3P2UA=</ns4:DigestValue>
+  </ns4:Reference>
+   * </pre>
+   *
+   * @param aRef1
+   *        First reference. May not be <code>null</code>.
+   * @param aRef2
+   *        Second reference. May not be <code>null</code>.
+   * @return <code>true</code> if they are equivalent, <code>false</code> if not.
+   * @since 3.0.7
+   */
+  public static boolean areSemanticallyEquivalent (@Nonnull final ReferenceType aRef1,
+                                                   @Nonnull final ReferenceType aRef2)
+  {
+    // Reference URI
+    if (!EqualsHelper.equals (aRef1.getURI (), aRef2.getURI ()))
+      return false;
+
+    // Transform algorithms
+    final List <TransformType> aTransforms1 = aRef1.getTransforms () == null ? new ArrayList <> () : aRef1
+                                                                                                          .getTransforms ()
+                                                                                                          .getTransform ();
+    final List <TransformType> aTransforms2 = aRef2.getTransforms () == null ? new ArrayList <> () : aRef2
+                                                                                                          .getTransforms ()
+                                                                                                          .getTransform ();
+    if (aTransforms1.size () != aTransforms2.size ())
+      return false;
+    for (final TransformType aTransform1 : aTransforms1)
+      if (!CollectionHelper.containsAny (aTransforms2,
+                                         x -> EqualsHelper.equals (x.getAlgorithm (), aTransform1.getAlgorithm ())))
+        return false;
+
+    // Digest algorithm
+    if (!EqualsHelper.equals (aRef1.getDigestMethod ().getAlgorithm (), aRef2.getDigestMethod ().getAlgorithm ()))
+      return false;
+
+    // Digest algorithm
+    if (!EqualsHelper.equals (aRef1.getDigestValue (), aRef2.getDigestValue ()))
+      return false;
+
+    return true;
   }
 
   public void handleSignalMessage (@Nonnull final Ebms3SignalMessage aEbmsSignalMsg,
@@ -98,20 +177,29 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
 
         final ICommonsList <ReferenceType> aSentDSRefs = m_aClientSetMsg.getBuiltMessage ().getAllDSReferences ();
         if (aSentDSRefs.size () != aReceivedNRR.getMessagePartNRInformationCount ())
+        {
           m_aResultHandler.onError ("The UserMessage sent out contains " +
                                     aSentDSRefs.size () +
                                     " DSig references, wheres the received Receipt contains " +
                                     aReceivedNRR.getMessagePartNRInformationCount () +
                                     " DSig references. This will lead to follow-up errors.");
-        for (final var aInfo : aReceivedNRR.getMessagePartNRInformation ())
+        }
+
+        int nRefsFound = 0;
+        for (final MessagePartNRInformation aInfo : aReceivedNRR.getMessagePartNRInformation ())
         {
           final ReferenceType aReceivedRef = aInfo.getReference ();
-          if (aSentDSRefs.removeObject (aReceivedRef).isUnchanged ())
-          {
+
+          // Find by content
+          final ReferenceType aMatchingSentRef = aSentDSRefs.findFirst (x -> areSemanticallyEquivalent (aReceivedRef,
+                                                                                                        x));
+          if (aMatchingSentRef == null)
             m_aResultHandler.onError ("The received DSig reference was not found in the source list: " + aReceivedRef);
-          }
+          else
+            nRefsFound++;
         }
-        if (aSentDSRefs.isNotEmpty ())
+
+        if (nRefsFound != aSentDSRefs.size ())
           m_aResultHandler.onError ("No all sent DSig references were found in the received AS4 Receipt message");
         else
           m_aResultHandler.onSuccess ();
