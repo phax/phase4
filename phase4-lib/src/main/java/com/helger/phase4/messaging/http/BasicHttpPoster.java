@@ -194,10 +194,12 @@ public class BasicHttpPoster implements IHttpPoster
         return ret.toString ();
       });
 
+      // Execute main HTTP request
       return aClientMgr.execute (aPost, aResponseHandler);
     }
     catch (final IOException ex)
     {
+      // Remember something went wrong
       aCaughtException = ex;
       throw ex;
     }
