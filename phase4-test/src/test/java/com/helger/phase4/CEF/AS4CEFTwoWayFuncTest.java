@@ -44,15 +44,14 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile: Two-Way/Push-and-Push MEP. SMSH sends an AS4 User Message
-   * (M1) associated to a specific conversation through variable (element)
-   * CONVERSATIONIDM1 (set by the producer). The consumer replies to the message
-   * M1.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS profile:
+   * Two-Way/Push-and-Push MEP. SMSH sends an AS4 User Message (M1) associated to a specific
+   * conversation through variable (element) CONVERSATIONIDM1 (set by the producer). The consumer
+   * replies to the message M1.<br>
    * <br>
    * Predicate: <br>
-   * The RMSH sends back a User Message (M2) with element CONVERSATIONIDM2 equal
-   * to ConversationIdM1 (set by the consumer).
+   * The RMSH sends back a User Message (M2) with element CONVERSATIONIDM2 equal to ConversationIdM1
+   * (set by the consumer).
    *
    * @throws Exception
    *         In case of error
@@ -86,17 +85,15 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile: Two-Way/Push-and-Push MEP. SMSH sends an AS4 User Message
-   * (M1 with ID MessageId) that requires a consumer response to the RMSH.
-   * Additionally, the message is associated to a specific conversation through
-   * variable (element) CONVERSATIONIDM1 (set by the producer). The consumer
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS profile:
+   * Two-Way/Push-and-Push MEP. SMSH sends an AS4 User Message (M1 with ID MessageId) that requires
+   * a consumer response to the RMSH. Additionally, the message is associated to a specific
+   * conversation through variable (element) CONVERSATIONIDM1 (set by the producer). The consumer
    * replies to the message M1.<br>
    * <br>
    * Predicate: <br>
-   * The RMSH sends back a User Message (M2) with element REFTOMESSAGEID set to
-   * MESSAGEID (of M1) and with element CONVERSATIONIDM2 equal to
-   * ConversationIdM1.
+   * The RMSH sends back a User Message (M2) with element REFTOMESSAGEID set to MESSAGEID (of M1)
+   * and with element CONVERSATIONIDM2 equal to ConversationIdM1.
    *
    * @throws Exception
    *         In case of error
