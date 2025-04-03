@@ -107,7 +107,7 @@ public final class MainPhase4PeppolSenderConstantReceiverSG2
                                                                                                          "-----END CERTIFICATE-----"),
                                                             "https://dev.einvoicing.i-portal.biz/msh")
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                                  .validationConfiguration (PeppolValidationBisSG.VID_OPENPEPPOL_BIS3_SG_UBL_INVOICE_2023_7,
+                                  .validationConfiguration (PeppolValidationBisSG.VID_OPENPEPPOL_BIS3_SG_UBL_INVOICE_2024_12,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
