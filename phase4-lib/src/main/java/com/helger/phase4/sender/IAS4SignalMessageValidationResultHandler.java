@@ -18,9 +18,11 @@ package com.helger.phase4.sender;
 
 import javax.annotation.Nonnull;
 
+import com.helger.commons.annotation.Nonempty;
+
 /**
- * Specific callback interface for {@link ValidatingAS4SignalMsgConsumer} to
- * handle the results in a structured way.
+ * Specific callback interface for {@link ValidatingAS4SignalMsgConsumer} to handle the results in a
+ * structured way.
  *
  * @author Philip Helger
  * @since 3.0.0
@@ -28,8 +30,7 @@ import javax.annotation.Nonnull;
 public interface IAS4SignalMessageValidationResultHandler
 {
   /**
-   * Called if no issues were found between the sent and the received receipts.
-   * Called 0 to 1 times.
+   * Called if no issues were found between the sent and the received receipts. Called 0 to 1 times.
    */
   void onSuccess ();
 
@@ -37,13 +38,14 @@ public interface IAS4SignalMessageValidationResultHandler
    * Called for each error found.
    *
    * @param sErrorMsg
-   *        The error text in human readable string what went wrong.
+   *        The error text in human readable string what went wrong. May neither be
+   *        <code>null</code> nor empty.
    */
-  void onError (@Nonnull String sErrorMsg);
+  void onError (@Nonnull @Nonempty String sErrorMsg);
 
   /**
-   * This method is only called if sent and/or received message did not contain
-   * DSig references, so there was nothing to compare to.
+   * This method is only called if sent and/or received message did not contain DSig references, so
+   * there was nothing to compare to.
    */
   void onNotApplicable ();
 }
