@@ -943,8 +943,7 @@ public final class AS4IncomingHandler
     return aRetWrapper.get ();
   }
 
-  // Parse an AS4 SignalMessage that was received as the response to a
-  // UserMessage
+  // Parse an AS4 SignalMessage
   @Nullable
   public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                        @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
@@ -999,7 +998,7 @@ public final class AS4IncomingHandler
     return ret;
   }
 
-  // Parse an AS4 UserMessage that was received as the response to a PullRequest
+  // Parse an AS4 UserMessage
   @Nullable
   public static Ebms3UserMessage parseUserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                    @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
@@ -1054,6 +1053,7 @@ public final class AS4IncomingHandler
     return ret;
   }
 
+  // Parse as an AS4 UserMessage or an AS4 SignalMessage
   @Nonnull
   public static ESuccess parseUserOrSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
                                                    @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
