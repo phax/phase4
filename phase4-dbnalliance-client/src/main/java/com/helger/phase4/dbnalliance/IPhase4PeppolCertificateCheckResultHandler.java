@@ -28,7 +28,7 @@ import com.helger.security.certificate.ECertificateCheckResult;
  * Interface for handling certification validations results
  *
  * @author Philip Helger
- * @since 3.0.8
+ * @since 3.1.0
  */
 public interface IPhase4PeppolCertificateCheckResultHandler
 {

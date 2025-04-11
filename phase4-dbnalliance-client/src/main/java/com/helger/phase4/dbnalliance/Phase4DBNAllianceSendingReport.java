@@ -59,7 +59,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
  * This class contains the structured information about what happens on DBNAlliance sending.
  *
  * @author Philip Helger
- * @since 3.0.8
+ * @since 3.1.0
  */
 @NotThreadSafe
 public class Phase4DBNAllianceSendingReport

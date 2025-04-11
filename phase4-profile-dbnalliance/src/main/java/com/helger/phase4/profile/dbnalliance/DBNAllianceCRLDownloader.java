@@ -30,10 +30,10 @@ import com.helger.security.crl.CRLDownloader;
 import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 
 /**
- * The Peppol specific CRL downloader using the {@link HttpClientUrlDownloader} internally.
+ * The DBNAlliance specific CRL downloader using the {@link HttpClientUrlDownloader} internally.
  *
  * @author Philip Helger
- * @since 3.0.8
+ * @since 3.1.0
  */
 public class DBNAllianceCRLDownloader extends CRLDownloader
 {

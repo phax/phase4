@@ -445,7 +445,7 @@ public final class Phase4DBNAllianceSender
      * @param bCheckReceiverAPCertificate
      *        <code>true</code> to enable it, <code>false</code> to disable it.
      * @return this for chaining
-     * @since 3.0.8
+     * @since 3.1.0
      */
     @Nonnull
     public final IMPLTYPE checkReceiverAPCertificate (final boolean bCheckReceiverAPCertificate)
@@ -463,7 +463,7 @@ public final class Phase4DBNAllianceSender
      * @param aCAChecker
      *        The Certificate CA checker to be used. May not be <code>null</code>.
      * @return this for chaining
-     * @since 3.0.8
+     * @since 3.1.0
      */
     @Nonnull
     public final IMPLTYPE apCAChecker (@Nonnull final TrustedCAChecker aCAChecker)
@@ -678,7 +678,7 @@ public final class Phase4DBNAllianceSender
      * @param aXHEDocumentConsumer
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
-     * @since 3.0.8
+     * @since 3.1.0
      */
     @Nonnull
     public DBNAllianceUserMessageBuilder xheDocumentConsumer (@Nullable final Consumer <? super XHE10XHEType> aXHEDocumentConsumer)
@@ -693,7 +693,7 @@ public final class Phase4DBNAllianceSender
      * @param aXHEBytesConsumer
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
-     * @since 3.0.8
+     * @since 3.1.0
      */
     @Nonnull
     public DBNAllianceUserMessageBuilder xheBytesConsumer (@Nullable final Consumer <byte []> aXHEBytesConsumer)
