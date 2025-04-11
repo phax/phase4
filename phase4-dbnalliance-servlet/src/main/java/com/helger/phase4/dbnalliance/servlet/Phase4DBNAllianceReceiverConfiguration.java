@@ -44,8 +44,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
   private final IBDXR2ServiceMetadataProvider m_aSMPClient;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
-  private final IIdentifierFactory m_aSBDHIdentifierFactory;
-  private final boolean m_bPerformSBDHValueChecks;
+  private final IIdentifierFactory m_aXHEIdentifierFactory;
+  private final boolean m_bPerformXHEValueChecks;
   private final boolean m_bCheckSigningCertificateRevocation;
   private final PeppolCAChecker m_aAPCAChecker;
 
@@ -63,10 +63,10 @@ public final class Phase4DBNAllianceReceiverConfiguration
    * @param aAPCertificate
    *        The AP certificate to be used for compatibility. May not be <code>null</code> if
    *        receiver checks are enabled.
-   * @param aSBDHIdentifierFactory
-   *        The identifier factory to be used for SBDH parsing. May not be <code>null</code>.
-   * @param bPerformSBDHValueChecks
-   *        <code>true</code> if SBDH value checks should be performed.
+   * @param aXHEIdentifierFactory
+   *        The identifier factory to be used for XHE parsing. May not be <code>null</code>.
+   * @param bPerformXHEValueChecks
+   *        <code>true</code> if XHE value checks should be performed.
    * @param bCheckSigningCertificateRevocation
    *        <code>true</code> if signing certificate revocation checks should be performed.
    * @param aAPCAChecker
@@ -76,8 +76,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                                  @Nullable final IBDXR2ServiceMetadataProvider aSMPClient,
                                                  @Nullable final String sAS4EndpointURL,
                                                  @Nullable final X509Certificate aAPCertificate,
-                                                 @Nonnull final IIdentifierFactory aSBDHIdentifierFactory,
-                                                 final boolean bPerformSBDHValueChecks,
+                                                 @Nonnull final IIdentifierFactory aXHEIdentifierFactory,
+                                                 final boolean bPerformXHEValueChecks,
                                                  final boolean bCheckSigningCertificateRevocation,
                                                  @Nonnull final PeppolCAChecker aAPCAChecker)
   {
@@ -87,13 +87,13 @@ public final class Phase4DBNAllianceReceiverConfiguration
       ValueEnforcer.notEmpty (sAS4EndpointURL, "AS4EndpointURL");
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aAPCertificate, "APCertificate");
-    ValueEnforcer.notNull (aSBDHIdentifierFactory, "SBDHIdentifierFactory");
+    ValueEnforcer.notNull (aXHEIdentifierFactory, "XHEIdentifierFactory");
     m_bReceiverCheckEnabled = bReceiverCheckEnabled;
     m_aSMPClient = aSMPClient;
     m_sAS4EndpointURL = sAS4EndpointURL;
     m_aAPCertificate = aAPCertificate;
-    m_aSBDHIdentifierFactory = aSBDHIdentifierFactory;
-    m_bPerformSBDHValueChecks = bPerformSBDHValueChecks;
+    m_aXHEIdentifierFactory = aXHEIdentifierFactory;
+    m_bPerformXHEValueChecks = bPerformXHEValueChecks;
     m_bCheckSigningCertificateRevocation = bCheckSigningCertificateRevocation;
     m_aAPCAChecker = aAPCAChecker;
   }
@@ -138,17 +138,17 @@ public final class Phase4DBNAllianceReceiverConfiguration
   }
 
   /**
-   * @return The identifier factory to be used for SBDH parsing.
+   * @return The identifier factory to be used for XHE parsing.
    */
   @Nonnull
   public IIdentifierFactory getXHEIdentifierFactory ()
   {
-    return m_aSBDHIdentifierFactory;
+    return m_aXHEIdentifierFactory;
   }
 
   public boolean isPerformXHEValueChecks ()
   {
-    return m_bPerformSBDHValueChecks;
+    return m_bPerformXHEValueChecks;
   }
 
   public boolean isCheckSigningCertificateRevocation ()
@@ -172,8 +172,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                        .append ("SMPClient", m_aSMPClient)
                                        .append ("AS4EndpointURL", m_sAS4EndpointURL)
                                        .append ("APCertificate", m_aAPCertificate)
-                                       .append ("SBDHIdentifierFactory", m_aSBDHIdentifierFactory)
-                                       .append ("PerformSBDHValueChecks", m_bPerformSBDHValueChecks)
+                                       .append ("XHEIdentifierFactory", m_aXHEIdentifierFactory)
+                                       .append ("PerformXHEValueChecks", m_bPerformXHEValueChecks)
                                        .append ("CheckSigningCertificateRevocation",
                                                 m_bCheckSigningCertificateRevocation)
                                        .append ("APCAChecker", m_aAPCAChecker)
@@ -215,8 +215,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
     private IBDXR2ServiceMetadataProvider m_aSMPClient;
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
-    private IIdentifierFactory m_aSBDHIdentifierFactory;
-    private boolean m_bPerformSBDHValueChecks;
+    private IIdentifierFactory m_aXHEIdentifierFactory;
+    private boolean m_bPerformXHEValueChecks;
     private boolean m_bCheckSigningCertificateRevocation;
     private PeppolCAChecker m_aAPCAChecker;
 
@@ -230,7 +230,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                                            .as4EndpointUrl (aSrc.getAS4EndpointURL ())
                                                            .apCertificate (aSrc.getAPCertificate ())
                                                            .xheIdentifierFactory (aSrc.getXHEIdentifierFactory ())
-                                                           .performSBDHValueChecks (aSrc.isPerformXHEValueChecks ())
+                                                           .performXHEValueChecks (aSrc.isPerformXHEValueChecks ())
                                                            .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ())
                                                            .apCAChecker (aSrc.getAPCAChecker ());
     }
@@ -272,14 +272,14 @@ public final class Phase4DBNAllianceReceiverConfiguration
     @Nonnull
     public Phase4DBNAllianceReceiverConfigurationBuilder xheIdentifierFactory (@Nullable final IIdentifierFactory a)
     {
-      m_aSBDHIdentifierFactory = a;
+      m_aXHEIdentifierFactory = a;
       return this;
     }
 
     @Nonnull
-    public Phase4DBNAllianceReceiverConfigurationBuilder performSBDHValueChecks (final boolean b)
+    public Phase4DBNAllianceReceiverConfigurationBuilder performXHEValueChecks (final boolean b)
     {
-      m_bPerformSBDHValueChecks = b;
+      m_bPerformXHEValueChecks = b;
       return this;
     }
 
@@ -309,8 +309,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
         if (m_aAPCertificate == null)
           throw new IllegalStateException ("Our AS4 AP certificate must be provided");
       }
-      if (m_aSBDHIdentifierFactory == null)
-        throw new IllegalStateException ("The SBDH Identifier Factory must be provided");
+      if (m_aXHEIdentifierFactory == null)
+        throw new IllegalStateException ("The XHE Identifier Factory must be provided");
       if (m_aAPCAChecker == null)
         throw new IllegalStateException ("The DBNAlliance AP CA checker must be provided");
 
@@ -318,8 +318,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                                          m_aSMPClient,
                                                          m_sAS4EndpointURL,
                                                          m_aAPCertificate,
-                                                         m_aSBDHIdentifierFactory,
-                                                         m_bPerformSBDHValueChecks,
+                                                         m_aXHEIdentifierFactory,
+                                                         m_bPerformXHEValueChecks,
                                                          m_bCheckSigningCertificateRevocation,
                                                          m_aAPCAChecker);
     }

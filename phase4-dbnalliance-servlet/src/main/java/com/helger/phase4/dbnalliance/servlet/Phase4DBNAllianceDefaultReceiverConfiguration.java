@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
+import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
 import com.helger.peppol.utils.PeppolCAChecker;
-import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppol.xhe.read.DBNAllianceXHEDocumentReader;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
@@ -48,10 +48,10 @@ import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 @NotThreadSafe
 public final class Phase4DBNAllianceDefaultReceiverConfiguration
 {
-  public static final IIdentifierFactory DEFAULT_SBDH_IDENTIFIER_FACTORY = SimpleIdentifierFactory.INSTANCE;
+  public static final IIdentifierFactory DEFAULT_XHE_IDENTIFIER_FACTORY = SimpleIdentifierFactory.INSTANCE;
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
-  public static final PeppolCAChecker DEFAULT_PEPPOL_AP_CA_CHECKER = PeppolCertificateChecker.peppolAllAP ();
+  public static final PeppolCAChecker DEFAULT_CA_CHECKER = DBNAllianceTrustStores.Config2023.PILOT_CA;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4DBNAllianceDefaultReceiverConfiguration.class);
 
@@ -59,10 +59,10 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   private static IBDXR2ServiceMetadataProvider s_aSMPClient;
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
-  private static IIdentifierFactory s_aSBDHIdentifierFactory = DEFAULT_SBDH_IDENTIFIER_FACTORY;
-  private static boolean s_bPerformSBDHValueChecks = DBNAllianceXHEDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
+  private static IIdentifierFactory s_aXHEIdentifierFactory = DEFAULT_XHE_IDENTIFIER_FACTORY;
+  private static boolean s_bPerformXHEValueChecks = DBNAllianceXHEDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
-  private static PeppolCAChecker s_aAPCAChecker = DEFAULT_PEPPOL_AP_CA_CHECKER;
+  private static PeppolCAChecker s_aAPCAChecker = DEFAULT_CA_CHECKER;
 
   private Phase4DBNAllianceDefaultReceiverConfiguration ()
   {}
@@ -145,7 +145,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   }
 
   /**
-   * Set the Peppol AP certificate to be used for comparing against the SMP lookup result.
+   * Set the AP certificate to be used for comparing against the SMP lookup result.
    *
    * @param aAPCertificate
    *        The AP certificate to be used for compatibility. May be <code>null</code>.
@@ -156,48 +156,48 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   }
 
   /**
-   * @return The default identifier factory used to parse SBDH data. Never <code>null</code>.
+   * @return The default identifier factory used to parse XHE data. Never <code>null</code>.
    */
   @Nonnull
-  public static IIdentifierFactory getSBDHIdentifierFactory ()
+  public static IIdentifierFactory getXHEIdentifierFactory ()
   {
-    return s_aSBDHIdentifierFactory;
+    return s_aXHEIdentifierFactory;
   }
 
   /**
-   * Set the default identifier factory used to parse SBDH data.
+   * Set the default identifier factory used to parse XHE data.
    *
    * @param a
    *        The identifier factory to use. May not be <code>null</code>.
    */
-  public static void setSBDHIdentifierFactory (@Nonnull final IIdentifierFactory a)
+  public static void setXHEIdentifierFactory (@Nonnull final IIdentifierFactory a)
   {
-    ValueEnforcer.notNull (a, "SBDHIdentifierFactory");
-    s_aSBDHIdentifierFactory = a;
+    ValueEnforcer.notNull (a, "XHEIdentifierFactory");
+    s_aXHEIdentifierFactory = a;
   }
 
   /**
-   * @return <code>true</code> if SBDH value checks are enabled, <code>false</code> if they are
+   * @return <code>true</code> if XHE value checks are enabled, <code>false</code> if they are
    *         disabled.
    */
-  public static boolean isPerformSBDHValueChecks ()
+  public static boolean isPerformXHEValueChecks ()
   {
-    return s_bPerformSBDHValueChecks;
+    return s_bPerformXHEValueChecks;
   }
 
   /**
-   * Enable or disable the SBDH value checks. By default checks are enabled.
+   * Enable or disable the XHE value checks. By default checks are enabled.
    *
    * @param b
    *        <code>true</code> to enable the checks, <code>false</code> to disable them
    */
-  public static void setPerformSBDHValueChecks (final boolean b)
+  public static void setPerformXHEValueChecks (final boolean b)
   {
-    final boolean bChange = b != s_bPerformSBDHValueChecks;
-    s_bPerformSBDHValueChecks = b;
+    final boolean bChange = b != s_bPerformXHEValueChecks;
+    s_bPerformXHEValueChecks = b;
     if (bChange)
     {
-      LOGGER.info (CAS4.LIB_NAME + " Peppol SBDH value checks are now " + (b ? "enabled" : "disabled"));
+      LOGGER.info (CAS4.LIB_NAME + " DBNAlliance XHE value checks are now " + (b ? "enabled" : "disabled"));
     }
   }
 
@@ -223,13 +223,13 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
     if (bChange)
     {
       LOGGER.info (CAS4.LIB_NAME +
-                   " Peppol signing certificate revocation check is now " +
+                   " DBNAlliance signing certificate revocation check is now " +
                    (b ? "enabled" : "disabled"));
     }
   }
 
   /**
-   * @return The Peppol AP CA checker to be used. Never <code>null</code>.
+   * @return The DBNAlliance AP CA checker to be used. Never <code>null</code>.
    */
   @Nonnull
   public static PeppolCAChecker getAPCAChecker ()
@@ -238,10 +238,10 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   }
 
   /**
-   * Set the Peppol CA checker to be used.
+   * Set the DBNAlliance CA checker to be used.
    *
    * @param a
-   *        The Peppol CA checker to be used. May not be <code>null</code>.
+   *        The DBNAlliance CA checker to be used. May not be <code>null</code>.
    */
   public static void setAPCAChecker (@Nonnull final PeppolCAChecker a)
   {
@@ -251,7 +251,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
     s_aAPCAChecker = a;
     if (bChange)
     {
-      LOGGER.info (CAS4.LIB_NAME + " Peppol AP CA Checker is set to " + a);
+      LOGGER.info (CAS4.LIB_NAME + " DBNAlliance AP CA Checker is set to " + a);
     }
   }
 
@@ -279,8 +279,8 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
                                                  .serviceMetadataProvider (aSMPClient)
                                                  .as4EndpointUrl (sAS4EndpointURL)
                                                  .apCertificate (aAPCertificate)
-                                                 .xheIdentifierFactory (getSBDHIdentifierFactory ())
-                                                 .performSBDHValueChecks (isPerformSBDHValueChecks ())
+                                                 .xheIdentifierFactory (getXHEIdentifierFactory ())
+                                                 .performXHEValueChecks (isPerformXHEValueChecks ())
                                                  .checkSigningCertificateRevocation (isCheckSigningCertificateRevocation ())
                                                  .apCAChecker (getAPCAChecker ());
   }
