@@ -667,9 +667,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
         // Check if an endpoint is registered
         final IParticipantIdentifier aReceiverID = aDBNAllianceXHE.getToPartyAsIdentifier ();
         final IDocumentTypeIdentifier aDocTypeID = aIdentifierFactory.parseDocumentTypeIdentifier (sAction);
-        final IProcessIdentifier aProcessID = aIdentifierFactory.parseProcessIdentifier (StringHelper.getNotNull (sServiceType) +
-                                                                                         "::" +
-                                                                                         sService);
+        final IProcessIdentifier aProcessID = aIdentifierFactory.createProcessIdentifier (sServiceType, sService);
         final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
                                                                      aReceiverCheckData.getSMPClient (),
                                                                      aReceiverID,

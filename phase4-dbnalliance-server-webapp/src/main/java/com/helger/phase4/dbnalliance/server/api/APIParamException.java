@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 Philip Helger (www.helger.com)
+ * Copyright (C) 2025 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.profile.dbnalliance;
-
-import org.junit.Test;
+package com.helger.phase4.dbnalliance.server.api;
 
 /**
- * Test class for class {@link Phase4DBNAllianceHttpClientSettings}
+ * Special exception for API parameter violations
  *
  * @author Philip Helger
  */
-public class Phase4DBNAllianceHttpClientSettingsTest
+public class APIParamException extends RuntimeException
 {
-  @Test
-  public void testBasic ()
+  public APIParamException (final String sMsg)
   {
-    new Phase4DBNAllianceHttpClientSettings ();
+    super (sMsg);
   }
 }

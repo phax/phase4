@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 Philip Helger (www.helger.com)
+ * Copyright (C) 2025 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.profile.dbnalliance;
+package com.helger.phase4.dbnalliance.server;
 
 import org.junit.Test;
 
+import com.helger.commons.mock.SPITestHelper;
+import com.helger.photon.core.mock.PhotonCoreValidator;
+
 /**
- * Test class for class {@link Phase4DBNAllianceHttpClientSettings}
+ * Test SPI definitions
  *
  * @author Philip Helger
  */
-public class Phase4DBNAllianceHttpClientSettingsTest
+public final class SPITest
 {
   @Test
-  public void testBasic ()
+  public void testBasic () throws Exception
   {
-    new Phase4DBNAllianceHttpClientSettings ();
+    SPITestHelper.testIfAllSPIImplementationsAreValid ();
+    PhotonCoreValidator.validateExternalResources ();
   }
 }
