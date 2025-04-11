@@ -58,8 +58,7 @@ import com.helger.xml.serialize.write.IXMLWriterSettings;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
 /**
- * This class contains the structured information about what happens on Peppol
- * sending.
+ * This class contains the structured information about what happens on Peppol sending.
  *
  * @author Philip Helger
  * @since 3.0.5
@@ -119,8 +118,7 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * Remember any specific exception that occurred during parsing of a provided
-   * SBDH.
+   * Remember any specific exception that occurred during parsing of a provided SBDH.
    *
    * @param e
    *        The exception that was caught. May be <code>null</code>.
@@ -232,9 +230,8 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * Remember the SBDH Instance Identifier. That is the identifier, that
-   * uniquely identifies the specific transmission and is referred to by MLR and
-   * MLS.
+   * Remember the SBDH Instance Identifier. That is the identifier, that uniquely identifies the
+   * specific transmission and is referred to by MLR and MLS.
    *
    * @param s
    *        SBDH instance identifier. May be <code>null</code>.
@@ -271,8 +268,7 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * Remember the public Peppol AP certificate of C3 determined by the SMP
-   * lookup.
+   * Remember the public Peppol AP certificate of C3 determined by the SMP lookup.
    *
    * @param a
    *        C3 public Peppol AP certificate. May be <code>null</code>.
@@ -289,8 +285,8 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * Remember the date and time, when the Peppol AP certificate of C3, as
-   * retrieved from the SMP, was checked for revocation.
+   * Remember the date and time, when the Peppol AP certificate of C3, as retrieved from the SMP,
+   * was checked for revocation.
    *
    * @param a
    *        The Peppol AP Certificate check date time. May be <code>null</code>.
@@ -306,8 +302,8 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * Remember the result of checking the Peppol AP certificate of C3, as
-   * retrieved from the SMP, for validity.
+   * Remember the result of checking the Peppol AP certificate of C3, as retrieved from the SMP, for
+   * validity.
    *
    * @param e
    *        The Peppol AP Certificate check result. May be <code>null</code>.
@@ -418,8 +414,7 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * Remember the overall duration it took to perform the lookup and sending
-   * process.
+   * Remember the overall duration it took to perform the lookup and sending process.
    *
    * @param n
    *        The overall milliseconds needed. Must be &ge; 0.
@@ -441,8 +436,8 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * Remember the overall success. This may differ from the sending success, if
-   * e.g. sending succeeded but storing the record for Peppol recording failed.
+   * Remember the overall success. This may differ from the sending success, if e.g. sending
+   * succeeded but storing the record for Peppol reporting failed.
    *
    * @param b
    *        <code>true</code> on success, <code>false</code> on failure.
@@ -453,8 +448,8 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * Get the whole report as one big JSON structure. Only elements that were
-   * provided, are contained in the report.
+   * Get the whole report as one big JSON structure. Only elements that were provided, are contained
+   * in the report.
    *
    * @return The sending report as a JSON object. May not be <code>null</code>.
    */
@@ -547,8 +542,8 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * @return The JSON representation of the sending report, as a formatted
-   *         string. Never <code>null</code>.
+   * @return The JSON representation of the sending report, as a formatted string. Never
+   *         <code>null</code>.
    */
   @Nonnull
   public String getAsJsonString ()
@@ -559,8 +554,7 @@ public class Phase4PeppolSendingReport
   /**
    * @param aJWS
    *        The JSON writer settings to use. May not be <code>null</code>.
-   * @return The JSON representation of the sending report, as a string. Never
-   *         <code>null</code>.
+   * @return The JSON representation of the sending report, as a string. Never <code>null</code>.
    */
   @Nonnull
   public String getAsJsonString (@Nonnull final IJsonWriterSettings aJWS)
@@ -569,14 +563,13 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * Get the sending report as a MicroDOM element. Only elements that were
-   * provided, are contained in the report.
+   * Get the sending report as a MicroDOM element. Only elements that were provided, are contained
+   * in the report.
    *
    * @param sNamespaceURI
    *        The namespace URI to be used. May be <code>null</code>.
    * @param sTagName
-   *        The tag name to use for the root element. May neither be
-   *        <code>null</code> nor empty.
+   *        The tag name to use for the root element. May neither be <code>null</code> nor empty.
    * @return The created micro element and never <code>null</code>.
    */
   @Nonnull
