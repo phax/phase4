@@ -51,7 +51,7 @@ public final class Phase4API
     final EPeppolNetwork eStage = APConfig.getPeppolStage ();
 
     {
-      final APIDescriptor aSendTest = new APIDescriptor (APIPath.post ("/sendas4/{" +
+      final APIDescriptor aSendAS4 = new APIDescriptor (APIPath.post ("/sendas4/{" +
                                                                        PARAM_SENDER_ID +
                                                                        "}/{" +
                                                                        PARAM_RECEIVER_ID +
@@ -62,14 +62,14 @@ public final class Phase4API
                                                                        "}/{" +
                                                                        PARAM_COUNTRY_CODE_C1 +
                                                                        "}"), new APIPostSendDocument (eStage));
-      aSendTest.setExceptionMapper (aExceptionMapper);
-      aAPIRegistry.registerAPI (aSendTest);
+      aSendAS4.setExceptionMapper (aExceptionMapper);
+      aAPIRegistry.registerAPI (aSendAS4);
     }
 
     {
-      final APIDescriptor aSendTestSbdh = new APIDescriptor (APIPath.post ("/sendsbdh"), new APIPostSendSBDH (eStage));
-      aSendTestSbdh.setExceptionMapper (aExceptionMapper);
-      aAPIRegistry.registerAPI (aSendTestSbdh);
+      final APIDescriptor aSendSbdh = new APIDescriptor (APIPath.post ("/sendsbdh"), new APIPostSendSBDH (eStage));
+      aSendSbdh.setExceptionMapper (aExceptionMapper);
+      aAPIRegistry.registerAPI (aSendSbdh);
     }
 
     {
