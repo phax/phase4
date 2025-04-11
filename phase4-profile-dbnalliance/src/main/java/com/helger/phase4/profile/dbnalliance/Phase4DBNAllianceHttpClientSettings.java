@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.dbnalliance;
+package com.helger.phase4.profile.dbnalliance;
 
 import java.security.GeneralSecurityException;
 

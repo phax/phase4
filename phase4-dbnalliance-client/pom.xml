@@ -60,7 +60,7 @@
     </dependency>
     <dependency>
       <groupId>com.helger.peppol</groupId>
-      <artifactId>peppol-commons</artifactId>
+      <artifactId>dbnalliance-commons</artifactId>
       <version>${peppol-commons.version}</version>
     </dependency>
     <dependency>

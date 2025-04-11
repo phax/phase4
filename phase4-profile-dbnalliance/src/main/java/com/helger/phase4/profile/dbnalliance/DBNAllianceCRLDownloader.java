@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.profile.peppol;
+package com.helger.phase4.profile.dbnalliance;
 
 import javax.annotation.Nonnull;
 
@@ -33,18 +33,18 @@ import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
  * The Peppol specific CRL downloader using the {@link HttpClientUrlDownloader} internally.
  *
  * @author Philip Helger
- * @since 2.7.4
+ * @since 3.0.8
  */
-public class PeppolCRLDownloader extends CRLDownloader
+public class DBNAllianceCRLDownloader extends CRLDownloader
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (PeppolCRLDownloader.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (DBNAllianceCRLDownloader.class);
 
   /**
-   * Default constructor using {@link Phase4PeppolHttpClientSettings}.
+   * Default constructor using {@link Phase4DBNAllianceHttpClientSettings}.
    */
-  public PeppolCRLDownloader ()
+  public DBNAllianceCRLDownloader ()
   {
-    this (new Phase4PeppolHttpClientSettings ());
+    this (new Phase4DBNAllianceHttpClientSettings ());
   }
 
   /**
@@ -53,7 +53,7 @@ public class PeppolCRLDownloader extends CRLDownloader
    * @param aHCS
    *        The {@link HttpClientSettings} to use. May not be <code>null</code>.
    */
-  public PeppolCRLDownloader (@Nonnull final HttpClientSettings aHCS)
+  public DBNAllianceCRLDownloader (@Nonnull final HttpClientSettings aHCS)
   {
     super (new HttpClientUrlDownloader (aHCS));
   }
@@ -64,7 +64,7 @@ public class PeppolCRLDownloader extends CRLDownloader
    * @param aHCF
    *        The {@link HttpClientFactory} to use. May not be <code>null</code>.
    */
-  public PeppolCRLDownloader (@Nonnull final HttpClientFactory aHCF)
+  public DBNAllianceCRLDownloader (@Nonnull final HttpClientFactory aHCF)
   {
     super (new HttpClientUrlDownloader (aHCF));
   }
@@ -80,8 +80,8 @@ public class PeppolCRLDownloader extends CRLDownloader
   {
     ValueEnforcer.notNull (aHCS, "HttpClientSettings");
 
-    LOGGER.info ("Installing the PeppolCRLDownloader as the default CRL cache using HttpClientSettings " + aHCS);
-    CertificateRevocationCheckerDefaults.setDefaultCRLCache (new CRLCache (new PeppolCRLDownloader (aHCS),
+    LOGGER.info ("Installing the DBNAllianceCRLDownloader as the default CRL cache using HttpClientSettings " + aHCS);
+    CertificateRevocationCheckerDefaults.setDefaultCRLCache (new CRLCache (new DBNAllianceCRLDownloader (aHCS),
                                                                            CRLCache.DEFAULT_CACHING_DURATION));
   }
 }
