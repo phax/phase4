@@ -45,8 +45,6 @@ import com.helger.commons.url.URLHelper;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.json.serialize.JsonWriterSettings;
-import com.helger.peppol.utils.EPeppolCertificateCheckResult;
-import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
@@ -70,6 +68,8 @@ import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.IUserManager;
+import com.helger.security.certificate.ECertificateCheckResult;
+import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
@@ -307,17 +307,17 @@ public final class Phase4DBNAllianceWebAppListener extends WebAppListener
     // Separate between pilot, test and production
     // final EDBNAllianceStage eStage = APConfig.getStage ();
     // TODO pick the right CA here
-    final PeppolCAChecker aAPCAChecker = DBNAllianceTrustStores.Config2023.PILOT_CA;
+    final TrustedCAChecker aAPCAChecker = DBNAllianceTrustStores.Config2023.PILOT_CA;
 
     // Check if the certificate is really a DBNAlliance AP certificate - fail early
     // if something is misconfigured
     // * Do not cache result
     // * Use the global checking mode or provide a new one
-    final EPeppolCertificateCheckResult eCheckResult = aAPCAChecker.checkCertificate (aAPCert,
-                                                                                      MetaAS4Manager.getTimestampMgr ()
-                                                                                                    .getCurrentDateTime (),
-                                                                                      ETriState.FALSE,
-                                                                                      null);
+    final ECertificateCheckResult eCheckResult = aAPCAChecker.checkCertificate (aAPCert,
+                                                                                MetaAS4Manager.getTimestampMgr ()
+                                                                                              .getCurrentDateTime (),
+                                                                                ETriState.FALSE,
+                                                                                null);
     if (eCheckResult.isInvalid ())
       throw new InitializationException ("The provided certificate is not a valid DBNAlliance AP certificate. Check result: " +
                                          eCheckResult);

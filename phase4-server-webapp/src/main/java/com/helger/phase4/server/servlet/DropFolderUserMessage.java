@@ -45,7 +45,6 @@ import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.CAS4;
@@ -134,9 +133,9 @@ public final class DropFolderUserMessage
           aClient.setAgreementRefValue ("xxx");
 
           aClient.setFromRole (CAS4.DEFAULT_ROLE);
-          aClient.setFromPartyID (PeppolCertificateHelper.getSubjectCN ((X509Certificate) aOurCert.getCertificate ()));
+          aClient.setFromPartyID (CertificateHelper.getSubjectCN ((X509Certificate) aOurCert.getCertificate ()));
           aClient.setToRole (CAS4.DEFAULT_ROLE);
-          aClient.setToPartyID (PeppolCertificateHelper.getSubjectCN (aTheirCert));
+          aClient.setToPartyID (CertificateHelper.getSubjectCN (aTheirCert));
           aClient.ebms3Properties ()
                  .setAll (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER,
                                                                     aSBDH.getSenderScheme (),

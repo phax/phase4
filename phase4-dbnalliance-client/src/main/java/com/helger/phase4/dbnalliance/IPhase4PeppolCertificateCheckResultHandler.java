@@ -22,7 +22,7 @@ import java.time.OffsetDateTime;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.peppol.utils.EPeppolCertificateCheckResult;
+import com.helger.security.certificate.ECertificateCheckResult;
 
 /**
  * Interface for handling certification validations results
@@ -46,5 +46,5 @@ public interface IPhase4PeppolCertificateCheckResultHandler
    */
   void onCertificateCheckResult (@Nullable X509Certificate aAPCertificate,
                                  @Nonnull OffsetDateTime aCheckDT,
-                                 @Nonnull EPeppolCertificateCheckResult eCertCheckResult) throws Phase4DBNAllianceException;
+                                 @Nonnull ECertificateCheckResult eCertCheckResult) throws Phase4DBNAllianceException;
 }

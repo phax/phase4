@@ -26,7 +26,7 @@
   </parent>
   <groupId>com.helger.phase4</groupId>
   <artifactId>phase4-parent-pom</artifactId>
-  <version>3.0.8-SNAPSHOT</version>
+  <version>3.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phase4-parent-pom</name>
   <description>Base POM to build the phase4 projects</description>
@@ -77,9 +77,9 @@
     <log4j.version>2.24.3</log4j.version>
     <xmlsec.version>3.0.5</xmlsec.version>
     <wss4j.version>3.0.4</wss4j.version>
-    <peppol-commons.version>10.1.1-SNAPSHOT</peppol-commons.version>
+    <peppol-commons.version>10.2.0-SNAPSHOT</peppol-commons.version>
     <peppol-reporting.version>3.0.3</peppol-reporting.version>
-    <ph-commons.version>11.2.0</ph-commons.version>
+    <ph-commons.version>11.2.1-SNAPSHOT</ph-commons.version>
     <ph-schematron.version>8.0.6</ph-schematron.version>
     <ph-ubl.version>9.0.3</ph-ubl.version>
     <ph-web.version>10.4.1</ph-web.version>

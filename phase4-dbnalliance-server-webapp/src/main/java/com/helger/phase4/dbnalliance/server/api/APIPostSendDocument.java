@@ -34,7 +34,6 @@ import com.helger.commons.timing.StopWatch;
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.dbnalliance.commons.EDBNAllianceStage;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
-import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -43,14 +42,15 @@ import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dbnalliance.Phase4DBNAllianceSender;
 import com.helger.phase4.dbnalliance.Phase4DBNAllianceSender.DBNAllianceUserMessageBuilder;
-import com.helger.phase4.dbnalliance.server.APConfig;
 import com.helger.phase4.dbnalliance.Phase4DBNAllianceSendingReport;
+import com.helger.phase4.dbnalliance.server.APConfig;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.profile.dbnalliance.Phase4DBNAllianceHttpClientSettings;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.api.IAPIDescriptor;
+import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.url.DBNAURLProviderSMP;
@@ -112,7 +112,7 @@ public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
 
     final IIdentifierFactory aIF = PeppolIdentifierFactory.INSTANCE;
     final EDBNAllianceStage eStage = APConfig.getStage ();
-    final PeppolCAChecker aAPCAChecker = DBNAllianceTrustStores.Config2023.PILOT_CA;
+    final TrustedCAChecker aAPCAChecker = DBNAllianceTrustStores.Config2023.PILOT_CA;
     final String sMySeatID = APConfig.getMySeatID ();
 
     final Phase4DBNAllianceSendingReport aSendingReport = new Phase4DBNAllianceSendingReport (eStage.getSML ()

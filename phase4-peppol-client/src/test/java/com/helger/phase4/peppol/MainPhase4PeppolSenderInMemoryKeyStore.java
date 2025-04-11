@@ -23,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.helger.peppol.security.PeppolTrustStores;
 import com.helger.peppol.sml.ESML;
-import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -37,8 +37,8 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * An example file that uses an externally supplied key store and trust store so
- * that no disc access is needed.
+ * An example file that uses an externally supplied key store and trust store so that no disc access
+ * is needed.
  *
  * @author Philip Helger
  */
@@ -67,22 +67,21 @@ public final class MainPhase4PeppolSenderInMemoryKeyStore
       final IAS4CryptoFactory aInMemoryCryptoFactory = new AS4CryptoFactoryInMemoryKeyStore (aKS,
                                                                                              "cert",
                                                                                              "peppol".toCharArray (),
-                                                                                             PeppolKeyStoreHelper.Config2018.TRUSTSTORE_AP_PILOT);
-      final EAS4UserMessageSendResult eResult;
-      eResult = Phase4PeppolSender.builder ()
-                                  .cryptoFactory (aInMemoryCryptoFactory)
-                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
-                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
-                                  .receiverParticipantID (aReceiverID)
-                                  .senderPartyID ("POP000306")
-                                  .countryC1 ("AT")
-                                  .payload (aPayloadElement)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                     aReceiverID,
-                                                                     ESML.DIGIT_TEST))
-                                  .disableValidation ()
-                                  .sendMessageAndCheckForReceipt ();
+                                                                                             PeppolTrustStores.Config2018.TRUSTSTORE_AP_PILOT);
+      final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
+                                        .cryptoFactory (aInMemoryCryptoFactory)
+                                        .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
+                                        .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
+                                        .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
+                                        .receiverParticipantID (aReceiverID)
+                                        .senderPartyID ("POP000306")
+                                        .countryC1 ("AT")
+                                        .payload (aPayloadElement)
+                                        .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                           aReceiverID,
+                                                                           ESML.DIGIT_TEST))
+                                        .disableValidation ()
+                                        .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
     catch (final Exception ex)

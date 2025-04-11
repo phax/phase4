@@ -35,11 +35,10 @@ import com.helger.commons.wrapper.Wrapper;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.PeppolSBDHDataReadException;
 import com.helger.peppol.sbdh.PeppolSBDHDataReader;
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ISMLInfo;
-import com.helger.peppol.utils.PeppolCAChecker;
-import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
@@ -53,6 +52,7 @@ import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.api.IAPIDescriptor;
+import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -132,8 +132,8 @@ public final class APIPostSendSBDH extends AbstractVerifyingAPIExecutor
                  sCountryCodeC1 +
                  "'");
 
-    final PeppolCAChecker aAPCAChecker = m_eStage.isTest () ? PeppolCertificateChecker.peppolTestAP ()
-                                                            : PeppolCertificateChecker.peppolProductionAP ();
+    final TrustedCAChecker aAPCAChecker = m_eStage.isTest () ? PeppolTrustedCA.peppolTestAP () : PeppolTrustedCA
+                                                                                                                .peppolProductionAP ();
 
     final String sMyPeppolSeatID = APConfig.getMyPeppolSeatID ();
     aSendingReport.setSenderPartyID (sMyPeppolSeatID);

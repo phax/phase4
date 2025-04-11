@@ -26,10 +26,10 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
+import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.Pfuoi420;
@@ -55,37 +55,33 @@ public final class Phase4PeppolReceiverConfiguration
   private final boolean m_bPerformSBDHValueChecks;
   private final boolean m_bCheckSBDHForMandatoryCountryC1;
   private final boolean m_bCheckSigningCertificateRevocation;
-  private final PeppolCAChecker m_aAPCAChecker;
+  private final TrustedCAChecker m_aAPCAChecker;
 
   /**
    * Constructor
    *
    * @param bReceiverCheckEnabled
-   *        <code>true</code> if the receiver checks are enabled,
-   *        <code>false</code> otherwise
+   *        <code>true</code> if the receiver checks are enabled, <code>false</code> otherwise
    * @param aSMPClient
-   *        The SMP metadata provider to be used. May not be <code>null</code>
-   *        if receiver checks are enabled.
+   *        The SMP metadata provider to be used. May not be <code>null</code> if receiver checks
+   *        are enabled.
    * @param eWildcardSelectionMode
-   *        The wildcard selection mode to use for the SMP. May not be
-   *        <code>null</code>
+   *        The wildcard selection mode to use for the SMP. May not be <code>null</code>
    * @param sAS4EndpointURL
-   *        The endpoint URL to check against. May neither be <code>null</code>
-   *        nor empty if receiver checks are enabled.
+   *        The endpoint URL to check against. May neither be <code>null</code> nor empty if
+   *        receiver checks are enabled.
    * @param aAPCertificate
-   *        The AP certificate to be used for compatibility. May not be
-   *        <code>null</code> if receiver checks are enabled.
+   *        The AP certificate to be used for compatibility. May not be <code>null</code> if
+   *        receiver checks are enabled.
    * @param aSBDHIdentifierFactory
-   *        The identifier factory to be used for SBDH parsing. May not be
-   *        <code>null</code>.
+   *        The identifier factory to be used for SBDH parsing. May not be <code>null</code>.
    * @param bPerformSBDHValueChecks
    *        <code>true</code> if SBDH value checks should be performed.
    * @param bCheckSBDHForMandatoryCountryC1
-   *        <code>true</code> if SBDH value checks should be performed for
-   *        mandatory C1 country code.
+   *        <code>true</code> if SBDH value checks should be performed for mandatory C1 country
+   *        code.
    * @param bCheckSigningCertificateRevocation
-   *        <code>true</code> if signing certificate revocation checks should be
-   *        performed.
+   *        <code>true</code> if signing certificate revocation checks should be performed.
    * @since 2.8.1
    */
   @Deprecated (forRemoval = true, since = "3.0.3")
@@ -115,31 +111,27 @@ public final class Phase4PeppolReceiverConfiguration
    * Constructor
    *
    * @param bReceiverCheckEnabled
-   *        <code>true</code> if the receiver checks are enabled,
-   *        <code>false</code> otherwise
+   *        <code>true</code> if the receiver checks are enabled, <code>false</code> otherwise
    * @param aSMPClient
-   *        The SMP metadata provider to be used. May not be <code>null</code>
-   *        if receiver checks are enabled.
+   *        The SMP metadata provider to be used. May not be <code>null</code> if receiver checks
+   *        are enabled.
    * @param eWildcardSelectionMode
-   *        The wildcard selection mode to use for the SMP. May not be
-   *        <code>null</code>
+   *        The wildcard selection mode to use for the SMP. May not be <code>null</code>
    * @param sAS4EndpointURL
-   *        The endpoint URL to check against. May neither be <code>null</code>
-   *        nor empty if receiver checks are enabled.
+   *        The endpoint URL to check against. May neither be <code>null</code> nor empty if
+   *        receiver checks are enabled.
    * @param aAPCertificate
-   *        The AP certificate to be used for compatibility. May not be
-   *        <code>null</code> if receiver checks are enabled.
+   *        The AP certificate to be used for compatibility. May not be <code>null</code> if
+   *        receiver checks are enabled.
    * @param aSBDHIdentifierFactory
-   *        The identifier factory to be used for SBDH parsing. May not be
-   *        <code>null</code>.
+   *        The identifier factory to be used for SBDH parsing. May not be <code>null</code>.
    * @param bPerformSBDHValueChecks
    *        <code>true</code> if SBDH value checks should be performed.
    * @param bCheckSBDHForMandatoryCountryC1
-   *        <code>true</code> if SBDH value checks should be performed for
-   *        mandatory C1 country code.
+   *        <code>true</code> if SBDH value checks should be performed for mandatory C1 country
+   *        code.
    * @param bCheckSigningCertificateRevocation
-   *        <code>true</code> if signing certificate revocation checks should be
-   *        performed.
+   *        <code>true</code> if signing certificate revocation checks should be performed.
    * @param aAPCAChecker
    *        The Peppol AP CA checker. May not be <code>null</code>.
    * @since 3.0.3
@@ -153,7 +145,7 @@ public final class Phase4PeppolReceiverConfiguration
                                             final boolean bPerformSBDHValueChecks,
                                             final boolean bCheckSBDHForMandatoryCountryC1,
                                             final boolean bCheckSigningCertificateRevocation,
-                                            @Nonnull final PeppolCAChecker aAPCAChecker)
+                                            @Nonnull final TrustedCAChecker aAPCAChecker)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -181,10 +173,9 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * @return The SMP client object that should be used for the SMP lookup. It is
-   *         customizable because it depends either on the SML or a direct URL
-   *         to the SMP may be provided. Never <code>null</code> if receiver
-   *         checks are enabled.
+   * @return The SMP client object that should be used for the SMP lookup. It is customizable
+   *         because it depends either on the SML or a direct URL to the SMP may be provided. Never
+   *         <code>null</code> if receiver checks are enabled.
    * @see #isReceiverCheckEnabled()
    */
   @Nullable
@@ -205,9 +196,8 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * @return The URL of this AP to compare to against the SMP lookup result upon
-   *         retrieval. Neither <code>null</code> nor empty if receiver checks
-   *         are enabled.
+   * @return The URL of this AP to compare to against the SMP lookup result upon retrieval. Neither
+   *         <code>null</code> nor empty if receiver checks are enabled.
    * @see #isReceiverCheckEnabled()
    */
   @Nullable
@@ -217,9 +207,8 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * @return The certificate of this AP to compare to against the SMP lookup
-   *         result upon retrieval. Never <code>null</code> if receiver checks
-   *         are enabled.
+   * @return The certificate of this AP to compare to against the SMP lookup result upon retrieval.
+   *         Never <code>null</code> if receiver checks are enabled.
    * @see #isReceiverCheckEnabled()
    */
   @Nonnull
@@ -258,7 +247,7 @@ public final class Phase4PeppolReceiverConfiguration
    * @since 3.0.3
    */
   @Nonnull
-  public PeppolCAChecker getAPCAChecker ()
+  public TrustedCAChecker getAPCAChecker ()
   {
     return m_aAPCAChecker;
   }
@@ -290,12 +279,11 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * Create a builder instance with the data of the provided object already
-   * filled in.
+   * Create a builder instance with the data of the provided object already filled in.
    *
    * @param aSrc
-   *        The source {@link Phase4PeppolReceiverConfiguration} to take the
-   *        data from. May not be <code>null</code>.
+   *        The source {@link Phase4PeppolReceiverConfiguration} to take the data from. May not be
+   *        <code>null</code>.
    * @return A non-<code>null</code> filled builder instance.
    */
   @Nonnull
@@ -322,7 +310,7 @@ public final class Phase4PeppolReceiverConfiguration
     private boolean m_bPerformSBDHValueChecks;
     private boolean m_bCheckSBDHForMandatoryCountryC1;
     private boolean m_bCheckSigningCertificateRevocation;
-    private PeppolCAChecker m_aAPCAChecker;
+    private TrustedCAChecker m_aAPCAChecker;
 
     public Phase4PeppolReceiverConfigurationBuilder ()
     {}
@@ -418,7 +406,7 @@ public final class Phase4PeppolReceiverConfiguration
     }
 
     @Nonnull
-    public Phase4PeppolReceiverConfigurationBuilder apCAChecker (@Nullable final PeppolCAChecker a)
+    public Phase4PeppolReceiverConfigurationBuilder apCAChecker (@Nullable final TrustedCAChecker a)
     {
       m_aAPCAChecker = a;
       return this;

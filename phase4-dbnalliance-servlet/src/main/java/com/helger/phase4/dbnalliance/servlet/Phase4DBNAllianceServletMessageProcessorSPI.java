@@ -52,7 +52,6 @@ import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ISMPTransportProfile;
-import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
 import com.helger.peppol.xhe.read.DBNAllianceXHEDocumentReadException;
 import com.helger.peppol.xhe.read.DBNAllianceXHEDocumentReader;
@@ -78,6 +77,7 @@ import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.certificate.CertificateHelper;
+import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.xhe.v10.XHE10Marshaller;
@@ -488,9 +488,8 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
       // Check if signing AP certificate is revoked
       // * Use global caching setting
       // * Use global certificate check mode
-      final EPeppolCertificateCheckResult eCertCheckResult = aReceiverCheckData.getAPCAChecker ()
-                                                                               .checkCertificate (aSenderSigningCert,
-                                                                                                  aNow);
+      final ECertificateCheckResult eCertCheckResult = aReceiverCheckData.getAPCAChecker ()
+                                                                         .checkCertificate (aSenderSigningCert, aNow);
       if (eCertCheckResult.isInvalid ())
       {
         final String sDetails = "The received DBNAlliance message is signed with a DBNAlliance AP certificate invalid at " +

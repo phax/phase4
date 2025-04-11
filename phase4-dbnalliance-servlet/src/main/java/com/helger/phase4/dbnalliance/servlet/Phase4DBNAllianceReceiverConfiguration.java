@@ -26,9 +26,9 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.builder.IBuilder;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
+import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 
 /**
@@ -47,7 +47,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
   private final IIdentifierFactory m_aXHEIdentifierFactory;
   private final boolean m_bPerformXHEValueChecks;
   private final boolean m_bCheckSigningCertificateRevocation;
-  private final PeppolCAChecker m_aAPCAChecker;
+  private final TrustedCAChecker m_aAPCAChecker;
 
   /**
    * Constructor
@@ -79,7 +79,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                                  @Nonnull final IIdentifierFactory aXHEIdentifierFactory,
                                                  final boolean bPerformXHEValueChecks,
                                                  final boolean bCheckSigningCertificateRevocation,
-                                                 @Nonnull final PeppolCAChecker aAPCAChecker)
+                                                 @Nonnull final TrustedCAChecker aAPCAChecker)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -160,7 +160,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
    * @return The DBNAlliance CA checker to be used. Must not be <code>null</code>.
    */
   @Nonnull
-  public PeppolCAChecker getAPCAChecker ()
+  public TrustedCAChecker getAPCAChecker ()
   {
     return m_aAPCAChecker;
   }
@@ -218,7 +218,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
     private IIdentifierFactory m_aXHEIdentifierFactory;
     private boolean m_bPerformXHEValueChecks;
     private boolean m_bCheckSigningCertificateRevocation;
-    private PeppolCAChecker m_aAPCAChecker;
+    private TrustedCAChecker m_aAPCAChecker;
 
     public Phase4DBNAllianceReceiverConfigurationBuilder ()
     {}
@@ -291,7 +291,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
     }
 
     @Nonnull
-    public Phase4DBNAllianceReceiverConfigurationBuilder apCAChecker (@Nullable final PeppolCAChecker a)
+    public Phase4DBNAllianceReceiverConfigurationBuilder apCAChecker (@Nullable final TrustedCAChecker a)
     {
       m_aAPCAChecker = a;
       return this;

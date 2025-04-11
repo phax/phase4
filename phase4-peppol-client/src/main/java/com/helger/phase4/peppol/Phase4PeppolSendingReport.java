@@ -40,8 +40,6 @@ import com.helger.json.JsonObject;
 import com.helger.json.serialize.IJsonWriterSettings;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.sml.ISMLInfo;
-import com.helger.peppol.utils.EPeppolCertificateCheckResult;
-import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -50,6 +48,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.security.certificate.CertificateHelper;
+import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.serialize.MicroWriter;
@@ -89,7 +88,7 @@ public class Phase4PeppolSendingReport
   private X509Certificate m_aC3Cert;
   private String m_sC3CertSubjectCN;
   private OffsetDateTime m_aC3CertCheckDT;
-  private EPeppolCertificateCheckResult m_eC3CertCheckResult;
+  private ECertificateCheckResult m_eC3CertCheckResult;
 
   // AS4 params
   private String m_sAS4MessageID;
@@ -276,7 +275,7 @@ public class Phase4PeppolSendingReport
   public void setC3Cert (@Nullable final X509Certificate a)
   {
     m_aC3Cert = a;
-    m_sC3CertSubjectCN = PeppolCertificateHelper.getSubjectCN (a);
+    m_sC3CertSubjectCN = CertificateHelper.getSubjectCN (a);
   }
 
   public boolean hasC3CertCheckDT ()
@@ -308,7 +307,7 @@ public class Phase4PeppolSendingReport
    * @param e
    *        The Peppol AP Certificate check result. May be <code>null</code>.
    */
-  public void setC3CertCheckResult (@Nullable final EPeppolCertificateCheckResult e)
+  public void setC3CertCheckResult (@Nullable final ECertificateCheckResult e)
   {
     m_eC3CertCheckResult = e;
   }

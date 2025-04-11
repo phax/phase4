@@ -28,12 +28,12 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
-import com.helger.peppol.utils.PeppolCAChecker;
 import com.helger.peppol.xhe.read.DBNAllianceXHEDocumentReader;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.dbnalliance.servlet.Phase4DBNAllianceReceiverConfiguration.Phase4DBNAllianceReceiverConfigurationBuilder;
+import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 
 /**
@@ -51,7 +51,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   public static final IIdentifierFactory DEFAULT_XHE_IDENTIFIER_FACTORY = SimpleIdentifierFactory.INSTANCE;
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
-  public static final PeppolCAChecker DEFAULT_CA_CHECKER = DBNAllianceTrustStores.Config2023.PILOT_CA;
+  public static final TrustedCAChecker DEFAULT_CA_CHECKER = DBNAllianceTrustStores.Config2023.PILOT_CA;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4DBNAllianceDefaultReceiverConfiguration.class);
 
@@ -62,7 +62,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   private static IIdentifierFactory s_aXHEIdentifierFactory = DEFAULT_XHE_IDENTIFIER_FACTORY;
   private static boolean s_bPerformXHEValueChecks = DBNAllianceXHEDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
-  private static PeppolCAChecker s_aAPCAChecker = DEFAULT_CA_CHECKER;
+  private static TrustedCAChecker s_aAPCAChecker = DEFAULT_CA_CHECKER;
 
   private Phase4DBNAllianceDefaultReceiverConfiguration ()
   {}
@@ -232,7 +232,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
    * @return The DBNAlliance AP CA checker to be used. Never <code>null</code>.
    */
   @Nonnull
-  public static PeppolCAChecker getAPCAChecker ()
+  public static TrustedCAChecker getAPCAChecker ()
   {
     return s_aAPCAChecker;
   }
@@ -243,7 +243,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
    * @param a
    *        The DBNAlliance CA checker to be used. May not be <code>null</code>.
    */
-  public static void setAPCAChecker (@Nonnull final PeppolCAChecker a)
+  public static void setAPCAChecker (@Nonnull final TrustedCAChecker a)
   {
     ValueEnforcer.notNull (a, "APCAChecker");
 

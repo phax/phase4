@@ -29,7 +29,6 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
@@ -42,6 +41,7 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.model.error.EEbmsError;
+import com.helger.security.certificate.CertificateHelper;
 import com.helger.xhe.v10.XHE10XHEType;
 
 /**
@@ -69,7 +69,7 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
     // Example code snippets how to get data
     LOGGER.info ("Received a new DBNAlliance Message");
     LOGGER.info ("  C1 = " + aDBNAllianceXHE.getFromPartyAsIdentifier ().getURIEncoded ());
-    LOGGER.info ("  C2 = " + PeppolCertificateHelper.getSubjectCN (aIncomingState.getSigningCertificate ()));
+    LOGGER.info ("  C2 = " + CertificateHelper.getSubjectCN (aIncomingState.getSigningCertificate ()));
     LOGGER.info ("  C3 = " + sMyPeppolSeatID);
     LOGGER.info ("  C4 = " + aDBNAllianceXHE.getToPartyAsIdentifier ().getURIEncoded ());
     LOGGER.info ("  DocType = " +

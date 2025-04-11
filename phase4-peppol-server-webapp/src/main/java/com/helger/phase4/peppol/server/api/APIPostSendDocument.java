@@ -33,11 +33,10 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.system.EJavaVersion;
 import com.helger.commons.timing.StopWatch;
 import com.helger.commons.wrapper.Wrapper;
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ISMLInfo;
-import com.helger.peppol.utils.PeppolCAChecker;
-import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -54,6 +53,7 @@ import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.api.IAPIDescriptor;
+import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -119,8 +119,8 @@ public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
 
     final IIdentifierFactory aIF = PeppolIdentifierFactory.INSTANCE;
     final ISMLInfo aSmlInfo = m_eStage.isTest () ? ESML.DIGIT_TEST : ESML.DIGIT_PRODUCTION;
-    final PeppolCAChecker aAPCAChecker = m_eStage.isTest () ? PeppolCertificateChecker.peppolTestAP ()
-                                                            : PeppolCertificateChecker.peppolProductionAP ();
+    final TrustedCAChecker aAPCAChecker = m_eStage.isTest () ? PeppolTrustedCA.peppolTestAP () : PeppolTrustedCA
+                                                                                                                .peppolProductionAP ();
     final String sMyPeppolSeatID = APConfig.getMyPeppolSeatID ();
 
     final Phase4PeppolSendingReport aSendingReport = new Phase4PeppolSendingReport (aSmlInfo);

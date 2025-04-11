@@ -40,9 +40,6 @@ import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
 import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.utils.EPeppolCertificateCheckResult;
-import com.helger.peppol.utils.PeppolCAChecker;
-import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppol.xhe.DBNAlliancePayload;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
 import com.helger.peppol.xhe.write.DBNAllianceXHEDocumentWriter;
@@ -65,6 +62,9 @@ import com.helger.phase4.profile.dbnalliance.Phase4DBNAllianceHttpClientSettings
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.security.certificate.CertificateHelper;
+import com.helger.security.certificate.ECertificateCheckResult;
+import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.smpclient.url.DBNAURLProviderSMP;
@@ -152,7 +152,7 @@ public final class Phase4DBNAllianceSender
    * @throws Phase4DBNAllianceException
    *         in case of error
    */
-  private static void _checkReceiverAPCert (@Nonnull final PeppolCAChecker aCAChecker,
+  private static void _checkReceiverAPCert (@Nonnull final TrustedCAChecker aCAChecker,
                                             @Nullable final X509Certificate aReceiverCert,
                                             @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
                                             @Nonnull final ETriState eCacheOSCResult,
@@ -162,10 +162,10 @@ public final class Phase4DBNAllianceSender
       LOGGER.debug ("Using the following receiver AP certificate from the SMP: " + aReceiverCert);
 
     final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-    final EPeppolCertificateCheckResult eCertCheckResult = aCAChecker.checkCertificate (aReceiverCert,
-                                                                                        aNow,
-                                                                                        eCacheOSCResult,
-                                                                                        eCheckMode);
+    final ECertificateCheckResult eCertCheckResult = aCAChecker.checkCertificate (aReceiverCert,
+                                                                                  aNow,
+                                                                                  eCacheOSCResult,
+                                                                                  eCheckMode);
 
     // Interested in the certificate?
     if (aCertificateConsumer != null)
@@ -226,7 +226,7 @@ public final class Phase4DBNAllianceSender
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private Consumer <String> m_aAPEndpointURLConsumer;
     private boolean m_bCheckReceiverAPCertificate;
-    protected PeppolCAChecker m_aCAChecker;
+    protected TrustedCAChecker m_aCAChecker;
 
     // Status var
     private OffsetDateTime m_aEffectiveSendingDT;
@@ -466,7 +466,7 @@ public final class Phase4DBNAllianceSender
      * @since 3.0.8
      */
     @Nonnull
-    public final IMPLTYPE apCAChecker (@Nonnull final PeppolCAChecker aCAChecker)
+    public final IMPLTYPE apCAChecker (@Nonnull final TrustedCAChecker aCAChecker)
     {
       ValueEnforcer.notNull (aCAChecker, "CAChecker");
       m_aCAChecker = aCAChecker;
@@ -541,9 +541,7 @@ public final class Phase4DBNAllianceSender
         if (m_aCertificateConsumer != null)
         {
           final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-          m_aCertificateConsumer.onCertificateCheckResult (aReceiverCert,
-                                                           aNow,
-                                                           EPeppolCertificateCheckResult.NOT_CHECKED);
+          m_aCertificateConsumer.onCertificateCheckResult (aReceiverCert, aNow, ECertificateCheckResult.NOT_CHECKED);
         }
       }
       receiverCertificate (aReceiverCert);
@@ -555,7 +553,7 @@ public final class Phase4DBNAllianceSender
       endpointURL (sDestURL);
 
       // From receiver certificate
-      toPartyID (PeppolCertificateHelper.getSubjectCN (aReceiverCert));
+      toPartyID (CertificateHelper.getSubjectCN (aReceiverCert));
 
       // Super at the end
       return super.finishFields ();
