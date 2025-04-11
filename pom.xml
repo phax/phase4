@@ -348,6 +348,10 @@
     <module>phase4-peppol-client</module>
     <module>phase4-peppol-servlet</module>
     <module>phase4-peppol-server-webapp</module>
+    <module>phase4-dbnalliance-servlet</module>
+    <!--
+    <module>phase4-dbnalliance-server-webapp</module>
+    -->
   </modules>
 <!--
   <build>
