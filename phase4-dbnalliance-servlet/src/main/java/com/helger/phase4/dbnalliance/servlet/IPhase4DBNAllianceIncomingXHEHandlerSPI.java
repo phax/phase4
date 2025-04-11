@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Philip Helger (www.helger.com)
+ * Copyright (C) 2025 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,26 +41,25 @@ public interface IPhase4DBNAllianceIncomingXHEHandlerSPI
    *
    * @param aMessageMetadata
    *        Message metadata. Includes data when and from whom it was received. Never
-   *        <code>null</code>. Since v0.9.8.
+   *        <code>null</code>.
    * @param aHeaders
    *        The (HTTP) headers of the incoming request. Never <code>null</code>.
    * @param aUserMessage
-   *        The received EBMS user message. Never <code>null</code>. Since v0.9.8.
+   *        The received EBMS user message. Never <code>null</code>.
    * @param aSBDBytes
    *        The raw SBD bytes. These are the bytes as received via AS4, just decrypted and
    *        decompressed. Never <code>null</code>.
    * @param aXHE
    *        The incoming parsed Standard Business Document as JAXB data model. This is the
-   *        pre-parsed SBD bytes. Use {@link com.helger.sbdh.SBDMarshaller} to serialize the
+   *        pre-parsed SBD bytes. Use {@link com.helger.xhe.v10.XHE10Marshaller} to serialize the
    *        document. Never <code>null</code>
    * @param aDBNAllianceXHE
-   *        The pre-parsed Peppol Standard Business Document. Never <code>null</code>. Since v0.9.8.
+   *        The pre-parsed Peppol Standard Business Document. Never <code>null</code>.
    * @param aState
    *        The message state. Can e.g. be used to retrieve information about the certificate found
-   *        in the message. Never <code>null</code>. Since v0.9.8
+   *        in the message. Never <code>null</code>.
    * @param aProcessingErrorMessages
-   *        List for error messages that occur during processing. Never <code>null</code>. Since
-   *        v2.6.0.
+   *        List for error messages that occur during processing. Never <code>null</code>.
    * @throws Exception
    *         In case it cannot be processed.
    */

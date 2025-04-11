@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Philip Helger (www.helger.com)
+ * Copyright (C) 2025 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -157,7 +157,6 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
 
   /**
    * @return The default identifier factory used to parse SBDH data. Never <code>null</code>.
-   * @since 3.0.1
    */
   @Nonnull
   public static IIdentifierFactory getSBDHIdentifierFactory ()
@@ -170,7 +169,6 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
    *
    * @param a
    *        The identifier factory to use. May not be <code>null</code>.
-   * @since 3.0.1
    */
   public static void setSBDHIdentifierFactory (@Nonnull final IIdentifierFactory a)
   {
@@ -181,7 +179,6 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   /**
    * @return <code>true</code> if SBDH value checks are enabled, <code>false</code> if they are
    *         disabled.
-   * @since 0.12.1
    */
   public static boolean isPerformSBDHValueChecks ()
   {
@@ -193,7 +190,6 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
    *
    * @param b
    *        <code>true</code> to enable the checks, <code>false</code> to disable them
-   * @since 0.12.1
    */
   public static void setPerformSBDHValueChecks (final boolean b)
   {
@@ -294,7 +290,6 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
    * instance.
    *
    * @return The instance data and never <code>null</code>.
-   * @since 0.9.13
    */
   @Nonnull
   public static Phase4DBNAllianceReceiverConfiguration getAsReceiverCheckData ()

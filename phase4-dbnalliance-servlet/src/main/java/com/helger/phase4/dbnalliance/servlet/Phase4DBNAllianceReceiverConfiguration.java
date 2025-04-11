@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Philip Helger (www.helger.com)
+ * Copyright (C) 2025 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,11 +33,9 @@ import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 
 /**
  * This class contains the "per-request" data of
- * {@link Phase4DBNAllianceDefaultReceiverConfiguration}.<br/>
- * Old name before v3: <code>Phase4PeppolReceiverCheckData</code>
+ * {@link Phase4DBNAllianceDefaultReceiverConfiguration}.
  *
  * @author Philip Helger
- * @since 0.9.13
  */
 @Immutable
 public final class Phase4DBNAllianceReceiverConfiguration
@@ -141,7 +139,6 @@ public final class Phase4DBNAllianceReceiverConfiguration
 
   /**
    * @return The identifier factory to be used for SBDH parsing.
-   * @since 3.0.1
    */
   @Nonnull
   public IIdentifierFactory getXHEIdentifierFactory ()
