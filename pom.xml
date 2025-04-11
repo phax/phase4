@@ -75,11 +75,11 @@
 
     <bctls.version>1.80</bctls.version>
     <log4j.version>2.24.3</log4j.version>
-    <xmlsec.version>3.0.5</xmlsec.version>
+    <xmlsec.version>3.0.6</xmlsec.version>
     <wss4j.version>3.0.4</wss4j.version>
     <peppol-commons.version>10.2.0-SNAPSHOT</peppol-commons.version>
     <peppol-reporting.version>3.0.3</peppol-reporting.version>
-    <ph-commons.version>11.2.1-SNAPSHOT</ph-commons.version>
+    <ph-commons.version>11.2.1</ph-commons.version>
     <ph-schematron.version>8.0.6</ph-schematron.version>
     <ph-ubl.version>9.0.3</ph-ubl.version>
     <ph-web.version>10.4.1</ph-web.version>
