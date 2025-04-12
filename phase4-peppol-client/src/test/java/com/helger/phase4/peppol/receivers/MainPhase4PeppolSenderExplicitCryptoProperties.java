@@ -31,8 +31,8 @@ import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phive.peppol.PeppolValidation2024_11;
 import com.helger.security.keystore.EKeyStoreType;
+import com.helger.security.keystore.ITrustStoreDescriptor;
 import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
-import com.helger.security.keystore.TrustStoreDescriptor;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -63,29 +63,26 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
                                                                     .keyAlias ("openpeppol aisbl id von pop000306")
                                                                     .keyPassword ("peppol")
                                                                     .build ();
-      final TrustStoreDescriptor aTSD = TrustStoreDescriptor.builder ()
-                                                            .type (PeppolTrustStores.TRUSTSTORE_TYPE)
-                                                            .path (PeppolTrustStores.Config2018.TRUSTSTORE_AP_PILOT_CLASSPATH)
-                                                            .password (PeppolTrustStores.TRUSTSTORE_PASSWORD)
-                                                            .build ();
+      final ITrustStoreDescriptor aTSD = PeppolTrustStores.Config2018.TRUSTSTORE_DESCRIPTOR_AP_PILOT;
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
       final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
-                                        .cryptoFactory (new AS4CryptoFactoryInMemoryKeyStore (aKSD, aTSD))
-                                        .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
-                                        .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                                        .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
-                                        .receiverParticipantID (aReceiverID)
-                                        .senderPartyID ("POP000306")
-                                        .countryC1 ("AT")
-                                        .payload (aPayloadBytes)
-                                        .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                           aReceiverID,
-                                                                           ESML.DIGIT_TEST))
-                                        .validationConfiguration (PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
-                                                                  new Phase4PeppolValidatonResultHandler ())
-                                        .sendMessageAndCheckForReceipt ();
+                                                                  .cryptoFactory (new AS4CryptoFactoryInMemoryKeyStore (aKSD,
+                                                                                                                        aTSD))
+                                                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
+                                                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
+                                                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
+                                                                  .receiverParticipantID (aReceiverID)
+                                                                  .senderPartyID ("POP000306")
+                                                                  .countryC1 ("AT")
+                                                                  .payload (aPayloadBytes)
+                                                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                                                     aReceiverID,
+                                                                                                     ESML.DIGIT_TEST))
+                                                                  .validationConfiguration (PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
+                                                                                            new Phase4PeppolValidatonResultHandler ())
+                                                                  .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
     catch (final Exception ex)

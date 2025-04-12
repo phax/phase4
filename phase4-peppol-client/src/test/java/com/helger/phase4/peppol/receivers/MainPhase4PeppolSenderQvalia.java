@@ -107,10 +107,7 @@ public final class MainPhase4PeppolSenderQvalia
                                                                                                                    "peppol".toCharArray ()),
                                                                                 "1",
                                                                                 "peppol".toCharArray (),
-                                                                                KeyStoreHelper.loadKeyStore (PeppolTrustStores.TRUSTSTORE_TYPE,
-                                                                                                             PeppolTrustStores.Config2018.TRUSTSTORE_AP_PRODUCTION_CLASSPATH,
-                                                                                                             PeppolTrustStores.TRUSTSTORE_PASSWORD.toCharArray ())
-                                                                                              .getKeyStore ());
+                                                                                PeppolTrustStores.Config2018.TRUSTSTORE_AP_PILOT);
       final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
                                                                   .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
                                                                   .cryptoFactory (cf)

@@ -78,10 +78,7 @@ public final class MainPhase4PeppolSenderExpiredKeystore
                                                                                                             "peppol".toCharArray ()),
                                                                          "cert",
                                                                          "peppol".toCharArray (),
-                                                                         KeyStoreHelper.loadKeyStore (PeppolTrustStores.TRUSTSTORE_TYPE,
-                                                                                                      PeppolTrustStores.Config2018.TRUSTSTORE_AP_PILOT_CLASSPATH,
-                                                                                                      PeppolTrustStores.TRUSTSTORE_PASSWORD.toCharArray ())
-                                                                                       .getKeyStore ());
+                                                                         PeppolTrustStores.Config2018.TRUSTSTORE_AP_PILOT);
 
       final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
                                                                   .cryptoFactory (cf)
