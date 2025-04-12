@@ -87,6 +87,7 @@ public class Phase4PeppolSendingReport
   private String m_sC3EndpointURL;
   private X509Certificate m_aC3Cert;
   private String m_sC3CertSubjectCN;
+  private String m_sC3CertSubjectO;
   private OffsetDateTime m_aC3CertCheckDT;
   private ECertificateCheckResult m_eC3CertCheckResult;
 
@@ -266,6 +267,11 @@ public class Phase4PeppolSendingReport
     return StringHelper.hasText (m_sC3CertSubjectCN);
   }
 
+  public boolean hasC3CertSubjectO ()
+  {
+    return StringHelper.hasText (m_sC3CertSubjectO);
+  }
+
   /**
    * Remember the public Peppol AP certificate of C3 determined by the SMP lookup.
    *
@@ -276,6 +282,7 @@ public class Phase4PeppolSendingReport
   {
     m_aC3Cert = a;
     m_sC3CertSubjectCN = CertificateHelper.getSubjectCN (a);
+    m_sC3CertSubjectO = CertificateHelper.getSubjectO (a);
   }
 
   public boolean hasC3CertCheckDT ()
@@ -490,6 +497,8 @@ public class Phase4PeppolSendingReport
       aJson.add ("c3Cert", CertificateHelper.getPEMEncodedCertificate (m_aC3Cert));
     if (hasC3CertSubjectCN ())
       aJson.add ("c3CertSubjectCN", m_sC3CertSubjectCN);
+    if (hasC3CertSubjectO ())
+      aJson.add ("c3CertSubjectO", m_sC3CertSubjectO);
     if (hasC3CertCheckDT ())
       aJson.add ("c3CertCheckDT", PDTWebDateHelper.getAsStringXSD (m_aC3CertCheckDT));
     if (hasC3CertCheckResult ())
@@ -613,6 +622,8 @@ public class Phase4PeppolSendingReport
       ret.appendElement (sNamespaceURI, "C3Cert").appendText (CertificateHelper.getPEMEncodedCertificate (m_aC3Cert));
     if (hasC3CertSubjectCN ())
       ret.appendElement (sNamespaceURI, "C3CertSubjectCN").appendText (m_sC3CertSubjectCN);
+    if (hasC3CertSubjectO ())
+      ret.appendElement (sNamespaceURI, "C3CertSubjectO").appendText (m_sC3CertSubjectO);
     if (hasC3CertCheckDT ())
       ret.appendElement (sNamespaceURI, "C3CertCheckDT")
          .appendText (PDTWebDateHelper.getAsStringXSD (m_aC3CertCheckDT));
