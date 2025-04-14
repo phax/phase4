@@ -58,9 +58,9 @@ public class MainPhase4DBNAllianceSenderExample
         throw new IllegalStateException ("Failed to read file to be send");
 
       // Start configuring here
-      final BDXR2ParticipantIdentifier aReceiver = Phase4DBNAllianceSender.IF.createParticipantIdentifier ("us:ein",
-                                                                                                           "365060483");
-      final BDXR2ClientReadOnly aSMPClient = new BDXR2ClientReadOnly (DBNAURLProviderSMP.INSTANCE.getSMPURIOfParticipant (aReceiver,
+      final BDXR2ParticipantIdentifier aReceiverID = Phase4DBNAllianceSender.IF.createParticipantIdentifier ("us:ein",
+                                                                                                             "365060483");
+      final BDXR2ClientReadOnly aSMPClient = new BDXR2ClientReadOnly (DBNAURLProviderSMP.INSTANCE.getSMPURIOfParticipant (aReceiverID,
                                                                                                                           EDBNAllianceSML.TEST.getZoneName ()));
       // TODO Set correct truststore here
       aSMPClient.setTrustStore (DBNAllianceTrustStores.Config2023.TRUSTSTORE_PILOT);
@@ -72,7 +72,7 @@ public class MainPhase4DBNAllianceSenderExample
                                                                                                                                        "bdx:noprocess"))
                                                                        .senderParticipantID (Phase4DBNAllianceSender.IF.createParticipantIdentifier ("us:ein",
                                                                                                                                                      "365060483"))
-                                                                       .receiverParticipantID (aReceiver)
+                                                                       .receiverParticipantID (aReceiverID)
                                                                        .fromPartyID ("365060483")
                                                                        .payloadElement (aPayloadElement)
                                                                        .smpClient (aSMPClient)

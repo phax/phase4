@@ -53,8 +53,8 @@ import com.helger.commons.string.StringHelper;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
-import com.helger.peppol.xhe.read.DBNAllianceXHEDocumentReadException;
-import com.helger.peppol.xhe.read.DBNAllianceXHEDocumentReader;
+import com.helger.peppol.xhe.read.DBNAllianceXHEDataReadException;
+import com.helger.peppol.xhe.read.DBNAllianceXHEDataReader;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -635,7 +635,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
 
       // Interpret as DBNAlliance XHE and eventually perform consistency checks
       final boolean bPerformValueChecks = aReceiverCheckData.isPerformXHEValueChecks ();
-      final DBNAllianceXHEDocumentReader aReader = new DBNAllianceXHEDocumentReader (aIdentifierFactory).setPerformValueChecks (bPerformValueChecks);
+      final DBNAllianceXHEDataReader aReader = new DBNAllianceXHEDataReader (aIdentifierFactory).setPerformValueChecks (bPerformValueChecks);
 
       aDBNAllianceXHE = aReader.extractData (aReadAttachment.xhe ());
 
@@ -644,7 +644,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
                       "The provided XHE is valid according to DBNAlliance rules, with value checks being " +
                       (bPerformValueChecks ? "enabled" : "disabled"));
     }
-    catch (final DBNAllianceXHEDocumentReadException ex)
+    catch (final DBNAllianceXHEDataReadException ex)
     {
       final String sMsg = "Failed to extract the DBNAlliance data from XHE.";
       LOGGER.error (sLogPrefix + sMsg, ex);

@@ -42,7 +42,7 @@ import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.xhe.DBNAlliancePayload;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
-import com.helger.peppol.xhe.write.DBNAllianceXHEDocumentWriter;
+import com.helger.peppol.xhe.write.DBNAllianceXHEDataWriter;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -127,7 +127,7 @@ public final class Phase4DBNAllianceSender
     if (!aData.areAllFieldsSet (true))
       throw new Phase4DBNAllianceException ("The DBNAlliance XHE data is incomplete. See logs for details.");
 
-    return DBNAllianceXHEDocumentWriter.createExchangeHeaderEnvelope (aData);
+    return DBNAllianceXHEDataWriter.createExchangeHeaderEnvelope (aData);
   }
 
   /**

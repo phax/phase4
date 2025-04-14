@@ -96,8 +96,10 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
 
     // TODO This is only demo code to force an error
     // Check if any "MessageProperty" with name "MockAction" is contained
-    final Ebms3Property aMockAction = CollectionHelper.findFirst (aUserMessage.getMessageProperties ().getProperty (),
-                                                                  x -> "MockAction".equals (x.getName ()));
+    final Ebms3Property aMockAction = aUserMessage.getMessageProperties () == null ? null : CollectionHelper.findFirst (
+                                                                                                                        aUserMessage.getMessageProperties ()
+                                                                                                                                    .getProperty (),
+                                                                                                                        x -> "MockAction".equals (x.getName ()));
     if (aMockAction != null)
     {
       // Explicitly return an Error - for testing errors

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
-import com.helger.peppol.xhe.read.DBNAllianceXHEDocumentReader;
+import com.helger.peppol.xhe.read.DBNAllianceXHEDataReader;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.CAS4;
@@ -60,7 +60,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
   private static IIdentifierFactory s_aXHEIdentifierFactory = DEFAULT_XHE_IDENTIFIER_FACTORY;
-  private static boolean s_bPerformXHEValueChecks = DBNAllianceXHEDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
+  private static boolean s_bPerformXHEValueChecks = DBNAllianceXHEDataReader.DEFAULT_PERFORM_VALUE_CHECKS;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
   private static TrustedCAChecker s_aAPCAChecker = DEFAULT_CA_CHECKER;
 
