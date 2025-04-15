@@ -223,7 +223,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     final Phase4PeppolHttpClientSettings aHCS = new Phase4PeppolHttpClientSettings ();
     if (false)
     {
-      // TODO enable when you use a proxy
+      // TODO enable when you use an HTTP proxy
       aHCS.setProxyHost (new HttpHost (APConfig.getHttpProxyHost (), APConfig.getHttpProxyPort ()));
     }
     PeppolCRLDownloader.setAsDefaultCRLCache (aHCS);

@@ -66,7 +66,7 @@ public class MainCEFeInvoicingConnectivityTest
   private static final KeyStore TRUST_STORE;
   private static final AS4CryptoFactoryInMemoryKeyStore CF;
 
-  // XXX change 00 to your ID
+  // TODO change 00 to your ID
   private static final String YOUR_ID = "einvoicingct_00_gw";
 
   static
@@ -123,7 +123,7 @@ public class MainCEFeInvoicingConnectivityTest
                                                     new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)));
         }
       };
-      // XXX The message ID to use in the UI
+      // TODO The message ID to use in the UI
       final String sAS4MessageID = "36999089-662a-441f-95fd-470bec2b538e-100@phase4";
       final EAS4UserMessageSendResult eRes = Phase4CEFSender.builder ()
                                                             .cryptoFactory (CF)

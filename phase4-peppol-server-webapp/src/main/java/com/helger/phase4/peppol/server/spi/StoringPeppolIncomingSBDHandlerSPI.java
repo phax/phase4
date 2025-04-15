@@ -121,8 +121,7 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
         {
           LOGGER.info ("Creating Peppol Reporting Item and storing it");
 
-          // TODO determine correct values for the next three
-          // fields
+          // TODO determine correct values for Peppol Reporting for the next three fields
           final String sC3ID = sMyPeppolSeatID;
           final String sC4CountryCode = "AT";
           final String sEndUserID = "EndUserID";
@@ -140,7 +139,7 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
         catch (final PeppolReportingBackendException ex)
         {
           LOGGER.error ("Failed to store Peppol Reporting Item", ex);
-          // TODO improve error handling
+          // TODO improve Peppol Reporting error handling
         }
     });
   }

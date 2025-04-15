@@ -51,26 +51,25 @@ public final class MainPhase4PeppolSenderTestbed
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // TODO use correct participant ID
-      final IParticipantIdentifier aSenderID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("yours");
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("theirs");
-      final EAS4UserMessageSendResult eResult;
-      eResult = Phase4PeppolSender.builder ()
-                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
-                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                                  .senderParticipantID (aSenderID)
-                                  .receiverParticipantID (aReceiverID)
-                                  .senderPartyID ("POP000306")
-                                  .countryC1 ("AT")
-                                  .payload (aPayloadElement)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                     aReceiverID,
-                                                                     ESML.DIGIT_TEST))
-                                  .disableValidation ()
-                                  .signalMsgConsumer ( (aSignalMsg, aMessageMetadata, aState) -> {
-                                    LOGGER.info (new Ebms3SignalMessageMarshaller ().setFormattedOutput (true)
-                                                                                    .getAsString (aSignalMsg));
-                                  })
-                                  .sendMessageAndCheckForReceipt ();
+      final IParticipantIdentifier aSenderID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:yours");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:theirs");
+      final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
+                                        .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
+                                        .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
+                                        .senderParticipantID (aSenderID)
+                                        .receiverParticipantID (aReceiverID)
+                                        .senderPartyID ("POP000306")
+                                        .countryC1 ("AT")
+                                        .payload (aPayloadElement)
+                                        .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                           aReceiverID,
+                                                                           ESML.DIGIT_TEST))
+                                        .disableValidation ()
+                                        .signalMsgConsumer ( (aSignalMsg, aMessageMetadata, aState) -> {
+                                          LOGGER.info (new Ebms3SignalMessageMarshaller ().setFormattedOutput (true)
+                                                                                          .getAsString (aSignalMsg));
+                                        })
+                                        .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
     catch (final Exception ex)
