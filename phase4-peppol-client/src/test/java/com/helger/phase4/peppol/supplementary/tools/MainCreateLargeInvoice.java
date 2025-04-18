@@ -30,9 +30,10 @@ public class MainCreateLargeInvoice
     // The target size of the invoice in characters
     final long nTargetChars = CGlobal.BYTES_PER_GIGABYTE * 1;
 
+    final SizeHelper aSH = new SizeHelper (Locale.ENGLISH);
     int nLineID = 2;
     final File fTarget = new File ("src/test/resources/external/examples/large-files/base-example-large-" +
-                                   new SizeHelper (Locale.ENGLISH).getAsMatching (nTargetChars) +
+                                   aSH.getAsMatching (nTargetChars).toLowerCase (Locale.ROOT) +
                                    ".xml");
     System.out.println ("Creating file " +
                         fTarget.getName () +
