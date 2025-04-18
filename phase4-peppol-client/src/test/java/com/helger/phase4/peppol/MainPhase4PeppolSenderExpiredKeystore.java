@@ -19,7 +19,6 @@ package com.helger.phase4.peppol;
 import java.io.File;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.peppol.security.PeppolTrustStores;
@@ -31,6 +30,7 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.photon.io.WebFileIO;
 import com.helger.security.keystore.EKeyStoreType;
@@ -48,7 +48,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class MainPhase4PeppolSenderExpiredKeystore
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderExpiredKeystore.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderExpiredKeystore.class);
 
   public static void main (final String [] args)
   {

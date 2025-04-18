@@ -19,9 +19,9 @@
  */
 package com.helger.phase4.bdew;
 
-import org.junit.Test;
-
 import java.security.GeneralSecurityException;
+
+import org.junit.Test;
 
 /**
  * Test class for class {@link Phase4BDEWHttpClientSettings}

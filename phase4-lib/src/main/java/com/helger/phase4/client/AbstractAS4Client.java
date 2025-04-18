@@ -31,7 +31,6 @@ import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -45,6 +44,7 @@ import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.BasicHttpPoster;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.messaging.http.IHttpPoster;
@@ -79,7 +79,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     return MessageHelperMethods::createRandomMessageID;
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4Client.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AbstractAS4Client.class);
 
   private final EAS4MessageType m_eMessageType;
   private final AS4ResourceHelper m_aResHelper;

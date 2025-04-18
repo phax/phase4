@@ -26,7 +26,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -39,6 +38,7 @@ import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.crypto.IAS4PModeAwareCryptoFactory;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 
@@ -53,7 +53,7 @@ import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 @NotThreadSafe
 public class SoapHeaderElementProcessorRegistry
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (SoapHeaderElementProcessorRegistry.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (SoapHeaderElementProcessorRegistry.class);
   private final ICommonsOrderedMap <QName, ISoapHeaderElementProcessor> m_aMap = new CommonsLinkedHashMap <> ();
 
   public SoapHeaderElementProcessorRegistry ()

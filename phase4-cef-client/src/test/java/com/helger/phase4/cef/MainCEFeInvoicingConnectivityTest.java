@@ -23,7 +23,6 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.commons.exception.InitializationException;
@@ -38,6 +37,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
@@ -60,7 +60,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
  */
 public class MainCEFeInvoicingConnectivityTest
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainCEFeInvoicingConnectivityTest.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainCEFeInvoicingConnectivityTest.class);
 
   // Shared between sender and receiver
   private static final KeyStore TRUST_STORE;

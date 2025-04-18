@@ -19,12 +19,12 @@ package com.helger.phase4.profile.dbnalliance;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.HttpClientUrlDownloader;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.crl.CRLCache;
 import com.helger.security.crl.CRLDownloader;
 import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
@@ -37,7 +37,7 @@ import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
  */
 public class DBNAllianceCRLDownloader extends CRLDownloader
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (DBNAllianceCRLDownloader.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (DBNAllianceCRLDownloader.class);
 
   /**
    * Default constructor using {@link Phase4DBNAllianceHttpClientSettings}.

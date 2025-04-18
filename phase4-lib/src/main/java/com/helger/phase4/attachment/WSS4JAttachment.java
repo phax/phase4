@@ -32,7 +32,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.wss4j.common.ext.Attachment;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
@@ -52,6 +51,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.mail.datasource.InputStreamProviderDataSource;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -78,7 +78,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   public static final String CONTENT_ID_PREFIX = "<attachment=";
   public static final String CONTENT_ID_SUFFIX = ">";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (WSS4JAttachment.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (WSS4JAttachment.class);
 
   private final AS4ResourceHelper m_aResHelper;
   private IHasInputStream m_aISP;

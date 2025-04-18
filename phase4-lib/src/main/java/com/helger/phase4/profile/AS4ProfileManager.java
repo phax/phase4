@@ -23,7 +23,6 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -34,6 +33,7 @@ import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * AS4 profile manager. All profiles are registered by SPI -
@@ -44,7 +44,7 @@ import com.helger.commons.string.ToStringGenerator;
 @ThreadSafe
 public class AS4ProfileManager implements IAS4ProfileManager
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ProfileManager.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ProfileManager.class);
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("m_aRWLock")

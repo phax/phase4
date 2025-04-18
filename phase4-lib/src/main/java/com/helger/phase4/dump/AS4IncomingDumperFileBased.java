@@ -24,13 +24,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * Simple file based version of {@link IAS4IncomingDumper}.
@@ -44,7 +44,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    * The default relative path for incoming messages.
    */
   public static final String DEFAULT_BASE_PATH = "incoming/";
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingDumperFileBased.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4IncomingDumperFileBased.class);
 
   private final IAS4IncomingDumperFileProvider m_aFileProvider;
 

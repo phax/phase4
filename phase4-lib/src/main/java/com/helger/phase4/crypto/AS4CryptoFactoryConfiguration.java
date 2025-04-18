@@ -25,12 +25,12 @@ import javax.annotation.concurrent.Immutable;
 
 import org.apache.wss4j.common.crypto.Merlin;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.config.IConfig;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.Phase4RuntimeException;
 import com.helger.security.keystore.IKeyStoreAndKeyDescriptor;
 import com.helger.security.keystore.ITrustStoreDescriptor;
@@ -56,7 +56,7 @@ import com.helger.security.keystore.LoadedKeyStore;
 @Immutable
 public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeyStore
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptoFactoryConfiguration.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4CryptoFactoryConfiguration.class);
 
   /**
    * @return The default instance, created by reading the default properties

@@ -30,7 +30,6 @@ import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -57,6 +56,7 @@ import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
@@ -79,7 +79,7 @@ import jakarta.mail.Multipart;
 public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 {
   // For Lambdas
-  static final Logger LOGGER = LoggerFactory.getLogger (AS4eSENSCEFOneWayFuncTest.class);
+  static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4eSENSCEFOneWayFuncTest.class);
 
   public AS4eSENSCEFOneWayFuncTest ()
   {}

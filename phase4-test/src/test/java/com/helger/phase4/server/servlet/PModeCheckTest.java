@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -43,6 +42,7 @@ import com.helger.phase4.ebms3header.Ebms3MessageProperties;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3Service;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -59,7 +59,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (PModeCheckTest.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (PModeCheckTest.class);
 
   private static final ESoapVersion SOAP_VERSION = ESoapVersion.AS4_DEFAULT;
 

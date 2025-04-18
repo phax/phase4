@@ -32,7 +32,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.VisibleForTesting;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -49,6 +48,7 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.incoming.AS4IncomingHandler;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.MessageHelperMethods;
@@ -75,7 +75,7 @@ import jakarta.mail.MessagingException;
  */
 public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessageTest.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ClientUserMessageTest.class);
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
   private static final String SERVER_URL = MockJettySetup.getServerAddressFromSettings ();
 

@@ -26,12 +26,12 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.keystore.KeyStoreHelper;
 
 /**
@@ -46,7 +46,7 @@ import com.helger.security.keystore.KeyStoreHelper;
 @Deprecated (forRemoval = true, since = "3.0.0")
 public class AS4CryptoFactoryProperties extends AbstractAS4CryptoFactory
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptoFactoryProperties.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4CryptoFactoryProperties.class);
   private static final AS4CryptoFactoryProperties DEFAULT_INSTANCE = new AS4CryptoFactoryProperties (AS4CryptoProperties.createFromConfig ());
 
   /**

@@ -19,9 +19,9 @@ package com.helger.phase4.test.profile;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
@@ -42,7 +42,7 @@ public final class AS4TestProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
   public static final String AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT = "phase4-unitest";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4TestProfileRegistarSPI.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4TestProfileRegistarSPI.class);
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {

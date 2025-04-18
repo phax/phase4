@@ -19,7 +19,6 @@ package com.helger.phase4.peppol.receivers;
 import java.io.File;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.peppol.sml.ESML;
@@ -28,6 +27,7 @@ import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
@@ -48,10 +48,13 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class MainPhase4PeppolSenderHelger
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderHelger.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderHelger.class);
 
   public static void send ()
   {
+    Phase4LoggerFactory.setThreadLocalPrefix ("[PeppolSender] <");
+    Phase4LoggerFactory.setThreadLocalSuffix (">");
+
     try
     {
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/base-example.xml"))

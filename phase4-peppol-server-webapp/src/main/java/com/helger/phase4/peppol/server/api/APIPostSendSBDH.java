@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.ArrayHelper;
@@ -42,6 +41,7 @@ import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
@@ -64,7 +64,7 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
  */
 public final class APIPostSendSBDH extends AbstractVerifyingAPIExecutor
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (APIPostSendSBDH.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (APIPostSendSBDH.class);
 
   private final EPeppolNetwork m_eStage;
 

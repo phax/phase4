@@ -27,7 +27,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.commons.annotation.Nonempty;
@@ -51,6 +50,7 @@ import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.model.message.AS4UserMessage;
@@ -73,7 +73,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class MainPhase4PeppolSenderQvalia
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderQvalia.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderQvalia.class);
 
   public static void send ()
   {

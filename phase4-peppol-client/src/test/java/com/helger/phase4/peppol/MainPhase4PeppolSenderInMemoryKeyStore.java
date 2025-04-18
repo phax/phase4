@@ -20,7 +20,6 @@ import java.io.File;
 import java.security.KeyStore;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.peppol.security.PeppolTrustStores;
@@ -28,6 +27,7 @@ import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
@@ -44,7 +44,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class MainPhase4PeppolSenderInMemoryKeyStore
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderInMemoryKeyStore.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderInMemoryKeyStore.class);
 
   public static void main (final String [] args)
   {

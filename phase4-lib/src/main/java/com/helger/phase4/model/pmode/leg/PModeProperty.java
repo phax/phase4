@@ -23,7 +23,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
@@ -36,6 +35,7 @@ import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.IMandatoryIndicator;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.text.IHasDescription;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * A property is a data structure that consists of four values: the property
@@ -56,7 +56,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   public static final String DATA_TYPE_STRING = "string";
   public static final boolean DEFAULT_MANDATORY = false;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (PModeProperty.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (PModeProperty.class);
 
   private String m_sName;
   private String m_sDescription;

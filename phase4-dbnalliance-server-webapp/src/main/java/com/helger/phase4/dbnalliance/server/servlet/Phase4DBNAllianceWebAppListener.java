@@ -30,7 +30,6 @@ import javax.annotation.Nullable;
 
 import org.apache.hc.core5.http.HttpHost;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.commons.collection.CollectionHelper;
@@ -59,6 +58,7 @@ import com.helger.phase4.incoming.AS4IncomingHelper;
 import com.helger.phase4.incoming.AS4ServerInitializer;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.profile.dbnalliance.AS4DBNAllianceProfileRegistarSPI;
 import com.helger.phase4.profile.dbnalliance.DBNAllianceCRLDownloader;
@@ -81,7 +81,7 @@ import jakarta.servlet.annotation.WebListener;
 @WebListener
 public final class Phase4DBNAllianceWebAppListener extends WebAppListener
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4DBNAllianceWebAppListener.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4DBNAllianceWebAppListener.class);
 
   @Override
   @Nullable

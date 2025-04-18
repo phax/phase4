@@ -33,7 +33,6 @@ import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.HttpEntityWrapper;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -51,6 +50,7 @@ import com.helger.httpclient.IHttpClientProvider;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.util.MultiOutputStream;
 
@@ -73,7 +73,7 @@ public class BasicHttpPoster implements IHttpPoster
   }
 
   public static final boolean DEFAULT_QUOTE_HTTP_HEADERS = false;
-  private static final Logger LOGGER = LoggerFactory.getLogger (BasicHttpPoster.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (BasicHttpPoster.class);
 
   // By default no special SSL context present
   private HttpClientFactory m_aHttpClientFactory = createDefaultHttpClientFactory ();

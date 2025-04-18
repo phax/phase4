@@ -31,7 +31,6 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -42,6 +41,7 @@ import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FileIOError;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * A resource manager that keeps track of temporary files and other closables
@@ -56,7 +56,7 @@ public class AS4ResourceHelper implements Closeable
 {
   private static final String TEMP_FILE_PREFIX = "phase4-res-";
   private static final String TEMP_FILE_SUFFIX = ".tmp";
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ResourceHelper.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ResourceHelper.class);
 
   private static File s_aTempDir;
 

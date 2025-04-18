@@ -19,7 +19,6 @@ package com.helger.phase4.mgr;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.UsedViaReflection;
@@ -27,6 +26,7 @@ import com.helger.commons.exception.InitializationException;
 import com.helger.commons.lang.ClassHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
@@ -40,7 +40,7 @@ import com.helger.scope.singleton.AbstractGlobalSingleton;
  */
 public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MetaAS4Manager.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MetaAS4Manager.class);
 
   private static IAS4ManagerFactory s_aFactory;
   private static IAS4TimestampManager s_aTimestampMgr;

@@ -20,11 +20,11 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.mgr.AS4DuplicateCleanupJob;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.quartz.TriggerKey;
 
@@ -41,7 +41,7 @@ import com.helger.quartz.TriggerKey;
 @ThreadSafe
 public final class AS4ServerInitializer
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServerInitializer.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ServerInitializer.class);
 
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   @GuardedBy ("RW_LOCK")

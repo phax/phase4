@@ -26,7 +26,6 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 
@@ -40,6 +39,7 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -55,7 +55,7 @@ import com.helger.phase4.wss.WSSSynchronizer;
 public final class AS4Signer
 {
   static final String ENCRYPTION_MODE_CONTENT = "Content";
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4Signer.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Signer.class);
   private static final String CID_ATTACHMENTS = MessageHelperMethods.PREFIX_CID + "Attachments";
 
   private AS4Signer ()

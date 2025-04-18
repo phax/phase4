@@ -30,7 +30,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.commons.io.resource.ClassPathResource;
@@ -53,6 +52,7 @@ import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.euctp.Phase4EuCtpSender.EuCtpPullRequestBuilder;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.mpc.IMPCManager;
@@ -75,7 +75,7 @@ import jakarta.mail.MessagingException;
 
 public class MainPhase4EuCtpSenderExample
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4EuCtpSenderExample.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4EuCtpSenderExample.class);
 
   @Nonnull
   private static IAS4CryptoFactory _buildAs4CryptoFactory ()

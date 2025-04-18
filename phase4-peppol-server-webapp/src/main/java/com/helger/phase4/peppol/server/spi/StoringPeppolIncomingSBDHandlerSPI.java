@@ -22,7 +22,6 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.commons.annotation.IsSPIImplementation;
@@ -41,6 +40,7 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
@@ -57,7 +57,7 @@ import com.helger.security.certificate.CertificateHelper;
 @IsSPIImplementation
 public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncomingSBDHandlerSPI
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (StoringPeppolIncomingSBDHandlerSPI.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (StoringPeppolIncomingSBDHandlerSPI.class);
 
   public void handleIncomingSBD (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                  @Nonnull final HttpHeaderMap aHeaders,

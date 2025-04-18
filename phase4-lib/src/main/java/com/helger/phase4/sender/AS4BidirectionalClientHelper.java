@@ -28,7 +28,6 @@ import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.response.ResponseHandlerHttpEntity;
@@ -51,6 +50,7 @@ import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
 import com.helger.phase4.incoming.IAS4UserMessageConsumer;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.util.Phase4Exception;
@@ -64,7 +64,7 @@ import jakarta.mail.MessagingException;
  */
 public final class AS4BidirectionalClientHelper
 {
-  static final Logger LOGGER = LoggerFactory.getLogger (AS4BidirectionalClientHelper.class);
+  static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4BidirectionalClientHelper.class);
 
   private AS4BidirectionalClientHelper ()
   {}

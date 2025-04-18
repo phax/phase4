@@ -26,7 +26,6 @@ import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.state.ESuccess;
@@ -41,6 +40,7 @@ import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR2;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
@@ -64,7 +64,7 @@ public final class Phase4CEFSender
   public static final SimpleIdentifierFactory IF = SimpleIdentifierFactory.INSTANCE;
   public static final IBDXLURLProvider URL_PROVIDER = BDXLURLProvider.INSTANCE;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4CEFSender.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4CEFSender.class);
 
   private Phase4CEFSender ()
   {}

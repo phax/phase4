@@ -19,7 +19,6 @@ package com.helger.phase4.peppol;
 import java.io.File;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.peppol.sml.ESML;
@@ -28,6 +27,7 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phive.api.result.ValidationResultList;
 import com.helger.phive.peppol.PeppolValidation2024_11;
@@ -45,7 +45,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class MainPhase4PeppolSender
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSender.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSender.class);
 
   public static void main (final String [] args)
   {

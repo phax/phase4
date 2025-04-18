@@ -33,7 +33,6 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -75,6 +74,7 @@ import com.helger.phase4.incoming.soap.AS4SingleSoapHeader;
 import com.helger.phase4.incoming.soap.ISoapHeaderElementProcessor;
 import com.helger.phase4.incoming.soap.SoapHeaderElementProcessorRegistry;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessingStatusSPI;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.AS4Helper;
 import com.helger.phase4.model.ESoapVersion;
@@ -140,7 +140,7 @@ public final class AS4IncomingHandler
                                                                                Phase4Exception;
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingHandler.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4IncomingHandler.class);
 
   private AS4IncomingHandler ()
   {}

@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.transform.dom.DOMSource;
 
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.commons.ValueEnforcer;
@@ -34,6 +33,7 @@ import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.util.AS4XMLHelper;
 
@@ -90,7 +90,7 @@ public final class AS4MimeMessageHelper
              .append ("; ")
              .append (aCI.getCommandClass ())
              .append ('\n');
-      LoggerFactory.getLogger ("root").info (aSB.toString ());
+      Phase4LoggerFactory.getLogger ("root").info (aSB.toString ());
     }
 
     // Register SOAP 1.2 content handler
@@ -117,9 +117,9 @@ public final class AS4MimeMessageHelper
     final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
     final AS4SoapMimeMultipart aMimeMultipart = new AS4SoapMimeMultipart (eSoapVersion);
     /*
-     * RFC 1341, section 5 states: If an entity is of type "multipart" or
-     * "message", the Content-Transfer-Encoding is not permitted to have any
-     * value other than a bit width (e.g., "7bit", "8bit", etc.) or "binary".
+     * RFC 1341, section 5 states: If an entity is of type "multipart" or "message", the
+     * Content-Transfer-Encoding is not permitted to have any value other than a bit width (e.g.,
+     * "7bit", "8bit", etc.) or "binary".
      */
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
     final String sRootContentType = eSoapVersion.getMimeType (aCharset).getAsString ();
@@ -150,16 +150,15 @@ public final class AS4MimeMessageHelper
   }
 
   /**
-   * Take all headers from the MIME message and pass them to the provided
-   * consumer. Afterwards remove all headers from the MIME message itself.
+   * Take all headers from the MIME message and pass them to the provided consumer. Afterwards
+   * remove all headers from the MIME message itself.
    *
    * @param aMimeMsg
    *        The message to use. May not be <code>null</code>.
    * @param aConsumer
    *        The consumer to be invoked. May not be <code>null</code>.
    * @param bUnifyValues
-   *        <code>true</code> to unify the HTTP header values before passing
-   *        them to the consumer.
+   *        <code>true</code> to unify the HTTP header values before passing them to the consumer.
    * @throws MessagingException
    *         In case of MIME message processing problems
    */

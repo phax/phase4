@@ -28,7 +28,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -50,6 +49,7 @@ import com.helger.phase4.ebms3header.Ebms3MessageProperties;
 import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
@@ -80,7 +80,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 {
   public static final boolean DEFAULT_FORCE_MIME_MESSAGE = false;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessage.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ClientUserMessage.class);
 
   private Node m_aSoapBodyPayload;
   private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();

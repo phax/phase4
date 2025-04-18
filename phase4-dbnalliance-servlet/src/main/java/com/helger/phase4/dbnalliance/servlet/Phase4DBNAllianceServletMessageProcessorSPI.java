@@ -28,7 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.helger.commons.ValueEnforcer;
@@ -72,6 +71,7 @@ import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
@@ -165,7 +165,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
 
   public static final ESMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_DBNA_AS4_v1;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4DBNAllianceServletMessageProcessorSPI.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4DBNAllianceServletMessageProcessorSPI.class);
 
   private ICommonsList <IPhase4DBNAllianceIncomingXHEHandlerSPI> m_aHandlers;
   private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;

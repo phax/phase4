@@ -19,7 +19,6 @@ package com.helger.phase4.supplementary.tools;
 import java.io.File;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
@@ -27,6 +26,7 @@ import com.helger.phase4.crypto.AS4KeyStoreDescriptor;
 import com.helger.phase4.crypto.AS4TrustStoreDescriptor;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
 import com.helger.security.keystore.TrustStoreDescriptor;
 
@@ -38,7 +38,7 @@ import com.helger.security.keystore.TrustStoreDescriptor;
  */
 public final class MainDecipherAS4In
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainDecipherAS4In.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainDecipherAS4In.class);
 
   public static void main (final String [] args) throws Exception
   {

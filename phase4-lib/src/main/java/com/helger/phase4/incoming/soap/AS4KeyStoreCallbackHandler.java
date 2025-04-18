@@ -26,11 +26,11 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * Internal WSS4J callback handler to check if a certain key alias is present in
@@ -42,7 +42,7 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 @Immutable
 public final class AS4KeyStoreCallbackHandler implements CallbackHandler
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4KeyStoreCallbackHandler.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4KeyStoreCallbackHandler.class);
 
   private final IAS4CryptoFactory m_aCryptoFactoryCrypt;
 

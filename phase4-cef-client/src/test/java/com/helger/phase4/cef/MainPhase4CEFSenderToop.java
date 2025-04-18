@@ -19,7 +19,6 @@ package com.helger.phase4.cef;
 import java.io.File;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.sml.ISMLInfo;
@@ -31,6 +30,7 @@ import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.servlet.mock.MockServletContext;
@@ -45,7 +45,7 @@ import com.helger.web.scope.mgr.WebScoped;
  */
 public final class MainPhase4CEFSenderToop
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4CEFSenderToop.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4CEFSenderToop.class);
   private static final ISMLInfo SML_TOOP = new SMLInfo ("tooptest",
                                                         "SMK TOOP",
                                                         "toop.acc.edelivery.tech.ec.europa.eu.",

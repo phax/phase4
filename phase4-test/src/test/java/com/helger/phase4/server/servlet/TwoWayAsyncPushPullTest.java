@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -38,6 +37,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
@@ -56,7 +56,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (TwoWayAsyncPushPullTest.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (TwoWayAsyncPushPullTest.class);
 
   private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
   private PMode m_aPMode;

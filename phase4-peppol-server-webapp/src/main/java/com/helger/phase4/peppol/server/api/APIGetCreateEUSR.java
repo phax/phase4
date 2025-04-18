@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -35,6 +34,7 @@ import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.reporting.eusr.EndUserStatisticsReport;
 import com.helger.peppol.reporting.jaxb.eusr.EndUserStatisticsReport110Marshaller;
 import com.helger.peppol.reporting.jaxb.eusr.v110.EndUserStatisticsReportType;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
@@ -48,7 +48,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
  */
 public final class APIGetCreateEUSR extends AbstractVerifyingAPIExecutor
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (APIGetCreateEUSR.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (APIGetCreateEUSR.class);
 
   @Override
   protected void verifiedInvokeAPI (@Nonnull final IAPIDescriptor aAPIDescriptor,

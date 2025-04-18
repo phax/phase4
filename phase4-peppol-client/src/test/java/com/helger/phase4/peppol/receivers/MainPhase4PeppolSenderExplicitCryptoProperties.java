@@ -19,13 +19,13 @@ package com.helger.phase4.peppol.receivers;
 import java.io.File;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.security.PeppolTrustStores;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
@@ -44,7 +44,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
  */
 public final class MainPhase4PeppolSenderExplicitCryptoProperties
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderExplicitCryptoProperties.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderExplicitCryptoProperties.class);
 
   public static void main (final String [] args)
   {

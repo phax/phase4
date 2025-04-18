@@ -35,7 +35,6 @@ import org.apache.hc.core5.util.Timeout;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
@@ -51,6 +50,7 @@ import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
 import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
@@ -69,7 +69,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 
   protected static final String DEFAULT_PARTY_ID = "APP_MOCK_DUMMY_001";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractUserMessageTestSetUp.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AbstractUserMessageTestSetUp.class);
 
   protected static AS4ResourceHelper s_aResMgr;
 

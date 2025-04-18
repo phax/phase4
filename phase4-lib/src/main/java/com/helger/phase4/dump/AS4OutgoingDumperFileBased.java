@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -34,6 +33,7 @@ import com.helger.commons.io.file.FileHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.EAS4MessageMode;
 
 /**
@@ -48,7 +48,7 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
    * The default relative path for outgoing messages.
    */
   public static final String DEFAULT_BASE_PATH = "outgoing/";
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4OutgoingDumperFileBased.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4OutgoingDumperFileBased.class);
 
   private final IAS4OutgoingDumperFileProvider m_aFileProvider;
 

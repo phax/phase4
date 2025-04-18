@@ -16,11 +16,12 @@
  */
 package com.helger.phase4.crypto;
 
-import org.apache.wss4j.common.crypto.Crypto;
+import java.security.KeyStore;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.security.KeyStore;
+
+import org.apache.wss4j.common.crypto.Crypto;
 
 /**
  * The basic phase4 crypto interface.

@@ -24,7 +24,6 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -41,6 +40,7 @@ import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
@@ -54,7 +54,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public final class MainOldAS4Client
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainOldAS4Client.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainOldAS4Client.class);
 
   private MainOldAS4Client ()
   {}

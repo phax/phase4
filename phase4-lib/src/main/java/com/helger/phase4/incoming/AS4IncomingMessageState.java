@@ -29,7 +29,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.wss4j.dom.WSConstants;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -42,6 +41,7 @@ import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.mpc.IMPC;
@@ -62,7 +62,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
 @NotThreadSafe
 public final class AS4IncomingMessageState extends AttributeContainerAny <String> implements IAS4IncomingMessageState
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingMessageState.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4IncomingMessageState.class);
 
   private static final String KEY_EBMS3_MESSAGING = "phase4.ebms3.messaging";
   private static final String KEY_PMODE = "phase4.pmode";

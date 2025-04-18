@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -46,6 +45,7 @@ import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.Ebms3NamespaceHandler;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.security.certificate.CertificateHelper;
@@ -61,7 +61,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
 @IsSPIImplementation
 public class StoringServletMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (StoringServletMessageProcessorSPI.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (StoringServletMessageProcessorSPI.class);
 
   private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                  @Nonnull final IAS4IncomingMessageState aIncomingState)

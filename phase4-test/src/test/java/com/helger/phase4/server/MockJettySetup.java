@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.concurrent.ThreadHelper;
@@ -33,6 +32,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.URLHelper;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
@@ -44,7 +44,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
   public static final String SETTINGS_SERVER_JETTY_ENABLED = "server.jetty.enabled";
   public static final String SETTINGS_SERVER_ADDRESS = "server.jetty.address";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (MockJettySetup.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MockJettySetup.class);
 
   private static AS4JettyRunner s_aJetty;
   private static AS4ResourceHelper s_aResMgr;

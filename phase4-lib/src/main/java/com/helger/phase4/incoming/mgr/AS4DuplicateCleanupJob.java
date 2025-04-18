@@ -23,10 +23,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.lang.ClassHelper;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.quartz.DisallowConcurrentExecution;
 import com.helger.quartz.IJobExecutionContext;
@@ -46,7 +46,7 @@ import com.helger.web.scope.util.AbstractScopeAwareJob;
 @DisallowConcurrentExecution
 public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);
   private static final String KEY_MINUTES = "mins";
   private static final AtomicBoolean WAS_SCHEDULED = new AtomicBoolean (false);
 

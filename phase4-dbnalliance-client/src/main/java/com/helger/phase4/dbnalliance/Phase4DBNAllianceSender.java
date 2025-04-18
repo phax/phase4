@@ -29,7 +29,6 @@ import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
@@ -55,6 +54,7 @@ import com.helger.phase4.crypto.ICryptoSessionKeyProvider;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR2;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.profile.dbnalliance.AS4DBNAllianceProfileRegistarSPI;
 import com.helger.phase4.profile.dbnalliance.DBNAlliancePMode;
@@ -88,7 +88,7 @@ public final class Phase4DBNAllianceSender
   public static final BDXR2IdentifierFactory IF = BDXR2IdentifierFactory.INSTANCE;
   public static final ISMPURLProvider URL_PROVIDER = DBNAURLProviderSMP.INSTANCE;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4DBNAllianceSender.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4DBNAllianceSender.class);
   private static final IMimeType MIME_TYPE = CMimeType.APPLICATION_XML;
 
   private Phase4DBNAllianceSender ()

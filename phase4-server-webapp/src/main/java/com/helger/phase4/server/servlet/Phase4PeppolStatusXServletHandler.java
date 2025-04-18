@@ -24,7 +24,6 @@ import java.security.cert.X509Certificate;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.datetime.PDTFactory;
@@ -38,6 +37,7 @@ import com.helger.json.JsonObject;
 import com.helger.phase4.CAS4Version;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
@@ -49,7 +49,7 @@ import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
  */
 public class Phase4PeppolStatusXServletHandler implements IXServletSimpleHandler
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolStatusXServletHandler.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolStatusXServletHandler.class);
   private static final Charset CHARSET = StandardCharsets.UTF_8;
 
   @Nonnull

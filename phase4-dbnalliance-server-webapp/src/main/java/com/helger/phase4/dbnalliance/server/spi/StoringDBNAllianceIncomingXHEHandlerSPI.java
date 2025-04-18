@@ -22,7 +22,6 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.CollectionHelper;
@@ -40,6 +39,7 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.xhe.v10.XHE10XHEType;
@@ -52,7 +52,7 @@ import com.helger.xhe.v10.XHE10XHEType;
 @IsSPIImplementation
 public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllianceIncomingXHEHandlerSPI
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (StoringDBNAllianceIncomingXHEHandlerSPI.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (StoringDBNAllianceIncomingXHEHandlerSPI.class);
 
   public void handleIncomingXHE (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                  @Nonnull final HttpHeaderMap aHeaders,
