@@ -19,11 +19,11 @@ package com.helger.phase4;
 import javax.annotation.concurrent.Immutable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.lang.PropertiesHelper;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * Contains application wide constants.
@@ -38,7 +38,7 @@ public final class CAS4Version
   /** Build timestamp - from properties file */
   public static final String BUILD_TIMESTAMP;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (CAS4Version.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (CAS4Version.class);
 
   static
   {

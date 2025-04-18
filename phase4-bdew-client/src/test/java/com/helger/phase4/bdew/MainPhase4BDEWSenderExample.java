@@ -24,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.wrapper.Wrapper;
@@ -36,13 +35,14 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 
 public class MainPhase4BDEWSenderExample
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4BDEWSenderExample.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4BDEWSenderExample.class);
 
   public static void main (final String [] args)
   {

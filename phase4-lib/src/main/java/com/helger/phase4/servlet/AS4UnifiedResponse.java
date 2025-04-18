@@ -23,12 +23,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.http.EHttpVersion;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.servlet.response.UnifiedResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +40,7 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class AS4UnifiedResponse extends UnifiedResponse
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4UnifiedResponse.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4UnifiedResponse.class);
 
   public AS4UnifiedResponse (@Nonnull final EHttpVersion eHTTPVersion,
                              @Nonnull final EHttpMethod eHTTPMethod,

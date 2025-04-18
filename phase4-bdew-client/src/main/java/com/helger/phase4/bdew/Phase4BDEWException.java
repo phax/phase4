@@ -19,10 +19,10 @@
  */
 package com.helger.phase4.bdew;
 
-import com.helger.phase4.util.Phase4Exception;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Generic exception to be thrown from the phase4 BDEW sender.

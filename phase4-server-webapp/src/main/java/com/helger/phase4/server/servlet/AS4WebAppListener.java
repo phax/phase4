@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.commons.debug.GlobalDebug;
@@ -44,6 +43,7 @@ import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.incoming.AS4IncomingHelper;
 import com.helger.phase4.incoming.AS4ServerInitializer;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.server.storage.StorageHelper;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
@@ -59,7 +59,7 @@ import jakarta.servlet.annotation.WebListener;
 @WebListener
 public final class AS4WebAppListener extends WebAppListener
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4WebAppListener.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4WebAppListener.class);
 
   @Override
   @Nullable

@@ -24,13 +24,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.soap11.Soap11Envelope;
 import com.helger.phase4.soap12.Soap12Envelope;
 
@@ -41,7 +41,7 @@ import com.helger.phase4.soap12.Soap12Envelope;
  */
 public final class Ebms3MessagingMarshallerTest
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (Ebms3MessagingMarshallerTest.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Ebms3MessagingMarshallerTest.class);
   private static final String PATH11 = "external/soap11test/";
   private static final String PATH12 = "external/soap12test/";
 

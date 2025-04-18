@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.UUID;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.peppol.sml.ESML;
@@ -29,6 +28,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
@@ -43,7 +43,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class MainPhase4PeppolSenderATOebb
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderATOebb.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderATOebb.class);
 
   public static void main (final String [] args)
   {

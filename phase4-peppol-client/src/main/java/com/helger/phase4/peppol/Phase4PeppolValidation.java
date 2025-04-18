@@ -19,13 +19,13 @@ package com.helger.phase4.peppol;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.diver.api.coord.DVRCoordinate;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phive.api.execute.ValidationExecutionManager;
 import com.helger.phive.api.executorset.IValidationExecutorSet;
 import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
@@ -44,7 +44,7 @@ import com.helger.phive.xml.source.ValidationSourceXML;
  */
 public final class Phase4PeppolValidation
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolValidation.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolValidation.class);
   // Note to myself: don't create a getter for this registry to avoid outside
   // modification
   private static final IValidationExecutorSetRegistry <IValidationSourceXML> VES_REGISTRY = createDefaultRegistry ();

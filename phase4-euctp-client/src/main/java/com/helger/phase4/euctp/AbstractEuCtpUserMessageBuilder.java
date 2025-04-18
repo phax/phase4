@@ -25,12 +25,12 @@ import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.profile.euctp.AS4EuCtpProfileRegistarSPI;
 import com.helger.phase4.profile.euctp.EEuCtpAction;
 import com.helger.phase4.profile.euctp.EEuCtpService;
@@ -49,7 +49,7 @@ public abstract class AbstractEuCtpUserMessageBuilder <IMPLTYPE extends Abstract
                                                       extends
                                                       AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractEuCtpUserMessageBuilder.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AbstractEuCtpUserMessageBuilder.class);
 
   // Default per section 2.2.6.2.1
   public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_SIGN = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;

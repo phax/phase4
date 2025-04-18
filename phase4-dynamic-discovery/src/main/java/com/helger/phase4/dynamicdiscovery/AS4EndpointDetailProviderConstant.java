@@ -24,13 +24,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * Implementation of {@link IAS4EndpointDetailProvider} that uses constant
@@ -41,7 +41,7 @@ import com.helger.peppolid.IProcessIdentifier;
  */
 public class AS4EndpointDetailProviderConstant implements IAS4EndpointDetailProvider
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4EndpointDetailProviderConstant.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4EndpointDetailProviderConstant.class);
 
   private final X509Certificate m_aReceiverCert;
   private final String m_sDestURL;

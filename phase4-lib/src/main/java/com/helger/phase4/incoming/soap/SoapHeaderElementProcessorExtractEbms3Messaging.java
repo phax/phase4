@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -59,6 +58,7 @@ import com.helger.phase4.incoming.AS4IncomingMessageState;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.mgr.AS4IncomingPullRequestProcessorManager;
 import com.helger.phase4.incoming.spi.IAS4IncomingPullRequestProcessorSPI;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.error.EEbmsError;
@@ -83,7 +83,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
   public static final QName QNAME_MESSAGING = new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
                                                          "Messaging");
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (SoapHeaderElementProcessorExtractEbms3Messaging.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (SoapHeaderElementProcessorExtractEbms3Messaging.class);
 
   private final IAS4PModeResolver m_aPModeResolver;
   private final Consumer <? super IPMode> m_aPModeConsumer;

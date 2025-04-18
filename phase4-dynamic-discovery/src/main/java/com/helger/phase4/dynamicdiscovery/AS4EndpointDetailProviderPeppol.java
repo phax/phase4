@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.DevelopersNote;
@@ -38,6 +37,7 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.exception.SMPClientException;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
@@ -65,7 +65,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.BUSDOX_THEN_WILDCARD;
   public static final ISMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4EndpointDetailProviderPeppol.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4EndpointDetailProviderPeppol.class);
 
   private final ISMPServiceGroupProvider m_aServiceGroupProvider;
   private final ISMPExtendedServiceMetadataProvider m_aServiceMetadataProvider;

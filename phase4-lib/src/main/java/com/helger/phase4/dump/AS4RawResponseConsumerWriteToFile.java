@@ -27,7 +27,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -39,6 +38,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.sender.AbstractAS4RawResponseConsumer;
 import com.helger.phase4.sender.IAS4RawResponseConsumer;
@@ -94,7 +94,7 @@ public class AS4RawResponseConsumerWriteToFile extends
     }
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4RawResponseConsumerWriteToFile.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4RawResponseConsumerWriteToFile.class);
 
   private final IFileProvider m_aFileProvider;
   private Consumer <? super File> m_aFileOpenCallback;

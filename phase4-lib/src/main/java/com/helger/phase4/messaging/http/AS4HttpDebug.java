@@ -23,8 +23,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.Ebms3NamespaceHandler;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
@@ -42,7 +42,7 @@ public final class AS4HttpDebug
 {
   public static final boolean DEFAULT_DEBUG = false;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4HttpDebug.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4HttpDebug.class);
   private static final AtomicBoolean ENABLED = new AtomicBoolean (DEFAULT_DEBUG);
   private static final XMLWriterSettings XWS = new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)
                                                                        .setNamespaceContext (Ebms3NamespaceHandler.getInstance ());

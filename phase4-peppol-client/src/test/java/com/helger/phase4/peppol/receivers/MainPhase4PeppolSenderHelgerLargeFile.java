@@ -20,7 +20,6 @@ import java.io.File;
 
 import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.resource.FileSystemResource;
 import com.helger.httpclient.HttpClientSettings;
@@ -30,6 +29,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
@@ -47,7 +47,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
  */
 public final class MainPhase4PeppolSenderHelgerLargeFile
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderHelgerLargeFile.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderHelgerLargeFile.class);
 
   public static void send ()
   {

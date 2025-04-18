@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -29,6 +28,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
 import com.helger.phase4.marshaller.Ebms3NamespaceHandler;
 import com.helger.phase4.marshaller.Soap12EnvelopeMarshaller;
@@ -46,7 +46,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
  */
 public final class AS4ReceiptMessageTest
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ReceiptMessageTest.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ReceiptMessageTest.class);
 
   @Test
   public void testReadWriteWithUserMessage ()

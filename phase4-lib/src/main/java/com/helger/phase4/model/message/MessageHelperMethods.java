@@ -29,7 +29,6 @@ import javax.annotation.RegEx;
 import javax.annotation.concurrent.Immutable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.helger.commons.ValueEnforcer;
@@ -59,6 +58,7 @@ import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3Service;
 import com.helger.phase4.ebms3header.Ebms3To;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.DSigReferenceMarshaller;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.xml.ChildElementIterator;
@@ -87,7 +87,7 @@ public final class MessageHelperMethods
   @RegEx
   public static final String MESSAGE_ID_SUFFIX_REGEX = "^[a-zA-Z0-9\\._\\-]+$";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (MessageHelperMethods.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MessageHelperMethods.class);
 
   private static String s_sCustomMessageIDSuffix = null;
 

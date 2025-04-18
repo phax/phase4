@@ -25,7 +25,6 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
@@ -39,6 +38,7 @@ import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
@@ -56,7 +56,7 @@ import com.helger.phase4.util.Phase4Exception;
 public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS4UserMessageBuilder <IMPLTYPE>> extends
                                                     AbstractAS4MessageBuilder <IMPLTYPE>
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4UserMessageBuilder.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AbstractAS4UserMessageBuilder.class);
 
   protected IPMode m_aPMode;
 

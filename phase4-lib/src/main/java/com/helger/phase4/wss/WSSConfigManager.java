@@ -20,11 +20,11 @@ import javax.annotation.Nonnull;
 
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.lang.priviledged.IPrivilegedAction;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.scope.IScope;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
 
@@ -36,7 +36,7 @@ import com.helger.scope.singleton.AbstractGlobalSingleton;
  */
 public class WSSConfigManager extends AbstractGlobalSingleton
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (WSSConfigManager.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (WSSConfigManager.class);
 
   @Deprecated (forRemoval = false)
   @UsedViaReflection

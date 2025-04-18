@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,6 +33,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.ebms3header.MessagePartNRInformation;
 import com.helger.phase4.ebms3header.NonRepudiationInformation;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.Ebms3UserMessageMarshaller;
 import com.helger.phase4.marshaller.NonRepudiationInformationMarshaller;
 import com.helger.phase4.model.ESoapVersion;
@@ -50,7 +50,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
   private static final String PHASE4_RECEIPT_WRAPPER_NS = "urn:fdc:com.helger.phase4:ns:wrapper";
   private static final String PHASE4_RECEIPT_INFO_NS = "urn:fdc:com.helger.phase4:ns:info";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ReceiptMessage.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ReceiptMessage.class);
 
   private final Ebms3SignalMessage m_aSignalMessage;
 

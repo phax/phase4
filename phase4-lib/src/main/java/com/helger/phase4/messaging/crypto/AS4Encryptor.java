@@ -27,7 +27,6 @@ import org.apache.wss4j.common.ext.WSSecurityException.ErrorCode;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 
@@ -42,6 +41,7 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.model.ESoapVersion;
@@ -60,7 +60,7 @@ import jakarta.mail.MessagingException;
 @Immutable
 public final class AS4Encryptor
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4Encryptor.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Encryptor.class);
 
   private AS4Encryptor ()
   {}

@@ -29,7 +29,6 @@ import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.AttachmentRequestCallback;
 import org.apache.wss4j.common.ext.AttachmentResultCallback;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -40,6 +39,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
@@ -55,7 +55,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 {
   public static final String ATTACHMENT_ID_ATTACHMENTS = "Attachments";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (WSS4JAttachmentCallbackHandler.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (WSS4JAttachmentCallbackHandler.class);
 
   private final ICommonsOrderedMap <String, WSS4JAttachment> m_aAttachmentMap = new CommonsLinkedHashMap <> ();
   private final AS4ResourceHelper m_aResHelper;

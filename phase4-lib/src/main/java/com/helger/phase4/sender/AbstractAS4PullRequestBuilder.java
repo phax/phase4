@@ -22,7 +22,6 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
@@ -33,6 +32,7 @@ import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
 import com.helger.phase4.incoming.IAS4UserMessageConsumer;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -50,7 +50,7 @@ import com.helger.phase4.util.Phase4Exception;
 public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS4PullRequestBuilder <IMPLTYPE>> extends
                                                     AbstractAS4MessageBuilder <IMPLTYPE>
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4PullRequestBuilder.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AbstractAS4PullRequestBuilder.class);
 
   protected IPMode m_aPMode;
   protected String m_sPModeID;

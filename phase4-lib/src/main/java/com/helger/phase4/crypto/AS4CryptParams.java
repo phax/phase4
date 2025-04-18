@@ -29,7 +29,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.wss4j.common.WSS4JConstants;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -38,6 +37,7 @@ import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.lang.ICloneable;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 
 /**
@@ -57,7 +57,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   public static final ICryptoSessionKeyProvider DEFAULT_SESSION_KEY_PROVIDER = ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_128;
   public static final boolean DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY = true;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptParams.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4CryptParams.class);
 
   // The key identifier type to use
   private ECryptoKeyIdentifierType m_eKeyIdentifierType = DEFAULT_KEY_IDENTIFIER_TYPE;

@@ -30,7 +30,6 @@ import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -47,6 +46,7 @@ import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;
 import com.helger.phase4.incoming.soap.AS4KeyStoreCallbackHandler;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.servlet.mock.MockServletContext;
@@ -65,7 +65,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public class MainVerifySignature
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainVerifySignature.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainVerifySignature.class);
 
   @Nonnull
   private static ESuccess _verifyAndDecrypt (@Nonnull final AS4ResourceHelper aResHelper,

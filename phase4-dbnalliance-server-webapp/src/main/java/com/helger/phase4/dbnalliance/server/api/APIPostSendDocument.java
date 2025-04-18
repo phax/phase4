@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.commons.annotation.Nonempty;
@@ -44,6 +43,7 @@ import com.helger.phase4.dbnalliance.Phase4DBNAllianceSender;
 import com.helger.phase4.dbnalliance.Phase4DBNAllianceSender.DBNAllianceUserMessageBuilder;
 import com.helger.phase4.dbnalliance.Phase4DBNAllianceSendingReport;
 import com.helger.phase4.dbnalliance.server.APConfig;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.profile.dbnalliance.Phase4DBNAllianceHttpClientSettings;
@@ -64,7 +64,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (APIPostSendDocument.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (APIPostSendDocument.class);
 
   private final EDBNAllianceStage m_eStage;
 

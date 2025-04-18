@@ -26,7 +26,6 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.OverrideOnDemand;
@@ -48,6 +47,7 @@ import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.incoming.AS4IncomingProfileSelectorConstant;
 import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.messaging.http.IHttpPoster;
 import com.helger.phase4.model.ESoapVersion;
@@ -69,7 +69,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 {
   public static final Locale DEFAULT_LOCALE = Locale.US;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4MessageBuilder.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AbstractAS4MessageBuilder.class);
 
   protected IHttpPoster m_aCustomHttpPoster;
   protected HttpClientFactory m_aHttpClientFactory;

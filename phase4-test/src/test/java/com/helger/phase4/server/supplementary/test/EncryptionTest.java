@@ -35,7 +35,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.commons.io.resource.ClassPathResource;
@@ -45,6 +44,7 @@ import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.scope.mock.ScopeTestRule;
@@ -58,7 +58,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class EncryptionTest
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (EncryptionTest.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (EncryptionTest.class);
 
   @Rule
   public final ScopeTestRule m_aRule = new ScopeTestRule ();

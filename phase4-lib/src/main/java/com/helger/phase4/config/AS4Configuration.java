@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
@@ -38,6 +37,7 @@ import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.config.source.EConfigSourceType;
 import com.helger.config.source.MultiConfigurationValueProvider;
 import com.helger.config.source.res.ConfigurationSourceProperties;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * This class contains the central phase4 configuration. <br>
@@ -64,7 +64,7 @@ public final class AS4Configuration
 
   public static final long DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = 10;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4Configuration.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Configuration.class);
 
   /**
    * The configuration value provider created in here uses the default lookup

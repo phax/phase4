@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.helger.commons.annotation.IsSPIImplementation;
@@ -47,6 +46,7 @@ import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.message.MessageHelperMethods;
@@ -66,7 +66,7 @@ public class MockMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
   public static final String MPC_FAILURE = "failure";
   public static final String MPC_EMPTY = "empty";
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
-  private static final Logger LOGGER = LoggerFactory.getLogger (MockMessageProcessorSPI.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MockMessageProcessorSPI.class);
 
   @Nonnull
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,

@@ -26,7 +26,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -38,6 +37,7 @@ import com.helger.phase4.ebms3header.Ebms3MessageProperties;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.AS4UserMessage;
@@ -52,7 +52,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (CEFProfileTest.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (CEFProfileTest.class);
 
   private ESoapVersion m_eSoapVersion;
   private Ebms3UserMessage m_aEbms3UserMessage;

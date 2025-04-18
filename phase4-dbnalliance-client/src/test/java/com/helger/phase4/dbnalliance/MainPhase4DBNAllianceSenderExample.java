@@ -19,7 +19,6 @@ package com.helger.phase4.dbnalliance;
 import java.io.File;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.dbnalliance.commons.EDBNAllianceSML;
@@ -29,6 +28,7 @@ import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
@@ -38,7 +38,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public class MainPhase4DBNAllianceSenderExample
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4DBNAllianceSenderExample.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4DBNAllianceSenderExample.class);
 
   public static void main (final String [] args)
   {

@@ -23,13 +23,13 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ELockType;
 import com.helger.commons.annotation.MustBeLocked;
 import com.helger.commons.state.EChange;
 import com.helger.dao.DAOException;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.photon.audit.AuditHelper;
 import com.helger.photon.io.dao.AbstractPhotonMapBasedWALDAO;
 import com.helger.photon.security.object.BusinessObjectHelper;
@@ -42,7 +42,7 @@ import com.helger.photon.security.object.BusinessObjectHelper;
 @ThreadSafe
 public class PModeManagerXML extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> implements IPModeManager
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (PModeManagerXML.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (PModeManagerXML.class);
 
   public PModeManagerXML (@Nullable final String sFilename) throws DAOException
   {

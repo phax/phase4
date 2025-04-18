@@ -41,7 +41,6 @@ import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -65,6 +64,7 @@ import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.AS4IncomingMessageState;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -83,7 +83,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
   /** The QName for which this processor should be invoked */
   public static final QName QNAME_SECURITY = new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
                                                         "Security");
-  private static final Logger LOGGER = LoggerFactory.getLogger (SoapHeaderElementProcessorWSS4J.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (SoapHeaderElementProcessorWSS4J.class);
 
   private final IAS4CryptoFactory m_aCryptoFactorySign;
   private final IAS4CryptoFactory m_aCryptoFactoryCrypt;

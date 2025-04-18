@@ -19,9 +19,9 @@ package com.helger.phase4.sender;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * A logging implementation of {@link IAS4SignalMessageValidationResultHandler}.
@@ -30,7 +30,7 @@ import com.helger.commons.annotation.Nonempty;
  */
 public class LoggingAS4SignalMsgValidationResultHandler implements IAS4SignalMessageValidationResultHandler
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (LoggingAS4SignalMsgValidationResultHandler.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (LoggingAS4SignalMsgValidationResultHandler.class);
 
   public void onSuccess ()
   {

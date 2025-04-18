@@ -19,13 +19,13 @@ package com.helger.phase4.peppol;
 import java.io.File;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.io.WebFileIO;
@@ -43,7 +43,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class MainPhase4PeppolSenderNonExistingReceiver
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderNonExistingReceiver.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderNonExistingReceiver.class);
 
   public static void main (final String [] args)
   {

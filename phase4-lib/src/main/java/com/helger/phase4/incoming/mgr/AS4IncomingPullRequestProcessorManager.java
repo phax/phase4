@@ -21,7 +21,6 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -29,6 +28,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.phase4.incoming.spi.IAS4IncomingPullRequestProcessorSPI;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * This class manages all the {@link IAS4IncomingPullRequestProcessorSPI} SPI
@@ -40,7 +40,7 @@ import com.helger.phase4.incoming.spi.IAS4IncomingPullRequestProcessorSPI;
 @ThreadSafe
 public final class AS4IncomingPullRequestProcessorManager
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingPullRequestProcessorManager.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4IncomingPullRequestProcessorManager.class);
 
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   @GuardedBy ("RW_LOCK")

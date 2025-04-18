@@ -29,7 +29,6 @@ import java.security.cert.X509Certificate;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.commons.io.file.FilenameHelper;
@@ -57,6 +56,7 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -74,7 +74,7 @@ public final class DropFolderUserMessage
   private static final IPeppolURLProvider UP = PeppolURLProvider.INSTANCE;
   private static final String PATH_DONE = "done";
   private static final String PATH_ERROR = "error";
-  private static final Logger LOGGER = LoggerFactory.getLogger (DropFolderUserMessage.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (DropFolderUserMessage.class);
   private static WatchDir s_aWatch;
 
   private DropFolderUserMessage ()

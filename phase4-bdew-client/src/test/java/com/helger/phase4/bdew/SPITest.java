@@ -19,8 +19,9 @@
  */
 package com.helger.phase4.bdew;
 
-import com.helger.commons.mock.SPITestHelper;
 import org.junit.Test;
+
+import com.helger.commons.mock.SPITestHelper;
 
 /**
  * Test SPI definitions

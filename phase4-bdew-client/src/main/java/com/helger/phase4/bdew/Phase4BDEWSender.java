@@ -29,7 +29,6 @@ import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
@@ -38,6 +37,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.profile.bdew.AS4BDEWProfileRegistarSPI;
 import com.helger.phase4.profile.bdew.BDEWPMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
@@ -54,7 +54,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
 @Immutable
 public final class Phase4BDEWSender
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4BDEWSender.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4BDEWSender.class);
 
   private Phase4BDEWSender ()
   {}

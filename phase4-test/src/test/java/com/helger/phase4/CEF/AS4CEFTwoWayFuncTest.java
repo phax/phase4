@@ -22,19 +22,19 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
 public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CEFTwoWayFuncTest.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4CEFTwoWayFuncTest.class);
 
   public AS4CEFTwoWayFuncTest ()
   {

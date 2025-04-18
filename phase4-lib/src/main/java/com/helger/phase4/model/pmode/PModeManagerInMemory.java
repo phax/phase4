@@ -24,7 +24,6 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ELockType;
@@ -39,6 +38,7 @@ import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.photon.security.object.BusinessObjectHelper;
 
 /**
@@ -49,7 +49,7 @@ import com.helger.photon.security.object.BusinessObjectHelper;
 @ThreadSafe
 public class PModeManagerInMemory implements IPModeManager
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (PModeManagerInMemory.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (PModeManagerInMemory.class);
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("m_aRWLock")
