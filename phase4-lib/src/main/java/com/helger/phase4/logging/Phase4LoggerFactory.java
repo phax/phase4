@@ -20,6 +20,7 @@ import com.helger.commons.string.StringHelper;
  * Specific logger factory for the phase4 library that allows an easy customization of log messages.
  *
  * @author Philip Helger
+ * @since 3.1.0-beta3
  */
 public final class Phase4LoggerFactory
 {
@@ -28,6 +29,7 @@ public final class Phase4LoggerFactory
    * prefix and suffix.
    *
    * @author Philip Helger
+   * @since 3.1.0-beta3
    */
   public static class Phase4Logger implements Logger
   {
@@ -518,6 +520,13 @@ public final class Phase4LoggerFactory
     return aSB.toString ();
   };
 
+  /**
+   * Get a new SLF4J logger using the provided class.
+   *
+   * @param aClass
+   *        The class to use. May not be <code>null</code>.
+   * @return The wrapped {@link Phase4Logger}. Never <code>null</code>.
+   */
   @Nonnull
   public static Phase4Logger getLogger (@Nonnull final Class <?> aClass)
   {
@@ -526,6 +535,13 @@ public final class Phase4LoggerFactory
     return new Phase4Logger (aLogger, MSG_CUSTOMIZER);
   }
 
+  /**
+   * Get a new SLF4J logger using the provided logger name.
+   *
+   * @param sLoggerName
+   *        The logger name to use. May neither be <code>null</code> nor empty.
+   * @return The wrapped {@link Phase4Logger}. Never <code>null</code>.
+   */
   @Nonnull
   public static Phase4Logger getLogger (@Nonnull @Nonempty final String sLoggerName)
   {
