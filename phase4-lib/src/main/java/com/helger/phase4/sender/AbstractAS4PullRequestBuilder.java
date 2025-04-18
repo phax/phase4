@@ -122,8 +122,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * @return <code>true</code> if PMode leg 1 is used, <code>false</code> if leg
-   *         2 is used.
+   * @return <code>true</code> if PMode leg 1 is used, <code>false</code> if leg 2 is used.
    * @since 3.0.0
    */
   public final boolean useLeg1 ()
@@ -171,8 +170,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * @return The receiver AS4 endpoint URL currently set. May be
-   *         <code>null</code>.
+   * @return The receiver AS4 endpoint URL currently set. May be <code>null</code>.
    * @since 3.0.0
    */
   @Nullable
@@ -206,8 +204,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set an optional Ebms3 User Message Consumer. This method is optional and
-   * must not be called prior to sending.
+   * Set an optional Ebms3 User Message Consumer. This method is optional and must not be called
+   * prior to sending.
    *
    * @param aUserMsgConsumer
    *        The optional User Message consumer. May be <code>null</code>.
@@ -221,8 +219,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * @return The optional Ebms3 Signal Message Consumer. May be
-   *         <code>null</code>.
+   * @return The optional Ebms3 Signal Message Consumer. May be <code>null</code>.
    * @since 3.0.0
    */
   @Nullable
@@ -232,9 +229,9 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set an optional Ebms3 Signal Message Consumer. If this consumer is set, the
-   * response is trying to be parsed as a Signal Message. This method is
-   * optional and must not be called prior to sending.
+   * Set an optional Ebms3 Signal Message Consumer. If this consumer is set, the response is trying
+   * to be parsed as a Signal Message. This method is optional and must not be called prior to
+   * sending.
    *
    * @param aSignalMsgConsumer
    *        The optional signal message consumer. May be <code>null</code>.
@@ -248,8 +245,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * @return The optional Ebms3 Signal Message validation result handled. May be
-   *         <code>null</code>.
+   * @return The optional Ebms3 Signal Message validation result handled. May be <code>null</code>.
    * @since 3.0.1
    */
   @Nullable
@@ -259,10 +255,9 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set an optional Ebms3 Signal Message validation result handler. This
-   * handler is invoked, after the synchronous signal message references were
-   * evaluated. This handler cannot modify any message flow - it is an
-   * informational callback only.
+   * Set an optional Ebms3 Signal Message validation result handler. This handler is invoked, after
+   * the synchronous signal message references were evaluated. This handler cannot modify any
+   * message flow - it is an informational callback only.
    *
    * @param aSignalMsgValidationResultHdl
    *        The optional signal message consumer. May be <code>null</code>.
@@ -279,9 +274,9 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   @Override
   @Nonnull
   @OverridingMethodsMustInvokeSuper
-  protected ESuccess finishFields () throws Phase4Exception
+  protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
   {
-    if (super.finishFields ().isFailure ())
+    if (super.finishFields (aResHelper).isFailure ())
       return ESuccess.FAILURE;
 
     if (m_aPMode == null && pmodeResolver () != null)
@@ -322,12 +317,10 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * This method applies all builder parameters onto the Pull Request, except
-   * the attachments.
+   * This method applies all builder parameters onto the Pull Request, except the attachments.
    *
    * @param aPullRequestMsg
-   *        The Pull request the parameters should be applied to. May not be
-   *        <code>null</code>.
+   *        The Pull request the parameters should be applied to. May not be <code>null</code>.
    */
   protected final void applyToPullRequest (@Nonnull final AS4ClientPullRequestMessage aPullRequestMsg)
   {

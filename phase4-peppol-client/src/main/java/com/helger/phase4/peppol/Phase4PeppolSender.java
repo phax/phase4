@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.peppol;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
@@ -78,6 +80,7 @@ import com.helger.phase4.profile.peppol.PeppolPMode;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
+import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.xml.source.IValidationSourceXML;
@@ -177,7 +180,8 @@ public final class Phase4PeppolSender
     if (!aData.areAllFieldsSet (true))
       throw new IllegalArgumentException ("The Peppol SBDH data is incomplete. See logs for details.");
 
-    return new PeppolSBDHDataWriter ().createStandardBusinessDocument (aData);
+    // We never need to clone the payload element here because it was evtl. cloned before
+    return new PeppolSBDHDataWriter ().setFavourSpeed (true).createStandardBusinessDocument (aData);
   }
 
   /**
@@ -803,7 +807,7 @@ public final class Phase4PeppolSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields () throws Phase4Exception
+    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
       {
@@ -845,7 +849,7 @@ public final class Phase4PeppolSender
       toPartyID (CertificateHelper.getSubjectCN (aReceiverCert));
 
       // Super at the end
-      return super.finishFields ();
+      return super.finishFields (aResHelper);
     }
 
     @Override
@@ -1302,7 +1306,7 @@ public final class Phase4PeppolSender
     }
 
     @Override
-    protected ESuccess finishFields () throws Phase4Exception
+    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       // Ensure a DOM element is present
       final Element aPayloadElement;
@@ -1352,7 +1356,7 @@ public final class Phase4PeppolSender
       _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
 
       // Perform SMP lookup
-      if (super.finishFields ().isFailure ())
+      if (super.finishFields (aResHelper).isFailure ())
         return ESuccess.FAILURE;
 
       // Created SBDH
@@ -1389,16 +1393,41 @@ public final class Phase4PeppolSender
       if (m_aSBDDocumentConsumer != null)
         m_aSBDDocumentConsumer.accept (aSBD);
 
-      final byte [] aSBDBytes = new SBDMarshaller ().getAsBytes (aSBD);
-      if (m_aSBDBytesConsumer != null)
-        m_aSBDBytesConsumer.accept (aSBDBytes);
+      if (true)
+      {
+        // Serialize the SBDH to a temporary file
+        // Drawback: will not call the SBDH Byte Consumer
+        try
+        {
+          final File fTempSBD = aResHelper.createTempFile ();
+          new SBDMarshaller ().write (aSBD, fTempSBD);
 
-      // Now we have the main payload
-      payload (AS4OutgoingAttachment.builder ()
-                                    .data (aSBDBytes)
-                                    .mimeType (m_aPayloadMimeType)
-                                    .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null)
-                                    .contentID (m_sPayloadContentID));
+          // Now we have the main payload
+          payload (AS4OutgoingAttachment.builder ()
+                                        .data (fTempSBD)
+                                        .mimeType (m_aPayloadMimeType)
+                                        .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null)
+                                        .contentID (m_sPayloadContentID));
+        }
+        catch (final IOException ex)
+        {
+          throw new Phase4PeppolException ("Failed to create temporary file for SBDH", ex);
+        }
+      }
+      else
+      {
+        // Serializing the full SBDH to bytes may fail for large files
+        final byte [] aSBDBytes = new SBDMarshaller ().getAsBytes (aSBD);
+        if (m_aSBDBytesConsumer != null)
+          m_aSBDBytesConsumer.accept (aSBDBytes);
+
+        // Now we have the main payload
+        payload (AS4OutgoingAttachment.builder ()
+                                      .data (aSBDBytes)
+                                      .mimeType (m_aPayloadMimeType)
+                                      .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null)
+                                      .contentID (m_sPayloadContentID));
+      }
 
       return ESuccess.SUCCESS;
     }
@@ -1498,10 +1527,10 @@ public final class Phase4PeppolSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields () throws Phase4Exception
+    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       // Perform SMP lookup
-      if (super.finishFields ().isFailure ())
+      if (super.finishFields (aResHelper).isFailure ())
         return ESuccess.FAILURE;
 
       // Now we have the main payload

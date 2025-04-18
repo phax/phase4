@@ -61,6 +61,7 @@ import com.helger.phase4.profile.dbnalliance.DBNAlliancePMode;
 import com.helger.phase4.profile.dbnalliance.Phase4DBNAllianceHttpClientSettings;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
+import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
@@ -514,7 +515,7 @@ public final class Phase4DBNAllianceSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields () throws Phase4Exception
+    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
       {
@@ -556,7 +557,7 @@ public final class Phase4DBNAllianceSender
       toPartyID (CertificateHelper.getSubjectCN (aReceiverCert));
 
       // Super at the end
-      return super.finishFields ();
+      return super.finishFields (aResHelper);
     }
 
     @Override
@@ -704,10 +705,10 @@ public final class Phase4DBNAllianceSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields () throws Phase4Exception
+    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       // Perform SMP lookup
-      if (super.finishFields ().isFailure ())
+      if (super.finishFields (aResHelper).isFailure ())
         return ESuccess.FAILURE;
 
       // Ensure a DOM element is present
@@ -865,10 +866,10 @@ public final class Phase4DBNAllianceSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields () throws Phase4Exception
+    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       // Perform SMP lookup
-      if (super.finishFields ().isFailure ())
+      if (super.finishFields (aResHelper).isFailure ())
         return ESuccess.FAILURE;
 
       // Now we have the main payload

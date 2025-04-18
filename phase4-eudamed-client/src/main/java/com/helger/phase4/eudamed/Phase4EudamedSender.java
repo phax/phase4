@@ -42,14 +42,15 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
+import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.IBDXLURLProvider;
 
 /**
- * This class contains all the specifics to send AS4 messages with the CEF
- * profile. See <code>sendAS4Message</code> as the main method to trigger the
- * sending, with all potential customization.
+ * This class contains all the specifics to send AS4 messages with the CEF profile. See
+ * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
+ * customization.
  *
  * @author Philip Helger
  * @since 1.4.2
@@ -66,8 +67,8 @@ public final class Phase4EudamedSender
   {}
 
   /**
-   * @return Create a new Builder for AS4 messages if the payload is present.
-   *         Never <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the payload is present. Never
+   *         <code>null</code>.
    */
   @Nonnull
   public static EudamedUserMessageBuilder builder ()
@@ -111,9 +112,8 @@ public final class Phase4EudamedSender
     }
 
     /**
-     * Set the sender participant ID of the message. The participant ID must be
-     * provided prior to sending. This ends up in the "originalSender"
-     * UserMessage property.
+     * Set the sender participant ID of the message. The participant ID must be provided prior to
+     * sending. This ends up in the "originalSender" UserMessage property.
      *
      * @param s
      *        The sender participant ID. May not be <code>null</code>.
@@ -127,9 +127,8 @@ public final class Phase4EudamedSender
     }
 
     /**
-     * Set the receiver participant ID of the message. The participant ID must
-     * be provided prior to sending. This ends up in the "finalRecipient"
-     * UserMessage property.
+     * Set the receiver participant ID of the message. The participant ID must be provided prior to
+     * sending. This ends up in the "finalRecipient" UserMessage property.
      *
      * @param s
      *        The receiver participant ID. May not be <code>null</code>.
@@ -143,8 +142,7 @@ public final class Phase4EudamedSender
     }
 
     /**
-     * Set the document type ID to be send. The document type must be provided
-     * prior to sending.
+     * Set the document type ID to be send. The document type must be provided prior to sending.
      *
      * @param a
      *        The document type ID to be used. May not be <code>null</code>.
@@ -158,8 +156,7 @@ public final class Phase4EudamedSender
     }
 
     /**
-     * Set the process ID to be send. The process ID must be provided prior to
-     * sending.
+     * Set the process ID to be send. The process ID must be provided prior to sending.
      *
      * @param a
      *        The process ID to be used. May not be <code>null</code>.
@@ -199,9 +196,8 @@ public final class Phase4EudamedSender
     }
 
     /**
-     * Set the abstract endpoint detail provider to be used. This can be an SMP
-     * lookup routine or in certain test cases a predefined certificate and
-     * endpoint URL.
+     * Set the abstract endpoint detail provider to be used. This can be an SMP lookup routine or in
+     * certain test cases a predefined certificate and endpoint URL.
      *
      * @param a
      *        The endpoint detail provider to be used. May be <code>null</code>.
@@ -222,8 +218,7 @@ public final class Phase4EudamedSender
     }
 
     /**
-     * Set an optional Consumer for the retrieved certificate, independent of
-     * its usability.
+     * Set an optional Consumer for the retrieved certificate, independent of its usability.
      *
      * @param a
      *        The consumer to be used. May be <code>null</code>.
@@ -237,8 +232,7 @@ public final class Phase4EudamedSender
     }
 
     /**
-     * Set an optional Consumer for the destination AP address, independent of
-     * its usability.
+     * Set an optional Consumer for the destination AP address, independent of its usability.
      *
      * @param a
      *        The consumer to be used. May be <code>null</code>.
@@ -271,7 +265,7 @@ public final class Phase4EudamedSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields () throws Phase4Exception
+    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
       {
@@ -297,7 +291,7 @@ public final class Phase4EudamedSender
       endpointURL (sReceiverEndpointURL);
 
       // Call at the end
-      return super.finishFields ();
+      return super.finishFields (aResHelper);
     }
 
     @Override
@@ -353,9 +347,9 @@ public final class Phase4EudamedSender
   }
 
   /**
-   * The builder class for sending AS4 messages using EUDAMED profile specifics.
-   * Use {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to
-   * trigger the main transmission.
+   * The builder class for sending AS4 messages using EUDAMED profile specifics. Use
+   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to trigger the main
+   * transmission.
    *
    * @author Philip Helger
    */

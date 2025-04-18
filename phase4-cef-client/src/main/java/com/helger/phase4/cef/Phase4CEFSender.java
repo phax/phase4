@@ -44,6 +44,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
+import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
@@ -51,9 +52,9 @@ import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.IBDXLURLProvider;
 
 /**
- * This class contains all the specifics to send AS4 messages with the CEF
- * profile. See <code>sendAS4Message</code> as the main method to trigger the
- * sending, with all potential customization.
+ * This class contains all the specifics to send AS4 messages with the CEF profile. See
+ * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
+ * customization.
  *
  * @author Philip Helger
  * @since 0.9.15
@@ -70,8 +71,8 @@ public final class Phase4CEFSender
   {}
 
   /**
-   * @return Create a new Builder for AS4 messages if the payload is present.
-   *         Never <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the payload is present. Never
+   *         <code>null</code>.
    */
   @Nonnull
   public static CEFUserMessageBuilder builder ()
@@ -125,9 +126,8 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set the sender participant ID of the message. The participant ID must be
-     * provided prior to sending. This ends up in the "originalSender"
-     * UserMessage property.
+     * Set the sender participant ID of the message. The participant ID must be provided prior to
+     * sending. This ends up in the "originalSender" UserMessage property.
      *
      * @param a
      *        The sender participant ID. May not be <code>null</code>.
@@ -141,9 +141,8 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set the receiver participant ID of the message. The participant ID must
-     * be provided prior to sending. This ends up in the "finalRecipient"
-     * UserMessage property.
+     * Set the receiver participant ID of the message. The participant ID must be provided prior to
+     * sending. This ends up in the "finalRecipient" UserMessage property.
      *
      * @param a
      *        The receiver participant ID. May not be <code>null</code>.
@@ -157,8 +156,7 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set the document type ID to be send. The document type must be provided
-     * prior to sending.
+     * Set the document type ID to be send. The document type must be provided prior to sending.
      *
      * @param a
      *        The document type ID to be used. May not be <code>null</code>.
@@ -172,8 +170,7 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set the process ID to be send. The process ID must be provided prior to
-     * sending.
+     * Set the process ID to be send. The process ID must be provided prior to sending.
      *
      * @param a
      *        The process ID to be used. May not be <code>null</code>.
@@ -213,9 +210,8 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set the abstract endpoint detail provider to be used. This can be an SMP
-     * lookup routine or in certain test cases a predefined certificate and
-     * endpoint URL.
+     * Set the abstract endpoint detail provider to be used. This can be an SMP lookup routine or in
+     * certain test cases a predefined certificate and endpoint URL.
      *
      * @param a
      *        The endpoint detail provider to be used. May be <code>null</code>.
@@ -231,9 +227,8 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set the SMP v1 client to be used. This is the point where e.g. the
-     * differentiation between SMK and SML can be done. This must be set prior
-     * to sending.
+     * Set the SMP v1 client to be used. This is the point where e.g. the differentiation between
+     * SMK and SML can be done. This must be set prior to sending.
      *
      * @param a
      *        The SMP v1 client to be used. May not be <code>null</code>.
@@ -247,9 +242,8 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set the SMP v2 client to be used. This is the point where e.g. the
-     * differentiation between SMK and SML can be done. This must be set prior
-     * to sending.
+     * Set the SMP v2 client to be used. This is the point where e.g. the differentiation between
+     * SMK and SML can be done. This must be set prior to sending.
      *
      * @param a
      *        The SMP v2 client to be used. May not be <code>null</code>.
@@ -271,8 +265,7 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set an optional Consumer for the retrieved certificate, independent of
-     * its usability.
+     * Set an optional Consumer for the retrieved certificate, independent of its usability.
      *
      * @param a
      *        The consumer to be used. May be <code>null</code>.
@@ -286,8 +279,7 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set an optional Consumer for the destination AP address, independent of
-     * its usability.
+     * Set an optional Consumer for the destination AP address, independent of its usability.
      *
      * @param a
      *        The consumer to be used. May be <code>null</code>.
@@ -301,9 +293,8 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Define if the <code>type</code> attribute for the message properties of
-     * "originalSender" and "finalRecipient" should be emitted or not. By
-     * default it is enabled.
+     * Define if the <code>type</code> attribute for the message properties of "originalSender" and
+     * "finalRecipient" should be emitted or not. By default it is enabled.
      *
      * @param b
      *        <code>true</code> to enabled it, <code>false</code> to disable it.
@@ -337,7 +328,7 @@ public final class Phase4CEFSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields () throws Phase4Exception
+    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
       {
@@ -361,7 +352,7 @@ public final class Phase4CEFSender
       endpointURL (sReceiverEndpointURL);
 
       // Call at the end
-      return super.finishFields ();
+      return super.finishFields (aResHelper);
     }
 
     @Override
@@ -436,8 +427,8 @@ public final class Phase4CEFSender
 
   /**
    * The builder class for sending AS4 messages using CEF profile specifics. Use
-   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to
-   * trigger the main transmission.
+   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to trigger the main
+   * transmission.
    *
    * @author Philip Helger
    */

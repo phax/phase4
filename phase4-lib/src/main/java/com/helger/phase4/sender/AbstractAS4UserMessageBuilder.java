@@ -42,6 +42,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
@@ -753,9 +754,9 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   @Override
   @Nonnull
   @OverridingMethodsMustInvokeSuper
-  protected ESuccess finishFields () throws Phase4Exception
+  protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
   {
-    if (super.finishFields ().isFailure ())
+    if (super.finishFields (aResHelper).isFailure ())
       return ESuccess.FAILURE;
 
     if (m_aPMode == null && pmodeResolver () != null)
