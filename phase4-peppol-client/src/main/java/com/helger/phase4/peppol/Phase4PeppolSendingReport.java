@@ -81,6 +81,7 @@ public class Phase4PeppolSendingReport
   private IProcessIdentifier m_aProcessID;
   private String m_sCountryC1;
   private String m_sSenderPartyID;
+  private String m_sTransportProfileID;
 
   // SBDH details
   private String m_sSBDHInstanceIdentifier;
@@ -224,6 +225,22 @@ public class Phase4PeppolSendingReport
   public void setSenderPartyID (@Nullable final String s)
   {
     m_sSenderPartyID = s;
+  }
+
+  public boolean hasTransportProfileID ()
+  {
+    return StringHelper.hasText (m_sTransportProfileID);
+  }
+
+  /**
+   * Remember the transport profile ID.
+   *
+   * @param s
+   *        Transport profile ID. May be <code>null</code>.
+   */
+  public void setTransportProfileID (@Nullable final String s)
+  {
+    m_sTransportProfileID = s;
   }
 
   public boolean hasSBDHInstanceIdentifier ()
@@ -499,6 +516,8 @@ public class Phase4PeppolSendingReport
       aJson.add ("countryC1", m_sCountryC1);
     if (hasSenderPartyID ())
       aJson.add ("senderPartyId", m_sSenderPartyID);
+    if (hasTransportProfileID ())
+      aJson.add ("transportProfileId", m_sTransportProfileID);
 
     if (hasSBDHInstanceIdentifier ())
       aJson.add ("sbdhInstanceIdentifier", m_sSBDHInstanceIdentifier);
@@ -635,6 +654,8 @@ public class Phase4PeppolSendingReport
       ret.appendElement (sNamespaceURI, "CountryC1").appendText (m_sCountryC1);
     if (hasSenderPartyID ())
       ret.appendElement (sNamespaceURI, "SenderPartyID").appendText (m_sSenderPartyID);
+    if (hasTransportProfileID ())
+      ret.appendElement (sNamespaceURI, "TransportProfileID").appendText (m_sTransportProfileID);
 
     if (hasSBDHInstanceIdentifier ())
       ret.appendElement (sNamespaceURI, "SBDHInstanceIdentifier").appendText (m_sSBDHInstanceIdentifier);
