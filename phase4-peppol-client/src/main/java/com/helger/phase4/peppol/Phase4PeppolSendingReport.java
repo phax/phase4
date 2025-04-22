@@ -43,6 +43,8 @@ import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
+import com.helger.peppolid.peppol.doctype.PredefinedDocumentTypeIdentifierManager;
+import com.helger.peppolid.peppol.process.PredefinedProcessIdentifierManager;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
@@ -480,9 +482,19 @@ public class Phase4PeppolSendingReport
     if (hasReceiverID ())
       aJson.add ("receiverId", m_aReceiverID.getURIEncoded ());
     if (hasDocTypeID ())
-      aJson.add ("docTypeId", m_aDocTypeID.getURIEncoded ());
+    {
+      final String sDocTypeID = m_aDocTypeID.getURIEncoded ();
+      aJson.add ("docTypeId", sDocTypeID);
+      aJson.add ("docTypeIdInCodeList",
+                 PredefinedDocumentTypeIdentifierManager.containsDocumentTypeIdentifierWithID (sDocTypeID));
+    }
     if (hasProcessID ())
-      aJson.add ("processId", m_aProcessID.getURIEncoded ());
+    {
+      final String sProcessID = m_aProcessID.getURIEncoded ();
+      aJson.add ("processId", sProcessID);
+      aJson.add ("processIdInCodeList",
+                 PredefinedProcessIdentifierManager.containsProcessIdentifierWithID (sProcessID));
+    }
     if (hasCountryC1 ())
       aJson.add ("countryC1", m_sCountryC1);
     if (hasSenderPartyID ())
@@ -605,9 +617,20 @@ public class Phase4PeppolSendingReport
     if (hasReceiverID ())
       ret.appendElement (sNamespaceURI, "ReceiverID").appendText (m_aReceiverID.getURIEncoded ());
     if (hasDocTypeID ())
-      ret.appendElement (sNamespaceURI, "DocTypeID").appendText (m_aDocTypeID.getURIEncoded ());
+    {
+      final String sDocTypeID = m_aDocTypeID.getURIEncoded ();
+      ret.appendElement (sNamespaceURI, "DocTypeID")
+         .setAttribute ("inCodeList",
+                        PredefinedDocumentTypeIdentifierManager.containsDocumentTypeIdentifierWithID (sDocTypeID))
+         .appendText (sDocTypeID);
+    }
     if (hasProcessID ())
-      ret.appendElement (sNamespaceURI, "ProcessID").appendText (m_aProcessID.getURIEncoded ());
+    {
+      final String sProcessID = m_aProcessID.getURIEncoded ();
+      ret.appendElement (sNamespaceURI, "ProcessID")
+         .setAttribute ("inCodeList", PredefinedProcessIdentifierManager.containsProcessIdentifierWithID (sProcessID))
+         .appendText (sProcessID);
+    }
     if (hasCountryC1 ())
       ret.appendElement (sNamespaceURI, "CountryC1").appendText (m_sCountryC1);
     if (hasSenderPartyID ())
