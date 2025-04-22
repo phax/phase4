@@ -45,6 +45,7 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.doctype.PredefinedDocumentTypeIdentifierManager;
 import com.helger.peppolid.peppol.process.PredefinedProcessIdentifierManager;
+import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
@@ -113,6 +114,7 @@ public class Phase4PeppolSendingReport
   {
     m_aCurrentDateTimeUTC = PDTFactory.getCurrentOffsetDateTimeUTC ();
     m_sSMLDNSZone = aSMLInfo.getDNSZone ();
+    m_sTransportProfileID = AS4EndpointDetailProviderPeppol.DEFAULT_TRANSPORT_PROFILE.getID ();
   }
 
   public boolean hasSBDHParseException ()
