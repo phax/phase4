@@ -42,6 +42,7 @@ import com.helger.commons.annotation.UnsupportedOperation;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.error.IError;
@@ -87,6 +88,7 @@ import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.Pfuoi420;
+import com.helger.smpclient.peppol.Pfuoi430;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.peppol.smp1.EndpointType;
@@ -183,6 +185,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   public Phase4PeppolServletMessageProcessorSPI ()
   {
     m_aHandlers = ServiceLoaderHelper.getAllSPIImplementations (IPhase4PeppolIncomingSBDHandlerSPI.class);
+    if (m_aHandlers.isEmpty ())
+      LOGGER.warn ("Found no instance of IPhase4PeppolIncomingSBDHandlerSPI - this means incoming messages are only checked and afterwards discarded");
   }
 
   /**
@@ -297,20 +301,32 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       }
 
       final EndpointType aEndpoint;
-      final boolean bWildcard = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
-      if (bWildcard)
+
+      if (PDTFactory.getCurrentZonedDateTimeUTC ().toLocalDate ().isAfter (Pfuoi430.VALID_FROM))
       {
-        // Wildcard lookup
-        @Pfuoi420
-        final SignedServiceMetadataType aSSM = aSMPClient.getWildcardServiceMetadataOrNull (aRecipientID,
-                                                                                            aDocTypeID,
-                                                                                            eWildcardSelectionMode);
+        // PFUOI 4.3.0
+        final SignedServiceMetadataType aSSM = aSMPClient.getSchemeSpecificServiceMetadataOrNull (aRecipientID,
+                                                                                                  aDocTypeID);
         aEndpoint = aSSM == null ? null : SMPClientReadOnly.getEndpoint (aSSM, aProcessID, m_aTransportProfile);
       }
       else
       {
-        // Direct match
-        aEndpoint = aSMPClient.getEndpoint (aRecipientID, aDocTypeID, aProcessID, m_aTransportProfile);
+        // PFUOI 4.2.0
+        final boolean bWildcard = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
+        if (bWildcard)
+        {
+          // Wildcard lookup
+          @Pfuoi420
+          final SignedServiceMetadataType aSSM = aSMPClient.getWildcardServiceMetadataOrNull (aRecipientID,
+                                                                                              aDocTypeID,
+                                                                                              eWildcardSelectionMode);
+          aEndpoint = aSSM == null ? null : SMPClientReadOnly.getEndpoint (aSSM, aProcessID, m_aTransportProfile);
+        }
+        else
+        {
+          // Direct match
+          aEndpoint = aSMPClient.getEndpoint (aRecipientID, aDocTypeID, aProcessID, m_aTransportProfile);
+        }
       }
       return aEndpoint;
     }
@@ -850,6 +866,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                            .errorDetail ("The phase4 implementation is marked as in production, but has no capabilities to process an incoming Peppol message." +
                                                                          " Unfortunately, the Peppol message needs to be rejected for that reason.")
                                                            .build ());
+        return AS4MessageProcessorResult.createFailure ();
       }
     }
     else
