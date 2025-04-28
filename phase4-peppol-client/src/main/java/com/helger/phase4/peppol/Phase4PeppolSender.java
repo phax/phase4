@@ -1393,18 +1393,19 @@ public final class Phase4PeppolSender
       if (m_aSBDDocumentConsumer != null)
         m_aSBDDocumentConsumer.accept (aSBD);
 
-      if (true)
+      if (false)
       {
         // Serialize the SBDH to a temporary file
+        // Advantage: works with large files as well because it consumes less memory
         // Drawback: will not call the SBDH Byte Consumer
         try
         {
-          final File fTempSBD = aResHelper.createTempFile ();
-          new SBDMarshaller ().write (aSBD, fTempSBD);
+          final File aTempSBDFile = aResHelper.createTempFile ();
+          new SBDMarshaller ().write (aSBD, aTempSBDFile);
 
           // Now we have the main payload
           payload (AS4OutgoingAttachment.builder ()
-                                        .data (fTempSBD)
+                                        .data (aTempSBDFile)
                                         .mimeType (m_aPayloadMimeType)
                                         .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null)
                                         .contentID (m_sPayloadContentID));
