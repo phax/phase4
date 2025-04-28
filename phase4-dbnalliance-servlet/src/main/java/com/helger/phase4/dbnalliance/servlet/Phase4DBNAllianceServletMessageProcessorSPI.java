@@ -179,6 +179,8 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
   public Phase4DBNAllianceServletMessageProcessorSPI ()
   {
     m_aHandlers = ServiceLoaderHelper.getAllSPIImplementations (IPhase4DBNAllianceIncomingXHEHandlerSPI.class);
+    if (m_aHandlers.isEmpty ())
+      LOGGER.warn ("Found no instance of IPhase4DBNAllianceIncomingXHEHandlerSPI - this means incoming messages are only checked and afterwards discarded");
   }
 
   /**
@@ -730,6 +732,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
                                                            .errorDetail ("The phase4 implementation is marked as in production, but has no capabilities to process an incoming DBNAlliance message." +
                                                                          " Unfortunately, the DBNAlliance message needs to be rejected for that reason.")
                                                            .build ());
+        return AS4MessageProcessorResult.createFailure ();
       }
     }
     else
