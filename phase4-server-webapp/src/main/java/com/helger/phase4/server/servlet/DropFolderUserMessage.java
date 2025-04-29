@@ -65,13 +65,13 @@ import com.helger.security.certificate.CertificateHelper;
 import com.helger.smpclient.peppol.SMPClient;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
 import com.helger.smpclient.url.IPeppolURLProvider;
-import com.helger.smpclient.url.PeppolURLProvider;
+import com.helger.smpclient.url.PeppolConfigurableURLProvider;
 import com.helger.xsds.peppol.smp1.EndpointType;
 
 public final class DropFolderUserMessage
 {
   private static final IIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
-  private static final IPeppolURLProvider UP = PeppolURLProvider.INSTANCE;
+  private static final IPeppolURLProvider UP = PeppolConfigurableURLProvider.INSTANCE;
   private static final String PATH_DONE = "done";
   private static final String PATH_ERROR = "error";
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (DropFolderUserMessage.class);

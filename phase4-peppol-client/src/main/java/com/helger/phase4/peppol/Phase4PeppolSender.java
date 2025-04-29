@@ -93,7 +93,7 @@ import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.IPeppolURLProvider;
-import com.helger.smpclient.url.PeppolURLProvider;
+import com.helger.smpclient.url.PeppolConfigurableURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xsds.peppol.smp1.EndpointType;
 
@@ -108,7 +108,7 @@ import com.helger.xsds.peppol.smp1.EndpointType;
 public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
-  public static final IPeppolURLProvider URL_PROVIDER = PeppolURLProvider.INSTANCE;
+  public static final IPeppolURLProvider URL_PROVIDER = PeppolConfigurableURLProvider.INSTANCE;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolSender.class);
 
