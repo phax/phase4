@@ -55,6 +55,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   public static final IIdentifierFactory DEFAULT_SBDH_IDENTIFIER_FACTORY = SimpleIdentifierFactory.INSTANCE;
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
   @Pfuoi420
+  @Deprecated (forRemoval = true, since = "3.1.0")
   public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.WILDCARD_ONLY;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
   public static final TrustedCAChecker DEFAULT_PEPPOL_AP_CA_CHECKER = PeppolTrustedCA.peppolAllAP ();
