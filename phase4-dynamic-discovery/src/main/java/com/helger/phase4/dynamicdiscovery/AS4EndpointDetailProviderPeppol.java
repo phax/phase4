@@ -74,7 +74,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   private ISMPTransportProfile m_aTP = DEFAULT_TRANSPORT_PROFILE;
   private EndpointType m_aEndpoint;
   // Mandatory per May 15th, 2025
-  private boolean m_bUsePFUOI430 = false;
+  private boolean m_bUsePFUOI430 = PDTFactory.getCurrentLocalDate ().compareTo (Pfuoi430.VALID_FROM) >= 0;
 
   public AS4EndpointDetailProviderPeppol (@Nonnull final ISMPServiceGroupProvider aServiceGroupProvider,
                                           @Nonnull final ISMPExtendedServiceMetadataProvider aServiceMetadataProvider)
