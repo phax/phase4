@@ -64,6 +64,7 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
+import com.helger.peppolid.peppol.Pfuoi430;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4Attachment;
@@ -87,8 +88,6 @@ import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
-import com.helger.smpclient.peppol.Pfuoi420;
-import com.helger.smpclient.peppol.Pfuoi430;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.peppol.smp1.EndpointType;
@@ -316,7 +315,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         if (bWildcard)
         {
           // Wildcard lookup
-          @Pfuoi420
           final SignedServiceMetadataType aSSM = aSMPClient.getWildcardServiceMetadataOrNull (aRecipientID,
                                                                                               aDocTypeID,
                                                                                               eWildcardSelectionMode);

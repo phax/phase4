@@ -30,6 +30,7 @@ import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
+import com.helger.peppolid.peppol.Pfuoi420;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverConfiguration.Phase4PeppolReceiverConfigurationBuilder;
@@ -37,7 +38,6 @@ import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
-import com.helger.smpclient.peppol.Pfuoi420;
 
 /**
  * This class contains the references values against which incoming values are compared. These are
@@ -131,6 +131,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    */
   @Nonnull
   @Pfuoi420
+  @Deprecated (forRemoval = true, since = "3.1.0")
   public static PeppolWildcardSelector.EMode getWildcardSelectionMode ()
   {
     return s_eWildcardSelectionMode;
@@ -145,6 +146,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @since 2.7.3
    */
   @Pfuoi420
+  @Deprecated (forRemoval = true, since = "3.1.0")
   public static void setWildcardSelectionMode (@Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
   {
     ValueEnforcer.notNull (eWildcardSelectionMode, "WildcardSlectionMode");

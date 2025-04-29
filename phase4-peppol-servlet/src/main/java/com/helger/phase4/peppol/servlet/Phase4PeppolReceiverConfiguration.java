@@ -29,10 +29,10 @@ import com.helger.commons.string.ToStringGenerator;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
+import com.helger.peppolid.peppol.Pfuoi420;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
-import com.helger.smpclient.peppol.Pfuoi420;
 
 /**
  * This class contains the "per-request" data of
@@ -190,6 +190,7 @@ public final class Phase4PeppolReceiverConfiguration
    */
   @Nonnull
   @Pfuoi420
+  @Deprecated (forRemoval = true, since = "3.1.0")
   public PeppolWildcardSelector.EMode getWildcardSelectionMode ()
   {
     return m_eWildcardSelectionMode;
@@ -345,6 +346,7 @@ public final class Phase4PeppolReceiverConfiguration
 
     @Nonnull
     @Pfuoi420
+    @Deprecated (forRemoval = true, since = "3.1.0")
     public Phase4PeppolReceiverConfigurationBuilder wildcardSelectionMode (@Nullable final PeppolWildcardSelector.EMode e)
     {
       m_eWildcardSelectionMode = e;

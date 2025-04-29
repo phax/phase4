@@ -37,6 +37,8 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
+import com.helger.peppolid.peppol.Pfuoi420;
+import com.helger.peppolid.peppol.Pfuoi430;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.exception.SMPClientException;
@@ -45,8 +47,6 @@ import com.helger.smpclient.peppol.ISMPServiceGroupProvider;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
-import com.helger.smpclient.peppol.Pfuoi420;
-import com.helger.smpclient.peppol.Pfuoi430;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helger.xsds.peppol.smp1.ServiceGroupType;
@@ -211,6 +211,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   @Nullable
   @OverrideOnDemand
   @Pfuoi420
+  @Deprecated (forRemoval = true, since = "3.1.0")
   protected SignedServiceMetadataType resolvedWildcardServiceMetadata (@Nonnull final IParticipantIdentifier aReceiverID,
                                                                        @Nonnull final IDocumentTypeIdentifier aDocTypeID) throws SMPClientException
   {
