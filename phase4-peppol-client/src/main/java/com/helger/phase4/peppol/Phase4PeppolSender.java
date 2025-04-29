@@ -1223,8 +1223,12 @@ public final class Phase4PeppolSender
      * @param aSBDBytesConsumer
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
+     * @deprecated This is deprecated, because in future versions, the SBDH will be temporarily
+     *             serialized to disk to allow messages larger than 2GB. Use
+     *             {@link #sbdDocumentConsumer(Consumer)} instead and serialize it manually instead.
      */
     @Nonnull
+    @Deprecated (since = "3.1.0", forRemoval = true)
     public PeppolUserMessageBuilder sbdBytesConsumer (@Nullable final Consumer <byte []> aSBDBytesConsumer)
     {
       m_aSBDBytesConsumer = aSBDBytesConsumer;
@@ -1393,7 +1397,8 @@ public final class Phase4PeppolSender
       if (m_aSBDDocumentConsumer != null)
         m_aSBDDocumentConsumer.accept (aSBD);
 
-      if (false)
+      // This can only be done, if no specific customizer is set
+      if (m_aSBDBytesConsumer == null)
       {
         // Serialize the SBDH to a temporary file
         // Advantage: works with large files as well because it consumes less memory
