@@ -301,7 +301,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
 
       final EndpointType aEndpoint;
 
-      if (PDTFactory.getCurrentZonedDateTimeUTC ().toLocalDate ().isAfter (Pfuoi430.VALID_FROM))
+      if (PDTFactory.getCurrentZonedDateTimeUTC ().toLocalDate ().compareTo (Pfuoi430.VALID_FROM) >= 0)
       {
         // PFUOI 4.3.0
         final SignedServiceMetadataType aSSM = aSMPClient.getSchemeSpecificServiceMetadataOrNull (aRecipientID,
