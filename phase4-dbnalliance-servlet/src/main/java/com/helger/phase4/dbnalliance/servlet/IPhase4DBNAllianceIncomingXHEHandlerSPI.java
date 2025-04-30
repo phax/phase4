@@ -17,8 +17,10 @@
 package com.helger.phase4.dbnalliance.servlet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.IsSPIInterface;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
@@ -71,4 +73,31 @@ public interface IPhase4DBNAllianceIncomingXHEHandlerSPI
                           @Nonnull DBNAllianceXHEData aDBNAllianceXHE,
                           @Nonnull IAS4IncomingMessageState aState,
                           @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
+
+  /**
+   * Optional callback to process a response message
+   *
+   * @param aIncomingMessageMetadata
+   *        Incoming message metadata. Never <code>null</code>.
+   * @param aIncomingState
+   *        The current message state. Can be used to determine all other things potentially
+   *        necessary for processing the response message. Never <code>null</code>.
+   * @param sResponseMessageID
+   *        The AS4 message ID of the response. Neither <code>null</code> nor empty. Since v1.2.0.
+   * @param aResponseBytes
+   *        The response bytes to be written. May be <code>null</code> for several reasons.
+   * @param bResponsePayloadIsAvailable
+   *        This indicates if a response payload is available at all. If this is <code>false</code>
+   *        than the response bytes are <code>null</code>. Special case: if this is
+   *        <code>true</code> and response bytes is <code>null</code> than most likely the response
+   *        entity is not repeatable and cannot be handled more than once - that's why it is
+   *        <code>null</code> here in this callback, but non-<code>null</code> in the originally
+   *        returned message.
+   * @since v3.1.0
+   */
+  void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                  @Nonnull final IAS4IncomingMessageState aIncomingState,
+                                  @Nonnull @Nonempty final String sResponseMessageID,
+                                  @Nullable final byte [] aResponseBytes,
+                                  final boolean bResponsePayloadIsAvailable);
 }

@@ -923,6 +923,15 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {
-    // Not used callback
+    // Now start invoking SPI handlers
+    for (final IPhase4PeppolIncomingSBDHandlerSPI aHandler : m_aHandlers)
+    {
+      // Just pass it through
+      aHandler.processAS4ResponseMessage (aMessageMetadata,
+                                          aState,
+                                          sResponseMessageID,
+                                          aResponseBytes,
+                                          bResponsePayloadIsAvailable);
+    }
   }
 }

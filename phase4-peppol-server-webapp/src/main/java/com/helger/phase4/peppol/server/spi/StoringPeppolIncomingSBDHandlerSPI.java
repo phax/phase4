@@ -20,11 +20,13 @@ import java.io.File;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -142,5 +144,14 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
           // TODO improve Peppol Reporting error handling
         }
     });
+  }
+
+  public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                         @Nonnull final IAS4IncomingMessageState aIncomingState,
+                                         @Nonnull @Nonempty final String sResponseMessageID,
+                                         @Nullable final byte [] aResponseBytes,
+                                         final boolean bResponsePayloadIsAvailable)
+  {
+    // empty
   }
 }
