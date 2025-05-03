@@ -45,7 +45,7 @@ jobs:
       with:
         java-version: ${{ matrix.Java }}
         distribution: 'adopt'
-        server-id: ossrh # Value of the distributionManagement/repository/id field of the pom.xml
+        server-id: central
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
 
