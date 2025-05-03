@@ -36,14 +36,14 @@ jobs:
     strategy:
       matrix:
         java: [ '11', '17', '21' ]
-    name: Java ${{ matrix.Java }} build
+    name: Java ${{ matrix.java }} build
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK ${{ matrix.Java }}
+    - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ matrix.Java }}
+        java-version: ${{ matrix.java }}
         distribution: 'adopt'
         server-id: central
         server-username: MAVEN_USERNAME
@@ -59,11 +59,11 @@ jobs:
 
     - name: Publish to the Maven Central Repository
       run: mvn --batch-mode --update-snapshots deploy
-      if: matrix.Java == 11
+      if: matrix.java == 11
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
     - name: Maven Build
       run: mvn --batch-mode --update-snapshots install
-      if: matrix.Java != 11
+      if: matrix.java != 11
