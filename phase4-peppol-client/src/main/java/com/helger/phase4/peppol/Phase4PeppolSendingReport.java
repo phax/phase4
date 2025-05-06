@@ -45,6 +45,7 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.doctype.PredefinedDocumentTypeIdentifierManager;
 import com.helger.peppolid.peppol.process.PredefinedProcessIdentifierManager;
+import com.helger.phase4.CAS4Version;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
@@ -491,6 +492,7 @@ public class Phase4PeppolSendingReport
 
     final IJsonObject aJson = new JsonObject ();
     aJson.add ("currentDateTimeUTC", PDTWebDateHelper.getAsStringXSD (m_aCurrentDateTimeUTC));
+    aJson.add ("phase4Version", CAS4Version.BUILD_VERSION);
     aJson.add ("smlDnsZone", m_sSMLDNSZone);
 
     if (hasSBDHParseException ())
@@ -628,6 +630,7 @@ public class Phase4PeppolSendingReport
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.appendElement (sNamespaceURI, "CurrentDateTimeUTC")
        .appendText (PDTWebDateHelper.getAsStringXSD (m_aCurrentDateTimeUTC));
+    ret.appendElement (sNamespaceURI, "phase4Version").appendText (CAS4Version.BUILD_VERSION);
     ret.appendElement (sNamespaceURI, "SMLDNSZone").appendText (m_sSMLDNSZone);
 
     if (hasSBDHParseException ())
