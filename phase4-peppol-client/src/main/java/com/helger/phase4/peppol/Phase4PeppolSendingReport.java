@@ -99,6 +99,7 @@ public class Phase4PeppolSendingReport
   // AS4 params
   private String m_sAS4MessageID;
   private String m_sAS4ConversationID;
+  private OffsetDateTime m_aAS4SendingDT;
 
   // AS4 response details
   private EAS4UserMessageSendResult m_eAS4SendingResult;
@@ -113,7 +114,7 @@ public class Phase4PeppolSendingReport
 
   public Phase4PeppolSendingReport (@Nonnull final ISMLInfo aSMLInfo)
   {
-    m_aCurrentDateTimeUTC = PDTFactory.getCurrentOffsetDateTimeUTC ();
+    m_aCurrentDateTimeUTC = PDTFactory.getCurrentOffsetDateTimeMillisOnlyUTC ();
     m_sSMLDNSZone = aSMLInfo.getDNSZone ();
     m_sTransportProfileID = AS4EndpointDetailProviderPeppol.DEFAULT_TRANSPORT_PROFILE.getID ();
   }
@@ -373,6 +374,24 @@ public class Phase4PeppolSendingReport
     m_sAS4ConversationID = s;
   }
 
+  public boolean hasAS4SendingDT ()
+  {
+    return m_aAS4SendingDT != null;
+  }
+
+  /**
+   * Remember the AS4 sending date time, as the correlation basis for MLS.
+   *
+   * @param a
+   *        The sending date time.
+   * @since 3.1.0
+   */
+  public void setAS4SendingDT (@Nullable final OffsetDateTime a)
+  {
+    // Make sure to use only millisecond precision for correct XSD rendering
+    m_aAS4SendingDT = a == null ? null : PDTFactory.getWithMillisOnly (a);
+  }
+
   public boolean hasAS4ReceivedSignalMsg ()
   {
     return m_aAS4ReceivedSignalMsg != null;
@@ -543,6 +562,8 @@ public class Phase4PeppolSendingReport
       aJson.add ("as4MessageId", m_sAS4MessageID);
     if (hasAS4ConversationID ())
       aJson.add ("as4ConversationId", m_sAS4ConversationID);
+    if (hasAS4SendingDT ())
+      aJson.add ("as4SendingDateTime", PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
 
     if (hasAS4SendingResult ())
       aJson.add ("sendingResult", m_eAS4SendingResult.name ());
@@ -683,6 +704,9 @@ public class Phase4PeppolSendingReport
       ret.appendElement (sNamespaceURI, "AS4MessageId").appendText (m_sAS4MessageID);
     if (hasAS4ConversationID ())
       ret.appendElement (sNamespaceURI, "AS4ConversationId").appendText (m_sAS4ConversationID);
+    if (hasAS4SendingDT ())
+      ret.appendElement (sNamespaceURI, "AS4SendingDateTime")
+         .appendText (PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
 
     if (hasAS4SendingResult ())
       ret.appendElement (sNamespaceURI, "AS4SendingResult").appendText (m_eAS4SendingResult.name ());
