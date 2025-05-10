@@ -182,6 +182,7 @@ public final class APIPostSendSBDH extends AbstractVerifyingAPIExecutor
                                                                         aSendingReport.setC3CertCheckDT (aCheckDT);
                                                                         aSendingReport.setC3CertCheckResult (eCertCheckResult);
                                                                       })
+                                                                      .sendingDateTimeConsumer (aSendingReport::setAS4SendingDT)
                                                                       .buildMessageCallback (new IAS4ClientBuildMessageCallback ()
                                                                       {
                                                                         public void onAS4Message (@Nonnull final AbstractAS4Message <?> aMsg)
