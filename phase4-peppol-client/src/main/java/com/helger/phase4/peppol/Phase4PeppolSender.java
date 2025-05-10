@@ -116,15 +116,17 @@ public final class Phase4PeppolSender
   {}
 
   @Nullable
-  private static StandardBusinessDocument _createSBD (@Nonnull final IParticipantIdentifier aSenderID,
-                                                      @Nonnull final IParticipantIdentifier aReceiverID,
-                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                      @Nonnull final IProcessIdentifier aProcID,
-                                                      @Nullable final String sCountryC1,
-                                                      @Nullable final String sInstanceIdentifier,
-                                                      @Nullable final String sTypeVersion,
-                                                      @Nonnull final Element aPayloadElement,
-                                                      final boolean bClonePayloadElement)
+  private static PeppolSBDHData _createPeppolSBDHData (@Nonnull final IParticipantIdentifier aSenderID,
+                                                       @Nonnull final IParticipantIdentifier aReceiverID,
+                                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                       @Nonnull final IProcessIdentifier aProcID,
+                                                       @Nullable final String sCountryC1,
+                                                       @Nullable final String sInstanceIdentifier,
+                                                       @Nullable final String sStandard,
+                                                       @Nullable final String sTypeVersion,
+                                                       @Nullable final String sType,
+                                                       @Nonnull final Element aPayloadElement,
+                                                       final boolean bClonePayloadElement)
   {
     final PeppolSBDHData aData = new PeppolSBDHData (IF);
     aData.setSender (aSenderID.getScheme (), aSenderID.getValue ());
@@ -132,6 +134,17 @@ public final class Phase4PeppolSender
     aData.setDocumentType (aDocTypeID.getScheme (), aDocTypeID.getValue ());
     aData.setProcess (aProcID.getScheme (), aProcID.getValue ());
     aData.setCountryC1 (sCountryC1);
+
+    String sRealStandard = sStandard;
+    if (StringHelper.hasNoText (sRealStandard))
+    {
+      sRealStandard = aPayloadElement.getNamespaceURI ();
+    }
+    if (StringHelper.hasNoText (sRealStandard))
+    {
+      LOGGER.warn ("No Standard was provided and none could be deduced from the payload element (XML payloads without namespace URI are not permitted)");
+      return null;
+    }
 
     String sRealTypeVersion = sTypeVersion;
     if (StringHelper.hasNoText (sRealTypeVersion))
@@ -154,6 +167,18 @@ public final class Phase4PeppolSender
                    "'");
       return null;
     }
+
+    String sRealType = sType;
+    if (StringHelper.hasNoText (sRealType))
+    {
+      sRealType = aPayloadElement.getLocalName ();
+    }
+    if (StringHelper.hasNoText (sRealType))
+    {
+      LOGGER.warn ("No Type was provided and none could be deduced from the payload element");
+      return null;
+    }
+
     String sRealInstanceIdentifier = sInstanceIdentifier;
     if (StringHelper.hasNoText (sRealInstanceIdentifier))
     {
@@ -163,9 +188,10 @@ public final class Phase4PeppolSender
                       sRealInstanceIdentifier +
                       "'");
     }
-    aData.setDocumentIdentification (aPayloadElement.getNamespaceURI (),
+
+    aData.setDocumentIdentification (sRealStandard,
                                      sRealTypeVersion,
-                                     aPayloadElement.getLocalName (),
+                                     sRealType,
                                      sRealInstanceIdentifier,
                                      MetaAS4Manager.getTimestampMgr ().getCurrentXMLDateTime ());
 
@@ -179,6 +205,36 @@ public final class Phase4PeppolSender
     // Check with logging
     if (!aData.areAllFieldsSet (true))
       throw new IllegalArgumentException ("The Peppol SBDH data is incomplete. See logs for details.");
+
+    return aData;
+  }
+
+  @Nullable
+  private static StandardBusinessDocument _createSBD (@Nonnull final IParticipantIdentifier aSenderID,
+                                                      @Nonnull final IParticipantIdentifier aReceiverID,
+                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                      @Nonnull final IProcessIdentifier aProcID,
+                                                      @Nullable final String sCountryC1,
+                                                      @Nullable final String sInstanceIdentifier,
+                                                      @Nullable final String sStandard,
+                                                      @Nullable final String sTypeVersion,
+                                                      @Nullable final String sType,
+                                                      @Nonnull final Element aPayloadElement,
+                                                      final boolean bClonePayloadElement)
+  {
+    final PeppolSBDHData aData = _createPeppolSBDHData (aSenderID,
+                                                        aReceiverID,
+                                                        aDocTypeID,
+                                                        aProcID,
+                                                        sCountryC1,
+                                                        sInstanceIdentifier,
+                                                        sStandard,
+                                                        sTypeVersion,
+                                                        sType,
+                                                        aPayloadElement,
+                                                        bClonePayloadElement);
+    if (aData == null)
+      return null;
 
     // We never need to clone the payload element here because it was evtl. cloned before
     return new PeppolSBDHDataWriter ().setFavourSpeed (true).createStandardBusinessDocument (aData);
@@ -205,8 +261,11 @@ public final class Phase4PeppolSender
    * @return The domain object representation of the created SBDH or <code>null</code> if not all
    *         parameters are present.
    * @since 2.1.1
+   * @deprecated Use the version with more parameters. Simply pass <code>null</code> if you want to
+   *             have the previous behaviour
    */
   @Nullable
+  @Deprecated (forRemoval = true, since = "3.1.0")
   public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
                                                      @Nonnull final IParticipantIdentifier aReceiverID,
                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
@@ -216,13 +275,67 @@ public final class Phase4PeppolSender
                                                      @Nullable final String sTypeVersion,
                                                      @Nonnull final Element aPayloadElement)
   {
+    return createSBDH (aSenderID,
+                       aReceiverID,
+                       aDocTypeID,
+                       aProcID,
+                       sCountryC1,
+                       sInstanceIdentifier,
+                       null,
+                       sTypeVersion,
+                       null,
+                       aPayloadElement);
+  }
+
+  /**
+   * @param aSenderID
+   *        Sender participant ID. May not be <code>null</code>.
+   * @param aReceiverID
+   *        Receiver participant ID. May not be <code>null</code>.
+   * @param aDocTypeID
+   *        Document type ID. May not be <code>null</code>.
+   * @param aProcID
+   *        Process ID. May not be <code>null</code>.
+   * @param sCountryC1
+   *        Country code of C1. May be <code>null</code>.
+   * @param sInstanceIdentifier
+   *        SBDH instance identifier. May be <code>null</code> to create a random ID.
+   * @param sStandard
+   *        SBDH standard (e.g. the XML payload root element namespace URI). May be
+   *        <code>null</code> to use the default.
+   * @param sTypeVersion
+   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be <code>null</code> to use
+   *        the default.
+   * @param sType
+   *        SBDH type (e.g. the XML payload root element local name). May be <code>null</code> to
+   *        use the default.
+   * @param aPayloadElement
+   *        Payload element to be wrapped. May not be <code>null</code>.
+   * @return The domain object representation of the created SBDH or <code>null</code> if not all
+   *         parameters are present.
+   * @since 3.1.0
+   */
+  @Nullable
+  public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
+                                                     @Nonnull final IParticipantIdentifier aReceiverID,
+                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                     @Nonnull final IProcessIdentifier aProcID,
+                                                     @Nullable final String sCountryC1,
+                                                     @Nullable final String sInstanceIdentifier,
+                                                     @Nullable final String sStandard,
+                                                     @Nullable final String sTypeVersion,
+                                                     @Nullable final String sType,
+                                                     @Nonnull final Element aPayloadElement)
+  {
     return _createSBD (aSenderID,
                        aReceiverID,
                        aDocTypeID,
                        aProcID,
                        sCountryC1,
                        sInstanceIdentifier,
+                       sStandard,
                        sTypeVersion,
+                       sType,
                        aPayloadElement,
                        true);
   }
@@ -1032,7 +1145,9 @@ public final class Phase4PeppolSender
   public static class PeppolUserMessageBuilder extends AbstractPeppolUserMessageBuilder <PeppolUserMessageBuilder>
   {
     private String m_sSBDHInstanceIdentifier;
+    private String m_sSBDHStandard;
     private String m_sSBDHTypeVersion;
+    private String m_sSBDHType;
     private Element m_aPayloadElement;
     private byte [] m_aPayloadBytes;
     private IHasInputStream m_aPayloadHasIS;
@@ -1067,8 +1182,25 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Set the SBDH document standard. If none is provided, the value is extracted from the business
+     * document root element. This is specifically needed for non-XML payloads.
+     *
+     * @param sSBDHStandard
+     *        The SBDH document standard to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since 3.1.0
+     */
+    @Nonnull
+    public PeppolUserMessageBuilder sbdhStandard (@Nullable final String sSBDHStandard)
+    {
+      m_sSBDHStandard = sSBDHStandard;
+      return this;
+    }
+
+    /**
      * Set the SBDH document identification type version. If none is provided, the value is
-     * extracted from the document type identifier.
+     * extracted from the document type identifier. This is specifically needed for non-XML
+     * payloads.
      *
      * @param sSBDHTypeVersion
      *        The SBDH document identification type version to be used. May be <code>null</code>.
@@ -1079,6 +1211,22 @@ public final class Phase4PeppolSender
     public PeppolUserMessageBuilder sbdhTypeVersion (@Nullable final String sSBDHTypeVersion)
     {
       m_sSBDHTypeVersion = sSBDHTypeVersion;
+      return this;
+    }
+
+    /**
+     * Set the SBDH document identification type. If none is provided, the value is extracted from
+     * the business document root element. This is specifically needed for non-XML payloads.
+     *
+     * @param sSBDHType
+     *        The SBDH document identification type to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since 3.1.0
+     */
+    @Nonnull
+    public PeppolUserMessageBuilder sbdhType (@Nullable final String sSBDHType)
+    {
+      m_sSBDHType = sSBDHType;
       return this;
     }
 
@@ -1373,7 +1521,9 @@ public final class Phase4PeppolSender
                                                         m_aProcessID,
                                                         m_sCountryC1,
                                                         m_sSBDHInstanceIdentifier,
+                                                        m_sSBDHStandard,
                                                         m_sSBDHTypeVersion,
+                                                        m_sSBDHType,
                                                         aPayloadElement,
                                                         bClonePayloadElement);
       if (aSBD == null)
