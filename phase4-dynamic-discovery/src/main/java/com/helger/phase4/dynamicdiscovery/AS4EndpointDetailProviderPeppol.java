@@ -132,6 +132,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
    *         wildcard document type identifier is used. Defaults to
    *         {@link #DEFAULT_WILDCARD_SELECTION_MODE}.
    */
+  @SuppressWarnings ("removal")
   @Nonnull
   @Pfuoi420
   @Deprecated (forRemoval = true, since = "3.0.0")
@@ -150,6 +151,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
    *        The wildcard selection mode to be used. May not be <code>null</code>.
    * @return this for chaining.
    */
+  @SuppressWarnings ("removal")
   @Nonnull
   @Pfuoi420
   @Deprecated (forRemoval = true, since = "3.0.0")
@@ -197,6 +199,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
     return m_aEndpoint;
   }
 
+  @SuppressWarnings ("removal")
   @Nullable
   @OverrideOnDemand
   @Pfuoi420
@@ -208,6 +211,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
     return m_aServiceMetadataProvider.getServiceMetadata (aReceiverID, aDocTypeID);
   }
 
+  @SuppressWarnings ("removal")
   @Nullable
   @OverrideOnDemand
   @Pfuoi420

@@ -275,7 +275,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                              @Nullable final IParticipantIdentifier aRecipientID,
                                              @Nullable final IDocumentTypeIdentifier aDocTypeID,
                                              @Nullable final IProcessIdentifier aProcessID,
-                                             @Nullable final PeppolWildcardSelector.EMode eWildcardSelectionMode) throws Phase4PeppolServletException
+                                             @SuppressWarnings ("removal") @Nullable final PeppolWildcardSelector.EMode eWildcardSelectionMode) throws Phase4PeppolServletException
   {
     if (aRecipientID == null || aDocTypeID == null || aProcessID == null || eWildcardSelectionMode == null)
       return null;
@@ -315,6 +315,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         if (bWildcard)
         {
           // Wildcard lookup
+          @SuppressWarnings ("removal")
           final SignedServiceMetadataType aSSM = aSMPClient.getWildcardServiceMetadataOrNull (aRecipientID,
                                                                                               aDocTypeID,
                                                                                               eWildcardSelectionMode);
@@ -800,6 +801,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         final IParticipantIdentifier aReceiverID = aPeppolSBDH.getReceiverAsIdentifier ();
         final IDocumentTypeIdentifier aDocTypeID = aPeppolSBDH.getDocumentTypeAsIdentifier ();
         final IProcessIdentifier aProcessID = aPeppolSBDH.getProcessAsIdentifier ();
+        @SuppressWarnings ("removal")
         final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
                                                                      aReceiverCheckData.getSMPClient (),
                                                                      aReceiverID,

@@ -206,6 +206,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                                                      ".as4out")));
   }
 
+  @SuppressWarnings ("removal")
   private static void _initPeppolAS4 ()
   {
     // Our server expects all SBDH to contain the COUNTRY_C1 element in SBDH

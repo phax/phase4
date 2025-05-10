@@ -47,6 +47,7 @@ public final class Phase4PeppolReceiverConfiguration
 {
   private final boolean m_bReceiverCheckEnabled;
   private final ISMPExtendedServiceMetadataProvider m_aSMPClient;
+  @SuppressWarnings ("removal")
   @Pfuoi420
   private final PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
   private final String m_sAS4EndpointURL;
@@ -138,7 +139,7 @@ public final class Phase4PeppolReceiverConfiguration
    */
   public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
                                             @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
-                                            @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
+                                            @SuppressWarnings ("removal") @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
                                             @Nullable final String sAS4EndpointURL,
                                             @Nullable final X509Certificate aAPCertificate,
                                             @Nonnull final IIdentifierFactory aSBDHIdentifierFactory,
@@ -188,6 +189,7 @@ public final class Phase4PeppolReceiverConfiguration
    * @return The transport profile to be used. Never <code>null</code>.
    * @since 2.7.3
    */
+  @SuppressWarnings ("removal")
   @Nonnull
   @Pfuoi420
   @Deprecated (forRemoval = true, since = "3.1.0")
@@ -303,6 +305,7 @@ public final class Phase4PeppolReceiverConfiguration
   {
     private boolean m_bReceiverCheckEnabled;
     private ISMPExtendedServiceMetadataProvider m_aSMPClient;
+    @SuppressWarnings ("removal")
     @Pfuoi420
     private PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
     private String m_sAS4EndpointURL;
@@ -344,6 +347,7 @@ public final class Phase4PeppolReceiverConfiguration
       return this;
     }
 
+    @SuppressWarnings ("removal")
     @Nonnull
     @Pfuoi420
     @Deprecated (forRemoval = true, since = "3.1.0")

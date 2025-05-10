@@ -21,7 +21,6 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
-import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
@@ -34,6 +33,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
+import com.helger.sbdh.SBDMarshaller;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -72,12 +72,12 @@ public final class MainPhase4PeppolSenderACube
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
-                                  .sbdBytesConsumer (x -> SimpleFileIO.writeFile (new File (AS4Configuration.getDumpBasePathFile (),
-                                                                                            com.helger.phase4.dump.AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH +
-                                                                                                                                     IAS4OutgoingDumperFileProvider.getDefaultDirectoryAndFilename ("",
-                                                                                                                                                                1) +
-                                                                                                                                     ".sbdh"),
-                                                                                  x))
+                                  .sbdDocumentConsumer (x -> new SBDMarshaller ().write (x,
+                                                                                         new File (AS4Configuration.getDumpBasePathFile (),
+                                                                                                   com.helger.phase4.dump.AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH +
+                                                                                                                                            IAS4OutgoingDumperFileProvider.getDefaultDirectoryAndFilename ("",
+                                                                                                                                                                                                           1) +
+                                                                                                                                            ".sbdh")))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);

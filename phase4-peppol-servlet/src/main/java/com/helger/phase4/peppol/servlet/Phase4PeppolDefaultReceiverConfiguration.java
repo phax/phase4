@@ -54,6 +54,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
 {
   public static final IIdentifierFactory DEFAULT_SBDH_IDENTIFIER_FACTORY = SimpleIdentifierFactory.INSTANCE;
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
+  @SuppressWarnings ("removal")
   @Pfuoi420
   @Deprecated (forRemoval = true, since = "3.1.0")
   public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.WILDCARD_ONLY;
@@ -64,6 +65,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
 
   private static boolean s_bReceiverCheckEnabled = DEFAULT_RECEIVER_CHECK_ENABLED;
   private static ISMPExtendedServiceMetadataProvider s_aSMPClient;
+  @SuppressWarnings ("removal")
   @Pfuoi420
   private static PeppolWildcardSelector.EMode s_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private static String s_sAS4EndpointURL;
@@ -130,6 +132,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *         {@link #DEFAULT_WILDCARD_SELECTION_MODE}.
    * @since 2.7.3
    */
+  @SuppressWarnings ("removal")
   @Nonnull
   @Pfuoi420
   @Deprecated (forRemoval = true, since = "3.1.0")
@@ -146,6 +149,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *        The wildcard selection mode to be used. May not be <code>null</code>.
    * @since 2.7.3
    */
+  @SuppressWarnings ("removal")
   @Pfuoi420
   @Deprecated (forRemoval = true, since = "3.1.0")
   public static void setWildcardSelectionMode (@Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
@@ -342,6 +346,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return Completely filled builder. Never <code>null</code>.
    * @since 3.0.0 Beta7
    */
+  @SuppressWarnings ("removal")
   @Nonnull
   public static Phase4PeppolReceiverConfigurationBuilder getAsReceiverCheckDataBuilder ()
   {
