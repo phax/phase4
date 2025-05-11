@@ -26,6 +26,7 @@ import com.helger.commons.lang.ClassHelper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.quartz.CronScheduleBuilder;
+import com.helger.quartz.DisallowConcurrentExecution;
 import com.helger.quartz.IJobExecutionContext;
 import com.helger.quartz.JobDataMap;
 import com.helger.quartz.JobExecutionException;
@@ -39,6 +40,7 @@ import com.helger.web.scope.util.AbstractScopeAwareJob;
  *
  * @author Philip Helger
  */
+@DisallowConcurrentExecution
 public final class DoPeppolReportingJob extends AbstractScopeAwareJob
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (DoPeppolReportingJob.class);
