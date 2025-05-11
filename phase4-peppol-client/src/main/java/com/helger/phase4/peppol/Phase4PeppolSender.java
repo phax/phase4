@@ -129,10 +129,10 @@ public final class Phase4PeppolSender
                                                        final boolean bClonePayloadElement)
   {
     final PeppolSBDHData aData = new PeppolSBDHData (IF);
-    aData.setSender (aSenderID.getScheme (), aSenderID.getValue ());
-    aData.setReceiver (aReceiverID.getScheme (), aReceiverID.getValue ());
-    aData.setDocumentType (aDocTypeID.getScheme (), aDocTypeID.getValue ());
-    aData.setProcess (aProcID.getScheme (), aProcID.getValue ());
+    aData.setSender (aSenderID);
+    aData.setReceiver (aReceiverID);
+    aData.setDocumentType (aDocTypeID);
+    aData.setProcess (aProcID);
     aData.setCountryC1 (sCountryC1);
 
     String sRealStandard = sStandard;
@@ -182,6 +182,7 @@ public final class Phase4PeppolSender
     String sRealInstanceIdentifier = sInstanceIdentifier;
     if (StringHelper.hasNoText (sRealInstanceIdentifier))
     {
+      // Create a new random UUID as the SBDH Instance Identifier
       sRealInstanceIdentifier = UUID.randomUUID ().toString ();
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" +
