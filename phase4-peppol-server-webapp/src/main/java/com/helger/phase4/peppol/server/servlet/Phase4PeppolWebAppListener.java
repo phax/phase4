@@ -61,6 +61,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.api.Phase4API;
+import com.helger.phase4.peppol.server.reporting.DoPeppolReportingJob;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.Phase4PeppolDefaultReceiverConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
@@ -367,6 +368,12 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
   {
     _initAS4 ();
     _initPeppolAS4 ();
+  }
+
+  @Override
+  protected void initJobs ()
+  {
+    DoPeppolReportingJob.scheduleMe ();
   }
 
   @Override

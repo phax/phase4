@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -53,6 +52,7 @@ import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sml.ESML;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSendingReport;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.api.APIParamException;
@@ -66,7 +66,7 @@ import com.helger.security.certificate.TrustedCAChecker;
  */
 public final class AppReportingHelper
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AppReportingHelper.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AppReportingHelper.class);
 
   @Nonnull
   public static YearMonth getValidYearMonthInAPI (final int nYear, final int nMonth)

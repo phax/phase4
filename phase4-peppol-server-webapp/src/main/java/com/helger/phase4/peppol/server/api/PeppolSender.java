@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.commons.annotation.Nonempty;
@@ -36,6 +35,7 @@ import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
@@ -59,7 +59,7 @@ import com.helger.xml.serialize.read.DOMReader;
 @Immutable
 public final class PeppolSender
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (PeppolSender.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (PeppolSender.class);
 
   private PeppolSender ()
   {}
