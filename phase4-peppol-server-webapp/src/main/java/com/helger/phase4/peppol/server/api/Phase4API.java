@@ -52,16 +52,16 @@ public final class Phase4API
 
     {
       final APIDescriptor aSendAS4 = new APIDescriptor (APIPath.post ("/sendas4/{" +
-                                                                       PARAM_SENDER_ID +
-                                                                       "}/{" +
-                                                                       PARAM_RECEIVER_ID +
-                                                                       "}/{" +
-                                                                       PARAM_DOC_TYPE_ID +
-                                                                       "}/{" +
-                                                                       PARAM_PROCESS_ID +
-                                                                       "}/{" +
-                                                                       PARAM_COUNTRY_CODE_C1 +
-                                                                       "}"), new APIPostSendDocument (eStage));
+                                                                      PARAM_SENDER_ID +
+                                                                      "}/{" +
+                                                                      PARAM_RECEIVER_ID +
+                                                                      "}/{" +
+                                                                      PARAM_DOC_TYPE_ID +
+                                                                      "}/{" +
+                                                                      PARAM_PROCESS_ID +
+                                                                      "}/{" +
+                                                                      PARAM_COUNTRY_CODE_C1 +
+                                                                      "}"), new APIPostSendDocument (eStage));
       aSendAS4.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aSendAS4);
     }
@@ -90,6 +90,16 @@ public final class Phase4API
                                                                         "}"), new APIGetCreateEUSR ());
       aCreateEUSR.setExceptionMapper (aExceptionMapper);
       aAPIRegistry.registerAPI (aCreateEUSR);
+    }
+
+    {
+      final APIDescriptor aDoPeppolReporting = new APIDescriptor (APIPath.get ("/do-peppol-reporting/{" +
+                                                                               PARAM_YEAR +
+                                                                               "}/{" +
+                                                                               PARAM_MONTH +
+                                                                               "}"), new APIGetDoPeppolReporting ());
+      aDoPeppolReporting.setExceptionMapper (aExceptionMapper);
+      aAPIRegistry.registerAPI (aDoPeppolReporting);
     }
   }
 }

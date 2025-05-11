@@ -36,6 +36,7 @@ import com.helger.peppol.reporting.jaxb.tsr.v101.TransactionStatisticsReportType
 import com.helger.peppol.reporting.tsr.TransactionStatisticsReport;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.server.APConfig;
+import com.helger.phase4.peppol.server.reporting.AppReportingHelper;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -60,15 +61,9 @@ public final class APIGetCreateTSR extends AbstractVerifyingAPIExecutor
     final String sYear = aPathVariables.get (Phase4API.PARAM_YEAR);
     final String sMonth = aPathVariables.get (Phase4API.PARAM_MONTH);
 
-    final int nYear = StringParser.parseInt (sYear, -1);
-    final int nMonth = StringParser.parseInt (sMonth, -1);
-
     // Check parameters
-    if (nYear < 2024)
-      throw new APIParamException ("The year value '" + sYear + "' is invalid");
-    if (nMonth < 1 || nMonth > 12)
-      throw new APIParamException ("The month value '" + sMonth + "' is invalid");
-    final YearMonth aYearMonth = YearMonth.of (nYear, nMonth);
+    final YearMonth aYearMonth = AppReportingHelper.getValidYearMonthInAPI (StringParser.parseInt (sYear, -1),
+                                                                            StringParser.parseInt (sMonth, -1));
 
     LOGGER.info ("Trying to create Peppol Reporting TSR for " + aYearMonth);
 

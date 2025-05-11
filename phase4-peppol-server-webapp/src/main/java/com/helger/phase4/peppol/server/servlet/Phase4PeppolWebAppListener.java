@@ -43,6 +43,8 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.URLHelper;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.json.serialize.JsonWriterSettings;
+import com.helger.peppol.reporting.api.backend.IPeppolReportingBackendSPI;
+import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.phase4.CAS4;
@@ -310,7 +312,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       LOGGER.error ("Failed to do a reverse search of the certificate", ex);
     }
 
-    // Seeparate to test and production
+    // Change the stage per configuration
     final EPeppolNetwork eStage = APConfig.getPeppolStage ();
     final TrustedCAChecker aAPCAChecker = eStage.isTest () ? PeppolTrustedCA.peppolTestAP () : PeppolTrustedCA
                                                                                                               .peppolProductionAP ();
@@ -354,6 +356,10 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       Phase4PeppolDefaultReceiverConfiguration.setReceiverCheckEnabled (false);
       LOGGER.warn (CAS4.LIB_NAME + " Peppol receiver checks are disabled");
     }
+
+    // Initialize the Reporting Backend only once
+    if (PeppolReportingBackend.getBackendService ().initBackend (APConfig.getConfig ()).isFailure ())
+      throw new InitializationException ("Failed to init Peppol Reporting Backend Service");
   }
 
   @Override
@@ -372,6 +378,11 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
   @Override
   protected void beforeContextDestroyed (@Nonnull final ServletContext aSC)
   {
+    // Shutdown the Peppol Reporting Backend service, if it was initialized
+    final IPeppolReportingBackendSPI aPRBS = PeppolReportingBackend.getBackendService ();
+    if (aPRBS != null && aPRBS.isInitialized ())
+      aPRBS.shutdownBackend ();
+
     AS4ServerInitializer.shutdownAS4Server ();
   }
 }

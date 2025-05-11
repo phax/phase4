@@ -70,6 +70,11 @@
       <version>${peppol-reporting.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.helger.peppol</groupId>
+      <artifactId>peppol-reporting-support</artifactId>
+      <version>${peppol-ap-support.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-lib</artifactId>
     </dependency>
