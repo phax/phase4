@@ -82,7 +82,7 @@ public final class MainPhase4PeppolSenderLocalHost8080PDF
                                                                                          null)
                                                                   .sbdhStandard ("urn:peppol:doctype:pdf+xml")
                                                                   .sbdhTypeVersion ("0")
-                                                                  .sbdhType ("Invoice")
+                                                                  .sbdhType ("factur-x")
                                                                   .sbdDocumentConsumer (x -> LOGGER.info (new SBDMarshaller ().setFormattedOutput (true)
                                                                                                                               .getAsString (x)))
                                                                   .receiverEndpointDetails (CertificateHelper.convertStringToCertficate ("-----BEGIN CERTIFICATE-----\n" +
