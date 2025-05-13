@@ -58,7 +58,7 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: Publish to the Maven Central Repository
-      run: mvn --batch-mode --update-snapshots deploy
+      run: mvn --batch-mode --update-snapshots -P release-snapshot deploy
       if: matrix.java == 11
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
