@@ -359,7 +359,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     }
 
     // Initialize the Reporting Backend only once
-    if (PeppolReportingBackend.getBackendService ().initBackend (APConfig.getConfig ()).isFailure ())
+    final IPeppolReportingBackendSPI aPRBS = PeppolReportingBackend.getBackendService ();
+    if (aPRBS != null && aPRBS.initBackend (APConfig.getConfig ()).isFailure ())
       throw new InitializationException ("Failed to init Peppol Reporting Backend Service");
   }
 
