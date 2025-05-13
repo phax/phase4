@@ -52,6 +52,7 @@ import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.sbdh.CPeppolSBDH;
+import com.helger.peppol.sbdh.EPeppolMLSType;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.PeppolSBDHDataWriter;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadBinaryMarshaller;
@@ -1149,6 +1150,8 @@ public final class Phase4PeppolSender
     private String m_sSBDHStandard;
     private String m_sSBDHTypeVersion;
     private String m_sSBDHType;
+    private IParticipantIdentifier m_aMLSTo;
+    private EPeppolMLSType m_eMLSType;
     private Element m_aPayloadElement;
     private byte [] m_aPayloadBytes;
     private IHasInputStream m_aPayloadHasIS;
@@ -1228,6 +1231,37 @@ public final class Phase4PeppolSender
     public PeppolUserMessageBuilder sbdhType (@Nullable final String sSBDHType)
     {
       m_sSBDHType = sSBDHType;
+      return this;
+    }
+
+    /**
+     * Set the optional <code>MLS_TO</code> value of the Peppol SBDH providing the MLS receiver.
+     *
+     * @param aMLSTo
+     *        The optional participant identifier. May be <code>null</code>.
+     * @return this for chaining
+     * @since 3.1.1
+     */
+    @Nonnull
+    public PeppolUserMessageBuilder mlsTo (@Nullable final IParticipantIdentifier aMLSTo)
+    {
+      m_aMLSTo = aMLSTo;
+      return this;
+    }
+
+    /**
+     * Set the optional <code>MLS_TYPE</code> value of the Peppol SBDH providing the MLS
+     * orchestration.
+     *
+     * @param eMLSType
+     *        The optional MLS type. May be <code>null</code>.
+     * @return this for chaining
+     * @since 3.1.1
+     */
+    @Nonnull
+    public PeppolUserMessageBuilder mlsType (@Nullable final EPeppolMLSType eMLSType)
+    {
+      m_eMLSType = eMLSType;
       return this;
     }
 
@@ -1516,22 +1550,32 @@ public final class Phase4PeppolSender
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Start creating SBDH for AS4 message");
 
-      final StandardBusinessDocument aSBD = _createSBD (m_aSenderID,
-                                                        m_aReceiverID,
-                                                        m_aDocTypeID,
-                                                        m_aProcessID,
-                                                        m_sCountryC1,
-                                                        m_sSBDHInstanceIdentifier,
-                                                        m_sSBDHStandard,
-                                                        m_sSBDHTypeVersion,
-                                                        m_sSBDHType,
-                                                        aPayloadElement,
-                                                        bClonePayloadElement);
-      if (aSBD == null)
+      final PeppolSBDHData aPeppolSBDH = _createPeppolSBDHData (m_aSenderID,
+                                                                m_aReceiverID,
+                                                                m_aDocTypeID,
+                                                                m_aProcessID,
+                                                                m_sCountryC1,
+                                                                m_sSBDHInstanceIdentifier,
+                                                                m_sSBDHStandard,
+                                                                m_sSBDHTypeVersion,
+                                                                m_sSBDHType,
+                                                                aPayloadElement,
+                                                                bClonePayloadElement);
+
+      if (aPeppolSBDH == null)
       {
         // A log message was already provided
         return ESuccess.FAILURE;
       }
+
+      // Set MLS stuff here before bloating the public API
+      if (m_aMLSTo != null)
+        aPeppolSBDH.setMLSToScheme (m_aMLSTo.getScheme ()).setMLSToValue (m_aMLSTo.getValue ());
+      aPeppolSBDH.setMLSType (m_eMLSType);
+
+      // We never need to clone the payload element here because it was evtl. cloned before
+      final StandardBusinessDocument aSBD = new PeppolSBDHDataWriter ().setFavourSpeed (true)
+                                                                       .createStandardBusinessDocument (aPeppolSBDH);
 
       if (false)
       {
