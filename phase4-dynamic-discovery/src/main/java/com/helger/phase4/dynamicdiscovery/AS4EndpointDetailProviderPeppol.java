@@ -36,7 +36,6 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
-import com.helger.peppolid.peppol.Pfuoi430;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.exception.SMPClientException;
@@ -134,7 +133,6 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
 
   @Nullable
   @OverrideOnDemand
-  @Pfuoi430
   protected SignedServiceMetadataType resolvedSchemeSpecificServiceMetadata (@Nonnull final IParticipantIdentifier aReceiverID,
                                                                              @Nonnull final IDocumentTypeIdentifier aDocTypeID) throws SMPClientException
   {
