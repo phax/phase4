@@ -18,6 +18,7 @@ package com.helger.phase4.peppol;
 
 import javax.annotation.Nonnull;
 
+import com.helger.phase4.util.Phase4Exception;
 import com.helger.phive.api.result.ValidationResultList;
 
 /**
@@ -33,18 +34,18 @@ public interface IPhase4PeppolValidationResultHandler
    *
    * @param aValidationResult
    *        The full validation results. Never <code>null</code>.
-   * @throws Phase4PeppolException
+   * @throws Phase4Exception
    *         Implementation dependent
    */
-  void onValidationSuccess (@Nonnull final ValidationResultList aValidationResult) throws Phase4PeppolException;
+  void onValidationSuccess (@Nonnull final ValidationResultList aValidationResult) throws Phase4Exception;
 
   /**
    * Invoked, if at least one validation error is present.
    *
    * @param aValidationResult
    *        The full validation results. Never <code>null</code>.
-   * @throws Phase4PeppolException
+   * @throws Phase4Exception
    *         Implementation dependent
    */
-  void onValidationErrors (@Nonnull final ValidationResultList aValidationResult) throws Phase4PeppolException;
+  void onValidationErrors (@Nonnull final ValidationResultList aValidationResult) throws Phase4Exception;
 }
