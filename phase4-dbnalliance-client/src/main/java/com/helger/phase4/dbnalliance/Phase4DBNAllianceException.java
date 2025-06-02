@@ -41,6 +41,7 @@ public class Phase4DBNAllianceException extends Phase4Exception
    * @param aCause
    *        Optional causing exception
    */
+  @Deprecated (forRemoval = true, since = "3.2.0")
   public Phase4DBNAllianceException (@Nullable final Throwable aCause)
   {
     super (aCause);

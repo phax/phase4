@@ -31,5 +31,6 @@ public class PModeValidationException extends Phase4Exception
   public PModeValidationException (@Nonnull final String sMsg)
   {
     super (sMsg);
+    setRetryFeasible (false);
   }
 }

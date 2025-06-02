@@ -353,13 +353,13 @@ public final class Phase4PeppolSender
    *        The VESID to validate against. May be <code>null</code>.
    * @param aValidationResultHandler
    *        The validation result handler to be used. May be <code>null</code>.
-   * @throws Phase4PeppolException
+   * @throws Phase4Exception
    *         If the validation result handler decides to do so....
    */
   private static void _validatePayload (@Nonnull final Element aPayloadElement,
                                         @Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aRegistry,
                                         @Nullable final DVRCoordinate aVESID,
-                                        @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4PeppolException
+                                        @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4Exception
   {
     // Client side validation
     if (aVESID != null)
@@ -411,14 +411,14 @@ public final class Phase4PeppolSender
    *        Possibility to override the OSCP checking flag on a per query basis.
    *        May be <code>null</code> to use the global flag from
    *        {@link CertificateRevocationChecker#getRevocationCheckMode()}.
-   * @throws Phase4PeppolException
+   * @throws Phase4Exception
    *         in case of error
    */
   private static void _checkReceiverAPCert (@Nonnull final TrustedCAChecker aCAChecker,
                                             @Nullable final X509Certificate aReceiverCert,
                                             @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
                                             @Nonnull final ETriState eCacheOSCResult,
-                                            @Nullable final ERevocationCheckMode eCheckMode) throws Phase4PeppolException
+                                            @Nullable final ERevocationCheckMode eCheckMode) throws Phase4Exception
   {
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Using the following receiver AP certificate from the SMP: " + aReceiverCert);
@@ -440,7 +440,7 @@ public final class Phase4PeppolSender
                           ") and cannot be used for sending towards. Aborting. Reason: " +
                           eCertCheckResult.getReason ();
       LOGGER.error (sMsg);
-      throw new Phase4PeppolException (sMsg);
+      throw new Phase4PeppolException (sMsg).setRetryFeasible (false);
     }
   }
 
@@ -1058,17 +1058,17 @@ public final class Phase4PeppolSender
      *        The local end user ID, required to group all reporting items. May
      *        neither be <code>null</code> nor empty.
      * @return The created reporting item. Never <code>null</code>.
-     * @throws Phase4PeppolException
+     * @throws Phase4Exception
      *         in case something goes wrong
      * @see #createAndStorePeppolReportingItemAfterSending(String)
      * @since 2.2.2
      */
     @Nonnull
-    public final PeppolReportingItem createPeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4PeppolException
+    public final PeppolReportingItem createPeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4Exception
     {
       ValueEnforcer.notEmpty (sEndUserID, "EndUserID");
       if (m_aEffectiveSendingDT == null)
-        throw new Phase4PeppolException ("A Peppol Reporting item can only be created AFTER sending");
+        throw new Phase4PeppolException ("A Peppol Reporting item can only be created AFTER sending").setRetryFeasible (false);
 
       // No Country C4 necessary for sending
       return PeppolReportingItem.builder ()
@@ -1092,16 +1092,16 @@ public final class Phase4PeppolSender
      * @param sEndUserID
      *        The local end user ID, required to group all reporting items. May
      *        neither be <code>null</code> nor empty.
-     * @throws Phase4PeppolException
+     * @throws Phase4Exception
      *         in case something goes wrong
      * @see #createPeppolReportingItemAfterSending(String)
      * @since 2.2.2
      */
-    public final void createAndStorePeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4PeppolException
+    public final void createAndStorePeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4Exception
     {
       // Consistency check
       if (PeppolReportingBackend.getBackendService () == null)
-        throw new Phase4PeppolException ("No Peppol Reporting Backend is available. Cannot store Reporting Items");
+        throw new Phase4PeppolException ("No Peppol Reporting Backend is available. Cannot store Reporting Items").setRetryFeasible (false);
 
       // Filter out document types on Reporting
       if (PeppolReportingHelper.isDocumentTypeEligableForReporting (m_aDocTypeID))
@@ -1526,7 +1526,7 @@ public final class Phase4PeppolSender
           // Parse it
           final Document aDoc = DOMReader.readXMLDOM (m_aPayloadBytes);
           if (aDoc == null)
-            throw new Phase4PeppolException ("Failed to parse payload bytes to a DOM node");
+            throw new Phase4PeppolException ("Failed to parse payload bytes to a DOM node").setRetryFeasible (false);
           aPayloadElement = aDoc.getDocumentElement ();
         }
         else
@@ -1535,24 +1535,24 @@ public final class Phase4PeppolSender
             // Parse it
             final InputStream aIS = m_aPayloadHasIS.getBufferedInputStream ();
             if (aIS == null)
-              throw new Phase4PeppolException ("Failed to create payload InputStream from provider");
+              throw new Phase4PeppolException ("Failed to create payload InputStream from provider").setRetryFeasible (false);
             final Document aDoc = DOMReader.readXMLDOM (aIS);
             if (aDoc == null)
-              throw new Phase4PeppolException ("Failed to parse payload InputStream to a DOM node");
+              throw new Phase4PeppolException ("Failed to parse payload InputStream to a DOM node").setRetryFeasible (false);
             aPayloadElement = aDoc.getDocumentElement ();
           }
           else
             throw new IllegalStateException ("Unexpected - neither element nor bytes nor InputStream provider are present");
         if (aPayloadElement == null)
-          throw new Phase4PeppolException ("The parsed XML document must have a root element");
+          throw new Phase4PeppolException ("The parsed XML document must have a root element").setRetryFeasible (false);
         if (aPayloadElement.getNamespaceURI () == null)
-          throw new Phase4PeppolException ("The root element of the parsed XML document does not have a namespace URI");
+          throw new Phase4PeppolException ("The root element of the parsed XML document does not have a namespace URI").setRetryFeasible (false);
         bClonePayloadElement = false;
       }
 
       // Consistency check
       if (CSBDH.SBDH_NS.equals (aPayloadElement.getNamespaceURI ()))
-        throw new Phase4PeppolException ("You cannot set a Standard Business Document as the payload for the regular builder. The SBD is created automatically inside of this builder. Use Phase4PeppolSender.sbdhBuilder() if you have a pre-build SBD.");
+        throw new Phase4PeppolException ("You cannot set a Standard Business Document as the payload for the regular builder. The SBD is created automatically inside of this builder. Use Phase4PeppolSender.sbdhBuilder() if you have a pre-build SBD.").setRetryFeasible (false);
 
       // Optional payload validation
       _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);

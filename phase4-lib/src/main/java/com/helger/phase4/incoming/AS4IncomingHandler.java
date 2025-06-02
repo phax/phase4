@@ -433,7 +433,7 @@ public final class AS4IncomingHandler
         throw new Phase4Exception ("SOAP document is missing a Header element {" +
                                    eSoapVersion.getNamespaceURI () +
                                    "}" +
-                                   eSoapVersion.getHeaderElementName ());
+                                   eSoapVersion.getHeaderElementName ()).setRetryFeasible (false);
 
       // Extract all header elements including their "mustUnderstand" value
       for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
@@ -528,7 +528,7 @@ public final class AS4IncomingHandler
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
           throw new Phase4Exception ("Required SOAP header element " +
                                      aHeader.getQName ().toString () +
-                                     " could not be handled");
+                                     " could not be handled").setRetryFeasible (false);
     }
   }
 
@@ -910,7 +910,8 @@ public final class AS4IncomingHandler
       }
       else
       {
-        throw new Phase4Exception ("Error processing AS4 message", aIncomingState.getSoapWSS4JException ());
+        throw new Phase4Exception ("Error processing AS4 message", aIncomingState.getSoapWSS4JException ())
+                                                                                                           .setRetryFeasible (false);
       }
     };
 

@@ -38,7 +38,10 @@ import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.smpclient.exception.SMPClientBadRequestException;
+import com.helger.smpclient.exception.SMPClientBadResponseException;
 import com.helger.smpclient.exception.SMPClientException;
+import com.helger.smpclient.exception.SMPClientUnauthorizedException;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.ISMPServiceGroupProvider;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
@@ -212,6 +215,10 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
       }
       catch (final SMPClientException ex)
       {
+        final boolean bRetryFeasible = ex instanceof SMPClientBadRequestException ||
+                                       ex instanceof SMPClientBadResponseException ||
+                                       ex instanceof SMPClientUnauthorizedException ||
+                                       ex.getClass ().equals (SMPClientException.class);
         throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
                                       aReceiverID.getURIEncoded () +
                                       ", " +
@@ -221,7 +228,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
                                       ", " +
                                       m_aTP.getID () +
                                       ")",
-                                      ex);
+                                      ex).setRetryFeasible (bRetryFeasible);
       }
     }
   }
@@ -235,7 +242,8 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
     }
     catch (final CertificateException ex)
     {
-      throw new Phase4Exception ("Failed to extract AP certificate from SMP endpoint: " + m_aEndpoint, ex);
+      throw new Phase4Exception ("Failed to extract AP certificate from SMP endpoint: " + m_aEndpoint, ex)
+                                                                                                          .setRetryFeasible (false);
     }
   }
 

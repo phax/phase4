@@ -46,6 +46,7 @@ public class Phase4ENTSOGException extends Phase4Exception
    *        Optional causing exception
    * @since 0.13.0
    */
+  @Deprecated (forRemoval = true, since = "3.2.0")
   public Phase4ENTSOGException (@Nullable final Throwable aCause)
   {
     super (aCause);

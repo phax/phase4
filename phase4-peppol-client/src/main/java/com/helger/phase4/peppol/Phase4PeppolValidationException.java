@@ -37,6 +37,7 @@ public class Phase4PeppolValidationException extends Phase4PeppolException
   public Phase4PeppolValidationException (@Nonnull final ValidationResultList aValidationResult)
   {
     super ("Error validating business document");
+    setRetryFeasible (false);
     m_aValidationResult = ValueEnforcer.notNull (aValidationResult, "ValidationResult");
   }
 

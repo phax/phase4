@@ -36,7 +36,10 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
 import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
+import com.helger.smpclient.exception.SMPClientBadRequestException;
+import com.helger.smpclient.exception.SMPClientBadResponseException;
 import com.helger.smpclient.exception.SMPClientException;
+import com.helger.smpclient.exception.SMPClientUnauthorizedException;
 import com.helger.xsds.bdxr.smp1.EndpointType;
 
 /**
@@ -159,6 +162,10 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
       }
       catch (final SMPClientException ex)
       {
+        final boolean bRetryFeasible = ex instanceof SMPClientBadRequestException ||
+                                       ex instanceof SMPClientBadResponseException ||
+                                       ex instanceof SMPClientUnauthorizedException ||
+                                       ex.getClass ().equals (SMPClientException.class);
         throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
                                       aReceiverID.getURIEncoded () +
                                       ", " +
@@ -168,7 +175,7 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
                                       ", " +
                                       m_aTP.getID () +
                                       ")",
-                                      ex);
+                                      ex).setRetryFeasible (bRetryFeasible);
       }
     }
   }
@@ -182,7 +189,8 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
     }
     catch (final CertificateException ex)
     {
-      throw new Phase4Exception ("Failed to extract AP certificate from SMP endpoint: " + m_aEndpoint, ex);
+      throw new Phase4Exception ("Failed to extract AP certificate from SMP endpoint: " + m_aEndpoint, ex)
+                                                                                                          .setRetryFeasible (false);
     }
   }
 

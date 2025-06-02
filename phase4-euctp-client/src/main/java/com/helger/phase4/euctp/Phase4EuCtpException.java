@@ -41,6 +41,7 @@ public class Phase4EuCtpException extends Phase4Exception
    * @param aCause
    *        Optional causing exception
    */
+  @Deprecated (forRemoval = true, since = "3.2.0")
   public Phase4EuCtpException (@Nullable final Throwable aCause)
   {
     super (aCause);

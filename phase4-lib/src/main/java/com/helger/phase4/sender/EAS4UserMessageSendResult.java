@@ -43,6 +43,13 @@ public enum EAS4UserMessageSendResult implements IHasID <String>, ISuccessIndica
    */
   TRANSPORT_ERROR ("transport-error"),
   /**
+   * Something failed on the network or HTTP(S) level and a retry doesn't seem
+   * to be feasible.-
+   *
+   * @since 3.2.0
+   */
+  TRANSPORT_ERROR_NO_RETRY ("transport-error-no-retry"),
+  /**
    * Some answer was received, but it was no valid AS4 Signal Message
    */
   NO_SIGNAL_MESSAGE_RECEIVED ("no-signal-msg-received"),

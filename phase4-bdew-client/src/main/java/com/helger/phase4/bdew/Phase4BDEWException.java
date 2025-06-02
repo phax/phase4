@@ -35,7 +35,7 @@ public class Phase4BDEWException extends Phase4Exception
    * @param sMessage
    *        Error message
    */
-  public Phase4BDEWException(@Nonnull final String sMessage)
+  public Phase4BDEWException (@Nonnull final String sMessage)
   {
     super (sMessage);
   }
@@ -44,7 +44,8 @@ public class Phase4BDEWException extends Phase4Exception
    * @param aCause
    *        Optional causing exception
    */
-  public Phase4BDEWException(@Nullable final Throwable aCause)
+  @Deprecated (forRemoval = true, since = "3.2.0")
+  public Phase4BDEWException (@Nullable final Throwable aCause)
   {
     super (aCause);
   }
@@ -55,7 +56,7 @@ public class Phase4BDEWException extends Phase4Exception
    * @param aCause
    *        Optional causing exception
    */
-  public Phase4BDEWException(@Nonnull final String sMessage, @Nullable final Throwable aCause)
+  public Phase4BDEWException (@Nonnull final String sMessage, @Nullable final Throwable aCause)
   {
     super (sMessage, aCause);
   }

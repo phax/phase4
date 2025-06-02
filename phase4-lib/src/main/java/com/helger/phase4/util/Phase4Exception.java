@@ -28,6 +28,10 @@ import javax.annotation.Nullable;
  */
 public class Phase4Exception extends Exception
 {
+  public static final boolean DEFAULT_RETRY_FEASIBLE = true;
+
+  private boolean m_bRetryFeasible = DEFAULT_RETRY_FEASIBLE;
+
   /**
    * @param sMessage
    *        Error message
@@ -42,6 +46,7 @@ public class Phase4Exception extends Exception
    *        Optional causing exception
    * @since 0.13.0
    */
+  @Deprecated (forRemoval = true, since = "3.2.0")
   public Phase4Exception (@Nullable final Throwable aCause)
   {
     super (aCause);
@@ -56,5 +61,30 @@ public class Phase4Exception extends Exception
   public Phase4Exception (@Nonnull final String sMessage, @Nullable final Throwable aCause)
   {
     super (sMessage, aCause);
+  }
+
+  /**
+   * @return <code>true</code> if a retry is feasible, <code>false</code> if
+   *         not.
+   * @since 3.2.0
+   */
+  public final boolean isRetryFeasible ()
+  {
+    return m_bRetryFeasible;
+  }
+
+  /**
+   * Set whether a retry might be feasible or not.
+   *
+   * @param b
+   *        <code>true</code> if a retry is feasible, <code>false</code> if not
+   * @return this for chaining
+   * @since 3.2.0
+   */
+  @Nonnull
+  public final Phase4Exception setRetryFeasible (final boolean b)
+  {
+    m_bRetryFeasible = b;
+    return this;
   }
 }

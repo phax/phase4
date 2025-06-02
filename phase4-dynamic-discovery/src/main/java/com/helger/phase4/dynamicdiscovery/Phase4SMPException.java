@@ -44,6 +44,7 @@ public class Phase4SMPException extends Phase4Exception
    *        Optional causing exception
    * @since 0.13.0
    */
+  @Deprecated (forRemoval = true, since = "3.2.0")
   public Phase4SMPException (@Nullable final SMPClientException aCause)
   {
     super (aCause);

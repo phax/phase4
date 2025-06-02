@@ -51,7 +51,7 @@ public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
     }
     catch (final DAOException ex)
     {
-      throw new Phase4Exception ("Error creating MPCManager", ex);
+      throw new Phase4Exception ("Error creating MPCManager", ex).setRetryFeasible (false);
     }
   }
 
@@ -64,7 +64,7 @@ public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
     }
     catch (final DAOException ex)
     {
-      throw new Phase4Exception ("Error creating PModeManager", ex);
+      throw new Phase4Exception ("Error creating PModeManager", ex).setRetryFeasible (false);
     }
   }
 
@@ -77,7 +77,7 @@ public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
     }
     catch (final DAOException ex)
     {
-      throw new Phase4Exception ("Error creating AS4DuplicateManager", ex);
+      throw new Phase4Exception ("Error creating AS4DuplicateManager", ex).setRetryFeasible (false);
     }
   }
 

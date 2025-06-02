@@ -42,6 +42,7 @@ public class Phase4PeppolException extends Phase4Exception
    *        Optional causing exception
    * @since 0.13.0
    */
+  @Deprecated (forRemoval = true, since = "3.2.0")
   public Phase4PeppolException (@Nullable final Throwable aCause)
   {
     super (aCause);
