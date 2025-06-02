@@ -30,21 +30,20 @@ import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
-import com.helger.peppolid.peppol.Pfuoi420;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverConfiguration.Phase4PeppolReceiverConfigurationBuilder;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
-import com.helger.smpclient.peppol.PeppolWildcardSelector;
-import com.helger.smpclient.peppol.PeppolWildcardSelector.EMode;
 
 /**
- * This class contains the references values against which incoming values are compared. These are
- * the static default values that can be overridden in
- * {@link Phase4PeppolServletMessageProcessorSPI}. Please note that this class is not thread safe,
- * as the default values are not meant to be modified during runtime.<br>
- * See {@link Phase4PeppolReceiverConfiguration} for the "per-request" version of this class.<br/>
+ * This class contains the references values against which incoming values are
+ * compared. These are the static default values that can be overridden in
+ * {@link Phase4PeppolServletMessageProcessorSPI}. Please note that this class
+ * is not thread safe, as the default values are not meant to be modified during
+ * runtime.<br>
+ * See {@link Phase4PeppolReceiverConfiguration} for the "per-request" version
+ * of this class.<br/>
  * Old name before v3: <code>Phase4PeppolServletConfiguration</code>
  *
  * @author Philip Helger
@@ -54,10 +53,6 @@ public final class Phase4PeppolDefaultReceiverConfiguration
 {
   public static final IIdentifierFactory DEFAULT_SBDH_IDENTIFIER_FACTORY = SimpleIdentifierFactory.INSTANCE;
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
-  @SuppressWarnings ("removal")
-  @Pfuoi420
-  @Deprecated (forRemoval = true, since = "3.1.0")
-  public static final EMode DEFAULT_WILDCARD_SELECTION_MODE = EMode.WILDCARD_ONLY;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
   public static final TrustedCAChecker DEFAULT_PEPPOL_AP_CA_CHECKER = PeppolTrustedCA.peppolAllAP ();
 
@@ -65,9 +60,6 @@ public final class Phase4PeppolDefaultReceiverConfiguration
 
   private static boolean s_bReceiverCheckEnabled = DEFAULT_RECEIVER_CHECK_ENABLED;
   private static ISMPExtendedServiceMetadataProvider s_aSMPClient;
-  @SuppressWarnings ("removal")
-  @Pfuoi420
-  private static PeppolWildcardSelector.EMode s_eWildcardSelectionMode = DEFAULT_WILDCARD_SELECTION_MODE;
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
   private static IIdentifierFactory s_aSBDHIdentifierFactory = DEFAULT_SBDH_IDENTIFIER_FACTORY;
@@ -80,8 +72,9 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   {}
 
   /**
-   * @return <code>true</code> if the checks for endpoint URL and endpoint certificate are enabled,
-   *         <code>false</code> otherwise. By default the checks are enabled.
+   * @return <code>true</code> if the checks for endpoint URL and endpoint
+   *         certificate are enabled, <code>false</code> otherwise. By default
+   *         the checks are enabled.
    */
   public static boolean isReceiverCheckEnabled ()
   {
@@ -89,13 +82,13 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * Enable or disable the overall receiver checks. If the check is enabled, than all values MUST be
-   * set.
+   * Enable or disable the overall receiver checks. If the check is enabled,
+   * than all values MUST be set.
    *
    * @param bReceiverCheckEnabled
-   *        <code>true</code> to enable the checks, <code>false</code> to disable them.
+   *        <code>true</code> to enable the checks, <code>false</code> to
+   *        disable them.
    * @see #setSMPClient(ISMPExtendedServiceMetadataProvider)
-   * @see #setWildcardSelectionMode(EMode)
    * @see #setAS4EndpointURL(String)
    * @see #setAPCertificate(X509Certificate)
    */
@@ -105,9 +98,10 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * @return The SMP client object that should be used for the SMP lookup. It is customizable
-   *         because it depends either on the SML or a direct URL to the SMP may be provided. May be
-   *         <code>null</code> if not yet configured.
+   * @return The SMP client object that should be used for the SMP lookup. It is
+   *         customizable because it depends either on the SML or a direct URL
+   *         to the SMP may be provided. May be <code>null</code> if not yet
+   *         configured.
    */
   @Nullable
   public static ISMPExtendedServiceMetadataProvider getSMPClient ()
@@ -116,7 +110,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * Set the SMP client to use for reverse checking if the participant is registered or not.
+   * Set the SMP client to use for reverse checking if the participant is
+   * registered or not.
    *
    * @param aSMPClient
    *        The SMP metadata provider to be used. May be <code>null</code>.
@@ -127,40 +122,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * @return The Peppol SMP wildcard selection to be used for document type resolution, if a
-   *         wildcard document type identifier is used. Never <code>null</code>. Defaults to
-   *         {@link #DEFAULT_WILDCARD_SELECTION_MODE}.
-   * @since 2.7.3
-   */
-  @SuppressWarnings ("removal")
-  @Nonnull
-  @Pfuoi420
-  @Deprecated (forRemoval = true, since = "3.1.0")
-  public static PeppolWildcardSelector.EMode getWildcardSelectionMode ()
-  {
-    return s_eWildcardSelectionMode;
-  }
-
-  /**
-   * Change the Peppol SMP wildcard selection to be used for document type resolution, if a wildcard
-   * document type identifier is used.
-   *
-   * @param eWildcardSelectionMode
-   *        The wildcard selection mode to be used. May not be <code>null</code>.
-   * @since 2.7.3
-   */
-  @SuppressWarnings ("removal")
-  @Pfuoi420
-  @Deprecated (forRemoval = true, since = "3.1.0")
-  public static void setWildcardSelectionMode (@Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode)
-  {
-    ValueEnforcer.notNull (eWildcardSelectionMode, "WildcardSlectionMode");
-    s_eWildcardSelectionMode = eWildcardSelectionMode;
-  }
-
-  /**
-   * @return The URL of this (my) AP to compare to against the SMP lookup result upon retrieval. Is
-   *         <code>null</code> by default.
+   * @return The URL of this (my) AP to compare to against the SMP lookup result
+   *         upon retrieval. Is <code>null</code> by default.
    */
   @Nullable
   public static String getAS4EndpointURL ()
@@ -169,7 +132,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * Set the expected endpoint URL to be used for comparing against the SMP lookup result.
+   * Set the expected endpoint URL to be used for comparing against the SMP
+   * lookup result.
    *
    * @param sAS4EndpointURL
    *        The endpoint URL to check against. May be <code>null</code>.
@@ -180,8 +144,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * @return The certificate of this (my) AP to compare to against the SMP lookup result upon
-   *         retrieval. Is <code>null</code> by default.
+   * @return The certificate of this (my) AP to compare to against the SMP
+   *         lookup result upon retrieval. Is <code>null</code> by default.
    */
   @Nullable
   public static X509Certificate getAPCertificate ()
@@ -190,10 +154,12 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * Set the Peppol AP certificate to be used for comparing against the SMP lookup result.
+   * Set the Peppol AP certificate to be used for comparing against the SMP
+   * lookup result.
    *
    * @param aAPCertificate
-   *        The AP certificate to be used for compatibility. May be <code>null</code>.
+   *        The AP certificate to be used for compatibility. May be
+   *        <code>null</code>.
    */
   public static void setAPCertificate (@Nullable final X509Certificate aAPCertificate)
   {
@@ -201,7 +167,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * @return The default identifier factory used to parse SBDH data. Never <code>null</code>.
+   * @return The default identifier factory used to parse SBDH data. Never
+   *         <code>null</code>.
    * @since 3.0.1
    */
   @Nonnull
@@ -224,8 +191,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * @return <code>true</code> if SBDH value checks are enabled, <code>false</code> if they are
-   *         disabled.
+   * @return <code>true</code> if SBDH value checks are enabled,
+   *         <code>false</code> if they are disabled.
    * @since 0.12.1
    */
   public static boolean isPerformSBDHValueChecks ()
@@ -237,7 +204,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * Enable or disable the SBDH value checks. By default checks are enabled.
    *
    * @param b
-   *        <code>true</code> to enable the checks, <code>false</code> to disable them
+   *        <code>true</code> to enable the checks, <code>false</code> to
+   *        disable them
    * @since 0.12.1
    */
   public static void setPerformSBDHValueChecks (final boolean b)
@@ -251,9 +219,9 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * @return <code>true</code> if the Country C1 element in the SBDH of received messages is
-   *         mandatory, and if such messages should be rejected, if that field is missing. By
-   *         default it is enabled.
+   * @return <code>true</code> if the Country C1 element in the SBDH of received
+   *         messages is mandatory, and if such messages should be rejected, if
+   *         that field is missing. By default it is enabled.
    * @since 2.7.1
    */
   public static boolean isCheckSBDHForMandatoryCountryC1 ()
@@ -262,8 +230,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * Set whether the check for the mandatory Country C1 element in SBDH of received message is
-   * mandatory or not. By default it is enabled.
+   * Set whether the check for the mandatory Country C1 element in SBDH of
+   * received message is mandatory or not. By default it is enabled.
    *
    * @param b
    *        <code>true</code> to check, <code>false</code> to disable the check.
@@ -275,15 +243,13 @@ public final class Phase4PeppolDefaultReceiverConfiguration
     s_bCheckSBDHForMandatoryCountryC1 = b;
     if (bChange)
     {
-      LOGGER.info (CAS4.LIB_NAME +
-                   " Peppol SBDH checking for mandatory C1 Country Code is now " +
-                   (b ? "enabled" : "disabled"));
+      LOGGER.info (CAS4.LIB_NAME + " Peppol SBDH checking for mandatory C1 Country Code is now " + (b ? "enabled" : "disabled"));
     }
   }
 
   /**
-   * @return <code>true</code> if the signing certificate should be checked for revocation,
-   *         <code>false</code> if not.
+   * @return <code>true</code> if the signing certificate should be checked for
+   *         revocation, <code>false</code> if not.
    * @since 2.7.1
    */
   public static boolean isCheckSigningCertificateRevocation ()
@@ -292,10 +258,12 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * Set whether the signing certificate should be checked for revocation or not.
+   * Set whether the signing certificate should be checked for revocation or
+   * not.
    *
    * @param b
-   *        <code>true</code> to check, <code>false</code> to disable the check (not recommended).
+   *        <code>true</code> to check, <code>false</code> to disable the check
+   *        (not recommended).
    * @since 2.7.1
    */
   public static void setCheckSigningCertificateRevocation (final boolean b)
@@ -304,9 +272,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
     s_bCheckSigningCertificateRevocation = b;
     if (bChange)
     {
-      LOGGER.info (CAS4.LIB_NAME +
-                   " Peppol signing certificate revocation check is now " +
-                   (b ? "enabled" : "disabled"));
+      LOGGER.info (CAS4.LIB_NAME + " Peppol signing certificate revocation check is now " + (b ? "enabled" : "disabled"));
     }
   }
 
@@ -340,13 +306,13 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * Get the statically configured data as a {@link Phase4PeppolReceiverConfigurationBuilder}
-   * instance. This allows for modification before building the final object.
+   * Get the statically configured data as a
+   * {@link Phase4PeppolReceiverConfigurationBuilder} instance. This allows for
+   * modification before building the final object.
    *
    * @return Completely filled builder. Never <code>null</code>.
    * @since 3.0.0 Beta7
    */
-  @SuppressWarnings ("removal")
   @Nonnull
   public static Phase4PeppolReceiverConfigurationBuilder getAsReceiverCheckDataBuilder ()
   {
@@ -363,7 +329,6 @@ public final class Phase4PeppolDefaultReceiverConfiguration
     return Phase4PeppolReceiverConfiguration.builder ()
                                             .receiverCheckEnabled (bReceiverCheckEnabled)
                                             .serviceMetadataProvider (aSMPClient)
-                                            .wildcardSelectionMode (getWildcardSelectionMode ())
                                             .as4EndpointUrl (sAS4EndpointURL)
                                             .apCertificate (aAPCertificate)
                                             .sbdhIdentifierFactory (getSBDHIdentifierFactory ())
@@ -374,7 +339,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * Get the statically configured data as a {@link Phase4PeppolReceiverConfiguration} instance.
+   * Get the statically configured data as a
+   * {@link Phase4PeppolReceiverConfiguration} instance.
    *
    * @return The instance data and never <code>null</code>.
    * @since 0.9.13

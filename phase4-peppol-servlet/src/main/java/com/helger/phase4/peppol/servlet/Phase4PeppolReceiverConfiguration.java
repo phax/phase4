@@ -29,10 +29,8 @@ import com.helger.commons.string.ToStringGenerator;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
-import com.helger.peppolid.peppol.Pfuoi420;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
-import com.helger.smpclient.peppol.PeppolWildcardSelector;
 
 /**
  * This class contains the "per-request" data of
@@ -47,9 +45,6 @@ public final class Phase4PeppolReceiverConfiguration
 {
   private final boolean m_bReceiverCheckEnabled;
   private final ISMPExtendedServiceMetadataProvider m_aSMPClient;
-  @SuppressWarnings ("removal")
-  @Pfuoi420
-  private final PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
   private final IIdentifierFactory m_aSBDHIdentifierFactory;
@@ -62,84 +57,34 @@ public final class Phase4PeppolReceiverConfiguration
    * Constructor
    *
    * @param bReceiverCheckEnabled
-   *        <code>true</code> if the receiver checks are enabled, <code>false</code> otherwise
+   *        <code>true</code> if the receiver checks are enabled,
+   *        <code>false</code> otherwise
    * @param aSMPClient
-   *        The SMP metadata provider to be used. May not be <code>null</code> if receiver checks
-   *        are enabled.
-   * @param eWildcardSelectionMode
-   *        The wildcard selection mode to use for the SMP. May not be <code>null</code>
+   *        The SMP metadata provider to be used. May not be <code>null</code>
+   *        if receiver checks are enabled.
    * @param sAS4EndpointURL
-   *        The endpoint URL to check against. May neither be <code>null</code> nor empty if
-   *        receiver checks are enabled.
+   *        The endpoint URL to check against. May neither be <code>null</code>
+   *        nor empty if receiver checks are enabled.
    * @param aAPCertificate
-   *        The AP certificate to be used for compatibility. May not be <code>null</code> if
-   *        receiver checks are enabled.
+   *        The AP certificate to be used for compatibility. May not be
+   *        <code>null</code> if receiver checks are enabled.
    * @param aSBDHIdentifierFactory
-   *        The identifier factory to be used for SBDH parsing. May not be <code>null</code>.
+   *        The identifier factory to be used for SBDH parsing. May not be
+   *        <code>null</code>.
    * @param bPerformSBDHValueChecks
    *        <code>true</code> if SBDH value checks should be performed.
    * @param bCheckSBDHForMandatoryCountryC1
-   *        <code>true</code> if SBDH value checks should be performed for mandatory C1 country
-   *        code.
+   *        <code>true</code> if SBDH value checks should be performed for
+   *        mandatory C1 country code.
    * @param bCheckSigningCertificateRevocation
-   *        <code>true</code> if signing certificate revocation checks should be performed.
-   * @since 2.8.1
-   */
-  @Deprecated (forRemoval = true, since = "3.0.3")
-  public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
-                                            @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
-                                            @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
-                                            @Nullable final String sAS4EndpointURL,
-                                            @Nullable final X509Certificate aAPCertificate,
-                                            @Nonnull final IIdentifierFactory aSBDHIdentifierFactory,
-                                            final boolean bPerformSBDHValueChecks,
-                                            final boolean bCheckSBDHForMandatoryCountryC1,
-                                            final boolean bCheckSigningCertificateRevocation)
-  {
-    this (bReceiverCheckEnabled,
-          aSMPClient,
-          eWildcardSelectionMode,
-          sAS4EndpointURL,
-          aAPCertificate,
-          aSBDHIdentifierFactory,
-          bPerformSBDHValueChecks,
-          bCheckSBDHForMandatoryCountryC1,
-          bCheckSigningCertificateRevocation,
-          Phase4PeppolDefaultReceiverConfiguration.DEFAULT_PEPPOL_AP_CA_CHECKER);
-  }
-
-  /**
-   * Constructor
-   *
-   * @param bReceiverCheckEnabled
-   *        <code>true</code> if the receiver checks are enabled, <code>false</code> otherwise
-   * @param aSMPClient
-   *        The SMP metadata provider to be used. May not be <code>null</code> if receiver checks
-   *        are enabled.
-   * @param eWildcardSelectionMode
-   *        The wildcard selection mode to use for the SMP. May not be <code>null</code>
-   * @param sAS4EndpointURL
-   *        The endpoint URL to check against. May neither be <code>null</code> nor empty if
-   *        receiver checks are enabled.
-   * @param aAPCertificate
-   *        The AP certificate to be used for compatibility. May not be <code>null</code> if
-   *        receiver checks are enabled.
-   * @param aSBDHIdentifierFactory
-   *        The identifier factory to be used for SBDH parsing. May not be <code>null</code>.
-   * @param bPerformSBDHValueChecks
-   *        <code>true</code> if SBDH value checks should be performed.
-   * @param bCheckSBDHForMandatoryCountryC1
-   *        <code>true</code> if SBDH value checks should be performed for mandatory C1 country
-   *        code.
-   * @param bCheckSigningCertificateRevocation
-   *        <code>true</code> if signing certificate revocation checks should be performed.
+   *        <code>true</code> if signing certificate revocation checks should be
+   *        performed.
    * @param aAPCAChecker
    *        The Peppol AP CA checker. May not be <code>null</code>.
    * @since 3.0.3
    */
   public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
                                             @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
-                                            @SuppressWarnings ("removal") @Nonnull final PeppolWildcardSelector.EMode eWildcardSelectionMode,
                                             @Nullable final String sAS4EndpointURL,
                                             @Nullable final X509Certificate aAPCertificate,
                                             @Nonnull final IIdentifierFactory aSBDHIdentifierFactory,
@@ -150,7 +95,6 @@ public final class Phase4PeppolReceiverConfiguration
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
-    ValueEnforcer.notNull (eWildcardSelectionMode, "WildcardSelectionMode");
     if (bReceiverCheckEnabled)
       ValueEnforcer.notEmpty (sAS4EndpointURL, "AS4EndpointURL");
     if (bReceiverCheckEnabled)
@@ -158,7 +102,6 @@ public final class Phase4PeppolReceiverConfiguration
     ValueEnforcer.notNull (aSBDHIdentifierFactory, "SBDHIdentifierFactory");
     m_bReceiverCheckEnabled = bReceiverCheckEnabled;
     m_aSMPClient = aSMPClient;
-    m_eWildcardSelectionMode = eWildcardSelectionMode;
     m_sAS4EndpointURL = sAS4EndpointURL;
     m_aAPCertificate = aAPCertificate;
     m_aSBDHIdentifierFactory = aSBDHIdentifierFactory;
@@ -174,9 +117,10 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * @return The SMP client object that should be used for the SMP lookup. It is customizable
-   *         because it depends either on the SML or a direct URL to the SMP may be provided. Never
-   *         <code>null</code> if receiver checks are enabled.
+   * @return The SMP client object that should be used for the SMP lookup. It is
+   *         customizable because it depends either on the SML or a direct URL
+   *         to the SMP may be provided. Never <code>null</code> if receiver
+   *         checks are enabled.
    * @see #isReceiverCheckEnabled()
    */
   @Nullable
@@ -186,21 +130,9 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * @return The transport profile to be used. Never <code>null</code>.
-   * @since 2.7.3
-   */
-  @SuppressWarnings ("removal")
-  @Nonnull
-  @Pfuoi420
-  @Deprecated (forRemoval = true, since = "3.1.0")
-  public PeppolWildcardSelector.EMode getWildcardSelectionMode ()
-  {
-    return m_eWildcardSelectionMode;
-  }
-
-  /**
-   * @return The URL of this AP to compare to against the SMP lookup result upon retrieval. Neither
-   *         <code>null</code> nor empty if receiver checks are enabled.
+   * @return The URL of this AP to compare to against the SMP lookup result upon
+   *         retrieval. Neither <code>null</code> nor empty if receiver checks
+   *         are enabled.
    * @see #isReceiverCheckEnabled()
    */
   @Nullable
@@ -210,8 +142,9 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * @return The certificate of this AP to compare to against the SMP lookup result upon retrieval.
-   *         Never <code>null</code> if receiver checks are enabled.
+   * @return The certificate of this AP to compare to against the SMP lookup
+   *         result upon retrieval. Never <code>null</code> if receiver checks
+   *         are enabled.
    * @see #isReceiverCheckEnabled()
    */
   @Nonnull
@@ -260,14 +193,12 @@ public final class Phase4PeppolReceiverConfiguration
   {
     return new ToStringGenerator (null).append ("ReceiverCheckEnabled", m_bReceiverCheckEnabled)
                                        .append ("SMPClient", m_aSMPClient)
-                                       .append ("WildcardSelectionMode", m_eWildcardSelectionMode)
                                        .append ("AS4EndpointURL", m_sAS4EndpointURL)
                                        .append ("APCertificate", m_aAPCertificate)
                                        .append ("SBDHIdentifierFactory", m_aSBDHIdentifierFactory)
                                        .append ("PerformSBDHValueChecks", m_bPerformSBDHValueChecks)
                                        .append ("CheckSBDHForMandatoryCountryC1", m_bCheckSBDHForMandatoryCountryC1)
-                                       .append ("CheckSigningCertificateRevocation",
-                                                m_bCheckSigningCertificateRevocation)
+                                       .append ("CheckSigningCertificateRevocation", m_bCheckSigningCertificateRevocation)
                                        .append ("APCAChecker", m_aAPCAChecker)
                                        .getToString ();
   }
@@ -282,11 +213,12 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * Create a builder instance with the data of the provided object already filled in.
+   * Create a builder instance with the data of the provided object already
+   * filled in.
    *
    * @param aSrc
-   *        The source {@link Phase4PeppolReceiverConfiguration} to take the data from. May not be
-   *        <code>null</code>.
+   *        The source {@link Phase4PeppolReceiverConfiguration} to take the
+   *        data from. May not be <code>null</code>.
    * @return A non-<code>null</code> filled builder instance.
    */
   @Nonnull
@@ -305,9 +237,6 @@ public final class Phase4PeppolReceiverConfiguration
   {
     private boolean m_bReceiverCheckEnabled;
     private ISMPExtendedServiceMetadataProvider m_aSMPClient;
-    @SuppressWarnings ("removal")
-    @Pfuoi420
-    private PeppolWildcardSelector.EMode m_eWildcardSelectionMode;
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
     private IIdentifierFactory m_aSBDHIdentifierFactory;
@@ -323,7 +252,6 @@ public final class Phase4PeppolReceiverConfiguration
     {
       ValueEnforcer.notNull (aSrc, "Src");
       receiverCheckEnabled (aSrc.isReceiverCheckEnabled ()).serviceMetadataProvider (aSrc.getSMPClient ())
-                                                           .wildcardSelectionMode (aSrc.getWildcardSelectionMode ())
                                                            .as4EndpointUrl (aSrc.getAS4EndpointURL ())
                                                            .apCertificate (aSrc.getAPCertificate ())
                                                            .sbdhIdentifierFactory (aSrc.getSBDHIdentifierFactory ())
@@ -344,16 +272,6 @@ public final class Phase4PeppolReceiverConfiguration
     public Phase4PeppolReceiverConfigurationBuilder serviceMetadataProvider (@Nullable final ISMPExtendedServiceMetadataProvider a)
     {
       m_aSMPClient = a;
-      return this;
-    }
-
-    @SuppressWarnings ("removal")
-    @Nonnull
-    @Pfuoi420
-    @Deprecated (forRemoval = true, since = "3.1.0")
-    public Phase4PeppolReceiverConfigurationBuilder wildcardSelectionMode (@Nullable final PeppolWildcardSelector.EMode e)
-    {
-      m_eWildcardSelectionMode = e;
       return this;
     }
 
@@ -430,8 +348,6 @@ public final class Phase4PeppolReceiverConfiguration
         if (m_aAPCertificate == null)
           throw new IllegalStateException ("Our AS4 AP certificate must be provided");
       }
-      if (m_eWildcardSelectionMode == null)
-        throw new IllegalStateException ("The Wildcard Selection Mode must be provided");
       if (m_aSBDHIdentifierFactory == null)
         throw new IllegalStateException ("The SBDH Identifier Factory must be provided");
       if (m_aAPCAChecker == null)
@@ -439,7 +355,6 @@ public final class Phase4PeppolReceiverConfiguration
 
       return new Phase4PeppolReceiverConfiguration (m_bReceiverCheckEnabled,
                                                     m_aSMPClient,
-                                                    m_eWildcardSelectionMode,
                                                     m_sAS4EndpointURL,
                                                     m_aAPCertificate,
                                                     m_aSBDHIdentifierFactory,

@@ -42,7 +42,6 @@ import com.helger.commons.annotation.UnsupportedOperation;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.datetime.XMLOffsetDateTime;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.error.IError;
@@ -63,8 +62,6 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
-import com.helger.peppolid.peppol.PeppolIdentifierHelper;
-import com.helger.peppolid.peppol.Pfuoi430;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4Attachment;
@@ -87,18 +84,18 @@ import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
-import com.helger.smpclient.peppol.PeppolWildcardSelector;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
 
 /**
- * This is the SPI implementation to handle generic incoming AS4 requests. The main goal of this
- * class is to implement the Peppol specific requirements of packaging data in SBDH. Users of this
- * package must implement {@link IPhase4PeppolIncomingSBDHandlerSPI} instead which provides a more
- * Peppol-style SPI handler. This class is instantiated only once, therefore changing the state of
- * this class may have unintended side effects.
+ * This is the SPI implementation to handle generic incoming AS4 requests. The
+ * main goal of this class is to implement the Peppol specific requirements of
+ * packaging data in SBDH. Users of this package must implement
+ * {@link IPhase4PeppolIncomingSBDHandlerSPI} instead which provides a more
+ * Peppol-style SPI handler. This class is instantiated only once, therefore
+ * changing the state of this class may have unintended side effects.
  *
  * @author Philip Helger
  */
@@ -177,8 +174,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   private Phase4PeppolReceiverConfiguration m_aReceiverCheckData;
 
   /**
-   * Constructor. Uses all SPI implementations of {@link IPhase4PeppolIncomingSBDHandlerSPI} as the
-   * handlers.
+   * Constructor. Uses all SPI implementations of
+   * {@link IPhase4PeppolIncomingSBDHandlerSPI} as the handlers.
    */
   @UsedViaReflection
   public Phase4PeppolServletMessageProcessorSPI ()
@@ -189,8 +186,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   }
 
   /**
-   * @return A list of all contained Peppol specific SBD handlers. Never <code>null</code> but maybe
-   *         empty.
+   * @return A list of all contained Peppol specific SBD handlers. Never
+   *         <code>null</code> but maybe empty.
    */
   @Nonnull
   @ReturnsMutableCopy
@@ -200,12 +197,12 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   }
 
   /**
-   * Set all handler to be used. This is helpful, if this message processor is not used as an SPI
-   * but as a manually configured handler.
+   * Set all handler to be used. This is helpful, if this message processor is
+   * not used as an SPI but as a manually configured handler.
    *
    * @param aHandlers
-   *        The handler to be set. May not be <code>null</code> but maybe empty (in which case the
-   *        message is basically discarded).
+   *        The handler to be set. May not be <code>null</code> but maybe empty
+   *        (in which case the message is basically discarded).
    * @return this for chaining
    */
   @Nonnull
@@ -219,8 +216,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   }
 
   /**
-   * @return the transport profile to be handled. Never <code>null</code>. By default it is "Peppol
-   *         AS4 v2" (see {@link #DEFAULT_TRANSPORT_PROFILE}).
+   * @return the transport profile to be handled. Never <code>null</code>. By
+   *         default it is "Peppol AS4 v2" (see
+   *         {@link #DEFAULT_TRANSPORT_PROFILE}).
    */
   @Nonnull
   public final ISMPTransportProfile getTransportProfile ()
@@ -254,8 +252,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   }
 
   /**
-   * Set the receiver check data to be used. If set, it overrides the global one defined by
-   * {@link Phase4PeppolDefaultReceiverConfiguration}.
+   * Set the receiver check data to be used. If set, it overrides the global one
+   * defined by {@link Phase4PeppolDefaultReceiverConfiguration}.
    *
    * @param aReceiverCheckData
    *        The customer receiver check data to use. May be <code>null</code>.
@@ -274,10 +272,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                              @Nonnull final ISMPExtendedServiceMetadataProvider aSMPClient,
                                              @Nullable final IParticipantIdentifier aRecipientID,
                                              @Nullable final IDocumentTypeIdentifier aDocTypeID,
-                                             @Nullable final IProcessIdentifier aProcessID,
-                                             @SuppressWarnings ("removal") @Nullable final PeppolWildcardSelector.EMode eWildcardSelectionMode) throws Phase4PeppolServletException
+                                             @Nullable final IProcessIdentifier aProcessID) throws Phase4PeppolServletException
   {
-    if (aRecipientID == null || aDocTypeID == null || aProcessID == null || eWildcardSelectionMode == null)
+    if (aRecipientID == null || aDocTypeID == null || aProcessID == null)
       return null;
 
     try
@@ -294,40 +291,12 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                       " and " +
                       aProcessID.getURIEncoded () +
                       " and " +
-                      m_aTransportProfile.getID () +
-                      "; wildcard-mode=" +
-                      eWildcardSelectionMode);
+                      m_aTransportProfile.getID ());
       }
 
-      final EndpointType aEndpoint;
-
-      if (PDTFactory.getCurrentZonedDateTimeUTC ().toLocalDate ().compareTo (Pfuoi430.VALID_FROM) >= 0)
-      {
-        // PFUOI 4.3.0
-        final SignedServiceMetadataType aSSM = aSMPClient.getSchemeSpecificServiceMetadataOrNull (aRecipientID,
-                                                                                                  aDocTypeID);
-        aEndpoint = aSSM == null ? null : SMPClientReadOnly.getEndpoint (aSSM, aProcessID, m_aTransportProfile);
-      }
-      else
-      {
-        // PFUOI 4.2.0
-        final boolean bWildcard = PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ());
-        if (bWildcard)
-        {
-          // Wildcard lookup
-          @SuppressWarnings ("removal")
-          final SignedServiceMetadataType aSSM = aSMPClient.getWildcardServiceMetadataOrNull (aRecipientID,
-                                                                                              aDocTypeID,
-                                                                                              eWildcardSelectionMode);
-          aEndpoint = aSSM == null ? null : SMPClientReadOnly.getEndpoint (aSSM, aProcessID, m_aTransportProfile);
-        }
-        else
-        {
-          // Direct match
-          aEndpoint = aSMPClient.getEndpoint (aRecipientID, aDocTypeID, aProcessID, m_aTransportProfile);
-        }
-      }
-      return aEndpoint;
+      // PFUOI 4.3.0
+      final SignedServiceMetadataType aSSM = aSMPClient.getSchemeSpecificServiceMetadataOrNull (aRecipientID, aDocTypeID);
+      return aSSM == null ? null : SMPClientReadOnly.getEndpoint (aSSM, aProcessID, m_aTransportProfile);
     }
     catch (final Exception ex)
     {
@@ -425,18 +394,21 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
    * @param aPeppolSBD
    *        The parsed Peppol SBDH object. May not be <code>null</code>.
    * @param aState
-   *        The processing state of the incoming message. May not be <code>null</code>.
+   *        The processing state of the incoming message. May not be
+   *        <code>null</code>.
    * @param sC3ID
-   *        The Peppol Service Provider Seat ID (in the format PXX000000). May neither be
-   *        <code>null</code> nor empty.
-   * @param sC4CountryCode
-   *        The country code of the End User that is the business receiver of the document. Must
+   *        The Peppol Service Provider Seat ID (in the format PXX000000). May
    *        neither be <code>null</code> nor empty.
+   * @param sC4CountryCode
+   *        The country code of the End User that is the business receiver of
+   *        the document. Must neither be <code>null</code> nor empty.
    * @param sEndUserID
-   *        The internal (local) ID of the End User that is the business receiver of the document.
-   *        This ID is NOT part of the reporting towards OpenPeppol, it is just for created
-   *        aggregating counts. Must neither be <code>null</code> nor empty.
-   * @return <code>null</code> if not all necessary elements are present. Check logs for details.
+   *        The internal (local) ID of the End User that is the business
+   *        receiver of the document. This ID is NOT part of the reporting
+   *        towards OpenPeppol, it is just for created aggregating counts. Must
+   *        neither be <code>null</code> nor empty.
+   * @return <code>null</code> if not all necessary elements are present. Check
+   *         logs for details.
    * @since 2.2.2
    */
   @Nullable
@@ -518,19 +490,21 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   }
 
   /**
-   * Method that is invoked after the message was successfully processed with at least one handler,
-   * and before a Receipt is returned. By default this method does nothing. The idea was to override
-   * this method to allow for remembering the created transaction for Peppol Reporting.
+   * Method that is invoked after the message was successfully processed with at
+   * least one handler, and before a Receipt is returned. By default this method
+   * does nothing. The idea was to override this method to allow for remembering
+   * the created transaction for Peppol Reporting.
    *
    * @param aUserMessage
    *        The current AS4 UserMessage. Never <code>null</code>.
    * @param aPeppolSBD
    *        The parsed Peppol SBDH object. Never <code>null</code>.
    * @param aState
-   *        The processing state of the incoming message. Never <code>null</code>.
+   *        The processing state of the incoming message. Never
+   *        <code>null</code>.
    * @since 2.2.2
-   * @see #createPeppolReportingItemForReceivedMessage(Ebms3UserMessage, PeppolSBDHData,
-   *      IAS4IncomingMessageState, String, String, String)
+   * @see #createPeppolReportingItemForReceivedMessage(Ebms3UserMessage,
+   *      PeppolSBDHData, IAS4IncomingMessageState, String, String, String)
    */
   @OverrideOnDemand
   protected void afterSuccessfulPeppolProcessing (@Nonnull final Ebms3UserMessage aUserMessage,
@@ -801,13 +775,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         final IParticipantIdentifier aReceiverID = aPeppolSBDH.getReceiverAsIdentifier ();
         final IDocumentTypeIdentifier aDocTypeID = aPeppolSBDH.getDocumentTypeAsIdentifier ();
         final IProcessIdentifier aProcessID = aPeppolSBDH.getProcessAsIdentifier ();
-        @SuppressWarnings ("removal")
         final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
                                                                      aReceiverCheckData.getSMPClient (),
                                                                      aReceiverID,
                                                                      aDocTypeID,
-                                                                     aProcessID,
-                                                                     aReceiverCheckData.getWildcardSelectionMode ());
+                                                                     aProcessID);
         if (aReceiverEndpoint == null)
         {
           final String sMsg = "Failed to resolve SMP endpoint for provided receiver ID (" +

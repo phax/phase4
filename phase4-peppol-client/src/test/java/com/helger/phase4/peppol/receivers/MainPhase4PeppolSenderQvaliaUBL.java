@@ -107,7 +107,7 @@ public final class MainPhase4PeppolSenderQvaliaUBL
                                                                      ESML.DIGIT_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .validationRegistry (aVESRegistry)
-                                  .validationConfiguration (EN16931Validation.VID_UBL_INVOICE_1312,
+                                  .validationConfiguration (EN16931Validation.VID_UBL_INVOICE_1314_1,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .sendMessageAndCheckForReceipt ();

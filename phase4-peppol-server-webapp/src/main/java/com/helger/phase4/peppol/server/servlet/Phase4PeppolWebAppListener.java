@@ -146,8 +146,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
-        null)
+    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -182,9 +181,9 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     AS4ServerInitializer.initAS4Server ();
 
     // Store the incoming file as is
-    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ( (aMessageMetadata,
-                                                                        aHttpHeaderMap) -> StorageHelper.getStorageFile (aMessageMetadata,
-                                                                                                                         ".as4in"))
+    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ( (aMessageMetadata, aHttpHeaderMap) -> StorageHelper
+                                                                                                                          .getStorageFile (aMessageMetadata,
+                                                                                                                                           ".as4in"))
     {
       @Override
       public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
@@ -209,7 +208,6 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                                                      ".as4out")));
   }
 
-  @SuppressWarnings ("removal")
   private static void _initPeppolAS4 ()
   {
     // Our server expects all SBDH to contain the COUNTRY_C1 element in SBDH
@@ -275,15 +273,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
         {
           // Ignore
         }
-        LOGGER.info ("  " +
-                     nIndex +
-                     ".: alias(" +
-                     sAlias +
-                     ") type(" +
-                     sType +
-                     ") date(" +
-                     aKS.getCreationDate (sAlias) +
-                     ")");
+        LOGGER.info ("  " + nIndex + ".: alias(" + sAlias + ") type(" + sType + ") date(" + aKS.getCreationDate (sAlias) + ")");
         ++nIndex;
       }
     }
@@ -342,15 +332,9 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     {
       Phase4PeppolDefaultReceiverConfiguration.setReceiverCheckEnabled (true);
       Phase4PeppolDefaultReceiverConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
-      Phase4PeppolDefaultReceiverConfiguration.setWildcardSelectionMode (Phase4PeppolDefaultReceiverConfiguration.DEFAULT_WILDCARD_SELECTION_MODE);
       Phase4PeppolDefaultReceiverConfiguration.setAS4EndpointURL (sAPURL);
       Phase4PeppolDefaultReceiverConfiguration.setAPCertificate (aAPCert);
-      LOGGER.info (CAS4.LIB_NAME +
-                   " Peppol receiver checks are enabled on SMP '" +
-                   sSMPURL +
-                   "' and AP '" +
-                   sAPURL +
-                   "'");
+      LOGGER.info (CAS4.LIB_NAME + " Peppol receiver checks are enabled on SMP '" + sSMPURL + "' and AP '" + sAPURL + "'");
     }
     else
     {

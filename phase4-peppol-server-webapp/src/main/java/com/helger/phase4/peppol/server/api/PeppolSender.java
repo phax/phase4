@@ -34,7 +34,6 @@ import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
@@ -164,8 +163,7 @@ public final class PeppolSender
                                                                   .countryC1 (sCountryCodeC1)
                                                                   .payload (aDoc.getDocumentElement ())
                                                                   .peppolAP_CAChecker (aAPCAChecker)
-                                                                  .endpointDetailProvider (AS4EndpointDetailProviderPeppol.create (aSMPClient)
-                                                                                                                          .setUsePFUOI430 (APConfig.isUsePFUOI430 ()))
+                                                                  .smpClient (aSMPClient)
                                                                   .sbdDocumentConsumer (sbd -> {
                                                                     // Remember SBDH Instance
                                                                     // Identifier
@@ -303,8 +301,7 @@ public final class PeppolSender
                                                                       .payloadAndMetadata (aData)
                                                                       .senderPartyID (sMyPeppolSeatID)
                                                                       .peppolAP_CAChecker (aAPCAChecker)
-                                                                      .endpointDetailProvider (AS4EndpointDetailProviderPeppol.create (aSMPClient)
-                                                                                                                              .setUsePFUOI430 (APConfig.isUsePFUOI430 ()))
+                                                                      .smpClient (aSMPClient)
                                                                       .endpointURLConsumer (sEndpointUrl -> {
                                                                         // Determined by SMP lookup
                                                                         aSendingReport.setC3EndpointURL (sEndpointUrl);

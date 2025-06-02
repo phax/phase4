@@ -53,6 +53,7 @@ import com.helger.security.keystore.LoadedKeyStore;
  * @author Philip Helger
  * @since 3.0.0
  */
+@SuppressWarnings ("javadoc")
 @Immutable
 public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeyStore
 {
@@ -121,9 +122,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
     final IKeyStoreAndKeyDescriptor aDescriptor = AS4KeyStoreDescriptor.createFromConfig (aConfig, sConfigPrefix, null);
     if (aDescriptor == null)
     {
-      final String sMsg = "Failed to load the key store configuration from properties starting with '" +
-                          sConfigPrefix +
-                          "'";
+      final String sMsg = "Failed to load the key store configuration from properties starting with '" + sConfigPrefix + "'";
       if (bLogError)
         LOGGER.error (sMsg);
       throw new Phase4RuntimeException (sMsg);
@@ -190,8 +189,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    * @throws Phase4RuntimeException
    *         If loading the key store configuration from configuration fails.
    */
-  public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig,
-                                        @Nonnull @Nonempty final String sConfigPrefix) throws Phase4RuntimeException
+  public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig, @Nonnull @Nonempty final String sConfigPrefix)
+                                                                                                                                   throws Phase4RuntimeException
   {
     // Log warning for backward compatibility reasons
     this (aConfig, sConfigPrefix, true);
