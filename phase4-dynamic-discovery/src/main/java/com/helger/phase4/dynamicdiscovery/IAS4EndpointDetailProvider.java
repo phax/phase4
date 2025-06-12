@@ -28,8 +28,8 @@ import com.helger.peppolid.IProcessIdentifier;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
- * An abstraction for receiving the AP certificate and the destination URL of
- * the receiver. The default case is to use an SMP lookup for this.
+ * An abstraction for receiving the AP certificate and the destination URL of the receiver. The
+ * default case is to use an SMP lookup for this.
  *
  * @author Philip Helger
  * @since 0.10.6
@@ -37,8 +37,8 @@ import com.helger.phase4.util.Phase4Exception;
 public interface IAS4EndpointDetailProvider
 {
   /**
-   * The initialization method is always called, before the details are queried.
-   * This method may be called multiple times, so you may cache internally.
+   * The initialization method is always called, before the details are queried. This method may be
+   * called multiple times, so you may cache internally.
    *
    * @param aDocTypeID
    *        document type ID. May not be <code>null</code>.
@@ -54,8 +54,8 @@ public interface IAS4EndpointDetailProvider
              @Nonnull IParticipantIdentifier aReceiverID) throws Phase4Exception;
 
   /**
-   * @return The X509 AP Certificate of the receiver. May be <code>null</code>
-   *         if it could not be acquired.
+   * @return The X509 AP Certificate of the receiver. May be <code>null</code> if it could not be
+   *         acquired.
    * @throws Phase4Exception
    *         In case of an error in determining the certificate.
    */
@@ -63,12 +63,21 @@ public interface IAS4EndpointDetailProvider
   X509Certificate getReceiverAPCertificate () throws Phase4Exception;
 
   /**
-   * @return The AS4 endpoint URL of the receiver. May neither be
-   *         <code>null</code> nor empty.
+   * @return The AS4 endpoint URL of the receiver. May neither be <code>null</code> nor empty.
    * @throws Phase4Exception
    *         In case of an error in determining the endpoint URL.
    */
   @Nonnull
   @Nonempty
   String getReceiverAPEndpointURL () throws Phase4Exception;
+
+  /**
+   * @return The technical contact point for this endpoint as e.g. determined by an SMP query. May
+   *         be <code>null</code> or empty.
+   * @throws Phase4Exception
+   *         In case of an error in determining the endpoint URL.
+   * @since 3.2.0
+   */
+  @Nullable
+  String getReceiverTechnicalContact () throws Phase4Exception;
 }

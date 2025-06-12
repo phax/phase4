@@ -27,14 +27,15 @@ import org.slf4j.Logger;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.util.Phase4Exception;
 
 /**
- * Implementation of {@link IAS4EndpointDetailProvider} that uses constant
- * values.
+ * Implementation of {@link IAS4EndpointDetailProvider} that uses constant values.
  *
  * @author Philip Helger
  * @since 0.10.6
@@ -45,13 +46,22 @@ public class AS4EndpointDetailProviderConstant implements IAS4EndpointDetailProv
 
   private final X509Certificate m_aReceiverCert;
   private final String m_sDestURL;
+  private final String m_sTechnicalContact;
 
   public AS4EndpointDetailProviderConstant (@Nullable final X509Certificate aReceiverCert,
                                             @Nonnull @Nonempty final String sDestURL)
   {
+    this (aReceiverCert, sDestURL, (String) null);
+  }
+
+  public AS4EndpointDetailProviderConstant (@Nullable final X509Certificate aReceiverCert,
+                                            @Nonnull @Nonempty final String sDestURL,
+                                            @Nullable final String sTechnicalContact)
+  {
     ValueEnforcer.notEmpty (sDestURL, "DestURL");
     m_aReceiverCert = aReceiverCert;
     m_sDestURL = sDestURL;
+    m_sTechnicalContact = sTechnicalContact;
 
     if (aReceiverCert != null)
     {
@@ -92,5 +102,20 @@ public class AS4EndpointDetailProviderConstant implements IAS4EndpointDetailProv
   public String getReceiverAPEndpointURL ()
   {
     return m_sDestURL;
+  }
+
+  @Nullable
+  public String getReceiverTechnicalContact () throws Phase4Exception
+  {
+    return m_sTechnicalContact;
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (null).append ("ReceiverCert", m_aReceiverCert)
+                                       .append ("DestURL", m_sDestURL)
+                                       .appendIfNotNull ("TechnicalContact", m_sTechnicalContact)
+                                       .getToString ();
   }
 }

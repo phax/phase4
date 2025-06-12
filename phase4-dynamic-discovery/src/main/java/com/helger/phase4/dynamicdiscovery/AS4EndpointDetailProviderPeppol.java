@@ -50,8 +50,8 @@ import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
 
 /**
- * Implementation of {@link IAS4EndpointDetailProvider} using a Peppol SMP
- * Client to determine this information from an endpoint.
+ * Implementation of {@link IAS4EndpointDetailProvider} using a Peppol SMP Client to determine this
+ * information from an endpoint.
  *
  * @author Philip Helger
  * @since 0.10.6
@@ -77,8 +77,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * @return The service group provider passed in the constructor. Never
-   *         <code>null</code>.
+   * @return The service group provider passed in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final ISMPServiceGroupProvider getServiceGroupProvider ()
@@ -87,8 +86,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * @return The service metadata provider passed in the constructor. Never
-   *         <code>null</code>.
+   * @return The service metadata provider passed in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final ISMPServiceMetadataProvider getServiceMetadataProvider ()
@@ -97,8 +95,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * @return The transport profile to be used. Defaults to
-   *         {@link #DEFAULT_TRANSPORT_PROFILE}.
+   * @return The transport profile to be used. Defaults to {@link #DEFAULT_TRANSPORT_PROFILE}.
    */
   @Nonnull
   public final ISMPTransportProfile getTransportProfile ()
@@ -107,8 +104,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * Change the transport profile to be used. This only has an effect if it is
-   * called prior to
+   * Change the transport profile to be used. This only has an effect if it is called prior to
    * {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}.
    *
    * @param aTP
@@ -125,8 +121,8 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
 
   /**
    * @return The endpoint resolved. May only be non-<code>null</code> after
-   *         {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}
-   *         was called.
+   *         {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)} was
+   *         called.
    */
   @Nullable
   public final EndpointType getEndpoint ()
@@ -257,6 +253,12 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
     return sDestURL;
   }
 
+  @Nullable
+  public String getReceiverTechnicalContact () throws Phase4Exception
+  {
+    return m_aEndpoint.getTechnicalContactUrl ();
+  }
+
   @Override
   public String toString ()
   {
@@ -268,8 +270,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   }
 
   /**
-   * Create a new {@link AS4EndpointDetailProviderPeppol} based on the provided
-   * SMP client.
+   * Create a new {@link AS4EndpointDetailProviderPeppol} based on the provided SMP client.
    *
    * @param aSMPClient
    *        The SMP client to use. May not be <code>null</code>

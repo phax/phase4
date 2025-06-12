@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
@@ -43,8 +44,8 @@ import com.helger.smpclient.exception.SMPClientUnauthorizedException;
 import com.helger.xsds.bdxr.smp1.EndpointType;
 
 /**
- * Implementation of {@link IAS4EndpointDetailProvider} using an OASIS BDXR SMP
- * v1 Client to determine this information from an endpoint.
+ * Implementation of {@link IAS4EndpointDetailProvider} using an OASIS BDXR SMP v1 Client to
+ * determine this information from an endpoint.
  *
  * @author Philip Helger
  * @since 0.10.6
@@ -66,8 +67,7 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
   }
 
   /**
-   * @return The service metadata provider passed in the constructor. Never
-   *         <code>null</code>.
+   * @return The service metadata provider passed in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final IBDXRServiceMetadataProvider getServiceMetadataProvider ()
@@ -76,8 +76,7 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
   }
 
   /**
-   * @return The transport profile to be used. Defaults to
-   *         {@link #DEFAULT_TRANSPORT_PROFILE}.
+   * @return The transport profile to be used. Defaults to {@link #DEFAULT_TRANSPORT_PROFILE}.
    */
   @Nonnull
   public final ISMPTransportProfile getTransportProfile ()
@@ -86,8 +85,7 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
   }
 
   /**
-   * Change the transport profile to be used. This only has an effect if it is
-   * called prior to
+   * Change the transport profile to be used. This only has an effect if it is called prior to
    * {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}.
    *
    * @param aTP
@@ -104,8 +102,8 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
 
   /**
    * @return The endpoint resolved. May only be non-<code>null</code> if
-   *         {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}
-   *         was called.
+   *         {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)} was
+   *         called.
    */
   @Nullable
   public final EndpointType getEndpoint ()
@@ -202,5 +200,20 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
     if (StringHelper.hasNoText (sDestURL))
       throw new Phase4Exception ("Failed to determine the destination URL from the SMP endpoint: " + m_aEndpoint);
     return sDestURL;
+  }
+
+  @Nullable
+  public String getReceiverTechnicalContact () throws Phase4Exception
+  {
+    return m_aEndpoint.getTechnicalContactUrl ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (null).append ("SMPClient", m_aSMPClient)
+                                       .append ("TransportProfile", m_aTP)
+                                       .appendIfNotNull ("Endpoint", m_aEndpoint)
+                                       .getToString ();
   }
 }
