@@ -95,6 +95,7 @@ public class Phase4PeppolSendingReport
   private String m_sC3CertSubjectO;
   private OffsetDateTime m_aC3CertCheckDT;
   private ECertificateCheckResult m_eC3CertCheckResult;
+  private String m_sC3TechnicalContact;
 
   // AS4 params
   private String m_sAS4MessageID;
@@ -342,6 +343,23 @@ public class Phase4PeppolSendingReport
     m_eC3CertCheckResult = e;
   }
 
+  public boolean hasC3TechnicalContact ()
+  {
+    return StringHelper.hasText (m_sC3TechnicalContact);
+  }
+
+  /**
+   * Remember the technical contact information retrieved from the SMP endpoint. This might be
+   * helpful to find a quick spot.
+   *
+   * @param s
+   *        The technical contact URL to use. May be <code>null</code>.
+   */
+  public void setC3TechnicalContact (@Nullable final String s)
+  {
+    m_sC3TechnicalContact = s;
+  }
+
   public boolean hasAS4MessageID ()
   {
     return StringHelper.hasText (m_sAS4MessageID);
@@ -557,6 +575,8 @@ public class Phase4PeppolSendingReport
       aJson.add ("c3CertCheckDT", PDTWebDateHelper.getAsStringXSD (m_aC3CertCheckDT));
     if (hasC3CertCheckResult ())
       aJson.add ("c3CertCheckResult", m_eC3CertCheckResult.name ());
+    if (hasC3TechnicalContact ())
+      aJson.add ("c3TechnicalContact", m_sC3TechnicalContact);
 
     if (hasAS4MessageID ())
       aJson.add ("as4MessageId", m_sAS4MessageID);
@@ -699,6 +719,8 @@ public class Phase4PeppolSendingReport
          .appendText (PDTWebDateHelper.getAsStringXSD (m_aC3CertCheckDT));
     if (hasC3CertCheckResult ())
       ret.appendElement (sNamespaceURI, "C3CertCheckResult").appendText (m_eC3CertCheckResult.name ());
+    if (hasC3TechnicalContact ())
+      ret.appendElement (sNamespaceURI, "C3TechnicalContact").appendText (m_sC3TechnicalContact);
 
     if (hasAS4MessageID ())
       ret.appendElement (sNamespaceURI, "AS4MessageId").appendText (m_sAS4MessageID);

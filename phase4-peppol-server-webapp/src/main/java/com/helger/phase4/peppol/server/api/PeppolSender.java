@@ -171,10 +171,8 @@ public final class PeppolSender
                                                                                                                  .getDocumentIdentification ()
                                                                                                                  .getInstanceIdentifier ());
                                                                   })
-                                                                  .endpointURLConsumer (sEndpointUrl -> {
-                                                                    // Determined by SMP lookup
-                                                                    aSendingReport.setC3EndpointURL (sEndpointUrl);
-                                                                  })
+                                                                  .endpointURLConsumer (aSendingReport::setC3EndpointURL)
+                                                                  .technicalContactConsumer (aSendingReport::setC3TechnicalContact)
                                                                   .certificateConsumer ( (aAPCertificate,
                                                                                           aCheckDT,
                                                                                           eCertCheckResult) -> {
@@ -302,10 +300,8 @@ public final class PeppolSender
                                                                       .senderPartyID (sMyPeppolSeatID)
                                                                       .peppolAP_CAChecker (aAPCAChecker)
                                                                       .smpClient (aSMPClient)
-                                                                      .endpointURLConsumer (sEndpointUrl -> {
-                                                                        // Determined by SMP lookup
-                                                                        aSendingReport.setC3EndpointURL (sEndpointUrl);
-                                                                      })
+                                                                      .endpointURLConsumer (aSendingReport::setC3EndpointURL)
+                                                                      .technicalContactConsumer (aSendingReport::setC3TechnicalContact)
                                                                       .certificateConsumer ( (aAPCertificate,
                                                                                               aCheckDT,
                                                                                               eCertCheckResult) -> {

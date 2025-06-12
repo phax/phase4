@@ -98,8 +98,8 @@ import com.helger.xsds.peppol.smp1.EndpointType;
 
 /**
  * This class contains all the specifics to send AS4 messages to PEPPOL. See
- * <code>sendAS4Message</code> as the main method to trigger the sending, with
- * all potential customization.
+ * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
+ * customization.
  *
  * @author Philip Helger
  */
@@ -253,18 +253,17 @@ public final class Phase4PeppolSender
    * @param sCountryC1
    *        Country code of C1. May be <code>null</code>.
    * @param sInstanceIdentifier
-   *        SBDH instance identifier. May be <code>null</code> to create a
-   *        random ID.
+   *        SBDH instance identifier. May be <code>null</code> to create a random ID.
    * @param sTypeVersion
-   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be
-   *        <code>null</code> to use the default.
+   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be <code>null</code> to use
+   *        the default.
    * @param aPayloadElement
    *        Payload element to be wrapped. May not be <code>null</code>.
-   * @return The domain object representation of the created SBDH or
-   *         <code>null</code> if not all parameters are present.
+   * @return The domain object representation of the created SBDH or <code>null</code> if not all
+   *         parameters are present.
    * @since 2.1.1
-   * @deprecated Use the version with more parameters. Simply pass
-   *             <code>null</code> if you want to have the previous behaviour
+   * @deprecated Use the version with more parameters. Simply pass <code>null</code> if you want to
+   *             have the previous behaviour
    */
   @Nullable
   @Deprecated (forRemoval = true, since = "3.1.0")
@@ -301,21 +300,20 @@ public final class Phase4PeppolSender
    * @param sCountryC1
    *        Country code of C1. May be <code>null</code>.
    * @param sInstanceIdentifier
-   *        SBDH instance identifier. May be <code>null</code> to create a
-   *        random ID.
+   *        SBDH instance identifier. May be <code>null</code> to create a random ID.
    * @param sStandard
-   *        SBDH standard (e.g. the XML payload root element namespace URI). May
-   *        be <code>null</code> to use the default.
+   *        SBDH standard (e.g. the XML payload root element namespace URI). May be
+   *        <code>null</code> to use the default.
    * @param sTypeVersion
-   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be
-   *        <code>null</code> to use the default.
+   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be <code>null</code> to use
+   *        the default.
    * @param sType
-   *        SBDH type (e.g. the XML payload root element local name). May be
-   *        <code>null</code> to use the default.
+   *        SBDH type (e.g. the XML payload root element local name). May be <code>null</code> to
+   *        use the default.
    * @param aPayloadElement
    *        Payload element to be wrapped. May not be <code>null</code>.
-   * @return The domain object representation of the created SBDH or
-   *         <code>null</code> if not all parameters are present.
+   * @return The domain object representation of the created SBDH or <code>null</code> if not all
+   *         parameters are present.
    * @since 3.1.0
    */
   @Nullable
@@ -347,8 +345,8 @@ public final class Phase4PeppolSender
    * @param aPayloadElement
    *        The payload element to be validated. May not be <code>null</code>.
    * @param aRegistry
-   *        The validation registry to be used. May be <code>null</code> to
-   *        indicate to use the default one.
+   *        The validation registry to be used. May be <code>null</code> to indicate to use the
+   *        default one.
    * @param aVESID
    *        The VESID to validate against. May be <code>null</code>.
    * @param aValidationResultHandler
@@ -394,22 +392,20 @@ public final class Phase4PeppolSender
    * Check if the provided certificate is a valid Peppol AP certificate.
    *
    * @param aCAChecker
-   *        The Peppol CA checker to be used to verify the Peppol AP
-   *        certificate. May not be <code>null</code>.
-   * @param aReceiverCert
-   *        The determined receiver AP certificate to check. Never
+   *        The Peppol CA checker to be used to verify the Peppol AP certificate. May not be
    *        <code>null</code>.
+   * @param aReceiverCert
+   *        The determined receiver AP certificate to check. Never <code>null</code>.
    * @param aCertificateConsumer
-   *        An optional consumer that is invoked with the received AP
-   *        certificate to be used for the transmission. The certification check
-   *        result must be considered when used. May be <code>null</code>.
+   *        An optional consumer that is invoked with the received AP certificate to be used for the
+   *        transmission. The certification check result must be considered when used. May be
+   *        <code>null</code>.
    * @param eCacheOSCResult
-   *        Possibility to override the usage of OSCP caching flag on a per
-   *        query basis. Use {@link ETriState#UNDEFINED} to solely use the
-   *        global flag.
+   *        Possibility to override the usage of OSCP caching flag on a per query basis. Use
+   *        {@link ETriState#UNDEFINED} to solely use the global flag.
    * @param eCheckMode
-   *        Possibility to override the OSCP checking flag on a per query basis.
-   *        May be <code>null</code> to use the global flag from
+   *        Possibility to override the OSCP checking flag on a per query basis. May be
+   *        <code>null</code> to use the global flag from
    *        {@link CertificateRevocationChecker#getRevocationCheckMode()}.
    * @throws Phase4Exception
    *         in case of error
@@ -445,9 +441,8 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * @return Create a new Builder for AS4 messages if the payload is present and
-   *         the SBDH is always created internally by phase4. Never
-   *         <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the payload is present and the SBDH is always
+   *         created internally by phase4. Never <code>null</code>.
    * @see #sbdhBuilder() if you already have a ready Standard Business Document
    * @since 0.9.4
    */
@@ -458,11 +453,10 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * @return Create a new Builder for AS4 messages if the SBDH payload is
-   *         already present. This builder is slightly more limited, because it
-   *         doesn't offer validation, as it is expected to be done before. Use
-   *         this builder e.g. for the Peppol Testbed messages. Never
-   *         <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the SBDH payload is already present. This
+   *         builder is slightly more limited, because it doesn't offer validation, as it is
+   *         expected to be done before. Use this builder e.g. for the Peppol Testbed messages.
+   *         Never <code>null</code>.
    * @see #builder() if you want phase4 to create the Standard Business Document
    * @since 0.9.6
    */
@@ -504,6 +498,7 @@ public final class Phase4PeppolSender
     protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private Consumer <String> m_aAPEndpointURLConsumer;
+    private Consumer <String> m_aAPTechnicalContactConsumer;
     private boolean m_bCheckReceiverAPCertificate;
     protected TrustedCAChecker m_aCAChecker;
 
@@ -547,8 +542,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the sender participant ID of the message. The participant ID must be
-     * provided prior to sending.
+     * Set the sender participant ID of the message. The participant ID must be provided prior to
+     * sending.
      *
      * @param aSenderID
      *        The sender participant ID. May not be <code>null</code>.
@@ -565,9 +560,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the receiver participant ID of the message. The participant ID must
-     * be provided prior to sending. This ends up in the "finalRecipient"
-     * UserMessage property.
+     * Set the receiver participant ID of the message. The participant ID must be provided prior to
+     * sending. This ends up in the "finalRecipient" UserMessage property.
      *
      * @param aReceiverID
      *        The receiver participant ID. May not be <code>null</code>.
@@ -594,9 +588,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the document type ID to be send. The document type must be provided
-     * prior to sending. This is a shortcut to the {@link #action(String)}
-     * method.
+     * Set the document type ID to be send. The document type must be provided prior to sending.
+     * This is a shortcut to the {@link #action(String)} method.
      *
      * @param aDocTypeID
      *        The document type ID to be used. May not be <code>null</code>.
@@ -623,9 +616,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the process ID to be send. The process ID must be provided prior to
-     * sending. This is a shortcut to the {@link #service(String, String)}
-     * method.
+     * Set the process ID to be send. The process ID must be provided prior to sending. This is a
+     * shortcut to the {@link #service(String, String)} method.
      *
      * @param aProcessID
      *        The process ID to be used. May not be <code>null</code>.
@@ -642,9 +634,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the country code of C1 to be used in the SBDH. This field was
-     * introduced in the Peppol Business Message Envelope specification 2.0.
-     * <br>
+     * Set the country code of C1 to be used in the SBDH. This field was introduced in the Peppol
+     * Business Message Envelope specification 2.0. <br>
      * Note: There is no date yet, when it becomes mandatory.
      *
      * @param sCountryC1
@@ -660,10 +651,9 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the "sender party ID" which is the CN part of the PEPPOL AP
-     * certificate. An example value is e.g. "POP000123" but it MUST match the
-     * certificate you are using. This must be provided prior to sending. This
-     * is a shortcut to the {@link #fromPartyID(String)} method.
+     * Set the "sender party ID" which is the CN part of the PEPPOL AP certificate. An example value
+     * is e.g. "POP000123" but it MUST match the certificate you are using. This must be provided
+     * prior to sending. This is a shortcut to the {@link #fromPartyID(String)} method.
      *
      * @param sSenderPartyID
      *        The sender party ID. May neither be <code>null</code> nor empty.
@@ -677,9 +667,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the MIME type of the payload. By default it is
-     * <code>application/xml</code> and MUST usually not be changed. This value
-     * is required for sending.
+     * Set the MIME type of the payload. By default it is <code>application/xml</code> and MUST
+     * usually not be changed. This value is required for sending.
      *
      * @param aPayloadMimeType
      *        The payload MIME type. May not be <code>null</code>.
@@ -694,12 +683,10 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Enable or disable the AS4 compression of the payload. By default
-     * compression is disabled.
+     * Enable or disable the AS4 compression of the payload. By default compression is disabled.
      *
      * @param bCompressPayload
-     *        <code>true</code> to compress the payload, <code>false</code> to
-     *        not compress it.
+     *        <code>true</code> to compress the payload, <code>false</code> to not compress it.
      * @return this for chaining.
      */
     @Nonnull
@@ -710,9 +697,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set an optional payload "Content-ID". This method is usually not needed,
-     * because in Peppol there are currently no rules on the Content-ID. By
-     * default a random Content-ID is created.
+     * Set an optional payload "Content-ID". This method is usually not needed, because in Peppol
+     * there are currently no rules on the Content-ID. By default a random Content-ID is created.
      *
      * @param sPayloadContentID
      *        The new payload content ID. May be null.
@@ -727,13 +713,11 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the abstract endpoint detail provider to be used. This can be an SMP
-     * lookup routine or in certain test cases a predefined certificate and
-     * endpoint URL.
+     * Set the abstract endpoint detail provider to be used. This can be an SMP lookup routine or in
+     * certain test cases a predefined certificate and endpoint URL.
      *
      * @param aEndpointDetailProvider
-     *        The endpoint detail provider to be used. May not be
-     *        <code>null</code>.
+     *        The endpoint detail provider to be used. May not be <code>null</code>.
      * @return this for chaining
      * @see #smpClient(SMPClientReadOnly)
      */
@@ -748,10 +732,10 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the SMP client to be used. This is the point where e.g. the
-     * differentiation between SMK and SML can be done. This must be set prior
-     * to sending. If the endpoint information are already known you can also
-     * use {@link #receiverEndpointDetails(X509Certificate, String)} instead.
+     * Set the SMP client to be used. This is the point where e.g. the differentiation between SMK
+     * and SML can be done. This must be set prior to sending. If the endpoint information are
+     * already known you can also use {@link #receiverEndpointDetails(X509Certificate, String)}
+     * instead.
      *
      * @param aSMPClient
      *        The SMP client to be used. May not be <code>null</code>.
@@ -766,8 +750,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Use this method to explicit set the AP certificate and AP endpoint URL
-     * that was retrieved from a previous SMP query.
+     * Use this method to explicit set the AP certificate and AP endpoint URL that was retrieved
+     * from a previous SMP query.
      *
      * @param aEndpoint
      *        The Peppol SMP Endpoint instance. May not be <code>null</code>.
@@ -784,17 +768,15 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Use this method to explicit set the AP certificate and AP endpoint URL
-     * that was retrieved externally (e.g. via an SMP call or for a static test
-     * case).
+     * Use this method to explicit set the AP certificate and AP endpoint URL that was retrieved
+     * externally (e.g. via an SMP call or for a static test case).
      *
      * @param aCert
-     *        The Peppol AP certificate that should be used to encrypt the
-     *        message for the receiver. May not be <code>null</code>.
+     *        The Peppol AP certificate that should be used to encrypt the message for the receiver.
+     *        May not be <code>null</code>.
      * @param sDestURL
-     *        The destination URL of the receiving AP to send the AS4 message
-     *        to. Must be a valid URL and may neither be <code>null</code> nor
-     *        empty.
+     *        The destination URL of the receiving AP to send the AS4 message to. Must be a valid
+     *        URL and may neither be <code>null</code> nor empty.
      * @return this for chaining
      */
     @Nonnull
@@ -805,13 +787,12 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set an optional Consumer for the retrieved certificate from the endpoint
-     * details provider, independent of its usability.
+     * Set an optional Consumer for the retrieved certificate from the endpoint details provider,
+     * independent of its usability.
      *
      * @param aCertificateConsumer
-     *        The consumer to be used. The first parameter is the certificate
-     *        itself and the second parameter is the internal check result. May
-     *        be <code>null</code>.
+     *        The consumer to be used. The first parameter is the certificate itself and the second
+     *        parameter is the internal check result. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
@@ -822,8 +803,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set an optional Consumer for the destination AP address retrieved from
-     * the endpoint details provider, independent of its usability.
+     * Set an optional Consumer for the destination AP address retrieved from the endpoint details
+     * provider, independent of its usability.
      *
      * @param aAPEndpointURLConsumer
      *        The consumer to be used. May be <code>null</code>.
@@ -838,9 +819,25 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Enable or disable the check of the receiver AP certificate. This checks
-     * the validity of the certificate as well as the revocation status. It is
-     * strongly recommended to enable this check.
+     * Set an optional Consumer for the technical contact retrieved from the endpoint details
+     * provider, independent of its usability.
+     *
+     * @param aAPTechnicalContactConsumer
+     *        The consumer to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since 3.2.0
+     */
+    @Nonnull
+    public final IMPLTYPE technicalContactConsumer (@Nullable final Consumer <String> aAPTechnicalContactConsumer)
+    {
+      m_aAPTechnicalContactConsumer = aAPTechnicalContactConsumer;
+      return thisAsT ();
+    }
+
+    /**
+     * Enable or disable the check of the receiver AP certificate. This checks the validity of the
+     * certificate as well as the revocation status. It is strongly recommended to enable this
+     * check.
      *
      * @param bCheckReceiverAPCertificate
      *        <code>true</code> to enable it, <code>false</code> to disable it.
@@ -855,16 +852,13 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set a custom Peppol AP certificate CA checker. This is e.g. needed when a
-     * non-standard AP certificate (as for Peppol France PoC or Peppol eB2B) is
-     * needed. This CA checker checks the certificate provided by the endpoint
-     * detail provider (see below). This checker is only used, if
-     * {@link #checkReceiverAPCertificate(boolean)} was called with
-     * <code>true</code>.
+     * Set a custom Peppol AP certificate CA checker. This is e.g. needed when a non-standard AP
+     * certificate (as for Peppol France PoC or Peppol eB2B) is needed. This CA checker checks the
+     * certificate provided by the endpoint detail provider (see below). This checker is only used,
+     * if {@link #checkReceiverAPCertificate(boolean)} was called with <code>true</code>.
      *
      * @param aCAChecker
-     *        The Certificate CA checker to be used. May not be
-     *        <code>null</code>.
+     *        The Certificate CA checker to be used. May not be <code>null</code>.
      * @return this for chaining
      * @since 3.0.0-rc1
      */
@@ -877,11 +871,11 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * The effective sending date time of the message. That is set only if
-     * message sending takes place.
+     * The effective sending date time of the message. That is set only if message sending takes
+     * place.
      *
-     * @return The effective sending date time or <code>null</code> if the
-     *         messages was not sent yet.
+     * @return The effective sending date time or <code>null</code> if the messages was not sent
+     *         yet.
      * @since 2.2.2
      */
     @Nullable
@@ -955,6 +949,10 @@ public final class Phase4PeppolSender
       if (m_aAPEndpointURLConsumer != null)
         m_aAPEndpointURLConsumer.accept (sDestURL);
       endpointURL (sDestURL);
+
+      // For informational (logging) purposes only
+      if (m_aAPTechnicalContactConsumer != null)
+        m_aAPTechnicalContactConsumer.accept (m_aEndpointDetailProvider.getReceiverTechnicalContact ());
 
       // From receiver certificate
       toPartyID (CertificateHelper.getSubjectCN (aReceiverCert));
@@ -1047,16 +1045,15 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Create a Peppol Reporting Item in case sending was successful. This The
-     * end user ID needs to be provided from the outside, because it cannot be
-     * used from the sending data. The end user ID is only needed for grouping
-     * the reporting data later on, and is NOT part of the transmission (neither
-     * in TSR nor in EUSR).<br>
+     * Create a Peppol Reporting Item in case sending was successful. This The end user ID needs to
+     * be provided from the outside, because it cannot be used from the sending data. The end user
+     * ID is only needed for grouping the reporting data later on, and is NOT part of the
+     * transmission (neither in TSR nor in EUSR).<br>
      * The item is simply created but not stored.
      *
      * @param sEndUserID
-     *        The local end user ID, required to group all reporting items. May
-     *        neither be <code>null</code> nor empty.
+     *        The local end user ID, required to group all reporting items. May neither be
+     *        <code>null</code> nor empty.
      * @return The created reporting item. Never <code>null</code>.
      * @throws Phase4Exception
      *         in case something goes wrong
@@ -1086,12 +1083,12 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * This is a shortcut for creating and storing a Peppol reporting item in a
-     * shot. See the creation method for the extended documentation.
+     * This is a shortcut for creating and storing a Peppol reporting item in a shot. See the
+     * creation method for the extended documentation.
      *
      * @param sEndUserID
-     *        The local end user ID, required to group all reporting items. May
-     *        neither be <code>null</code> nor empty.
+     *        The local end user ID, required to group all reporting items. May neither be
+     *        <code>null</code> nor empty.
      * @throws Phase4Exception
      *         in case something goes wrong
      * @see #createPeppolReportingItemAfterSending(String)
@@ -1132,11 +1129,10 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * The builder class for sending AS4 messages using Peppol specifics. Use
-   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to
-   * trigger the main transmission.<br>
-   * This builder class assumes, that only the payload (e.g. the Invoice) is
-   * present, and that both validation and SBDH creation happens inside.
+   * The builder class for sending AS4 messages using Peppol specifics. Use {@link #sendMessage()}
+   * or {@link #sendMessageAndCheckForReceipt()} to trigger the main transmission.<br>
+   * This builder class assumes, that only the payload (e.g. the Invoice) is present, and that both
+   * validation and SBDH creation happens inside.
    *
    * @author Philip Helger
    * @since 0.9.4
@@ -1168,10 +1164,9 @@ public final class Phase4PeppolSender
     {}
 
     /**
-     * Set the SBDH instance identifier. If none is provided, a random ID is
-     * used. Usually this must NOT be set. In case of a retry, the same Instance
-     * Identifier should be used. Also an MLR should always refer to the
-     * Instance Identifier of the original transmission.
+     * Set the SBDH instance identifier. If none is provided, a random ID is used. Usually this must
+     * NOT be set. In case of a retry, the same Instance Identifier should be used. Also an MLR
+     * should always refer to the Instance Identifier of the original transmission.
      *
      * @param sSBDHInstanceIdentifier
      *        The SBDH instance identifier to be used. May be <code>null</code>.
@@ -1185,9 +1180,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the SBDH document standard. If none is provided, the value is
-     * extracted from the business document root element. This is specifically
-     * needed for non-XML payloads.
+     * Set the SBDH document standard. If none is provided, the value is extracted from the business
+     * document root element. This is specifically needed for non-XML payloads.
      *
      * @param sSBDHStandard
      *        The SBDH document standard to be used. May be <code>null</code>.
@@ -1202,13 +1196,12 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the SBDH document identification type version. If none is provided,
-     * the value is extracted from the document type identifier. This is
-     * specifically needed for non-XML payloads.
+     * Set the SBDH document identification type version. If none is provided, the value is
+     * extracted from the document type identifier. This is specifically needed for non-XML
+     * payloads.
      *
      * @param sSBDHTypeVersion
-     *        The SBDH document identification type version to be used. May be
-     *        <code>null</code>.
+     *        The SBDH document identification type version to be used. May be <code>null</code>.
      * @return this for chaining
      * @since 0.13.0
      */
@@ -1220,13 +1213,11 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the SBDH document identification type. If none is provided, the value
-     * is extracted from the business document root element. This is
-     * specifically needed for non-XML payloads.
+     * Set the SBDH document identification type. If none is provided, the value is extracted from
+     * the business document root element. This is specifically needed for non-XML payloads.
      *
      * @param sSBDHType
-     *        The SBDH document identification type to be used. May be
-     *        <code>null</code>.
+     *        The SBDH document identification type to be used. May be <code>null</code>.
      * @return this for chaining
      * @since 3.1.0
      */
@@ -1238,8 +1229,7 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the optional <code>MLS_TO</code> value of the Peppol SBDH providing
-     * the MLS receiver.
+     * Set the optional <code>MLS_TO</code> value of the Peppol SBDH providing the MLS receiver.
      *
      * @param aMLSTo
      *        The optional participant identifier. May be <code>null</code>.
@@ -1254,8 +1244,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the optional <code>MLS_TYPE</code> value of the Peppol SBDH providing
-     * the MLS orchestration.
+     * Set the optional <code>MLS_TYPE</code> value of the Peppol SBDH providing the MLS
+     * orchestration.
      *
      * @param eMLSType
      *        The optional MLS type. May be <code>null</code>.
@@ -1270,13 +1260,13 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the payload element to be used, if it is available as a parsed DOM
-     * element. Internally the DOM element will be cloned before sending it out.
-     * If this method is called, it overwrites any other explicitly set payload.
+     * Set the payload element to be used, if it is available as a parsed DOM element. Internally
+     * the DOM element will be cloned before sending it out. If this method is called, it overwrites
+     * any other explicitly set payload.
      *
      * @param aPayloadElement
-     *        The payload element to be used. They payload element MUST have a
-     *        namespace URI. May not be <code>null</code>.
+     *        The payload element to be used. They payload element MUST have a namespace URI. May
+     *        not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
@@ -1291,11 +1281,10 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the XML payload to be used as a byte array. It will be parsed
-     * internally to a DOM element. Compared to {@link #payload(Element)} the
-     * read DOM element will not be cloned internally, so this option is less
-     * memory intensive. If this method is called, it overwrites any other
-     * explicitly set payload.
+     * Set the XML payload to be used as a byte array. It will be parsed internally to a DOM
+     * element. Compared to {@link #payload(Element)} the read DOM element will not be cloned
+     * internally, so this option is less memory intensive. If this method is called, it overwrites
+     * any other explicitly set payload.
      *
      * @param aPayloadBytes
      *        The payload bytes to be used. May not be <code>null</code>.
@@ -1312,15 +1301,13 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the XML payload to be used as an InputStream provider. It will be
-     * parsed internally to a DOM element. Compared to {@link #payload(Element)}
-     * the read DOM element will not be cloned internally, so this option is
-     * less memory intensive. If this method is called, it overwrites any other
-     * explicitly set payload.
+     * Set the XML payload to be used as an InputStream provider. It will be parsed internally to a
+     * DOM element. Compared to {@link #payload(Element)} the read DOM element will not be cloned
+     * internally, so this option is less memory intensive. If this method is called, it overwrites
+     * any other explicitly set payload.
      *
      * @param aPayloadHasIS
-     *        The payload input stream provider to be used. May not be
-     *        <code>null</code>.
+     *        The payload input stream provider to be used. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
@@ -1334,17 +1321,16 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Use the provided byte array as the binary (non-XML) content of the Peppol
-     * SBDH message. Internally the data will be wrapped in a predefined
-     * "BinaryContent" element.
+     * Use the provided byte array as the binary (non-XML) content of the Peppol SBDH message.
+     * Internally the data will be wrapped in a predefined "BinaryContent" element.
      *
      * @param aBinaryPayload
      *        The bytes to be wrapped. May not be <code>null</code>.
      * @param aMimeType
      *        The MIME type to use. May not be <code>null</code>.
      * @param aCharset
-     *        The character set to be used, if the MIME type is text based. May
-     *        be <code>null</code>.
+     *        The character set to be used, if the MIME type is text based. May be
+     *        <code>null</code>.
      * @return this for chaining
      * @since 0.12.1
      */
@@ -1367,9 +1353,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Use the provided byte array as the text (non-XML) content of the Peppol
-     * SBDH message. Internally the data will be wrapped in a predefined
-     * "TextContent" element.
+     * Use the provided byte array as the text (non-XML) content of the Peppol SBDH message.
+     * Internally the data will be wrapped in a predefined "TextContent" element.
      *
      * @param sTextPayload
      *        The text to be wrapped. May not be <code>null</code>.
@@ -1410,16 +1395,14 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set an optional Consumer for the created StandardBusinessDocument (SBD)
-     * bytes.
+     * Set an optional Consumer for the created StandardBusinessDocument (SBD) bytes.
      *
      * @param aSBDBytesConsumer
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
-     * @deprecated This is deprecated, because in future versions, the SBDH will
-     *             be temporarily serialized to disk to allow messages larger
-     *             than 2GB. Use {@link #sbdDocumentConsumer(Consumer)} instead
-     *             and serialize it manually instead.
+     * @deprecated This is deprecated, because in future versions, the SBDH will be temporarily
+     *             serialized to disk to allow messages larger than 2GB. Use
+     *             {@link #sbdDocumentConsumer(Consumer)} instead and serialize it manually instead.
      */
     @Nonnull
     @Deprecated (since = "3.1.0", forRemoval = true)
@@ -1430,15 +1413,14 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set a custom validation registry to use in VESID lookup. This may be
-     * needed if other Peppol formats like XRechnung or SimplerInvoicing should
-     * be send through this client. The same registry instance should be used
-     * for all sending operations to ensure that validation artefact caching
-     * works best.
+     * Set a custom validation registry to use in VESID lookup. This may be needed if other Peppol
+     * formats like XRechnung or SimplerInvoicing should be send through this client. The same
+     * registry instance should be used for all sending operations to ensure that validation
+     * artefact caching works best.
      *
      * @param aVESRegistry
-     *        The registry to use. May be <code>null</code> to indicate that the
-     *        default registry (official Peppol artefacts only) should be used.
+     *        The registry to use. May be <code>null</code> to indicate that the default registry
+     *        (official Peppol artefacts only) should be used.
      * @return this for chaining
      * @since 0.10.1
      */
@@ -1450,18 +1432,16 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the client side validation to be used. If this method is not invoked,
-     * than it's the responsibility of the caller to validate the document prior
-     * to sending it. This method uses a default "do nothing validation result
-     * handler".
+     * Set the client side validation to be used. If this method is not invoked, than it's the
+     * responsibility of the caller to validate the document prior to sending it. This method uses a
+     * default "do nothing validation result handler".
      *
      * @param aVESID
      *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
-     *        May be <code>null</code>.
+     *        <code>PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>. May be
+     *        <code>null</code>.
      * @return this for chaining
-     * @see #validationConfiguration(DVRCoordinate,
-     *      IPhase4PeppolValidationResultHandler)
+     * @see #validationConfiguration(DVRCoordinate, IPhase4PeppolValidationResultHandler)
      */
     @Nonnull
     public PeppolUserMessageBuilder validationConfiguration (@Nullable final DVRCoordinate aVESID)
@@ -1472,18 +1452,17 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the client side validation to be used. If this method is not invoked,
-     * than it's the responsibility of the caller to validate the document prior
-     * to sending it. If the validation should happen internally, both the VESID
-     * AND the result handler must be set.
+     * Set the client side validation to be used. If this method is not invoked, than it's the
+     * responsibility of the caller to validate the document prior to sending it. If the validation
+     * should happen internally, both the VESID AND the result handler must be set.
      *
      * @param aVESID
      *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>.
-     *        May be <code>null</code>.
+     *        <code>PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>. May be
+     *        <code>null</code>.
      * @param aValidationResultHandler
-     *        The validation result handler for positive and negative response
-     *        handling. May be <code>null</code>.
+     *        The validation result handler for positive and negative response handling. May be
+     *        <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
@@ -1652,11 +1631,10 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * A builder class for sending AS4 messages using Peppol specifics. Use
-   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to
-   * trigger the main transmission.<br>
-   * This builder class assumes, that the SBDH was created outside, therefore no
-   * validation can occur.
+   * A builder class for sending AS4 messages using Peppol specifics. Use {@link #sendMessage()} or
+   * {@link #sendMessageAndCheckForReceipt()} to trigger the main transmission.<br>
+   * This builder class assumes, that the SBDH was created outside, therefore no validation can
+   * occur.
    *
    * @author Philip Helger
    * @since 0.9.6
@@ -1675,10 +1653,9 @@ public final class Phase4PeppolSender
     {}
 
     /**
-     * Set the SBDH payload to be used as a byte array. This means, that you
-     * need to pass in all other mandatory fields manually (sender participant
-     * ID, receiver participant ID, document Type ID, process ID and country
-     * C1).
+     * Set the SBDH payload to be used as a byte array. This means, that you need to pass in all
+     * other mandatory fields manually (sender participant ID, receiver participant ID, document
+     * Type ID, process ID and country C1).
      *
      * @param aSBDHBytes
      *        The SBDH bytes to be used. May not be <code>null</code>.
@@ -1698,8 +1675,8 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the payload, the sender participant ID, the receiver participant ID,
-     * the document type ID and the process ID.
+     * Set the payload, the sender participant ID, the receiver participant ID, the document type ID
+     * and the process ID.
      *
      * @param aSBDH
      *        The SBDH to use. May not be <code>null</code>.
