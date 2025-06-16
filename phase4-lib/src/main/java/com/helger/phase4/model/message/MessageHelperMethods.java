@@ -17,6 +17,7 @@
 package com.helger.phase4.model.message;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -67,8 +68,8 @@ import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.xmldsig.ReferenceType;
 
 /**
- * This class contains every method, static variables which are used by more
- * than one message creating classes in this package.
+ * This class contains every method, static variables which are used by more than one message
+ * creating classes in this package.
  *
  * @author bayerlma
  * @author Philip Helger
@@ -112,13 +113,12 @@ public final class MessageHelperMethods
   }
 
   /**
-   * Set a custom message ID suffix to be used in
-   * {@link #createRandomMessageID()}. If a string is provided, any eventually
-   * present leading dot is cut. This
+   * Set a custom message ID suffix to be used in {@link #createRandomMessageID()}. If a string is
+   * provided, any eventually present leading dot is cut. This
    *
    * @param sSuffix
-   *        The suffix to be used. May be <code>null</code>. If present it must
-   *        match the {@link #MESSAGE_ID_SUFFIX_REGEX} regular expression.
+   *        The suffix to be used. May be <code>null</code>. If present it must match the
+   *        {@link #MESSAGE_ID_SUFFIX_REGEX} regular expression.
    * @since 1.1.1
    */
   public static void setCustomMessageIDSuffix (@Nullable final String sSuffix)
@@ -136,10 +136,9 @@ public final class MessageHelperMethods
   }
 
   /**
-   * Create a new random AS4 Message ID. Every call results in a new unique
-   * message ID. The layout of a created message ID is like this:
-   * <code>UUID@phase4[.customSuffix]</code> where <code>UUID</code> is a random
-   * UID, "@phase4" is a constant, non-changeable value and
+   * Create a new random AS4 Message ID. Every call results in a new unique message ID. The layout
+   * of a created message ID is like this: <code>UUID@phase4[.customSuffix]</code> where
+   * <code>UUID</code> is a random UID, "@phase4" is a constant, non-changeable value and
    * <code>customSuffix</code> is the optional suffix to be set via
    * {@link #setCustomMessageIDSuffix(String)}.
    *
@@ -155,8 +154,7 @@ public final class MessageHelperMethods
   }
 
   /**
-   * @return A random Content-ID that adheres to RFC 822. Neither
-   *         <code>null</code> nor empty.
+   * @return A random Content-ID that adheres to RFC 822. Neither <code>null</code> nor empty.
    */
   @Nonnull
   @Nonempty
@@ -195,8 +193,7 @@ public final class MessageHelperMethods
   }
 
   /**
-   * Create a new message info with a UUID as message ID and a reference to the
-   * previous message.
+   * Create a new message info with a UUID as message ID and a reference to the previous message.
    *
    * @param sRefToMessageID
    *        The message ID of the referenced message. May be <code>null</code>.
@@ -214,8 +211,7 @@ public final class MessageHelperMethods
    * @param sMessageID
    *        The message ID. May neither be <code>null</code> nor empty.
    * @param sRefToMessageID
-   *        to set the reference to the previous message needed for two way
-   *        exchanges
+   *        to set the reference to the previous message needed for two way exchanges
    * @return Never <code>null</code>.
    */
   @Nonnull
@@ -233,8 +229,7 @@ public final class MessageHelperMethods
    * @param sMessageID
    *        The message ID. May neither be <code>null</code> nor empty.
    * @param sRefToMessageID
-   *        to set the reference to the previous message needed for two way
-   *        exchanges
+   *        to set the reference to the previous message needed for two way exchanges
    * @param aDateTime
    *        Date and time. May not be <code>null</code>.
    * @return Never <code>null</code>.
@@ -253,7 +248,9 @@ public final class MessageHelperMethods
     aMessageInfo.setMessageId (sMessageID);
     if (StringHelper.hasText (sRefToMessageID))
       aMessageInfo.setRefToMessageId (sRefToMessageID);
-    aMessageInfo.setTimestamp (XMLOffsetDateTime.of (aDateTime));
+    // ebMS Core: "It MUST be expressed as UTC. Indicating UTC in the Timestamp element by including
+    // the 'Z' identifier is optional."
+    aMessageInfo.setTimestamp (XMLOffsetDateTime.of (aDateTime.withOffsetSameInstant (ZoneOffset.UTC)));
     return aMessageInfo;
   }
 
@@ -455,8 +452,8 @@ public final class MessageHelperMethods
    * Add payload info if attachments are present.
    *
    * @param bHasSoapPayload
-   *        <code>true</code> if SOAP payload is present. This must be
-   *        <code>false</code> when using MIME message layout!
+   *        <code>true</code> if SOAP payload is present. This must be <code>false</code> when using
+   *        MIME message layout!
    * @param aAttachments
    *        Used attachments
    * @return <code>null</code> if no attachments are present.
@@ -485,11 +482,9 @@ public final class MessageHelperMethods
   }
 
   /**
-   * Extract all "ds:Reference" nodes from the passed SOAP document. This method
-   * search ins
+   * Extract all "ds:Reference" nodes from the passed SOAP document. This method search ins
    * "{soapDocument}/Envelop/Header/Security/Signature/SignedInfo".<br>
-   * Note: use <code>new DSigReferenceMarshaller ().read (aRef)</code> to read
-   * the content.
+   * Note: use <code>new DSigReferenceMarshaller ().read (aRef)</code> to read the content.
    *
    * @param aSoapDocument
    *        The SOAP document to search in. May be <code>null</code>.
@@ -534,8 +529,7 @@ public final class MessageHelperMethods
    *
    * @param aSoapDocument
    *        The SOAP document to search in. May be <code>null</code>.
-   * @return A non-<code>null</code> but maybe empty list of
-   *         {@link ReferenceType} object.
+   * @return A non-<code>null</code> but maybe empty list of {@link ReferenceType} object.
    */
   @Nonnull
   @ReturnsMutableCopy
