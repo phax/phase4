@@ -94,7 +94,9 @@ import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
+import com.helger.xml.sax.WrappedCollectingSAXErrorHandler;
 import com.helger.xml.serialize.read.DOMReader;
+import com.helger.xml.serialize.read.DOMReaderSettings;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
@@ -168,7 +170,7 @@ public final class AS4IncomingHandler
     // Determine content type
     final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
     if (StringHelper.hasNoText (sContentType))
-      throw new Phase4Exception ("Content-Type header is missing");
+      throw new Phase4Exception ("Content-Type header is missing").setRetryFeasible (false);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Received Content-Type string: '" + sContentType + "'");
@@ -176,7 +178,7 @@ public final class AS4IncomingHandler
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Received Content-Type object: " + aContentType);
     if (aContentType == null)
-      throw new Phase4Exception ("Failed to parse Content-Type '" + sContentType + "'");
+      throw new Phase4Exception ("Failed to parse Content-Type '" + sContentType + "'").setRetryFeasible (false);
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
@@ -207,6 +209,8 @@ public final class AS4IncomingHandler
 
     try
     {
+      ErrorList aXSDErrorList = new ErrorList ();
+
       if (aPlainContentType.equals (AS4RequestHandler.MT_MULTIPART_RELATED))
       {
         // MIME message
@@ -215,7 +219,8 @@ public final class AS4IncomingHandler
 
         final String sBoundary = aContentType.getParameterValueWithName ("boundary");
         if (StringHelper.hasNoText (sBoundary))
-          throw new Phase4Exception ("Content-Type '" + sContentType + "' misses 'boundary' parameter");
+          throw new Phase4Exception ("Content-Type '" + sContentType + "' misses 'boundary' parameter")
+                                                                                                       .setRetryFeasible (false);
 
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("MIME Boundary: '" + sBoundary + "'");
@@ -257,7 +262,8 @@ public final class AS4IncomingHandler
                   LOGGER.debug ("Parsing first MIME part as SOAP document");
 
                 // Read SOAP document
-                aSoapDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
+                aSoapDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream (),
+                                                      new DOMReaderSettings ().setErrorHandler (new WrappedCollectingSAXErrorHandler (aXSDErrorList)));
 
                 IMimeType aPlainPartMT = MimeTypeParser.safeParseMimeType (aBodyPart.getContentType ());
                 if (aPlainPartMT != null)
@@ -306,7 +312,8 @@ public final class AS4IncomingHandler
                                                                                               aPayloadIS,
                                                                                               aIncomingMessageMetadata,
                                                                                               aHttpHeaders,
-                                                                                              aDumpOSHolder));
+                                                                                              aDumpOSHolder),
+                                              new DOMReaderSettings ().setErrorHandler (new WrappedCollectingSAXErrorHandler (aXSDErrorList)));
 
         if (LOGGER.isDebugEnabled ())
         {
@@ -356,19 +363,27 @@ public final class AS4IncomingHandler
         }
       }
 
-      if (aSoapDocument == null)
+      if (aSoapDocument == null || aXSDErrorList.containsAtLeastOneError ())
       {
         // We don't have a SOAP document
-        throw new Phase4Exception (eSoapVersion == null ? "Failed to parse incoming message!"
-                                                        : "Failed to parse incoming SOAP " +
-                                                          eSoapVersion.getVersion () +
-                                                          " document!");
+        StringBuilder aErrorMessage = new StringBuilder ();
+        aErrorMessage.append (eSoapVersion == null ? "Failed to parse incoming message!"
+                                                   : "Failed to parse incoming SOAP " +
+                                                     eSoapVersion.getVersion () +
+                                                     " document!");
+        if (aXSDErrorList.isNotEmpty ())
+        {
+          aErrorMessage.append (" Technical details:");
+          for (IError aError : aXSDErrorList)
+            aErrorMessage.append ('\n').append (aError.getAsStringLocaleIndepdent ());
+        }
+        throw new Phase4Exception (aErrorMessage.toString ()).setRetryFeasible (false);
       }
 
       if (eSoapVersion == null)
       {
         // We're missing a SOAP version
-        throw new Phase4Exception ("Failed to determine SOAP version of XML document!");
+        throw new Phase4Exception ("Failed to determine SOAP version of XML document!").setRetryFeasible (false);
       }
 
       // Main processing
@@ -848,7 +863,7 @@ public final class AS4IncomingHandler
                                                                    eSoapVersion.getBodyElementName ());
       if (aBodyNode == null)
         throw new Phase4Exception ((bUseDecryptedSoap ? "Decrypted" : "Original") +
-                                   " SOAP document is missing a Body element");
+                                   " SOAP document is missing a Body element").setRetryFeasible (false);
 
       aIncomingState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
 
