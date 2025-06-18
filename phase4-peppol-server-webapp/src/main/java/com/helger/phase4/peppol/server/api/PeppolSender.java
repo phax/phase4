@@ -164,12 +164,12 @@ public final class PeppolSender
                                                                   .payload (aDoc.getDocumentElement ())
                                                                   .peppolAP_CAChecker (aAPCAChecker)
                                                                   .smpClient (aSMPClient)
-                                                                  .sbdDocumentConsumer (sbd -> {
+                                                                  .sbdDocumentConsumer (aSBD -> {
                                                                     // Remember SBDH Instance
                                                                     // Identifier
-                                                                    aSendingReport.setSBDHInstanceIdentifier (sbd.getStandardBusinessDocumentHeader ()
-                                                                                                                 .getDocumentIdentification ()
-                                                                                                                 .getInstanceIdentifier ());
+                                                                    aSendingReport.setSBDHInstanceIdentifier (aSBD.getStandardBusinessDocumentHeader ()
+                                                                                                                  .getDocumentIdentification ()
+                                                                                                                  .getInstanceIdentifier ());
                                                                   })
                                                                   .endpointURLConsumer (aSendingReport::setC3EndpointURL)
                                                                   .technicalContactConsumer (aSendingReport::setC3TechnicalContact)
