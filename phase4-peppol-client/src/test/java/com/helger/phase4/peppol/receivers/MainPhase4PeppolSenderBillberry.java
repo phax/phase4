@@ -17,10 +17,12 @@
 package com.helger.phase4.peppol.receivers;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
+import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
@@ -57,13 +59,19 @@ public final class MainPhase4PeppolSenderBillberry
 
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/base-example.xml"))
-                                               .getDocumentElement ();
+      IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0191:16122596");
+      String [] aParts = aReceiverID.getValue ().split (":", 2);
+
+      String sContent = SimpleFileIO.getFileAsString (new File ("src/test/resources/external/examples/base-example.xml"),
+                                                      StandardCharsets.UTF_8);
+      sContent = sContent.replace ("<cbc:EndpointID schemeID=\"9915\">helger</cbc:EndpointID>",
+                                   "<cbc:EndpointID schemeID=\"" + aParts[0] + "\">" + aParts[1] + "</cbc:EndpointID>");
+
+      final Element aPayloadElement = DOMReader.readXMLDOM (sContent).getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0191:16122596");
 
       final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
       {
