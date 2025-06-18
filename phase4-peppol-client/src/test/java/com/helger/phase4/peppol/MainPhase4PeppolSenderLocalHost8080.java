@@ -59,8 +59,8 @@ public final class MainPhase4PeppolSenderLocalHost8080
     try
     {
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/" +
-                                                                      (false ? "base-example.xml"
-                                                                             : "large-files/base-example-large-1gb.xml")))
+                                                                      (true ? "base-example.xml"
+                                                                            : "large-files/base-example-large-1gb.xml")))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ("Failed to read XML file to be send");
