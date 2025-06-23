@@ -25,7 +25,6 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
@@ -35,8 +34,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Special main class with a constant receiver for Storecove [NL]. This one
- * skips the SMP lookup.
+ * Special main class with a constant receiver for Storecove [NL]. This one skips the SMP lookup.
  *
  * @author Philip Helger
  */
@@ -100,7 +98,6 @@ public final class MainPhase4PeppolSenderStorecoveConstantReceiver
                                                                                                          "-----END CERTIFICATE-----\r\n"),
                                                             false ? "https://o96st7ob6h.execute-api.eu-west-1.amazonaws.com/prod/as4"
                                                                   : "https://accap.mypeppol.app/as4")
-                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

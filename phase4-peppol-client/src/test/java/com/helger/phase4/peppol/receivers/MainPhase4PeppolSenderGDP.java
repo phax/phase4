@@ -26,7 +26,6 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
@@ -68,7 +67,6 @@ public final class MainPhase4PeppolSenderGDP
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
-                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

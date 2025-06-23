@@ -28,13 +28,11 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phase4.sender.IAS4RawResponseConsumer;
 import com.helger.phive.peppol.PeppolValidation2024_11;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -60,8 +58,6 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
-      final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true)
-                                                                                   .setHandleHttpHeaders (true);
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .httpClientFactory (new HttpClientSettings ().setRetryCount (0)
@@ -82,7 +78,6 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
                                                                         : PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                             bNoValidate ? null
                                                                         : new Phase4PeppolValidatonResultHandler ())
-                                  .rawResponseConsumer (aRRC)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

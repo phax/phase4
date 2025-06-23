@@ -25,7 +25,6 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
@@ -105,7 +104,6 @@ public final class MainPhase4PeppolSenderAlbertPatronConstantReceiver
                                                                                                          "Oe8PlqaoGF+d6Csp9U25JzfpW0WadJLQsqtw9c1LgJKAMJ0bNVYtbQ==\r\n" +
                                                                                                          "-----END CERTIFICATE-----\r\n"),
                                                             "https://albertpatron.com/as4/as4")
-                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .validationConfiguration (PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();

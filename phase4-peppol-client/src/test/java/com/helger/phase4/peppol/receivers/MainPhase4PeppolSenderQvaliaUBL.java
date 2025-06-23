@@ -29,7 +29,6 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.model.message.AS4UserMessage;
@@ -105,7 +104,6 @@ public final class MainPhase4PeppolSenderQvaliaUBL
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
-                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .validationRegistry (aVESRegistry)
                                   .validationConfiguration (EN16931Validation.VID_UBL_INVOICE_1314_1,
                                                             new Phase4PeppolValidatonResultHandler ())

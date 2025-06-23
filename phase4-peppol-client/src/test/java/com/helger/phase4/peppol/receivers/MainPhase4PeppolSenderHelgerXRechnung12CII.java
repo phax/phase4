@@ -28,7 +28,6 @@ import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.AS4UserMessage;
@@ -37,7 +36,6 @@ import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidation;
 import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phase4.sender.IAS4RawResponseConsumer;
 import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.phive.en16931.EN16931Validation;
 import com.helger.phive.xml.source.IValidationSourceXML;
@@ -82,8 +80,6 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
         }
       };
       final Wrapper <Ebms3SignalMessage> aSignalMsgWrapper = new Wrapper <> ();
-      final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true)
-                                                                                   .setHandleHttpHeaders (true);
 
       // Add XRechnung rulesets
       final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry = Phase4PeppolValidation.createDefaultRegistry ();
@@ -106,7 +102,6 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
                                   .validationConfiguration (XRechnungValidation.VID_XRECHNUNG_CII_122,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
-                                  .rawResponseConsumer (aRRC)
                                   .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> aSignalMsgWrapper.set (aSignalMsg))
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);

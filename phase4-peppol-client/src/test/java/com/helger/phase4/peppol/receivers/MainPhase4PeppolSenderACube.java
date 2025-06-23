@@ -27,7 +27,6 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.dump.IAS4OutgoingDumperFileProvider;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
@@ -78,7 +77,6 @@ public final class MainPhase4PeppolSenderACube
                                                                                                                                             IAS4OutgoingDumperFileProvider.getDefaultDirectoryAndFilename ("",
                                                                                                                                                                                                            1) +
                                                                                                                                             ".sbdh")))
-                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

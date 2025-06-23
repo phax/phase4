@@ -26,7 +26,6 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.peppol.Phase4PeppolValidation;
@@ -85,7 +84,6 @@ public final class MainPhase4PeppolSenderCisboxXRechnung
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
-                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .validationRegistry (aVESRegistry)
                                   .validationConfiguration (XRechnungValidation.VID_XRECHNUNG_UBL_INVOICE_201,
                                                             new Phase4PeppolValidatonResultHandler ())

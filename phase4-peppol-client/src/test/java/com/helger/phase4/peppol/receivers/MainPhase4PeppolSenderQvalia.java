@@ -47,7 +47,6 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -121,7 +120,6 @@ public final class MainPhase4PeppolSenderQvalia
                                                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                                                      aReceiverID,
                                                                                                      ESML.DIGIT_TEST))
-                                                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                                                   .validationConfiguration (PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                                                             new Phase4PeppolValidatonResultHandler ())
                                                                   .buildMessageCallback (aBuildMessageCallback)

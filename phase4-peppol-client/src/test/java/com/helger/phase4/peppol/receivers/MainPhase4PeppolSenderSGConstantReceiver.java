@@ -25,7 +25,6 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
@@ -35,8 +34,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Special main class with a constant receiver. This one skips the SMP
- * lookup.<br>
+ * Special main class with a constant receiver. This one skips the SMP lookup.<br>
  * Will not work, because SG requires production certificate.
  *
  * @author Philip Helger
@@ -100,7 +98,6 @@ public final class MainPhase4PeppolSenderSGConstantReceiver
                                                                                                          "-----END CERTIFICATE-----\r\n" +
                                                                                                          ""),
                                                             "https://peppol.datapost.com.sg/as4app/as4")
-                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
