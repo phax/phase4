@@ -101,6 +101,8 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
                                                                                                     ":" +
                                                                                                     sC2SeatID.substring (3));
     }
+    if (aMLSReceiver != null)
+      LOGGER.info ("  MLS Receiver = " + aMLSReceiver.getURIEncoded ());
 
     // Example got that stores the data to disk
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".sbd");
