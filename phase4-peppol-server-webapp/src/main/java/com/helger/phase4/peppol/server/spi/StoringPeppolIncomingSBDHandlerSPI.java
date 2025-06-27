@@ -35,6 +35,8 @@ import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.sbdh.PeppolSBDHData;
+import com.helger.peppolid.IParticipantIdentifier;
+import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -81,6 +83,24 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
     LOGGER.info ("  DocType = " + aPeppolSBD.getDocumentTypeAsIdentifier ().getURIEncoded ());
     LOGGER.info ("  Process = " + aPeppolSBD.getProcessAsIdentifier ().getURIEncoded ());
     LOGGER.info ("  CountryC1 = " + aPeppolSBD.getCountryC1 ());
+
+    final IParticipantIdentifier aMLSReceiver;
+    if (aPeppolSBD.hasMLSToValue ())
+    {
+      // Explicit MLS_TO provided
+      aMLSReceiver = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aPeppolSBD.getMLSToScheme (),
+                                                                                   aPeppolSBD.getMLSToValue ());
+    }
+    else
+    {
+      // C1 country defines scheme
+      final String sScheme = "AE".equals (aPeppolSBD.getCountryC1 ()) ? "9960" : "0242";
+      // Take from C2 SeatID
+      final String sC2SeatID = CertificateHelper.getSubjectCN (aIncomingState.getSigningCertificate ());
+      aMLSReceiver = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifierWithDefaultScheme (sScheme +
+                                                                                                    ":" +
+                                                                                                    sC2SeatID.substring (3));
+    }
 
     // Example got that stores the data to disk
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".sbd");
