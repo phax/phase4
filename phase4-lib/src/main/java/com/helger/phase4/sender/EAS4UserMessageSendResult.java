@@ -26,8 +26,7 @@ import com.helger.commons.state.ISuccessIndicator;
 
 /**
  * Specific enumeration with the result error codes of the
- * {@link AbstractAS4UserMessageBuilder#sendMessageAndCheckForReceipt()}
- * method.<br />
+ * {@link AbstractAS4UserMessageBuilder#sendMessageAndCheckForReceipt()} method.<br />
  * Old name before v3: <code>ESimpleUserMessageSendResult</code>
  *
  * @author Philip Helger
@@ -43,8 +42,7 @@ public enum EAS4UserMessageSendResult implements IHasID <String>, ISuccessIndica
    */
   TRANSPORT_ERROR ("transport-error"),
   /**
-   * Something failed on the network or HTTP(S) level and a retry doesn't seem
-   * to be feasible.-
+   * Something failed on the network or HTTP(S) level and a retry doesn't seem to be feasible.
    *
    * @since 3.2.0
    */
@@ -58,13 +56,12 @@ public enum EAS4UserMessageSendResult implements IHasID <String>, ISuccessIndica
    */
   AS4_ERROR_MESSAGE_RECEIVED ("as4-error-msg-received"),
   /**
-   * An AS4 Signal Message was received, but it was neither a Receipt nor an
-   * Error Message but something else.
+   * An AS4 Signal Message was received, but it was neither a Receipt nor an Error Message but
+   * something else.
    */
   INVALID_SIGNAL_MESSAGE_RECEIVED ("invalid-signal-message-received"),
   /**
-   * Everything worked according to plan. The message was successfully
-   * delivered.
+   * Everything worked according to plan. The message was successfully delivered.
    */
   SUCCESS ("success");
 
@@ -92,8 +89,8 @@ public enum EAS4UserMessageSendResult implements IHasID <String>, ISuccessIndica
   }
 
   /**
-   * @return A recommendation whether a retry might be feasible in case the
-   *         internal retries were disabled.
+   * @return A recommendation whether a retry might be feasible in case the internal retries were
+   *         disabled.
    * @since 1.0.0-rc1
    */
   public boolean isRetryFeasible ()
