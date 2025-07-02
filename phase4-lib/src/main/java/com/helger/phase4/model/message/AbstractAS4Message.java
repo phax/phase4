@@ -67,6 +67,9 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
 
     // Must be a "wsu:Id" for WSSec to be found
     m_aMessaging.getOtherAttributes ().put (QNAME_WSU_ID, m_sMessagingID);
+
+    // Assume all EbmsMessaging parts are always "mustUnderstand"
+    setMustUnderstand (true);
   }
 
   @Nonnull

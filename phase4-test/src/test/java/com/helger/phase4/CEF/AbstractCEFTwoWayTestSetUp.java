@@ -64,7 +64,6 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
 
   protected AbstractCEFTwoWayTestSetUp ()
   {
-    super ();
   }
 
   protected AbstractCEFTwoWayTestSetUp (@Nonnegative final int nRetries)
@@ -150,7 +149,6 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
                                   null,
-                                  m_eSoapVersion)
-                         .setMustUnderstand (true);
+                                  m_eSoapVersion);
   }
 }

@@ -113,8 +113,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (),
-                                                                    s_aResMgr));
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = modifyUserMessage (m_aPMode.getID (),
                                              null,
@@ -144,8 +143,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
                                                                                          .mimeTypeXML ()
-                                                                                         .build (),
-                                                                    s_aResMgr));
+                                                                                         .build (), s_aResMgr));
 
     final Document aDoc = modifyUserMessage (m_aPMode.getID (),
                                              (String) null,
@@ -204,9 +202,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     final IPMode aPMode = MetaAS4Manager.getPModeMgr ().getPModeOfID (m_aPMode.getID ());
     aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPMode.getID ());
 
-    final Document aSignedDoc = AS4UserMessage.create (m_eSoapVersion, aEbms3UserMessage)
-                                              .setMustUnderstand (true)
-                                              .getAsSoapDocument (aPayload);
+    final Document aSignedDoc = AS4UserMessage.create (m_eSoapVersion, aEbms3UserMessage).getAsSoapDocument (aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
                       false,

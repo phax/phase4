@@ -88,8 +88,7 @@ final class MockClientMessages
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.errorBuilder (Locale.US)
                                                                                                              .build ());
-    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion, "srcmsgid", aEbms3ErrorList)
-                                                     .setMustUnderstand (true);
+    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion, "srcmsgid", aEbms3ErrorList);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryConfiguration.getDefaultInstance (),
                                                                aErrorMsg.getAsSoapDocument (),
                                                                eSoapVersion,
@@ -115,8 +114,7 @@ final class MockClientMessages
                                                                     null,
                                                                     aUserMessage,
                                                                     true,
-                                                                    null)
-                                                           .setMustUnderstand (true);
+                                                                    null);
     final Document aDoc = aReceiptMsg.getAsSoapDocument ();
 
     return AS4Signer.createSignedMessage (AS4CryptoFactoryConfiguration.getDefaultInstance (),
@@ -163,8 +161,7 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion)
-                                              .setMustUnderstand (true);
+                                                       eSoapVersion);
     return aDoc;
   }
 
@@ -200,8 +197,7 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion)
-                                              .setMustUnderstand (true);
+                                                       eSoapVersion);
     return aDoc.getAsSoapDocument (aPayload);
   }
 
@@ -236,8 +232,7 @@ final class MockClientMessages
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       eSoapVersion)
-                                              .setMustUnderstand (true);
+                                                       eSoapVersion);
     return aDoc.getAsSoapDocument (aPayload);
   }
 }

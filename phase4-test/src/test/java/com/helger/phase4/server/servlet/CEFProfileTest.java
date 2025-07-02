@@ -116,9 +116,7 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
-    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage).getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
@@ -138,9 +136,7 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
-    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage).getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,

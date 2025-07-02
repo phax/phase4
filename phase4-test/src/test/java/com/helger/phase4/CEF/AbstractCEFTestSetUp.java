@@ -120,7 +120,6 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
                                   null,
-                                  m_eSoapVersion)
-                         .setMustUnderstand (true);
+                                  m_eSoapVersion);
   }
 }

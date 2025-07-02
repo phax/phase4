@@ -120,8 +120,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * @return The payload of the user message that will be placed in the SOAP
-   *         body. May be <code>null</code>.
+   * @return The payload of the user message that will be placed in the SOAP body. May be
+   *         <code>null</code>.
    */
   @Nullable
   public final Node getPayload ()
@@ -130,8 +130,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * Sets the payload for a usermessage. The payload unlike an attachment will
-   * be added into the SOAP-Body of the message.
+   * Sets the payload for a usermessage. The payload unlike an attachment will be added into the
+   * SOAP-Body of the message.
    *
    * @param aPayload
    *        the Payload to be added
@@ -145,9 +145,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * @return The list of attachments that are part of the message. If this list
-   *         is not empty, a MIME message is created. Having attachments and no
-   *         SOAP body is totally valid.
+   * @return The list of attachments that are part of the message. If this list is not empty, a MIME
+   *         message is created. Having attachments and no SOAP body is totally valid.
    */
   @Nonnull
   @ReturnsMutableObject
@@ -157,10 +156,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * @return <code>true</code> if a MIME message is always created, even if no
-   *         attachments are present, <code>false</code> to use a simple SOAP
-   *         message in case of absence of attachments. The default value is
-   *         {@value #DEFAULT_FORCE_MIME_MESSAGE}
+   * @return <code>true</code> if a MIME message is always created, even if no attachments are
+   *         present, <code>false</code> to use a simple SOAP message in case of absence of
+   *         attachments. The default value is {@value #DEFAULT_FORCE_MIME_MESSAGE}
    * @since 2.5.1
    */
   public final boolean isForceMimeMessage ()
@@ -172,8 +170,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    * Enable the enforcement of packaging the AS4 user message in a MIME message.
    *
    * @param bForceMimeMessage
-   *        <code>true</code> to enforce it, <code>false</code> to make it
-   *        dynamic.
+   *        <code>true</code> to enforce it, <code>false</code> to make it dynamic.
    * @return this for chaining
    * @since 2.5.1
    */
@@ -192,8 +189,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    * @param aMimeType
    *        MIME type of the given file. May not be <code>null</code>.
    * @param eAS4CompressionMode
-   *        which compression type should be used to compress the attachment.
-   *        May be <code>null</code>.
+   *        which compression type should be used to compress the attachment. May be
+   *        <code>null</code>.
    * @return this for chaining
    * @throws IOException
    *         if something goes wrong in the adding process or the compression
@@ -215,8 +212,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * Adds a file as attachment to the message. The caller of the method must
-   * ensure the attachment is already compressed (if desired)!
+   * Adds a file as attachment to the message. The caller of the method must ensure the attachment
+   * is already compressed (if desired)!
    *
    * @param aAttachment
    *        Attachment to be added. May not be <code>null</code>.
@@ -231,10 +228,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * With properties optional info can be added for the receiving party. If you
-   * want to be AS4 Profile conform you need to add two properties to your
-   * message: originalSender and finalRecipient these two correlate to C1 and
-   * C4.
+   * With properties optional info can be added for the receiving party. If you want to be AS4
+   * Profile conform you need to add two properties to your message: originalSender and
+   * finalRecipient these two correlate to C1 and C4.
    *
    * @return The mutable list. Never <code>null</code>.
    * @since 0.8.2
@@ -253,8 +249,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * The element is a string identifying an operation or an activity within a
-   * Service that may support several of these.<br>
+   * The element is a string identifying an operation or an activity within a Service that may
+   * support several of these.<br>
    * Example of what will be written in the user message:
    * <code>&lt;eb:Action&gt;NewPurchaseOrder&lt;/eb:Action&gt;</code><br>
    * This is MANDATORY.
@@ -277,8 +273,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * It is a string identifying the service type of the service specified in
-   * service value.<br>
+   * It is a string identifying the service type of the service specified in service value.<br>
    * Example of what will be written in the user message:
    * <code>&lt;eb:Service type= "MyServiceTypes"&gt;QuoteToCollect&lt;/eb:Service&gt;</code><br>
    *
@@ -300,8 +295,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * It is a string identifying the service that acts on the message 1639 and it
-   * is specified by the designer of the service.<br>
+   * It is a string identifying the service that acts on the message 1639 and it is specified by the
+   * designer of the service.<br>
    * Example of what will be written in the user message: <code>&lt;eb:Service
    * type="MyServiceTypes"&gt;QuoteToCollect&lt;/eb:Service&gt;</code><br>
    * This is MANDATORY.
@@ -324,8 +319,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * The element is a string identifying the set of related messages that make
-   * up a conversation between Parties.<br>
+   * The element is a string identifying the set of related messages that make up a conversation
+   * between Parties.<br>
    * Example of what will be written in the user message:
    * <code>&lt;eb:ConversationId&gt;4321&lt;/eb:ConversationId&gt;</code><br>
    * This is MANDATORY.
@@ -342,8 +337,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * @return The value of the <code>eb:AgreementRef</code> element. May be
-   *         <code>null</code>.
+   * @return The value of the <code>eb:AgreementRef</code> element. May be <code>null</code>.
    */
   @Nullable
   public final String getAgreementRefValue ()
@@ -352,10 +346,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * The AgreementRef element is a string that identifies the entity or artifact
-   * governing the exchange of messages between the parties.<br>
-   * Example of what will be written in the user message:
-   * <code>&lt;eb:AgreementRef pmode=
+   * The AgreementRef element is a string that identifies the entity or artifact governing the
+   * exchange of messages between the parties.<br>
+   * Example of what will be written in the user message: <code>&lt;eb:AgreementRef pmode=
    * "pm-esens-generic-resp"&gt;http://agreements.holodeckb2b.org/examples/agreement0&lt;/eb:AgreementRef&gt;</code><br>
    * This is MANDATORY.
    *
@@ -371,8 +364,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * @return The value of the <code>eb:AgreementRef/@type</code> attribute. May
-   *         be <code>null</code>.
+   * @return The value of the <code>eb:AgreementRef/@type</code> attribute. May be
+   *         <code>null</code>.
    * @since 2.7.6
    */
   @Nullable
@@ -403,10 +396,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * The value of the Role element is a non-empty string, with a default value
-   * of
-   * <code>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole</code>
-   * .
+   * The value of the Role element is a non-empty string, with a default value of
+   * <code>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole</code> .
    *
    * @param sFromRole
    *        the role that should be set
@@ -426,8 +417,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * The PartyID is an ID that identifies the C2 over which the message gets
-   * sent.
+   * The PartyID is an ID that identifies the C2 over which the message gets sent.
    *
    * @param sFromPartyIDType
    *        the partyID type that should be set
@@ -447,8 +437,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * The PartyID is an ID that identifies the C2 over which the message gets
-   * sent.<br>
+   * The PartyID is an ID that identifies the C2 over which the message gets sent.<br>
    * Example of what will be written in the user message:
    * <code>&lt;eb:PartyId&gt;ImAPartyID&lt;/eb:PartyId&gt;</code><br>
    * This is MANDATORY.
@@ -529,12 +518,11 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * DEFAULT is set to <code>true</code>, if you want to use leg2 for the
-   * message set <code>false</code>.
+   * DEFAULT is set to <code>true</code>, if you want to use leg2 for the message set
+   * <code>false</code>.
    *
    * @param bUseLeg1
-   *        <code>true</code> if leg1 should be used, <code>false</code> if leg2
-   *        should be used
+   *        <code>true</code> if leg1 should be used, <code>false</code> if leg2 should be used
    * @return this for chaining
    */
   @Nonnull
@@ -597,15 +585,14 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   /**
-   * This method should be used if you do not want to set each parameter and
-   * have a PMode ready that you wish to use. Some parameters still must be set
-   * with the remaining setters.
+   * This method should be used if you do not want to set each parameter and have a PMode ready that
+   * you wish to use. Some parameters still must be set with the remaining setters.
    *
    * @param aPMode
    *        that should be used. May be <code>null</code>
    * @param bSetValuesFromPMode
-   *        <code>true</code> to set all values in the client, that can be
-   *        derived from the PMode, <code>false</code> to not do it.
+   *        <code>true</code> to set all values in the client, that can be derived from the PMode,
+   *        <code>false</code> to not do it.
    */
   public final void setPMode (@Nullable final IPMode aPMode, final boolean bSetValuesFromPMode)
   {
@@ -718,7 +705,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
                                                            null,
-                                                           eSoapVersion).setMustUnderstand (true);
+                                                           eSoapVersion);
 
     if (aCallback != null)
       aCallback.onAS4Message (aUserMsg);

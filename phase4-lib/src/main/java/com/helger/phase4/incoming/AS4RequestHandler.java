@@ -1355,7 +1355,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                         aUserMessage,
                                                                         aSoapDocument,
                                                                         _isSendNonRepudiationInformation (aEffectiveLeg),
-                                                                        null).setMustUnderstand (true);
+                                                                        null);
 
     final ESoapVersion eResponseSoapVersion = aEffectiveLeg.getProtocol ().getSoapVersion ();
     if (eResponseSoapVersion != eSoapVersion)

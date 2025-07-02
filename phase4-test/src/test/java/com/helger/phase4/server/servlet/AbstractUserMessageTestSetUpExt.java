@@ -41,10 +41,9 @@ import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * The test classes for the usermessage, are split up for a better overview.
- * Since all these classes need the same setup and a helper method, this class
- * was created. Also with the help of Parameterized.class, each test will be
- * done for both SOAP Versions.
+ * The test classes for the usermessage, are split up for a better overview. Since all these classes
+ * need the same setup and a helper method, this class was created. Also with the help of
+ * Parameterized.class, each test will be done for both SOAP Versions.
  *
  * @author bayerlma
  */
@@ -53,8 +52,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
   protected static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
   /**
-   * Modify the standard user message to try special cases or provoke failure
-   * messages.
+   * Modify the standard user message to try special cases or provoke failure messages.
    *
    * @param sAnotherOrWrongPModeID
    *        Custom pmode ID
@@ -63,8 +61,8 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    * @param sAnotherOrWrongPartyIdResponder
    *        Custom Responder Party ID
    * @param aEbms3MessageProperties
-   *        Default should be with {@link #createDefaultProperties()}, only if
-   *        you do not want them change this
+   *        Default should be with {@link #createDefaultProperties()}, only if you do not want them
+   *        change this
    * @param aAttachments
    *        Custom attachments
    * @param sReferenceToMessageID
@@ -121,8 +119,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
                                                        null,
-                                                       ESoapVersion.AS4_DEFAULT)
-                                              .setMustUnderstand (true);
+                                                       ESoapVersion.AS4_DEFAULT);
 
     if (aMessagingIDConsumer != null)
       aMessagingIDConsumer.accept (aMsg.getMessagingID ());

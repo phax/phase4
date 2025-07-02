@@ -114,9 +114,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     aService.setValue ("Random Value");
     m_aEbms3UserMessage.getCollaborationInfo ().setService (aService);
 
-    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).getAsSoapDocument (m_aPayload);
     assertNotNull (aDoc);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()),
@@ -137,9 +135,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.getCollaborationInfo ()
                        .setAction ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1");
 
-    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).getAsSoapDocument (m_aPayload);
     assertNotNull (aDoc);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()), true, null);
@@ -172,7 +168,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       assertTrue (aPModeMgr.getAllIDs ().isEmpty ());
       aPModeMgr.createOrUpdatePMode (aPMode);
 
-      final AS4UserMessage aMsg = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).setMustUnderstand (true);
+      final AS4UserMessage aMsg = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage);
       final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                  aMsg.getAsSoapDocument (m_aPayload),
                                                                  SOAP_VERSION,
@@ -223,7 +219,6 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                                    AS4TestConstants.TEST_CONVERSATION_ID));
 
       final Document aSignedDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage)
-                                                .setMustUnderstand (true)
                                                 .getAsSoapDocument (m_aPayload);
 
       sendPlainMessage (new HttpXMLEntity (aSignedDoc, SOAP_VERSION.getMimeType ()),
@@ -243,9 +238,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testWrongMPCShouldReturnFailure () throws Exception
   {
     m_aEbms3UserMessage.setMpc ("http://random.com/testmpc");
-    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()),
                       false,
@@ -256,9 +249,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageMissingProperties () throws Exception
   {
     m_aEbms3UserMessage.setMessageProperties (null);
-    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()), false, "");
   }
@@ -280,9 +271,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
-    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()), false, "");
   }
@@ -298,9 +287,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   }
 
   /**
-   * Is ESENS specific, EBMS3 specification is the protocol an optional element.
-   * Maybe refactoring into a test if http and SMTP addresses later on get
-   * converted right
+   * Is ESENS specific, EBMS3 specification is the protocol an optional element. Maybe refactoring
+   * into a test if http and SMTP addresses later on get converted right
    *
    * @throws Exception
    *         In case of an error
