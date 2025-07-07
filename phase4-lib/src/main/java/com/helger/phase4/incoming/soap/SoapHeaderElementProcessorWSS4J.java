@@ -230,7 +230,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       final List <WSSecurityEngineResult> aResults = aVerifyDecryptResults != null ? aVerifyDecryptResults.getResults ()
                                                                                    : new CommonsArrayList <> ();
 
-      LOGGER.info ("phase4 --- verify-decrypt:end");
+      LOGGER.info ("phase4 --- verify-decrypt:end -- " + aResults.size () + " results");
 
       // The certificate used for signing
       X509Certificate aSigningCert = null;
