@@ -45,6 +45,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.HasInputStream;
@@ -224,9 +225,10 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
       aSecurityEngine.setWssConfig (aWSSConfig);
 
-      // This starts the main verification - throws an exception
+      // This starts the main verification - throws an exception or may return null
       final WSHandlerResult aVerifyDecryptResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
-      final List <WSSecurityEngineResult> aResults = aVerifyDecryptResults.getResults ();
+      final List <WSSecurityEngineResult> aResults = aVerifyDecryptResults != null ? aVerifyDecryptResults.getResults ()
+                                                                                   : new CommonsArrayList <> ();
 
       LOGGER.info ("phase4 --- verify-decrypt:end");
 
