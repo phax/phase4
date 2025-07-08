@@ -115,9 +115,13 @@ public final class PeppolSender
 
       // Start configuring here
       final IParticipantIdentifier aSenderID = aIF.createParticipantIdentifierWithDefaultScheme (sSenderID);
+      if (aSenderID == null)
+        throw new IllegalStateException ("Failed to parse the sending participant ID '" + sSenderID + "'");
       aSendingReport.setSenderID (aSenderID);
 
       final IParticipantIdentifier aReceiverID = aIF.createParticipantIdentifierWithDefaultScheme (sReceiverID);
+      if (aReceiverID == null)
+        throw new IllegalStateException ("Failed to parse the receiving participant ID '" + sReceiverID + "'");
       aSendingReport.setReceiverID (aReceiverID);
 
       IDocumentTypeIdentifier aDocTypeID = aIF.parseDocumentTypeIdentifier (sDocTypeID);
@@ -126,13 +130,18 @@ public final class PeppolSender
         // Fallback to default scheme
         aDocTypeID = aIF.createDocumentTypeIdentifierWithDefaultScheme (sDocTypeID);
       }
+      if (aDocTypeID == null)
+        throw new IllegalStateException ("Failed to parse the document type ID '" + sDocTypeID + "'");
       aSendingReport.setDocTypeID (aDocTypeID);
+
       IProcessIdentifier aProcessID = aIF.parseProcessIdentifier (sProcessID);
       if (aProcessID == null)
       {
         // Fallback to default scheme
         aProcessID = aIF.createProcessIdentifierWithDefaultScheme (sProcessID);
       }
+      if (aProcessID == null)
+        throw new IllegalStateException ("Failed to parse the process ID '" + sProcessID + "'");
       aSendingReport.setProcessID (aProcessID);
 
       final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
