@@ -227,8 +227,14 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
       // This starts the main verification - throws an exception or may return null
       final WSHandlerResult aVerifyDecryptResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
-      final List <WSSecurityEngineResult> aResults = aVerifyDecryptResults != null ? aVerifyDecryptResults.getResults ()
-                                                                                   : new CommonsArrayList <> ();
+      final List <WSSecurityEngineResult> aResults;
+      if (aVerifyDecryptResults != null)
+        aResults = aVerifyDecryptResults.getResults ();
+      else
+      {
+        LOGGER.info ("phase4 --- verify-decrypt:end -- found no security header");
+        aResults = new CommonsArrayList <> ();
+      }
 
       LOGGER.info ("phase4 --- verify-decrypt:end -- " + aResults.size () + " results");
 
