@@ -229,14 +229,15 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       final WSHandlerResult aVerifyDecryptResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
       final List <WSSecurityEngineResult> aResults;
       if (aVerifyDecryptResults != null)
+      {
         aResults = aVerifyDecryptResults.getResults ();
+        LOGGER.info ("phase4 --- verify-decrypt:end -- " + aResults.size () + " results");
+      }
       else
       {
         LOGGER.info ("phase4 --- verify-decrypt:end -- found no security header");
         aResults = new CommonsArrayList <> ();
       }
-
-      LOGGER.info ("phase4 --- verify-decrypt:end -- " + aResults.size () + " results");
 
       // The certificate used for signing
       X509Certificate aSigningCert = null;
