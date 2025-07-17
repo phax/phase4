@@ -77,7 +77,7 @@
     <log4j.version>2.25.0</log4j.version>
     <xmlsec.version>3.0.6</xmlsec.version>
     <wss4j.version>3.0.4</wss4j.version>
-    <peppol-commons.version>11.0.1</peppol-commons.version>
+    <peppol-commons.version>11.0.2</peppol-commons.version>
     <peppol-reporting.version>3.1.0</peppol-reporting.version>
     <peppol-ap-support.version>1.0.2</peppol-ap-support.version>
     <ph-commons.version>11.2.6</ph-commons.version>
