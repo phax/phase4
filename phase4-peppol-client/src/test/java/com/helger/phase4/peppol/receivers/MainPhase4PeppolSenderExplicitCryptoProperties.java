@@ -58,12 +58,12 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
 
       final KeyStoreAndKeyDescriptor aKSD = KeyStoreAndKeyDescriptor.builder ()
                                                                     .type (EKeyStoreType.PKCS12)
-                                                                    .path ("test-ap.p12")
+                                                                    .path ("test-ap-2025.p12")
                                                                     .password ("peppol")
-                                                                    .keyAlias ("openpeppol aisbl id von pop000306")
+                                                                    .keyAlias ("cert")
                                                                     .keyPassword ("peppol")
                                                                     .build ();
-      final ITrustStoreDescriptor aTSD = PeppolTrustStores.Config2018.TRUSTSTORE_DESCRIPTOR_AP_PILOT;
+      final ITrustStoreDescriptor aTSD = PeppolTrustStores.Config2025.TRUSTSTORE_DESCRIPTOR_AP_TEST;
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
