@@ -248,8 +248,8 @@ public final class MessageHelperMethods
     aMessageInfo.setMessageId (sMessageID);
     if (StringHelper.hasText (sRefToMessageID))
       aMessageInfo.setRefToMessageId (sRefToMessageID);
-    // ebMS Core: "It MUST be expressed as UTC. Indicating UTC in the Timestamp element by including
-    // the 'Z' identifier is optional."
+    // ebMS Core 5.2.2.1: "It MUST be expressed as UTC. Indicating UTC in the Timestamp element by
+    // including the 'Z' identifier is optional."
     aMessageInfo.setTimestamp (XMLOffsetDateTime.of (aDateTime.withOffsetSameInstant (ZoneOffset.UTC)));
     return aMessageInfo;
   }
