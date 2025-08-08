@@ -269,10 +269,10 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * @return The Peppol AP CA checker to be used. Never <code>null</code>.
+   * @return The Peppol AP CA checker to be used. May be <code>null</code> (since v3.2.2).
    * @since 3.0.3
    */
-  @Nonnull
+  @Nullable
   public static TrustedCAChecker getAPCAChecker ()
   {
     return s_aAPCAChecker;
@@ -282,13 +282,11 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * Set the Peppol CA checker to be used.
    *
    * @param a
-   *        The Peppol CA checker to be used. May not be <code>null</code>.
+   *        The Peppol CA checker to be used. May be <code>null</code> (since v3.2.2).
    * @since 3.0.3
    */
-  public static void setAPCAChecker (@Nonnull final TrustedCAChecker a)
+  public static void setAPCAChecker (@Nullable final TrustedCAChecker a)
   {
-    ValueEnforcer.notNull (a, "APCAChecker");
-
     final boolean bChange = a != s_aAPCAChecker;
     s_aAPCAChecker = a;
     if (bChange)
