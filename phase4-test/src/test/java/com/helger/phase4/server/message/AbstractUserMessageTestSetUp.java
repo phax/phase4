@@ -164,7 +164,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
       final HttpHost aProxyHost = new HttpHost (aConfig.getAsString (SETTINGS_SERVER_PROXY_ADDRESS),
                                                 aConfig.getAsInt (SETTINGS_SERVER_PROXY_PORT));
       LOGGER.info ("Using proxy host " + aProxyHost.toString ());
-      aHCS.setProxyHost (aProxyHost);
+      aHCS.getGeneralProxy ().setProxyHost (aProxyHost);
     }
 
     try (final CloseableHttpClient aHttpClient = new HttpClientFactory (aHCS).createHttpClient ())
@@ -195,13 +195,12 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
       else
       {
         // 200, 400 or 500
-        assertTrue ("Server responded with StatusCode=" +
-                    nStatusCode +
-                    ". Response:\n" +
-                    sResponse,
+        assertTrue ("Server responded with StatusCode=" + nStatusCode + ". Response:\n" + sResponse,
                     nStatusCode == CHttp.HTTP_OK ||
-                               nStatusCode == CHttp.HTTP_BAD_REQUEST ||
-                               nStatusCode == CHttp.HTTP_INTERNAL_SERVER_ERROR);
+                                                                                                     nStatusCode ==
+                                                    CHttp.HTTP_BAD_REQUEST ||
+                                                                                                     nStatusCode ==
+                                                                              CHttp.HTTP_INTERNAL_SERVER_ERROR);
         assertTrue ("Server responded with different error message than expected (" +
                     sExecptedResponseContent +
                     ")." +
@@ -222,11 +221,10 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
    * @param aHttpEntity
    *        the entity to send to the server
    * @param bExpectSuccess
-   *        specifies if the test case expects a positive or negative response
-   *        from the server
+   *        specifies if the test case expects a positive or negative response from the server
    * @param sExecptedResponseContent
-   *        if you expect a negative response, you must give the expected error
-   *        code as it will get searched for in the response.
+   *        if you expect a negative response, you must give the expected error code as it will get
+   *        searched for in the response.
    * @return Response as String
    * @throws IOException
    *         In case HTTP sending fails
@@ -254,11 +252,10 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
    * @param aHttpEntity
    *        the entity to send to the server
    * @param bExpectSuccess
-   *        specifies if the test case expects a positive or negative response
-   *        from the server
+   *        specifies if the test case expects a positive or negative response from the server
    * @param sExecptedResponseContent
-   *        if you expect a negative response, you must give the expected error
-   *        code as it will get searched for in the response.
+   *        if you expect a negative response, you must give the expected error code as it will get
+   *        searched for in the response.
    * @return Response as String
    * @throws IOException
    *         In case HTTP sending fails

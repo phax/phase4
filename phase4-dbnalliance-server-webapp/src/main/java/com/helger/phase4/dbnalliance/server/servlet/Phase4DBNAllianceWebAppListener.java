@@ -219,7 +219,7 @@ public final class Phase4DBNAllianceWebAppListener extends WebAppListener
     if (false)
     {
       // TODO enable when you use a proxy
-      aHCS.setProxyHost (new HttpHost (APConfig.getHttpProxyHost (), APConfig.getHttpProxyPort ()));
+      aHCS.getGeneralProxy ().setProxyHost (new HttpHost (APConfig.getHttpProxyHost (), APConfig.getHttpProxyPort ()));
     }
     DBNAllianceCRLDownloader.setAsDefaultCRLCache (aHCS);
 
