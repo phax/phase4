@@ -86,7 +86,7 @@
     <ph-web.version>10.5.1</ph-web.version>
     <ph-xsds.version>3.0.0</ph-xsds.version>
     <phive.version>10.1.1</phive.version>
-    <phive-rules.version>3.2.14</phive-rules.version>
+    <phive-rules.version>3.2.15</phive-rules.version>
   </properties>
 
   <dependencyManagement>
@@ -148,7 +148,7 @@
       <dependency>
         <groupId>org.eclipse.angus</groupId>
         <artifactId>angus-mail</artifactId>
-        <version>2.0.3</version>
+        <version>2.0.4</version>
       </dependency>
 
       <dependency>
@@ -221,7 +221,7 @@
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
-        <version>1.18.0</version>
+        <version>1.19.0</version>
       </dependency>
 
       <dependency>
