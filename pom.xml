@@ -241,13 +241,6 @@
         <artifactId>phase4-server-webapp</artifactId>
         <version>${project.version}</version>
       </dependency>
-     
-      <!-- EESPA -->
-      <dependency>
-        <groupId>com.helger.phase4</groupId>
-        <artifactId>phase4-profile-eespa</artifactId>
-        <version>${project.version}</version>
-      </dependency>
       
       <!-- BDEW -->
       <dependency>
@@ -345,7 +338,6 @@
     <module>phase4-profile-bdew</module>
     <module>phase4-profile-cef</module>
     <module>phase4-profile-dbnalliance</module>
-    <module>phase4-profile-eespa</module>
     <module>phase4-profile-entsog</module>
     <module>phase4-profile-euctp</module>
     <module>phase4-profile-peppol</module>
