@@ -20,7 +20,7 @@ import java.io.File;
 
 import org.slf4j.Logger;
 
-import com.helger.commons.io.resource.FileSystemResource;
+import com.helger.io.resource.FileSystemResource;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.sml.ESML;

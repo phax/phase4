@@ -18,20 +18,20 @@ package com.helger.phase4.incoming.spi;
 
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.state.ESuccess;
-import com.helger.commons.state.ISuccessIndicator;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.state.ESuccess;
+import com.helger.base.state.ISuccessIndicator;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.collection.CollectionHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.attachment.WSS4JAttachment;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class represents the result of a message processor SPI
@@ -111,7 +111,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
    */
   public boolean hasAsyncResponseURL ()
   {
-    return StringHelper.hasText (m_sAsyncResponseURL);
+    return StringHelper.isNotEmpty (m_sAsyncResponseURL);
   }
 
   @Override

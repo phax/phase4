@@ -16,14 +16,12 @@
  */
 package com.helger.phase4.mgr;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.UsedViaReflection;
-import com.helger.commons.exception.InitializationException;
-import com.helger.commons.lang.ClassHelper;
+import com.helger.annotation.style.UsedViaReflection;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.exception.InitializationException;
+import com.helger.base.lang.clazz.ClassHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -32,6 +30,8 @@ import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.scope.IScope;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Meta manager with all known managers.

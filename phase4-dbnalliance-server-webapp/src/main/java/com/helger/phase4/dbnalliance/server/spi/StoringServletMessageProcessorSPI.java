@@ -20,21 +20,18 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.annotation.IsSPIImplementation;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.file.FileHelper;
-import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.mutable.MutableLong;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.IsSPIImplementation;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.numeric.mutable.MutableLong;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.http.header.HttpHeaderMap;
+import com.helger.io.file.FileHelper;
+import com.helger.io.file.SimpleFileIO;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.dbnalliance.server.storage.StorageHelper;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -52,6 +49,9 @@ import com.helger.security.certificate.CertificateHelper;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Example implementation of {@link IAS4IncomingMessageProcessorSPI}

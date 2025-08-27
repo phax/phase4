@@ -16,16 +16,13 @@
  */
 package com.helger.phase4.client;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.WillNotClose;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.crypto.AS4Signer;
@@ -35,6 +32,9 @@ import com.helger.phase4.model.message.EAS4MessageType;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xsds.xmldsig.ReferenceType;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * AS4 client for {@link AS4ReceiptMessage} objects.

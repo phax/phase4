@@ -19,19 +19,19 @@ package com.helger.phase4.messaging.http;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.http.HttpHeaderMap;
+import com.helger.annotation.Nonempty;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.IHttpClientProvider;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Interface for an HTTP POST sender.

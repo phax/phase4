@@ -19,13 +19,10 @@ package com.helger.phase4.sender;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.equals.EqualsHelper;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.collection.CollectionFind;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.MessagePartNRInformation;
@@ -36,6 +33,9 @@ import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.xsds.xmldsig.ReferenceType;
 import com.helger.xsds.xmldsig.TransformType;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Specific wrapped {@link IAS4SignalMessageConsumer} that verifies the DSig References between the
@@ -135,8 +135,8 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
     if (aTransforms1.size () != aTransforms2.size ())
       return false;
     for (final TransformType aTransform1 : aTransforms1)
-      if (!CollectionHelper.containsAny (aTransforms2,
-                                         x -> EqualsHelper.equals (x.getAlgorithm (), aTransform1.getAlgorithm ())))
+      if (!CollectionFind.containsAny (aTransforms2,
+                                       x -> EqualsHelper.equals (x.getAlgorithm (), aTransform1.getAlgorithm ())))
         return false;
 
     // Digest algorithm

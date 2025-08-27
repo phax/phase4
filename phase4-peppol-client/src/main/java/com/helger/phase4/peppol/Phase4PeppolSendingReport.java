@@ -21,18 +21,15 @@ import java.time.OffsetDateTime;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.datetime.PDTFactory;
-import com.helger.commons.datetime.PDTWebDateHelper;
-import com.helger.commons.lang.StackTraceHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.Nonnegative;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.rt.StackTraceHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.datetime.helper.PDTFactory;
+import com.helger.datetime.web.PDTWebDateHelper;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
@@ -59,6 +56,9 @@ import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.IXMLWriterSettings;
 import com.helger.xml.serialize.write.XMLWriterSettings;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class contains the structured information about what happens on Peppol sending.
@@ -202,7 +202,7 @@ public class Phase4PeppolSendingReport
 
   public boolean hasCountryC1 ()
   {
-    return StringHelper.hasText (m_sCountryC1);
+    return StringHelper.isNotEmpty (m_sCountryC1);
   }
 
   /**
@@ -218,7 +218,7 @@ public class Phase4PeppolSendingReport
 
   public boolean hasSenderPartyID ()
   {
-    return StringHelper.hasText (m_sSenderPartyID);
+    return StringHelper.isNotEmpty (m_sSenderPartyID);
   }
 
   /**
@@ -234,7 +234,7 @@ public class Phase4PeppolSendingReport
 
   public boolean hasTransportProfileID ()
   {
-    return StringHelper.hasText (m_sTransportProfileID);
+    return StringHelper.isNotEmpty (m_sTransportProfileID);
   }
 
   /**
@@ -250,7 +250,7 @@ public class Phase4PeppolSendingReport
 
   public boolean hasSBDHInstanceIdentifier ()
   {
-    return StringHelper.hasText (m_sSBDHInstanceIdentifier);
+    return StringHelper.isNotEmpty (m_sSBDHInstanceIdentifier);
   }
 
   /**
@@ -267,7 +267,7 @@ public class Phase4PeppolSendingReport
 
   public boolean hasC3EndpointURL ()
   {
-    return StringHelper.hasText (m_sC3EndpointURL);
+    return StringHelper.isNotEmpty (m_sC3EndpointURL);
   }
 
   /**
@@ -288,12 +288,12 @@ public class Phase4PeppolSendingReport
 
   public boolean hasC3CertSubjectCN ()
   {
-    return StringHelper.hasText (m_sC3CertSubjectCN);
+    return StringHelper.isNotEmpty (m_sC3CertSubjectCN);
   }
 
   public boolean hasC3CertSubjectO ()
   {
-    return StringHelper.hasText (m_sC3CertSubjectO);
+    return StringHelper.isNotEmpty (m_sC3CertSubjectO);
   }
 
   /**
@@ -345,7 +345,7 @@ public class Phase4PeppolSendingReport
 
   public boolean hasC3TechnicalContact ()
   {
-    return StringHelper.hasText (m_sC3TechnicalContact);
+    return StringHelper.isNotEmpty (m_sC3TechnicalContact);
   }
 
   /**
@@ -362,7 +362,7 @@ public class Phase4PeppolSendingReport
 
   public boolean hasAS4MessageID ()
   {
-    return StringHelper.hasText (m_sAS4MessageID);
+    return StringHelper.isNotEmpty (m_sAS4MessageID);
   }
 
   /**
@@ -378,7 +378,7 @@ public class Phase4PeppolSendingReport
 
   public boolean hasAS4ConversationID ()
   {
-    return StringHelper.hasText (m_sAS4ConversationID);
+    return StringHelper.isNotEmpty (m_sAS4ConversationID);
   }
 
   /**
@@ -533,7 +533,7 @@ public class Phase4PeppolSendingReport
     aJson.add ("smlDnsZone", m_sSMLDNSZone);
 
     if (hasSBDHParseException ())
-      aJson.addJson ("sbdhParsingException", fEx.apply (m_aSBDHParseException));
+      aJson.add ("sbdhParsingException", fEx.apply (m_aSBDHParseException));
 
     if (hasSenderID ())
       aJson.add ("senderId", m_aSenderID.getURIEncoded ());
@@ -588,7 +588,7 @@ public class Phase4PeppolSendingReport
     if (hasAS4SendingResult ())
       aJson.add ("sendingResult", m_eAS4SendingResult.name ());
     if (hasAS4SendingException ())
-      aJson.addJson ("sendingException", fEx.apply (m_aAS4SendingException));
+      aJson.add ("sendingException", fEx.apply (m_aAS4SendingException));
     if (hasAS4ReceivedSignalMsg ())
       aJson.add ("as4ReceivedSignalMsg", new Ebms3SignalMessageMarshaller ().getAsString (m_aAS4ReceivedSignalMsg));
     aJson.add ("as4ResponseError", m_bAS4ResponseError);
@@ -662,111 +662,110 @@ public class Phase4PeppolSendingReport
   {
     final BiFunction <Exception, String, IMicroElement> fEx = (ex, tag) -> {
       final IMicroElement ret = new MicroElement (sNamespaceURI, tag);
-      ret.appendElement (sNamespaceURI, "Class").appendText (ex.getClass ().getName ());
-      ret.appendElement (sNamespaceURI, "Message").appendText (ex.getMessage ());
-      ret.appendElement (sNamespaceURI, "StackTrace").appendText (StackTraceHelper.getStackAsString (ex));
+      ret.addElementNS (sNamespaceURI, "Class").addText (ex.getClass ().getName ());
+      ret.addElementNS (sNamespaceURI, "Message").addText (ex.getMessage ());
+      ret.addElementNS (sNamespaceURI, "StackTrace").addText (StackTraceHelper.getStackAsString (ex));
       return ret;
     };
 
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
-    ret.appendElement (sNamespaceURI, "CurrentDateTimeUTC")
-       .appendText (PDTWebDateHelper.getAsStringXSD (m_aCurrentDateTimeUTC));
-    ret.appendElement (sNamespaceURI, "phase4Version").appendText (CAS4Version.BUILD_VERSION);
-    ret.appendElement (sNamespaceURI, "SMLDNSZone").appendText (m_sSMLDNSZone);
+    ret.addElementNS (sNamespaceURI, "CurrentDateTimeUTC")
+       .addText (PDTWebDateHelper.getAsStringXSD (m_aCurrentDateTimeUTC));
+    ret.addElementNS (sNamespaceURI, "phase4Version").addText (CAS4Version.BUILD_VERSION);
+    ret.addElementNS (sNamespaceURI, "SMLDNSZone").addText (m_sSMLDNSZone);
 
     if (hasSBDHParseException ())
-      ret.appendChild (fEx.apply (m_aSBDHParseException, "SBDHParsingException"));
+      ret.addChild (fEx.apply (m_aSBDHParseException, "SBDHParsingException"));
 
     if (hasSenderID ())
-      ret.appendElement (sNamespaceURI, "SenderID").appendText (m_aSenderID.getURIEncoded ());
+      ret.addElementNS (sNamespaceURI, "SenderID").addText (m_aSenderID.getURIEncoded ());
     if (hasReceiverID ())
-      ret.appendElement (sNamespaceURI, "ReceiverID").appendText (m_aReceiverID.getURIEncoded ());
+      ret.addElementNS (sNamespaceURI, "ReceiverID").addText (m_aReceiverID.getURIEncoded ());
     if (hasDocTypeID ())
     {
       final String sDocTypeID = m_aDocTypeID.getURIEncoded ();
-      ret.appendElement (sNamespaceURI, "DocTypeID")
+      ret.addElementNS (sNamespaceURI, "DocTypeID")
          .setAttribute ("inCodeList",
                         PredefinedDocumentTypeIdentifierManager.containsDocumentTypeIdentifierWithID (sDocTypeID))
-         .appendText (sDocTypeID);
+         .addText (sDocTypeID);
     }
     if (hasProcessID ())
     {
       final String sProcessID = m_aProcessID.getURIEncoded ();
-      ret.appendElement (sNamespaceURI, "ProcessID")
+      ret.addElementNS (sNamespaceURI, "ProcessID")
          .setAttribute ("inCodeList", PredefinedProcessIdentifierManager.containsProcessIdentifierWithID (sProcessID))
-         .appendText (sProcessID);
+         .addText (sProcessID);
     }
     if (hasCountryC1 ())
-      ret.appendElement (sNamespaceURI, "CountryC1").appendText (m_sCountryC1);
+      ret.addElementNS (sNamespaceURI, "CountryC1").addText (m_sCountryC1);
     if (hasSenderPartyID ())
-      ret.appendElement (sNamespaceURI, "SenderPartyID").appendText (m_sSenderPartyID);
+      ret.addElementNS (sNamespaceURI, "SenderPartyID").addText (m_sSenderPartyID);
     if (hasTransportProfileID ())
-      ret.appendElement (sNamespaceURI, "TransportProfileID").appendText (m_sTransportProfileID);
+      ret.addElementNS (sNamespaceURI, "TransportProfileID").addText (m_sTransportProfileID);
 
     if (hasSBDHInstanceIdentifier ())
-      ret.appendElement (sNamespaceURI, "SBDHInstanceIdentifier").appendText (m_sSBDHInstanceIdentifier);
+      ret.addElementNS (sNamespaceURI, "SBDHInstanceIdentifier").addText (m_sSBDHInstanceIdentifier);
 
     if (hasC3EndpointURL ())
-      ret.appendElement (sNamespaceURI, "C3EndpointUrl").appendText (m_sC3EndpointURL);
+      ret.addElementNS (sNamespaceURI, "C3EndpointUrl").addText (m_sC3EndpointURL);
     if (hasC3Cert ())
-      ret.appendElement (sNamespaceURI, "C3Cert").appendText (CertificateHelper.getPEMEncodedCertificate (m_aC3Cert));
+      ret.addElementNS (sNamespaceURI, "C3Cert").addText (CertificateHelper.getPEMEncodedCertificate (m_aC3Cert));
     if (hasC3CertSubjectCN ())
-      ret.appendElement (sNamespaceURI, "C3CertSubjectCN").appendText (m_sC3CertSubjectCN);
+      ret.addElementNS (sNamespaceURI, "C3CertSubjectCN").addText (m_sC3CertSubjectCN);
     if (hasC3CertSubjectO ())
-      ret.appendElement (sNamespaceURI, "C3CertSubjectO").appendText (m_sC3CertSubjectO);
+      ret.addElementNS (sNamespaceURI, "C3CertSubjectO").addText (m_sC3CertSubjectO);
     if (hasC3CertCheckDT ())
-      ret.appendElement (sNamespaceURI, "C3CertCheckDT")
-         .appendText (PDTWebDateHelper.getAsStringXSD (m_aC3CertCheckDT));
+      ret.addElementNS (sNamespaceURI, "C3CertCheckDT").addText (PDTWebDateHelper.getAsStringXSD (m_aC3CertCheckDT));
     if (hasC3CertCheckResult ())
-      ret.appendElement (sNamespaceURI, "C3CertCheckResult").appendText (m_eC3CertCheckResult.name ());
+      ret.addElementNS (sNamespaceURI, "C3CertCheckResult").addText (m_eC3CertCheckResult.name ());
     if (hasC3TechnicalContact ())
-      ret.appendElement (sNamespaceURI, "C3TechnicalContact").appendText (m_sC3TechnicalContact);
+      ret.addElementNS (sNamespaceURI, "C3TechnicalContact").addText (m_sC3TechnicalContact);
 
     if (hasAS4MessageID ())
-      ret.appendElement (sNamespaceURI, "AS4MessageId").appendText (m_sAS4MessageID);
+      ret.addElementNS (sNamespaceURI, "AS4MessageId").addText (m_sAS4MessageID);
     if (hasAS4ConversationID ())
-      ret.appendElement (sNamespaceURI, "AS4ConversationId").appendText (m_sAS4ConversationID);
+      ret.addElementNS (sNamespaceURI, "AS4ConversationId").addText (m_sAS4ConversationID);
     if (hasAS4SendingDT ())
-      ret.appendElement (sNamespaceURI, "AS4SendingDateTime")
-         .appendText (PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
+      ret.addElementNS (sNamespaceURI, "AS4SendingDateTime")
+         .addText (PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
 
     if (hasAS4SendingResult ())
-      ret.appendElement (sNamespaceURI, "AS4SendingResult").appendText (m_eAS4SendingResult.name ());
+      ret.addElementNS (sNamespaceURI, "AS4SendingResult").addText (m_eAS4SendingResult.name ());
     if (hasAS4SendingException ())
-      ret.appendChild (fEx.apply (m_aAS4SendingException, "AS4SendingException"));
+      ret.addChild (fEx.apply (m_aAS4SendingException, "AS4SendingException"));
     if (hasAS4ReceivedSignalMsg ())
-      ret.appendElement (sNamespaceURI, "AS4ReceivedSignalMsg")
-         .appendChild (new Ebms3SignalMessageMarshaller ().getAsMicroElement (m_aAS4ReceivedSignalMsg));
-    ret.appendElement (sNamespaceURI, "AS4ResponseError").appendText (m_bAS4ResponseError);
+      ret.addElementNS (sNamespaceURI, "AS4ReceivedSignalMsg")
+         .addChild (new Ebms3SignalMessageMarshaller ().getAsMicroElement (m_aAS4ReceivedSignalMsg));
+    ret.addElementNS (sNamespaceURI, "AS4ResponseError").addText (m_bAS4ResponseError);
     if (hasAS4ResponseErrors ())
     {
-      final IMicroElement aErrors = ret.appendElement (sNamespaceURI, "AS4ResponseErrors");
+      final IMicroElement aErrors = ret.addElementNS (sNamespaceURI, "AS4ResponseErrors");
 
       for (final Ebms3Error aError : m_aAS4ResponseErrors)
       {
-        final IMicroElement aItem = aErrors.appendElement (sNamespaceURI, "Item");
+        final IMicroElement aItem = aErrors.addElementNS (sNamespaceURI, "Item");
         if (aError.getDescription () != null)
-          aItem.appendElement (sNamespaceURI, "Description").appendText (aError.getDescriptionValue ());
+          aItem.addElementNS (sNamespaceURI, "Description").addText (aError.getDescriptionValue ());
         if (aError.getErrorDetail () != null)
-          aItem.appendElement (sNamespaceURI, "ErrorDetails").appendText (aError.getErrorDetail ());
+          aItem.addElementNS (sNamespaceURI, "ErrorDetails").addText (aError.getErrorDetail ());
         if (aError.getCategory () != null)
-          aItem.appendElement (sNamespaceURI, "Category").appendText (aError.getCategory ());
+          aItem.addElementNS (sNamespaceURI, "Category").addText (aError.getCategory ());
         if (aError.getRefToMessageInError () != null)
-          aItem.appendElement (sNamespaceURI, "RefToMessageInError").appendText (aError.getRefToMessageInError ());
+          aItem.addElementNS (sNamespaceURI, "RefToMessageInError").addText (aError.getRefToMessageInError ());
         if (aError.getErrorCode () != null)
-          aItem.appendElement (sNamespaceURI, "ErrorCode").appendText (aError.getErrorCode ());
+          aItem.addElementNS (sNamespaceURI, "ErrorCode").addText (aError.getErrorCode ());
         if (aError.getOrigin () != null)
-          aItem.appendElement (sNamespaceURI, "Origin").appendText (aError.getOrigin ());
+          aItem.addElementNS (sNamespaceURI, "Origin").addText (aError.getOrigin ());
         if (aError.getSeverity () != null)
-          aItem.appendElement (sNamespaceURI, "Severity").appendText (aError.getSeverity ());
+          aItem.addElementNS (sNamespaceURI, "Severity").addText (aError.getSeverity ());
         if (aError.getShortDescription () != null)
-          aItem.appendElement (sNamespaceURI, "ShortDescription").appendText (aError.getShortDescription ());
+          aItem.addElementNS (sNamespaceURI, "ShortDescription").addText (aError.getShortDescription ());
       }
     }
 
-    ret.appendElement (sNamespaceURI, "OverallDurationMillis").appendText (m_nOverallDurationMillis);
-    ret.appendElement (sNamespaceURI, "SendingSuccess").appendText (m_bSendingSuccess);
-    ret.appendElement (sNamespaceURI, "OverallSuccess").appendText (m_bOverallSuccess);
+    ret.addElementNS (sNamespaceURI, "OverallDurationMillis").addText (m_nOverallDurationMillis);
+    ret.addElementNS (sNamespaceURI, "SendingSuccess").addText (m_bSendingSuccess);
+    ret.addElementNS (sNamespaceURI, "OverallSuccess").addText (m_bOverallSuccess);
     return ret;
   }
 

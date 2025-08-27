@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.crypto;
 
-import javax.annotation.Nonnull;
+import com.helger.annotation.Nonempty;
+import com.helger.base.id.IHasID;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
+import jakarta.annotation.Nonnull;
 
 /**
  * Base interface for a canonicalization algorithm.

@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.crypto;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.wss4j.common.WSS4JConstants;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
-import com.helger.commons.lang.EnumHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.id.IHasID;
+import com.helger.base.lang.EnumHelper;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Enumeration of all key encryption algorithms.

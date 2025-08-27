@@ -19,10 +19,10 @@
  */
 package com.helger.phase4.bdew;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.helger.phase4.util.Phase4Exception;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Generic exception to be thrown from the phase4 BDEW sender.
@@ -38,16 +38,6 @@ public class Phase4BDEWException extends Phase4Exception
   public Phase4BDEWException (@Nonnull final String sMessage)
   {
     super (sMessage);
-  }
-
-  /**
-   * @param aCause
-   *        Optional causing exception
-   */
-  @Deprecated (forRemoval = true, since = "3.2.0")
-  public Phase4BDEWException (@Nullable final Throwable aCause)
-  {
-    super (aCause);
   }
 
   /**

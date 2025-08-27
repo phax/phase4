@@ -19,23 +19,23 @@ package com.helger.phase4.duplicate;
 import java.time.OffsetDateTime;
 import java.util.function.Predicate;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
+import com.helger.annotation.Nonnegative;
+import com.helger.annotation.concurrent.GuardedBy;
+import com.helger.annotation.concurrent.ThreadSafe;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.concurrent.SimpleReadWriteLock;
+import com.helger.base.state.EChange;
+import com.helger.base.state.EContinue;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.collection.CollectionFind;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsHashMap;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsMap;
 
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsHashMap;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsMap;
-import com.helger.commons.concurrent.SimpleReadWriteLock;
-import com.helger.commons.state.EChange;
-import com.helger.commons.state.EContinue;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This is the duplicate checker for avoiding duplicate messages.
@@ -57,7 +57,7 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
                                      @Nullable final String sProfileID,
                                      @Nullable final String sPModeID)
   {
-    if (StringHelper.hasNoText (sMessageID))
+    if (StringHelper.isEmpty (sMessageID))
     {
       // No message ID present - don't check for duplication
       return EContinue.CONTINUE;
@@ -126,13 +126,13 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   @Nullable
   public IAS4DuplicateItem findFirst (@Nonnull final Predicate <? super IAS4DuplicateItem> aFilter)
   {
-    return m_aRWLock.readLockedGet ( () -> CollectionHelper.findFirst (m_aMap.values (), aFilter));
+    return m_aRWLock.readLockedGet ( () -> CollectionFind.findFirst (m_aMap.values (), aFilter));
   }
 
   @Nullable
   public IAS4DuplicateItem getItemOfMessageID (@Nullable final String sMessageID)
   {
-    if (StringHelper.hasNoText (sMessageID))
+    if (StringHelper.isEmpty (sMessageID))
       return null;
 
     return findFirst (x -> x.getMessageID ().equals (sMessageID));

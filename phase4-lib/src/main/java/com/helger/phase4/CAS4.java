@@ -16,11 +16,11 @@
  */
 package com.helger.phase4;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.xsds.xmldsig.CXMLDSig;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * AS4 constants
@@ -58,8 +58,7 @@ public final class CAS4
   public static final String XENC11_NS = "http://www.w3.org/2009/xmlenc11#";
 
   /**
-   * Name of the library. Must start with a letter and must be a valid XML ID
-   * and token
+   * Name of the library. Must start with a letter and must be a valid XML ID and token
    */
   public static final String LIB_NAME = "phase4";
   /** The URL of the library. */
@@ -67,13 +66,13 @@ public final class CAS4
 
   // Constant Names
   /**
-   * The name of the "original sender" (C1) message property for four-corner
-   * topology message exchanges.
+   * The name of the "original sender" (C1) message property for four-corner topology message
+   * exchanges.
    */
   public static final String ORIGINAL_SENDER = "originalSender";
   /**
-   * The name of the "final recipient" (C4) message property for four-corner
-   * topology message exchanges.
+   * The name of the "final recipient" (C4) message property for four-corner topology message
+   * exchanges.
    */
   public static final String FINAL_RECIPIENT = "finalRecipient";
 

@@ -16,25 +16,25 @@
  */
 package com.helger.phase4;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.attr.IStringMap;
-import com.helger.commons.io.resource.FileSystemResource;
-import com.helger.commons.io.resource.IReadableResource;
+import com.helger.annotation.concurrent.ThreadSafe;
+import com.helger.base.enforce.ValueEnforcer;
 import com.helger.config.IConfig;
 import com.helger.config.fallback.ConfigWithFallback;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.config.source.EConfigSourceType;
 import com.helger.config.source.MultiConfigurationValueProvider;
 import com.helger.config.source.appl.ConfigurationSourceFunction;
-import com.helger.config.source.res.ConfigurationSourceProperties;
+import com.helger.config.source.resource.properties.ConfigurationSourceProperties;
+import com.helger.io.resource.FileSystemResource;
+import com.helger.io.resource.IReadableResource;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.typeconvert.collection.IStringMap;
+
+import jakarta.annotation.Nonnull;
 
 /**
- * Helper class to apply a certain {@link IConfig} for a certain code area. Use
- * via the try-with-resources idiom.
+ * Helper class to apply a certain {@link IConfig} for a certain code area. Use via the
+ * try-with-resources idiom.
  *
  * @author Philip Helger
  */

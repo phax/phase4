@@ -16,12 +16,10 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.state.ETriState;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.state.ETriState;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.IJsonValue;
@@ -32,6 +30,8 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.phase4.wss.EWSSVersion;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeLegSecurity}.
@@ -67,14 +67,12 @@ public final class PModeLegSecurityJsonConverter
   {}
 
   /**
-   * Convert the provided {@link PModeLegSecurity} object to a JSON object. The
-   * conversion from JSON Object back to a domain object happens via
-   * {@link #convertToNative(IJsonObject)}.
+   * Convert the provided {@link PModeLegSecurity} object to a JSON object. The conversion from JSON
+   * Object back to a domain object happens via {@link #convertToNative(IJsonObject)}.
    *
    * @param aValue
    *        The value to be converted. May not be <code>null</code>.
-   * @return The non-<code>null</code> JSON object filled with the necessary
-   *         values.
+   * @return The non-<code>null</code> JSON object filled with the necessary values.
    */
   @Nonnull
   public static IJsonObject convertToJson (@Nonnull final PModeLegSecurity aValue)
@@ -85,9 +83,9 @@ public final class PModeLegSecurityJsonConverter
       ret.add (ATTR_WSS_VERSION, aValue.getWSSVersionAsString ());
 
     if (aValue.x509SignElements ().isNotEmpty ())
-      ret.addJson (ELEMENT_X509_SIGN_ELEMENT, new JsonArray ().addAll (aValue.x509SignElements ()));
+      ret.add (ELEMENT_X509_SIGN_ELEMENT, new JsonArray ().addAll (aValue.x509SignElements ()));
     if (aValue.x509SignAttachments ().isNotEmpty ())
-      ret.addJson (ELEMENT_X509_SIGN_ATTACHMENT, new JsonArray ().addAll (aValue.x509SignAttachments ()));
+      ret.add (ELEMENT_X509_SIGN_ATTACHMENT, new JsonArray ().addAll (aValue.x509SignAttachments ()));
     if (aValue.hasX509SignatureCertificate ())
       ret.add (ELEMENT_X509_SIGNATURE_CERTIFICATE, aValue.getX509SignatureCertificate ());
     if (aValue.hasX509SignatureHashFunction ())
@@ -96,11 +94,11 @@ public final class PModeLegSecurityJsonConverter
       ret.add (ATTR_X509_SIGNATURE_ALGORITHM, aValue.getX509SignatureAlgorithmID ());
 
     if (aValue.x509EncryptionEncryptElements ().isNotEmpty ())
-      ret.addJson (ELEMENT_X509_ENCRYPTION_ENCRYPT_ELEMENT,
-                   new JsonArray ().addAll (aValue.x509EncryptionEncryptElements ()));
+      ret.add (ELEMENT_X509_ENCRYPTION_ENCRYPT_ELEMENT,
+               new JsonArray ().addAll (aValue.x509EncryptionEncryptElements ()));
     if (aValue.x509EncryptionEncryptAttachments ().isNotEmpty ())
-      ret.addJson (ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT,
-                   new JsonArray ().addAll (aValue.x509EncryptionEncryptAttachments ()));
+      ret.add (ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT,
+               new JsonArray ().addAll (aValue.x509EncryptionEncryptAttachments ()));
     if (aValue.hasX509EncryptionCertificate ())
       ret.add (ELEMENT_X509_ENCRYPTION_CERTIFICATE, aValue.getX509EncryptionCertificate ());
     ret.add (ATTR_X509_ENCRYPTION_ALGORITHM, aValue.getX509EncryptionAlgorithmID ());

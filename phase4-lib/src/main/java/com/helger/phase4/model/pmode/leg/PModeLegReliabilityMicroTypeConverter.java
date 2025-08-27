@@ -16,17 +16,17 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.state.ETriState;
+import com.helger.base.state.ETriState;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModeLegReliability}.
@@ -68,7 +68,7 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
     if (aValue.isStartGroupDefined ())
       ret.setAttribute (ATTR_START_GROUP, aValue.isStartGroup ());
     for (final String sCorrelation : aValue.getAllCorrelations ())
-      ret.appendElement (sNamespaceURI, ELEMENT_CORRELATION).appendText (sCorrelation);
+      ret.addElementNS (sNamespaceURI, ELEMENT_CORRELATION).addText (sCorrelation);
     if (aValue.isTerminateGroupDefined ())
       ret.setAttribute (ATTR_TERMINATE_GROUP, aValue.isTerminateGroup ());
     return ret;

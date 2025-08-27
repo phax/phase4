@@ -19,9 +19,9 @@ package com.helger.phase4.crypto;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
-import javax.annotation.Nullable;
-
 import com.helger.security.keystore.KeyStoreHelper;
+
+import jakarta.annotation.Nullable;
 
 /**
  * Abstract implementation of {@link IAS4CryptoFactory}.

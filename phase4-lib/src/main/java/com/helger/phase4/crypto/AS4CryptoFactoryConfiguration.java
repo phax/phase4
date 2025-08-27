@@ -19,14 +19,11 @@ package com.helger.phase4.crypto;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-
 import org.apache.wss4j.common.crypto.Merlin;
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.Nonempty;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.concurrent.Immutable;
 import com.helger.config.IConfig;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.phase4.config.AS4Configuration;
@@ -36,6 +33,9 @@ import com.helger.security.keystore.IKeyStoreAndKeyDescriptor;
 import com.helger.security.keystore.ITrustStoreDescriptor;
 import com.helger.security.keystore.LoadedKey;
 import com.helger.security.keystore.LoadedKeyStore;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * phase4 crypto factory settings based on {@link IConfig}. It can do the same

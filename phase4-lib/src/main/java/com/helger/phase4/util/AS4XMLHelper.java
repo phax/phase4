@@ -18,7 +18,6 @@ package com.helger.phase4.util;
 
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -27,9 +26,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.ArrayHelper;
-import com.helger.commons.io.stream.NonBlockingStringWriter;
+import com.helger.base.CGlobal;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.io.nonblocking.NonBlockingStringWriter;
 import com.helger.phase4.marshaller.Ebms3NamespaceHandler;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.EXMLSerializeXMLDeclaration;
@@ -37,6 +36,8 @@ import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 import com.helger.xml.transform.LoggingTransformErrorListener;
 import com.helger.xml.transform.XMLTransformerFactory;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * AS4 XML helper methods.
@@ -69,7 +70,7 @@ public final class AS4XMLHelper
     {
       final TransformerFactory aFactory = XMLTransformerFactory.createTransformerFactory (new LoggingTransformErrorListener (Locale.ROOT),
                                                                                           null);
-      XMLTransformerFactory.makeTransformerFactorySecure (aFactory, ArrayHelper.EMPTY_STRING_ARRAY);
+      XMLTransformerFactory.makeTransformerFactorySecure (aFactory, CGlobal.EMPTY_STRING_ARRAY);
       final Transformer aTransformer = aFactory.newTransformer ();
 
       try (final NonBlockingStringWriter aSW = new NonBlockingStringWriter ())

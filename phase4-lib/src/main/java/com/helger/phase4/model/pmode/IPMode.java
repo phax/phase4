@@ -16,17 +16,17 @@
  */
 package com.helger.phase4.model.pmode;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.string.StringHelper;
 import com.helger.json.IJsonObject;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.tenancy.IBusinessObject;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Base read-only interface for a single {@link PMode}.
@@ -131,7 +131,7 @@ public interface IPMode extends IBusinessObject
    */
   default boolean hasAgreement ()
   {
-    return StringHelper.hasText (getAgreement ());
+    return StringHelper.isNotEmpty (getAgreement ());
   }
 
   /**

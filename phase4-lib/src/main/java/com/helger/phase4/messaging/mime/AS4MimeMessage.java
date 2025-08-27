@@ -18,11 +18,10 @@ package com.helger.phase4.messaging.mime;
 
 import java.io.InputStream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.helger.base.tostring.ToStringGenerator;
 
-import com.helger.commons.string.ToStringGenerator;
-
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;

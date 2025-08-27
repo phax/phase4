@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonValue;
 import com.helger.json.JsonArray;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for {@link PModeAddressList} objects.

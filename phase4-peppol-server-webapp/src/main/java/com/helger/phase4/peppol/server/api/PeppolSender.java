@@ -16,16 +16,14 @@
  */
 package com.helger.phase4.peppol.server.api;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.system.EJavaVersion;
-import com.helger.commons.timing.StopWatch;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.system.EJavaVersion;
+import com.helger.base.timing.StopWatch;
+import com.helger.base.wrapper.Wrapper;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppolid.IDocumentTypeIdentifier;
@@ -48,6 +46,8 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * This contains the main Peppol sending code. It was extracted from the controller to make it more

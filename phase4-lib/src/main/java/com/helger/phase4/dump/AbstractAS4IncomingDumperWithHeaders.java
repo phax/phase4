@@ -20,14 +20,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.CHttp;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.traits.IGenericImplTrait;
+import com.helger.base.trait.IGenericImplTrait;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.http.CHttp;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Abstract version of {@link IAS4IncomingDumper} that emits all headers on the

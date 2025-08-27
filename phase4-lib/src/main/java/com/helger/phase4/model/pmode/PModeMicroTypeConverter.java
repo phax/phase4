@@ -16,9 +16,6 @@
  */
 package com.helger.phase4.model.pmode;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -28,6 +25,9 @@ import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PMode}.
@@ -53,23 +53,19 @@ public final class PModeMicroTypeConverter extends AbstractBusinessObjectMicroTy
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     setObjectFields (aValue, ret);
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getInitiator (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_INITIATOR));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getResponder (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_RESPONDER));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getInitiator (), sNamespaceURI, ELEMENT_INITIATOR));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getResponder (), sNamespaceURI, ELEMENT_RESPONDER));
     ret.setAttribute (ATTR_AGREEMENT, aValue.getAgreement ());
     ret.setAttribute (ATTR_MEP, aValue.getMEPID ());
     ret.setAttribute (ATTR_MEP_BINDING, aValue.getMEPBindingID ());
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg1 (), sNamespaceURI, ELEMENT_LEG1));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg2 (), sNamespaceURI, ELEMENT_LEG2));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getPayloadService (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_PAYLOADSERVICE));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReceptionAwareness (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_RECEPETIONAWARENESS));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg1 (), sNamespaceURI, ELEMENT_LEG1));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg2 (), sNamespaceURI, ELEMENT_LEG2));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getPayloadService (),
+                                                            sNamespaceURI,
+                                                            ELEMENT_PAYLOADSERVICE));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getReceptionAwareness (),
+                                                            sNamespaceURI,
+                                                            ELEMENT_RECEPETIONAWARENESS));
     return ret;
   }
 

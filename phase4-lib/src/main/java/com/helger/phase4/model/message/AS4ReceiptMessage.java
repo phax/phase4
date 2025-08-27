@@ -16,17 +16,14 @@
  */
 package com.helger.phase4.model.message;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.annotation.Nonempty;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.CAS4Version;
 import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
@@ -39,6 +36,9 @@ import com.helger.phase4.marshaller.NonRepudiationInformationMarshaller;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.xml.XMLFactory;
 import com.helger.xsds.xmldsig.ReferenceType;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * AS4 receipt message

@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.state.ETriState;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.state.ETriState;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeLegErrorHandling}.
@@ -49,11 +49,11 @@ public final class PModeLegErrorHandlingJsonConverter
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.hasReportSenderErrorsTo ())
-      ret.addJson (REPORT_SENDER_ERRORS_TO,
-                   PModeAddressListJsonConverter.convertToJson (aValue.getReportSenderErrorsTo ()));
+      ret.add (REPORT_SENDER_ERRORS_TO,
+               PModeAddressListJsonConverter.convertToJson (aValue.getReportSenderErrorsTo ()));
     if (aValue.hasReportReceiverErrorsTo ())
-      ret.addJson (REPORT_RECEIVER_ERRORS_TO,
-                   PModeAddressListJsonConverter.convertToJson (aValue.getReportReceiverErrorsTo ()));
+      ret.add (REPORT_RECEIVER_ERRORS_TO,
+               PModeAddressListJsonConverter.convertToJson (aValue.getReportReceiverErrorsTo ()));
     if (aValue.isReportAsResponseDefined ())
       ret.add (REPORT_AS_RESPONSE, aValue.isReportAsResponse ());
     if (aValue.isReportProcessErrorNotifyConsumerDefined ())

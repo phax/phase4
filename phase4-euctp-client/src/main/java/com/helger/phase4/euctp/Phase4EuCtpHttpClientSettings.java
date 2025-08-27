@@ -19,8 +19,6 @@ package com.helger.phase4.euctp;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
 
 import org.apache.hc.core5.ssl.SSLContextBuilder;
@@ -32,6 +30,9 @@ import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.CAS4Version;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Special {@link HttpClientSettings} with better defaults for euctp.

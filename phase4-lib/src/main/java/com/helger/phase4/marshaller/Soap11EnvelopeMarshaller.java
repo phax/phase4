@@ -20,8 +20,8 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.jaxb.GenericJAXBMarshaller;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.model.ESoapVersion;

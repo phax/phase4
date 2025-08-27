@@ -18,8 +18,6 @@ package com.helger.phase4.incoming.soap;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -27,10 +25,13 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.enforce.ValueEnforcer;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Internal WSS4J callback handler to check if a certain key alias is present in

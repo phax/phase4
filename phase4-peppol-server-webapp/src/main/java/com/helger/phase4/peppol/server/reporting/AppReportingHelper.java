@@ -21,18 +21,15 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.datetime.PDTFactory;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.timing.StopWatch;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.base.timing.StopWatch;
+import com.helger.base.wrapper.Wrapper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.datetime.helper.PDTFactory;
 import com.helger.peppol.reporting.api.CPeppolReporting;
 import com.helger.peppol.reporting.api.PeppolReportingHelper;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
@@ -58,6 +55,9 @@ import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.api.APIParamException;
 import com.helger.phase4.peppol.server.api.PeppolSender;
 import com.helger.security.certificate.TrustedCAChecker;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Helper class for report generation
@@ -153,7 +153,7 @@ public final class AppReportingHelper
                                                                                                                      .peppolTestAP ();
       // Sender: your company participant ID
       final String sSenderID = APConfig.getMyPeppolReportingSenderID ();
-      if (StringHelper.hasNoText (sSenderID))
+      if (StringHelper.isEmpty (sSenderID))
         throw new IllegalStateException ("No Peppol Reporting Sender ID is configured");
 
       // Receiver: production OpenPeppol; test Helger

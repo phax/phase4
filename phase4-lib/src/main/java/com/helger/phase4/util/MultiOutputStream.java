@@ -19,10 +19,10 @@ package com.helger.phase4.util;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.annotation.Nonnull;
+import com.helger.annotation.Nonempty;
+import com.helger.base.enforce.ValueEnforcer;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
+import jakarta.annotation.Nonnull;
 
 /**
  * An output stream that writes to multiple output streams.

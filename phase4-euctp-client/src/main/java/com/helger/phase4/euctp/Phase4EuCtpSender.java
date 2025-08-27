@@ -16,8 +16,9 @@
  */
 package com.helger.phase4.euctp;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+import com.helger.annotation.concurrent.Immutable;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * This class contains all the specifics to send AS4 messages with the euctp

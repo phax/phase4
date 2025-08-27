@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.crypto;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phase4.model.pmode.IPMode;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * An extended {@link IAS4CryptoFactory} with the capability to receive a P-Mode

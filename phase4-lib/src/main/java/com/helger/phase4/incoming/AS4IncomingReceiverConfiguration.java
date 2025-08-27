@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.incoming;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
-
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.config.AS4Configuration;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Default implementation of {@link IAS4IncomingReceiverConfiguration}.

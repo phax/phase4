@@ -18,17 +18,17 @@ package com.helger.phase4.crypto;
 
 import java.security.Provider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * A specific helper for {@link KeyStoreAndKeyDescriptor}
@@ -102,7 +102,7 @@ public final class AS4KeyStoreDescriptor
     final EKeyStoreType aType = EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sType,
                                                                                  CAS4Crypto.DEFAULT_KEY_STORE_TYPE);
     final String sPath = aConfig.getAsString (sConfigPrefix + "keystore.file");
-    if (StringHelper.hasNoText (sPath))
+    if (StringHelper.isEmpty (sPath))
       return null;
     final char [] aPassword = aConfig.getAsCharArray (sConfigPrefix + "keystore.password");
     if (aPassword == null)
@@ -110,7 +110,7 @@ public final class AS4KeyStoreDescriptor
 
     // Key Store Key
     final String sKeyAlias = aConfig.getAsString (sConfigPrefix + "keystore.alias");
-    if (StringHelper.hasNoText (sKeyAlias))
+    if (StringHelper.isEmpty (sKeyAlias))
       return null;
     final char [] aKeyPassword = aConfig.getAsCharArray (sConfigPrefix + "keystore.private.password");
     if (aKeyPassword == null)

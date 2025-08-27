@@ -24,13 +24,13 @@ import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.helger.commons.collection.attr.IStringMap;
-import com.helger.commons.collection.attr.StringMap;
 import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.message.ReceiptMessageTest;
 import com.helger.phase4.server.message.UserMessageOneAttachmentTest;
 import com.helger.phase4.server.message.UserMessageSoapBodyPayloadTest;
+import com.helger.typeconvert.collection.IStringMap;
+import com.helger.typeconvert.collection.StringMap;
 
 /**
  * Runs tests that are marked with the Category {@link IHolodeckTests}. <br>

@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.helger.commons.string.StringHelper;
+import com.helger.base.string.StringHelper;
 
 /**
  * Test class for class {@link ECryptoAlgorithmCrypt}.
@@ -36,9 +36,9 @@ public final class ECryptoAlgorithmCryptTest
   {
     for (final ECryptoAlgorithmCrypt e : ECryptoAlgorithmCrypt.values ())
     {
-      assertTrue (StringHelper.hasText (e.getID ()));
+      assertTrue (StringHelper.isNotEmpty (e.getID ()));
       assertNotNull (e.getOID ());
-      assertTrue (StringHelper.hasText (e.getAlgorithmURI ()));
+      assertTrue (StringHelper.isNotEmpty (e.getAlgorithmURI ()));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrNull (e.getID ()));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrDefault (e.getID (), null));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrThrow (e.getID ()));

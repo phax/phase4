@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.helger.commons.string.StringHelper;
+import com.helger.base.string.StringHelper;
 
 /**
  * Test class for class {@link EMEPBinding}
@@ -35,8 +35,8 @@ public final class EMEPBindingTest
   {
     for (final EMEPBinding e : EMEPBinding.values ())
     {
-      assertTrue (StringHelper.hasText (e.getID ()));
-      assertTrue (StringHelper.hasText (e.getURI ()));
+      assertTrue (StringHelper.isNotEmpty (e.getID ()));
+      assertTrue (StringHelper.isNotEmpty (e.getURI ()));
       assertSame (e, EMEPBinding.getFromIDOrNull (e.getID ()));
       assertTrue (e.isSynchronous () || e.isAsynchronous ());
     }

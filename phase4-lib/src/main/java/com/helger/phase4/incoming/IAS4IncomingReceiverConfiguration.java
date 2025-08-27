@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.incoming;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Contains some configuration properties for incoming messages.

@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.marshaller;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * A special XML namespace context that contains all default SOAP 1.2 mappings.

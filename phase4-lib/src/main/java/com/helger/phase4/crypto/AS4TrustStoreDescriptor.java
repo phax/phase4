@@ -18,17 +18,17 @@ package com.helger.phase4.crypto;
 
 import java.security.Provider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.TrustStoreDescriptor;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * A specific helper for {@link TrustStoreDescriptor}
@@ -96,7 +96,7 @@ public final class AS4TrustStoreDescriptor
     final EKeyStoreType aType = EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sType,
                                                                                  CAS4Crypto.DEFAULT_TRUST_STORE_TYPE);
     final String sPath = aConfig.getAsString (sConfigPrefix + "truststore.file");
-    if (StringHelper.hasNoText (sPath))
+    if (StringHelper.isEmpty (sPath))
       return null;
 
     final char [] aPassword = aConfig.getAsCharArray (sConfigPrefix + "truststore.password");

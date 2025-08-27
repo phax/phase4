@@ -18,17 +18,17 @@ package com.helger.phase4.duplicate;
 
 import java.time.OffsetDateTime;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
-
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.state.EChange;
-import com.helger.commons.state.EContinue;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.concurrent.ThreadSafe;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.state.EChange;
+import com.helger.base.state.EContinue;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.dao.DAOException;
 import com.helger.photon.io.dao.AbstractPhotonMapBasedWALDAO;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This is the duplicate checker for avoiding duplicate messages.
@@ -50,7 +50,7 @@ public class AS4DuplicateManagerXML extends AbstractPhotonMapBasedWALDAO <IAS4Du
                                      @Nullable final String sProfileID,
                                      @Nullable final String sPModeID)
   {
-    if (StringHelper.hasNoText (sMessageID))
+    if (StringHelper.isEmpty (sMessageID))
     {
       // No message ID present - don't check for duplication
       return EContinue.CONTINUE;
@@ -94,7 +94,7 @@ public class AS4DuplicateManagerXML extends AbstractPhotonMapBasedWALDAO <IAS4Du
   @Nullable
   public IAS4DuplicateItem getItemOfMessageID (@Nullable final String sMessageID)
   {
-    if (StringHelper.hasNoText (sMessageID))
+    if (StringHelper.isEmpty (sMessageID))
       return null;
 
     return findFirst (x -> x.getMessageID ().equals (sMessageID));

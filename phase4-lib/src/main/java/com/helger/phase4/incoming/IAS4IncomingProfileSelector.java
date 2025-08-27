@@ -16,8 +16,8 @@
  */
 package com.helger.phase4.incoming;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Callback interface to determine the used AS4 profile of an incoming message.

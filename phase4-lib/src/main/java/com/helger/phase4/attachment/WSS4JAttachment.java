@@ -25,48 +25,46 @@ import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.apache.wss4j.common.ext.Attachment;
 import org.slf4j.Logger;
 
-import com.helger.commons.CGlobal;
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.annotation.UnsupportedOperation;
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.http.CHttpHeader;
-import com.helger.commons.io.IHasInputStream;
-import com.helger.commons.io.file.FileHelper;
-import com.helger.commons.io.stream.HasInputStream;
-import com.helger.commons.io.stream.NonBlockingBufferedOutputStream;
-import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.annotation.WillNotClose;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.annotation.style.UnsupportedOperation;
+import com.helger.base.CGlobal;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.io.iface.IHasInputStream;
+import com.helger.base.io.nonblocking.NonBlockingBufferedOutputStream;
+import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
+import com.helger.base.io.stream.HasInputStream;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.collection.commons.CommonsLinkedHashMap;
+import com.helger.collection.commons.ICommonsOrderedMap;
+import com.helger.http.CHttpHeader;
+import com.helger.io.file.FileHelper;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.mail.datasource.InputStreamProviderDataSource;
+import com.helger.mime.IMimeType;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.Header;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMultipart;
 
 /**
- * Special WSS4J attachment with an InputStream provider instead of a fixed
- * InputStream<br>
- * Note: cannot be serializable because base class is not serializable and
- * because we're dealing with {@link InputStream}s.
+ * Special WSS4J attachment with an InputStream provider instead of a fixed InputStream<br>
+ * Note: cannot be serializable because base class is not serializable and because we're dealing
+ * with {@link InputStream}s.
  *
  * @author bayerlma
  * @author Philip Helger
@@ -95,8 +93,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   }
 
   /**
-   * @return The resource helper provided in the constructor. Never
-   *         <code>null</code>.
+   * @return The resource helper provided in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final AS4ResourceHelper getResHelper ()
@@ -113,8 +110,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   }
 
   /**
-   * @deprecated Do not use this. If you need to use this, use
-   *             {@link #overwriteMimeType(String)}
+   * @deprecated Do not use this. If you need to use this, use {@link #overwriteMimeType(String)}
    */
   @Override
   @Deprecated (forRemoval = false)
@@ -273,7 +269,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
       // addr-spec = local-part "@" domain ; global address
       // etc.
       String sContentID = getId ();
-      if (StringHelper.hasText (sContentID))
+      if (StringHelper.isNotEmpty (sContentID))
       {
         if (sContentID.charAt (0) != '<')
           sContentID = '<' + sContentID + '>';
@@ -318,12 +314,12 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   private static void _addOutgoingHeaders (@Nonnull final WSS4JAttachment aAttachment, @Nullable final String sFilename)
   {
     // Ensure an ID is present
-    if (StringHelper.hasNoText (aAttachment.getId ()))
+    if (StringHelper.isEmpty (aAttachment.getId ()))
       aAttachment.setUniqueID ();
 
     // Set after ID and MimeType!
     aAttachment.addHeader (CHttpHeader.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION_ATTACHMENT);
-    if (StringHelper.hasText (sFilename))
+    if (StringHelper.isNotEmpty (sFilename))
     {
       if (sFilename.indexOf ('"') >= 0)
         LOGGER.warn ("The filename '" +
@@ -349,7 +345,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                                                 aAttachment.getCompressionMode (),
                                                                 aAttachment.getCharset (),
                                                                 aResHelper);
-      ret.customPartProperties ().addAll (aAttachment.customProperties ());
+      ret.customPartProperties ().putAll (aAttachment.customProperties ());
       return ret;
     }
 
@@ -363,7 +359,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                                                 aAttachment.getCompressionMode (),
                                                                 aAttachment.getCharset (),
                                                                 aResHelper);
-      ret.customPartProperties ().addAll (aAttachment.customProperties ());
+      ret.customPartProperties ().putAll (aAttachment.customProperties ());
       return ret;
     }
 
@@ -377,11 +373,10 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    * @param aSrcFile
    *        Source, uncompressed, unencrypted file.
    * @param sContentID
-   *        Content-ID of the attachment. If <code>null</code> a random ID is
-   *        created.
+   *        Content-ID of the attachment. If <code>null</code> a random ID is created.
    * @param sFilename
-   *        Filename of the attachment. May be <code>null</code> in which case
-   *        no <code>Content-Disposition</code> header is created.
+   *        Filename of the attachment. May be <code>null</code> in which case no
+   *        <code>Content-Disposition</code> header is created.
    * @param aMimeType
    *        Original mime type of the file.
    * @param eCompressionMode
@@ -449,12 +444,11 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    * @param aSrcData
    *        Source in-memory data, uncompressed, unencrypted.
    * @param sContentID
-   *        Optional content ID or <code>null</code> to create a random one.
-   *        Filename of the attachment. May be <code>null</code> in which case
-   *        no <code>Content-Disposition</code> header is created.
+   *        Optional content ID or <code>null</code> to create a random one. Filename of the
+   *        attachment. May be <code>null</code> in which case no <code>Content-Disposition</code>
+   *        header is created.
    * @param sFilename
-   *        Optional filename to use in the "Content-Disposition" headers. May
-   *        be <code>null</code>.
+   *        Optional filename to use in the "Content-Disposition" headers. May be <code>null</code>.
    * @param aMimeType
    *        Original mime type of the file. May not be <code>null</code>.
    * @param eCompressionMode
@@ -513,8 +507,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   }
 
   /**
-   * Check if an incoming attachment can be kept in memory, or if a temporary
-   * file is needed.
+   * Check if an incoming attachment can be kept in memory, or if a temporary file is needed.
    *
    * @param nBytes
    *        File size.

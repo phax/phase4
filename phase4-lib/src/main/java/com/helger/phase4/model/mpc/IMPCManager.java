@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.mpc;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.state.EChange;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.state.EChange;
+import com.helger.base.string.StringHelper;
 import com.helger.phase4.CAS4;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Interface for an MPC (Message Partition Channel) manager
@@ -104,6 +104,6 @@ public interface IMPCManager
   @Nullable
   default IMPC getMPCOrDefaultOfID (@Nullable final String sID)
   {
-    return getMPCOfID (StringHelper.hasNoText (sID) ? CAS4.DEFAULT_MPC_ID : sID);
+    return getMPCOfID (StringHelper.isEmpty (sID) ? CAS4.DEFAULT_MPC_ID : sID);
   }
 }

@@ -24,9 +24,9 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import com.helger.commons.collection.impl.CommonsHashSet;
-import com.helger.commons.collection.impl.ICommonsSet;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.CommonsHashSet;
+import com.helger.collection.commons.ICommonsSet;
 import com.helger.phase4.CAS4;
 
 /**
@@ -48,7 +48,7 @@ public final class MessageHelperMethodsTest
     assertNull (MessageHelperMethods.getCustomMessageIDSuffix ());
     String sMessageID = MessageHelperMethods.createRandomMessageID ();
     assertNotNull (sMessageID);
-    assertTrue (StringHelper.hasText (sMessageID));
+    assertTrue (StringHelper.isNotEmpty (sMessageID));
     assertTrue (sMessageID.contains ("@"));
     assertTrue (sMessageID.contains (CAS4.LIB_NAME));
     assertTrue (sMessageID.endsWith (CAS4.LIB_NAME));
@@ -68,7 +68,7 @@ public final class MessageHelperMethodsTest
     {
       sMessageID = MessageHelperMethods.createRandomMessageID ();
       assertNotNull (sMessageID);
-      assertTrue (StringHelper.hasText (sMessageID));
+      assertTrue (StringHelper.isNotEmpty (sMessageID));
       assertTrue (sMessageID.contains ("@"));
       assertTrue (sMessageID.contains (CAS4.LIB_NAME));
       assertTrue (sMessageID.contains ("super.Company12"));
@@ -85,7 +85,7 @@ public final class MessageHelperMethodsTest
     {
       sMessageID = MessageHelperMethods.createRandomMessageID ();
       assertNotNull (sMessageID);
-      assertTrue (StringHelper.hasText (sMessageID));
+      assertTrue (StringHelper.isNotEmpty (sMessageID));
       assertTrue (sMessageID.contains ("@"));
       assertTrue (sMessageID.contains (CAS4.LIB_NAME));
       assertTrue (sMessageID.contains ("Company12"));
@@ -102,7 +102,7 @@ public final class MessageHelperMethodsTest
     {
       sMessageID = MessageHelperMethods.createRandomMessageID ();
       assertNotNull (sMessageID);
-      assertTrue (StringHelper.hasText (sMessageID));
+      assertTrue (StringHelper.isNotEmpty (sMessageID));
       assertTrue (sMessageID.contains ("@"));
       assertTrue (sMessageID.contains (CAS4.LIB_NAME));
       assertTrue (sMessageID.endsWith ("@" + CAS4.LIB_NAME));

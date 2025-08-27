@@ -16,17 +16,17 @@
  */
 package com.helger.phase4.server.spi;
 
-import javax.annotation.Nonnull;
-
 import org.w3c.dom.Element;
 
-import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.incoming.spi.IAS4IncomingPullRequestProcessorSPI;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.test.profile.TestPMode;
+
+import jakarta.annotation.Nonnull;
 
 @IsSPIImplementation
 public class MockPullRequestProcessorSPI implements IAS4IncomingPullRequestProcessorSPI

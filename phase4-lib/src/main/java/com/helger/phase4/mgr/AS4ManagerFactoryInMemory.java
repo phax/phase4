@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.mgr;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phase4.duplicate.AS4DuplicateManagerInMemory;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
@@ -26,6 +24,8 @@ import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.model.pmode.PModeManagerInMemory;
 import com.helger.phase4.profile.AS4ProfileManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Implementation of {@link IAS4ManagerFactory} creating managers that are

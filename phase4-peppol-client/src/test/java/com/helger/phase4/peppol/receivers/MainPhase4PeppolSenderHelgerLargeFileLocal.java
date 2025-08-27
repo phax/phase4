@@ -21,10 +21,10 @@ import java.io.File;
 import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 
-import com.helger.commons.io.resource.FileSystemResource;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.base.wrapper.Wrapper;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ExtendedHttpResponseException;
+import com.helger.io.resource.FileSystemResource;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;

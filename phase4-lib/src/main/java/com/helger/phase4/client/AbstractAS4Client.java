@@ -21,10 +21,6 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
@@ -32,13 +28,14 @@ import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.traits.IGenericImplTrait;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.WillNotClose;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.base.trait.IGenericImplTrait;
+import com.helger.base.wrapper.Wrapper;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -57,6 +54,8 @@ import com.helger.phase4.model.pmode.PModeReceptionAwareness;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**
@@ -120,8 +119,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return The resource helper provided in the constructor. Never
-   *         <code>null</code>.
+   * @return The resource helper provided in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final AS4ResourceHelper getAS4ResourceHelper ()
@@ -130,8 +128,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return The currently set crypto factory for signing. <code>null</code> by
-   *         default.
+   * @return The currently set crypto factory for signing. <code>null</code> by default.
    * @since 2.2.0
    */
   @Nullable
@@ -157,8 +154,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return The currently set crypto factory for crypting. <code>null</code> by
-   *         default.
+   * @return The currently set crypto factory for crypting. <code>null</code> by default.
    * @since 2.2.0
    */
   @Nullable
@@ -208,8 +204,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return The encrypt and decrypt parameters to use. Never null
-   *         <code>null</code>.
+   * @return The encrypt and decrypt parameters to use. Never null <code>null</code>.
    * @since 0.9.0
    */
   @Nonnull
@@ -230,8 +225,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * Set the HTTP poster to be used. This is the instance that is responsible
-   * for the HTTP transmission of the AS4 messages.
+   * Set the HTTP poster to be used. This is the instance that is responsible for the HTTP
+   * transmission of the AS4 messages.
    *
    * @param aHttpPoster
    *        Instance to be used. May not be <code>null</code>.
@@ -285,15 +280,14 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return A new message ID created by the contained factory. Neither
-   *         <code>null</code> nor empty.
+   * @return A new message ID created by the contained factory. Neither <code>null</code> nor empty.
    */
   @Nonnull
   @Nonempty
   public final String createMessageID ()
   {
     final String ret = m_aMessageIDFactory.get ();
-    if (StringHelper.hasNoText (ret))
+    if (StringHelper.isEmpty (ret))
       throw new IllegalStateException ("The contained MessageID factory created an empty MessageID!");
     return ret;
   }
@@ -308,20 +302,18 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return <code>true</code> if an AS4 reference to the original message
-   *         exists.
+   * @return <code>true</code> if an AS4 reference to the original message exists.
    */
   public final boolean hasRefToMessageID ()
   {
-    return StringHelper.hasText (m_sRefToMessageID);
+    return StringHelper.isNotEmpty (m_sRefToMessageID);
   }
 
   /**
    * Set the reference to the original AS4 message.
    *
    * @param sRefToMessageID
-   *        The Message ID of the original AS4 message. May be
-   *        <code>null</code>.
+   *        The Message ID of the original AS4 message. May be <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
@@ -332,8 +324,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return The sending time stamp of the message. If this is <code>null</code>
-   *         the current time should be used in the EBMS messages.
+   * @return The sending time stamp of the message. If this is <code>null</code> the current time
+   *         should be used in the EBMS messages.
    * @since 0.12.0
    */
   @Nullable
@@ -343,8 +335,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * Ensure the sending date time is set. If it is already set, nothing happens,
-   * else it is set to the current point in time.
+   * Ensure the sending date time is set. If it is already set, nothing happens, else it is set to
+   * the current point in time.
    *
    * @return this for chaining Never <code>null</code>.
    * @since 2.2.2
@@ -358,8 +350,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * Set the sending date time of the AS4 message. If not set, the current point
-   * in time will be used onwards.
+   * Set the sending date time of the AS4 message. If not set, the current point in time will be
+   * used onwards.
    *
    * @param aSendingDateTime
    *        The sending date time to be used. May be <code>null</code>.
@@ -399,8 +391,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return The HTTP retry settings to be used. Never <code>null</code>. Modify
-   *         the response object.
+   * @return The HTTP retry settings to be used. Never <code>null</code>. Modify the response
+   *         object.
    * @since 0.13.0
    */
   @Nonnull
@@ -451,9 +443,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * Build the AS4 message to be sent. It uses all the attributes of this class
-   * to build the final message. Compression, signing and encryption happens in
-   * this methods.
+   * Build the AS4 message to be sent. It uses all the attributes of this class to build the final
+   * message. Compression, signing and encryption happens in this methods.
    *
    * @param sMessageID
    *        The message ID to be used. Neither <code>null</code> nor empty.
@@ -475,27 +466,26 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   /**
    * Send the AS4 client message created by
-   * {@link #buildMessage(String, IAS4ClientBuildMessageCallback)} to the
-   * provided URL. This methods does take retries into account. It synchronously
-   * handles the retries and only returns after the last retry.
+   * {@link #buildMessage(String, IAS4ClientBuildMessageCallback)} to the provided URL. This methods
+   * does take retries into account. It synchronously handles the retries and only returns after the
+   * last retry.
    *
    * @param <T>
    *        The response data type
    * @param sURL
    *        The URL to send the HTTP POST to
    * @param aResponseHandler
-   *        The response handler that converts the HTTP response to a domain
-   *        object. May not be <code>null</code>.
+   *        The response handler that converts the HTTP response to a domain object. May not be
+   *        <code>null</code>.
    * @param aCallback
-   *        An optional callback for the different stages of building the
-   *        document. May be <code>null</code>.
+   *        An optional callback for the different stages of building the document. May be
+   *        <code>null</code>.
    * @param aOutgoingDumper
-   *        An outgoing dumper to be used. Maybe <code>null</code>. If
-   *        <code>null</code> the global outgoing dumper from
-   *        {@link AS4DumpManager} is used.
+   *        An outgoing dumper to be used. Maybe <code>null</code>. If <code>null</code> the global
+   *        outgoing dumper from {@link AS4DumpManager} is used.
    * @param aRetryCallback
-   *        An optional callback to be invoked if a retry happens on HTTP level.
-   *        May be <code>null</code>.
+   *        An optional callback to be invoked if a retry happens on HTTP level. May be
+   *        <code>null</code>.
    * @return The sent message that contains
    * @throws IOException
    *         in case of error when building or sending the message

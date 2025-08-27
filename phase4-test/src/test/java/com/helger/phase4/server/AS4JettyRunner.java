@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.server;
 
-import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
 
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.jetty.JettyRunner;

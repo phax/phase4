@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.peppol.servlet;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.helger.phase4.util.Phase4Exception;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Generic exception to be thrown from the phase4 Peppol servlet.
@@ -35,17 +35,6 @@ public class Phase4PeppolServletException extends Phase4Exception
   public Phase4PeppolServletException (@Nonnull final String sMessage)
   {
     super (sMessage);
-  }
-
-  /**
-   * @param aCause
-   *        Optional causing exception
-   * @since 0.13.0
-   */
-  @Deprecated (forRemoval = true, since = "3.2.0")
-  public Phase4PeppolServletException (@Nullable final Throwable aCause)
-  {
-    super (aCause);
   }
 
   /**

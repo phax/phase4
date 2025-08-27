@@ -16,22 +16,22 @@
  */
 package com.helger.phase4.model.pmode;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.hashcode.HashCodeGenerator;
-import com.helger.commons.state.EChange;
-import com.helger.commons.string.ToStringGenerator;
-import com.helger.commons.type.ObjectType;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.MustImplementEqualsAndHashcode;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.hashcode.HashCodeGenerator;
+import com.helger.base.state.EChange;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.base.type.ObjectType;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.photon.security.object.StubObject;
 import com.helger.tenancy.AbstractBusinessObject;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Default implementation of {@link IPMode}
@@ -44,48 +44,37 @@ public class PMode extends AbstractBusinessObject implements IPMode
   public static final ObjectType OT = new ObjectType ("as4.pmode");
 
   /**
-   * 1.(PMode.Initiator and its subelements are optional if PMode.Responder is
-   * present.) Qualifies the party initiating the MEP (see Section 2.2.3). A
-   * user message initiating an MEP instance under this P-Mode must have its
-   * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:From</code> element
-   * contain the same <code>PartyId</code> elements as the <code>PartyId</code>
-   * elements defined in this parameter. Any user message sent to the initiator
-   * must have its <code>eb:PartyInfo/eb:To</code> map to or be compatible with
-   * this parameter.<br>
-   * Role: Name of the role assumed by the party sending the first message of
-   * this MEP. Either the message element
-   * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:From/eb:Role</code> or
-   * the element
-   * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:To/eb:Role</code> of each
-   * message in this MEP must have this value, depending on the direction of
-   * message transfer.<br>
-   * Authorization: Describe authorization information for messages sent by
-   * Initiator. These parameters need to be matched by a
-   * <code>wsse:UsernameToken</code> element in a message (in a security header
-   * only intended for authorization) for this message to be processed
-   * successfully on receiver side - here by Responder MSH.
+   * 1.(PMode.Initiator and its subelements are optional if PMode.Responder is present.) Qualifies
+   * the party initiating the MEP (see Section 2.2.3). A user message initiating an MEP instance
+   * under this P-Mode must have its <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:From</code>
+   * element contain the same <code>PartyId</code> elements as the <code>PartyId</code> elements
+   * defined in this parameter. Any user message sent to the initiator must have its
+   * <code>eb:PartyInfo/eb:To</code> map to or be compatible with this parameter.<br>
+   * Role: Name of the role assumed by the party sending the first message of this MEP. Either the
+   * message element <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:From/eb:Role</code> or the
+   * element <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:To/eb:Role</code> of each message in
+   * this MEP must have this value, depending on the direction of message transfer.<br>
+   * Authorization: Describe authorization information for messages sent by Initiator. These
+   * parameters need to be matched by a <code>wsse:UsernameToken</code> element in a message (in a
+   * security header only intended for authorization) for this message to be processed successfully
+   * on receiver side - here by Responder MSH.
    */
   private PModeParty m_aInitiator;
 
   /**
-   * (PMode.Responder and its subelements are optional if PMode.Initiator is
-   * present.) Qualifies the party responding to the initiator party in this
-   * MEP. Any user message sent to the responder must have its
-   * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:To</code> element contain
-   * the same <code>PartyId</code> elements as the <code>PartyId</code> elements
-   * defined in this parameter.<br>
-   * Role: Name of the role assumed by the party receiving the first message of
-   * this MEP. Either the message element
-   * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:From/eb:Role</code> or
-   * the element
-   * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:To/eb:Role</code> of each
-   * message in this MEP must have this value, depending on the direction of
-   * message transfer.<br>
-   * Authorization: Describe authorization information for messages sent by
-   * Responder. These parameters need to be matched by a
-   * <code>wsse:UsernameToken</code> element in a message (in a security header
-   * only intended for authorization) for this message to be processed
-   * successfully on receiver side - here by Initiator MSH.
+   * (PMode.Responder and its subelements are optional if PMode.Initiator is present.) Qualifies the
+   * party responding to the initiator party in this MEP. Any user message sent to the responder
+   * must have its <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:To</code> element contain the
+   * same <code>PartyId</code> elements as the <code>PartyId</code> elements defined in this
+   * parameter.<br>
+   * Role: Name of the role assumed by the party receiving the first message of this MEP. Either the
+   * message element <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:From/eb:Role</code> or the
+   * element <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:To/eb:Role</code> of each message in
+   * this MEP must have this value, depending on the direction of message transfer.<br>
+   * Authorization: Describe authorization information for messages sent by Responder. These
+   * parameters need to be matched by a <code>wsse:UsernameToken</code> element in a message (in a
+   * security header only intended for authorization) for this message to be processed successfully
+   * on receiver side - here by Initiator MSH.
    */
   private PModeParty m_aResponder;
 
@@ -99,8 +88,8 @@ public class PMode extends AbstractBusinessObject implements IPMode
   private EMEP m_eMEP = EMEP.DEFAULT_EBMS;
 
   /**
-   * The transport channel binding assigned to the MEP (push, pull, sync,
-   * push-and-push, push-and-pull, pull-and-push, pull-and-pull, ...).
+   * The transport channel binding assigned to the MEP (push, pull, sync, push-and-push,
+   * push-and-pull, pull-and-push, pull-and-pull, ...).
    */
   private EMEPBinding m_eMEPBinding = EMEPBinding.DEFAULT_EBMS;
 
@@ -108,8 +97,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
   private PModeLeg m_aLeg2;
 
   /**
-   * PayloadService is only used in the AS4 - Profile, to mark the compression
-   * type.
+   * PayloadService is only used in the AS4 - Profile, to mark the compression type.
    */
   private PModePayloadService m_aPayloadService;
 

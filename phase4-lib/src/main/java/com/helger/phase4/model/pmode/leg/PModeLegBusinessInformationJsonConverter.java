@@ -16,15 +16,15 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.collection.commons.CommonsLinkedHashMap;
+import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeLegBusinessInformation}.
@@ -57,13 +57,13 @@ public final class PModeLegBusinessInformationJsonConverter
     if (aValue.hasAction ())
       ret.add (ACTION, aValue.getAction ());
     if (aValue.properties ().isNotEmpty ())
-      ret.addJson (PROPERTIES,
-                   new JsonArray ().addAllMapped (aValue.properties ().values (),
-                                                  PModePropertyJsonConverter::convertToJson));
+      ret.add (PROPERTIES,
+               new JsonArray ().addAllMapped (aValue.properties ().values (),
+                                              PModePropertyJsonConverter::convertToJson));
     if (aValue.payloadProfiles ().isNotEmpty ())
-      ret.addJson (PAYLOAD_PROFILE,
-                   new JsonArray ().addAllMapped (aValue.payloadProfiles ().values (),
-                                                  PModePayloadProfileJsonConverter::convertToJson));
+      ret.add (PAYLOAD_PROFILE,
+               new JsonArray ().addAllMapped (aValue.payloadProfiles ().values (),
+                                              PModePayloadProfileJsonConverter::convertToJson));
     if (aValue.hasPayloadProfileMaxKB ())
       ret.add (PAYLOAD_PROFILE_MAX_KB, aValue.getPayloadProfileMaxKB ().longValue ());
     if (aValue.hasMPCID ())

@@ -26,17 +26,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
-import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.state.ESuccess;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.state.ESuccess;
+import com.helger.base.wrapper.Wrapper;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientErrorMessage;
@@ -71,6 +69,7 @@ import com.helger.security.keystore.TrustStoreDescriptor;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 
+import jakarta.annotation.Nonnull;
 import jakarta.mail.MessagingException;
 
 public class MainPhase4EuCtpSenderExample
@@ -172,10 +171,7 @@ public class MainPhase4EuCtpSenderExample
                                                                  if (aIncomingState.hasDecryptedAttachments ())
                                                                  {
                                                                    /*
-                                                                    * Remember
-                                                                    * all
-                                                                    * attachments
-                                                                    * here
+                                                                    * Remember all attachments here
                                                                     */
                                                                    for (final WSS4JAttachment attachment : aIncomingState.getDecryptedAttachments ())
                                                                    {

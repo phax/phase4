@@ -20,18 +20,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.CHttp;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.traits.IGenericImplTrait;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.Nonnegative;
+import com.helger.base.trait.IGenericImplTrait;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.http.CHttp;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.EAS4MessageMode;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Abstract implementation of {@link IAS4OutgoingDumper} that always adds the

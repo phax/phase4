@@ -22,10 +22,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.junit.AfterClass;
@@ -33,11 +29,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.VisibleForTesting;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.mime.CMimeType;
+import com.helger.annotation.WillNotClose;
+import com.helger.annotation.style.VisibleForTesting;
+import com.helger.collection.commons.CommonsArrayList;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
+import com.helger.io.resource.ClassPathResource;
+import com.helger.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
@@ -65,6 +62,8 @@ import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.serialize.read.DOMReader;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**

@@ -20,18 +20,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
-
-import com.helger.commons.concurrent.SimpleReadWriteLock;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.io.stream.WrappedInputStream;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.annotation.WillNotClose;
+import com.helger.annotation.concurrent.GuardedBy;
+import com.helger.annotation.concurrent.ThreadSafe;
+import com.helger.base.concurrent.SimpleReadWriteLock;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.io.stream.WrappedInputStream;
+import com.helger.base.wrapper.Wrapper;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class holds the global stream dumpers.
@@ -93,23 +93,21 @@ public final class AS4DumpManager
 
   /**
    * @param aIncomingDumper
-   *        The incoming AS4 dumper. May be <code>null</code>. The caller is
-   *        responsible to invoke {@link AS4DumpManager#getIncomingDumper()}
-   *        outside.
+   *        The incoming AS4 dumper. May be <code>null</code>. The caller is responsible to invoke
+   *        {@link AS4DumpManager#getIncomingDumper()} outside.
    * @param aRequestInputStream
-   *        The InputStream to read the request payload from. Will not be closed
-   *        internally. Never <code>null</code>.
+   *        The InputStream to read the request payload from. Will not be closed internally. Never
+   *        <code>null</code>.
    * @param aMessageMetadata
    *        Request metadata. Never <code>null</code>.
    * @param aHttpHeaders
    *        the HTTP headers of the current request. Never <code>null</code>.
    * @param aDumpOSHolder
-   *        A wrapper that holds the debug output stream. This can be used to
-   *        determine if the message should be dumped or not. Parameter was
-   *        added in v1.3.0. Do not close the received OutputStream, that is
-   *        done internally automatically.
-   * @return the InputStream to be used. The caller is responsible for closing
-   *         the stream. Never <code>null</code>.
+   *        A wrapper that holds the debug output stream. This can be used to determine if the
+   *        message should be dumped or not. Parameter was added in v1.3.0. Do not close the
+   *        received OutputStream, that is done internally automatically.
+   * @return the InputStream to be used. The caller is responsible for closing the stream. Never
+   *         <code>null</code>.
    * @throws IOException
    *         In case of IO error
    */

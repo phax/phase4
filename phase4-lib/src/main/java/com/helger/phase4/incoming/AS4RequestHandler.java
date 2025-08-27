@@ -24,37 +24,34 @@ import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.WillClose;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.CGlobal;
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.callback.IThrowingRunnable;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.http.CHttp;
-import com.helger.commons.http.CHttpHeader;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.IHasInputStream;
-import com.helger.commons.io.stream.HasInputStream;
-import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.mime.EMimeContentType;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.mime.MimeTypeParser;
-import com.helger.commons.state.ISuccessIndicator;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.WillClose;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.CGlobal;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.iface.IThrowingRunnable;
+import com.helger.base.io.iface.IHasInputStream;
+import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
+import com.helger.base.io.stream.HasInputStream;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.state.ISuccessIndicator;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.http.CHttp;
+import com.helger.http.CHttpHeader;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.httpclient.response.ResponseHandlerXml;
+import com.helger.mime.EMimeContentType;
+import com.helger.mime.IMimeType;
+import com.helger.mime.parse.MimeTypeParser;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
@@ -115,6 +112,8 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.io.PhotonWorkerPool;
 import com.helger.xml.serialize.write.XMLWriter;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**
@@ -347,7 +346,7 @@ public class AS4RequestHandler implements AutoCloseable
 
     public boolean hasAsyncResponseURL ()
     {
-      return StringHelper.hasText (m_sAsyncResponseURL);
+      return StringHelper.isNotEmpty (m_sAsyncResponseURL);
     }
   }
 
@@ -940,7 +939,7 @@ public class AS4RequestHandler implements AutoCloseable
           // SPI invocation returned success and no errors
           {
             final String sAsyncResultURL = aResult.getAsyncResponseURL ();
-            if (StringHelper.hasText (sAsyncResultURL))
+            if (StringHelper.isNotEmpty (sAsyncResultURL))
             {
               // URL present
               if (aSPIResult.hasAsyncResponseURL ())
@@ -1847,7 +1846,7 @@ public class AS4RequestHandler implements AutoCloseable
 
           // where to send it back (must be determined by SPI!)
           final String sAsyncResponseURL = aAsyncSPIResult.getAsyncResponseURL ();
-          if (StringHelper.hasNoText (sAsyncResponseURL))
+          if (StringHelper.isEmpty (sAsyncResponseURL))
             throw new IllegalStateException ("No asynchronous response URL present - please check your SPI implementation");
 
           if (LOGGER.isDebugEnabled ())

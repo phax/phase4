@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.client;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import com.helger.annotation.Nonnegative;
+import com.helger.base.state.EContinue;
 
-import com.helger.commons.state.EContinue;
+import jakarta.annotation.Nonnull;
 
 /**
  * Callback to be informed on http retries

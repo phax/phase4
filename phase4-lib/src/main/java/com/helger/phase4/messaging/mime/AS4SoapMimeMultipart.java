@@ -16,10 +16,9 @@
  */
 package com.helger.phase4.messaging.mime;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phase4.model.ESoapVersion;
 
+import jakarta.annotation.Nonnull;
 import jakarta.mail.internet.ContentType;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.internet.ParseException;

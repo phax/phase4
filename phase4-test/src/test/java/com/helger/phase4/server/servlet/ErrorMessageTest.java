@@ -20,7 +20,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.error.EEbmsError;

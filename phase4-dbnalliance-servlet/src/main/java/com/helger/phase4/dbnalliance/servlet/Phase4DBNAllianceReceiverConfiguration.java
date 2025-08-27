@@ -18,18 +18,18 @@ package com.helger.phase4.dbnalliance.servlet;
 
 import java.security.cert.X509Certificate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.builder.IBuilder;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.builder.IBuilder;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class contains the "per-request" data of
@@ -304,7 +304,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
       {
         if (m_aSMPClient == null)
           throw new IllegalStateException ("The SMP Client must be provided");
-        if (StringHelper.hasNoText (m_sAS4EndpointURL))
+        if (StringHelper.isEmpty (m_sAS4EndpointURL))
           throw new IllegalStateException ("Our AS4 Endpoint URL must be provided");
         if (m_aAPCertificate == null)
           throw new IllegalStateException ("Our AS4 AP certificate must be provided");

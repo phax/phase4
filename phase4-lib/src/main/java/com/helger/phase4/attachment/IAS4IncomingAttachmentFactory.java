@@ -18,10 +18,9 @@ package com.helger.phase4.attachment;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phase4.util.AS4ResourceHelper;
 
+import jakarta.annotation.Nonnull;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
 

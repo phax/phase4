@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.util;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.diagnostics.error.SingleError;
+import com.helger.io.file.FileOperationManager;
+import com.helger.io.file.LoggingFileOperationCallback;
 
-import com.helger.commons.error.SingleError;
-import com.helger.commons.io.file.FileOperationManager;
-import com.helger.commons.io.file.LoggingFileOperationCallback;
+import jakarta.annotation.Nonnull;
 
 /**
  * IO related helper classes

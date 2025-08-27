@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.crypto;
 
-import javax.annotation.Nonnull;
-
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Customize the {@link WSSecSignature} object additional to what is possible

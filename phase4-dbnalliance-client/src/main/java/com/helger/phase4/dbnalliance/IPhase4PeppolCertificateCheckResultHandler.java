@@ -19,10 +19,10 @@ package com.helger.phase4.dbnalliance;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.helger.security.certificate.ECertificateCheckResult;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Interface for handling certification validations results

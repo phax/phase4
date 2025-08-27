@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.mgr;
 
-import javax.annotation.Nonnull;
-
 import com.helger.dao.DAOException;
 import com.helger.phase4.duplicate.AS4DuplicateManagerXML;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
@@ -28,6 +26,8 @@ import com.helger.phase4.model.pmode.PModeManagerXML;
 import com.helger.phase4.profile.AS4ProfileManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.phase4.util.Phase4Exception;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Implementation of {@link IAS4ManagerFactory} creating managers that are

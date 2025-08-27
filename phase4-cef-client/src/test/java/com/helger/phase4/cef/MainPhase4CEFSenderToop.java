@@ -20,7 +20,7 @@ import java.io.File;
 
 import org.slf4j.Logger;
 
-import com.helger.commons.io.file.SimpleFileIO;
+import com.helger.io.file.SimpleFileIO;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.sml.SMLInfo;
 import com.helger.peppolid.IParticipantIdentifier;

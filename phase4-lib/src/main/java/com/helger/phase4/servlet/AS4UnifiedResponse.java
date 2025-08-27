@@ -18,19 +18,18 @@ package com.helger.phase4.servlet;
 
 import java.nio.charset.StandardCharsets;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.http.EHttpMethod;
-import com.helger.commons.lang.StackTraceHelper;
-import com.helger.commons.mime.CMimeType;
+import com.helger.annotation.Nonnegative;
+import com.helger.base.rt.StackTraceHelper;
+import com.helger.http.EHttpMethod;
 import com.helger.http.EHttpVersion;
+import com.helger.mime.CMimeType;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.servlet.response.UnifiedResponse;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

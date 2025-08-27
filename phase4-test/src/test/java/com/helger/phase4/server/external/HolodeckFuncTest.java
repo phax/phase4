@@ -22,11 +22,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.helger.commons.collection.attr.IStringMap;
-import com.helger.commons.collection.attr.StringMap;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ScopedAS4Configuration;
@@ -48,6 +46,8 @@ import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.MockJettySetup;
+import com.helger.typeconvert.collection.IStringMap;
+import com.helger.typeconvert.collection.StringMap;
 
 @Ignore ("Axis2 bug in Holodeck! Requires external proxy and Peppol pilot certificate!")
 public final class HolodeckFuncTest extends AbstractCEFTestSetUp

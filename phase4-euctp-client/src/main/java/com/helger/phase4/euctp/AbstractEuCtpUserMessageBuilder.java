@@ -20,13 +20,10 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
+import com.helger.annotation.OverridingMethodsMustInvokeSuper;
+import com.helger.base.enforce.ValueEnforcer;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
@@ -36,6 +33,9 @@ import com.helger.phase4.profile.euctp.EEuCtpAction;
 import com.helger.phase4.profile.euctp.EEuCtpService;
 import com.helger.phase4.profile.euctp.EuCtpPMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Abstract EuCTP UserMessage builder class with sanity methods

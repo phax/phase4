@@ -16,16 +16,13 @@
  */
 package com.helger.phase4.CEF;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.junit.Before;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -47,6 +44,9 @@ import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.phase4.test.profile.TestPMode;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
 {

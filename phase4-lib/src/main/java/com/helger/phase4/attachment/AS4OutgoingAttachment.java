@@ -19,23 +19,23 @@ package com.helger.phase4.attachment;
 import java.io.File;
 import java.nio.charset.Charset;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.builder.IBuilder;
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.io.ByteArrayWrapper;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.annotation.OverridingMethodsMustInvokeSuper;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.array.bytes.ByteArrayWrapper;
+import com.helger.base.builder.IBuilder;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.collection.commons.CommonsLinkedHashMap;
+import com.helger.collection.commons.ICommonsOrderedMap;
+import com.helger.mime.CMimeType;
+import com.helger.mime.IMimeType;
 import com.helger.phase4.model.message.MessageHelperMethods;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This represents a single payload for an outgoing message.
@@ -80,8 +80,8 @@ public class AS4OutgoingAttachment
   }
 
   /**
-   * @return The data to be send as a byte array. May be <code>null</code> in
-   *         which case {@link #getDataFile()} has the content.
+   * @return The data to be send as a byte array. May be <code>null</code> in which case
+   *         {@link #getDataFile()} has the content.
    * @since 0.14.0
    * @see #getDataFile()
    */
@@ -92,8 +92,8 @@ public class AS4OutgoingAttachment
   }
 
   /**
-   * @return <code>true</code> if the data is available as a byte array,
-   *         <code>false</code> if it is a file.
+   * @return <code>true</code> if the data is available as a byte array, <code>false</code> if it is
+   *         a file.
    * @see #hasDataFile()
    */
   public final boolean hasDataBytes ()
@@ -102,8 +102,8 @@ public class AS4OutgoingAttachment
   }
 
   /**
-   * @return The data to be send as a File. May be <code>null</code> in which
-   *         case {@link #getDataBytes()} has the content.
+   * @return The data to be send as a File. May be <code>null</code> in which case
+   *         {@link #getDataBytes()} has the content.
    * @since 0.14.0
    * @see #getDataBytes()
    */
@@ -114,8 +114,8 @@ public class AS4OutgoingAttachment
   }
 
   /**
-   * @return <code>true</code> if the data is available as a File,
-   *         <code>false</code> if it is a byte array.
+   * @return <code>true</code> if the data is available as a File, <code>false</code> if it is a
+   *         byte array.
    * @see #hasDataBytes()
    */
   public final boolean hasDataFile ()
@@ -217,8 +217,8 @@ public class AS4OutgoingAttachment
   }
 
   /**
-   * Builder class for class {@link AS4OutgoingAttachment}. At least "data" and
-   * "mimeType" must be set.
+   * Builder class for class {@link AS4OutgoingAttachment}. At least "data" and "mimeType" must be
+   * set.
    *
    * @author Philip Helger
    */
@@ -333,8 +333,8 @@ public class AS4OutgoingAttachment
      * Add a single custom property.
      *
      * @param sKey
-     *        They property key. May be <code>null</code>. Only properties with
-     *        a non-<code>null</code> key are considered.
+     *        They property key. May be <code>null</code>. Only properties with a
+     *        non-<code>null</code> key are considered.
      * @param sValue
      *        The value to use. May be <code>null</code>.
      * @return this for chaining
@@ -343,25 +343,24 @@ public class AS4OutgoingAttachment
     @Nonnull
     public Builder addCustomProperty (@Nullable final String sKey, @Nullable final String sValue)
     {
-      if (StringHelper.hasText (sKey))
+      if (StringHelper.isNotEmpty (sKey))
         m_aCustomProperties.put (sKey, sValue);
       return this;
     }
 
     /**
-     * Add the provided map of custom properties. Existing custom properties are
-     * not changed, but may be overwritten.
+     * Add the provided map of custom properties. Existing custom properties are not changed, but
+     * may be overwritten.
      *
      * @param a
-     *        The key-value-pairs to be added as custom properties. May be
-     *        <code>null</code>.
+     *        The key-value-pairs to be added as custom properties. May be <code>null</code>.
      * @return this for chaining
      * @since 2.8.6
      */
     @Nonnull
     public Builder addCustomProperties (@Nullable final ICommonsOrderedMap <String, String> a)
     {
-      m_aCustomProperties.addAll (a);
+      m_aCustomProperties.putAllIfNotNull (a);
       return this;
     }
 
@@ -369,8 +368,8 @@ public class AS4OutgoingAttachment
      * Remove all existing custom properties and only use the provided one.
      *
      * @param sKey
-     *        They property key. May be <code>null</code>. Only properties with
-     *        a non-<code>null</code> key are considered.
+     *        They property key. May be <code>null</code>. Only properties with a
+     *        non-<code>null</code> key are considered.
      * @param sValue
      *        The value to use. May be <code>null</code>.
      * @return this for chaining
@@ -379,7 +378,7 @@ public class AS4OutgoingAttachment
     @Nonnull
     public Builder customProperty (@Nullable final String sKey, @Nullable final String sValue)
     {
-      if (StringHelper.hasText (sKey))
+      if (StringHelper.isNotEmpty (sKey))
       {
         m_aCustomProperties.clear ();
         m_aCustomProperties.put (sKey, sValue);
@@ -388,12 +387,10 @@ public class AS4OutgoingAttachment
     }
 
     /**
-     * Use the provided map of custom properties. All existing custom properties
-     * are removed.
+     * Use the provided map of custom properties. All existing custom properties are removed.
      *
      * @param a
-     *        The key-value-pairs to use as custom properties. May be
-     *        <code>null</code>.
+     *        The key-value-pairs to use as custom properties. May be <code>null</code>.
      * @return this for chaining
      * @since 2.8.6
      */

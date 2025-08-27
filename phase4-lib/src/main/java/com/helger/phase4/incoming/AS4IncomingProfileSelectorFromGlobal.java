@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.incoming;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Default implementation of {@link IAS4IncomingProfileSelector} taking the AS4

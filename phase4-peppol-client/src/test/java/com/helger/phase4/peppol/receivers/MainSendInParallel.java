@@ -19,7 +19,7 @@ package com.helger.phase4.peppol.receivers;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.helger.commons.concurrent.ExecutorServiceHelper;
+import com.helger.base.concurrent.ExecutorServiceHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 

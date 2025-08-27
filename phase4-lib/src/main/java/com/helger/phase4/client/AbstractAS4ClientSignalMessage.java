@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.client;
 
-import javax.annotation.Nonnull;
-import javax.annotation.WillNotClose;
-
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.annotation.WillNotClose;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.model.message.EAS4MessageType;
 import com.helger.phase4.util.AS4ResourceHelper;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Abstract AS4 client for signal messages with arbitrary content.

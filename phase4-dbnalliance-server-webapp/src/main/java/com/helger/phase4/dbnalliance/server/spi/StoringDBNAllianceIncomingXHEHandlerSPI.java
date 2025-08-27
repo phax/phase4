@@ -19,17 +19,14 @@ package com.helger.phase4.dbnalliance.server.spi;
 import java.io.File;
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.IsSPIImplementation;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.file.SimpleFileIO;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.IsSPIImplementation;
+import com.helger.collection.CollectionFind;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.http.header.HttpHeaderMap;
+import com.helger.io.file.SimpleFileIO;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
@@ -45,6 +42,9 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.xhe.v10.XHE10XHEType;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Logging implementation of {@link IPhase4DBNAllianceIncomingXHEHandlerSPI}.
@@ -98,10 +98,10 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
 
     // TODO This is only demo code to force an error
     // Check if any "MessageProperty" with name "MockAction" is contained
-    final Ebms3Property aMockAction = aUserMessage.getMessageProperties () == null ? null : CollectionHelper.findFirst (
-                                                                                                                        aUserMessage.getMessageProperties ()
-                                                                                                                                    .getProperty (),
-                                                                                                                        x -> "MockAction".equals (x.getName ()));
+    final Ebms3Property aMockAction = aUserMessage.getMessageProperties () == null ? null : CollectionFind.findFirst (
+                                                                                                                      aUserMessage.getMessageProperties ()
+                                                                                                                                  .getProperty (),
+                                                                                                                      x -> "MockAction".equals (x.getName ()));
     if (aMockAction != null)
     {
       // Explicitly return an Error - for testing errors

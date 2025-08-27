@@ -16,23 +16,24 @@
  */
 package com.helger.phase4.incoming.mgr;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
+import java.util.List;
 
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.concurrent.SimpleReadWriteLock;
-import com.helger.commons.lang.ServiceLoaderHelper;
+import com.helger.annotation.concurrent.GuardedBy;
+import com.helger.annotation.concurrent.ThreadSafe;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.concurrent.SimpleReadWriteLock;
+import com.helger.base.spi.ServiceLoaderHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 
+import jakarta.annotation.Nonnull;
+
 /**
- * This class manages all the {@link IAS4IncomingMessageProcessorSPI} SPI
- * implementations.
+ * This class manages all the {@link IAS4IncomingMessageProcessorSPI} SPI implementations.
  *
  * @author Philip Helger
  */
@@ -53,7 +54,7 @@ public final class AS4IncomingMessageProcessorManager
    */
   public static void reinitProcessors ()
   {
-    final ICommonsList <IAS4IncomingMessageProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4IncomingMessageProcessorSPI.class);
+    final List <IAS4IncomingMessageProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4IncomingMessageProcessorSPI.class);
     if (aProcessorSPIs.isEmpty ())
       LOGGER.warn ("No AS4 message processor is registered. All incoming messages will be positively responded and discarded on the receiver side!");
     else
@@ -70,8 +71,7 @@ public final class AS4IncomingMessageProcessorManager
   }
 
   /**
-   * @return A list of all registered receiver handlers. Never <code>null</code>
-   *         but maybe empty.
+   * @return A list of all registered receiver handlers. Never <code>null</code> but maybe empty.
    */
   @Nonnull
   @ReturnsMutableCopy

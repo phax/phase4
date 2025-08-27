@@ -21,10 +21,10 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
-import com.helger.commons.CGlobal;
-import com.helger.commons.io.file.FileHelper;
-import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.commons.io.misc.SizeHelper;
+import com.helger.base.CGlobal;
+import com.helger.io.file.FileHelper;
+import com.helger.io.file.SimpleFileIO;
+import com.helger.io.misc.SizeHelper;
 
 public class MainCreateLargeInvoice
 {

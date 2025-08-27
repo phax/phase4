@@ -19,15 +19,15 @@ package com.helger.phase4.wss;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
-
 import org.apache.wss4j.dom.engine.WSSConfig;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.functional.IThrowingSupplier;
+import com.helger.annotation.concurrent.ThreadSafe;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.functional.IThrowingSupplier;
 import com.helger.phase4.config.AS4Configuration;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * A helper class to run all WSS stuff in a lock. {@link WSSConfig#init()} and

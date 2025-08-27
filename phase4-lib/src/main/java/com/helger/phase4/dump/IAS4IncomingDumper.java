@@ -19,11 +19,11 @@ package com.helger.phase4.dump;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.http.HttpHeaderMap;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Interface for dumping incoming requests

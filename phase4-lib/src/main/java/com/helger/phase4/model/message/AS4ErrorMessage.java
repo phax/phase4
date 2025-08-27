@@ -16,16 +16,16 @@
  */
 package com.helger.phase4.model.message;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.model.ESoapVersion;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * AS4 error message.<br>
@@ -50,7 +50,7 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
     m_aSignalMessage = aSignalMessage;
 
     for (final Ebms3Error aError : aSignalMessage.getError ())
-      if (aError.getDescription () != null && StringHelper.hasNoText (aError.getDescription ().getValue ()))
+      if (aError.getDescription () != null && StringHelper.isEmpty (aError.getDescription ().getValue ()))
         throw new IllegalArgumentException ("Error description may not be empty - will lead to invalid XML!");
   }
 

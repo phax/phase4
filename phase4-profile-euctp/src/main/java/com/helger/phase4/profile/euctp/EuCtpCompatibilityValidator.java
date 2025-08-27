@@ -16,15 +16,13 @@
  */
 package com.helger.phase4.profile.euctp;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.SingleError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.SingleError;
+import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
@@ -48,6 +46,8 @@ import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.wss.EWSSVersion;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Validate certain requirements imposed by the Peppol project.
@@ -84,7 +84,7 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
     {
       // PROTOCOL Address only https allowed
       final String sAddressProtocol = aLegProtocol.getAddressProtocol ();
-      if (StringHelper.hasText (sAddressProtocol))
+      if (StringHelper.isNotEmpty (sAddressProtocol))
       {
         if (sAddressProtocol.equalsIgnoreCase ("https"))
         {
@@ -331,12 +331,12 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
+      if (StringHelper.isEmpty (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
 
       // As we support One-Way-Pull this is allowed
       if (false)
-        if (StringHelper.hasText (aUserMsg.getMessageInfo ().getRefToMessageId ()))
+        if (StringHelper.isNotEmpty (aUserMsg.getMessageInfo ().getRefToMessageId ()))
           aErrorList.add (_createError ("MessageInfo/RefToMessageId must not be set"));
     }
 
@@ -368,7 +368,7 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
     else
     {
       final Ebms3AgreementRef aAgreementRef = aUserMsg.getCollaborationInfo ().getAgreementRef ();
-      if (StringHelper.hasNoText (aAgreementRef.getValue ()))
+      if (StringHelper.isEmpty (aAgreementRef.getValue ()))
         aErrorList.add (_createError ("CollaborationInfo/AgreementRef value is missing"));
       if (aAgreementRef.getPmode () != null)
         aErrorList.add (_createError ("CollaborationInfo/PMode has not to be set!"));
@@ -386,7 +386,7 @@ public class EuCtpCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
+      if (StringHelper.isEmpty (aSignalMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
     }
   }

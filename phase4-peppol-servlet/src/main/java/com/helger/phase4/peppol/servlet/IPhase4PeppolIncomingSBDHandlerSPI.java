@@ -16,20 +16,20 @@
  */
 package com.helger.phase4.peppol.servlet;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
-import com.helger.commons.annotation.IsSPIInterface;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.HttpHeaderMap;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.IsSPIInterface;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This is the interface that must be implemented to handle incoming SBD documents.

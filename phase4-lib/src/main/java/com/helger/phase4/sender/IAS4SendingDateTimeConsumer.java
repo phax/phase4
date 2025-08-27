@@ -18,7 +18,7 @@ package com.helger.phase4.sender;
 
 import java.time.OffsetDateTime;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * A specific callback interface to get the effective sending date time

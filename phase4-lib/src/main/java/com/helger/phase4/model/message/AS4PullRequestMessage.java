@@ -18,15 +18,15 @@ package com.helger.phase4.model.message;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.model.ESoapVersion;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * AS4 pull request message
@@ -70,7 +70,7 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
     aSignalMessage.setMessageInfo (aEbms3MessageInfo);
 
     // PullRequest
-    if (StringHelper.hasText (sMPC))
+    if (StringHelper.isNotEmpty (sMPC))
     {
       final Ebms3PullRequest aEbms3PullRequest = new Ebms3PullRequest ();
       aEbms3PullRequest.setMpc (sMPC);

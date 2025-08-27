@@ -19,18 +19,17 @@ package com.helger.phase4.incoming;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 
-import javax.annotation.CheckForSigned;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.CheckForSigned;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.messaging.EAS4MessageMode;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.Cookie;
 
 /**
@@ -88,7 +87,7 @@ public interface IAS4IncomingMessageMetadata
    */
   default boolean hasRemoteAddr ()
   {
-    return StringHelper.hasText (getRemoteAddr ());
+    return StringHelper.isNotEmpty (getRemoteAddr ());
   }
 
   /**
@@ -110,7 +109,7 @@ public interface IAS4IncomingMessageMetadata
    */
   default boolean hasRemoteHost ()
   {
-    return StringHelper.hasText (getRemoteHost ());
+    return StringHelper.isNotEmpty (getRemoteHost ());
   }
 
   /**
@@ -153,7 +152,7 @@ public interface IAS4IncomingMessageMetadata
    */
   default boolean hasRemoteUser ()
   {
-    return StringHelper.hasText (getRemoteUser ());
+    return StringHelper.isNotEmpty (getRemoteUser ());
   }
 
   /**

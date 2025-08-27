@@ -20,8 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +27,8 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ebms3header.Ebms3MessageProperties;
@@ -44,6 +42,8 @@ import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Test for the CEF PMode

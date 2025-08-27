@@ -20,7 +20,7 @@ import java.io.File;
 
 import org.slf4j.Logger;
 
-import com.helger.commons.io.file.SimpleFileIO;
+import com.helger.io.file.SimpleFileIO;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpReader;

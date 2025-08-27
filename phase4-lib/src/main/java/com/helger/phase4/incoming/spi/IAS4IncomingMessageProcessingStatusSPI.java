@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.incoming.spi;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.annotation.IsSPIInterface;
+import com.helger.annotation.style.IsSPIInterface;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Specific callback interface to inform interested entities about the end of

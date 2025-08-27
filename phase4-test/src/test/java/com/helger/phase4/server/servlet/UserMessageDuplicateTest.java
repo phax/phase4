@@ -24,9 +24,9 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.CGlobal;
-import com.helger.commons.concurrent.ThreadHelper;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.base.CGlobal;
+import com.helger.base.concurrent.ThreadHelper;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.messaging.http.HttpXMLEntity;

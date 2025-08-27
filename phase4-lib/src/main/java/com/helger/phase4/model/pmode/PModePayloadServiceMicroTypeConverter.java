@@ -16,15 +16,15 @@
  */
 package com.helger.phase4.model.pmode;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModePayloadService}.

@@ -16,15 +16,15 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.mime.MimeTypeParser;
-import com.helger.commons.mime.MimeTypeParserException;
-import com.helger.commons.state.EMandatory;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.state.EMandatory;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
+import com.helger.mime.IMimeType;
+import com.helger.mime.parse.MimeTypeParser;
+import com.helger.mime.parse.MimeTypeParserException;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModePayloadProfile}.

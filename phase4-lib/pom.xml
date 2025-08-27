@@ -30,7 +30,6 @@
   <description>AS4 common library</description>
   <url>https://github.com/phax/phase4/phase4-lib</url>
   <inceptionYear>2015</inceptionYear>
-  
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -38,7 +37,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>
@@ -47,10 +45,6 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.commons</groupId>
-      <artifactId>ph-commons</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger.commons</groupId>
@@ -81,16 +75,28 @@
       <artifactId>ph-json</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-http</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.helger.web</groupId>
       <artifactId>ph-mail</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger.web</groupId>
-      <artifactId>ph-http</artifactId>
+      <artifactId>ph-httpclient</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger.web</groupId>
-      <artifactId>ph-httpclient</artifactId>
+      <artifactId>ph-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.web</groupId>
+      <artifactId>ph-xservlet</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger.xsd</groupId>
@@ -105,23 +111,9 @@
       <artifactId>ph-tenancy</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger.commons</groupId>
-      <artifactId>ph-config</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>com.helger.schedule</groupId>
       <artifactId>ph-schedule</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.helger.web</groupId>
-      <artifactId>ph-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.web</groupId>
-      <artifactId>ph-xservlet</artifactId>
-    </dependency>
-    
     <dependency>
       <groupId>com.helger.photon</groupId>
       <artifactId>ph-oton-io</artifactId>
@@ -134,7 +126,6 @@
       <groupId>com.helger.photon</groupId>
       <artifactId>ph-oton-security</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jul-to-slf4j</artifactId>
@@ -144,13 +135,6 @@
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.spotbugs</groupId>
-      <artifactId>spotbugs-annotations</artifactId>
-      <scope>compile</scope>
-      <optional>true</optional>
     </dependency>
     
     <dependency>
@@ -169,12 +153,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-unittest-support-ext</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.helger.photon</groupId>
       <artifactId>ph-oton-app</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
   <build>
     <resources>
       <!-- Don't specify the targetPath because this leads to a broken JAR file 
@@ -191,10 +179,9 @@
         <filtering>false</filtering>
         <excludes>
           <exclude>**/*.properties</exclude>
-        </excludes>  
+        </excludes>
       </resource>
     </resources>
-
     <plugins>
       <plugin>
         <groupId>org.apache.felix</groupId>
@@ -204,15 +191,10 @@
           <instructions>
             <Automatic-Module-Name>com.helger.phase4</Automatic-Module-Name>
             <Export-Package>com.helger.phase4.*</Export-Package>
-            <Import-Package>!javax.annotation.*,*</Import-Package>
-            <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",
-osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
-osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI)"; cardinality:=multiple; resolution:=optional,
-osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI)"; cardinality:=multiple; resolution:=optional,
-osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>
+            <Import-Package>!jakarta.annotation.*,*</Import-Package>
+            <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
             <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.commons.thirdparty.IThirdPartyModuleProviderSPI,
 osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI</Provide-Capability>
-            <!-- The latter one has precedence -->
             <Include-Resource>{maven-resources},phase4-version.properties=target/classes/phase4-version.properties</Include-Resource>
           </instructions>
         </configuration>
@@ -299,9 +281,12 @@ osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTyp
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <doclint>none</doclint>
+          <source>17</source>
+          <sourcepath>
+            ${project.build.sourceDirectory}:${project.build.directory}/generated-sources/xjc
+          </sourcepath>
         </configuration>
-      </plugin>
+      </plugin> 
     </plugins>
   </build>
 </project>

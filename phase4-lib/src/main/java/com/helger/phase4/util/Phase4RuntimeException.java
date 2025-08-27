@@ -16,8 +16,8 @@
  */
 package com.helger.phase4.util;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * phase4 base runtime exception. It is just a in-between exception for easy

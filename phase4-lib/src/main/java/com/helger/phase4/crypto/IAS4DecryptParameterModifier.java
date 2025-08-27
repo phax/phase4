@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.crypto;
 
-import javax.annotation.Nonnull;
-
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.handler.RequestData;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Callback interface for modifying the decryption {@link RequestData} WSS4J

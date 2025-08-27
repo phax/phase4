@@ -19,15 +19,13 @@ package com.helger.phase4.peppol.server.api;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.ArrayHelper;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.array.ArrayHelper;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.mime.CMimeType;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.peppol.sml.ESML;
@@ -36,6 +34,8 @@ import com.helger.phase4.peppol.Phase4PeppolSendingReport;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * API to send a document via Peppol. The SBDH is created internally.
@@ -68,15 +68,15 @@ public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
     final byte [] aPayloadBytes = StreamHelper.getAllBytes (aRequestScope.getRequest ().getInputStream ());
 
     // Check parameters
-    if (StringHelper.hasNoText (sSenderID))
+    if (StringHelper.isEmpty (sSenderID))
       throw new APIParamException ("API call retrieved an empty Sender ID");
-    if (StringHelper.hasNoText (sReceiverID))
+    if (StringHelper.isEmpty (sReceiverID))
       throw new APIParamException ("API call retrieved an empty Receiver ID");
-    if (StringHelper.hasNoText (sDocTypeID))
+    if (StringHelper.isEmpty (sDocTypeID))
       throw new APIParamException ("API call retrieved an empty Document Type ID");
-    if (StringHelper.hasNoText (sProcessID))
+    if (StringHelper.isEmpty (sProcessID))
       throw new APIParamException ("API call retrieved an empty Process ID");
-    if (StringHelper.hasNoText (sCountryCodeC1))
+    if (StringHelper.isEmpty (sCountryCodeC1))
       throw new APIParamException ("API call retrieved an empty Country Code C1");
     if (ArrayHelper.isEmpty (aPayloadBytes))
       throw new APIParamException ("API call retrieved an empty payload");

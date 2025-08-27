@@ -18,14 +18,12 @@ package com.helger.phase4.test.profile;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.SingleError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.SingleError;
+import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.ebms3header.Ebms3From;
@@ -42,6 +40,8 @@ import com.helger.phase4.model.pmode.PModeValidationException;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.profile.IAS4ProfileValidator;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Validate certain requirements imposed by the Test profile.
@@ -79,7 +79,7 @@ public class TestProfileCompatibilityValidator implements IAS4ProfileValidator
     {
       // PROTOCOL Address only https allowed
       final String sAddressProtocol = aLegProtocol.getAddressProtocol ();
-      if (StringHelper.hasText (sAddressProtocol))
+      if (StringHelper.isNotEmpty (sAddressProtocol))
       {
         if (sAddressProtocol.equalsIgnoreCase ("http") || sAddressProtocol.equalsIgnoreCase ("https"))
         {
@@ -174,7 +174,7 @@ public class TestProfileCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
+      if (StringHelper.isEmpty (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
 
       // Check if originalSender and finalRecipient are present
@@ -201,11 +201,11 @@ public class TestProfileCompatibilityValidator implements IAS4ProfileValidator
                 sFinalRecipientC4 = sProperty.getValue ();
           }
 
-          if (StringHelper.hasNoText (sOriginalSenderC1))
+          if (StringHelper.isEmpty (sOriginalSenderC1))
             aErrorList.add (_createError ("MessageProperties/Property '" +
                                           CAS4.ORIGINAL_SENDER +
                                           "' property is empty or not existant but mandatory"));
-          if (StringHelper.hasNoText (sFinalRecipientC4))
+          if (StringHelper.isEmpty (sFinalRecipientC4))
             aErrorList.add (_createError ("MessageProperties/Property '" +
                                           CAS4.FINAL_RECIPIENT +
                                           "' property is empty or not existant but mandatory"));
@@ -246,7 +246,7 @@ public class TestProfileCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
+      if (StringHelper.isEmpty (aSignalMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
     }
   }

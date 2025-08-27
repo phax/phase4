@@ -19,20 +19,18 @@ package com.helger.phase4.dbnalliance.server.api;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.ArrayHelper;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.timing.StopWatch;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.array.ArrayHelper;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.base.timing.StopWatch;
+import com.helger.base.wrapper.Wrapper;
 import com.helger.dbnalliance.commons.EDBNAllianceStage;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
+import com.helger.mime.CMimeType;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -56,6 +54,8 @@ import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.url.DBNAURLProviderSMP;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * API to send a document via Peppol. The SBDH is created internally.
@@ -87,13 +87,13 @@ public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
     final byte [] aPayloadBytes = StreamHelper.getAllBytes (aRequestScope.getRequest ().getInputStream ());
 
     // Check parameters
-    if (StringHelper.hasNoText (sSenderID))
+    if (StringHelper.isEmpty (sSenderID))
       throw new APIParamException ("API call retrieved an empty Sender ID");
-    if (StringHelper.hasNoText (sReceiverID))
+    if (StringHelper.isEmpty (sReceiverID))
       throw new APIParamException ("API call retrieved an empty Receiver ID");
-    if (StringHelper.hasNoText (sDocTypeID))
+    if (StringHelper.isEmpty (sDocTypeID))
       throw new APIParamException ("API call retrieved an empty Document Type ID");
-    if (StringHelper.hasNoText (sProcessID))
+    if (StringHelper.isEmpty (sProcessID))
       throw new APIParamException ("API call retrieved an empty Process ID");
     if (ArrayHelper.isEmpty (aPayloadBytes))
       throw new APIParamException ("API call retrieved an empty payload");

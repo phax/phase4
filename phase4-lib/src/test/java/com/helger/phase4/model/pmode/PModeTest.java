@@ -25,8 +25,6 @@ import org.junit.rules.TestRule;
 import com.helger.phase4.AS4TestRule;
 import com.helger.photon.security.object.StubObject;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Test class for class {@link PMode}.
  *
@@ -40,7 +38,6 @@ public final class PModeTest
 
   @Test
   @SuppressWarnings ("unused")
-  @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
   public void testInvalidCtor ()
   {
     try

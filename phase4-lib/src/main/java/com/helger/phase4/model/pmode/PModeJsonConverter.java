@@ -19,13 +19,11 @@ package com.helger.phase4.model.pmode;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.datetime.PDTWebDateHelper;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.collection.commons.CommonsLinkedHashMap;
+import com.helger.collection.commons.ICommonsOrderedMap;
+import com.helger.collection.helper.CollectionSort;
+import com.helger.datetime.web.PDTWebDateHelper;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
@@ -36,6 +34,8 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegJsonConverter;
 import com.helger.photon.security.object.StubObject;
 import com.helger.tenancy.IBusinessObject;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PMode}.
@@ -87,7 +87,7 @@ public final class PModeJsonConverter
     if (aValue.attrs ().isNotEmpty ())
     {
       final IJsonArray aCustomArray = new JsonArray ();
-      for (final Map.Entry <String, String> aEntry : CollectionHelper.getSortedByKey (aValue.attrs ()).entrySet ())
+      for (final Map.Entry <String, String> aEntry : CollectionSort.getSortedByKey (aValue.attrs ()).entrySet ())
       {
         final IJsonObject eCustom = new JsonObject ();
         eCustom.add (ATTR_ID, aEntry.getKey ());
@@ -95,7 +95,7 @@ public final class PModeJsonConverter
           eCustom.add (VALUE, aEntry.getValue ());
         aCustomArray.add (eCustom);
       }
-      aElement.addJson (ELEMENT_CUSTOM, aCustomArray);
+      aElement.add (ELEMENT_CUSTOM, aCustomArray);
     }
   }
 
@@ -139,23 +139,22 @@ public final class PModeJsonConverter
     final IJsonObject ret = new JsonObject ();
     setObjectFields (aValue, ret);
     if (aValue.hasInitiator ())
-      ret.addJson (ELEMENT_INITIATOR, PModePartyJsonConverter.convertToJson (aValue.getInitiator ()));
+      ret.add (ELEMENT_INITIATOR, PModePartyJsonConverter.convertToJson (aValue.getInitiator ()));
     if (aValue.hasResponder ())
-      ret.addJson (ELEMENT_RESPONDER, PModePartyJsonConverter.convertToJson (aValue.getResponder ()));
+      ret.add (ELEMENT_RESPONDER, PModePartyJsonConverter.convertToJson (aValue.getResponder ()));
     if (aValue.hasAgreement ())
       ret.add (ATTR_AGREEMENT, aValue.getAgreement ());
     ret.add (ATTR_MEP, aValue.getMEPID ());
     ret.add (ATTR_MEP_BINDING, aValue.getMEPBindingID ());
     if (aValue.hasLeg1 ())
-      ret.addJson (ELEMENT_LEG1, PModeLegJsonConverter.convertToJson (aValue.getLeg1 ()));
+      ret.add (ELEMENT_LEG1, PModeLegJsonConverter.convertToJson (aValue.getLeg1 ()));
     if (aValue.hasLeg2 ())
-      ret.addJson (ELEMENT_LEG2, PModeLegJsonConverter.convertToJson (aValue.getLeg2 ()));
+      ret.add (ELEMENT_LEG2, PModeLegJsonConverter.convertToJson (aValue.getLeg2 ()));
     if (aValue.hasPayloadService ())
-      ret.addJson (ELEMENT_PAYLOADSERVICE,
-                   PModePayloadServiceJsonConverter.convertToJson (aValue.getPayloadService ()));
+      ret.add (ELEMENT_PAYLOADSERVICE, PModePayloadServiceJsonConverter.convertToJson (aValue.getPayloadService ()));
     if (aValue.hasReceptionAwareness ())
-      ret.addJson (ELEMENT_RECEPETIONAWARENESS,
-                   PModeReceptionAwarenessJsonConverter.convertToJson (aValue.getReceptionAwareness ()));
+      ret.add (ELEMENT_RECEPETIONAWARENESS,
+               PModeReceptionAwarenessJsonConverter.convertToJson (aValue.getReceptionAwareness ()));
     return ret;
   }
 

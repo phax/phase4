@@ -18,18 +18,16 @@ package com.helger.phase4.server;
 
 import java.io.File;
 
-import javax.annotation.Nonnull;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.concurrent.ThreadHelper;
-import com.helger.commons.id.factory.FileIntIDFactory;
-import com.helger.commons.id.factory.GlobalIDFactory;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.url.URLHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.concurrent.ThreadHelper;
+import com.helger.base.id.factory.GlobalIDFactory;
+import com.helger.base.string.StringHelper;
+import com.helger.base.url.URLHelper;
+import com.helger.io.id.factory.FileIntIDFactory;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -38,6 +36,8 @@ import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
+
+import jakarta.annotation.Nonnull;
 
 public final class MockJettySetup extends AbstractAS4TestSetUp
 {
@@ -64,7 +64,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
     final String ret = AS4Configuration.getConfig ()
                                        .getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS,
                                                      AS4TestConstants.DEFAULT_SERVER_ADDRESS);
-    if (StringHelper.hasNoText (ret))
+    if (StringHelper.isEmpty (ret))
       throw new IllegalStateException ("Configuration property '" +
                                        MockJettySetup.SETTINGS_SERVER_ADDRESS +
                                        "' is missing");

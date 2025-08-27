@@ -19,17 +19,14 @@ package com.helger.phase4.cef;
 import java.security.cert.X509Certificate;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.state.ESuccess;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.OverridingMethodsMustInvokeSuper;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.state.ESuccess;
+import com.helger.base.string.StringHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -50,6 +47,9 @@ import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.IBDXLURLProvider;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class contains all the specifics to send AS4 messages with the CEF profile. See
@@ -377,12 +377,12 @@ public final class Phase4CEFSender
         LOGGER.warn ("The field 'receiverID' is not set");
         return false;
       }
-      if (m_aDocTypeID == null && StringHelper.hasNoText (m_sAction))
+      if (m_aDocTypeID == null && StringHelper.isEmpty (m_sAction))
       {
         LOGGER.warn ("Neither the field 'docTypeID' nor the field 'action' is set");
         return false;
       }
-      if (m_aProcessID == null && StringHelper.hasNoText (m_sService))
+      if (m_aProcessID == null && StringHelper.isEmpty (m_sService))
       {
         LOGGER.warn ("Neither the field 'processID' nor the field 'service' is set");
         return false;

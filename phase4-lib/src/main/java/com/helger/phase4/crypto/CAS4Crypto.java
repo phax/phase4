@@ -16,8 +16,7 @@
  */
 package com.helger.phase4.crypto;
 
-import javax.annotation.concurrent.Immutable;
-
+import com.helger.annotation.concurrent.Immutable;
 import com.helger.security.keystore.EKeyStoreType;
 
 /**

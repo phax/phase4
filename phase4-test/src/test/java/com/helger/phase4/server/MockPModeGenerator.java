@@ -16,9 +16,7 @@
  */
 package com.helger.phase4.server;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.state.ETriState;
+import com.helger.base.state.ETriState;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
@@ -40,6 +38,8 @@ import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
+
+import jakarta.annotation.Nonnull;
 
 public final class MockPModeGenerator
 {

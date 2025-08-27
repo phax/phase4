@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.model;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
+import com.helger.annotation.concurrent.Immutable;
 import com.helger.phase4.model.message.EAS4MessageType;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Message Exchange Pattern helper

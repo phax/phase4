@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.helger.commons.mock.SPITestHelper;
+import com.helger.unittestext.SPITestHelper;
 
 /**
  * Test SPI definitions

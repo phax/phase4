@@ -22,15 +22,15 @@ import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.helger.annotation.Nonempty;
+import com.helger.base.id.IHasID;
+import com.helger.base.lang.EnumHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.mime.CMimeType;
+import com.helger.mime.IMimeType;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
-import com.helger.commons.lang.EnumHelper;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.string.StringHelper;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Defines the allowed AS4 compression modes.
@@ -134,7 +134,7 @@ public enum EAS4CompressionMode implements IHasID <String>
   @Nullable
   public static EAS4CompressionMode getFromMimeTypeStringOrNull (@Nullable final String sMimeType)
   {
-    if (StringHelper.hasNoText (sMimeType))
+    if (StringHelper.isEmpty (sMimeType))
       return null;
     return EnumHelper.findFirst (EAS4CompressionMode.class, x -> x.getMimeTypeAsString ().equals (sMimeType));
   }

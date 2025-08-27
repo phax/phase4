@@ -18,14 +18,11 @@ package com.helger.phase4.dbnalliance.servlet;
 
 import java.security.cert.X509Certificate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
 import com.helger.peppol.xhe.read.DBNAllianceXHEDataReader;
 import com.helger.peppolid.factory.IIdentifierFactory;
@@ -35,6 +32,9 @@ import com.helger.phase4.dbnalliance.servlet.Phase4DBNAllianceReceiverConfigurat
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class contains the references values against which incoming values are compared. These are
@@ -269,7 +269,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
     final X509Certificate aAPCertificate = getAPCertificate ();
 
     final boolean bReceiverCheckEnabled;
-    if (aSMPClient == null || StringHelper.hasNoText (sAS4EndpointURL) || aAPCertificate == null)
+    if (aSMPClient == null || StringHelper.isEmpty (sAS4EndpointURL) || aAPCertificate == null)
       bReceiverCheckEnabled = false;
     else
       bReceiverCheckEnabled = isReceiverCheckEnabled ();

@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
+import com.helger.annotation.concurrent.Immutable;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for {@link PModeLeg}.
@@ -45,16 +45,16 @@ public final class PModeLegJsonConverter
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.hasProtocol ())
-      ret.addJson (PROTOCOL, PModeLegProtocolJsonConverter.convertToJson (aValue.getProtocol ()));
+      ret.add (PROTOCOL, PModeLegProtocolJsonConverter.convertToJson (aValue.getProtocol ()));
     if (aValue.hasBusinessInfo ())
-      ret.addJson (BUSINESS_INFORMATION,
-                   PModeLegBusinessInformationJsonConverter.convertToJson (aValue.getBusinessInfo ()));
+      ret.add (BUSINESS_INFORMATION,
+               PModeLegBusinessInformationJsonConverter.convertToJson (aValue.getBusinessInfo ()));
     if (aValue.hasErrorHandling ())
-      ret.addJson (ERROR_HANDLING, PModeLegErrorHandlingJsonConverter.convertToJson (aValue.getErrorHandling ()));
+      ret.add (ERROR_HANDLING, PModeLegErrorHandlingJsonConverter.convertToJson (aValue.getErrorHandling ()));
     if (aValue.hasReliability ())
-      ret.addJson (RELIABILITY, PModeLegReliabilityJsonConverter.convertToJson (aValue.getReliability ()));
+      ret.add (RELIABILITY, PModeLegReliabilityJsonConverter.convertToJson (aValue.getReliability ()));
     if (aValue.hasSecurity ())
-      ret.addJson (SECURITY, PModeLegSecurityJsonConverter.convertToJson (aValue.getSecurity ()));
+      ret.add (SECURITY, PModeLegSecurityJsonConverter.convertToJson (aValue.getSecurity ()));
     return ret;
   }
 

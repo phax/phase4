@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.helger.config.source.IConfigurationSource;
-import com.helger.config.source.res.IConfigurationSourceResource;
+import com.helger.config.source.resource.IConfigurationSourceResource;
 import com.helger.config.value.ConfiguredValue;
 
 /**

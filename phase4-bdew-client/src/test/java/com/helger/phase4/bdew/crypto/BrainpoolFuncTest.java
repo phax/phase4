@@ -52,8 +52,8 @@ import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 
-import com.helger.commons.io.stream.StringInputStream;
-import com.helger.commons.system.SystemProperties;
+import com.helger.base.io.stream.StringInputStream;
+import com.helger.base.system.SystemProperties;
 import com.helger.http.tls.ETLSVersion;
 import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientFactory;

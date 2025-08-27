@@ -18,11 +18,11 @@ package com.helger.phase4.incoming;
 
 import java.nio.charset.Charset;
 
-import javax.annotation.Nonnull;
+import com.helger.base.io.iface.IHasInputStream;
+import com.helger.http.header.HttpHeaderMap;
+import com.helger.mime.IMimeType;
 
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.IHasInputStream;
-import com.helger.commons.mime.IMimeType;
+import jakarta.annotation.Nonnull;
 
 /**
  * A synthetic wrapper for an AS4 HTTP response.

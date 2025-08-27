@@ -22,33 +22,31 @@ import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Locale;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.IsSPIImplementation;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.OverrideOnDemand;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.annotation.UnsupportedOperation;
-import com.helger.commons.annotation.UsedViaReflection;
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.lang.ServiceLoaderHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.IsSPIImplementation;
+import com.helger.annotation.style.OverrideOnDemand;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.annotation.style.UnsupportedOperation;
+import com.helger.annotation.style.UsedViaReflection;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.spi.ServiceLoaderHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.CollectionFind;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.list.ErrorList;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
@@ -85,6 +83,9 @@ import com.helger.xhe.v10.XHE10XHEType;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.bdxr.smp2.ac.CertificateType;
 import com.helger.xsds.bdxr.smp2.ac.EndpointType;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This is the SPI implementation to handle generic incoming AS4 requests. The main goal of this
@@ -167,7 +168,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4DBNAllianceServletMessageProcessorSPI.class);
 
-  private ICommonsList <IPhase4DBNAllianceIncomingXHEHandlerSPI> m_aHandlers;
+  private List <IPhase4DBNAllianceIncomingXHEHandlerSPI> m_aHandlers;
   private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;
   private Phase4DBNAllianceReceiverConfiguration m_aReceiverCheckData;
 
@@ -191,7 +192,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
   @ReturnsMutableCopy
   public final ICommonsList <IPhase4DBNAllianceIncomingXHEHandlerSPI> getAllHandler ()
   {
-    return m_aHandlers.getClone ();
+    return new CommonsArrayList <> (m_aHandlers);
   }
 
   /**
@@ -336,8 +337,8 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
                                                           @Nonnull final X509Certificate aOurCert,
                                                           @Nonnull final EndpointType aRecipientEndpoint) throws Phase4DBNAllianceServletException
   {
-    final CertificateType aCertificate = CollectionHelper.findFirst (aRecipientEndpoint.getCertificate (),
-                                                                     x -> CERT_TYPE_CODE_SMP.equals (x.getTypeCodeValue ()));
+    final CertificateType aCertificate = CollectionFind.findFirst (aRecipientEndpoint.getCertificate (),
+                                                                   x -> CERT_TYPE_CODE_SMP.equals (x.getTypeCodeValue ()));
     if (aCertificate == null)
       throw new Phase4DBNAllianceServletException (sLogPrefix +
                                                    "Failed to find certificate with proper TypeCode '" +

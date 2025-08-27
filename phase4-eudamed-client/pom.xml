@@ -55,6 +55,7 @@
     <dependency>
       <groupId>dnsjava</groupId>
       <artifactId>dnsjava</artifactId>
+      <version>${dnsjava.version}</version>
     </dependency>
 
     <dependency>
@@ -73,6 +74,11 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-unittest-support-ext</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -85,7 +91,7 @@
           <instructions>
             <Automatic-Module-Name>com.helger.phase4.eudamed</Automatic-Module-Name>
             <Export-Package>com.helger.phase4.eudamed.*</Export-Package>
-            <Import-Package>!javax.annotation.*,*</Import-Package>
+            <Import-Package>!jakarta.annotation.*,*</Import-Package>
           </instructions>
         </configuration>
       </plugin>

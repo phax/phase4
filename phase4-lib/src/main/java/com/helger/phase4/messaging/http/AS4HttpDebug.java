@@ -19,17 +19,17 @@ package com.helger.phase4.messaging.http;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.ThreadSafe;
-
 import org.slf4j.Logger;
 
+import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.Ebms3NamespaceHandler;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.IXMLWriterSettings;
 import com.helger.xml.serialize.write.XMLWriterSettings;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Turn on/off AS4 HTTP debug logging.<br>

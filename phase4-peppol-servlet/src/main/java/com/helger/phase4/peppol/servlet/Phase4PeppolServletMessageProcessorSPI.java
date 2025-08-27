@@ -23,34 +23,32 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Locale;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.IsSPIImplementation;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.OverrideOnDemand;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.annotation.UnsupportedOperation;
-import com.helger.commons.annotation.UsedViaReflection;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.datetime.XMLOffsetDateTime;
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.lang.ServiceLoaderHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.IsSPIImplementation;
+import com.helger.annotation.style.OverrideOnDemand;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.annotation.style.UnsupportedOperation;
+import com.helger.annotation.style.UsedViaReflection;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.spi.ServiceLoaderHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.datetime.xml.XMLOffsetDateTime;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.list.ErrorList;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.peppol.reporting.api.CPeppolReporting;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.sbdh.PeppolSBDHData;
@@ -89,13 +87,15 @@ import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 /**
- * This is the SPI implementation to handle generic incoming AS4 requests. The
- * main goal of this class is to implement the Peppol specific requirements of
- * packaging data in SBDH. Users of this package must implement
- * {@link IPhase4PeppolIncomingSBDHandlerSPI} instead which provides a more
- * Peppol-style SPI handler. This class is instantiated only once, therefore
- * changing the state of this class may have unintended side effects.
+ * This is the SPI implementation to handle generic incoming AS4 requests. The main goal of this
+ * class is to implement the Peppol specific requirements of packaging data in SBDH. Users of this
+ * package must implement {@link IPhase4PeppolIncomingSBDHandlerSPI} instead which provides a more
+ * Peppol-style SPI handler. This class is instantiated only once, therefore changing the state of
+ * this class may have unintended side effects.
  *
  * @author Philip Helger
  */
@@ -169,13 +169,13 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolServletMessageProcessorSPI.class);
 
-  private ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> m_aHandlers;
+  private List <IPhase4PeppolIncomingSBDHandlerSPI> m_aHandlers;
   private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;
   private Phase4PeppolReceiverConfiguration m_aReceiverCheckData;
 
   /**
-   * Constructor. Uses all SPI implementations of
-   * {@link IPhase4PeppolIncomingSBDHandlerSPI} as the handlers.
+   * Constructor. Uses all SPI implementations of {@link IPhase4PeppolIncomingSBDHandlerSPI} as the
+   * handlers.
    */
   @UsedViaReflection
   public Phase4PeppolServletMessageProcessorSPI ()
@@ -186,23 +186,23 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   }
 
   /**
-   * @return A list of all contained Peppol specific SBD handlers. Never
-   *         <code>null</code> but maybe empty.
+   * @return A list of all contained Peppol specific SBD handlers. Never <code>null</code> but maybe
+   *         empty.
    */
   @Nonnull
   @ReturnsMutableCopy
   public final ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> getAllHandler ()
   {
-    return m_aHandlers.getClone ();
+    return new CommonsArrayList <> (m_aHandlers);
   }
 
   /**
-   * Set all handler to be used. This is helpful, if this message processor is
-   * not used as an SPI but as a manually configured handler.
+   * Set all handler to be used. This is helpful, if this message processor is not used as an SPI
+   * but as a manually configured handler.
    *
    * @param aHandlers
-   *        The handler to be set. May not be <code>null</code> but maybe empty
-   *        (in which case the message is basically discarded).
+   *        The handler to be set. May not be <code>null</code> but maybe empty (in which case the
+   *        message is basically discarded).
    * @return this for chaining
    */
   @Nonnull
@@ -216,9 +216,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   }
 
   /**
-   * @return the transport profile to be handled. Never <code>null</code>. By
-   *         default it is "Peppol AS4 v2" (see
-   *         {@link #DEFAULT_TRANSPORT_PROFILE}).
+   * @return the transport profile to be handled. Never <code>null</code>. By default it is "Peppol
+   *         AS4 v2" (see {@link #DEFAULT_TRANSPORT_PROFILE}).
    */
   @Nonnull
   public final ISMPTransportProfile getTransportProfile ()
@@ -252,8 +251,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   }
 
   /**
-   * Set the receiver check data to be used. If set, it overrides the global one
-   * defined by {@link Phase4PeppolDefaultReceiverConfiguration}.
+   * Set the receiver check data to be used. If set, it overrides the global one defined by
+   * {@link Phase4PeppolDefaultReceiverConfiguration}.
    *
    * @param aReceiverCheckData
    *        The customer receiver check data to use. May be <code>null</code>.
@@ -295,7 +294,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       }
 
       // PFUOI 4.3.0
-      final SignedServiceMetadataType aSSM = aSMPClient.getSchemeSpecificServiceMetadataOrNull (aRecipientID, aDocTypeID);
+      final SignedServiceMetadataType aSSM = aSMPClient.getSchemeSpecificServiceMetadataOrNull (aRecipientID,
+                                                                                                aDocTypeID);
       return aSSM == null ? null : SMPClientReadOnly.getEndpoint (aSSM, aProcessID, m_aTransportProfile);
     }
     catch (final Exception ex)
@@ -394,21 +394,18 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
    * @param aPeppolSBD
    *        The parsed Peppol SBDH object. May not be <code>null</code>.
    * @param aState
-   *        The processing state of the incoming message. May not be
-   *        <code>null</code>.
+   *        The processing state of the incoming message. May not be <code>null</code>.
    * @param sC3ID
-   *        The Peppol Service Provider Seat ID (in the format PXX000000). May
-   *        neither be <code>null</code> nor empty.
+   *        The Peppol Service Provider Seat ID (in the format PXX000000). May neither be
+   *        <code>null</code> nor empty.
    * @param sC4CountryCode
-   *        The country code of the End User that is the business receiver of
-   *        the document. Must neither be <code>null</code> nor empty.
-   * @param sEndUserID
-   *        The internal (local) ID of the End User that is the business
-   *        receiver of the document. This ID is NOT part of the reporting
-   *        towards OpenPeppol, it is just for created aggregating counts. Must
+   *        The country code of the End User that is the business receiver of the document. Must
    *        neither be <code>null</code> nor empty.
-   * @return <code>null</code> if not all necessary elements are present. Check
-   *         logs for details.
+   * @param sEndUserID
+   *        The internal (local) ID of the End User that is the business receiver of the document.
+   *        This ID is NOT part of the reporting towards OpenPeppol, it is just for created
+   *        aggregating counts. Must neither be <code>null</code> nor empty.
+   * @return <code>null</code> if not all necessary elements are present. Check logs for details.
    * @since 2.2.2
    */
   @Nullable
@@ -463,7 +460,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     try
     {
       String sC1CountryCode = aPeppolSBD.getCountryC1 ();
-      if (StringHelper.hasNoText (sC1CountryCode))
+      if (StringHelper.isEmpty (sC1CountryCode))
       {
         // Fallback to ZZ to make sure the item can be created
         sC1CountryCode = CPeppolReporting.REPLACEMENT_COUNTRY_CODE;
@@ -490,21 +487,19 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   }
 
   /**
-   * Method that is invoked after the message was successfully processed with at
-   * least one handler, and before a Receipt is returned. By default this method
-   * does nothing. The idea was to override this method to allow for remembering
-   * the created transaction for Peppol Reporting.
+   * Method that is invoked after the message was successfully processed with at least one handler,
+   * and before a Receipt is returned. By default this method does nothing. The idea was to override
+   * this method to allow for remembering the created transaction for Peppol Reporting.
    *
    * @param aUserMessage
    *        The current AS4 UserMessage. Never <code>null</code>.
    * @param aPeppolSBD
    *        The parsed Peppol SBDH object. Never <code>null</code>.
    * @param aState
-   *        The processing state of the incoming message. Never
-   *        <code>null</code>.
+   *        The processing state of the incoming message. Never <code>null</code>.
    * @since 2.2.2
-   * @see #createPeppolReportingItemForReceivedMessage(Ebms3UserMessage,
-   *      PeppolSBDHData, IAS4IncomingMessageState, String, String, String)
+   * @see #createPeppolReportingItemForReceivedMessage(Ebms3UserMessage, PeppolSBDHData,
+   *      IAS4IncomingMessageState, String, String, String)
    */
   @OverrideOnDemand
   protected void afterSuccessfulPeppolProcessing (@Nonnull final Ebms3UserMessage aUserMessage,

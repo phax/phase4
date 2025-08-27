@@ -20,14 +20,14 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.io.IHasInputStream;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.io.iface.IHasInputStream;
+import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.phase4.util.AS4ResourceHelper;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Read-only interface for an attachment.

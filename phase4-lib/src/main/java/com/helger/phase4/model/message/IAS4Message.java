@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model.message;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.annotation.Nonempty;
+import com.helger.annotation.Nonempty;
 import com.helger.phase4.model.ESoapVersion;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Base interface for an AS4 message.

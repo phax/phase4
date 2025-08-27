@@ -26,8 +26,8 @@ import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.state.ETriState;
+import com.helger.base.state.ETriState;
+import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;

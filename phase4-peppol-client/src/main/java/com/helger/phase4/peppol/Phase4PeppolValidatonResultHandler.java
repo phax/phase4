@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.peppol;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phive.api.result.ValidationResultList;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * The default implementation of {@link IPhase4PeppolValidationResultHandler}.

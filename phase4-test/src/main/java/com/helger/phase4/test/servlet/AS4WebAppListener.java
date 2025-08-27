@@ -18,9 +18,6 @@ package com.helger.phase4.test.servlet;
 
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.httpclient.HttpDebugger;
@@ -32,6 +29,8 @@ import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.IUserManager;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.ServletContext;
 
 /**

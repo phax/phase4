@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.incoming;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.util.Phase4Exception;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Specialized interface for the EBMS 3 Signal Message consumer.

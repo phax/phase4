@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.pmode;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
+import com.helger.annotation.concurrent.Immutable;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
 import com.helger.phase4.attachment.EAS4CompressionMode;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModePayloadService}.

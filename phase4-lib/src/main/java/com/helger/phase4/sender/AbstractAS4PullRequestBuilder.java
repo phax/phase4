@@ -16,15 +16,12 @@
  */
 package com.helger.phase4.sender;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.state.ESuccess;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.OverridingMethodsMustInvokeSuper;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.state.ESuccess;
+import com.helger.base.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
@@ -37,6 +34,9 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Abstract builder base class for a Pull Request.
@@ -297,13 +297,13 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     if (!super.isEveryRequiredFieldSet ())
       return false;
 
-    if (StringHelper.hasNoText (m_sMPC))
+    if (StringHelper.isEmpty (m_sMPC))
     {
       LOGGER.warn ("The field 'MPC' is not set");
       return false;
     }
 
-    if (StringHelper.hasNoText (m_sEndpointURL))
+    if (StringHelper.isEmpty (m_sEndpointURL))
     {
       LOGGER.warn ("The field 'endpointURL' is not set");
       return false;
@@ -350,9 +350,9 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
     if (m_aHttpRetrySettings != null)
       aPullRequestMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
 
-    if (StringHelper.hasText (m_sMessageID))
+    if (StringHelper.isNotEmpty (m_sMessageID))
       aPullRequestMsg.setMessageID (m_sMessageID);
-    if (StringHelper.hasText (m_sRefToMessageID))
+    if (StringHelper.isNotEmpty (m_sRefToMessageID))
       aPullRequestMsg.setRefToMessageID (m_sRefToMessageID);
 
     aPullRequestMsg.setMPC (m_sMPC);

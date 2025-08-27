@@ -16,13 +16,13 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-
 import org.junit.Test;
 
-import com.helger.commons.mock.CommonsTestHelper;
 import com.helger.json.IJsonObject;
+import com.helger.unittest.support.TestHelper;
 import com.helger.xml.mock.XMLTestHelper;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Test class for class {@link PModeLegSecurity}.
@@ -35,7 +35,7 @@ public final class PModeLegSecurityTest
   {
     final IJsonObject o = PModeLegSecurityJsonConverter.convertToJson (p);
     final PModeLegSecurity p2 = PModeLegSecurityJsonConverter.convertToNative (o);
-    CommonsTestHelper.testDefaultImplementationWithEqualContentObject (p, p2);
+    TestHelper.testDefaultImplementationWithEqualContentObject (p, p2);
     XMLTestHelper.testMicroTypeConversion (p);
   }
 

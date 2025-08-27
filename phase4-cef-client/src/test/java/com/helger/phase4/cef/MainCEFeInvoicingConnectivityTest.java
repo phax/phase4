@@ -20,14 +20,12 @@ import java.io.File;
 import java.security.KeyStore;
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
-import com.helger.commons.exception.InitializationException;
-import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.commons.mime.CMimeType;
+import com.helger.base.exception.InitializationException;
+import com.helger.io.file.SimpleFileIO;
+import com.helger.mime.CMimeType;
 import com.helger.peppolid.simple.participant.SimpleParticipantIdentifier;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
@@ -52,6 +50,8 @@ import com.helger.web.scope.mgr.WebScoped;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * This is an example file for sending to the CEF eInvoicing test endpoint

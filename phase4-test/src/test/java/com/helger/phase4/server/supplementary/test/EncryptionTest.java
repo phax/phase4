@@ -20,7 +20,6 @@ import static org.junit.Assert.assertFalse;
 
 import java.nio.charset.StandardCharsets;
 
-import javax.annotation.Nullable;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.xml.transform.TransformerException;
@@ -37,8 +36,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
-import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
+import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
@@ -49,6 +48,8 @@ import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.scope.mock.ScopeTestRule;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nullable;
 
 /**
  * A set of test-cases for encrypting and decrypting SOAP requests.
@@ -86,8 +87,8 @@ public final class EncryptionTest
   }
 
   /**
-   * Test that encrypt and decrypt a WS-Security envelope. This test uses the
-   * RSA_15 algorithm to transport (wrap) the symmetric key.
+   * Test that encrypt and decrypt a WS-Security envelope. This test uses the RSA_15 algorithm to
+   * transport (wrap) the symmetric key.
    * <p/>
    *
    * @throws Exception

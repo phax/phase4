@@ -18,18 +18,18 @@ package com.helger.phase4.model.error;
 
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
-
-import com.helger.commons.builder.IBuilder;
-import com.helger.commons.error.level.IErrorLevel;
-import com.helger.commons.lang.StackTraceHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.builder.IBuilder;
+import com.helger.base.rt.StackTraceHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.diagnostics.error.level.IErrorLevel;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Description;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.model.message.MessageHelperMethods;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Builder class for {@link Ebms3Error}
@@ -79,7 +79,7 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   @Nonnull
   public Ebms3ErrorBuilder description (@Nullable final String s, @Nullable final Locale aLocale)
   {
-    return description (StringHelper.hasNoText (s) ? null : MessageHelperMethods.createEbms3Description (aLocale == null
+    return description (StringHelper.isEmpty (s) ? null : MessageHelperMethods.createEbms3Description (aLocale == null
                                                                                                                          ? Locale.US
                                                                                                                          : aLocale,
                                                                                                          s));
@@ -171,7 +171,7 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   {
     if (m_eSeverity == null)
       throw new IllegalStateException ("Severity is required");
-    if (StringHelper.hasNoText (m_sErrorCode))
+    if (StringHelper.isEmpty (m_sErrorCode))
       throw new IllegalStateException ("Error Code is required");
 
     final Ebms3Error aEbms3Error = new Ebms3Error ();

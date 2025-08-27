@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.incoming.spi;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.annotation.IsSPIInterface;
+import com.helger.annotation.style.IsSPIInterface;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.model.pmode.IPMode;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Implement this SPI interface to handle incoming pull request appropriately

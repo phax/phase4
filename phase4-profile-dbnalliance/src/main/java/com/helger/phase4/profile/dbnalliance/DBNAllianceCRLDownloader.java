@@ -16,11 +16,9 @@
  */
 package com.helger.phase4.profile.dbnalliance;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
+import com.helger.base.enforce.ValueEnforcer;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.HttpClientUrlDownloader;
@@ -28,6 +26,8 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.crl.CRLCache;
 import com.helger.security.crl.CRLDownloader;
 import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * The DBNAlliance specific CRL downloader using the {@link HttpClientUrlDownloader} internally.

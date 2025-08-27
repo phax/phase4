@@ -18,16 +18,13 @@ package com.helger.phase4.server.message;
 
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -52,7 +49,8 @@ import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.server.spi.MockMessageProcessorCheckingStreamsSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public final class MockMessages
 {
@@ -208,7 +206,6 @@ public final class MockMessages
   }
 
   @Nonnull
-  @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
   public static Document createEmptyUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                                  @Nullable final Node aPayload,
                                                  @Nullable final ICommonsList <WSS4JAttachment> aAttachments)

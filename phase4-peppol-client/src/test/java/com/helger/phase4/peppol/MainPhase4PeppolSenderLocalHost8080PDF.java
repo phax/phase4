@@ -20,9 +20,9 @@ import java.io.File;
 
 import org.slf4j.Logger;
 
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.commons.mime.CMimeType;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.io.file.SimpleFileIO;
+import com.helger.mime.CMimeType;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.peppol.doctype.EPredefinedDocumentTypeIdentifier;
 import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifier;

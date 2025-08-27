@@ -19,18 +19,15 @@ package com.helger.phase4.servlet;
 import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.OverrideOnDemand;
-import com.helger.commons.http.CHttp;
-import com.helger.commons.http.EHttpMethod;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.IHasInputStream;
-import com.helger.commons.mime.IMimeType;
+import com.helger.annotation.style.OverrideOnDemand;
+import com.helger.base.io.iface.IHasInputStream;
+import com.helger.http.CHttp;
+import com.helger.http.EHttpMethod;
 import com.helger.http.EHttpVersion;
+import com.helger.http.header.HttpHeaderMap;
+import com.helger.mime.IMimeType;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -51,6 +48,8 @@ import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 

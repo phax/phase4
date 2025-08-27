@@ -21,24 +21,21 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.function.Function;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.file.FilenameHelper;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.WillNotClose;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.file.FilenameHelper;
+import com.helger.mime.IMimeType;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -67,6 +64,8 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.xmldsig.ReferenceType;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**
@@ -629,33 +628,33 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
   private void _checkMandatoryAttributes ()
   {
-    if (StringHelper.hasNoText (m_sAction))
+    if (StringHelper.isEmpty (m_sAction))
       throw new IllegalStateException ("Action needs to be set");
 
     if (false)
-      if (StringHelper.hasNoText (m_sServiceType))
+      if (StringHelper.isEmpty (m_sServiceType))
         throw new IllegalStateException ("ServiceType needs to be set");
 
-    if (StringHelper.hasNoText (m_sServiceValue))
+    if (StringHelper.isEmpty (m_sServiceValue))
       throw new IllegalStateException ("ServiceValue needs to be set");
 
     if (m_sConversationID == null)
       throw new IllegalStateException ("ConversationID needs to be set (but may be empty)");
 
     if (false)
-      if (StringHelper.hasNoText (m_sAgreementRefValue))
+      if (StringHelper.isEmpty (m_sAgreementRefValue))
         throw new IllegalStateException ("AgreementRefValue needs to be set");
 
-    if (StringHelper.hasNoText (m_sFromRole))
+    if (StringHelper.isEmpty (m_sFromRole))
       throw new IllegalStateException ("FromRole needs to be set");
 
-    if (StringHelper.hasNoText (m_sFromPartyIDValue))
+    if (StringHelper.isEmpty (m_sFromPartyIDValue))
       throw new IllegalStateException ("FromPartyID needs to be set");
 
-    if (StringHelper.hasNoText (m_sToRole))
+    if (StringHelper.isEmpty (m_sToRole))
       throw new IllegalStateException ("ToRole needs to be set");
 
-    if (StringHelper.hasNoText (m_sToPartyIDValue))
+    if (StringHelper.isEmpty (m_sToPartyIDValue))
       throw new IllegalStateException ("ToPartyID needs to be set");
   }
 

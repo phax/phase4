@@ -30,7 +30,6 @@
   <description>DBNAlliance AS4 servlet for incoming transmissions</description>
   <url>https://github.com/phax/phase4/phase4-dbnalliance-servlet</url>
   <inceptionYear>2025</inceptionYear>
-
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -38,7 +37,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
   <dependencies>
     <dependency>
       <groupId>com.helger.phase4</groupId>
@@ -68,13 +66,11 @@
       <artifactId>peppol-smp-client</artifactId>
       <version>${peppol-commons.version}</version>
     </dependency>
-
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -85,8 +81,12 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-unittest-support-ext</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -95,13 +95,11 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Automatic-Module-Name>com.helger.phase4.peppol.servlet</Automatic-Module-Name>
-            <Export-Package>com.helger.phase4.peppol.servlet.*</Export-Package>
-            <Import-Package>!javax.annotation.*,*</Import-Package>
-            <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",
-osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
-osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>
-            <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI</Provide-Capability>
+            <Automatic-Module-Name>com.helger.phase4.dbnalliance.servlet</Automatic-Module-Name>
+            <Export-Package>com.helger.phase4.dbnalliance.servlet.*</Export-Package>
+            <Import-Package>!jakarta.annotation.*,*</Import-Package>
+            <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
+            <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI</Provide-Capability>
           </instructions>
         </configuration>
       </plugin>

@@ -21,8 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -30,11 +28,11 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.id.factory.GlobalIDFactory;
-import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.base.id.factory.GlobalIDFactory;
+import com.helger.base.wrapper.Wrapper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -56,6 +54,8 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nonnull;
 
 public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 {

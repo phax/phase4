@@ -19,9 +19,6 @@ package com.helger.phase4.sender;
 import java.io.IOException;
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
@@ -29,7 +26,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.base.wrapper.Wrapper;
 import com.helger.httpclient.response.ResponseHandlerHttpEntity;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -55,6 +52,8 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.util.Phase4Exception;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**

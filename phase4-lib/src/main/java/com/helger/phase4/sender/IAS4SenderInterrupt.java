@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.sender;
 
-import javax.annotation.Nonnull;
+import com.helger.base.state.EContinue;
 
-import com.helger.commons.state.EContinue;
+import jakarta.annotation.Nonnull;
 
 /**
  * A specific helper interface with the sole purpose to be able to interrupt the

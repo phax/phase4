@@ -21,8 +21,8 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 
-import com.helger.commons.concurrent.ExecutorServiceHelper;
-import com.helger.commons.timing.StopWatch;
+import com.helger.base.concurrent.ExecutorServiceHelper;
+import com.helger.base.timing.StopWatch;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;

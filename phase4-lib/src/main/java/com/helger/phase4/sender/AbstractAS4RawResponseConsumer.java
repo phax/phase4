@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.sender;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.base.trait.IGenericImplTrait;
 
-import com.helger.commons.string.ToStringGenerator;
-import com.helger.commons.traits.IGenericImplTrait;
+import jakarta.annotation.Nonnull;
 
 /**
  * Abstract base implementation of <code>IAS4RawResponseConsumer</code> to

@@ -16,17 +16,17 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
+import com.helger.collection.commons.CommonsLinkedHashMap;
+import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModeLegBusinessInformation}.
@@ -54,13 +54,13 @@ public class PModeLegBusinessInformationMicroTypeConverter extends
     ret.setAttribute (ATTR_SERVICE_TYPE, aValue.getServiceType ());
     ret.setAttribute (ATTR_ACTION, aValue.getAction ());
     aValue.properties ()
-          .forEachValue (x -> ret.appendChild (MicroTypeConverter.convertToMicroElement (x,
-                                                                                         sNamespaceURI,
-                                                                                         ELEMENT_PROPERTIES)));
+          .forEachValue (x -> ret.addChild (MicroTypeConverter.convertToMicroElement (x,
+                                                                                      sNamespaceURI,
+                                                                                      ELEMENT_PROPERTIES)));
     aValue.payloadProfiles ()
-          .forEachValue (x -> ret.appendChild (MicroTypeConverter.convertToMicroElement (x,
-                                                                                         sNamespaceURI,
-                                                                                         ELEMENT_PAYLOAD_PROFILE)));
+          .forEachValue (x -> ret.addChild (MicroTypeConverter.convertToMicroElement (x,
+                                                                                      sNamespaceURI,
+                                                                                      ELEMENT_PAYLOAD_PROFILE)));
     if (aValue.hasPayloadProfileMaxKB ())
       ret.setAttribute (ATTR_PAYLOAD_PROFILE_MAX_KB, aValue.getPayloadProfileMaxKB ().longValue ());
     ret.setAttribute (ATTR_MPCID, aValue.getMPCID ());

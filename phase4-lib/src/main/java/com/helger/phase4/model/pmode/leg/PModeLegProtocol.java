@@ -19,19 +19,19 @@ package com.helger.phase4.model.pmode.leg;
 import java.io.Serializable;
 import java.net.URL;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.hashcode.HashCodeGenerator;
-import com.helger.commons.state.EChange;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
-import com.helger.commons.url.URLHelper;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.MustImplementEqualsAndHashcode;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.hashcode.HashCodeGenerator;
+import com.helger.base.state.EChange;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.base.url.URLHelper;
 import com.helger.phase4.model.ESoapVersion;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * PMode leg protocol parameters.
@@ -76,7 +76,7 @@ public class PModeLegProtocol implements Serializable
 
   public final boolean hasAddress ()
   {
-    return StringHelper.hasText (m_sAddress);
+    return StringHelper.isNotEmpty (m_sAddress);
   }
 
   @Nullable

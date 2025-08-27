@@ -18,11 +18,11 @@ package com.helger.phase4.logging;
 
 import java.util.concurrent.Callable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
+import com.helger.annotation.concurrent.ThreadSafe;
+import com.helger.base.enforce.ValueEnforcer;
 
-import com.helger.commons.ValueEnforcer;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * The logging customizer for the phase4 library.
@@ -36,7 +36,7 @@ public final class Phase4LogCustomizer
   private static final ThreadLocal <String> TL_PREFIX = new ThreadLocal <> ();
   private static final ThreadLocal <String> TL_SUFFIX = new ThreadLocal <> ();
 
-  @Deprecated
+  @Deprecated (forRemoval = false)
   private Phase4LogCustomizer ()
   {}
 

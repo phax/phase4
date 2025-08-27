@@ -21,11 +21,6 @@ import java.io.OutputStream;
 import java.time.Duration;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
@@ -34,16 +29,18 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.HttpEntityWrapper;
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.concurrent.ThreadHelper;
-import com.helger.commons.http.CHttp;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.lang.StackTraceHelper;
-import com.helger.commons.string.ToStringGenerator;
-import com.helger.commons.timing.StopWatch;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.Nonnegative;
+import com.helger.annotation.WillNotClose;
+import com.helger.base.concurrent.ThreadHelper;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.rt.StackTraceHelper;
+import com.helger.base.timing.StopWatch;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.base.wrapper.Wrapper;
+import com.helger.http.CHttp;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.IHttpClientProvider;
@@ -53,6 +50,9 @@ import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.util.MultiOutputStream;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * A generic HTTP POST wrapper based on {@link IHttpClientProvider} and {@link HttpPost}. Since

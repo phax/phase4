@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.error;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.text.display.IHasDisplayText;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.string.ToStringGenerator;
-import com.helger.commons.text.display.IHasDisplayText;
+import jakarta.annotation.Nonnull;
 
 /**
  * Generic implementation of {@link IEbmsError} to represent other errors

@@ -19,16 +19,13 @@ package com.helger.phase4.server.message;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.hc.core5.http.HttpEntity;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
@@ -52,6 +49,9 @@ import com.helger.phase4.soap12.Soap12Body;
 import com.helger.phase4.soap12.Soap12Envelope;
 import com.helger.phase4.soap12.Soap12Header;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Test class for class {@link Ebms3Messaging}.

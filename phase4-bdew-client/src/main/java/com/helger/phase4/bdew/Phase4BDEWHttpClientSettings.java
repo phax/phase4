@@ -27,7 +27,7 @@ import javax.net.ssl.TrustManager;
 
 import org.apache.hc.core5.util.Timeout;
 
-import com.helger.commons.ws.TrustManagerTrustAll;
+import com.helger.http.security.TrustManagerTrustAll;
 import com.helger.http.tls.ETLSVersion;
 import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientSettings;

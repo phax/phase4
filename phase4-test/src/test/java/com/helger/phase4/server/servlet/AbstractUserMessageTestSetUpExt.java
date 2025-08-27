@@ -18,14 +18,11 @@ package com.helger.phase4.server.servlet;
 
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -39,6 +36,9 @@ import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * The test classes for the usermessage, are split up for a better overview. Since all these classes

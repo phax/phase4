@@ -22,16 +22,13 @@ package com.helger.phase4.bdew;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.annotation.OverridingMethodsMustInvokeSuper;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
@@ -42,6 +39,9 @@ import com.helger.phase4.profile.bdew.AS4BDEWProfileRegistarSPI;
 import com.helger.phase4.profile.bdew.BDEWPMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class contains all the specifics to send AS4 messages with the BDEW
@@ -214,28 +214,28 @@ public final class Phase4BDEWSender
 
       if (m_aPayloadParams != null)
       {
-        if (StringHelper.hasText (m_aPayloadParams.getDocumentType ()))
+        if (StringHelper.isNotEmpty (m_aPayloadParams.getDocumentType ()))
           aPayloadAttachment.customPartProperties ().put ("BDEWDocumentType", m_aPayloadParams.getDocumentType ());
 
         if (m_aPayloadParams.getDocumentDate () != null)
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWDocumentDate", m_aPayloadParams.getDocumentDate ().toString ());
 
-        if (StringHelper.hasText (m_aPayloadParams.getDocumentNumber ()))
+        if (StringHelper.isNotEmpty (m_aPayloadParams.getDocumentNumber ()))
           aPayloadAttachment.customPartProperties ().put ("BDEWDocumentNo", m_aPayloadParams.getDocumentNumber ());
 
         if (m_aPayloadParams.getFulfillmentDate () != null)
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWFulfillmentDate", m_aPayloadParams.getFulfillmentDate ().toString ());
 
-        if (StringHelper.hasText (m_aPayloadParams.getSubjectPartyId ()))
+        if (StringHelper.isNotEmpty (m_aPayloadParams.getSubjectPartyId ()))
           aPayloadAttachment.customPartProperties ().put ("BDEWSubjectPartyID", m_aPayloadParams.getSubjectPartyId ());
 
-        if (StringHelper.hasText (m_aPayloadParams.getSubjectPartyRole ()))
+        if (StringHelper.isNotEmpty (m_aPayloadParams.getSubjectPartyRole ()))
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWSubjectPartyRole", m_aPayloadParams.getSubjectPartyRole ());
 
-        if (StringHelper.hasText (m_aPayloadParams.getApplicationReference ()))
+        if (StringHelper.isNotEmpty (m_aPayloadParams.getApplicationReference ()))
           aPayloadAttachment.customPartProperties ()
                             .put ("BDEWApplicationReference", m_aPayloadParams.getApplicationReference ());
       }

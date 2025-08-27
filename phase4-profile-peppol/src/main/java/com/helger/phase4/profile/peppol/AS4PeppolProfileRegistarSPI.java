@@ -16,17 +16,17 @@
  */
 package com.helger.phase4.profile.peppol;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
 import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Library specific implementation of {@link IAS4ProfileRegistrarSPI}.

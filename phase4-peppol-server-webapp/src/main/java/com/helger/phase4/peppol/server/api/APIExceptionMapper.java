@@ -16,21 +16,20 @@
  */
 package com.helger.phase4.peppol.server.api;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.hc.client5.http.HttpResponseException;
 import org.slf4j.Logger;
 
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.state.EHandled;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.state.EHandled;
+import com.helger.base.string.StringHelper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.photon.api.AbstractAPIExceptionMapper;
 import com.helger.photon.api.InvokableAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
@@ -53,7 +52,7 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
   {
     // With payload
     setSimpleTextResponse (aUnifiedResponse, nStatusCode, sContent);
-    if (StringHelper.hasText (sContent))
+    if (StringHelper.isNotEmpty (sContent))
       aUnifiedResponse.disableCaching ();
   }
 

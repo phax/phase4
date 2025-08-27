@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.profile.euctp;
 
-import javax.annotation.Nonnull;
+import com.helger.annotation.Nonempty;
 
-import com.helger.commons.annotation.Nonempty;
+import jakarta.annotation.Nonnull;
 
 /**
  * This enum contains all the EU CTP AS4 actions.

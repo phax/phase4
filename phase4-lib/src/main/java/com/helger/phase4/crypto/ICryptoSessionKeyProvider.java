@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.crypto;
 
-import javax.annotation.Nonnull;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
@@ -24,18 +23,18 @@ import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.KeyUtils;
 
+import jakarta.annotation.Nonnull;
+
 /**
- * Interface for a "session key" provider, that is used for encrypting
- * documents. Default instances for AES-128 and AES-256 are provided for
- * simplicity.
+ * Interface for a "session key" provider, that is used for encrypting documents. Default instances
+ * for AES-128 and AES-256 are provided for simplicity.
  *
  * @author Philip Helger
  */
 public interface ICryptoSessionKeyProvider
 {
   /**
-   * Get or create a new symmetric session key. This method may only throw
-   * unchecked exceptions.
+   * Get or create a new symmetric session key. This method may only throw unchecked exceptions.
    *
    * @return A new session key. Must not be <code>null</code>.
    */
@@ -43,8 +42,7 @@ public interface ICryptoSessionKeyProvider
   SecretKey getSessionKey ();
 
   /**
-   * Session key provider for AES-128 keys that can be used e.g. for AES-128-CBC
-   * or AES-128-GCM
+   * Session key provider for AES-128 keys that can be used e.g. for AES-128-CBC or AES-128-GCM
    */
   ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_128 = () -> {
     try
@@ -58,12 +56,8 @@ public interface ICryptoSessionKeyProvider
     }
   };
 
-  @Deprecated (forRemoval = true, since = "3.0.2")
-  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_128_GCM = INSTANCE_RANDOM_AES_128;
-
   /**
-   * Session key provider for AES-256 keys that can be used e.g. for AES-256-CBC
-   * or AES-256-GCM
+   * Session key provider for AES-256 keys that can be used e.g. for AES-256-CBC or AES-256-GCM
    */
   ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_256 = () -> {
     try
@@ -76,7 +70,4 @@ public interface ICryptoSessionKeyProvider
       throw new IllegalStateException ("Failed to create session key (AES-256)", ex);
     }
   };
-
-  @Deprecated (forRemoval = true, since = "3.0.2")
-  ICryptoSessionKeyProvider INSTANCE_RANDOM_AES_256_GCM = INSTANCE_RANDOM_AES_256;
 }

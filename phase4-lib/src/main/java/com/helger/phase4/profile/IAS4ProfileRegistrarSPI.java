@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.profile;
 
-import javax.annotation.Nonnull;
+import com.helger.annotation.style.IsSPIInterface;
 
-import com.helger.commons.annotation.IsSPIInterface;
+import jakarta.annotation.Nonnull;
 
 /**
  * AS4 profile registrar SPI interface

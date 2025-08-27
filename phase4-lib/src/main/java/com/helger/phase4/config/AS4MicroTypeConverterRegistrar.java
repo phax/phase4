@@ -16,10 +16,8 @@
  */
 package com.helger.phase4.config;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.phase4.duplicate.AS4DuplicateItem;
 import com.helger.phase4.duplicate.AS4DuplicateItemMicroTypeConverter;
 import com.helger.phase4.model.mpc.MPC;
@@ -52,6 +50,8 @@ import com.helger.phase4.model.pmode.leg.PModeProperty;
 import com.helger.phase4.model.pmode.leg.PModePropertyMicroTypeConverter;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistry;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * MicroType converter registry for this project. Invoked via SPI.

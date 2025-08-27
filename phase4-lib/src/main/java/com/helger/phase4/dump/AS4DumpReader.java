@@ -22,25 +22,22 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.IHasInputStream;
-import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.mutable.MutableInt;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.Nonnegative;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.io.iface.IHasInputStream;
+import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.numeric.mutable.MutableInt;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.http.header.HttpHeaderMap;
+import com.helger.mime.IMimeType;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -66,6 +63,8 @@ import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**
@@ -96,19 +95,17 @@ public final class AS4DumpReader
   {}
 
   /**
-   * Utility method to just read and consume the leading HTTP headers from a
-   * dump. Usually this method is not called explicitly but invoked directly by
+   * Utility method to just read and consume the leading HTTP headers from a dump. Usually this
+   * method is not called explicitly but invoked directly by
    * {@link #decryptAS4In(String, byte[], IAS4CryptoFactory, IAS4CryptoFactory, Consumer, IDecryptedPayloadConsumer)}
    *
    * @param aAS4InData
    *        The byte array with the dump. May not be <code>null</code>.
    * @param aHttpHeaderConsumer
-   *        The optional consumer for the read HTTP headers. May be
-   *        <code>null</code>.
+   *        The optional consumer for the read HTTP headers. May be <code>null</code>.
    * @param aHttpEndIndexConsumer
-   *        An optional consumer for the number of header data bytes read, so
-   *        that the start index of the payload can easily be determined. May be
-   *        <code>null</code>.
+   *        An optional consumer for the number of header data bytes read, so that the start index
+   *        of the payload can easily be determined. May be <code>null</code>.
    * @since 2.1.0
    */
   public static void readAndSkipInitialHttpHeaders (@Nonnull final byte [] aAS4InData,
@@ -167,25 +164,23 @@ public final class AS4DumpReader
 
   /**
    * Utility method to decrypt dumped .as4in message late.<br>
-   * Note: this method was mainly created for internal use and does not win the
-   * prize for the most sexy piece of software in the world ;-)
+   * Note: this method was mainly created for internal use and does not win the prize for the most
+   * sexy piece of software in the world ;-)
    *
    * @param sAS4ProfileID
-   *        The AS4 profile ID to use. May neither be <code>null</code> nor
-   *        empty.
+   *        The AS4 profile ID to use. May neither be <code>null</code> nor empty.
    * @param aAS4InData
    *        The byte array with the dumped data.
    * @param aCryptoFactorySign
    *        The Crypto factory to be used. May not be <code>null</code>.
    * @param aCryptoFactoryCrypt
-   *        The Crypto factory to be used for decrypting. This crypto factory
-   *        must use the private key that can be used to decrypt this particular
-   *        message. May not be <code>null</code>.
+   *        The Crypto factory to be used for decrypting. This crypto factory must use the private
+   *        key that can be used to decrypt this particular message. May not be <code>null</code>.
    * @param aHttpHeaderConsumer
    *        An optional HTTP Header map consumer. May be <code>null</code>.
    * @param aDecryptedConsumer
-   *        The consumer for the decrypted payload - whatever that is :). May
-   *        not be <code>null</code>.
+   *        The consumer for the decrypted payload - whatever that is :). May not be
+   *        <code>null</code>.
    * @throws WSSecurityException
    *         In case of error
    * @throws Phase4Exception
@@ -220,7 +215,7 @@ public final class AS4DumpReader
     if (aHttpHeaderConsumer != null)
       aHttpHeaderConsumer.accept (hm);
 
-    LOGGER.info ("Now at byte " + nHttpEnd + " having " + hm.getCount () + " HTTP headers");
+    LOGGER.info ("Now at byte " + nHttpEnd + " having " + hm.size () + " HTTP headers");
 
     final boolean bGlobalScopePresent = WebScopeManager.isGlobalScopePresent ();
     if (!bGlobalScopePresent)
@@ -230,7 +225,7 @@ public final class AS4DumpReader
     }
 
     try (final WebScoped w = new WebScoped ();
-        final AS4RequestHandler aHandler = new AS4RequestHandler (AS4IncomingMessageMetadata.createForRequest ()))
+         final AS4RequestHandler aHandler = new AS4RequestHandler (AS4IncomingMessageMetadata.createForRequest ()))
     {
       // Set default values in handler
       aHandler.setCryptoFactorySign (aCryptoFactorySign);

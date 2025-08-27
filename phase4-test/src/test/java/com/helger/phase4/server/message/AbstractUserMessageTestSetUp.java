@@ -22,10 +22,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.Header;
@@ -36,12 +32,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.ArrayHelper;
-import com.helger.commons.http.CHttp;
-import com.helger.commons.lang.StackTraceHelper;
-import com.helger.commons.mutable.MutableInt;
+import com.helger.annotation.Nonnegative;
+import com.helger.base.array.ArrayHelper;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.numeric.mutable.MutableInt;
+import com.helger.base.rt.StackTraceHelper;
 import com.helger.config.IConfig;
+import com.helger.http.CHttp;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientHelper;
 import com.helger.httpclient.HttpClientSettings;
@@ -59,6 +56,8 @@ import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp

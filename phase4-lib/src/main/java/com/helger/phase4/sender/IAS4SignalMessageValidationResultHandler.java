@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.sender;
 
-import javax.annotation.Nonnull;
+import com.helger.annotation.Nonempty;
 
-import com.helger.commons.annotation.Nonempty;
+import jakarta.annotation.Nonnull;
 
 /**
  * Specific callback interface for {@link ValidatingAS4SignalMsgConsumer} to handle the results in a

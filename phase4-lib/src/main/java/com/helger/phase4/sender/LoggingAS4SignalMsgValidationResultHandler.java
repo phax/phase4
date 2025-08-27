@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.sender;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.Nonempty;
+import com.helger.annotation.Nonempty;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * A logging implementation of {@link IAS4SignalMessageValidationResultHandler}.

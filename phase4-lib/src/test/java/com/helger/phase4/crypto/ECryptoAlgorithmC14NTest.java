@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.helger.commons.string.StringHelper;
+import com.helger.base.string.StringHelper;
 
 /**
  * Test class for class {@link ECryptoAlgorithmC14N}.
@@ -35,8 +35,8 @@ public final class ECryptoAlgorithmC14NTest
   {
     for (final ECryptoAlgorithmC14N e : ECryptoAlgorithmC14N.values ())
     {
-      assertTrue (StringHelper.hasText (e.getID ()));
-      assertTrue (StringHelper.hasText (e.getAlgorithmURI ()));
+      assertTrue (StringHelper.isNotEmpty (e.getID ()));
+      assertTrue (StringHelper.isNotEmpty (e.getAlgorithmURI ()));
       assertSame (e, ECryptoAlgorithmC14N.getFromIDOrNull (e.getID ()));
       assertSame (e, ECryptoAlgorithmC14N.getFromIDOrDefault (e.getID (), null));
       assertSame (e, ECryptoAlgorithmC14N.getFromIDOrThrow (e.getID ()));

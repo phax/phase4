@@ -18,22 +18,22 @@ package com.helger.phase4.model.pmode.leg;
 
 import java.io.Serializable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.MustImplementEqualsAndHashcode;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.hashcode.HashCodeGenerator;
+import com.helger.base.name.IHasName;
+import com.helger.base.state.EChange;
+import com.helger.base.state.EMandatory;
+import com.helger.base.state.IMandatoryIndicator;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.mime.IMimeType;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.hashcode.HashCodeGenerator;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.name.IHasName;
-import com.helger.commons.state.EChange;
-import com.helger.commons.state.EMandatory;
-import com.helger.commons.state.IMandatoryIndicator;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * A payload part is a data structure that consists of five properties: name (or
@@ -145,7 +145,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
    */
   public final boolean hasXSDFilename ()
   {
-    return StringHelper.hasText (m_sXSDFilename);
+    return StringHelper.isNotEmpty (m_sXSDFilename);
   }
 
   /**

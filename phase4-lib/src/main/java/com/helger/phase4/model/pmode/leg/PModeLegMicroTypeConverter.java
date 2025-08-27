@@ -16,17 +16,17 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 /**
  * XML converter for {@link PModeLeg}.
- * 
+ *
  * @author Philip Helger
  */
 public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLeg>
@@ -43,17 +43,17 @@ public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter 
                                               @Nonnull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getProtocol (), sNamespaceURI, ELEMENT_PROTOCOL));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getBusinessInfo (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_BUSINESS_INFORMATION));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getErrorHandling (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_ERROR_HANDLING));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReliability (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_RELIABILITY));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getSecurity (), sNamespaceURI, ELEMENT_SECURITY));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getProtocol (), sNamespaceURI, ELEMENT_PROTOCOL));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getBusinessInfo (),
+                                                            sNamespaceURI,
+                                                            ELEMENT_BUSINESS_INFORMATION));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getErrorHandling (),
+                                                            sNamespaceURI,
+                                                            ELEMENT_ERROR_HANDLING));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getReliability (),
+                                                            sNamespaceURI,
+                                                            ELEMENT_RELIABILITY));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getSecurity (), sNamespaceURI, ELEMENT_SECURITY));
     return ret;
   }
 

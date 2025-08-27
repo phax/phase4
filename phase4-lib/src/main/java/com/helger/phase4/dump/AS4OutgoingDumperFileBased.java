@@ -20,21 +20,21 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.file.FileHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.Nonnegative;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.http.header.HttpHeaderMap;
+import com.helger.io.file.FileHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.EAS4MessageMode;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * File based implementation of {@link IAS4OutgoingDumper}.

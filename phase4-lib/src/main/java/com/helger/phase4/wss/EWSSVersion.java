@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.wss;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.helger.annotation.Nonempty;
+import com.helger.base.lang.EnumHelper;
+import com.helger.base.string.StringHelper;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.lang.EnumHelper;
-import com.helger.commons.string.StringHelper;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Specifies the different WS Security versions available
@@ -92,7 +92,7 @@ public enum EWSSVersion
   public static EWSSVersion getFromVersionOrDefault (@Nullable final String sVersion,
                                                      @Nullable final EWSSVersion eDefault)
   {
-    if (StringHelper.hasNoText (sVersion))
+    if (StringHelper.isEmpty (sVersion))
       return eDefault;
     return EnumHelper.findFirst (EWSSVersion.class, x -> x.getVersion ().equals (sVersion), eDefault);
   }

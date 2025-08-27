@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.model.pmode;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * A nice little helper interface to dynamically create new PMode IDs based on

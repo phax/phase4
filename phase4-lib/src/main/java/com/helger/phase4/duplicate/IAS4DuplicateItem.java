@@ -19,12 +19,12 @@ package com.helger.phase4.duplicate;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.helger.annotation.Nonempty;
+import com.helger.base.id.IHasID;
+import com.helger.base.string.StringHelper;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
-import com.helger.commons.string.StringHelper;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Base interface for a single duplication check item.
@@ -59,7 +59,7 @@ public interface IAS4DuplicateItem extends IHasID <String>, Serializable
    */
   default boolean hasProfileID ()
   {
-    return StringHelper.hasText (getProfileID ());
+    return StringHelper.isNotEmpty (getProfileID ());
   }
 
   /**
@@ -75,6 +75,6 @@ public interface IAS4DuplicateItem extends IHasID <String>, Serializable
    */
   default boolean hasPModeID ()
   {
-    return StringHelper.hasText (getPModeID ());
+    return StringHelper.isNotEmpty (getPModeID ());
   }
 }

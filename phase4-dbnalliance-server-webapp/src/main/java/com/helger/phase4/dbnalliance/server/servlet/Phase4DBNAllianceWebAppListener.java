@@ -25,25 +25,22 @@ import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.hc.core5.http.HttpHost;
 import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.exception.InitializationException;
-import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.state.ETriState;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.url.URLHelper;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.exception.InitializationException;
+import com.helger.base.state.ETriState;
+import com.helger.base.string.StringHelper;
+import com.helger.base.url.URLHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
 import com.helger.httpclient.HttpDebugger;
+import com.helger.io.file.SimpleFileIO;
 import com.helger.json.serialize.JsonWriterSettings;
+import com.helger.mime.CMimeType;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
@@ -74,6 +71,8 @@ import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
 import jakarta.activation.CommandMap;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.annotation.WebListener;
@@ -242,7 +241,7 @@ public final class Phase4DBNAllianceWebAppListener extends WebAppListener
     // List all the aliases - debug only
     try
     {
-      final ICommonsList <String> aAliases = CollectionHelper.newList (aKS.aliases ());
+      final ICommonsList <String> aAliases = new CommonsArrayList <> (aKS.aliases ());
       LOGGER.info ("The keystore contains the following " + aAliases.size () + " alias(es): " + aAliases);
       int nIndex = 1;
       for (final String sAlias : aAliases)
@@ -329,7 +328,7 @@ public final class Phase4DBNAllianceWebAppListener extends WebAppListener
 
     final String sSMPURL = APConfig.getMySmpUrl ();
     final String sAPURL = AS4Configuration.getThisEndpointAddress ();
-    if (StringHelper.hasText (sSMPURL) && StringHelper.hasText (sAPURL))
+    if (StringHelper.isNotEmpty (sSMPURL) && StringHelper.isNotEmpty (sAPURL))
     {
       Phase4DBNAllianceDefaultReceiverConfiguration.setReceiverCheckEnabled (true);
       Phase4DBNAllianceDefaultReceiverConfiguration.setSMPClient (new BDXR2ClientReadOnly (URLHelper.getAsURI (sSMPURL)));

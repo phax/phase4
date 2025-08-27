@@ -19,14 +19,14 @@ package com.helger.phase4.dump;
 import java.io.File;
 import java.time.OffsetDateTime;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.file.FilenameHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
+import com.helger.http.header.HttpHeaderMap;
+import com.helger.io.file.FilenameHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Callback interface to create a file based on the provided metadata.

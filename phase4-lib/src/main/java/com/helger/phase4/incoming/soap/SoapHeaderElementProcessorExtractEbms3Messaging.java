@@ -21,25 +21,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.charset.CharsetHelper;
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.CommonsHashMap;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsMap;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.state.ESuccess;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.charset.CharsetHelper;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.state.ESuccess;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.CollectionHelper;
+import com.helger.collection.commons.CommonsHashMap;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsMap;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
@@ -69,6 +67,9 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.xml.XMLHelper;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class manages the EBMS Messaging SOAP header element
@@ -123,13 +124,13 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
     final String sThisMessageID = aMessageInfo.getMessageId ();
     final String sRefToMessageID = aMessageInfo.getRefToMessageId ();
 
-    if (StringHelper.hasText (sRefToMessageID))
+    if (StringHelper.isNotEmpty (sRefToMessageID))
       if (sThisMessageID.equals (sRefToMessageID))
         LOGGER.warn ("MessageID and ReferenceToMessageID are the same (" + sThisMessageID + ")!");
 
     // If the message has a non-empty reference to a previous message, and this
     // reference differs from this message's ID, than leg 2 should be used
-    return StringHelper.hasNoText (sRefToMessageID) || sRefToMessageID.equals (sThisMessageID);
+    return StringHelper.isEmpty (sRefToMessageID) || sRefToMessageID.equals (sThisMessageID);
   }
 
   /**
@@ -513,7 +514,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
         for (final Ebms3PartInfo aPartInfo : aEbms3PayloadInfo.getPartInfo ())
         {
           // If href is null or empty there has to be a SOAP Payload
-          if (StringHelper.hasNoText (aPartInfo.getHref ()))
+          if (StringHelper.isEmpty (aPartInfo.getHref ()))
           {
             // Check if there is a BodyPayload as specified in the UserMessage
             if (!bHasSoapBodyPayload)
@@ -555,7 +556,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
 
                 if (sPropertyName.equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_MIME_TYPE))
                 {
-                  bMimeTypePresent = StringHelper.hasText (sPropertyValue);
+                  bMimeTypePresent = StringHelper.isNotEmpty (sPropertyValue);
                 }
                 else
                   if (sPropertyName.equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_COMPRESSION_TYPE))
@@ -584,7 +585,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
                   else
                     if (sPropertyName.equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_CHARACTER_SET))
                     {
-                      if (StringHelper.hasText (sPropertyValue))
+                      if (StringHelper.isNotEmpty (sPropertyValue))
                       {
                         final Charset aCharset = CharsetHelper.getCharsetFromNameOrNull (sPropertyValue);
                         if (aCharset == null)
@@ -710,7 +711,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
         if (aEbms3Receipt != null)
         {
           final String sRefToMessageID = aSignalMessage.getMessageInfo ().getRefToMessageId ();
-          if (StringHelper.hasNoText (sRefToMessageID))
+          if (StringHelper.isEmpty (sRefToMessageID))
           {
             final String sDetails = "The Receipt does not contain a RefToMessageId";
             LOGGER.error (sDetails);
@@ -732,7 +733,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
                * in error, for which this error is raised.
                */
               if (false)
-                if (StringHelper.hasNoText (aError.getRefToMessageInError ()))
+                if (StringHelper.isEmpty (aError.getRefToMessageInError ()))
                 {
                   final String sDetails = "The Error does not contain a RefToMessageInError";
                   LOGGER.error (sDetails);

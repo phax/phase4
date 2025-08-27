@@ -19,13 +19,10 @@ package com.helger.phase4.incoming.mgr;
 import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.lang.ClassHelper;
+import com.helger.base.lang.clazz.ClassHelper;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.quartz.DisallowConcurrentExecution;
@@ -37,6 +34,9 @@ import com.helger.quartz.TriggerKey;
 import com.helger.schedule.quartz.GlobalQuartzScheduler;
 import com.helger.schedule.quartz.trigger.JDK8TriggerBuilder;
 import com.helger.web.scope.util.AbstractScopeAwareJob;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * A special job, that removes all entries

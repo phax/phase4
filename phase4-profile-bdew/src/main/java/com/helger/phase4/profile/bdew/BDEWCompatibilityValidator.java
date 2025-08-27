@@ -18,20 +18,17 @@ package com.helger.phase4.profile.bdew;
 
 import java.security.cert.X509Certificate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.SingleError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.SingleError;
+import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
@@ -64,6 +61,9 @@ import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.wss.EWSSVersion;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Validate certain requirements imposed by the BDEW project.
@@ -105,7 +105,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       // PROTOCOL Address only https allowed
       final String sAddressProtocol = aLegProtocol.getAddressProtocol ();
 
-      if (StringHelper.hasText (sAddressProtocol))
+      if (StringHelper.isNotEmpty (sAddressProtocol))
       {
         if (sAddressProtocol.equalsIgnoreCase ("https"))
         {
@@ -530,10 +530,10 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
+      if (StringHelper.isEmpty (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
 
-      if (StringHelper.hasText (aUserMsg.getMessageInfo ().getRefToMessageId ()))
+      if (StringHelper.isNotEmpty (aUserMsg.getMessageInfo ().getRefToMessageId ()))
         aErrorList.add (_createError ("MessageInfo/RefToMessageId must not be set"));
 
     }
@@ -595,7 +595,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       }
       else
       {
-        if (StringHelper.hasNoText (aAgreementRef.getValue ()))
+        if (StringHelper.isEmpty (aAgreementRef.getValue ()))
           aErrorList.add (_createError ("CollaborationInfo/AgreementRef value is missing"));
         if (!BDEWPMode.DEFAULT_AGREEMENT_ID.equals (aAgreementRef.getValue ()))
           aErrorList.add (_createError ("CollaborationInfo/AgreementRef value must equal " +
@@ -607,7 +607,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       }
 
       final Ebms3Service aService = aCollaborationInfo.getService ();
-      if (aService == null || StringHelper.hasNoText (aService.getValue ()))
+      if (aService == null || StringHelper.isEmpty (aService.getValue ()))
       {
         aErrorList.add (_createError ("CollaborationInfo/Service is missing"));
       }
@@ -620,7 +620,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       }
 
       final String sAction = aCollaborationInfo.getAction ();
-      if (StringHelper.hasNoText (sAction))
+      if (StringHelper.isEmpty (sAction))
       {
         aErrorList.add (_createError ("CollaborationInfo/Action is missing"));
       }
@@ -645,7 +645,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
+      if (StringHelper.isEmpty (aSignalMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
     }
   }

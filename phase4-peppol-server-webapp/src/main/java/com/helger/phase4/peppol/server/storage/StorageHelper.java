@@ -20,18 +20,18 @@ import java.io.File;
 import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.io.file.FilenameHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.Nonnegative;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
+import com.helger.io.file.FilenameHelper;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.photon.io.WebFileIO;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Central storage helper

@@ -62,6 +62,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-unittest-support-ext</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.helger.photon</groupId>
       <artifactId>ph-oton-app</artifactId>
       <scope>test</scope>
@@ -78,7 +83,7 @@
           <instructions>
             <Automatic-Module-Name>com.helger.phase4.profile.euctp</Automatic-Module-Name>
             <Export-Package>com.helger.phase4.profile.euctp.*</Export-Package>
-            <Import-Package>!javax.annotation.*,*</Import-Package>
+            <Import-Package>!jakarta.annotation.*,*</Import-Package>
             <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
             <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI</Provide-Capability>
           </instructions>

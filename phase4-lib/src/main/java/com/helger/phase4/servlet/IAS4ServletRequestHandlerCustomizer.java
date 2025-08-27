@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.servlet;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * This is a special callback handler that is meant to be used in combination

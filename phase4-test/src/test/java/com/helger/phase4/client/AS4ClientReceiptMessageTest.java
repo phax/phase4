@@ -18,15 +18,13 @@ package com.helger.phase4.client;
 
 import static org.junit.Assert.fail;
 
-import javax.annotation.Nonnull;
-import javax.annotation.WillNotClose;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Node;
 
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.annotation.WillNotClose;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
@@ -39,6 +37,8 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Test class for class {@link AS4ClientReceiptMessage}
@@ -127,8 +127,7 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
                                                                                             .password ("test")
                                                                                             .keyAlias ("ph-as4")
                                                                                             .keyPassword ("test")
-                                                                                            .build (),
-                                                                    null));
+                                                                                            .build (), null));
 
     aClient.signingParams ()
            .setAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT)

@@ -29,11 +29,11 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.concurrent.ThreadHelper;
-import com.helger.commons.id.factory.GlobalIDFactory;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.base.concurrent.ThreadHelper;
+import com.helger.base.id.factory.GlobalIDFactory;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
@@ -142,8 +142,7 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
     aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                          MessageHelperMethods.createEbms3MessageInfo (sID),
                                          AS4TestConstants.DEFAULT_MPC,
-                                         aAny)
-                                .getAsSoapDocument ();
+                                         aAny).getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sResponse = sendPlainMessage (aEntity, true, null);
 

@@ -18,16 +18,16 @@ package com.helger.phase4.model;
 
 import java.nio.charset.Charset;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.array.ArrayHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.mime.CMimeType;
+import com.helger.mime.IMimeType;
+import com.helger.mime.MimeType;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.ArrayHelper;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.mime.MimeType;
-import com.helger.commons.string.StringHelper;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Enumeration with all known and supported SOAP versions.
@@ -59,8 +59,7 @@ public enum ESoapVersion
   }
 
   /**
-   * @return The namespace URI for this SOAP version. Neither <code>null</code>
-   *         nor empty.
+   * @return The namespace URI for this SOAP version. Neither <code>null</code> nor empty.
    */
   @Nonnull
   @Nonempty
@@ -70,8 +69,7 @@ public enum ESoapVersion
   }
 
   /**
-   * @return The default namespace prefix to be used. Neither <code>null</code>
-   *         nor empty.
+   * @return The default namespace prefix to be used. Neither <code>null</code> nor empty.
    */
   @Nonnull
   @Nonempty
@@ -104,8 +102,7 @@ public enum ESoapVersion
   }
 
   /**
-   * @return The human readable version string. Neither <code>null</code> nor
-   *         empty.
+   * @return The human readable version string. Neither <code>null</code> nor empty.
    */
   @Nonnull
   @Nonempty
@@ -167,7 +164,7 @@ public enum ESoapVersion
   public static ESoapVersion getFromVersionOrDefault (@Nullable final String sVersion,
                                                       @Nullable final ESoapVersion eDefault)
   {
-    if (StringHelper.hasNoText (sVersion))
+    if (StringHelper.isEmpty (sVersion))
       return eDefault;
     return ArrayHelper.findFirst (values (), x -> x.getVersion ().equals (sVersion), eDefault);
   }
@@ -175,7 +172,7 @@ public enum ESoapVersion
   @Nullable
   public static ESoapVersion getFromNamespaceURIOrNull (@Nullable final String sNamespaceURI)
   {
-    if (StringHelper.hasNoText (sNamespaceURI))
+    if (StringHelper.isEmpty (sNamespaceURI))
       return null;
     return ArrayHelper.findFirst (values (), x -> x.getNamespaceURI ().equals (sNamespaceURI));
   }

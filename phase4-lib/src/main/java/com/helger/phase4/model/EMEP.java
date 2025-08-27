@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.Nonnegative;
+import com.helger.base.id.IHasID;
+import com.helger.base.lang.EnumHelper;
+import com.helger.base.string.StringHelper;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
-import com.helger.commons.lang.EnumHelper;
-import com.helger.commons.string.StringHelper;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Defines the available Message Exchange Patterns (MEPs).
@@ -100,7 +100,7 @@ public enum EMEP implements IHasID <String>
   @Nullable
   public static EMEP getFromURIOrNull (@Nullable final String sURI)
   {
-    if (StringHelper.hasNoText (sURI))
+    if (StringHelper.isEmpty (sURI))
       return null;
     return EnumHelper.findFirst (EMEP.class, x -> sURI.equals (x.getURI ()));
   }

@@ -20,15 +20,15 @@ import java.nio.charset.StandardCharsets;
 import java.time.YearMonth;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.string.StringParser;
+import com.helger.annotation.Nonempty;
+import com.helger.base.string.StringParser;
+import com.helger.mime.CMimeType;
 import com.helger.phase4.peppol.server.reporting.AppReportingHelper;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * This API creates a TSR and EUSR report for the provided year and month, validate them, store them

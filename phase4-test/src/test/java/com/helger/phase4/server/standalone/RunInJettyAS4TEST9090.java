@@ -18,7 +18,7 @@ package com.helger.phase4.server.standalone;
 
 import java.io.IOException;
 
-import com.helger.commons.io.resource.FileSystemResource;
+import com.helger.io.resource.FileSystemResource;
 import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.photon.jetty.JettyRunner;
 import com.helger.photon.jetty.JettyStopper;

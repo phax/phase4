@@ -20,23 +20,19 @@ import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 
-import javax.annotation.CheckForSigned;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.apache.wss4j.dom.WSConstants;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.attr.AttributeContainerAny;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsMap;
-import com.helger.commons.datetime.XMLOffsetDateTime;
+import com.helger.annotation.CheckForSigned;
+import com.helger.annotation.Nonnegative;
+import com.helger.annotation.WillNotClose;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsMap;
+import com.helger.datetime.xml.XMLOffsetDateTime;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -49,10 +45,14 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.typeconvert.collection.AttributeContainerAny;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
- * This class keeps track of the status of an incoming message. It is basically
- * a String to any map.<br>
+ * This class keeps track of the status of an incoming message. It is basically a String to any
+ * map.<br>
  * Keys starting with <code>phase4.</code> are reserved for internal use.<br>
  * Instances of this object are only modified in the SOAP header handlers.<br>
  * Old name before v3: <code>AS4MessageState</code>
@@ -75,8 +75,6 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   private static final String KEY_SOAP_BODY_PAYLOAD_PRESENT = "phase4.soap.body.payload.present";
   private static final String KEY_INITIATOR_ID = "phase4.initiator.id";
   private static final String KEY_RESPONDER_ID = "phase4.responder.id";
-  @Deprecated (forRemoval = true, since = "3.0.5")
-  private static final String KEY_USED_CERTIFICATE = "phase4.used.certificate";
   private static final String KEY_SIGNING_CERTIFICATE = "phase4.signing.certificate";
   private static final String KEY_DECRYPTING_CERTIFICATE = "phase4.decryting.certificate";
   private static final String KEY_EFFECTIVE_PMODE_LEG = "phase4.pmode.effective.leg";
@@ -256,19 +254,6 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   public void setResponderID (@Nullable final String sResponderID)
   {
     putIn (KEY_RESPONDER_ID, sResponderID);
-  }
-
-  @Nullable
-  @Deprecated (forRemoval = true, since = "3.0.5")
-  public X509Certificate getUsedCertificate ()
-  {
-    return getCastedValue (KEY_USED_CERTIFICATE);
-  }
-
-  @Deprecated (forRemoval = true, since = "3.0.5")
-  public void setUsedCertificate (@Nullable final X509Certificate aCert)
-  {
-    putIn (KEY_USED_CERTIFICATE, aCert);
   }
 
   @Nullable

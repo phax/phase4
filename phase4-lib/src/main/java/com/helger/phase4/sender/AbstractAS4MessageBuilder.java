@@ -20,19 +20,16 @@ import java.time.OffsetDateTime;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.OverrideOnDemand;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.state.ESuccess;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.traits.IGenericImplTrait;
+import com.helger.annotation.OverridingMethodsMustInvokeSuper;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.OverrideOnDemand;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.state.ESuccess;
+import com.helger.base.string.StringHelper;
+import com.helger.base.trait.IGenericImplTrait;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
@@ -55,6 +52,9 @@ import com.helger.phase4.model.pmode.resolve.AS4DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Abstract builder base class with the requirements for all message types.
@@ -842,7 +842,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   @OverridingMethodsMustInvokeSuper
   protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
   {
-    if (StringHelper.hasText (m_sAS4ProfileID))
+    if (StringHelper.isNotEmpty (m_sAS4ProfileID))
     {
       if (m_aPModeResolver == null)
         pmodeResolver (new AS4DefaultPModeResolver (m_sAS4ProfileID));
@@ -885,7 +885,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       LOGGER.warn ("The field 'locale' is not set");
       return false;
     }
-    if (StringHelper.hasNoText (m_sAS4ProfileID))
+    if (StringHelper.isEmpty (m_sAS4ProfileID))
     {
       LOGGER.warn ("The field 'as4ProfileID' is not set");
       return false;

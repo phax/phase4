@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.attachment;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Special exception type for decompression errors.

@@ -18,9 +18,9 @@ package com.helger.phase4.peppol.supplementary.issues;
 
 import java.time.OffsetDateTime;
 
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.state.EChange;
-import com.helger.commons.state.EContinue;
+import com.helger.base.state.EChange;
+import com.helger.base.state.EContinue;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.duplicate.IAS4DuplicateItem;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.mgr.AS4ManagerFactoryInMemory;

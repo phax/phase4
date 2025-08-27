@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.helger.commons.string.StringHelper;
+import com.helger.base.string.StringHelper;
 
 /**
  * Test class for class {@link ECryptoAlgorithmSignDigest}.
@@ -35,8 +35,8 @@ public final class ECryptoAlgorithmSignDigestTest
   {
     for (final ECryptoAlgorithmSignDigest e : ECryptoAlgorithmSignDigest.values ())
     {
-      assertTrue (StringHelper.hasText (e.getID ()));
-      assertTrue (StringHelper.hasText (e.getAlgorithmURI ()));
+      assertTrue (StringHelper.isNotEmpty (e.getID ()));
+      assertTrue (StringHelper.isNotEmpty (e.getAlgorithmURI ()));
       assertSame (e, ECryptoAlgorithmSignDigest.getFromIDOrNull (e.getID ()));
       assertSame (e, ECryptoAlgorithmSignDigest.getFromIDOrDefault (e.getID (), null));
       assertSame (e, ECryptoAlgorithmSignDigest.getFromIDOrThrow (e.getID ()));

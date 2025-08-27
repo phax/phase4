@@ -22,10 +22,10 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.concurrent.ThreadHelper;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.base.concurrent.ThreadHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -38,13 +38,12 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 {
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile: Two-Way/Push-and-Push MEP. SMSH sends an AS4 User Message
-   * (M1 with ID MessageId) that requires a consumer response to the RMSH. <br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS profile:
+   * Two-Way/Push-and-Push MEP. SMSH sends an AS4 User Message (M1 with ID MessageId) that requires
+   * a consumer response to the RMSH. <br>
    * <br>
    * Predicate: <br>
-   * The RMSH sends back a User Message (M2) with element REFTOMESSAGEID set to
-   * MESSAGEID (of M1).
+   * The RMSH sends back a User Message (M2) with element REFTOMESSAGEID set to MESSAGEID (of M1).
    *
    * @throws Exception
    *         In case of error
@@ -71,13 +70,11 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (Two-Way/Push-and-Push MEP). SMSH sends an AS4 User Message
-   * to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS profile
+   * (Two-Way/Push-and-Push MEP). SMSH sends an AS4 User Message to the RMSH.<br>
    * <br>
    * Predicate: <br>
-   * The RMSH returns a non-repudiation receipt within a HTTP response with
-   * status code 2XX.
+   * The RMSH returns a non-repudiation receipt within a HTTP response with status code 2XX.
    *
    * @throws Exception
    *         In case of error
@@ -90,15 +87,14 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
                                                                                          .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
                                                                                          .mimeTypeXML ()
                                                                                          .compressionGZIP ()
-                                                                                         .build (),
-                                                                    s_aResMgr));
+                                                                                         .build (), s_aResMgr));
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                        testSignedUserMessage (m_eSoapVersion,
-                                                                                               m_aPayload,
-                                                                                               aAttachments,
-                                                                                               s_aResMgr),
-                                                                        aAttachments);
+                                                                          testSignedUserMessage (m_eSoapVersion,
+                                                                                                 m_aPayload,
+                                                                                                 aAttachments,
+                                                                                                 s_aResMgr),
+                                                                          aAttachments);
 
     final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
 

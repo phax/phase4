@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * XML converter for {@link PModeAddressList} objects.
@@ -42,7 +42,7 @@ public class PModeAddressListMicroTypeConverter extends AbstractPModeMicroTypeCo
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     for (final String sEncrypt : aValue.getAllAddresses ())
     {
-      ret.appendElement (sNamespaceURI, ELEMENT_ADDRESSES).appendText (sEncrypt);
+      ret.addElementNS (sNamespaceURI, ELEMENT_ADDRESSES).addText (sEncrypt);
     }
     return ret;
   }

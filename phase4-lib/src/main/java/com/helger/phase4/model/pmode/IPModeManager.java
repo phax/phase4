@@ -18,17 +18,17 @@ package com.helger.phase4.model.pmode;
 
 import java.util.function.Predicate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsSet;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.state.EChange;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.state.EChange;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsSet;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Interface for a manager for {@link PMode} objects.
@@ -181,18 +181,18 @@ public interface IPModeManager
     ValueEnforcer.notNull (aPMode, "PMode");
 
     // Needs ID
-    if (StringHelper.hasNoText (aPMode.getID ()))
+    if (StringHelper.isEmpty (aPMode.getID ()))
       throw new PModeValidationException ("No PMode ID present");
 
     final PModeParty aInitiator = aPMode.getInitiator ();
     if (aInitiator != null)
     {
       // INITIATOR PARTY_ID
-      if (StringHelper.hasNoText (aInitiator.getIDValue ()))
+      if (StringHelper.isEmpty (aInitiator.getIDValue ()))
         throw new PModeValidationException ("No PMode Initiator ID present");
 
       // INITIATOR ROLE
-      if (StringHelper.hasNoText (aInitiator.getRole ()))
+      if (StringHelper.isEmpty (aInitiator.getRole ()))
         throw new PModeValidationException ("No PMode Initiator Role present");
     }
 
@@ -200,11 +200,11 @@ public interface IPModeManager
     if (aResponder != null)
     {
       // RESPONDER PARTY_ID
-      if (StringHelper.hasNoText (aResponder.getIDValue ()))
+      if (StringHelper.isEmpty (aResponder.getIDValue ()))
         throw new PModeValidationException ("No PMode Responder ID present");
 
       // RESPONDER ROLE
-      if (StringHelper.hasNoText (aResponder.getRole ()))
+      if (StringHelper.isEmpty (aResponder.getRole ()))
         throw new PModeValidationException ("No PMode Responder Role present");
     }
 

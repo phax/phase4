@@ -16,15 +16,13 @@
  */
 package com.helger.phase4.profile.dbnalliance;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.SingleError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.SingleError;
+import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
@@ -48,6 +46,8 @@ import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.wss.EWSSVersion;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Validate certain requirements imposed by the DBNAlliance.
@@ -85,7 +85,7 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
     {
       // PROTOCOL Address only https allowed
       final String sAddressProtocol = aLegProtocol.getAddressProtocol ();
-      if (StringHelper.hasText (sAddressProtocol))
+      if (StringHelper.isNotEmpty (sAddressProtocol))
       {
         if (sAddressProtocol.equalsIgnoreCase ("https"))
         {
@@ -349,7 +349,7 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
+      if (StringHelper.isEmpty (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
     }
 
@@ -418,7 +418,7 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
                                         aAgreementRef.getValue () +
                                         "'"));
 
-        if (StringHelper.hasText (aAgreementRef.getType ()))
+        if (StringHelper.isNotEmpty (aAgreementRef.getType ()))
           aErrorList.add (_createError ("CollaborationInfo/AgreementRef/@type must not be set"));
       }
     }
@@ -434,7 +434,7 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
+      if (StringHelper.isEmpty (aSignalMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
     }
   }

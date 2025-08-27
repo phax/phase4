@@ -22,22 +22,19 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.state.ESuccess;
-import com.helger.commons.state.ETriState;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.OverridingMethodsMustInvokeSuper;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.state.ESuccess;
+import com.helger.base.state.ETriState;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
+import com.helger.mime.CMimeType;
+import com.helger.mime.IMimeType;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.xhe.DBNAlliancePayload;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
@@ -74,6 +71,9 @@ import com.helger.xhe.v10.CXHE10;
 import com.helger.xhe.v10.XHE10Marshaller;
 import com.helger.xhe.v10.XHE10XHEType;
 import com.helger.xhe.v10.cac.XHE10PayloadType;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class contains all the specifics to send AS4 messages with the DBNAlliance profile. See
@@ -634,24 +634,6 @@ public final class Phase4DBNAllianceSender
 
     public DBNAllianceUserMessageBuilder ()
     {}
-
-    /**
-     * Set the payload element to be used, if it is available as a parsed DOM element. Internally
-     * the DOM element will be cloned before sending it out. If this method is called, it overwrites
-     * any other explicitly set payload.
-     *
-     * @param aPayloadElement
-     *        The payload element to be used. They payload element MUST have a namespace URI. May
-     *        not be <code>null</code>.
-     * @return this for chaining
-     * @deprecated in favour of {@link #payloadElement(Element)}
-     */
-    @Nonnull
-    @Deprecated (forRemoval = true, since = "2.8.6")
-    public DBNAllianceUserMessageBuilder payload (@Nonnull final Element aPayloadElement)
-    {
-      return payloadElement (aPayloadElement);
-    }
 
     /**
      * Set the payload element to be used, if it is available as a parsed DOM element. Internally

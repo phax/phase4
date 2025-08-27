@@ -16,20 +16,20 @@
  */
 package com.helger.phase4.model.pmode.resolve;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.OverrideOnDemand;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.OverrideOnDemand;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.profile.IAS4Profile;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Default implementation of {@link IAS4PModeResolver} based on an AS4 Profile
@@ -50,7 +50,7 @@ public class AS4DefaultPModeResolver implements IAS4PModeResolver
   {
     m_sAS4ProfileID = sAS4ProfileID;
     m_aAS4Profile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sAS4ProfileID);
-    if (m_aAS4Profile == null && StringHelper.hasText (sAS4ProfileID))
+    if (m_aAS4Profile == null && StringHelper.isNotEmpty (sAS4ProfileID))
       LOGGER.error ("Failed to resolved the AS4 profile ID '" + sAS4ProfileID + "'");
   }
 
@@ -104,7 +104,7 @@ public class AS4DefaultPModeResolver implements IAS4PModeResolver
     final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
 
     IPMode ret = null;
-    if (StringHelper.hasText (sPModeID))
+    if (StringHelper.isNotEmpty (sPModeID))
     {
       // An ID is present - try to resolve this ID
       ret = aPModeMgr.getPModeOfID (sPModeID);

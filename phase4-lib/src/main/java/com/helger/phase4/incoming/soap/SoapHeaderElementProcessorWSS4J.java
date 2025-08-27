@@ -27,8 +27,6 @@ import java.util.Locale;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.apache.wss4j.common.crypto.AlgorithmSuite;
@@ -44,14 +42,14 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.file.FileHelper;
-import com.helger.commons.io.stream.HasInputStream;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.state.ESuccess;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.io.stream.HasInputStream;
+import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.state.ESuccess;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.file.FileHelper;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
@@ -72,6 +70,9 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.phase4.wss.WSSSynchronizer;
 import com.helger.xml.XMLHelper;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class manages the WSS4J SOAP header
@@ -111,7 +112,6 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
     m_aSigningParams = aSigningParams;
   }
 
-  @SuppressWarnings ("removal")
   @Nonnull
   private ESuccess _verifyAndDecrypt (@Nonnull final Document aSOAPDoc,
                                       @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
@@ -279,7 +279,6 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       aIncomingState.setSoapWSS4JSecurityActions (nWSS4JSecurityActions);
 
       // Remember in State
-      aIncomingState.setUsedCertificate (aSigningCert);
       aIncomingState.setSigningCertificate (aSigningCert);
       aIncomingState.setDecryptingCertificate (aDecryptingCert);
       aIncomingState.setDecryptedSoapDocument (aSOAPDoc);
@@ -422,7 +421,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
     PModeLeg aPModeLeg = aPMode.getLeg1 ();
     final Ebms3UserMessage aUserMessage = aIncomingState.getEbmsUserMessage ();
-    if (aUserMessage != null && StringHelper.hasText (aUserMessage.getMessageInfo ().getRefToMessageId ()))
+    if (aUserMessage != null && StringHelper.isNotEmpty (aUserMessage.getMessageInfo ().getRefToMessageId ()))
       aPModeLeg = aPMode.getLeg2 ();
 
     // Does security - leg part checks if not <code>null</code>
@@ -489,7 +488,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         {
           // Get "Content-ID" header
           String sAttachmentID = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
-          if (StringHelper.hasNoText (sAttachmentID))
+          if (StringHelper.isEmpty (sAttachmentID))
           {
             final String sDetails = "The provided attachment ID in the 'Content-ID' header may not be empty.";
             LOGGER.error (sDetails);

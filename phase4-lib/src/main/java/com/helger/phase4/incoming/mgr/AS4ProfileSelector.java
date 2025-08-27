@@ -16,13 +16,13 @@
  */
 package com.helger.phase4.incoming.mgr;
 
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
-
-import com.helger.commons.concurrent.SimpleReadWriteLock;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.concurrent.GuardedBy;
+import com.helger.annotation.concurrent.ThreadSafe;
+import com.helger.base.concurrent.SimpleReadWriteLock;
+import com.helger.base.string.StringHelper;
 import com.helger.phase4.config.AS4Configuration;
+
+import jakarta.annotation.Nullable;
 
 /**
  * Static helper class for the fallback AS4 profile selection.
@@ -75,7 +75,7 @@ public final class AS4ProfileSelector
   {
     // Is a custom default provided?
     String ret = getCustomDefaultAS4ProfileID ();
-    if (StringHelper.hasNoText (ret))
+    if (StringHelper.isEmpty (ret))
     {
       // Fall back to the configuration file
       // The profile ID from the configuration file is optional

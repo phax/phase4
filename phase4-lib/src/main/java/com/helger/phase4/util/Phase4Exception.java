@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.util;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
- * phase4 base exception. It is just a in-between exception for easy catching of
- * all phase4 related exception.
+ * phase4 base exception. It is just a in-between exception for easy catching of all phase4 related
+ * exception.
  *
  * @author Philip Helger
  * @since 0.9.7
@@ -42,17 +42,6 @@ public class Phase4Exception extends Exception
   }
 
   /**
-   * @param aCause
-   *        Optional causing exception
-   * @since 0.13.0
-   */
-  @Deprecated (forRemoval = true, since = "3.2.0")
-  public Phase4Exception (@Nullable final Throwable aCause)
-  {
-    super (aCause);
-  }
-
-  /**
    * @param sMessage
    *        Error message
    * @param aCause
@@ -64,8 +53,7 @@ public class Phase4Exception extends Exception
   }
 
   /**
-   * @return <code>true</code> if a retry is feasible, <code>false</code> if
-   *         not.
+   * @return <code>true</code> if a retry is feasible, <code>false</code> if not.
    * @since 3.2.0
    */
   public final boolean isRetryFeasible ()

@@ -16,18 +16,17 @@
  */
 package com.helger.phase4.incoming;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.datetime.PDTWebDateHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.datetime.web.PDTWebDateHelper;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.Cookie;
 
 /**
@@ -44,8 +43,7 @@ public final class AS4IncomingHelper
   {}
 
   /**
-   * Convert an {@link IAS4IncomingMessageMetadata} structure to a JSON
-   * representation.
+   * Convert an {@link IAS4IncomingMessageMetadata} structure to a JSON representation.
    *
    * @param aMessageMetadata
    *        The message metadata to convert. May not be <code>null</code>.
@@ -72,9 +70,9 @@ public final class AS4IncomingHelper
       for (final Cookie aCookie : aMessageMetadata.cookies ())
       {
         final IJsonObject aCookieObj = new JsonObject ();
-        if (StringHelper.hasText (aCookie.getDomain ()))
+        if (StringHelper.isNotEmpty (aCookie.getDomain ()))
           aCookieObj.add ("Domain", aCookie.getDomain ());
-        if (StringHelper.hasText (aCookie.getPath ()))
+        if (StringHelper.isNotEmpty (aCookie.getPath ()))
           aCookieObj.add ("Path", aCookie.getPath ());
         aCookieObj.add ("Secure", aCookie.getSecure ());
         aCookieObj.add ("HttpOnly", aCookie.isHttpOnly ());
@@ -84,7 +82,7 @@ public final class AS4IncomingHelper
         aArray.add (aCookieObj);
       }
       if (aArray.isNotEmpty ())
-        aMap.addJson ("Cookies", aArray);
+        aMap.add ("Cookies", aArray);
     }
     {
       final IJsonArray aArray = new JsonArray ();
@@ -100,7 +98,7 @@ public final class AS4IncomingHelper
         aArray.add (aObj);
       }
       if (aArray.isNotEmpty ())
-        aMap.addJson ("HttpHeaders", aArray);
+        aMap.add ("HttpHeaders", aArray);
     }
     return aMap;
   }

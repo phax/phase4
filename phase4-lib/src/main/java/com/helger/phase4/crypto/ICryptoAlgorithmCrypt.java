@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.crypto;
 
-import javax.annotation.Nonnull;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.id.IHasID;
+import com.helger.annotation.Nonempty;
+import com.helger.base.id.IHasID;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Base interface for an encryption algorithm.

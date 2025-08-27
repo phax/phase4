@@ -19,15 +19,12 @@ package com.helger.phase4.dynamicdiscovery;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.annotation.Nonempty;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
@@ -42,6 +39,9 @@ import com.helger.smpclient.exception.SMPClientBadResponseException;
 import com.helger.smpclient.exception.SMPClientException;
 import com.helger.smpclient.exception.SMPClientUnauthorizedException;
 import com.helger.xsds.bdxr.smp1.EndpointType;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Implementation of {@link IAS4EndpointDetailProvider} using an OASIS BDXR SMP v1 Client to
@@ -197,7 +197,7 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
   public String getReceiverAPEndpointURL () throws Phase4Exception
   {
     final String sDestURL = BDXRClientReadOnly.getEndpointAddress (m_aEndpoint);
-    if (StringHelper.hasNoText (sDestURL))
+    if (StringHelper.isEmpty (sDestURL))
       throw new Phase4Exception ("Failed to determine the destination URL from the SMP endpoint: " + m_aEndpoint);
     return sDestURL;
   }

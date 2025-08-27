@@ -18,18 +18,18 @@ package com.helger.phase4.peppol.server.api;
 
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.string.StringHelper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.photon.api.IAPIExecutor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Abstract API executor class. Contains the check for the "X-Token" HTTP
@@ -54,7 +54,7 @@ public abstract class AbstractVerifyingAPIExecutor implements IAPIExecutor
                          @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     final String sXToken = aRequestScope.headers ().getFirstHeaderValue ("X-Token");
-    if (StringHelper.hasNoText (sXToken))
+    if (StringHelper.isEmpty (sXToken))
     {
       LOGGER.error ("The specific token header is missing");
       throw new APIParamException ("The specific token header is missing");

@@ -16,13 +16,13 @@
  */
 package com.helger.phase4.model.error;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.helger.base.lang.EnumHelper;
+import com.helger.base.string.StringHelper;
+import com.helger.diagnostics.error.IError;
+import com.helger.text.display.IHasDisplayText;
 
-import com.helger.commons.error.IError;
-import com.helger.commons.lang.EnumHelper;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.text.display.IHasDisplayText;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Enumeration with all predefined EBMS errors based on the specs. Use
@@ -180,7 +180,7 @@ public enum EEbmsError implements IEbmsError
   @Nullable
   public static EEbmsError getFromErrorCodeOrNull (@Nullable final String sErrorCode)
   {
-    if (StringHelper.hasNoText (sErrorCode))
+    if (StringHelper.isEmpty (sErrorCode))
       return null;
     return EnumHelper.findFirst (EEbmsError.class, x -> x.getErrorCode ().equals (sErrorCode));
   }

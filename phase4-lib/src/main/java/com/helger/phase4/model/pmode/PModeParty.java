@@ -18,19 +18,19 @@ package com.helger.phase4.model.pmode;
 
 import java.io.Serializable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.MustImplementEqualsAndHashcode;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.hashcode.HashCodeGenerator;
+import com.helger.base.id.IHasID;
+import com.helger.base.state.EChange;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.hashcode.HashCodeGenerator;
-import com.helger.commons.id.IHasID;
-import com.helger.commons.state.EChange;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Party within a PMode
@@ -84,7 +84,7 @@ public class PModeParty implements IHasID <String>, Serializable
    */
   public final boolean hasIDType ()
   {
-    return StringHelper.hasText (m_sIDType);
+    return StringHelper.isNotEmpty (m_sIDType);
   }
 
   /**
@@ -140,7 +140,7 @@ public class PModeParty implements IHasID <String>, Serializable
   @Nonempty
   public final String getID ()
   {
-    if (StringHelper.hasText (m_sIDType))
+    if (StringHelper.isNotEmpty (m_sIDType))
       return m_sIDType + ':' + m_sIDValue;
     return m_sIDValue;
   }
@@ -188,7 +188,7 @@ public class PModeParty implements IHasID <String>, Serializable
    */
   public final boolean hasUserName ()
   {
-    return StringHelper.hasText (m_sUserName);
+    return StringHelper.isNotEmpty (m_sUserName);
   }
 
   /**
@@ -223,7 +223,7 @@ public class PModeParty implements IHasID <String>, Serializable
    */
   public final boolean hasPassword ()
   {
-    return StringHelper.hasText (m_sPassword);
+    return StringHelper.isNotEmpty (m_sPassword);
   }
 
   /**

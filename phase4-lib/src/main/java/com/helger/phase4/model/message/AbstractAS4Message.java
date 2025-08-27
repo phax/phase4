@@ -16,18 +16,16 @@
  */
 package com.helger.phase4.model.message;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.string.ToStringGenerator;
-import com.helger.commons.traits.IGenericImplTrait;
+import com.helger.annotation.Nonempty;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.base.trait.IGenericImplTrait;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
@@ -40,6 +38,9 @@ import com.helger.phase4.soap11.Soap11Header;
 import com.helger.phase4.soap12.Soap12Body;
 import com.helger.phase4.soap12.Soap12Envelope;
 import com.helger.phase4.soap12.Soap12Header;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Abstract AS4 message implementation

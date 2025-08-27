@@ -18,8 +18,8 @@ package com.helger.phase4.marshaller;
 
 import java.util.List;
 
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.jaxb.GenericJAXBMarshaller;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ebms3header.Ebms3Messaging;

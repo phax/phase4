@@ -23,19 +23,16 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.CHttp;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.file.FileHelper;
-import com.helger.commons.io.file.FilenameHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.datetime.util.PDTIOHelper;
+import com.helger.http.CHttp;
+import com.helger.http.header.HttpHeaderMap;
+import com.helger.io.file.FileHelper;
+import com.helger.io.file.FilenameHelper;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -43,6 +40,9 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.sender.AbstractAS4RawResponseConsumer;
 import com.helger.phase4.sender.IAS4RawResponseConsumer;
 import com.helger.phase4.util.Phase4Exception;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Example implementation of {@link IAS4RawResponseConsumer} writing to a file.

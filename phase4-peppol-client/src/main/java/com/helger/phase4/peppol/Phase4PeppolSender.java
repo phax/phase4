@@ -26,26 +26,23 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.slf4j.Logger;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.io.IHasInputStream;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.state.ESuccess;
-import com.helger.commons.state.ETriState;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.OverridingMethodsMustInvokeSuper;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.io.iface.IHasInputStream;
+import com.helger.base.state.ESuccess;
+import com.helger.base.state.ETriState;
+import com.helger.base.string.StringHelper;
 import com.helger.diver.api.coord.DVRCoordinate;
+import com.helger.mime.CMimeType;
+import com.helger.mime.IMimeType;
 import com.helger.peppol.reporting.api.PeppolReportingHelper;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
@@ -96,6 +93,9 @@ import com.helger.smpclient.url.PeppolConfigurableURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xsds.peppol.smp1.EndpointType;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
 /**
  * This class contains all the specifics to send AS4 messages to PEPPOL. See
  * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
@@ -135,18 +135,18 @@ public final class Phase4PeppolSender
     aData.setCountryC1 (sCountryC1);
 
     String sRealStandard = sStandard;
-    if (StringHelper.hasNoText (sRealStandard))
+    if (StringHelper.isEmpty (sRealStandard))
     {
       sRealStandard = aPayloadElement.getNamespaceURI ();
     }
-    if (StringHelper.hasNoText (sRealStandard))
+    if (StringHelper.isEmpty (sRealStandard))
     {
       LOGGER.warn ("No Standard was provided and none could be deduced from the payload element (XML payloads without namespace URI are not permitted)");
       return null;
     }
 
     String sRealTypeVersion = sTypeVersion;
-    if (StringHelper.hasNoText (sRealTypeVersion))
+    if (StringHelper.isEmpty (sRealTypeVersion))
     {
       // Determine from document type
       try
@@ -159,7 +159,7 @@ public final class Phase4PeppolSender
         // failure
       }
     }
-    if (StringHelper.hasNoText (sRealTypeVersion))
+    if (StringHelper.isEmpty (sRealTypeVersion))
     {
       LOGGER.warn ("No TypeVersion was provided and none could be deduced from the document type identifier '" +
                    aDocTypeID.getURIEncoded () +
@@ -168,18 +168,18 @@ public final class Phase4PeppolSender
     }
 
     String sRealType = sType;
-    if (StringHelper.hasNoText (sRealType))
+    if (StringHelper.isEmpty (sRealType))
     {
       sRealType = aPayloadElement.getLocalName ();
     }
-    if (StringHelper.hasNoText (sRealType))
+    if (StringHelper.isEmpty (sRealType))
     {
       LOGGER.warn ("No Type was provided and none could be deduced from the payload element");
       return null;
     }
 
     String sRealInstanceIdentifier = sInstanceIdentifier;
-    if (StringHelper.hasNoText (sRealInstanceIdentifier))
+    if (StringHelper.isEmpty (sRealInstanceIdentifier))
     {
       // Create a new random UUID as the SBDH Instance Identifier
       sRealInstanceIdentifier = UUID.randomUUID ().toString ();
@@ -239,53 +239,6 @@ public final class Phase4PeppolSender
     // We never need to clone the payload element here because it was evtl.
     // cloned before
     return new PeppolSBDHDataWriter ().setFavourSpeed (true).createStandardBusinessDocument (aData);
-  }
-
-  /**
-   * @param aSenderID
-   *        Sender participant ID. May not be <code>null</code>.
-   * @param aReceiverID
-   *        Receiver participant ID. May not be <code>null</code>.
-   * @param aDocTypeID
-   *        Document type ID. May not be <code>null</code>.
-   * @param aProcID
-   *        Process ID. May not be <code>null</code>.
-   * @param sCountryC1
-   *        Country code of C1. May be <code>null</code>.
-   * @param sInstanceIdentifier
-   *        SBDH instance identifier. May be <code>null</code> to create a random ID.
-   * @param sTypeVersion
-   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be <code>null</code> to use
-   *        the default.
-   * @param aPayloadElement
-   *        Payload element to be wrapped. May not be <code>null</code>.
-   * @return The domain object representation of the created SBDH or <code>null</code> if not all
-   *         parameters are present.
-   * @since 2.1.1
-   * @deprecated Use the version with more parameters. Simply pass <code>null</code> if you want to
-   *             have the previous behaviour
-   */
-  @Nullable
-  @Deprecated (forRemoval = true, since = "3.1.0")
-  public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
-                                                     @Nonnull final IParticipantIdentifier aReceiverID,
-                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                     @Nonnull final IProcessIdentifier aProcID,
-                                                     @Nullable final String sCountryC1,
-                                                     @Nullable final String sInstanceIdentifier,
-                                                     @Nullable final String sTypeVersion,
-                                                     @Nonnull final Element aPayloadElement)
-  {
-    return createSBDH (aSenderID,
-                       aReceiverID,
-                       aDocTypeID,
-                       aProcID,
-                       sCountryC1,
-                       sInstanceIdentifier,
-                       null,
-                       sTypeVersion,
-                       null,
-                       aPayloadElement);
   }
 
   /**
@@ -995,7 +948,7 @@ public final class Phase4PeppolSender
       }
 
       // m_sCountryC1 is mandatory since 1.1.2024
-      if (StringHelper.hasNoText (m_sCountryC1))
+      if (StringHelper.isEmpty (m_sCountryC1))
       {
         LOGGER.warn ("The field 'countryC1' is not set");
         return false;
@@ -1150,7 +1103,6 @@ public final class Phase4PeppolSender
     private byte [] m_aPayloadBytes;
     private IHasInputStream m_aPayloadHasIS;
     private Consumer <? super StandardBusinessDocument> m_aSBDDocumentConsumer;
-    private Consumer <byte []> m_aSBDBytesConsumer;
 
     private IValidationExecutorSetRegistry <IValidationSourceXML> m_aVESRegistry;
     private DVRCoordinate m_aVESID;
@@ -1395,24 +1347,6 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set an optional Consumer for the created StandardBusinessDocument (SBD) bytes.
-     *
-     * @param aSBDBytesConsumer
-     *        The consumer to be used. May be <code>null</code>.
-     * @return this for chaining
-     * @deprecated This is deprecated, because in future versions, the SBDH will be temporarily
-     *             serialized to disk to allow messages larger than 2GB. Use
-     *             {@link #sbdDocumentConsumer(Consumer)} instead and serialize it manually instead.
-     */
-    @Nonnull
-    @Deprecated (since = "3.1.0", forRemoval = true)
-    public PeppolUserMessageBuilder sbdBytesConsumer (@Nullable final Consumer <byte []> aSBDBytesConsumer)
-    {
-      m_aSBDBytesConsumer = aSBDBytesConsumer;
-      return this;
-    }
-
-    /**
      * Set a custom validation registry to use in VESID lookup. This may be needed if other Peppol
      * formats like XRechnung or SimplerInvoicing should be send through this client. The same
      * registry instance should be used for all sending operations to ensure that validation
@@ -1587,13 +1521,10 @@ public final class Phase4PeppolSender
       if (m_aSBDDocumentConsumer != null)
         m_aSBDDocumentConsumer.accept (aSBD);
 
-      // This can only be done, if no specific customizer is set
-      if (m_aSBDBytesConsumer == null)
       {
         // Serialize the SBDH to a temporary file
         // Advantage: works with large files as well because it consumes less
         // memory
-        // Drawback: will not call the SBDH Byte Consumer
         try
         {
           final File aTempSBDFile = aResHelper.createTempFile ();
@@ -1610,20 +1541,6 @@ public final class Phase4PeppolSender
         {
           throw new Phase4PeppolException ("Failed to create temporary file for SBDH", ex);
         }
-      }
-      else
-      {
-        // Serializing the full SBDH to bytes may fail for large files
-        final byte [] aSBDBytes = new SBDMarshaller ().getAsBytes (aSBD);
-        if (m_aSBDBytesConsumer != null)
-          m_aSBDBytesConsumer.accept (aSBDBytes);
-
-        // Now we have the main payload
-        payload (AS4OutgoingAttachment.builder ()
-                                      .data (aSBDBytes)
-                                      .mimeType (m_aPayloadMimeType)
-                                      .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null)
-                                      .contentID (m_sPayloadContentID));
       }
 
       return ESuccess.SUCCESS;

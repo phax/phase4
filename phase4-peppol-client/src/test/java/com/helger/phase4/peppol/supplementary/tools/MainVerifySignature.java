@@ -21,8 +21,6 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
@@ -32,13 +30,13 @@ import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsHashSet;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsSet;
-import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.commons.mutable.MutableInt;
-import com.helger.commons.state.ESuccess;
+import com.helger.base.numeric.mutable.MutableInt;
+import com.helger.base.state.ESuccess;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsHashSet;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsSet;
+import com.helger.io.file.SimpleFileIO;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
@@ -52,6 +50,8 @@ import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * This is a small tool that takes the dump of an incoming AS4 message (from a

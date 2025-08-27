@@ -17,20 +17,22 @@
 package com.helger.phase4.model.pmode.leg;
 
 import java.io.Serializable;
+import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.MustImplementEqualsAndHashcode;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.clone.ICloneable;
+import com.helger.base.hashcode.HashCodeGenerator;
+import com.helger.base.string.StringHelper;
+import com.helger.base.string.StringImplode;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 
-import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.hashcode.HashCodeGenerator;
-import com.helger.commons.lang.ICloneable;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * List of addresses in a PMode
@@ -81,13 +83,12 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
   }
 
   /**
-   * @return All addresses as a single string, separated by a "comma char".
-   *         Never <code>null</code>.
+   * @return All addresses as a single string, separated by a "comma char". Never <code>null</code>.
    */
   @Nonnull
   public String getAsString ()
   {
-    return StringHelper.getImploded (ADDRESS_SEPARATOR, m_aAddresses);
+    return StringImplode.imploder ().source (m_aAddresses).separator (ADDRESS_SEPARATOR).build ();
   }
 
   @Nonnull
@@ -130,7 +131,7 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
   @Nonnull
   public static PModeAddressList createFromString (@Nullable final String sAddressString)
   {
-    final ICommonsList <String> aAddresses = StringHelper.getExploded (ADDRESS_SEPARATOR, sAddressString);
+    final List <String> aAddresses = StringHelper.getExploded (ADDRESS_SEPARATOR, sAddressString);
     return new PModeAddressList (aAddresses);
   }
 }

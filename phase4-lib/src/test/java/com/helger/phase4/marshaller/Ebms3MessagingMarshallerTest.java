@@ -26,8 +26,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.collection.CollectionFind;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -149,10 +149,11 @@ public final class Ebms3MessagingMarshallerTest
     assertTrue ("Soap Errors: " + aCVEH.getErrorList (), aCVEH.getErrorList ().isEmpty ());
 
     final Ebms3Messaging aUserMsg = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH)
-                                                                   .read ((Element) CollectionHelper.findFirst (aEnv.getHeader ()
-                                                                                                                    .getAny (),
-                                                                                                                x -> x instanceof Element &&
-                                                                                                                     "Messaging".equals (((Element) x).getLocalName ())));
+                                                                   .read (CollectionFind.findFirstMapped (aEnv.getHeader ()
+                                                                                                              .getAny (),
+                                                                                                          x -> x instanceof Element &&
+                                                                                                               "Messaging".equals (((Element) x).getLocalName ()),
+                                                                                                          Element.class::cast));
     assertNotNull (aUserMsg);
     assertTrue ("Ebms Errors: " + aCVEH.getErrorList (), aCVEH.getErrorList ().isEmpty ());
   }

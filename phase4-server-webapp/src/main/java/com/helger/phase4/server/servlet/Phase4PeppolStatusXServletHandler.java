@@ -21,19 +21,17 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.datetime.PDTFactory;
-import com.helger.commons.datetime.PDTWebDateHelper;
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.mime.MimeType;
-import com.helger.commons.system.SystemProperties;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.system.SystemProperties;
+import com.helger.datetime.helper.PDTFactory;
+import com.helger.datetime.web.PDTWebDateHelper;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
+import com.helger.mime.CMimeType;
+import com.helger.mime.MimeType;
 import com.helger.phase4.CAS4Version;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -41,6 +39,8 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Create the demo application status information

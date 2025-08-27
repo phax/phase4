@@ -16,18 +16,18 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
-
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.state.ETriState;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.state.ETriState;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.IJsonValue;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeLegReliability}.
@@ -74,7 +74,7 @@ public final class PModeLegReliabilityJsonConverter
     if (aValue.isStartGroupDefined ())
       ret.add (START_GROUP, aValue.isStartGroup ());
     if (aValue.correlations ().isNotEmpty ())
-      ret.addJson (CORRELATION, new JsonArray ().addAll (aValue.correlations ()));
+      ret.add (CORRELATION, new JsonArray ().addAll (aValue.correlations ()));
     if (aValue.isTerminateGroupDefined ())
       ret.add (TERMINATE_GROUP, aValue.isTerminateGroup ());
     return ret;

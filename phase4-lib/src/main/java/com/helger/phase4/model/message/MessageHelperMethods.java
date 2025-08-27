@@ -24,25 +24,21 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.RegEx;
-import javax.annotation.concurrent.Immutable;
-
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsHashSet;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsSet;
-import com.helger.commons.datetime.XMLOffsetDateTime;
-import com.helger.commons.regex.RegExHelper;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.url.EURLProtocol;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.RegEx;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.cache.regex.RegExHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsHashSet;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsSet;
+import com.helger.datetime.xml.XMLOffsetDateTime;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.IAS4Attachment;
 import com.helger.phase4.ebms3header.Ebms3AgreementRef;
@@ -62,10 +58,14 @@ import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.DSigReferenceMarshaller;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.url.protocol.EURLProtocol;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.xmldsig.ReferenceType;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class contains every method, static variables which are used by more than one message
@@ -123,7 +123,7 @@ public final class MessageHelperMethods
    */
   public static void setCustomMessageIDSuffix (@Nullable final String sSuffix)
   {
-    if (StringHelper.hasText (sSuffix))
+    if (StringHelper.isNotEmpty (sSuffix))
     {
       if (!RegExHelper.stringMatchesPattern (MESSAGE_ID_SUFFIX_REGEX, sSuffix))
         throw new IllegalArgumentException ("The provided message ID suffix '" +
@@ -246,7 +246,7 @@ public final class MessageHelperMethods
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
 
     aMessageInfo.setMessageId (sMessageID);
-    if (StringHelper.hasText (sRefToMessageID))
+    if (StringHelper.isNotEmpty (sRefToMessageID))
       aMessageInfo.setRefToMessageId (sRefToMessageID);
     // ebMS Core 5.2.2.1: "It MUST be expressed as UTC. Indicating UTC in the Timestamp element by
     // including the 'Z' identifier is optional."
@@ -390,12 +390,12 @@ public final class MessageHelperMethods
     ValueEnforcer.notNull (sConversationID, "ConversationID");
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = new Ebms3CollaborationInfo ();
-    if (StringHelper.hasText (sAgreementRefValue))
+    if (StringHelper.isNotEmpty (sAgreementRefValue))
     {
       final Ebms3AgreementRef aEbms3AgreementRef = new Ebms3AgreementRef ();
-      if (StringHelper.hasText (sAgreementRefPMode))
+      if (StringHelper.isNotEmpty (sAgreementRefPMode))
         aEbms3AgreementRef.setPmode (sAgreementRefPMode);
-      if (StringHelper.hasText (sAgreementTypeValue))
+      if (StringHelper.isNotEmpty (sAgreementTypeValue))
         aEbms3AgreementRef.setType (sAgreementTypeValue);
       aEbms3AgreementRef.setValue (sAgreementRefValue);
       aEbms3CollaborationInfo.setAgreementRef (aEbms3AgreementRef);

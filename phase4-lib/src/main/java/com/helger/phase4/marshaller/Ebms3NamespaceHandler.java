@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.marshaller;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phase4.CAS4;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 import com.helger.xsds.xlink.CXLink;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * A special XML namespace context that contains all default Ebms3 mappings.

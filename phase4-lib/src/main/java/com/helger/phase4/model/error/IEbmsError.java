@@ -18,9 +18,9 @@ package com.helger.phase4.model.error;
 
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
+import com.helger.text.display.IHasDisplayText;
 
-import com.helger.commons.text.display.IHasDisplayText;
+import jakarta.annotation.Nonnull;
 
 /**
  * Base interface for a single EBMS error

@@ -16,13 +16,13 @@
  */
 package com.helger.phase4.mgr;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.phase4.util.Phase4Exception;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Factory for global managers

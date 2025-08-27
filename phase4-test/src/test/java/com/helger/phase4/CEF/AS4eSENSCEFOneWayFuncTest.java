@@ -19,9 +19,6 @@ package com.helger.phase4.CEF;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-
 import org.apache.hc.core5.http.NoHttpResponseException;
 import org.junit.Test;
 import org.littleshoot.proxy.HttpFilters;
@@ -33,13 +30,12 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import com.helger.commons.collection.attr.IStringMap;
-import com.helger.commons.collection.attr.StringMap;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.concurrent.ThreadHelper;
-import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.mime.CMimeType;
+import com.helger.annotation.Nonnegative;
+import com.helger.base.concurrent.ThreadHelper;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.resource.ClassPathResource;
+import com.helger.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ScopedAS4Configuration;
@@ -68,12 +64,15 @@ import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.MockPModeGenerator;
+import com.helger.typeconvert.collection.IStringMap;
+import com.helger.typeconvert.collection.StringMap;
 import com.helger.xml.serialize.read.DOMReader;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import jakarta.annotation.Nonnull;
 import jakarta.mail.Multipart;
 
 public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp

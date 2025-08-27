@@ -20,13 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.WillClose;
-import javax.annotation.WillNotClose;
 import javax.xml.namespace.QName;
 
 import org.apache.hc.core5.http.Header;
@@ -37,24 +34,26 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.http.CHttpHeader;
-import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.IHasInputStream;
-import com.helger.commons.io.stream.HasInputStream;
-import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
-import com.helger.commons.lang.ServiceLoaderHelper;
-import com.helger.commons.mime.IMimeType;
-import com.helger.commons.mime.MimeTypeParser;
-import com.helger.commons.state.ESuccess;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.annotation.WillClose;
+import com.helger.annotation.WillNotClose;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.io.iface.IHasInputStream;
+import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
+import com.helger.base.io.stream.HasInputStream;
+import com.helger.base.spi.ServiceLoaderHelper;
+import com.helger.base.state.ESuccess;
+import com.helger.base.string.StringHelper;
+import com.helger.base.wrapper.Wrapper;
+import com.helger.collection.CollectionFind;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsOrderedMap;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.list.ErrorList;
+import com.helger.http.CHttpHeader;
+import com.helger.http.header.HttpHeaderMap;
+import com.helger.mime.IMimeType;
+import com.helger.mime.parse.MimeTypeParser;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
@@ -98,6 +97,8 @@ import com.helger.xml.sax.WrappedCollectingSAXErrorHandler;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.read.DOMReaderSettings;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
 
@@ -169,7 +170,7 @@ public final class AS4IncomingHandler
 
     // Determine content type
     final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
-    if (StringHelper.hasNoText (sContentType))
+    if (StringHelper.isEmpty (sContentType))
       throw new Phase4Exception ("Content-Type header is missing").setRetryFeasible (false);
 
     if (LOGGER.isDebugEnabled ())
@@ -192,7 +193,7 @@ public final class AS4IncomingHandler
     Exception aCaughtException = null;
 
     // Load all SPIs
-    final ICommonsList <IAS4IncomingMessageProcessingStatusSPI> aStatusSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4IncomingMessageProcessingStatusSPI.class);
+    final List <IAS4IncomingMessageProcessingStatusSPI> aStatusSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4IncomingMessageProcessingStatusSPI.class);
     for (final IAS4IncomingMessageProcessingStatusSPI aStatusSPI : aStatusSPIs)
       try
       {
@@ -218,7 +219,7 @@ public final class AS4IncomingHandler
           LOGGER.debug ("Received MIME message");
 
         final String sBoundary = aContentType.getParameterValueWithName ("boundary");
-        if (StringHelper.hasNoText (sBoundary))
+        if (StringHelper.isEmpty (sBoundary))
           throw new Phase4Exception ("Content-Type '" + sContentType + "' misses 'boundary' parameter")
                                                                                                        .setRetryFeasible (false);
 
@@ -588,18 +589,18 @@ public final class AS4IncomingHandler
         // an attachment, it would throw a NullPointerException since a payload
         // does not have anything written in its partinfo therefore also now
         // href
-        final Ebms3PartInfo aPartInfo = CollectionHelper.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
-                                                                    x -> x.getHref () != null &&
-                                                                         (x.getHref ().equals (sAttachmentContentID) ||
-                                                                          x.getHref ()
-                                                                           .equals (MessageHelperMethods.PREFIX_CID +
-                                                                                    sAttachmentContentID)));
+        final Ebms3PartInfo aPartInfo = CollectionFind.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
+                                                                  x -> x.getHref () != null &&
+                                                                       (x.getHref ().equals (sAttachmentContentID) ||
+                                                                        x.getHref ()
+                                                                         .equals (MessageHelperMethods.PREFIX_CID +
+                                                                                  sAttachmentContentID)));
         if (aPartInfo != null && aPartInfo.getPartProperties () != null)
         {
           // Find "MimeType" property
-          final Ebms3Property aProperty = CollectionHelper.findFirst (aPartInfo.getPartProperties ().getProperty (),
-                                                                      x -> x.getName ()
-                                                                            .equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_MIME_TYPE));
+          final Ebms3Property aProperty = CollectionFind.findFirst (aPartInfo.getPartProperties ().getProperty (),
+                                                                    x -> x.getName ()
+                                                                          .equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_MIME_TYPE));
           if (aProperty != null)
           {
             final String sMimeType = aProperty.getValue ();
@@ -714,7 +715,7 @@ public final class AS4IncomingHandler
       final IAS4Profile aProfile;
       final IAS4ProfileValidator aValidator;
       // Only do profile checks if a profile is set
-      if (StringHelper.hasText (sProfileID))
+      if (StringHelper.isNotEmpty (sProfileID))
       {
         // Resolve profile ID
         aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);

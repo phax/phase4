@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.peppol.server.api;
 
-import javax.annotation.Nonnull;
-
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.photon.api.APIDescriptor;
 import com.helger.photon.api.APIPath;
 import com.helger.photon.api.IAPIExceptionMapper;
 import com.helger.photon.api.IAPIRegistry;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * This class contains the API registration and global parameters.

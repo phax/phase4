@@ -19,18 +19,16 @@ package com.helger.phase4.messaging.mime;
 import java.nio.charset.Charset;
 import java.util.function.BiConsumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.CHttpHeader;
-import com.helger.commons.http.HttpHeaderMap;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.http.CHttpHeader;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -41,6 +39,8 @@ import jakarta.activation.CommandInfo;
 import jakarta.activation.CommandMap;
 import jakarta.activation.DataHandler;
 import jakarta.activation.MailcapCommandMap;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.mail.Header;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
@@ -167,7 +167,7 @@ public final class AS4MimeMessageHelper
                                                        final boolean bUnifyValues) throws MessagingException
   {
     // Create a copy
-    final ICommonsList <Header> aHeaders = CollectionHelper.newList (aMimeMsg.getAllHeaders ());
+    final ICommonsList <Header> aHeaders = new CommonsArrayList <> (aMimeMsg.getAllHeaders ());
 
     // First round
     for (final Header aHeader : aHeaders)

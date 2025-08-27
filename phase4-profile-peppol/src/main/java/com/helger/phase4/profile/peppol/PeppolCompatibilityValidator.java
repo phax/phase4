@@ -18,15 +18,13 @@ package com.helger.phase4.profile.peppol;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.SingleError;
-import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.debug.GlobalDebug;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
+import com.helger.diagnostics.error.IError;
+import com.helger.diagnostics.error.SingleError;
+import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
@@ -53,6 +51,8 @@ import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.wss.EWSSVersion;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Validate certain requirements imposed by the Peppol project.
@@ -89,7 +89,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     {
       // PROTOCOL Address only https allowed
       final String sAddressProtocol = aLegProtocol.getAddressProtocol ();
-      if (StringHelper.hasText (sAddressProtocol))
+      if (StringHelper.isNotEmpty (sAddressProtocol))
       {
         if (sAddressProtocol.equalsIgnoreCase ("https"))
         {
@@ -341,7 +341,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
+      if (StringHelper.isEmpty (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
 
       {
@@ -373,11 +373,11 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
                   sFinalRecipientC4 = sProperty.getValue ();
             }
 
-            if (StringHelper.hasNoText (sOriginalSenderC1))
+            if (StringHelper.isEmpty (sOriginalSenderC1))
               aErrorList.add (_createError ("MessageProperties/Property '" +
                                             CAS4.ORIGINAL_SENDER +
                                             "' property is empty or not existant but mandatory"));
-            if (StringHelper.hasNoText (sFinalRecipientC4))
+            if (StringHelper.isEmpty (sFinalRecipientC4))
               aErrorList.add (_createError ("MessageProperties/Property '" +
                                             CAS4.FINAL_RECIPIENT +
                                             "' property is empty or not existant but mandatory"));
@@ -451,7 +451,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
                                         aAgreementRef.getValue () +
                                         "'"));
 
-        if (StringHelper.hasText (aAgreementRef.getType ()))
+        if (StringHelper.isNotEmpty (aAgreementRef.getType ()))
           aErrorList.add (_createError ("CollaborationInfo/AgreementRef/@type must not be set"));
       }
     }
@@ -467,7 +467,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
+      if (StringHelper.isEmpty (aSignalMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
     }
   }

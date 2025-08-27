@@ -25,8 +25,8 @@ import java.nio.file.Files;
 
 import org.slf4j.Logger;
 
-import com.helger.commons.datetime.PDTFactory;
-import com.helger.commons.wrapper.Wrapper;
+import com.helger.base.wrapper.Wrapper;
+import com.helger.datetime.helper.PDTFactory;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.bdew.Phase4BDEWSender.BDEWPayloadParams;

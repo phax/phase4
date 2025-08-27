@@ -20,15 +20,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.annotation.Nonnull;
-
 import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.annotation.Nonempty;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 
+import jakarta.annotation.Nonnull;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 

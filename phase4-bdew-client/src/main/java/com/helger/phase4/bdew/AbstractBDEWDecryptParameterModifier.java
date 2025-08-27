@@ -19,15 +19,15 @@
  */
 package com.helger.phase4.bdew;
 
-import javax.annotation.Nonnull;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-
 import org.apache.wss4j.common.bsp.BSPRule;
 import org.apache.wss4j.dom.handler.RequestData;
 
-import com.helger.commons.annotation.OverrideOnDemand;
-import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.annotation.OverridingMethodsMustInvokeSuper;
+import com.helger.annotation.style.OverrideOnDemand;
+import com.helger.collection.commons.CommonsArrayList;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Abstract base implementation of {@link IAS4DecryptParameterModifier} show

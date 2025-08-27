@@ -18,21 +18,21 @@ package com.helger.phase4.model.pmode.leg;
 
 import java.io.Serializable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.MustImplementEqualsAndHashcode;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.hashcode.HashCodeGenerator;
+import com.helger.base.state.EChange;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.collection.commons.CommonsLinkedHashMap;
+import com.helger.collection.commons.ICommonsMap;
+import com.helger.collection.commons.ICommonsOrderedMap;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.ICommonsMap;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.hashcode.HashCodeGenerator;
-import com.helger.commons.state.EChange;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Business information - This set of parameters only applies to user messages.
@@ -117,7 +117,7 @@ public class PModeLegBusinessInformation implements Serializable
 
   public final boolean hasService ()
   {
-    return StringHelper.hasText (m_sServiceValue);
+    return StringHelper.isNotEmpty (m_sServiceValue);
   }
 
   @Nonnull
@@ -137,7 +137,7 @@ public class PModeLegBusinessInformation implements Serializable
 
   public final boolean hasServiceType ()
   {
-    return StringHelper.hasText (m_sServiceType);
+    return StringHelper.isNotEmpty (m_sServiceType);
   }
 
   @Nonnull
@@ -157,7 +157,7 @@ public class PModeLegBusinessInformation implements Serializable
 
   public final boolean hasAction ()
   {
-    return StringHelper.hasText (m_sAction);
+    return StringHelper.isNotEmpty (m_sAction);
   }
 
   @Nonnull
@@ -235,7 +235,7 @@ public class PModeLegBusinessInformation implements Serializable
 
   public final boolean hasMPCID ()
   {
-    return StringHelper.hasText (m_sMPCID);
+    return StringHelper.isNotEmpty (m_sMPCID);
   }
 
   @Nonnull

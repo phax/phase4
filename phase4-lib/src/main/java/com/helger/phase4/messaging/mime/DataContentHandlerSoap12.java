@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 
-import javax.annotation.Nonnull;
-import javax.annotation.WillNotClose;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -31,14 +29,16 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.eclipse.angus.mail.handlers.text_plain;
 
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.collection.ArrayHelper;
+import com.helger.annotation.WillNotClose;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.CGlobal;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.xml.transform.LoggingTransformErrorListener;
 import com.helger.xml.transform.XMLTransformerFactory;
 
 import jakarta.activation.ActivationDataFlavor;
 import jakarta.activation.DataSource;
+import jakarta.annotation.Nonnull;
 
 /**
  * Special DataContentHandler for SOAP 1.2 messages with the special MIME type.
@@ -62,8 +62,8 @@ public class DataContentHandlerSoap12 extends text_plain
 
   @Override
   @Nonnull
-  protected Object getData (@Nonnull final ActivationDataFlavor aFlavor,
-                            @Nonnull final DataSource aDataSource) throws IOException
+  protected Object getData (@Nonnull final ActivationDataFlavor aFlavor, @Nonnull final DataSource aDataSource)
+                                                                                                                throws IOException
   {
     if (aFlavor.getRepresentationClass () == StreamSource.class)
       return new StreamSource (aDataSource.getInputStream ());
@@ -81,7 +81,7 @@ public class DataContentHandlerSoap12 extends text_plain
       // Here we can use a secure transformer factory
       final TransformerFactory aFactory = XMLTransformerFactory.createTransformerFactory (new LoggingTransformErrorListener (Locale.ROOT),
                                                                                           null);
-      XMLTransformerFactory.makeTransformerFactorySecure (aFactory, ArrayHelper.EMPTY_STRING_ARRAY);
+      XMLTransformerFactory.makeTransformerFactorySecure (aFactory, CGlobal.EMPTY_STRING_ARRAY);
       final Transformer aTransformer = XMLTransformerFactory.newTransformer (aFactory);
 
       final StreamResult aStreamResult = new StreamResult (aOS);

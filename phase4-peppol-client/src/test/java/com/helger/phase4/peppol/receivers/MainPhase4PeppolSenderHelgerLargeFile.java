@@ -21,8 +21,8 @@ import java.io.File;
 import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 
-import com.helger.commons.io.resource.FileSystemResource;
 import com.helger.httpclient.HttpClientSettings;
+import com.helger.io.resource.FileSystemResource;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;

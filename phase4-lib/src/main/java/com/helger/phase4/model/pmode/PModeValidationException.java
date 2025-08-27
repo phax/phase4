@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.model.pmode;
 
-import javax.annotation.Nonnull;
-
 import com.helger.phase4.util.Phase4Exception;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * A special exception thrown in PMode validation.

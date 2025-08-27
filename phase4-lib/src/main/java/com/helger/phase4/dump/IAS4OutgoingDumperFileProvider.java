@@ -19,16 +19,16 @@ package com.helger.phase4.dump;
 import java.io.File;
 import java.time.OffsetDateTime;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.io.file.FilenameHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.Nonnegative;
+import com.helger.base.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
+import com.helger.io.file.FilenameHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.mgr.MetaAS4Manager;
+
+import jakarta.annotation.Nonnull;
 
 @FunctionalInterface
 public interface IAS4OutgoingDumperFileProvider

@@ -19,8 +19,6 @@ package com.helger.phase4.server.supplementary.test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
-import javax.annotation.Nullable;
-
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
@@ -33,7 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
@@ -43,6 +41,8 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.scope.mock.ScopeTestRule;
 import com.helger.xml.serialize.read.DOMReader;
+
+import jakarta.annotation.Nullable;
 
 /**
  * A set of test-cases for signing and verifying SOAP requests.

@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.peppol;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.ValueEnforcer;
+import com.helger.base.enforce.ValueEnforcer;
 import com.helger.phive.api.result.ValidationResultList;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Special {@link Phase4PeppolException} exception for validation errors.

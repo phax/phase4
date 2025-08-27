@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.incoming;
 
-import javax.annotation.Nonnull;
-
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.annotation.Nonempty;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.model.message.AS4ErrorMessage;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * A callback interface to be notified about returned errors.

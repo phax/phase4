@@ -20,10 +20,10 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 
-import javax.annotation.Nonnull;
+import com.helger.datetime.helper.PDTFactory;
+import com.helger.datetime.xml.XMLOffsetDateTime;
 
-import com.helger.commons.datetime.PDTFactory;
-import com.helger.commons.datetime.XMLOffsetDateTime;
+import jakarta.annotation.Nonnull;
 
 /**
  * Interface for providing time stamps.<br>

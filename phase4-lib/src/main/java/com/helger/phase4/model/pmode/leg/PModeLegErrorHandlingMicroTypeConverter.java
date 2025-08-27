@@ -16,16 +16,16 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.helger.commons.state.ETriState;
+import com.helger.base.state.ETriState;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModeLegErrorHandling}.
@@ -47,12 +47,12 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
                                               @Nonnull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReportReceiverErrorsTo (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_REPORT_RECEIVER_ERRORS_TO));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReportSenderErrorsTo (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_REPORT_SENDER_ERRORS_TO));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getReportReceiverErrorsTo (),
+                                                            sNamespaceURI,
+                                                            ELEMENT_REPORT_RECEIVER_ERRORS_TO));
+    ret.addChild (MicroTypeConverter.convertToMicroElement (aValue.getReportSenderErrorsTo (),
+                                                            sNamespaceURI,
+                                                            ELEMENT_REPORT_SENDER_ERRORS_TO));
     if (aValue.isReportAsResponseDefined ())
       ret.setAttribute (ATTR_REPORT_AS_RESPONSE, aValue.isReportAsResponse ());
     if (aValue.isReportProcessErrorNotifyConsumerDefined ())

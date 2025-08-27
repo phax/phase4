@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import com.helger.commons.concurrent.ThreadHelper;
+import com.helger.base.concurrent.ThreadHelper;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.logging.Phase4LoggerFactory;

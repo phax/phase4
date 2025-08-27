@@ -19,13 +19,13 @@ package com.helger.phase4.euctp;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.profile.euctp.AS4EuCtpProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4PullRequestBuilder;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Abstract EuCTP PullRequest builder class with sanity methods

@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.messaging.http;
 
-import javax.annotation.Nonnull;
-
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.w3c.dom.Node;
 
-import com.helger.commons.mime.IMimeType;
+import com.helger.mime.IMimeType;
 import com.helger.phase4.util.AS4XMLHelper;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Special HttpClient HTTP POST entity that contains a DOM Node as a serialized

@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.crypto;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.wss4j.common.WSS4JConstants;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.lang.EnumHelper;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.base.lang.EnumHelper;
+import com.helger.base.string.StringHelper;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Enumeration with all message canonicalization algorithms supported when
@@ -86,7 +86,7 @@ public enum ECryptoAlgorithmC14N implements ICryptoAlgorithmC14N
   @Nullable
   public static ECryptoAlgorithmC14N getFromURIOrNull (@Nullable final String sURI)
   {
-    if (StringHelper.hasNoText (sURI))
+    if (StringHelper.isEmpty (sURI))
       return null;
     return EnumHelper.findFirst (ECryptoAlgorithmC14N.class, x -> x.getAlgorithmURI ().equals (sURI));
   }

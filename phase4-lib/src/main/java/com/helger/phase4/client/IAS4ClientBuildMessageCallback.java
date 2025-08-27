@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.client;
 
-import javax.annotation.Nonnull;
-
 import org.w3c.dom.Document;
 
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Callback interface for AS4 client message creation.

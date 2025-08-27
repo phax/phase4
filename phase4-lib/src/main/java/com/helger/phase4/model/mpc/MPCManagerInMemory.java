@@ -16,19 +16,19 @@
  */
 package com.helger.phase4.model.mpc;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.impl.CommonsHashMap;
-import com.helger.commons.collection.impl.ICommonsMap;
-import com.helger.commons.concurrent.SimpleReadWriteLock;
-import com.helger.commons.state.EChange;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.concurrent.GuardedBy;
+import com.helger.annotation.concurrent.ThreadSafe;
+import com.helger.base.concurrent.SimpleReadWriteLock;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.state.EChange;
+import com.helger.base.string.StringHelper;
+import com.helger.collection.commons.CommonsHashMap;
+import com.helger.collection.commons.ICommonsMap;
 import com.helger.phase4.CAS4;
 import com.helger.photon.security.object.BusinessObjectHelper;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Manager for {@link MPC} objects.
@@ -125,7 +125,7 @@ public class MPCManagerInMemory implements IMPCManager
   @Nullable
   MPC getOfID (@Nullable final String sID)
   {
-    if (StringHelper.hasNoText (sID))
+    if (StringHelper.isEmpty (sID))
       return null;
     return m_aRWLock.readLockedGet ( () -> m_aMap.get (sID));
   }
@@ -138,7 +138,7 @@ public class MPCManagerInMemory implements IMPCManager
 
   public boolean containsWithID (final String sID)
   {
-    if (StringHelper.hasNoText (sID))
+    if (StringHelper.isEmpty (sID))
       return false;
     return m_aRWLock.readLockedBoolean ( () -> m_aMap.containsKey (sID));
   }

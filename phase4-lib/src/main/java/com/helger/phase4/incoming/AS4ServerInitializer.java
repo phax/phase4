@@ -16,12 +16,11 @@
  */
 package com.helger.phase4.incoming;
 
-import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.concurrent.SimpleReadWriteLock;
+import com.helger.annotation.concurrent.GuardedBy;
+import com.helger.annotation.concurrent.ThreadSafe;
+import com.helger.base.concurrent.SimpleReadWriteLock;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.mgr.AS4DuplicateCleanupJob;
 import com.helger.phase4.logging.Phase4LoggerFactory;

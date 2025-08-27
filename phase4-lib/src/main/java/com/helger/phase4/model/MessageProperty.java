@@ -16,19 +16,19 @@
  */
 package com.helger.phase4.model;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.builder.IBuilder;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.hashcode.HashCodeGenerator;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.OverridingMethodsMustInvokeSuper;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.builder.IBuilder;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.hashcode.HashCodeGenerator;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.ebms3header.Ebms3Property;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Represents a single message property.
@@ -160,9 +160,9 @@ public class MessageProperty
     @OverridingMethodsMustInvokeSuper
     public void checkConsistency ()
     {
-      if (StringHelper.hasNoText (m_sName))
+      if (StringHelper.isEmpty (m_sName))
         throw new IllegalStateException ("Name MUST be present");
-      if (StringHelper.hasNoText (m_sValue))
+      if (StringHelper.isEmpty (m_sValue))
         throw new IllegalStateException ("Value MUST be present");
     }
 

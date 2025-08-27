@@ -18,14 +18,14 @@ package com.helger.phase4.logging;
 
 import java.util.function.Function;
 
-import javax.annotation.Nonnull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.PresentForCodeCoverage;
-import com.helger.commons.string.StringHelper;
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.PresentForCodeCoverage;
+import com.helger.base.string.StringHelper;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Specific logger factory for the phase4 library that allows an easy customization of log messages.
@@ -38,7 +38,7 @@ public final class Phase4LoggerFactory
   @PresentForCodeCoverage
   private static final Phase4LoggerFactory INSTANCE = new Phase4LoggerFactory ();
 
-  @Deprecated
+  @Deprecated (forRemoval = false)
   private Phase4LoggerFactory ()
   {}
 
@@ -46,8 +46,8 @@ public final class Phase4LoggerFactory
     final String sPrefix = Phase4LogCustomizer.getThreadLocalLogPrefix ();
     final String sSuffix = Phase4LogCustomizer.getThreadLocalLogSuffix ();
 
-    final boolean bHasPrefix = StringHelper.hasText (sPrefix);
-    final boolean bHasSuffix = StringHelper.hasText (sSuffix);
+    final boolean bHasPrefix = StringHelper.isNotEmpty (sPrefix);
+    final boolean bHasSuffix = StringHelper.isNotEmpty (sSuffix);
 
     if (bHasPrefix || bHasSuffix)
     {
@@ -55,7 +55,7 @@ public final class Phase4LoggerFactory
       final StringBuilder aSB = new StringBuilder ();
       if (bHasPrefix)
         aSB.append (sPrefix);
-      if (StringHelper.hasText (sMsg))
+      if (StringHelper.isNotEmpty (sMsg))
         aSB.append (sMsg);
       if (bHasSuffix)
         aSB.append (sSuffix);

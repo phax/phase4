@@ -16,17 +16,18 @@
  */
 package com.helger.phase4.wss;
 
-import javax.annotation.Nonnull;
+import java.security.Security;
 
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.slf4j.Logger;
 
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.annotation.UsedViaReflection;
-import com.helger.commons.lang.priviledged.IPrivilegedAction;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.annotation.style.UsedViaReflection;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.scope.IScope;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * A utility class to handle the life cycle of the {@link WSSConfig} objects.
@@ -53,11 +54,11 @@ public class WSSConfigManager extends AbstractGlobalSingleton
   protected void onAfterInstantiation (@Nonnull final IScope aScope)
   {
     // init WSSConfig
-    final boolean bContainsSTRTransform = IPrivilegedAction.securityGetProvider ("STRTransform").invokeSafe () != null;
-    final boolean bContainsAttachmentContentSignatureTransform = IPrivilegedAction.securityGetProvider ("AttachmentContentSignatureTransform")
-                                                                                  .invokeSafe () != null;
-    final boolean bContainsAttachmentCompleteSignatureTransform = IPrivilegedAction.securityGetProvider ("AttachmentCompleteSignatureTransform")
-                                                                                   .invokeSafe () != null;
+    final boolean bContainsSTRTransform = Security.getProvider ("STRTransform") != null;
+    final boolean bContainsAttachmentContentSignatureTransform = Security.getProvider ("AttachmentContentSignatureTransform") !=
+                                                                 null;
+    final boolean bContainsAttachmentCompleteSignatureTransform = Security.getProvider ("AttachmentCompleteSignatureTransform") !=
+                                                                  null;
     final boolean bAddJCEProviders;
     if (bContainsSTRTransform &&
         bContainsAttachmentContentSignatureTransform &&

@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.profile;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Base interface for AS4 profile registrar

@@ -18,22 +18,22 @@ package com.helger.phase4.model.pmode.leg;
 
 import java.io.Serializable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.MustImplementEqualsAndHashcode;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.hashcode.HashCodeGenerator;
+import com.helger.base.state.EChange;
+import com.helger.base.state.ETriState;
+import com.helger.base.string.StringHelper;
+import com.helger.base.tostring.ToStringGenerator;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.hashcode.HashCodeGenerator;
-import com.helger.commons.state.EChange;
-import com.helger.commons.state.ETriState;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * PMode reliability stuff.
@@ -235,7 +235,7 @@ public class PModeLegReliability implements Serializable
 
   public final boolean hasAtLeastOnceContractAcksTo ()
   {
-    return StringHelper.hasText (m_sAtLeastOnceContractAcksTo);
+    return StringHelper.isNotEmpty (m_sAtLeastOnceContractAcksTo);
   }
 
   @Nonnull
@@ -281,7 +281,7 @@ public class PModeLegReliability implements Serializable
 
   public final boolean hasAtLeastOnceReplyPattern ()
   {
-    return StringHelper.hasText (m_sAtLeastOnceReplyPattern);
+    return StringHelper.isNotEmpty (m_sAtLeastOnceReplyPattern);
   }
 
   @Nonnull

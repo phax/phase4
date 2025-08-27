@@ -19,30 +19,30 @@ package com.helger.phase4.config;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.concurrent.SimpleReadWriteLock;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.io.resource.IReadableResource;
-import com.helger.commons.io.resourceprovider.ReadableResourceProviderChain;
-import com.helger.commons.string.StringParser;
+import com.helger.base.concurrent.SimpleReadWriteLock;
+import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.equals.EqualsHelper;
+import com.helger.base.string.StringParser;
 import com.helger.config.ConfigFactory;
 import com.helger.config.IConfig;
 import com.helger.config.fallback.ConfigWithFallback;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.config.source.EConfigSourceType;
 import com.helger.config.source.MultiConfigurationValueProvider;
-import com.helger.config.source.res.ConfigurationSourceProperties;
+import com.helger.config.source.resource.properties.ConfigurationSourceProperties;
+import com.helger.io.resource.IReadableResource;
+import com.helger.io.resourceprovider.ReadableResourceProviderChain;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * This class contains the central phase4 configuration. <br>
- * Note: this class should not depend on any other phase4 class to avoid startup
- * issues, and cyclic dependencies.
+ * Note: this class should not depend on any other phase4 class to avoid startup issues, and cyclic
+ * dependencies.
  *
  * @author Philip Helger
  * @since 0.11.0
@@ -56,8 +56,7 @@ public final class AS4Configuration
   public static final boolean DEFAULT_PHASE4_MANAGER_INMEMORY = true;
 
   /**
-   * The boolean property to enable synchronization of sign/verify and
-   * encrypt/decrypt.
+   * The boolean property to enable synchronization of sign/verify and encrypt/decrypt.
    */
   public static final String PROPERTY_PHASE4_WSS4J_SYNCSECURITY = "phase4.wss4j.syncsecurity";
   public static final boolean DEFAULT_PHASE4_WSS4J_SYNCSECURITY = false;
@@ -67,18 +66,17 @@ public final class AS4Configuration
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Configuration.class);
 
   /**
-   * The configuration value provider created in here uses the default lookup
-   * scheme defined by {@link ConfigFactory#createDefaultValueProvider()} but
-   * adds support for AS4 specific files. For a sustainable solution use one of
-   * the following files that have higher precedence than
+   * The configuration value provider created in here uses the default lookup scheme defined by
+   * {@link ConfigFactory#createDefaultValueProvider()} but adds support for AS4 specific files. For
+   * a sustainable solution use one of the following files that have higher precedence than
    * <code>application.properties</code>:
    * <ul>
    * <li>private-phase4.properties - priority 204</li>
    * <li>phase4.properties - priority 203</li>
    * </ul>
    *
-   * @return The configuration value provider for phase4 that contains backward
-   *         compatibility support.
+   * @return The configuration value provider for phase4 that contains backward compatibility
+   *         support.
    */
   @Nonnull
   public static MultiConfigurationValueProvider createPhase4ValueProvider ()
@@ -195,8 +193,7 @@ public final class AS4Configuration
 
   /**
    * @return Use in-memory managers, taken from the configuration item
-   *         <code>phase4.manager.inmemory</code>. Defaults to <code>true</code>
-   *         since 0.11.0.
+   *         <code>phase4.manager.inmemory</code>. Defaults to <code>true</code> since 0.11.0.
    */
   public static boolean isUseInMemoryManagers ()
   {
@@ -212,10 +209,9 @@ public final class AS4Configuration
   }
 
   /**
-   * @return <code>true</code> if all WSS4J actions should be explicitly
-   *         synchronized. This is needed if multiple workers sending/receiving
-   *         AS4 messages from the same JVM. The configuration item is
-   *         <code>phase4.wss4j.syncsecurity</code>.
+   * @return <code>true</code> if all WSS4J actions should be explicitly synchronized. This is
+   *         needed if multiple workers sending/receiving AS4 messages from the same JVM. The
+   *         configuration item is <code>phase4.wss4j.syncsecurity</code>.
    */
   public static boolean isWSS4JSynchronizedSecurity ()
   {
@@ -232,8 +228,8 @@ public final class AS4Configuration
 
   /**
    * @return The AS4 profile to use, taken from the configuration item
-   *         <code>phase4.default.profile</code> (changed in 3.0.0; was
-   *         <code>phase4.profile</code> before). May be <code>null</code>.
+   *         <code>phase4.default.profile</code> (changed in 3.0.0; was <code>phase4.profile</code>
+   *         before). May be <code>null</code>.
    */
   @Nullable
   public static String getDefaultAS4ProfileID ()
@@ -242,11 +238,10 @@ public final class AS4Configuration
   }
 
   /**
-   * @return the number of minutes, the message IDs of incoming messages are
-   *         stored for duplication check. Taken from the configuration item
-   *         <code>phase4.incoming.duplicatedisposal.minutes</code>. By default
-   *         this is {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES}
-   *         minutes.
+   * @return the number of minutes, the message IDs of incoming messages are stored for duplication
+   *         check. Taken from the configuration item
+   *         <code>phase4.incoming.duplicatedisposal.minutes</code>. By default this is
+   *         {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES} minutes.
    */
   public static long getIncomingDuplicateDisposalMinutes ()
   {
@@ -255,8 +250,7 @@ public final class AS4Configuration
   }
 
   /**
-   * @return The dumping base path. Taken from the configuration item
-   *         <code>phase4.dump.path</code>.
+   * @return The dumping base path. Taken from the configuration item <code>phase4.dump.path</code>.
    * @see #getDumpBasePathFile() for the same data as a {@link File}
    */
   @Nonnull
@@ -267,8 +261,8 @@ public final class AS4Configuration
   }
 
   /**
-   * @return The dumping base path as a {@link File}. Taken from the
-   *         configuration item <code>phase4.dump.path</code>.
+   * @return The dumping base path as a {@link File}. Taken from the configuration item
+   *         <code>phase4.dump.path</code>.
    * @see #getDumpBasePath() for the plain String
    */
   @Nonnull
@@ -278,10 +272,9 @@ public final class AS4Configuration
   }
 
   /**
-   * @return The endpoint address of "our" AP for comparison. Taken from the
-   *         configuration item <code>phase4.endpoint.address</code>. For Peppol
-   *         this is e.g. required to have the `https` protocol in production
-   *         mode.
+   * @return The endpoint address of "our" AP for comparison. Taken from the configuration item
+   *         <code>phase4.endpoint.address</code>. For Peppol this is e.g. required to have the
+   *         `https` protocol in production mode.
    */
   @Nullable
   public static String getThisEndpointAddress ()
@@ -290,8 +283,8 @@ public final class AS4Configuration
   }
 
   /**
-   * @return <code>true</code> if stack traces should be contained in error
-   *         messages, <code>false</code> if not. Defaults to <code>true</code>.
+   * @return <code>true</code> if stack traces should be contained in error messages,
+   *         <code>false</code> if not. Defaults to <code>true</code>.
    * @since 2.7.5
    */
   public static boolean isIncludeStackTraceInErrorMessages ()

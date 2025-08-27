@@ -16,13 +16,12 @@
  */
 package com.helger.phase4;
 
-import javax.annotation.concurrent.Immutable;
-
 import org.slf4j.Logger;
 
-import com.helger.commons.collection.impl.ICommonsMap;
-import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.lang.PropertiesHelper;
+import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.rt.NonBlockingProperties;
+import com.helger.base.rt.PropertiesHelper;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
@@ -44,8 +43,8 @@ public final class CAS4Version
   {
     String sProjectVersion = null;
     String sProjectTimestamp = null;
-    final ICommonsMap <String, String> aProps = PropertiesHelper.loadProperties (new ClassPathResource ("phase4-version.properties",
-                                                                                                        CAS4Version.class.getClassLoader ()));
+    final NonBlockingProperties aProps = PropertiesHelper.loadProperties (ClassPathResource.getInputStream ("phase4-version.properties",
+                                                                                                            CAS4Version.class.getClassLoader ()));
     if (aProps != null)
     {
       sProjectVersion = aProps.get ("version");

@@ -18,23 +18,20 @@ package com.helger.phase4.model.pmode;
 
 import static org.junit.Assert.assertNotNull;
 
-import javax.annotation.Nonnull;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.mime.EMimeContentType;
-import com.helger.commons.mime.MimeType;
-import com.helger.commons.mock.CommonsTestHelper;
-import com.helger.commons.state.EMandatory;
-import com.helger.commons.state.ETriState;
+import com.helger.annotation.style.ReturnsMutableCopy;
+import com.helger.base.state.EMandatory;
+import com.helger.base.state.ETriState;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsLinkedHashMap;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.json.IJsonObject;
+import com.helger.mime.EMimeContentType;
+import com.helger.mime.MimeType;
 import com.helger.phase4.AS4TestRule;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
@@ -55,7 +52,10 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.model.pmode.leg.PModePayloadProfile;
 import com.helger.phase4.model.pmode.leg.PModeProperty;
 import com.helger.phase4.wss.EWSSVersion;
+import com.helger.unittest.support.TestHelper;
 import com.helger.xml.mock.XMLTestHelper;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Test class for class {@link PModeMicroTypeConverter}.
@@ -87,7 +87,7 @@ public final class PModeMicroTypeConverterTest
     assertNotNull (o);
     final PMode aPMode2 = PModeJsonConverter.convertToNative (o);
     assertNotNull (aPMode2);
-    CommonsTestHelper.testDefaultImplementationWithEqualContentObject (aPMode, aPMode2);
+    TestHelper.testDefaultImplementationWithEqualContentObject (aPMode, aPMode2);
   }
 
   @Test
@@ -165,7 +165,8 @@ public final class PModeMicroTypeConverterTest
   private ICommonsOrderedMap <String, PModePayloadProfile> _createPModePayloadProfile ()
   {
     final PModePayloadProfile aPModePayloadProfile = new PModePayloadProfile ("name",
-                                                                              new MimeType (EMimeContentType.EXAMPLE, "example"),
+                                                                              new MimeType (EMimeContentType.EXAMPLE,
+                                                                                            "example"),
                                                                               "xsdfilename",
                                                                               Integer.valueOf (20001),
                                                                               EMandatory.MANDATORY);
@@ -178,7 +179,10 @@ public final class PModeMicroTypeConverterTest
   @ReturnsMutableCopy
   private ICommonsOrderedMap <String, PModeProperty> _createPModeProperties ()
   {
-    final PModeProperty aPModeProperty = new PModeProperty ("name", "description", PModeProperty.DATA_TYPE_STRING, EMandatory.MANDATORY);
+    final PModeProperty aPModeProperty = new PModeProperty ("name",
+                                                            "description",
+                                                            PModeProperty.DATA_TYPE_STRING,
+                                                            EMandatory.MANDATORY);
     final ICommonsOrderedMap <String, PModeProperty> aPModeProperties = new CommonsLinkedHashMap <> ();
     aPModeProperties.put (aPModeProperty.getName (), aPModeProperty);
     return aPModeProperties;
@@ -221,13 +225,13 @@ public final class PModeMicroTypeConverterTest
                                     ETriState.TRUE,
                                     aCorrelation,
                                     ETriState.TRUE);
-
   }
 
   @Nonnull
   private PModeLegSecurity _createPModeLegSecurity ()
   {
-    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList <> ("X509EncryptionEncrypt", "X509EncryptionEncrypt2");
+    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList <> ("X509EncryptionEncrypt",
+                                                                                  "X509EncryptionEncrypt2");
     final ICommonsList <String> aX509Sign = new CommonsArrayList <> ("X509Sign", "X509Sign2");
     return new PModeLegSecurity (EWSSVersion.WSS_111,
                                  aX509Sign,

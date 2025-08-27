@@ -18,7 +18,7 @@ package com.helger.phase4.server.spi;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessingStatusSPI;
 

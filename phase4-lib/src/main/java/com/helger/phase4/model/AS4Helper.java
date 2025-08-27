@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.model;
 
-import javax.annotation.Nullable;
-
 import com.helger.phase4.CAS4;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
+
+import jakarta.annotation.Nullable;
 
 /**
  * Generic AS4 helper for specification related things.
