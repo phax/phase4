@@ -315,8 +315,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   /**
    * Returns whether signature subject certificate constraints exists
    *
-   * @return Returns <code>true</false> if signature subject certificate constraints exists,
-   *         <code>false</false> otherwise.
+   * @return Returns <code>true</code> if signature subject certificate constraints exists,
+   *         <code>false</code> otherwise.
    * @since 3.0.7
    */
   public final boolean hasSubjectCertConstraints ()

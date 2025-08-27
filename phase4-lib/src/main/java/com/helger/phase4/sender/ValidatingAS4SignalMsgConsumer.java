@@ -88,27 +88,27 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
    * This is based on a real world problem, where the outbound message used
    *
    * <pre>
-  <ds:Reference URI="#my-msg-6311136f-ff8e-4d84-9ca4-6ba68939680e">
-   <ds:Transforms>
-    <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
-     <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="S12"/>
-    </ds:Transform>
-   </ds:Transforms>
-   <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-   <ds:DigestValue>LceN50/wXDPAvAvitk+EtQHANOxac2zVrWTCHm3P2UA=</ds:DigestValue>
-  </ds:Reference>
+  &lt;ds:Reference URI="#my-msg-6311136f-ff8e-4d84-9ca4-6ba68939680e">
+   &lt;ds:Transforms>
+    &lt;ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+     &lt;ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="S12"/>
+    &lt;/ds:Transform>
+   &lt;/ds:Transforms>
+   &lt;ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+   &lt;ds:DigestValue>LceN50/wXDPAvAvitk+EtQHANOxac2zVrWTCHm3P2UA=&lt;/ds:DigestValue>
+  &lt;/ds:Reference>
    * </pre>
    *
    * but the returned reference looked like this:
    *
    * <pre>
-  <ns4:Reference URI="#my-msg-6311136f-ff8e-4d84-9ca4-6ba68939680e">
-    <ns4:Transforms>
-        <ns4:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
-    </ns4:Transforms>
-    <ns4:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-    <ns4:DigestValue>LceN50/wXDPAvAvitk+EtQHANOxac2zVrWTCHm3P2UA=</ns4:DigestValue>
-  </ns4:Reference>
+  &lt;ns4:Reference URI="#my-msg-6311136f-ff8e-4d84-9ca4-6ba68939680e">
+    &lt;ns4:Transforms>
+        &lt;ns4:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+    &lt;/ns4:Transforms>
+    &lt;ns4:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+    &lt;ns4:DigestValue>LceN50/wXDPAvAvitk+EtQHANOxac2zVrWTCHm3P2UA=&lt;/ns4:DigestValue>
+  &lt;/ns4:Reference>
    * </pre>
    *
    * @param aRef1
