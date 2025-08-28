@@ -81,6 +81,11 @@ public enum ECryptoKeyIdentifierType implements IHasID <String>
    */
   SKI_KEY_IDENTIFIER ("ski-key-id", WSConstants.SKI_KEY_IDENTIFIER),
   /**
+   * Send a <code>SubjectKeyIdentifier</code> as ds:X509Data/ds:KeyValue element to refer to
+   * the base64 encoded plain value of a X509 V.3 SubjectKeyIdentifier extension
+   */
+  X509_SKI_KEY_IDENTIFIER("x509-ski-key-id", WSConstants.X509_SKI),
+   /**
    * <code>UT_SIGNING</code> is used internally only to set a specific Signature
    * behavior. The signing token is constructed from values in the UsernameToken
    * according to WS-Trust specification.
