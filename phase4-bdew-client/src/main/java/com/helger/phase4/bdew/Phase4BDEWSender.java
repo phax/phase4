@@ -83,7 +83,7 @@ public final class Phase4BDEWSender
     // Default per section 2.2.6.2.1
     public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_SIGN = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
     // Default per section 2.2.6.2.2
-    public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT = ECryptoKeyIdentifierType.SKI_KEY_IDENTIFIER;
+    public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_CRYPT = ECryptoKeyIdentifierType.X509_SKI_KEY_IDENTIFIER;
 
     private BDEWPayloadParams m_aPayloadParams;
 
