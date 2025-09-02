@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
 
+import com.helger.annotation.concurrent.GuardedBy;
 import com.helger.base.concurrent.SimpleReadWriteLock;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.equals.EqualsHelper;
@@ -74,11 +75,18 @@ public final class AS4Configuration
    * <li>private-phase4.properties - priority 204</li>
    * <li>phase4.properties - priority 203</li>
    * </ul>
+   * <p>
+   * This is deprecated since v4.0.1 because it creates confusion with other objects that also rely
+   * on a centralized configuration. Put all your properties in <code>application.properties</code>
+   * or <code>private-application.properties</code> instead.
+   * </p>
    *
    * @return The configuration value provider for phase4 that contains backward compatibility
    *         support.
+   * @deprecated Use {@link ConfigFactory#createDefaultValueProvider()} instead
    */
   @Nonnull
+  @Deprecated (forRemoval = true, since = "4.0.1")
   public static MultiConfigurationValueProvider createPhase4ValueProvider ()
   {
     // Start with default setup
@@ -92,6 +100,7 @@ public final class AS4Configuration
                                                                       IReadableResource::exists);
     if (aRes != null)
     {
+      LOGGER.warn ("Using the phase4 specific configuration file 'private-phase4.properties' is deprecated. Please use 'private-application.properties' instead! Support for this file will be removed in the next major release.");
       ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
                                   nResourceDefaultPrio + 4);
     }
@@ -99,6 +108,7 @@ public final class AS4Configuration
     aRes = aResourceProvider.getReadableResourceIf ("phase4.properties", IReadableResource::exists);
     if (aRes != null)
     {
+      LOGGER.warn ("Using the phase4 specific configuration file 'phase4.properties' is deprecated. Please use 'application.properties' instead! Support for this file will be removed in the next major release.");
       ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
                                   nResourceDefaultPrio + 3);
     }
@@ -109,6 +119,7 @@ public final class AS4Configuration
   private static final MultiConfigurationValueProvider VP = createPhase4ValueProvider ();
   private static final IConfigWithFallback DEFAULT_INSTANCE = new ConfigWithFallback (VP);
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
+  @GuardedBy ("RW_LOCK")
   private static IConfigWithFallback s_aConfig = DEFAULT_INSTANCE;
 
   private AS4Configuration ()
