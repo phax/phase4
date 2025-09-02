@@ -22,15 +22,15 @@ import com.helger.phive.api.result.ValidationResultList;
 import jakarta.annotation.Nonnull;
 
 /**
- * Interface for handling validation errors
+ * Interface for handling Peppol validation errors
  *
  * @author Philip Helger
  */
 public interface IPhase4PeppolValidationResultHandler
 {
   /**
-   * Invoked, if no validation error is present. This method is invoked if only
-   * warnings are present.
+   * Invoked, if no validation error is present. This method is invoked if only warnings are
+   * present.
    *
    * @param aValidationResult
    *        The full validation results. Never <code>null</code>.

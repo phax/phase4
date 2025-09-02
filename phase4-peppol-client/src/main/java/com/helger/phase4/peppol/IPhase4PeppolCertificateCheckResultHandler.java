@@ -26,7 +26,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Interface for handling certification validations results
+ * Interface for handling Peppol certification validations results
  *
  * @author Philip Helger
  * @since 0.9.5
@@ -39,8 +39,7 @@ public interface IPhase4PeppolCertificateCheckResultHandler
    * @param aAPCertificate
    *        The AP certificate that was checked. May be <code>null</code>.
    * @param aCheckDT
-   *        The date and time that was used to check the certificate. Never
-   *        <code>null</code>.
+   *        The date and time that was used to check the certificate. Never <code>null</code>.
    * @param eCertCheckResult
    *        The result of the certificate check. Never <code>null</code>.
    * @throws Phase4Exception
