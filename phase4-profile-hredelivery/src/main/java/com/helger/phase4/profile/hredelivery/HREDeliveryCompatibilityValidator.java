@@ -54,7 +54,7 @@ import com.helger.phase4.wss.EWSSVersion;
 import jakarta.annotation.Nonnull;
 
 /**
- * Validate certain requirements imposed by the Peppol project.
+ * Validate certain requirements imposed by the HR eDelivery project.
  *
  * @author Philip Helger
  */

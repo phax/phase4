@@ -74,7 +74,7 @@ public final class HREDeliveryCompatibilityValidatorTest
   public void before ()
   {
     m_aErrorList = new ErrorList ();
-    m_aPMode = HREDeliveryPMode.createPeppolPMode ("TestInitiator",
+    m_aPMode = HREDeliveryPMode.createHREdeliveryPMode ("TestInitiator",
                                                    "TestResponder",
                                                    "http://localhost:8080",
                                                    IPModeIDProvider.DEFAULT_DYNAMIC,

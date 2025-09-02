@@ -44,7 +44,7 @@ public final class AS4HREDeliveryProfileRegistarSPI implements IAS4ProfileRegist
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> HREDeliveryPMode.createPeppolPMode (i,
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> HREDeliveryPMode.createHREdeliveryPMode (i,
                                                                                                             r,
                                                                                                             a,
                                                                                                             PMODE_ID_PROVIDER,

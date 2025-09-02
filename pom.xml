@@ -295,6 +295,13 @@
         <version>${project.version}</version>
       </dependency>
       
+      <!-- EUDAMED -->
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-eudamed-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      
       <!-- EUTCP -->
       <dependency>
         <groupId>com.helger.phase4</groupId>
@@ -307,10 +314,10 @@
         <version>${project.version}</version>
       </dependency>
       
-      <!-- EUDAMED -->
+      <!-- HR eDelivery -->
       <dependency>
         <groupId>com.helger.phase4</groupId>
-        <artifactId>phase4-eudamed-client</artifactId>
+        <artifactId>phase4-profile-hredelivery</artifactId>
         <version>${project.version}</version>
       </dependency>
       
@@ -340,6 +347,7 @@
     <module>phase4-profile-dbnalliance</module>
     <module>phase4-profile-entsog</module>
     <module>phase4-profile-euctp</module>
+    <module>phase4-profile-hredelivery</module>
     <module>phase4-profile-peppol</module>
     <module>phase4-test</module>
     <module>phase4-server-webapp</module>
