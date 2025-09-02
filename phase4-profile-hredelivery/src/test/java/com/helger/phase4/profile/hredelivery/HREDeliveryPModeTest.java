@@ -38,7 +38,7 @@ public final class HREDeliveryPModeTest
   @Test
   public void testCEFPMode ()
   {
-    final PMode aPMode = HREDeliveryPMode.createPeppolPMode ("TestInitiator",
+    final PMode aPMode = HREDeliveryPMode.createHREdeliveryPMode ("TestInitiator",
                                                              "TestResponder",
                                                              "https://test.example.org",
                                                              IPModeIDProvider.DEFAULT_DYNAMIC,

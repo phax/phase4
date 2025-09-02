@@ -158,12 +158,12 @@ public final class HREDeliveryPMode
   @Nonnull
   public static PModeParty createParty (@Nonnull @Nonempty final String sPartyID, @Nonnull @Nonempty final String sRole)
   {
-    // Party type is needed for Peppol
+    // Party type is needed for HR eDelivery
     return new PModeParty (DEFAULT_PARTY_TYPE_ID, sPartyID, sRole, null, null);
   }
 
   /**
-   * One-Way Version of the Peppol pmode uses one-way push
+   * One-Way Version of the HR eDelivery pmode uses one-way push
    *
    * @param sInitiatorID
    *        Initiator ID. May neither be <code>null</code> nor empty.
@@ -179,11 +179,11 @@ public final class HREDeliveryPMode
    * @return New PMode and never <code>null</code>.
    */
   @Nonnull
-  public static PMode createPeppolPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                         @Nonnull @Nonempty final String sResponderID,
-                                         @Nullable final String sAddress,
-                                         @Nonnull final IPModeIDProvider aPModeIDProvider,
-                                         final boolean bPersist)
+  public static PMode createHREdeliveryPMode (@Nonnull @Nonempty final String sInitiatorID,
+                                              @Nonnull @Nonempty final String sResponderID,
+                                              @Nullable final String sAddress,
+                                              @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                              final boolean bPersist)
   {
     final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
     final PModeParty aResponder = createParty (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
