@@ -97,7 +97,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * This class contains all the specifics to send AS4 messages to PEPPOL. See
+ * This class contains all the specifics to send AS4 messages to the Peppol Network. See
  * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
  * customization.
  *
