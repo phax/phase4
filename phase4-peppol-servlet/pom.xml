@@ -62,6 +62,11 @@
       <version>${peppol-commons.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.helger.peppol</groupId>
+      <artifactId>peppol-reporting-api</artifactId>
+      <version>${peppol-reporting.version}</version>
+    </dependency>
+    <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
       <scope>provided</scope>
