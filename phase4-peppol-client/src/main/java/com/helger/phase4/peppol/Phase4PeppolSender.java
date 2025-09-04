@@ -604,7 +604,7 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the "sender party ID" which is the CN part of the PEPPOL AP certificate. An example value
+     * Set the "sender party ID" which is the CN part of the Peppol AP certificate. An example value
      * is e.g. "POP000123" but it MUST match the certificate you are using. This must be provided
      * prior to sending. This is a shortcut to the {@link #fromPartyID(String)} method.
      *
