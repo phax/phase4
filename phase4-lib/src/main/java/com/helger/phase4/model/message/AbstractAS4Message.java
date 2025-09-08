@@ -16,8 +16,23 @@
  */
 package com.helger.phase4.model.message;
 
+import static java.time.temporal.ChronoField.HOUR_OF_DAY;
+import static java.time.temporal.ChronoField.MILLI_OF_SECOND;
+import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
+import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
+
+import java.time.OffsetDateTime;
+import java.time.chrono.IsoChronology;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
+import java.util.Locale;
+
 import javax.xml.namespace.QName;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,7 +41,9 @@ import com.helger.annotation.Nonempty;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.base.trait.IGenericImplTrait;
+import com.helger.datetime.web.PDTWebDateHelper;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
 import com.helger.phase4.marshaller.Soap11EnvelopeMarshaller;
@@ -38,6 +55,7 @@ import com.helger.phase4.soap11.Soap11Header;
 import com.helger.phase4.soap12.Soap12Body;
 import com.helger.phase4.soap12.Soap12Envelope;
 import com.helger.phase4.soap12.Soap12Header;
+import com.helger.xml.XMLHelper;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -53,6 +71,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
                                          IAS4Message,
                                          IGenericImplTrait <IMPLTYPE>
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4Message.class);
   private static final QName QNAME_WSU_ID = new QName (CAS4.WSU_NS, "Id");
 
   private final ESoapVersion m_eSoapVersion;
@@ -109,6 +128,53 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
     return thisAsT ();
   }
 
+  public static final DateTimeFormatter DOMIBUS_XSD_DATE_TIME;
+
+  static
+  {
+    // Same as PDTWebDateHelper.XSD_TIME except the milliseconds
+    final DateTimeFormatter aTimeFormatter = new DateTimeFormatterBuilder ().parseCaseInsensitive ()
+                                                                            .appendValue (HOUR_OF_DAY, 2)
+                                                                            .appendLiteral (':')
+                                                                            .appendValue (MINUTE_OF_HOUR, 2)
+                                                                            .optionalStart ()
+                                                                            .appendLiteral (':')
+                                                                            .appendValue (SECOND_OF_MINUTE, 2)
+                                                                            .optionalStart ()
+                                                                            /*
+                                                                             * This is different
+                                                                             * compared to
+                                                                             * PDTWebDateHelper. We
+                                                                             * use exactly 3 here.
+                                                                             */
+                                                                            .appendFraction (MILLI_OF_SECOND,
+                                                                                             3,
+                                                                                             3,
+                                                                                             true)
+                                                                            .optionalEnd ()
+                                                                            /*
+                                                                             * Timezone can occur
+                                                                             * without milliseconds
+                                                                             */
+                                                                            .optionalStart ()
+                                                                            .appendOffsetId ()
+                                                                            .optionalStart ()
+                                                                            .appendLiteral ('[')
+                                                                            .parseCaseSensitive ()
+                                                                            .appendZoneRegionId ()
+                                                                            .appendLiteral (']')
+                                                                            .toFormatter (Locale.getDefault (Locale.Category.FORMAT))
+                                                                            .withResolverStyle (ResolverStyle.STRICT)
+                                                                            .withChronology (IsoChronology.INSTANCE);
+    DOMIBUS_XSD_DATE_TIME = new DateTimeFormatterBuilder ().parseCaseInsensitive ()
+                                                           .append (DateTimeFormatter.ISO_LOCAL_DATE)
+                                                           .appendLiteral ('T')
+                                                           .append (aTimeFormatter)
+                                                           .toFormatter (Locale.getDefault (Locale.Category.FORMAT))
+                                                           .withResolverStyle (ResolverStyle.STRICT)
+                                                           .withChronology (IsoChronology.INSTANCE);
+  }
+
   @Nonnull
   public final Document getAsSoapDocument (@Nullable final Node aSoapBodyPayload)
   {
@@ -116,6 +182,36 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
     final Element aEbms3Element = new Ebms3MessagingMarshaller ().getAsElement (m_aMessaging);
     if (aEbms3Element == null)
       throw new IllegalStateException ("Failed to write EBMS3 Messaging to XML");
+
+    if (AS4Configuration.isCompatibilityModeDomibus ())
+    {
+      // Do some timestamp post processing. See #335
+      Element aEbms3AnyMessage = XMLHelper.getChildElementIteratorNS (aEbms3Element, CAS4.EBMS_NS).next ();
+      if (aEbms3AnyMessage != null)
+      {
+        Element aEbms3MessageInfo = XMLHelper.getFirstChildElementOfName (aEbms3AnyMessage,
+                                                                          CAS4.EBMS_NS,
+                                                                          "MessageInfo");
+        if (aEbms3MessageInfo != null)
+        {
+          Element aEbms3Timestamp = XMLHelper.getFirstChildElementOfName (aEbms3MessageInfo, CAS4.EBMS_NS, "Timestamp");
+          if (aEbms3Timestamp != null)
+          {
+            final String sValue = XMLHelper.getFirstChildText (aEbms3Timestamp);
+            final OffsetDateTime aODT = PDTWebDateHelper.getOffsetDateTimeFromXSD (sValue);
+            if ((aODT.get (ChronoField.MILLI_OF_SECOND) % 10) == 0)
+            {
+              String sNewValue = DOMIBUS_XSD_DATE_TIME.format (aODT);
+              LOGGER.info ("Changing MessageInfo/Timestamp from '" + sValue + "' to '" + sNewValue + "' for Domibus");
+
+              // Replace in DOM
+              XMLHelper.removeAllChildElements (aEbms3Timestamp);
+              aEbms3Timestamp.appendChild (aEbms3Timestamp.getOwnerDocument ().createTextNode (sNewValue));
+            }
+          }
+        }
+      }
+    }
 
     final Node aRealSoapBodyPayload = aSoapBodyPayload instanceof Document ? ((Document) aSoapBodyPayload).getDocumentElement ()
                                                                            : aSoapBodyPayload;

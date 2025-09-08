@@ -304,4 +304,17 @@ public final class AS4Configuration
     // Changed default to false in v3.0.2
     return getConfig ().getAsBoolean ("phase4.errormsg.include.stacktraces", false);
   }
+
+  /**
+   * Check if special Domibus compatibility is needed or not. This is e.g. needed in environments
+   * where there are multiple Domibus nodes.
+   *
+   * @return <code>true</code> if advanced Domibus compatibility is needed, <code>false</code> if
+   *         not.
+   * @since 4.0.1
+   */
+  public static boolean isCompatibilityModeDomibus ()
+  {
+    return getConfig ().getAsBoolean ("phase4.compatibility.domibus", false);
+  }
 }
