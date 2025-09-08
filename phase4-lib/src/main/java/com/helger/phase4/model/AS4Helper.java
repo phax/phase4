@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.model;
 
+import com.helger.annotation.concurrent.Immutable;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
@@ -27,22 +28,22 @@ import jakarta.annotation.Nullable;
  *
  * @author Philip Helger
  */
+@Immutable
 public final class AS4Helper
 {
   private AS4Helper ()
   {}
 
   /**
-   * Check if the combination of Action and Service resembles an EBMS Ping (aka
-   * test) Message as described in chapter 5.2.2.9.
+   * Check if the combination of Action and Service resembles an EBMS Ping (aka test) Message as
+   * described in chapter 5.2.2.9.
    *
    * @param sAction
    *        Action value. May be <code>null</code>.
    * @param sService
    *        Service value. May be <code>null</code>.
-   * @return <code>true</code> if the action is {@value CAS4#DEFAULT_ACTION_URL}
-   *         and service is {@value CAS4#DEFAULT_SERVICE_URL},
-   *         <code>false</code> otherwise.
+   * @return <code>true</code> if the action is {@value CAS4#DEFAULT_ACTION_URL} and service is
+   *         {@value CAS4#DEFAULT_SERVICE_URL}, <code>false</code> otherwise.
    */
   public static boolean isPingMessage (@Nullable final String sAction, @Nullable final String sService)
   {
@@ -51,14 +52,13 @@ public final class AS4Helper
   }
 
   /**
-   * Check if the combination of Action and Service resembles an EBMS Ping (aka
-   * test) Message as described in chapter 5.2.2.9.
+   * Check if the combination of Action and Service resembles an EBMS Ping (aka test) Message as
+   * described in chapter 5.2.2.9.
    *
    * @param aBusinessInfo
    *        PMode business information. May be <code>null</code>.
-   * @return <code>true</code> if the action is {@value CAS4#DEFAULT_ACTION_URL}
-   *         and service is {@value CAS4#DEFAULT_SERVICE_URL},
-   *         <code>false</code> otherwise.
+   * @return <code>true</code> if the action is {@value CAS4#DEFAULT_ACTION_URL} and service is
+   *         {@value CAS4#DEFAULT_SERVICE_URL}, <code>false</code> otherwise.
    */
   public static boolean isPingMessage (@Nullable final PModeLegBusinessInformation aBusinessInfo)
   {
@@ -66,13 +66,12 @@ public final class AS4Helper
   }
 
   /**
-   * Check if the combination of Action and Service resembles an EBMS Ping (aka
-   * test) Message as described in chapter 5.2.2.9.
+   * Check if the combination of Action and Service resembles an EBMS Ping (aka test) Message as
+   * described in chapter 5.2.2.9.
    *
    * @param aPMode
    *        to check. May be <code>null</code>
-   * @return <code>true</code> if the default values to ping are not used else
-   *         <code>false</code>
+   * @return <code>true</code> if the default values to ping are not used else <code>false</code>
    */
   public static boolean isPingMessage (@Nullable final IPMode aPMode)
   {
