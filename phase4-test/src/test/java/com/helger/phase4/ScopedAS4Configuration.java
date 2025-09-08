@@ -39,6 +39,7 @@ import jakarta.annotation.Nonnull;
  * @author Philip Helger
  */
 @ThreadSafe
+@SuppressWarnings ("removal")
 public final class ScopedAS4Configuration implements AutoCloseable
 {
   private static final String TEST_CONFIG_FILE = "src/test/resources/test-phase4.properties";
