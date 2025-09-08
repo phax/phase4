@@ -78,7 +78,7 @@
     <log4j.version>2.25.1</log4j.version>
     <xmlsec.version>4.0.4</xmlsec.version>
     <wss4j.version>4.0.0</wss4j.version>
-    <peppol-commons.version>12.0.1</peppol-commons.version>
+    <peppol-commons.version>12.0.2-SNAPSHOT</peppol-commons.version>
     <peppol-reporting.version>4.0.0</peppol-reporting.version>
     <peppol-ap-support.version>2.0.0</peppol-ap-support.version>
     <ph-commons.version>12.0.0</ph-commons.version>
@@ -311,6 +311,11 @@
         <artifactId>phase4-profile-hredelivery</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-hredelivery-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       
       <!-- Peppol -->
       <dependency>
@@ -333,6 +338,7 @@
 
   <modules>
     <module>phase4-lib</module>
+    <!-- all profiles -->
     <module>phase4-profile-bdew</module>
     <module>phase4-profile-cef</module>
     <module>phase4-profile-dbnalliance</module>
@@ -340,6 +346,7 @@
     <module>phase4-profile-euctp</module>
     <module>phase4-profile-hredelivery</module>
     <module>phase4-profile-peppol</module>
+    <!-- generic modules -->
     <module>phase4-test</module>
     <module>phase4-server-webapp</module>
     <module>phase4-dynamic-discovery</module>
@@ -352,6 +359,7 @@
     <module>phase4-entsog-client</module>
     <module>phase4-euctp-client</module>
     <module>phase4-eudamed-client</module>
+    <module>phase4-hredelivery-client</module>
     <module>phase4-peppol-client</module>
     <module>phase4-peppol-servlet</module>
     <module>phase4-peppol-server-webapp</module>
