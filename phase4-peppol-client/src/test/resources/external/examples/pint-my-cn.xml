@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <CreditNote xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+                xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+                xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2">
+        <cbc:CustomizationID>urn:peppol:pint:billing-1@my-1</cbc:CustomizationID> <!-- IBT-024 - Specification identifier -->
+        <cbc:ProfileID>urn:peppol:bis:billing</cbc:ProfileID> <!-- IBT-023 - Business process type -->
+        <cbc:ID>CN_MY002100258TEST</cbc:ID>
+        <cbc:IssueDate>2023-11-30</cbc:IssueDate>
+        <cbc:CreditNoteTypeCode>381</cbc:CreditNoteTypeCode> <!-- BT-3 -->
+        <cbc:Note>This is a credit note example</cbc:Note> <!-- BT-22 -->
+        <cbc:DocumentCurrencyCode>MYR</cbc:DocumentCurrencyCode>
+        <cbc:AccountingCost>Standard</cbc:AccountingCost>
+        <cbc:BuyerReference>Cik Maria</cbc:BuyerReference>	
+        <cac:BillingReference>
+            <cac:InvoiceDocumentReference>
+                <cbc:ID>MY002100258TEST</cbc:ID>
+            </cac:InvoiceDocumentReference>
+        </cac:BillingReference>
+        <cac:AccountingSupplierParty>
+            <cac:Party>
+                <cbc:EndpointID schemeID="0230">99202003251658T</cbc:EndpointID>     
+                <cac:PartyIdentification>
+                    <cbc:ID schemeID="0230">99202003251658T</cbc:ID>
+                </cac:PartyIdentification> 
+                <cac:PartyName>
+                    <cbc:Name>Two Boxes Sdn Bhd</cbc:Name>  
+                </cac:PartyName>
+                <cac:PostalAddress>
+                    <cbc:StreetName>18, Jalan Excellent</cbc:StreetName>
+                    <cbc:AdditionalStreetName>Bandar Sunway</cbc:AdditionalStreetName>
+                    <cbc:CityName>Petaling Jaya</cbc:CityName>
+                    <cbc:PostalZone>52000</cbc:PostalZone>
+                    <cbc:CountrySubentity>Sunway</cbc:CountrySubentity>
+                    <cac:AddressLine>
+                        <cbc:Line>No 18</cbc:Line>
+                    </cac:AddressLine>
+                    <cac:Country>
+                        <cbc:IdentificationCode>MY</cbc:IdentificationCode>  
+                    </cac:Country>
+                </cac:PostalAddress>
+                <cac:PartyTaxScheme> <!-- IBT-032 - Seller tax registration (ibt-032) MUST occur maximum once -->
+                    <cbc:CompanyID>TIN20211100090911</cbc:CompanyID> <!-- IBT-031 - An Invoice shall have the Supplier’s STT Registration Number -->
+                    <cac:TaxScheme>
+                        <cbc:ID>VAT</cbc:ID>
+                    </cac:TaxScheme>
+                </cac:PartyTaxScheme>
+                <cac:PartyTaxScheme>
+                    <cbc:CompanyID>20211100090911</cbc:CompanyID> <!-- IBT-031 - An Invoice shall have the Supplier’s STT Registration Number -->
+                    <cac:TaxScheme>
+                        <cbc:ID>GST</cbc:ID>
+                    </cac:TaxScheme>
+                </cac:PartyTaxScheme>
+                <cac:PartyLegalEntity>
+                    <cbc:RegistrationName>Monitor ERP Sdn Bhd</cbc:RegistrationName>  
+                    <cbc:CompanyID>2023010000001</cbc:CompanyID>  <!-- IBT-030 - An Invoice shall have the Supplier’s Registration / Identification Number / Passport Number  -->
+                    <cbc:CompanyLegalForm>SENDIRIAN BERHAD</cbc:CompanyLegalForm>
+                </cac:PartyLegalEntity>
+                <cac:Contact>  
+                    <cbc:Name>Ahmad, Danial</cbc:Name>
+                    <cbc:Telephone>0320334568</cbc:Telephone>
+                    <cbc:ElectronicMail>ahmad.danial@monitor.com.my</cbc:ElectronicMail>
+                </cac:Contact>
+            </cac:Party>
+        </cac:AccountingSupplierParty>
+        <cac:AccountingCustomerParty>
+            <cac:Party>
+                <cbc:EndpointID schemeID="0230">99200001012665</cbc:EndpointID>			
+                <cac:PartyIdentification>
+                    <cbc:ID schemeID="0230">99200001012665</cbc:ID>			
+                </cac:PartyIdentification>
+                <cac:PartyName>
+                    <cbc:Name>Finexus Sdn Bhd</cbc:Name> 
+                </cac:PartyName>
+                <cac:PostalAddress>
+                    <cbc:StreetName>Menara Amazing</cbc:StreetName>
+                    <cbc:AdditionalStreetName>Jalan Jalan</cbc:AdditionalStreetName>
+                    <cbc:CityName>Petaling Jaya</cbc:CityName>
+                    <cbc:PostalZone>47500</cbc:PostalZone>
+                    <cac:AddressLine>
+                        <cbc:Line>20</cbc:Line>
+                    </cac:AddressLine>
+                    <cac:Country>
+                        <cbc:IdentificationCode>MY</cbc:IdentificationCode> 
+                    </cac:Country>
+                </cac:PostalAddress>
+                <cac:PartyTaxScheme> <!-- IBT-048 - Buyer tax registration MUST occur maximum once.  -->
+                    <cbc:CompanyID>C20201234567</cbc:CompanyID>			
+                    <cac:TaxScheme>
+                        <cbc:ID>VAT</cbc:ID> 
+                    </cac:TaxScheme>
+                </cac:PartyTaxScheme>
+                <cac:PartyLegalEntity>
+                    <cbc:RegistrationName>Amazing HQ</cbc:RegistrationName> 
+                    <cbc:CompanyID>20201234567</cbc:CompanyID> <!-- IBT-047 - An Invoice shall have the Buyer's Registration / Identification Number / Passport Number  -->
+                </cac:PartyLegalEntity>
+                <cac:Contact> 
+                    <cbc:Name>Danny Khoo</cbc:Name>
+                    <cbc:Telephone>0175622845</cbc:Telephone>
+                    <cbc:ElectronicMail>Danny.khoo@amazing.com.my</cbc:ElectronicMail>
+                </cac:Contact>
+            </cac:Party>
+        </cac:AccountingCustomerParty>
+        <cac:AllowanceCharge>
+            <cbc:ChargeIndicator>true</cbc:ChargeIndicator> 
+            <cbc:AllowanceChargeReasonCode>FC</cbc:AllowanceChargeReasonCode>
+            <cbc:AllowanceChargeReason>Delivery service</cbc:AllowanceChargeReason>
+            <cbc:MultiplierFactorNumeric>0</cbc:MultiplierFactorNumeric>
+            <cbc:Amount currencyID="MYR">0</cbc:Amount> 
+            <cbc:BaseAmount currencyID="MYR">0</cbc:BaseAmount> 
+            <cac:TaxCategory>
+                <cbc:ID>T</cbc:ID>
+                <cbc:Percent>10</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:AllowanceCharge>
+        <cac:TaxTotal>
+            <cbc:TaxAmount currencyID="MYR">1100.00</cbc:TaxAmount>
+            <cac:TaxSubtotal>
+                <cbc:TaxableAmount currencyID="MYR">11000.00</cbc:TaxableAmount>
+                <cbc:TaxAmount currencyID="MYR">1100.00</cbc:TaxAmount>
+                <cac:TaxCategory>
+                    <cbc:ID>T</cbc:ID>
+                    <cbc:Percent>10</cbc:Percent>
+                    <cac:TaxScheme>
+                        <cbc:ID>VAT</cbc:ID>
+                    </cac:TaxScheme>
+                </cac:TaxCategory>
+            </cac:TaxSubtotal>
+        </cac:TaxTotal>
+        <cac:LegalMonetaryTotal>
+            <cbc:LineExtensionAmount currencyID="MYR">11000.00</cbc:LineExtensionAmount>
+            <cbc:TaxExclusiveAmount currencyID="MYR">11000.00</cbc:TaxExclusiveAmount>
+            <cbc:TaxInclusiveAmount currencyID="MYR">12100.00</cbc:TaxInclusiveAmount>
+            <cbc:AllowanceTotalAmount currencyID="MYR">0</cbc:AllowanceTotalAmount>		
+            <cbc:ChargeTotalAmount currencyID="MYR">0</cbc:ChargeTotalAmount>
+            <cbc:PrepaidAmount currencyID="MYR">0.00</cbc:PrepaidAmount>
+            <cbc:PayableRoundingAmount currencyID="MYR">0.00</cbc:PayableRoundingAmount>
+            <cbc:PayableAmount  currencyID="MYR">12100.00</cbc:PayableAmount> 
+        </cac:LegalMonetaryTotal>
+        <cac:CreditNoteLine>
+            <cbc:ID>1</cbc:ID>
+            <cbc:Note>Please send to gate 5</cbc:Note>
+            <cbc:CreditedQuantity unitCode="EA">100</cbc:CreditedQuantity> <!-- [ibr-023]-An Invoice line (ibg-25) MUST have an Invoiced quantity unit of measure code (ibt-130). -->
+            <cbc:LineExtensionAmount currencyID="MYR">5000.00</cbc:LineExtensionAmount>
+            <cbc:AccountingCost>Marvel</cbc:AccountingCost>
+            <cac:OrderLineReference>
+                <cbc:LineID>10</cbc:LineID>
+            </cac:OrderLineReference>
+            <cac:DocumentReference>
+                <cbc:ID>Mobile number 1223432432</cbc:ID>
+                <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode>
+            </cac:DocumentReference>
+            <cac:Item>
+                <cbc:Name>Marvel Chair AB18 Blue</cbc:Name> <!-- IBT-153 - Item name -->
+                <cac:ClassifiedTaxCategory> <!-- IBG-30 - LINE TAX INFORMATION -->
+                    <cbc:ID>T</cbc:ID> <!-- IBT-151 - Invoiced item TAX category code -->
+                    <cbc:Percent>10</cbc:Percent> <!-- IBT-152 - Invoiced item TAX rate -->
+                    <cac:TaxScheme>
+                        <cbc:ID>VAT</cbc:ID> <!-- IBT-167 - Tax Scheme -->
+                    </cac:TaxScheme>
+                </cac:ClassifiedTaxCategory>               
+            </cac:Item>
+            <cac:Price>
+                <cbc:PriceAmount currencyID="MYR">50.00</cbc:PriceAmount>
+                <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+            </cac:Price>
+        </cac:CreditNoteLine>
+        <cac:CreditNoteLine>
+            <cbc:ID>2</cbc:ID>
+            <cbc:Note>Please send to Gate 6</cbc:Note>
+            <cbc:CreditedQuantity unitCode="EA">100</cbc:CreditedQuantity> <!-- [ibr-023]-An Invoice line (ibg-25) MUST have an Invoiced quantity unit of measure code (ibt-130). -->
+            <cbc:LineExtensionAmount currencyID="MYR">6000.00</cbc:LineExtensionAmount>
+            <cbc:AccountingCost>Marvel</cbc:AccountingCost>
+            <cac:OrderLineReference>
+                <cbc:LineID>20</cbc:LineID>
+            </cac:OrderLineReference>
+            <cac:DocumentReference>
+                <cbc:ID>Mobile number 1223432432</cbc:ID>
+                <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode>
+            </cac:DocumentReference>
+            <cac:Item>
+                <cbc:Name>Marvel Chair AB20 Red</cbc:Name> <!-- IBT-153 - Item name -->
+                <cac:ClassifiedTaxCategory> <!-- IBG-30 - LINE TAX INFORMATION -->
+                    <cbc:ID>T</cbc:ID> <!-- IBT-151 - Invoiced item TAX category code -->
+                    <cbc:Percent>10</cbc:Percent> <!-- IBT-152 - Invoiced item TAX rate -->
+                    <cac:TaxScheme>
+                        <cbc:ID>VAT</cbc:ID> <!-- IBT-167 - Tax Scheme -->
+                    </cac:TaxScheme>
+                </cac:ClassifiedTaxCategory>   
+            </cac:Item>
+            <cac:Price>
+                <cbc:PriceAmount currencyID="MYR">60.00</cbc:PriceAmount>
+                <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+            </cac:Price>
+        </cac:CreditNoteLine>
+    </CreditNote>
+
