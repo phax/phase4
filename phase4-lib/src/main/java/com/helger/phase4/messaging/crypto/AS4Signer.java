@@ -103,8 +103,8 @@ public final class AS4Signer
 
     aBuilder.setKeyIdentifierType (aSigningParams.getKeyIdentifierType ().getTypeID ());
     // Set keystore alias and key password
-    aBuilder.setUserInfo (aCryptoFactorySign.getKeyAlias (),
-                          aCryptoFactorySign.getKeyPasswordPerAlias (aCryptoFactorySign.getKeyAlias ()));
+    final String sKeyAlias = aCryptoFactorySign.getKeyAlias ();
+    aBuilder.setUserInfo (sKeyAlias, aCryptoFactorySign.getKeyPasswordPerAlias (sKeyAlias));
     aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
     aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());
@@ -154,8 +154,8 @@ public final class AS4Signer
   }
 
   /**
-   * This method must be used if the message does not contain attachments, that
-   * should be in a additional mime message part.
+   * This method must be used if the message does not contain attachments, that should be in a
+   * additional mime message part.
    *
    * @param aCryptoFactorySign
    *        CryptoFactory to use. May not be <code>null</code>.
