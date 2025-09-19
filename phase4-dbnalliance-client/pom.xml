@@ -91,12 +91,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bctls-jdk18on</artifactId>
-      <version>${bctls.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.helger.commons</groupId>
       <artifactId>ph-unittest-support-ext</artifactId>
       <scope>test</scope>
