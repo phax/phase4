@@ -394,7 +394,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
            .setSecurityProviderSign (m_aSecurityProviderSign)
            .setSecurityProviderVerify (m_aSecurityProviderVerify)
            .setUseSingleCertificate (m_bUseSingleCertificate)
-           .setWSSecSignatureCustomizer (m_aWSSecSignatureCustomizer);
+           .setWSSecSignatureCustomizer (m_aWSSecSignatureCustomizer)
+           .setSubjectCertConstraints (m_aSubjectCertConstraints);
   }
 
   @Nonnull
@@ -417,6 +418,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
                                        .append ("SecurityProviderVerify", m_aSecurityProviderVerify)
                                        .append ("UseSingleCertificate", m_bUseSingleCertificate)
                                        .append ("WSSecSignatureCustomizer", m_aWSSecSignatureCustomizer)
+                                       .append ("SubjectCertConstraints", m_aSubjectCertConstraints)
                                        .getToString ();
   }
 
