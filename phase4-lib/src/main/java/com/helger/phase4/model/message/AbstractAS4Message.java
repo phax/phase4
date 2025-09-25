@@ -32,7 +32,6 @@ import java.util.Locale;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -45,6 +44,7 @@ import com.helger.datetime.web.PDTWebDateHelper;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
 import com.helger.phase4.marshaller.Soap11EnvelopeMarshaller;
 import com.helger.phase4.marshaller.Soap12EnvelopeMarshaller;
@@ -71,7 +71,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
                                          IAS4Message,
                                          IGenericImplTrait <IMPLTYPE>
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4Message.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AbstractAS4Message.class);
   private static final QName QNAME_WSU_ID = new QName (CAS4.WSU_NS, "Id");
 
   private final ESoapVersion m_eSoapVersion;
@@ -213,7 +213,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
       }
     }
 
-    final Node aRealSoapBodyPayload = aSoapBodyPayload instanceof Document ? ((Document) aSoapBodyPayload).getDocumentElement ()
+    final Node aRealSoapBodyPayload = aSoapBodyPayload instanceof Document d ? d.getDocumentElement ()
                                                                            : aSoapBodyPayload;
 
     switch (m_eSoapVersion)
