@@ -19,10 +19,7 @@
 -->
 <S12:Envelope xmlns:S12="http://www.w3.org/2003/05/soap-envelope">
   <S12:Header>
-    <eb:Messaging xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
-      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-      xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
-      xmlns:ebbp="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <eb:Messaging xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
       <eb:SignalMessage>
         <eb:MessageInfo>
           <eb:Timestamp>2017-06-13T11:39:52.967</eb:Timestamp>
