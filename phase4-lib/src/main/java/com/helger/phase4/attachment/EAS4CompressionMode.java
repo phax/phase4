@@ -87,8 +87,8 @@ public enum EAS4CompressionMode implements IHasID <String>
   }
 
   /**
-   * @return The string representation of the MIME type of the compression mode.
-   *         Never <code>null</code>.
+   * @return The string representation of the MIME type of the compression mode. Never
+   *         <code>null</code>.
    */
   @Nonnull
   @Nonempty

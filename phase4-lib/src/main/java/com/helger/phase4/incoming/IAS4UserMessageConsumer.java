@@ -31,18 +31,18 @@ import jakarta.annotation.Nonnull;
 public interface IAS4UserMessageConsumer
 {
   /**
-   * Handling an EBMS 3 User Message. Make sure to copy all attachments you are
-   * interested in, because by default they are only available based on
-   * temporary files during the processing of the inbound request.
+   * Handling an EBMS 3 User Message. Make sure to copy all attachments you are interested in,
+   * because by default they are only available based on temporary files during the processing of
+   * the inbound request.
    *
    * @param aEbmsUserMsg
    *        The User Message domain object. Never <code>null</code>.
    * @param aIncomingMessageMetadata
-   *        The message metadata of the synchronously received message. Never
-   *        <code>null</code>. Added in v2.5.0.
+   *        The message metadata of the synchronously received message. Never <code>null</code>.
+   *        Added in v2.5.0.
    * @param aIncomingState
-   *        The internal processing state of the signal message. Never
-   *        <code>null</code>. Added in v2.5.0.
+   *        The internal processing state of the signal message. Never <code>null</code>. Added in
+   *        v2.5.0.
    * @throws Phase4Exception
    *         in case of error
    */

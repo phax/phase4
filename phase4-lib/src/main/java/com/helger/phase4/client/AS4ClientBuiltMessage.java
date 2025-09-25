@@ -75,8 +75,7 @@ public final class AS4ClientBuiltMessage
   }
 
   /**
-   * @return The {@link HttpEntity} provided in the constructor. Always the same
-   *         object.
+   * @return The {@link HttpEntity} provided in the constructor. Always the same object.
    */
   @Nonnull
   @ReturnsMutableCopy

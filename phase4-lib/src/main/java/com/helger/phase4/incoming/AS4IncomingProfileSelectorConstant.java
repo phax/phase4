@@ -23,8 +23,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Implementation of {@link IAS4IncomingProfileSelector} taking a constant AS4
- * profile ID.
+ * Implementation of {@link IAS4IncomingProfileSelector} taking a constant AS4 profile ID.
  *
  * @author Philip Helger
  * @since 3.0.0

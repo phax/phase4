@@ -33,8 +33,8 @@ import jakarta.annotation.Nonnull;
 public interface IAS4ResponseAbstraction
 {
   /**
-   * Set the response payload as a byte array with a certain character set. This
-   * is called, if the an XML response is sent back.
+   * Set the response payload as a byte array with a certain character set. This is called, if the
+   * an XML response is sent back.
    *
    * @param aBytes
    *        The bytes to be set. May not be <code>null</code>.
@@ -45,12 +45,10 @@ public interface IAS4ResponseAbstraction
   void setContent (@Nonnull byte [] aBytes, @Nonnull Charset aCharset);
 
   /**
-   * Set the content as an input stream provider. This is used if a MIME
-   * response is sent back.
+   * Set the content as an input stream provider. This is used if a MIME response is sent back.
    *
    * @param aHeaderMap
-   *        Custom HTTP headers to be used. Never <code>null</code> but maybe
-   *        empty.
+   *        Custom HTTP headers to be used. Never <code>null</code> but maybe empty.
    * @param aHasIS
    *        The input stream provider.
    * @since 0.9.9 this was merged from addCustomResponseHeaders and setContent

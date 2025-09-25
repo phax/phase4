@@ -39,8 +39,8 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Abstract builder base class for a user messages that puts also the main
- * payload in a single MIME part and NOT in the SOAP body.
+ * Abstract builder base class for a user messages that puts also the main payload in a single MIME
+ * part and NOT in the SOAP body.
  *
  * @author Philip Helger
  * @param <IMPLTYPE>
@@ -66,8 +66,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   /**
    * Get the payload to be send out.
    *
-   * @return The currently set outgoing attachment payload. May be
-   *         <code>null</code>.
+   * @return The currently set outgoing attachment payload. May be <code>null</code>.
    * @since 2.5.0
    */
   @Nullable
@@ -77,8 +76,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   }
 
   /**
-   * Set the payload to be send out. The payload is translated into the first
-   * attachment to the user message.
+   * Set the payload to be send out. The payload is translated into the first attachment to the user
+   * message.
    *
    * @param aBuilder
    *        The payload builder to be used. May be <code>null</code>.
@@ -113,15 +112,13 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   }
 
   /**
-   * Create the main attachment. This is mainly intended for ENTSOG/BDEW to add
-   * some custom properties.
+   * Create the main attachment. This is mainly intended for ENTSOG/BDEW to add some custom
+   * properties.
    *
    * @param aPayload
-   *        The outgoing main attachment as provided to the builder. Never
-   *        <code>null</code>.s
+   *        The outgoing main attachment as provided to the builder. Never <code>null</code>.s
    * @param aResHelper
-   *        The resource helper to use for temporary files etc. Never
-   *        <code>null</code>.
+   *        The resource helper to use for temporary files etc. Never <code>null</code>.
    * @return May be <code>null</code> to indicate not to use the main payload
    * @throws IOException
    *         in case of error
@@ -136,15 +133,13 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   }
 
   /**
-   * Create another attachment that is not "main". This is mainly intended for
-   * ENTSOG to add some custom properties.
+   * Create another attachment that is not "main". This is mainly intended for ENTSOG to add some
+   * custom properties.
    *
    * @param aPayload
-   *        The outgoing main attachment as provided to the builder. Never
-   *        <code>null</code>.s
+   *        The outgoing main attachment as provided to the builder. Never <code>null</code>.s
    * @param aResHelper
-   *        The resource helper to use for temporary files etc. Never
-   *        <code>null</code>.
+   *        The resource helper to use for temporary files etc. Never <code>null</code>.
    * @param nAttachmentIndex
    *        0-based attachment index. Always &ge; 0.
    * @return May be <code>null</code> to indicate not to use the payload

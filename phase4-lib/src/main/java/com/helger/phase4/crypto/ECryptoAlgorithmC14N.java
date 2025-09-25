@@ -26,8 +26,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Enumeration with all message canonicalization algorithms supported when
- * signing.
+ * Enumeration with all message canonicalization algorithms supported when signing.
  *
  * @author Philip Helger
  * @since 0.10.6

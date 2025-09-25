@@ -32,17 +32,16 @@ import jakarta.annotation.Nonnull;
 public interface IAS4RequestHandlerErrorConsumer
 {
   /**
-   * Invoked when an AS4 error message is created. This doesn't mean that the
-   * response message is also sent back - that can be configured in the P-Mode.
+   * Invoked when an AS4 error message is created. This doesn't mean that the response message is
+   * also sent back - that can be configured in the P-Mode.
    *
    * @param aIncomingState
    *        The current message processing state. Never <code>null</code>.
    * @param aEbmsErrors
-   *        The list of errors that occurred. Neither <code>null</code> nor
-   *        empty. Never modify that list.
+   *        The list of errors that occurred. Neither <code>null</code> nor empty. Never modify that
+   *        list.
    * @param aAS4ErrorMsg
-   *        The filled AS4 error message to be returned. Don't touch. Never
-   *        <code>null</code>.
+   *        The filled AS4 error message to be returned. Don't touch. Never <code>null</code>.
    */
   void onAS4ErrorMessage (@Nonnull IAS4IncomingMessageState aIncomingState,
                           @Nonnull @Nonempty ICommonsList <Ebms3Error> aEbmsErrors,

@@ -32,9 +32,8 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * This class correlates the built source message
- * ({@link AS4ClientBuiltMessage}) with the HTTP response of the passed type
- * (<code>T</code>).
+ * This class correlates the built source message ({@link AS4ClientBuiltMessage}) with the HTTP
+ * response of the passed type (<code>T</code>).
  *
  * @author Philip Helger
  * @param <T>
@@ -51,8 +50,7 @@ public class AS4ClientSentMessage <T>
 
   /**
    * @param aBuiltMsg
-   *        The built message with headers, payload and message ID. May not be
-   *        <code>null</code>.
+   *        The built message with headers, payload and message ID. May not be <code>null</code>.
    * @param aResponseStatusLine
    *        The HTTP response status line. May be <code>null</code>.
    * @param aResponseHeaders
@@ -74,8 +72,7 @@ public class AS4ClientSentMessage <T>
 
   /**
    * @param aBuiltMsg
-   *        The built message with headers, payload and message ID. May not be
-   *        <code>null</code>.
+   *        The built message with headers, payload and message ID. May not be <code>null</code>.
    * @param aResponseStatusLine
    *        The HTTP response status line. May be <code>null</code>.
    * @param aResponseHeaders
@@ -102,8 +99,7 @@ public class AS4ClientSentMessage <T>
   }
 
   /**
-   * @return The built message as provided in the constructor. Never
-   *         <code>null</code>.
+   * @return The built message as provided in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final AS4ClientBuiltMessage getBuiltMessage ()
@@ -112,9 +108,8 @@ public class AS4ClientSentMessage <T>
   }
 
   /**
-   * @return The AS4 message ID of the sent out message. Neither
-   *         <code>null</code> nor empty. This is a shortcut for
-   *         <code>getBuiltMessage().getMessageID ()</code>.
+   * @return The AS4 message ID of the sent out message. Neither <code>null</code> nor empty. This
+   *         is a shortcut for <code>getBuiltMessage().getMessageID ()</code>.
    */
   @Nonnull
   @Nonempty
@@ -124,9 +119,8 @@ public class AS4ClientSentMessage <T>
   }
 
   /**
-   * @return The HTTP response status line. It contains the HTTP version, the
-   *         response code and the response reason (if present). May be
-   *         <code>null</code>.
+   * @return The HTTP response status line. It contains the HTTP version, the response code and the
+   *         response reason (if present). May be <code>null</code>.
    * @since 0.13.0
    * @see #hasResponseStatusLine()
    */
@@ -137,8 +131,7 @@ public class AS4ClientSentMessage <T>
   }
 
   /**
-   * @return <code>true</code> if a response status line is present,
-   *         <code>false</code> if not.
+   * @return <code>true</code> if a response status line is present, <code>false</code> if not.
    * @since 0.13.0
    * @see #getResponseStatusLine()
    */
@@ -148,8 +141,7 @@ public class AS4ClientSentMessage <T>
   }
 
   /**
-   * @return The HTTP response headers as a mutable map. Never
-   *         <code>null</code>.
+   * @return The HTTP response headers as a mutable map. Never <code>null</code>.
    * @since 0.13.0
    */
   @Nonnull
@@ -170,8 +162,7 @@ public class AS4ClientSentMessage <T>
   }
 
   /**
-   * @return <code>true</code> if a response payload is present,
-   *         <code>false</code> if not.
+   * @return <code>true</code> if a response payload is present, <code>false</code> if not.
    * @see #getResponseContent()
    */
   public final boolean hasResponseContent ()

@@ -38,33 +38,28 @@ import jakarta.annotation.Nullable;
 public interface IAS4OutgoingDumper
 {
   /**
-   * Called for new requests. It's the responsibility of the caller to close the
-   * created output stream.
+   * Called for new requests. It's the responsibility of the caller to close the created output
+   * stream.
    *
    * @param eMsgMode
-   *        Are we dumping a request or a response? Never <code>null</code>.
-   *        Added in v1.2.0.
+   *        Are we dumping a request or a response? Never <code>null</code>. Added in v1.2.0.
    * @param aIncomingMessageMetadata
-   *        The incoming message metadata. This is always <code>null</code> for
-   *        requests (outgoing messages) and always non-<code>null</code> for
-   *        responses (incoming messages) - see eMsgMode parameter for
-   *        differentiation. Added in v1.2.0.
+   *        The incoming message metadata. This is always <code>null</code> for requests (outgoing
+   *        messages) and always non-<code>null</code> for responses (incoming messages) - see
+   *        eMsgMode parameter for differentiation. Added in v1.2.0.
    * @param aIncomingState
-   *        The incoming message processing state. This is always
-   *        <code>null</code> for requests and always non-<code>null</code> for
-   *        responses - see eMsgMode parameter for differentiation. Added in
-   *        v1.2.0.
+   *        The incoming message processing state. This is always <code>null</code> for requests and
+   *        always non-<code>null</code> for responses - see eMsgMode parameter for differentiation.
+   *        Added in v1.2.0.
    * @param sMessageID
-   *        The AS4 message ID of the outgoing message. Neither
-   *        <code>null</code> nor empty.
+   *        The AS4 message ID of the outgoing message. Neither <code>null</code> nor empty.
    * @param aCustomHeaders
-   *        Custom headers to be added to the HTTP entity. May be
-   *        <code>null</code>.
+   *        Custom headers to be added to the HTTP entity. May be <code>null</code>.
    * @param nTry
-   *        The index of the try. The first try has always index 0, the first
-   *        retry has index 1, the second retry has index 2 etc. Always &ge; 0.
-   * @return If <code>null</code> is returned, nothing is dumped, else each byte
-   *         written to the target stream is also written to that output stream.
+   *        The index of the try. The first try has always index 0, the first retry has index 1, the
+   *        second retry has index 2 etc. Always &ge; 0.
+   * @return If <code>null</code> is returned, nothing is dumped, else each byte written to the
+   *         target stream is also written to that output stream.
    * @throws IOException
    *         in case of an error
    */
@@ -77,28 +72,23 @@ public interface IAS4OutgoingDumper
                                @Nonnegative int nTry) throws IOException;
 
   /**
-   * Called after the AS4 request is handled internally. Can e.g. be used to
-   * cleanup resources belonging to the message. This method may not throw an
-   * exception. This method is only called if the onBeginRequest method
-   * delivered a non-<code>null</code> {@link OutputStream}.
+   * Called after the AS4 request is handled internally. Can e.g. be used to cleanup resources
+   * belonging to the message. This method may not throw an exception. This method is only called if
+   * the onBeginRequest method delivered a non-<code>null</code> {@link OutputStream}.
    *
    * @param eMsgMode
-   *        Are we dumping a request or a response? Never <code>null</code>.
-   *        Added in v1.2.0.
+   *        Are we dumping a request or a response? Never <code>null</code>. Added in v1.2.0.
    * @param aIncomingMessageMetadata
-   *        The incoming message metadata. This is always <code>null</code> for
-   *        requests. This is always non-<code>null</code> for responses. Added
-   *        in v1.2.0.
+   *        The incoming message metadata. This is always <code>null</code> for requests. This is
+   *        always non-<code>null</code> for responses. Added in v1.2.0.
    * @param aIncomingState
-   *        The incoming message processing state. This is always
-   *        <code>null</code> for requests. This is always non-<code>null</code>
-   *        for responses. Added in v1.2.0.
+   *        The incoming message processing state. This is always <code>null</code> for requests.
+   *        This is always non-<code>null</code> for responses. Added in v1.2.0.
    * @param sMessageID
-   *        The AS4 message ID of the outgoing message. Neither
-   *        <code>null</code> nor empty.
+   *        The AS4 message ID of the outgoing message. Neither <code>null</code> nor empty.
    * @param aCaughtException
-   *        An optional exception caught during processing. May be
-   *        <code>null</code>. Added in v3.0.0.
+   *        An optional exception caught during processing. May be <code>null</code>. Added in
+   *        v3.0.0.
    */
   void onEndRequest (@Nonnull EAS4MessageMode eMsgMode,
                      @Nullable IAS4IncomingMessageMetadata aIncomingMessageMetadata,

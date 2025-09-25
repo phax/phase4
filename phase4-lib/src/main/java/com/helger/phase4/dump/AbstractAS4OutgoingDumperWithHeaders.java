@@ -34,8 +34,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Abstract implementation of {@link IAS4OutgoingDumper} that always adds the
- * custom headers
+ * Abstract implementation of {@link IAS4OutgoingDumper} that always adds the custom headers
  *
  * @author Philip Helger
  * @param <IMPLTYPE>
@@ -52,9 +51,8 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
   private boolean m_bIncludeHeaders = DEFAULT_INCLUDE_HEADERS;
 
   /**
-   * @return <code>true</code> to include the headers in the dump,
-   *         <code>false</code> if not. The default is
-   *         {@link #DEFAULT_INCLUDE_HEADERS}.
+   * @return <code>true</code> to include the headers in the dump, <code>false</code> if not. The
+   *         default is {@link #DEFAULT_INCLUDE_HEADERS}.
    * @since 2.5.2
    */
   public final boolean isIncludeHeaders ()
@@ -66,8 +64,7 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
    * Include or exclude the headers from the dump.
    *
    * @param b
-   *        <code>true</code> to include the headers in the dump,
-   *        <code>false</code> if not.
+   *        <code>true</code> to include the headers in the dump, <code>false</code> if not.
    * @return this for chaining (since v3)
    * @since 2.5.2
    */
@@ -81,26 +78,21 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
    * Create the output stream to which the data should be dumped.
    *
    * @param eMsgMode
-   *        Are we dumping a request or a response? Never <code>null</code>.
-   *        Added in v1.2.0.
+   *        Are we dumping a request or a response? Never <code>null</code>. Added in v1.2.0.
    * @param aIncomingMessageMetadata
-   *        The incoming message metadata. This is always <code>null</code> for
-   *        requests. This is always non-<code>null</code> for responses. Added
-   *        in v1.2.0.
+   *        The incoming message metadata. This is always <code>null</code> for requests. This is
+   *        always non-<code>null</code> for responses. Added in v1.2.0.
    * @param aIncomingState
-   *        The incoming message processing state. This is always
-   *        <code>null</code> for requests. This is always non-<code>null</code>
-   *        for responses. Added in v1.2.0.
+   *        The incoming message processing state. This is always <code>null</code> for requests.
+   *        This is always non-<code>null</code> for responses. Added in v1.2.0.
    * @param sMessageID
-   *        The AS4 message ID of the outgoing message. Neither
-   *        <code>null</code> nor empty.
+   *        The AS4 message ID of the outgoing message. Neither <code>null</code> nor empty.
    * @param aCustomHeaders
    *        The HTTP headers of the outgoing message. Never <code>null</code>.
    * @param nTry
-   *        The index of the try. The first try has always index 0, the first
-   *        retry has index 1, the second retry has index 2 etc. Always &ge; 0.
-   * @return The output stream to dump to or <code>null</code> if no dumping
-   *         should be performed.
+   *        The index of the try. The first try has always index 0, the first retry has index 1, the
+   *        second retry has index 2 etc. Always &ge; 0.
+   * @return The output stream to dump to or <code>null</code> if no dumping should be performed.
    * @throws IOException
    *         On IO error
    */

@@ -60,9 +60,9 @@ public class PModeReceptionAwareness implements Serializable
   }
 
   /**
-   * @return <code>true</code> if reception awareness is defined,
-   *         <code>false</code> if it is undefined. If it is undefined, the
-   *         default value ({@link #DEFAULT_RECEPTION_AWARENESS}) will be used.
+   * @return <code>true</code> if reception awareness is defined, <code>false</code> if it is
+   *         undefined. If it is undefined, the default value ({@link #DEFAULT_RECEPTION_AWARENESS})
+   *         will be used.
    */
   public final boolean isReceptionAwarenessDefined ()
   {
@@ -70,8 +70,7 @@ public class PModeReceptionAwareness implements Serializable
   }
 
   /**
-   * @return <code>true</code> if reception awareness is enabled,
-   *         <code>false</code> of not.
+   * @return <code>true</code> if reception awareness is enabled, <code>false</code> of not.
    */
   public final boolean isReceptionAwareness ()
   {
@@ -109,9 +108,8 @@ public class PModeReceptionAwareness implements Serializable
   }
 
   /**
-   * @return <code>true</code> if retry is defined, <code>false</code> if it is
-   *         undefined. If it is undefined, the default value
-   *         ({@link #DEFAULT_RETRY}) will be used.
+   * @return <code>true</code> if retry is defined, <code>false</code> if it is undefined. If it is
+   *         undefined, the default value ({@link #DEFAULT_RETRY}) will be used.
    */
   public final boolean isRetryDefined ()
   {
@@ -166,8 +164,7 @@ public class PModeReceptionAwareness implements Serializable
   }
 
   /**
-   * Set the maximum number of retries. This value does not include the original
-   * try.
+   * Set the maximum number of retries. This value does not include the original try.
    *
    * @param nMaxRetries
    *        The maximum number of retries to use. Must be &ge; 0.
@@ -193,8 +190,8 @@ public class PModeReceptionAwareness implements Serializable
   }
 
   /**
-   * Set the milliseconds to wait between retries. This should also be used to
-   * define the interval between the original try and the first retry.
+   * Set the milliseconds to wait between retries. This should also be used to define the interval
+   * between the original try and the first retry.
    *
    * @param nRetryIntervalMS
    *        Milliseconds to wait. Must be &ge; 0.
@@ -211,9 +208,9 @@ public class PModeReceptionAwareness implements Serializable
   }
 
   /**
-   * @return <code>true</code> if duplication detection is defined,
-   *         <code>false</code> if it is undefined. If it is undefined, the
-   *         default value ({@link #DEFAULT_DUPLICATE_DETECTION}) will be used.
+   * @return <code>true</code> if duplication detection is defined, <code>false</code> if it is
+   *         undefined. If it is undefined, the default value ({@link #DEFAULT_DUPLICATE_DETECTION})
+   *         will be used.
    */
   public final boolean isDuplicateDetectionDefined ()
   {
@@ -221,8 +218,7 @@ public class PModeReceptionAwareness implements Serializable
   }
 
   /**
-   * @return <code>true</code> if duplicate detection is enabled,
-   *         <code>false</code> of not.
+   * @return <code>true</code> if duplicate detection is enabled, <code>false</code> of not.
    */
   public final boolean isDuplicateDetection ()
   {
@@ -268,10 +264,10 @@ public class PModeReceptionAwareness implements Serializable
       return false;
     final PModeReceptionAwareness rhs = (PModeReceptionAwareness) o;
     return m_eReceptionAwareness.equals (rhs.m_eReceptionAwareness) &&
-           m_eRetry.equals (rhs.m_eRetry) &&
-           m_nMaxRetries == rhs.m_nMaxRetries &&
-           m_nRetryIntervalMS == rhs.m_nRetryIntervalMS &&
-           m_eDuplicateDetection.equals (rhs.m_eDuplicateDetection);
+      m_eRetry.equals (rhs.m_eRetry) &&
+      m_nMaxRetries == rhs.m_nMaxRetries &&
+      m_nRetryIntervalMS == rhs.m_nRetryIntervalMS &&
+      m_eDuplicateDetection.equals (rhs.m_eDuplicateDetection);
   }
 
   @Override

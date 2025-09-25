@@ -69,12 +69,12 @@ public final class PModeLegErrorHandlingJsonConverter
   public static PModeLegErrorHandling convertToNative (@Nonnull final IJsonObject aElement)
   {
     final IJsonArray aSender = aElement.getAsArray (REPORT_SENDER_ERRORS_TO);
-    final PModeAddressList aSenderAddresses = aSender == null ? null : PModeAddressListJsonConverter.convertToNative (
-                                                                                                                      aSender);
+    final PModeAddressList aSenderAddresses = aSender == null ? null
+                                                              : PModeAddressListJsonConverter.convertToNative (aSender);
 
     final IJsonArray aReceiver = aElement.getAsArray (REPORT_RECEIVER_ERRORS_TO);
-    final PModeAddressList aReceiverAddresses = aReceiver == null ? null : PModeAddressListJsonConverter
-                                                                                                        .convertToNative (aReceiver);
+    final PModeAddressList aReceiverAddresses = aReceiver == null ? null
+                                                                  : PModeAddressListJsonConverter.convertToNative (aReceiver);
 
     final ETriState eReportAsResponse = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (REPORT_AS_RESPONSE),
                                                                                      PModeLegSecurity.DEFAULT_PMODE_AUTHORIZE);

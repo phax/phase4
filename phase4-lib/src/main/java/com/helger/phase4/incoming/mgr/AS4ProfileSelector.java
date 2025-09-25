@@ -50,8 +50,8 @@ public final class AS4ProfileSelector
   }
 
   /**
-   * Set the custom default AS4 profile ID. This has precedence over the
-   * configured AS4 default profile ID, to allow for a runtime change.
+   * Set the custom default AS4 profile ID. This has precedence over the configured AS4 default
+   * profile ID, to allow for a runtime change.
    *
    * @param sAS4ProfileID
    *        The AS4 profile ID to set. May be <code>null</code>.

@@ -186,12 +186,12 @@ public final class PModeJsonConverter
     final PModeLeg aLeg2 = aL2 == null ? null : PModeLegJsonConverter.convertToNative (aL2);
 
     final IJsonObject aPS = aElement.getAsObject (ELEMENT_PAYLOADSERVICE);
-    final PModePayloadService aPayloadService = aPS == null ? null : PModePayloadServiceJsonConverter.convertToNative (
-                                                                                                                       aPS);
+    final PModePayloadService aPayloadService = aPS == null ? null
+                                                            : PModePayloadServiceJsonConverter.convertToNative (aPS);
 
     final IJsonObject aRA = aElement.getAsObject (ELEMENT_RECEPETIONAWARENESS);
-    final PModeReceptionAwareness aReceptionAwareness = aRA == null ? null : PModeReceptionAwarenessJsonConverter
-                                                                                                                 .convertToNative (aRA);
+    final PModeReceptionAwareness aReceptionAwareness = aRA == null ? null
+                                                                    : PModeReceptionAwarenessJsonConverter.convertToNative (aRA);
 
     return new PMode (getStubObject (aElement),
                       aInitiator,

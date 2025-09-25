@@ -44,10 +44,9 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * A Callback Handler implementation for the case of signing/encrypting
- * Attachments via the SwA (SOAP with Attachments) specification or when using
- * xop:Include in the case of MTOM. This class is used both in
- * signing/encryption and in verification/decryption
+ * A Callback Handler implementation for the case of signing/encrypting Attachments via the SwA
+ * (SOAP with Attachments) specification or when using xop:Include in the case of MTOM. This class
+ * is used both in signing/encryption and in verification/decryption
  *
  * @author Apache WSS4J
  * @author Philip Helger
@@ -82,8 +81,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   }
 
   /**
-   * @return The resource manager as passed in the constructor. Never
-   *         <code>null</code>.
+   * @return The resource manager as passed in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final AS4ResourceHelper getResourceHelper ()
@@ -92,8 +90,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   }
 
   /**
-   * Try to match the Attachment Id. Otherwise, add all Attachments if the ID
-   * "Attachments" is used.
+   * Try to match the Attachment Id. Otherwise, add all Attachments if the ID "Attachments" is used.
    *
    * @param sAttachmentID
    *        Attachment ID to search

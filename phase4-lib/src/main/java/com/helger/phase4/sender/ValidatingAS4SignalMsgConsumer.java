@@ -126,12 +126,10 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
       return false;
 
     // Transform algorithms
-    final List <TransformType> aTransforms1 = aRef1.getTransforms () == null ? new ArrayList <> () : aRef1
-                                                                                                          .getTransforms ()
-                                                                                                          .getTransform ();
-    final List <TransformType> aTransforms2 = aRef2.getTransforms () == null ? new ArrayList <> () : aRef2
-                                                                                                          .getTransforms ()
-                                                                                                          .getTransform ();
+    final List <TransformType> aTransforms1 = aRef1.getTransforms () == null ? new ArrayList <> ()
+                                                                             : aRef1.getTransforms ().getTransform ();
+    final List <TransformType> aTransforms2 = aRef2.getTransforms () == null ? new ArrayList <> ()
+                                                                             : aRef2.getTransforms ().getTransform ();
     if (aTransforms1.size () != aTransforms2.size ())
       return false;
     for (final TransformType aTransform1 : aTransforms1)
@@ -156,9 +154,9 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
   {
     boolean bComparedReferences = false;
     if (m_aClientSetMsg.getBuiltMessage ().hasDSReferences () &&
-        aEbmsSignalMsg != null &&
-        aEbmsSignalMsg.getReceipt () != null &&
-        aEbmsSignalMsg.getReceipt ().hasAnyEntries ())
+      aEbmsSignalMsg != null &&
+      aEbmsSignalMsg.getReceipt () != null &&
+      aEbmsSignalMsg.getReceipt ().hasAnyEntries ())
     {
       // Verify that stored references match the ones contained in the NRR
       // of the signal message

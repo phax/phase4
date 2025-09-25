@@ -25,8 +25,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
 
 /**
- * Factory interface for {@link WSS4JAttachment} objects for handling incoming
- * attachments.
+ * Factory interface for {@link WSS4JAttachment} objects for handling incoming attachments.
  *
  * @author Philip Helger
  */

@@ -21,13 +21,11 @@ import com.helger.xservlet.AbstractXServlet;
 
 /**
  * AS4 receiving servlet.<br>
- * This servlet works only, if a single AS4 profile is present. If multiple AS4
- * profiles should be served, it is recommended to provide two different
- * servlets and customize the {@link AS4XServletHandler} accordingly. See
- * https://github.com/phax/phase4/wiki/Multi-Profile-Handling for a more
- * detailed description.<br>
- * Use a configuration like the following in your <code>WEB-INF/web.xm</code>
- * file:
+ * This servlet works only, if a single AS4 profile is present. If multiple AS4 profiles should be
+ * served, it is recommended to provide two different servlets and customize the
+ * {@link AS4XServletHandler} accordingly. See
+ * https://github.com/phax/phase4/wiki/Multi-Profile-Handling for a more detailed description.<br>
+ * Use a configuration like the following in your <code>WEB-INF/web.xm</code> file:
  *
  * <pre>
 &lt;servlet&gt;

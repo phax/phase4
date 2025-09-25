@@ -24,8 +24,8 @@ import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.internet.ParseException;
 
 /**
- * Special {@link MimeMultipart} that modifies the Content-Type to add the
- * "type" parameter with the SOAP versions MIME type.<br>
+ * Special {@link MimeMultipart} that modifies the Content-Type to add the "type" parameter with the
+ * SOAP versions MIME type.<br>
  * Old name before v3: <code>AS4SoapMimeMultipart</code>.
  *
  * @author Philip Helger

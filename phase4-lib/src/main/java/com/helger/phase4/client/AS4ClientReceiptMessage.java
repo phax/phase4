@@ -77,8 +77,8 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
   }
 
   /**
-   * As node set the usermessage if it is signed, so the references can be
-   * counted and used in non repudiation.
+   * As node set the usermessage if it is signed, so the references can be counted and used in non
+   * repudiation.
    *
    * @param aSoapDocument
    *        Signed UserMessage
@@ -98,8 +98,8 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
   }
 
   /**
-   * Needs to be set to refer to the message which this receipt is the response
-   * and if non-repudiation is not used, to fill the receipt content
+   * Needs to be set to refer to the message which this receipt is the response and if
+   * non-repudiation is not used, to fill the receipt content
    *
    * @param aEbms3UserMessage
    *        UserMessage which this receipt should be the response for
@@ -154,7 +154,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
                                                                     m_aEbms3UserMessage,
                                                                     m_aSoapDocument,
                                                                     m_bNonRepudiation,
-                                                                    getRefToMessageID());
+                                                                    getRefToMessageID ());
 
     if (aCallback != null)
       aCallback.onAS4Message (aReceiptMsg);

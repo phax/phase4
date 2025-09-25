@@ -30,8 +30,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Abstract version of {@link IAS4IncomingDumper} that emits all headers on the
- * output stream.
+ * Abstract version of {@link IAS4IncomingDumper} that emits all headers on the output stream.
  *
  * @author Philip Helger
  * @param <IMPLTYPE>
@@ -48,9 +47,8 @@ public abstract class AbstractAS4IncomingDumperWithHeaders <IMPLTYPE extends Abs
   private boolean m_bIncludeHeaders = DEFAULT_INCLUDE_HEADERS;
 
   /**
-   * @return <code>true</code> to include the headers in the dump,
-   *         <code>false</code> if not. The default is
-   *         {@link #DEFAULT_INCLUDE_HEADERS}.
+   * @return <code>true</code> to include the headers in the dump, <code>false</code> if not. The
+   *         default is {@link #DEFAULT_INCLUDE_HEADERS}.
    * @since 2.5.2
    */
   public final boolean isIncludeHeaders ()
@@ -62,8 +60,7 @@ public abstract class AbstractAS4IncomingDumperWithHeaders <IMPLTYPE extends Abs
    * Include or exclude the headers from the dump.
    *
    * @param b
-   *        <code>true</code> to include the headers in the dump,
-   *        <code>false</code> if not.
+   *        <code>true</code> to include the headers in the dump, <code>false</code> if not.
    * @return this for chaining (since v3.0.0)
    * @since 2.5.2
    */
@@ -80,8 +77,7 @@ public abstract class AbstractAS4IncomingDumperWithHeaders <IMPLTYPE extends Abs
    *        Request metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaderMap
    *        The HTTP headers of the incoming message. Never <code>null</code>.
-   * @return The output stream to dump to or <code>null</code> if no dumping
-   *         should be performed.
+   * @return The output stream to dump to or <code>null</code> if no dumping should be performed.
    * @throws IOException
    *         On IO error
    */

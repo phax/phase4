@@ -65,8 +65,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
   }
 
   /**
-   * @return The {@link Ebms3SignalMessage} passed in the constructor. Never
-   *         <code>null</code>.
+   * @return The {@link Ebms3SignalMessage} passed in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final Ebms3SignalMessage getEbms3SignalMessage ()
@@ -82,16 +81,15 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
    * @param sMessageID
    *        Message ID to use. May neither be <code>null</code> nor empty.
    * @param aEbms3UserMessageToRespond
-   *        The received usermessage which should be responded too. May be
-   *        <code>null</code>.
+   *        The received usermessage which should be responded too. May be <code>null</code>.
    * @param aSoapDocument
-   *        If the SOAPDocument has WSS4j elements and the following parameter
-   *        is true NonRepudiation will be used if the message is signed
+   *        If the SOAPDocument has WSS4j elements and the following parameter is true
+   *        NonRepudiation will be used if the message is signed
    * @param bShouldUseNonRepudiation
    *        If NonRepudiation should be used or not
    * @param sRefToMessageID
-   *        The reference to the original message, if no UserMessage to respond
-   *        is provided. May be <code>null</code>. Since v3.0.0
+   *        The reference to the original message, if no UserMessage to respond is provided. May be
+   *        <code>null</code>. Since v3.0.0
    * @return AS4ReceiptMessage
    */
   @Nonnull

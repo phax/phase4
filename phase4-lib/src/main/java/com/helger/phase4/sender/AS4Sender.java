@@ -22,10 +22,9 @@ import com.helger.annotation.concurrent.NotThreadSafe;
 import jakarta.annotation.Nonnull;
 
 /**
- * This class contains all the settings necessary to send AS4 messages using the
- * builder pattern. See <code>Builder.sendMessage</code> and
- * <code>Builder.sendMessage</code> as the main methods to trigger the sending,
- * with all potential customization.<br>
+ * This class contains all the settings necessary to send AS4 messages using the builder pattern.
+ * See <code>Builder.sendMessage</code> and <code>Builder.sendMessage</code> as the main methods to
+ * trigger the sending, with all potential customization.<br>
  * Please note that this sender DOES NOT apply any profile specific settings.
  *
  * @author Philip Helger
@@ -38,8 +37,7 @@ public final class AS4Sender
   {}
 
   /**
-   * @return Create a new Builder for generic AS4 User Messages. Never
-   *         <code>null</code>.
+   * @return Create a new Builder for generic AS4 User Messages. Never <code>null</code>.
    */
   @Nonnull
   public static BuilderUserMessage builderUserMessage ()
@@ -48,8 +46,7 @@ public final class AS4Sender
   }
 
   /**
-   * @return Create a new Builder for generic AS4 Pull Requests. Never
-   *         <code>null</code>.
+   * @return Create a new Builder for generic AS4 Pull Requests. Never <code>null</code>.
    * @since 0.12.0
    */
   @Nonnull
@@ -59,8 +56,8 @@ public final class AS4Sender
   }
 
   /**
-   * This sending builder enforces the creation of a MIME message by putting the
-   * payload as a MIME part.
+   * This sending builder enforces the creation of a MIME message by putting the payload as a MIME
+   * part.
    *
    * @author Philip Helger
    */

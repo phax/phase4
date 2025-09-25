@@ -33,13 +33,12 @@ import jakarta.annotation.Nullable;
 import jakarta.servlet.http.Cookie;
 
 /**
- * This interface lets you access optional metadata for a single incoming
- * message.<br>
- * See {@link AS4IncomingHelper} for a transformation method of this object to
- * a JSON representation.<br>
- * Note: it does not contain the AS4 message ID or similar parameters, because
- * instance of the class must also be present for incoming messages that are
- * invalid AS4 message and hence have no AS4 message ID.
+ * This interface lets you access optional metadata for a single incoming message.<br>
+ * See {@link AS4IncomingHelper} for a transformation method of this object to a JSON
+ * representation.<br>
+ * Note: it does not contain the AS4 message ID or similar parameters, because instance of the class
+ * must also be present for incoming messages that are invalid AS4 message and hence have no AS4
+ * message ID.
  *
  * @author Philip Helger
  * @since 0.9.8
@@ -47,10 +46,9 @@ import jakarta.servlet.http.Cookie;
 public interface IAS4IncomingMessageMetadata
 {
   /**
-   * @return A unique ID created just for this message metadata. It can be used
-   *         to reference to this message internally. Usually this is a UUID.
-   *         This is different from the AS4 message ID, because in case of a
-   *         corrupted message, the AS4 message ID may be missing or misplaced.
+   * @return A unique ID created just for this message metadata. It can be used to reference to this
+   *         message internally. Usually this is a UUID. This is different from the AS4 message ID,
+   *         because in case of a corrupted message, the AS4 message ID may be missing or misplaced.
    *         Never <code>null</code> nor empty.
    */
   @Nonnull
@@ -58,8 +56,7 @@ public interface IAS4IncomingMessageMetadata
   String getIncomingUniqueID ();
 
   /**
-   * @return The date and time when the request was received. Never
-   *         <code>null</code>.
+   * @return The date and time when the request was received. Never <code>null</code>.
    */
   @Nonnull
   OffsetDateTime getIncomingDT ();
@@ -71,18 +68,15 @@ public interface IAS4IncomingMessageMetadata
   EAS4MessageMode getMode ();
 
   /**
-   * Returns the Internet Protocol (IP) address of the client or last proxy that
-   * sent the request.
+   * Returns the Internet Protocol (IP) address of the client or last proxy that sent the request.
    *
-   * @return a <code>String</code> containing the IP address of the client that
-   *         sent the request
+   * @return a <code>String</code> containing the IP address of the client that sent the request
    */
   @Nullable
   String getRemoteAddr ();
 
   /**
-   * @return <code>true</code> if the remote address is present,
-   *         <code>false</code> if not.
+   * @return <code>true</code> if the remote address is present, <code>false</code> if not.
    * @see #getRemoteAddr()
    */
   default boolean hasRemoteAddr ()
@@ -91,20 +85,17 @@ public interface IAS4IncomingMessageMetadata
   }
 
   /**
-   * Returns the fully qualified name of the client or the last proxy that sent
-   * the request. If the engine cannot or chooses not to resolve the hostname
-   * (to improve performance), this method returns the dotted-string form of the
-   * IP address.
+   * Returns the fully qualified name of the client or the last proxy that sent the request. If the
+   * engine cannot or chooses not to resolve the hostname (to improve performance), this method
+   * returns the dotted-string form of the IP address.
    *
-   * @return a <code>String</code> containing the fully qualified name of the
-   *         client
+   * @return a <code>String</code> containing the fully qualified name of the client
    */
   @Nullable
   String getRemoteHost ();
 
   /**
-   * @return <code>true</code> if the remote host is present, <code>false</code>
-   *         if not.
+   * @return <code>true</code> if the remote host is present, <code>false</code> if not.
    * @see #getRemoteHost()
    */
   default boolean hasRemoteHost ()
@@ -113,18 +104,16 @@ public interface IAS4IncomingMessageMetadata
   }
 
   /**
-   * Returns the Internet Protocol (IP) source port of the client or last proxy
-   * that sent the request.
+   * Returns the Internet Protocol (IP) source port of the client or last proxy that sent the
+   * request.
    *
-   * @return an integer specifying the port number or a negative value if not
-   *         set
+   * @return an integer specifying the port number or a negative value if not set
    */
   @CheckForSigned
   int getRemotePort ();
 
   /**
-   * @return <code>true</code> if the remote port is present, <code>false</code>
-   *         if not.
+   * @return <code>true</code> if the remote port is present, <code>false</code> if not.
    * @see #getRemotePort()
    */
   default boolean hasRemotePort ()
@@ -133,21 +122,19 @@ public interface IAS4IncomingMessageMetadata
   }
 
   /**
-   * Returns the login of the user making this request, if the user has been
-   * authenticated, or <code>null</code> if the user has not been authenticated.
-   * Whether the user name is sent with each subsequent request depends on the
-   * browser and type of authentication.
+   * Returns the login of the user making this request, if the user has been authenticated, or
+   * <code>null</code> if the user has not been authenticated. Whether the user name is sent with
+   * each subsequent request depends on the browser and type of authentication.
    *
-   * @return a <code>String</code> specifying the login of the user making this
-   *         request, or <code>null</code> if the user login is not known
+   * @return a <code>String</code> specifying the login of the user making this request, or
+   *         <code>null</code> if the user login is not known
    * @since 0.9.10
    */
   @Nullable
   String getRemoteUser ();
 
   /**
-   * @return <code>true</code> if the remote user is present, <code>false</code>
-   *         if not.
+   * @return <code>true</code> if the remote user is present, <code>false</code> if not.
    * @see #getRemoteUser()
    */
   default boolean hasRemoteUser ()
@@ -156,11 +143,9 @@ public interface IAS4IncomingMessageMetadata
   }
 
   /**
-   * Returns the TLS certificates presented by the remote client to authenticate
-   * itself.
+   * Returns the TLS certificates presented by the remote client to authenticate itself.
    *
-   * @return A list containing a chain of X509Certificate objects. Maybe
-   *         <code>null</code>.
+   * @return A list containing a chain of X509Certificate objects. Maybe <code>null</code>.
    * @since 2.5.0
    */
   @Nullable
@@ -168,8 +153,8 @@ public interface IAS4IncomingMessageMetadata
   ICommonsList <X509Certificate> remoteTlsCerts ();
 
   /**
-   * @return <code>true</code> if the remote TLS certificate chain with at least
-   *         a single certificate is present, <code>false</code> if not.
+   * @return <code>true</code> if the remote TLS certificate chain with at least a single
+   *         certificate is present, <code>false</code> if not.
    * @see #remoteTlsCerts()
    * @since 2.5.0
    */
@@ -179,9 +164,8 @@ public interface IAS4IncomingMessageMetadata
   }
 
   /**
-   * @return A list of all Cookies contained in the request. Never
-   *         <code>null</code> but maybe empty. The returned list is mutable so
-   *         handle with care.
+   * @return A list of all Cookies contained in the request. Never <code>null</code> but maybe
+   *         empty. The returned list is mutable so handle with care.
    * @since 0.9.10
    */
   @Nonnull
@@ -189,8 +173,8 @@ public interface IAS4IncomingMessageMetadata
   ICommonsList <Cookie> cookies ();
 
   /**
-   * @return A copy of the list of all Cookies contained in the request. Never
-   *         <code>null</code> but maybe empty.
+   * @return A copy of the list of all Cookies contained in the request. Never <code>null</code> but
+   *         maybe empty.
    * @since 2.7.3
    */
   @Nonnull
@@ -201,8 +185,8 @@ public interface IAS4IncomingMessageMetadata
   }
 
   /**
-   * @return A copy of all the HTTP headers from the incoming request. Never
-   *         <code>null</code> but maybe empty.
+   * @return A copy of all the HTTP headers from the incoming request. Never <code>null</code> but
+   *         maybe empty.
    * @since 2.7.3
    */
   @Nonnull
@@ -210,9 +194,8 @@ public interface IAS4IncomingMessageMetadata
   HttpHeaderMap getAllHttpHeaders ();
 
   /**
-   * @return The AS4 message ID of the request message. This field is always
-   *         <code>null</code> for a request. This field is always
-   *         non-<code>null</code> for a response.
+   * @return The AS4 message ID of the request message. This field is always <code>null</code> for a
+   *         request. This field is always non-<code>null</code> for a response.
    * @see #getMode() to differentiate between request and response
    * @since 1.4.2
    */

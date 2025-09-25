@@ -40,9 +40,8 @@ public class Soap12NamespaceHandler extends MapBasedNamespaceContext
   }
 
   /**
-   * @return The global instance of the namespace handler. Never
-   *         <code>null</code>. Don't modify it! To modify it, please clone it
-   *         and go from there.
+   * @return The global instance of the namespace handler. Never <code>null</code>. Don't modify it!
+   *         To modify it, please clone it and go from there.
    */
   @Nonnull
   public static Soap12NamespaceHandler getInstance ()

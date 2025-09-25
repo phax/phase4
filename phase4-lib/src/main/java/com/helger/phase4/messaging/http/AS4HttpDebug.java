@@ -70,12 +70,10 @@ public final class AS4HttpDebug
   }
 
   /**
-   * Debug the provided string if {@link #isEnabled()}. Uses the logger to log
-   * to the console
+   * Debug the provided string if {@link #isEnabled()}. Uses the logger to log to the console
    *
    * @param aMsg
-   *        The message supplier. May not be <code>null</code>. Invoked only if
-   *        {@link #isEnabled()}
+   *        The message supplier. May not be <code>null</code>. Invoked only if {@link #isEnabled()}
    */
   public static void debug (@Nonnull final Supplier <? super String> aMsg)
   {
@@ -87,8 +85,8 @@ public final class AS4HttpDebug
   }
 
   /**
-   * @return XML writer setting to debug XML documents. It uses formatting and a
-   *         predefined namespace context. Never <code>null</code>.
+   * @return XML writer setting to debug XML documents. It uses formatting and a predefined
+   *         namespace context. Never <code>null</code>.
    */
   @Nonnull
   public static IXMLWriterSettings getDebugXMLWriterSettings ()

@@ -44,9 +44,8 @@ import jakarta.annotation.Nullable;
 public class PModeLegBusinessInformation implements Serializable
 {
   /**
-   * Name of the service to which the User message is intended to be delivered.
-   * Its content should map to the element
-   * <code>eb:Messaging/eb:UserMessage/eb:CollaborationInfo/eb:Service</code>.
+   * Name of the service to which the User message is intended to be delivered. Its content should
+   * map to the element <code>eb:Messaging/eb:UserMessage/eb:CollaborationInfo/eb:Service</code>.
    */
   private String m_sServiceValue;
 
@@ -57,9 +56,8 @@ public class PModeLegBusinessInformation implements Serializable
   private String m_sServiceType;
 
   /**
-   * Name of the action the User message is intended to invoke. Its content
-   * should map to the element
-   * <code>eb:Messaging/eb:UserMessage/eb:CollaborationInfo/eb:Action</code>.
+   * Name of the action the User message is intended to invoke. Its content should map to the
+   * element <code>eb:Messaging/eb:UserMessage/eb:CollaborationInfo/eb:Action</code>.
    */
   private String m_sAction;
 
@@ -69,20 +67,20 @@ public class PModeLegBusinessInformation implements Serializable
   private final ICommonsOrderedMap <String, PModeProperty> m_aProperties = new CommonsLinkedHashMap <> ();
 
   /**
-   * This parameter allows for specifying some constraint or profile on the
-   * payload. It specifies a list of payload parts.
+   * This parameter allows for specifying some constraint or profile on the payload. It specifies a
+   * list of payload parts.
    */
   private final ICommonsOrderedMap <String, PModePayloadProfile> m_aPayloadProfiles = new CommonsLinkedHashMap <> ();
 
   /**
-   * This parameter allows for specifying a maximum size in kilobytes for the
-   * entire payload, i.e. for the total of all payload parts.
+   * This parameter allows for specifying a maximum size in kilobytes for the entire payload, i.e.
+   * for the total of all payload parts.
    */
   private Long m_aPayloadProfileMaxKB;
 
   /**
-   * The value of this parameter is the identifier of the MPC (Message Partition
-   * Channel) to which the message is assigned. It maps to the attribute
+   * The value of this parameter is the identifier of the MPC (Message Partition Channel) to which
+   * the message is assigned. It maps to the attribute
    * <code>eb:Messaging/eb:UserMessage/@mpc</code>.
    */
   private String m_sMPCID;
@@ -256,12 +254,12 @@ public class PModeLegBusinessInformation implements Serializable
       return false;
     final PModeLegBusinessInformation rhs = (PModeLegBusinessInformation) o;
     return EqualsHelper.equals (m_sServiceValue, rhs.m_sServiceValue) &&
-           EqualsHelper.equals (m_sServiceType, rhs.m_sServiceType) &&
-           EqualsHelper.equals (m_sAction, rhs.m_sAction) &&
-           m_aProperties.equals (rhs.m_aProperties) &&
-           m_aPayloadProfiles.equals (rhs.m_aPayloadProfiles) &&
-           EqualsHelper.equals (m_aPayloadProfileMaxKB, rhs.m_aPayloadProfileMaxKB) &&
-           EqualsHelper.equals (m_sMPCID, rhs.m_sMPCID);
+      EqualsHelper.equals (m_sServiceType, rhs.m_sServiceType) &&
+      EqualsHelper.equals (m_sAction, rhs.m_sAction) &&
+      m_aProperties.equals (rhs.m_aProperties) &&
+      m_aPayloadProfiles.equals (rhs.m_aPayloadProfiles) &&
+      EqualsHelper.equals (m_aPayloadProfileMaxKB, rhs.m_aPayloadProfileMaxKB) &&
+      EqualsHelper.equals (m_sMPCID, rhs.m_sMPCID);
   }
 
   @Override

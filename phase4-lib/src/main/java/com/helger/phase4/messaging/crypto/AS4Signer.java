@@ -154,8 +154,8 @@ public final class AS4Signer
   }
 
   /**
-   * This method must be used if the message does not contain attachments, that
-   * should be in a additional mime message part.
+   * This method must be used if the message does not contain attachments, that should be in a
+   * additional mime message part.
    *
    * @param aCryptoFactorySign
    *        CryptoFactory to use. May not be <code>null</code>.

@@ -30,8 +30,7 @@ import com.helger.phase4.util.Phase4Exception;
 import jakarta.annotation.Nonnull;
 
 /**
- * Implementation of {@link IAS4ManagerFactory} creating managers that are
- * persisting to disk.
+ * Implementation of {@link IAS4ManagerFactory} creating managers that are persisting to disk.
  *
  * @author Philip Helger
  * @since 0.9.6

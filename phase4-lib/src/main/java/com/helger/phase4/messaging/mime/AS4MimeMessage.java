@@ -27,8 +27,8 @@ import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 
 /**
- * Special wrapper around a {@link MimeMessage} with an indicator if the message
- * can be written more than once.
+ * Special wrapper around a {@link MimeMessage} with an indicator if the message can be written more
+ * than once.
  *
  * @author Philip Helger
  */

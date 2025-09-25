@@ -38,8 +38,8 @@ import jakarta.annotation.Nullable;
 import jakarta.servlet.http.Cookie;
 
 /**
- * This class holds optional metadata for a single incoming request. This is the
- * default implementation of {@link IAS4IncomingMessageMetadata}.
+ * This class holds optional metadata for a single incoming request. This is the default
+ * implementation of {@link IAS4IncomingMessageMetadata}.
  *
  * @author Philip Helger
  * @since 0.9.8
@@ -59,8 +59,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private String m_sRequestMessageID;
 
   /**
-   * Default constructor using a UUID as the incoming unique ID and the current
-   * date time.
+   * Default constructor using a UUID as the incoming unique ID and the current date time.
    *
    * @param eMode
    *        The messaging mode. May not be <code>null</code>.
@@ -71,8 +70,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   }
 
   /**
-   * Constructor in case this every needs to be deserialized or other weird
-   * things are necessary.
+   * Constructor in case this every needs to be deserialized or other weird things are necessary.
    *
    * @param sIncomingUniqueID
    *        Incoming unique ID. May neither be <code>null</code> nor empty.
@@ -204,8 +202,8 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    * Set the remote TLS certificates to be used.
    *
    * @param aRemoteTlsCerts
-   *        The TLS certificates the remote client presented during the
-   *        handshake. May be <code>null</code>.
+   *        The TLS certificates the remote client presented during the handshake. May be
+   *        <code>null</code>.
    * @return this for chaining
    * @since 2.5.0
    */
@@ -263,9 +261,9 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   }
 
   /**
-   * Set the request AS4 message ID to be used. This field should only be set by
-   * responses. Usually you don't have to call this setter, as this is done by
-   * the factory method {@link #createForResponse(String)}.
+   * Set the request AS4 message ID to be used. This field should only be set by responses. Usually
+   * you don't have to call this setter, as this is done by the factory method
+   * {@link #createForResponse(String)}.
    *
    * @param sRequestMessageID
    *        The request message ID to be used. May be <code>null</code>.

@@ -520,8 +520,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     LOGGER.info ("phase4 --- sending.withretries:start");
 
     if (m_aHttpRetrySettings.isRetryEnabled () ||
-        aOutgoingDumper != null ||
-        AS4DumpManager.getOutgoingDumper () != null)
+      aOutgoingDumper != null ||
+      AS4DumpManager.getOutgoingDumper () != null)
     {
       // Ensure a repeatable entity is provided
       aBuiltEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);

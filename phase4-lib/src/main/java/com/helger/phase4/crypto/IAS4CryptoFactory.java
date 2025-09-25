@@ -26,8 +26,8 @@ import jakarta.annotation.Nullable;
 /**
  * The basic phase4 crypto interface.
  * <ul>
- * <li>See {@link AS4CryptoFactoryConfiguration} for an implementation of this
- * interface based on the global configuration</li>
+ * <li>See {@link AS4CryptoFactoryConfiguration} for an implementation of this interface based on
+ * the global configuration</li>
  * </ul>
  *
  * @author Philip Helger
@@ -44,23 +44,21 @@ public interface IAS4CryptoFactory
   Crypto getCrypto (@Nonnull ECryptoMode eCryptoMode);
 
   /**
-   * @return The underlying key store, or <code>null</code> if none is available
-   *         (the reasons depend on the used implementation).
+   * @return The underlying key store, or <code>null</code> if none is available (the reasons depend
+   *         on the used implementation).
    */
   @Nullable
   KeyStore getKeyStore ();
 
   /**
-   * @return The underlying private key entry from the keystore or
-   *         <code>null</code> if none is available (the reasons depend on the
-   *         used implementation).
+   * @return The underlying private key entry from the keystore or <code>null</code> if none is
+   *         available (the reasons depend on the used implementation).
    */
   @Nullable
   KeyStore.PrivateKeyEntry getPrivateKeyEntry ();
 
   /**
-   * @return The keystore alias to resolve the private key entry. May be
-   *         <code>null</code>.
+   * @return The keystore alias to resolve the private key entry. May be <code>null</code>.
    */
   @Nullable
   String getKeyAlias ();
@@ -70,9 +68,8 @@ public interface IAS4CryptoFactory
    *
    * @param sSearchKeyAlias
    *        The alias of the key whose password is to be retrieved.
-   * @return The password for the key represented by the provided by the alias
-   *         or <code>null</code> if the factory doesn't have a password for the
-   *         key.
+   * @return The password for the key represented by the provided by the alias or <code>null</code>
+   *         if the factory doesn't have a password for the key.
    * @since 3.0.0
    */
   @Nullable
@@ -83,9 +80,8 @@ public interface IAS4CryptoFactory
    *
    * @param sSearchKeyAlias
    *        The alias of the key whose password is to be retrieved.
-   * @return The password for the key represented by the provided by the alias
-   *         or <code>null</code> if the factory doesn't have a password for the
-   *         key.
+   * @return The password for the key represented by the provided by the alias or <code>null</code>
+   *         if the factory doesn't have a password for the key.
    * @since 1.4.1
    */
   @Nullable
@@ -96,8 +92,7 @@ public interface IAS4CryptoFactory
   }
 
   /**
-   * @return The trust store to be used or <code>null</code> if none is
-   *         configured.
+   * @return The trust store to be used or <code>null</code> if none is configured.
    * @since 0.12.0
    */
   @Nullable

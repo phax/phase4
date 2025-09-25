@@ -67,15 +67,14 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
   }
 
   /**
-   * Start a job that runs every minute, that removes all messages older than a
-   * certain time from duplication check. If the job is already scheduled, it
-   * cannot be scheduled again.
+   * Start a job that runs every minute, that removes all messages older than a certain time from
+   * duplication check. If the job is already scheduled, it cannot be scheduled again.
    *
    * @param nDisposalMinutes
-   *        Messages older than this number of minutes will not be checked for
-   *        duplicates. Must be &gt; 0.
-   * @return <code>null</code> if no job was scheduled, the trigger key of the
-   *         respective job otherwise.
+   *        Messages older than this number of minutes will not be checked for duplicates. Must be
+   *        &gt; 0.
+   * @return <code>null</code> if no job was scheduled, the trigger key of the respective job
+   *         otherwise.
    */
   @Nullable
   public static TriggerKey scheduleMe (final long nDisposalMinutes)

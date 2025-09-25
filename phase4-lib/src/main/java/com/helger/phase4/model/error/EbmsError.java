@@ -24,8 +24,8 @@ import com.helger.text.display.IHasDisplayText;
 import jakarta.annotation.Nonnull;
 
 /**
- * Generic implementation of {@link IEbmsError} to represent other errors
- * besides {@link EEbmsError}.
+ * Generic implementation of {@link IEbmsError} to represent other errors besides
+ * {@link EEbmsError}.
  *
  * @author Philip Helger
  * @since 0.13.1

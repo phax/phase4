@@ -34,8 +34,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * This class represents the result of a message processor SPI
- * implementation.<br>
+ * This class represents the result of a message processor SPI implementation.<br>
  * Note: cannot be serializable because WSS4JAttachment is not serializable
  *
  * @author Philip Helger
@@ -84,8 +83,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   }
 
   /**
-   * Add all attachments contained in this object onto the provided target
-   * collection.
+   * Add all attachments contained in this object onto the provided target collection.
    *
    * @param aTarget
    *        The target collection. May not be <code>null</code>.
@@ -106,8 +104,8 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   }
 
   /**
-   * @return <code>true</code> if an asynchronous response URL is present,
-   *         <code>false</code> otherwise.
+   * @return <code>true</code> if an asynchronous response URL is present, <code>false</code>
+   *         otherwise.
    */
   public boolean hasAsyncResponseURL ()
   {
@@ -133,12 +131,11 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   }
 
   /**
-   * Create a success message with optional attachments. Usually you don't need
-   * this. Just call {@link #createSuccess()} and you are fine.
+   * Create a success message with optional attachments. Usually you don't need this. Just call
+   * {@link #createSuccess()} and you are fine.
    *
    * @param aAttachments
-   *        Optional list of RESPONSE (!) attachments. Don't put the incoming
-   *        attachments here.
+   *        Optional list of RESPONSE (!) attachments. Don't put the incoming attachments here.
    * @param sAsyncResponseURL
    *        The optional asynchronous response URL.
    * @return Never <code>null</code>.

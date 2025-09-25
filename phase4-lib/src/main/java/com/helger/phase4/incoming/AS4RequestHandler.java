@@ -839,9 +839,8 @@ public class AS4RequestHandler implements AutoCloseable
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
-    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId () : aEbmsSignalMessage
-                                                                                                                      .getMessageInfo ()
-                                                                                                                      .getMessageId ();
+    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
+                                             : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
 
     // Get all processors
     final ICommonsList <IAS4IncomingMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
@@ -1077,8 +1076,8 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (
-                                                                                                                       aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
+                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -1252,7 +1251,7 @@ public class AS4RequestHandler implements AutoCloseable
     {
       // Note: this is enabled in Default PMode
       return aLeg.getSecurity ().isSendReceipt () &&
-             EPModeSendReceiptReplyPattern.RESPONSE.equals (aLeg.getSecurity ().getSendReceiptReplyPattern ());
+        EPModeSendReceiptReplyPattern.RESPONSE.equals (aLeg.getSecurity ().getSendReceiptReplyPattern ());
     }
     // Default behaviour if the value is not set or no security is existing
     return true;
@@ -1736,10 +1735,10 @@ public class AS4RequestHandler implements AutoCloseable
     {
       // PMode may be null for receipts
       if (aPMode == null ||
-          aPMode.getMEPBinding ().isSynchronous () ||
-          aPMode.getMEPBinding ().isAsynchronousInitiator () ||
-          aIncomingState.getEffectivePModeLegNumber () <= 0 ||
-          (aPMode.getMEPBinding () == EMEPBinding.PUSH_PUSH && aIncomingState.getEffectivePModeLegNumber () == 2))
+        aPMode.getMEPBinding ().isSynchronous () ||
+        aPMode.getMEPBinding ().isAsynchronousInitiator () ||
+        aIncomingState.getEffectivePModeLegNumber () <= 0 ||
+        (aPMode.getMEPBinding () == EMEPBinding.PUSH_PUSH && aIncomingState.getEffectivePModeLegNumber () == 2))
       {
         // Invoke SPIs synchronously
 
@@ -1880,8 +1879,9 @@ public class AS4RequestHandler implements AutoCloseable
                                                                     m_aRetryCallback);
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     (aAsyncResponse == null ? "null" : XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                                                   AS4HttpDebug.getDebugXMLWriterSettings ())));
+                                     (aAsyncResponse == null ? "null"
+                                                             : XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                                          AS4HttpDebug.getDebugXMLWriterSettings ())));
         };
 
         final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
@@ -1963,8 +1963,8 @@ public class AS4RequestHandler implements AutoCloseable
             // way, we need to check if the current application is currently in
             // the pull phase
             if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL) ||
-                (aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && aSPIResult.hasPullReturnUserMsg ()) ||
-                (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ()))
+              (aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && aSPIResult.hasPullReturnUserMsg ()) ||
+              (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ()))
             {
               // TODO would be nice to have attachments here I guess
               final AS4UserMessage aResponseUserMsg = new AS4UserMessage (eSoapVersion,
@@ -2095,8 +2095,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager
-                                                                                                                     .getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
+                                                                                 : AS4DumpManager.getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else

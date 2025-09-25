@@ -36,20 +36,17 @@ public interface IAS4PModeResolver
    * @param sPModeID
    *        The direct PMode ID to be resolved. May be <code>null</code>.
    * @param sService
-   *        The service as specified in the EBMS CollaborationInformation. May
-   *        not be <code>null</code>.
-   * @param sAction
-   *        The action as specified in the EBMS CollaborationInformation. May
-   *        not be <code>null</code>.
-   * @param sInitiatorID
-   *        Initiator ID from user message. May neither be <code>null</code> nor
-   *        empty.
-   * @param sResponderID
-   *        Responder ID from user message. May neither be <code>null</code> nor
-   *        empty.
-   * @param sAgreementRef
-   *        The agreement reference from the user message. May be
+   *        The service as specified in the EBMS CollaborationInformation. May not be
    *        <code>null</code>.
+   * @param sAction
+   *        The action as specified in the EBMS CollaborationInformation. May not be
+   *        <code>null</code>.
+   * @param sInitiatorID
+   *        Initiator ID from user message. May neither be <code>null</code> nor empty.
+   * @param sResponderID
+   *        Responder ID from user message. May neither be <code>null</code> nor empty.
+   * @param sAgreementRef
+   *        The agreement reference from the user message. May be <code>null</code>.
    * @param sAddress
    *        Endpoint address. May be <code>null</code>.
    * @return <code>null</code> if resolution failed.

@@ -65,12 +65,11 @@ public class AS4RawResponseConsumerWriteToFile extends
     String DEFAULT_FILE_EXTENSION = ".as4response";
 
     /**
-     * Get the {@link File} to write the raw response to. The filename must be
-     * globally unique. The resulting file should be an absolute path.
+     * Get the {@link File} to write the raw response to. The filename must be globally unique. The
+     * resulting file should be an absolute path.
      *
      * @param sAS4MessageID
-     *        The AS4 message ID that was send out. Neither <code>null</code>
-     *        nor empty.
+     *        The AS4 message ID that was send out. Neither <code>null</code> nor empty.
      * @return A non-<code>null</code> {@link File}.
      * @see AS4Configuration#getDumpBasePath()
      */
@@ -126,9 +125,8 @@ public class AS4RawResponseConsumerWriteToFile extends
   }
 
   /**
-   * @return The optional callback that is invoked for every file that is
-   *         opened. This may be used to grab the effective filename. May be
-   *         <code>null</code>.
+   * @return The optional callback that is invoked for every file that is opened. This may be used
+   *         to grab the effective filename. May be <code>null</code>.
    * @since 1.4.1
    */
   @Nullable

@@ -19,8 +19,8 @@ package com.helger.phase4.model.pmode;
 import jakarta.annotation.Nonnull;
 
 /**
- * A nice little helper interface to dynamically create new PMode IDs based on
- * Initiator ID and Responder ID.
+ * A nice little helper interface to dynamically create new PMode IDs based on Initiator ID and
+ * Responder ID.
  *
  * @author Philip Helger
  */
@@ -28,14 +28,13 @@ import jakarta.annotation.Nonnull;
 public interface IPModeIDProvider
 {
   /**
-   * The default implementation combines initiator ID value and responder ID
-   * value with a minus sign
+   * The default implementation combines initiator ID value and responder ID value with a minus sign
    */
   IPModeIDProvider DEFAULT_DYNAMIC = (i, r) -> i.getIDValue () + "-" + r.getIDValue ();
 
   /**
-   * Create a PMode ID from initiator and responder. This was changed in v2.2.0
-   * to use the full PMode party instead of just the ID.
+   * Create a PMode ID from initiator and responder. This was changed in v2.2.0 to use the full
+   * PMode party instead of just the ID.
    *
    * @param aInitiator
    *        Non-<code>null</code> initiator party.

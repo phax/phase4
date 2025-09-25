@@ -32,9 +32,8 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Default implementation of {@link IAS4PModeResolver} based on an AS4 Profile
- * ID. If no PMode is present, the respective PMode template from the selected
- * AS4 profile is used instead.
+ * Default implementation of {@link IAS4PModeResolver} based on an AS4 Profile ID. If no PMode is
+ * present, the respective PMode template from the selected AS4 profile is used instead.
  *
  * @author bayerlma
  * @author Philip Helger
@@ -55,8 +54,7 @@ public class AS4DefaultPModeResolver implements IAS4PModeResolver
   }
 
   /**
-   * @return The AS4 profile ID that was provided in the constructor. May be
-   *         <code>null</code>.
+   * @return The AS4 profile ID that was provided in the constructor. May be <code>null</code>.
    * @since 2.8.2
    */
   @Nullable
@@ -66,8 +64,8 @@ public class AS4DefaultPModeResolver implements IAS4PModeResolver
   }
 
   /**
-   * @return The resolved AS4 profile based on the ID provided in the
-   *         constructor. May be <code>null</code>.
+   * @return The resolved AS4 profile based on the ID provided in the constructor. May be
+   *         <code>null</code>.
    * @since 3.0.0
    */
   @Nullable

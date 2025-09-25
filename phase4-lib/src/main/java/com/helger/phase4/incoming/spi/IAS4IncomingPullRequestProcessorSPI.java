@@ -24,10 +24,9 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Implement this SPI interface to handle incoming pull request appropriately
- * and give the servlet the right PMode back.<br/>
- * Name before v3:
- * <code>com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI</code>
+ * Implement this SPI interface to handle incoming pull request appropriately and give the servlet
+ * the right PMode back.<br/>
+ * Name before v3: <code>com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI</code>
  *
  * @author bayerlma
  * @author Philip Helger
@@ -39,8 +38,8 @@ public interface IAS4IncomingPullRequestProcessorSPI
    * Process incoming AS4 signal message and determine the PMode to be used.
    *
    * @param aSignalMessage
-   *        The received signal message. May not be <code>null</code>. Contains
-   *        the pull request AND the message info!
+   *        The received signal message. May not be <code>null</code>. Contains the pull request AND
+   *        the message info!
    * @return The resolved PMode. May be <code>null</code>.
    */
   @Nullable

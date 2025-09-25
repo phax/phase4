@@ -886,8 +886,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     if (StringHelper.isNotEmpty (m_sRefToMessageID))
       aUserMsg.setRefToMessageID (m_sRefToMessageID);
     // Empty conversation ID is okay
-    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID : MessageHelperMethods
-                                                                                                    .createRandomConversationID ());
+    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID
+                                                          : MessageHelperMethods.createRandomConversationID ());
 
     aUserMsg.setFromPartyIDType (m_sFromPartyIDType);
     aUserMsg.setFromPartyID (m_sFromPartyID);

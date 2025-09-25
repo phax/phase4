@@ -32,9 +32,8 @@ import jakarta.annotation.Nullable;
 /**
  * A helper class to run all WSS stuff in a lock. {@link WSSConfig#init()} and
  * {@link WSSConfig#cleanUp()} is called for every invocation.<br>
- * Note: this class may only be invoked if
- * {@link AS4Configuration#isWSS4JSynchronizedSecurity()} returns
- * <code>true</code>.
+ * Note: this class may only be invoked if {@link AS4Configuration#isWSS4JSynchronizedSecurity()}
+ * returns <code>true</code>.
  *
  * @author Philip Helger
  * @since 0.11.0
@@ -48,8 +47,7 @@ public final class WSSSynchronizer
   {}
 
   /**
-   * A wrapper around {@link #call(IThrowingSupplier)} swallowing the return
-   * value
+   * A wrapper around {@link #call(IThrowingSupplier)} swallowing the return value
    *
    * @param aRunnable
    *        The runnable to be run. May not be <code>null</code>.

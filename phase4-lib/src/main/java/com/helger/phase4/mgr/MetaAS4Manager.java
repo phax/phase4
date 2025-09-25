@@ -70,8 +70,8 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   }
 
   /**
-   * Set the manager factory to be used. This must be called before the first
-   * invocation of {@link #getInstance()} to have an effect.
+   * Set the manager factory to be used. This must be called before the first invocation of
+   * {@link #getInstance()} to have an effect.
    *
    * @param aFactory
    *        The new factory. May not be <code>null</code>.

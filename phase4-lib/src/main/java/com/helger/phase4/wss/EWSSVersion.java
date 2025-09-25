@@ -50,8 +50,7 @@ public enum EWSSVersion
   }
 
   /**
-   * @return The namespace URI of the specification. Neither <code>null</code>
-   *         nor empty.
+   * @return The namespace URI of the specification. Neither <code>null</code> nor empty.
    */
   @Nonnull
   @Nonempty
@@ -61,8 +60,7 @@ public enum EWSSVersion
   }
 
   /**
-   * @return The intended namespace prefix to be used. Neither <code>null</code>
-   *         nor empty.
+   * @return The intended namespace prefix to be used. Neither <code>null</code> nor empty.
    */
   @Nonnull
   @Nonempty
@@ -72,8 +70,7 @@ public enum EWSSVersion
   }
 
   /**
-   * @return The specification version number. Neither <code>null</code> nor
-   *         empty.
+   * @return The specification version number. Neither <code>null</code> nor empty.
    */
   @Nonnull
   @Nonempty

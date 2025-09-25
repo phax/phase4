@@ -22,8 +22,8 @@ import org.apache.wss4j.dom.message.WSSecSignature;
 import jakarta.annotation.Nonnull;
 
 /**
- * Customize the {@link WSSecSignature} object additional to what is possible
- * via the {@link AS4SigningParams} class.
+ * Customize the {@link WSSecSignature} object additional to what is possible via the
+ * {@link AS4SigningParams} class.
  *
  * @author Philip Helger
  * @since 2.2.2.
@@ -44,8 +44,8 @@ public interface IWSSecSignatureCustomizer
   }
 
   /**
-   * The customization happens AFTER all the default properties are applied. So
-   * be sure you know what to do when overwriting stuff.
+   * The customization happens AFTER all the default properties are applied. So be sure you know
+   * what to do when overwriting stuff.
    *
    * @param aWSSecSignature
    *        The object to modify. May not be <code>null</code>.

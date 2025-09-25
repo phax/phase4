@@ -27,10 +27,9 @@ import jakarta.annotation.Nonnull;
 
 /**
  * Interface for providing time stamps.<br>
- * The precision of all the methods in this class is milliseconds, so that it
- * stays compatible to XML serialization. Since version 1.1.0 the return types
- * of the methods changed from <code>Local(Date|Time|DateTime)</code> to
- * <code>Offset(Date|Time|DateTime)</code>
+ * The precision of all the methods in this class is milliseconds, so that it stays compatible to
+ * XML serialization. Since version 1.1.0 the return types of the methods changed from
+ * <code>Local(Date|Time|DateTime)</code> to <code>Offset(Date|Time|DateTime)</code>
  *
  * @author Philip Helger
  * @since 0.10.0
@@ -38,15 +37,14 @@ import jakarta.annotation.Nonnull;
 public interface IAS4TimestampManager
 {
   /**
-   * @return The current date in time in the current time zone. Never
-   *         <code>null</code>.
+   * @return The current date in time in the current time zone. Never <code>null</code>.
    */
   @Nonnull
   OffsetDateTime getCurrentDateTime ();
 
   /**
-   * @return The current date in time in the current time zone for XML
-   *         processing. Never <code>null</code>.
+   * @return The current date in time in the current time zone for XML processing. Never
+   *         <code>null</code>.
    */
   @Nonnull
   default XMLOffsetDateTime getCurrentXMLDateTime ()

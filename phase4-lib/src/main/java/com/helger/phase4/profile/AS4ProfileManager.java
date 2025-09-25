@@ -36,8 +36,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * AS4 profile manager. All profiles are registered by SPI -
- * {@link IAS4ProfileRegistrarSPI}.
+ * AS4 profile manager. All profiles are registered by SPI - {@link IAS4ProfileRegistrarSPI}.
  *
  * @author Philip Helger
  */

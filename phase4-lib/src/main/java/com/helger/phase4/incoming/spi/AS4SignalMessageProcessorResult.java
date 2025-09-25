@@ -27,8 +27,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * This class represents the result of a message processor SPI
- * implementation.<br>
+ * This class represents the result of a message processor SPI implementation.<br>
  * Note: cannot be serializable because WSS4JAttachment is not serializable
  *
  * @author Philip Helger
@@ -58,8 +57,8 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
   }
 
   /**
-   * @return Optional response user message for all "pull" based SPI
-   *         invocations. May be <code>null</code>.
+   * @return Optional response user message for all "pull" based SPI invocations. May be
+   *         <code>null</code>.
    */
   @Nullable
   public Ebms3UserMessage getPullReturnUserMessage ()

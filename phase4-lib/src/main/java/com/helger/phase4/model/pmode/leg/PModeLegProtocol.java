@@ -43,19 +43,18 @@ import jakarta.annotation.Nullable;
 public class PModeLegProtocol implements Serializable
 {
   /**
-   * the value of this parameter represents the address (endpoint URL) of the
-   * Receiver MSH (or Receiver Party) to which Messages under this P-Mode leg
-   * are to be sent. Note that a URL generally determines the transport protocol
-   * (for example, if the endpoint is an email address, then the transport
-   * protocol must be SMTP; if the address scheme is "http", then the transport
+   * the value of this parameter represents the address (endpoint URL) of the Receiver MSH (or
+   * Receiver Party) to which Messages under this P-Mode leg are to be sent. Note that a URL
+   * generally determines the transport protocol (for example, if the endpoint is an email address,
+   * then the transport protocol must be SMTP; if the address scheme is "http", then the transport
    * protocol must be HTTP).
    */
   private String m_sAddress;
 
   /**
-   * this parameter indicates the SOAP version to be used (<code>1.1</code> or
-   * <code>1.2</code>). In some implementations, this parameter may be
-   * constrained by the implementation, and not set by users.
+   * this parameter indicates the SOAP version to be used (<code>1.1</code> or <code>1.2</code>). In
+   * some implementations, this parameter may be constrained by the implementation, and not set by
+   * users.
    */
   private ESoapVersion m_eSoapVersion;
 

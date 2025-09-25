@@ -32,9 +32,9 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * This class contains an implementation of {@link IAS4CryptoFactory} in which
- * case the {@link KeyStore} is available in memory and the settings are NOT
- * read from a file. Created for https://github.com/phax/phase4/issues/28
+ * This class contains an implementation of {@link IAS4CryptoFactory} in which case the
+ * {@link KeyStore} is available in memory and the settings are NOT read from a file. Created for
+ * https://github.com/phax/phase4/issues/28
  *
  * @author Philip Helger
  * @since 0.9.7
@@ -56,8 +56,8 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    * @param aKeyStoreDesc
    *        The key store descriptor. May not be <code>null</code>.
    * @param aTrustStoreDesc
-   *        The trust store descriptor. May be <code>null</code> in which case
-   *        the global JRE CA certs list will be used.
+   *        The trust store descriptor. May be <code>null</code> in which case the global JRE CA
+   *        certs list will be used.
    * @since 3.0.0
    */
   public AS4CryptoFactoryInMemoryKeyStore (@Nonnull final IKeyStoreAndKeyDescriptor aKeyStoreDesc,
@@ -75,14 +75,12 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    * @param aKeyStore
    *        The key store to be used. May not be <code>null</code>.
    * @param sKeyAlias
-   *        The key alias to be used. May neither be <code>null</code> nor
-   *        empty.
+   *        The key alias to be used. May neither be <code>null</code> nor empty.
    * @param aKeyPassword
-   *        The key password to be used. May not be <code>null</code> but maybe
-   *        empty.
+   *        The key password to be used. May not be <code>null</code> but maybe empty.
    * @param aTrustStore
-   *        The optional trust store to be used. If none is provided the default
-   *        Java runtime truststore (cacerts) is used.
+   *        The optional trust store to be used. If none is provided the default Java runtime
+   *        truststore (cacerts) is used.
    */
   public AS4CryptoFactoryInMemoryKeyStore (@Nonnull final KeyStore aKeyStore,
                                            @Nonnull @Nonempty final String sKeyAlias,
@@ -99,9 +97,9 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
   }
 
   /**
-   * Lazily create a {@link Crypto} instance using the key store and trust store
-   * from the constructor. Removed "final" in v3 to allow users to use a
-   * different {@link Crypto} implementation if needed.
+   * Lazily create a {@link Crypto} instance using the key store and trust store from the
+   * constructor. Removed "final" in v3 to allow users to use a different {@link Crypto}
+   * implementation if needed.
    */
   @Nonnull
   public Crypto getCrypto (@Nonnull final ECryptoMode eCryptoMode)

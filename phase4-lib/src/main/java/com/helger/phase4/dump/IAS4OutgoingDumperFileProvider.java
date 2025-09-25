@@ -37,18 +37,16 @@ public interface IAS4OutgoingDumperFileProvider
   String DEFAULT_FILE_EXTENSION = ".as4out";
 
   /**
-   * Get the {@link File} to write the dump to. The filename must be globally
-   * unique. The resulting file should be an absolute path.
+   * Get the {@link File} to write the dump to. The filename must be globally unique. The resulting
+   * file should be an absolute path.
    *
    * @param eMsgMode
-   *        Are we dumping a request or a response? Never <code>null</code>.
-   *        Added in v1.2.0.
+   *        Are we dumping a request or a response? Never <code>null</code>. Added in v1.2.0.
    * @param sAS4MessageID
-   *        The AS4 message ID that was send out. Neither <code>null</code> nor
-   *        empty.
+   *        The AS4 message ID that was send out. Neither <code>null</code> nor empty.
    * @param nTry
-   *        The number of the try to send the message. The initial try has value
-   *        0, the first retry has value 1 etc.
+   *        The number of the try to send the message. The initial try has value 0, the first retry
+   *        has value 1 etc.
    * @return A non-<code>null</code> {@link File}.
    * @see AS4Configuration#getDumpBasePath()
    */

@@ -53,8 +53,7 @@ public interface IAS4DuplicateItem extends IHasID <String>, Serializable
   String getProfileID ();
 
   /**
-   * @return <code>true</code> if an AS4 profile ID is present,
-   *         <code>false</code> if not.
+   * @return <code>true</code> if an AS4 profile ID is present, <code>false</code> if not.
    * @since 0.8.3
    */
   default boolean hasProfileID ()
@@ -69,8 +68,7 @@ public interface IAS4DuplicateItem extends IHasID <String>, Serializable
   String getPModeID ();
 
   /**
-   * @return <code>true</code> if an AS4 PMode ID is present, <code>false</code>
-   *         if not.
+   * @return <code>true</code> if an AS4 PMode ID is present, <code>false</code> if not.
    * @since 0.8.3
    */
   default boolean hasPModeID ()

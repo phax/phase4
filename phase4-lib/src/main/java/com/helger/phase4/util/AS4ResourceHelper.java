@@ -114,10 +114,8 @@ public class AS4ResourceHelper implements Closeable
     // Create
     final File ret = s_aTempDir != null ? Files.createTempFile (s_aTempDir.toPath (),
                                                                 TEMP_FILE_PREFIX,
-                                                                TEMP_FILE_SUFFIX).toFile () : Files.createTempFile (
-                                                                                                                    TEMP_FILE_PREFIX,
-                                                                                                                    TEMP_FILE_SUFFIX)
-                                                                                                   .toFile ();
+                                                                TEMP_FILE_SUFFIX).toFile ()
+                                        : Files.createTempFile (TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX).toFile ();
     // And remember
     m_aRWLock.writeLocked ( () -> m_aTempFiles.add (ret));
 

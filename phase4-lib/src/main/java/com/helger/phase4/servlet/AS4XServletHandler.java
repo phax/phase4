@@ -107,9 +107,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   /**
-   * Create the incoming message metadata based on the provided request. This
-   * method may be overridden by sub-classes to customize the header generation
-   * e.g. when sitting behind a proxy or the like.
+   * Create the incoming message metadata based on the provided request. This method may be
+   * overridden by sub-classes to customize the header generation e.g. when sitting behind a proxy
+   * or the like.
    *
    * @param aRequestScope
    *        The request scope to use.
@@ -143,8 +143,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   /**
-   * Create the {@link IAS4ResponseAbstraction} for use with
-   * {@link AS4UnifiedResponse}.
+   * Create the {@link IAS4ResponseAbstraction} for use with {@link AS4UnifiedResponse}.
    *
    * @param aHttpResponse
    *        The unified response to be wrapped. May not be <code>null</code>.
@@ -181,18 +180,16 @@ public class AS4XServletHandler implements IXServletSimpleHandler
 
   /**
    * Handle an incoming request. Compared to
-   * {@link #handleRequest(IRequestWebScopeWithoutResponse, UnifiedResponse)}
-   * all the member variables are resolved into parameters to make overriding
-   * simpler.
+   * {@link #handleRequest(IRequestWebScopeWithoutResponse, UnifiedResponse)} all the member
+   * variables are resolved into parameters to make overriding simpler.
    *
    * @param aRequestScope
    *        The request scope. May not be <code>null</code>.
    * @param aHttpResponse
    *        The HTTP response to be filled. May not be <code>null</code>.
    * @param aHandlerCustomizer
-   *        An optional callback that can be used to modify the internal
-   *        {@link AS4RequestHandler} before and after processing. May be
-   *        <code>null</code>.
+   *        An optional callback that can be used to modify the internal {@link AS4RequestHandler}
+   *        before and after processing. May be <code>null</code>.
    * @throws Exception
    *         In case of a processing error
    * @since 1.3.1

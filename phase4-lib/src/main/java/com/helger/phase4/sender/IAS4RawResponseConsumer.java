@@ -42,8 +42,7 @@ public interface IAS4RawResponseConsumer
   void handleResponse (@Nonnull AS4ClientSentMessage <byte []> aResponseMsg) throws Phase4Exception;
 
   /**
-   * Chain this instance with another instance of the same type. This handler is
-   * called first.
+   * Chain this instance with another instance of the same type. This handler is called first.
    *
    * @param rhs
    *        The handler to chain with. May be <code>null</code>.
@@ -57,9 +56,9 @@ public interface IAS4RawResponseConsumer
   }
 
   /**
-   * Chain two instances of the same type to a single instance. This first
-   * handler is called first, the second handler is called afterwards. If any of
-   * the two parameters is <code>null</code> no chaining happens.
+   * Chain two instances of the same type to a single instance. This first handler is called first,
+   * the second handler is called afterwards. If any of the two parameters is <code>null</code> no
+   * chaining happens.
    *
    * @param lhs
    *        The first handler to invoke. May be <code>null</code>.

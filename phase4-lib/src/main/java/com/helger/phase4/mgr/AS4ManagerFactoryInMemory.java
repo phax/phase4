@@ -28,8 +28,7 @@ import com.helger.phase4.profile.IAS4ProfileManager;
 import jakarta.annotation.Nonnull;
 
 /**
- * Implementation of {@link IAS4ManagerFactory} creating managers that are
- * in-memory only.
+ * Implementation of {@link IAS4ManagerFactory} creating managers that are in-memory only.
  *
  * @author Philip Helger
  * @since 0.9.6

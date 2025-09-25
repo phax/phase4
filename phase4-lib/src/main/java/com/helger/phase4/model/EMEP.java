@@ -33,16 +33,15 @@ import jakarta.annotation.Nullable;
 public enum EMEP implements IHasID <String>
 {
   /**
-   * The One-Way MEP which governs the exchange of a single User Message Unit
-   * unrelated to other User Messages.
+   * The One-Way MEP which governs the exchange of a single User Message Unit unrelated to other
+   * User Messages.
    */
   ONE_WAY ("oneway", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/oneWay"),
   /**
-   * The Two-Way MEP which governs the exchange of two User Message Units in
-   * opposite directions, the first one to occur is labeled "request", the other
-   * one "reply". In an actual instance, the "reply" must reference the
-   * "request" using eb:RefToMessageId. Or referenced to as The Two-Way/Sync
-   * MEP.
+   * The Two-Way MEP which governs the exchange of two User Message Units in opposite directions,
+   * the first one to occur is labeled "request", the other one "reply". In an actual instance, the
+   * "reply" must reference the "request" using eb:RefToMessageId. Or referenced to as The
+   * Two-Way/Sync MEP.
    */
   TWO_WAY ("twoway", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/twoWay");
 

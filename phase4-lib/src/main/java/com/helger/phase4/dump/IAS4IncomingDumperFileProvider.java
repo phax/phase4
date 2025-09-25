@@ -41,12 +41,11 @@ public interface IAS4IncomingDumperFileProvider
   String DEFAULT_FILE_EXTENSION = ".as4in";
 
   /**
-   * Get the {@link File} to write the dump to. The filename must be globally
-   * unique. The resulting file should be an absolute path.
+   * Get the {@link File} to write the dump to. The filename must be globally unique. The resulting
+   * file should be an absolute path.
    *
    * @param aMessageMetadata
-   *        The message metadata of the incoming message. Never
-   *        <code>null</code>.
+   *        The message metadata of the incoming message. Never <code>null</code>.
    * @param aHttpHeaderMap
    *        The HTTP headers of the incoming message. Never <code>null</code>.
    * @return A non-<code>null</code> {@link File}.

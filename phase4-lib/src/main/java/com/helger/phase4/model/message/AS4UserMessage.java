@@ -48,8 +48,7 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
   }
 
   /**
-   * @return The {@link Ebms3UserMessage} passed in the constructor. Never
-   *         <code>null</code>.
+   * @return The {@link Ebms3UserMessage} passed in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final Ebms3UserMessage getEbms3UserMessage ()

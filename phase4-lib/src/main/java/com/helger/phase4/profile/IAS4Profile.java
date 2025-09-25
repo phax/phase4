@@ -27,8 +27,8 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Base interface for an AS4 profile - a group of settings that outline what
- * features of AS4 are used.
+ * Base interface for an AS4 profile - a group of settings that outline what features of AS4 are
+ * used.
  *
  * @author Philip Helger
  */
@@ -50,9 +50,8 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName
    *        Responder ID
    * @param sAddress
    *        Address string
-   * @return A PMode that is NOT yet in the manager and is not complete! The
-   *         following information is most likely not contained: URLs,
-   *         certificates.
+   * @return A PMode that is NOT yet in the manager and is not complete! The following information
+   *         is most likely not contained: URLs, certificates.
    */
   @Nonnull
   PMode createPModeTemplate (@Nonnull @Nonempty String sInitiatorID,
@@ -60,22 +59,20 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName
                              @Nullable String sAddress);
 
   /**
-   * @return The PMode ID provider to be used for this profile. May not be
-   *         <code>null</code>.
+   * @return The PMode ID provider to be used for this profile. May not be <code>null</code>.
    */
   @Nonnull
   IPModeIDProvider getPModeIDProvider ();
 
   /**
-   * @return <code>true</code> if this AS4 profile is deprecated and should
-   *         therefore not be used, or <code>false</code> if not.
+   * @return <code>true</code> if this AS4 profile is deprecated and should therefore not be used,
+   *         or <code>false</code> if not.
    */
   boolean isDeprecated ();
 
   /**
-   * @return <code>true</code> if this profile wants to handle Ping messages
-   *         inside the custom SPI handler. This was introduced for sole usage
-   *         in BDEW profile.
+   * @return <code>true</code> if this profile wants to handle Ping messages inside the custom SPI
+   *         handler. This was introduced for sole usage in BDEW profile.
    * @since v2.5.3
    */
   boolean isInvokeSPIForPingMessage ();

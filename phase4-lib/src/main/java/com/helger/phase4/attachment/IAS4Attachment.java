@@ -42,26 +42,25 @@ public interface IAS4Attachment
   String getId ();
 
   /**
-   * @return The MIME type in a string representation. If the attachment was
-   *         compressed and the <code>MimeType</code> part property was set it
-   *         can be queried via {@link #getUncompressedMimeType()}
+   * @return The MIME type in a string representation. If the attachment was compressed and the
+   *         <code>MimeType</code> part property was set it can be queried via
+   *         {@link #getUncompressedMimeType()}
    * @see #getUncompressedMimeType()
    */
   String getMimeType ();
 
   /**
-   * @return The MIME type of the uncompressed attachment. May be
-   *         <code>null</code>. This is only set, if compression was active.
-   *         Otherwise use {@link #getMimeType()}.
+   * @return The MIME type of the uncompressed attachment. May be <code>null</code>. This is only
+   *         set, if compression was active. Otherwise use {@link #getMimeType()}.
    * @see #getMimeType()
    */
   @Nullable
   String getUncompressedMimeType ();
 
   /**
-   * Get the source stream of the attachment using the default resource helper.
-   * The streams retrieved by this method are automatically closed when the
-   * respective resource helper goes out of scope.
+   * Get the source stream of the attachment using the default resource helper. The streams
+   * retrieved by this method are automatically closed when the respective resource helper goes out
+   * of scope.
    *
    * @return A non-<code>null</code> InputStream on the source.
    */
@@ -69,9 +68,9 @@ public interface IAS4Attachment
   InputStream getSourceStream ();
 
   /**
-   * Get the source stream of the attachment using the provided resource helper,
-   * to automatically close the stream at the end of the message. This can be
-   * helpful, if the source helper is already out of scope.
+   * Get the source stream of the attachment using the provided resource helper, to automatically
+   * close the stream at the end of the message. This can be helpful, if the source helper is
+   * already out of scope.
    *
    * @param aResourceHelper
    *        The resource helper to use. May not be <code>null</code>.
@@ -81,8 +80,8 @@ public interface IAS4Attachment
   InputStream getSourceStream (@Nonnull AS4ResourceHelper aResourceHelper);
 
   /**
-   * This is primarily an internal method. If you use it, you need to make sure
-   * to close the streams yourself if you open them.
+   * This is primarily an internal method. If you use it, you need to make sure to close the streams
+   * yourself if you open them.
    *
    * @return The internal input stream provider. May be <code>null</code>.
    */
@@ -90,8 +89,8 @@ public interface IAS4Attachment
   IHasInputStream getInputStreamProvider ();
 
   /**
-   * @return <code>true</code> if the input stream backing this attachment can
-   *         be read multiple times, <code>false</code> if not.
+   * @return <code>true</code> if the input stream backing this attachment can be read multiple
+   *         times, <code>false</code> if not.
    */
   default boolean isRepeatable ()
   {
@@ -100,22 +99,20 @@ public interface IAS4Attachment
   }
 
   /**
-   * @return The content transfer encoding to be used. Required for MIME
-   *         multipart handling only. May not be <code>null</code>.
+   * @return The content transfer encoding to be used. Required for MIME multipart handling only.
+   *         May not be <code>null</code>.
    */
   @Nonnull
   EContentTransferEncoding getContentTransferEncoding ();
 
   /**
-   * @return The compression mode to use or <code>null</code> if the attachment
-   *         is not compressed.
+   * @return The compression mode to use or <code>null</code> if the attachment is not compressed.
    */
   @Nullable
   EAS4CompressionMode getCompressionMode ();
 
   /**
-   * @return <code>true</code> if a compression mode is set, <code>false</code>
-   *         if not.
+   * @return <code>true</code> if a compression mode is set, <code>false</code> if not.
    */
   default boolean hasCompressionMode ()
   {
@@ -123,8 +120,7 @@ public interface IAS4Attachment
   }
 
   /**
-   * @return The defined character set, falling back to ISO-8859-1 if none is
-   *         defined.
+   * @return The defined character set, falling back to ISO-8859-1 if none is defined.
    */
   @Nonnull
   default Charset getCharset ()
@@ -136,23 +132,22 @@ public interface IAS4Attachment
    * Get the specified character set or the provided default value.
    *
    * @param aDefault
-   *        The default value to be returned, if no character set is provided.
-   *        May be <code>null</code>.
-   * @return Only <code>null</code> if no character set is defined and the
-   *         provided default value is <code>null</code>.
+   *        The default value to be returned, if no character set is provided. May be
+   *        <code>null</code>.
+   * @return Only <code>null</code> if no character set is defined and the provided default value is
+   *         <code>null</code>.
    */
   @Nullable
   Charset getCharsetOrDefault (@Nullable Charset aDefault);
 
   /**
-   * @return <code>true</code> if a character set is defined, <code>false</code>
-   *         if not.
+   * @return <code>true</code> if a character set is defined, <code>false</code> if not.
    */
   boolean hasCharset ();
 
   /**
-   * @return A non-<code>null</code> but maybe empty map of custom
-   *         PartInfo/PartProperties for the UserMessage.
+   * @return A non-<code>null</code> but maybe empty map of custom PartInfo/PartProperties for the
+   *         UserMessage.
    * @since 0.12.0
    */
   @Nonnull

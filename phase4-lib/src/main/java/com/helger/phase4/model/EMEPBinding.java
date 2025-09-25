@@ -33,40 +33,36 @@ import jakarta.annotation.Nullable;
 public enum EMEPBinding implements IHasID <String>
 {
   /**
-   * maps an MEP User message to the 1st leg of an underlying 2-way transport
-   * protocol, or of a 1-way protocol.
+   * maps an MEP User message to the 1st leg of an underlying 2-way transport protocol, or of a
+   * 1-way protocol.
    */
   PUSH ("push", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/push", 1),
   /**
-   * maps an MEP User message to the second leg of an underlying two-way
-   * transport protocol, as a result of an ebMS Pull Signal sent over the first
-   * leg.
+   * maps an MEP User message to the second leg of an underlying two-way transport protocol, as a
+   * result of an ebMS Pull Signal sent over the first leg.
    */
   PULL ("pull", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pull", 1),
   /**
-   * maps an exchange of two User messages respectively to the first and second
-   * legs of a two-way underlying transport protocol.
+   * maps an exchange of two User messages respectively to the first and second legs of a two-way
+   * underlying transport protocol.
    */
   SYNC ("sync", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sync", 2),
   /**
-   * The Two-Way/Push-and-Push MEP composes the choreographies of two
-   * One-Way/Push MEPs in opposite directions, the User Message unit of the
-   * second referring to the User Message unit of the first via
-   * eb:RefToMessageId.
+   * The Two-Way/Push-and-Push MEP composes the choreographies of two One-Way/Push MEPs in opposite
+   * directions, the User Message unit of the second referring to the User Message unit of the first
+   * via eb:RefToMessageId.
    */
   PUSH_PUSH ("pushpush", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPush", 2),
   /**
-   * The Two-Way/Push-and-Pull MEP composes the choreography of a One-Way/Push
-   * MEP followed by the choreography of a One-Way/Pull MEP, both initiated from
-   * the same MSH (Initiator). The User Message unit in the "pulled" message
-   * must refer to the previously "pushed" User Message unit.
+   * The Two-Way/Push-and-Pull MEP composes the choreography of a One-Way/Push MEP followed by the
+   * choreography of a One-Way/Pull MEP, both initiated from the same MSH (Initiator). The User
+   * Message unit in the "pulled" message must refer to the previously "pushed" User Message unit.
    */
   PUSH_PULL ("pushpull", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPull", 2),
   /**
-   * The Two-Way/Pull-and-Push MEP composes the choreography of a One-Way/Pull
-   * MEP followed by the choreography of a One-Way/Push MEP, with both MEPs
-   * initiated from the same MSH. The User Message unit in the "pushed" message
-   * must refer to the previously "pulled" User Message unit.
+   * The Two-Way/Pull-and-Push MEP composes the choreography of a One-Way/Pull MEP followed by the
+   * choreography of a One-Way/Push MEP, with both MEPs initiated from the same MSH. The User
+   * Message unit in the "pushed" message must refer to the previously "pulled" User Message unit.
    */
   PULL_PUSH ("pullpush", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pullAndPush", 2);
 
@@ -104,8 +100,8 @@ public enum EMEPBinding implements IHasID <String>
   }
 
   /**
-   * @return <code>true</code> if the processing is synchronous (PUSH, PULL or
-   *         SYNC), <code>false</code> otherwise.
+   * @return <code>true</code> if the processing is synchronous (PUSH, PULL or SYNC),
+   *         <code>false</code> otherwise.
    * @see #isAsynchronous()
    */
   public boolean isSynchronous ()
@@ -114,8 +110,8 @@ public enum EMEPBinding implements IHasID <String>
   }
 
   /**
-   * @return <code>true</code> if the processing is asynchronous (PUSH_PUSH,
-   *         PUSH_PULL or PULL_PUSH), <code>false</code> otherwise.
+   * @return <code>true</code> if the processing is asynchronous (PUSH_PUSH, PUSH_PULL or
+   *         PULL_PUSH), <code>false</code> otherwise.
    * @see #isSynchronous()
    */
   public boolean isAsynchronous ()
@@ -124,8 +120,8 @@ public enum EMEPBinding implements IHasID <String>
   }
 
   /**
-   * @return <code>true</code> if initiator side has the asynchronous part of
-   *         the transfer (this == PUSH_PULL || this == PULL_PUSH)
+   * @return <code>true</code> if initiator side has the asynchronous part of the transfer (this ==
+   *         PUSH_PULL || this == PULL_PUSH)
    */
   public boolean isAsynchronousInitiator ()
   {

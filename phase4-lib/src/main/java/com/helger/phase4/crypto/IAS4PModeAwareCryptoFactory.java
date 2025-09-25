@@ -21,9 +21,9 @@ import com.helger.phase4.model.pmode.IPMode;
 import jakarta.annotation.Nonnull;
 
 /**
- * An extended {@link IAS4CryptoFactory} with the capability to receive a P-Mode
- * that was successfully resolved during reception phase. This information can
- * be used to provide P-Mode specific crypto information for decryption.<br>
+ * An extended {@link IAS4CryptoFactory} with the capability to receive a P-Mode that was
+ * successfully resolved during reception phase. This information can be used to provide P-Mode
+ * specific crypto information for decryption.<br>
  * Source: https://github.com/phax/phase4/pull/121
  *
  * @author Gregor Scholtysik
@@ -33,8 +33,8 @@ public interface IAS4PModeAwareCryptoFactory extends IAS4CryptoFactory
 {
   /**
    * Set the P-Mode in context.<br>
-   * This method is only called on reception side after successful resolving of
-   * the P-Mode from the incoming ebms information.
+   * This method is only called on reception side after successful resolving of the P-Mode from the
+   * incoming ebms information.
    *
    * @param pMode
    *        the P-Mode resolved during reception

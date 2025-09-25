@@ -69,8 +69,8 @@ public final class PModeLegJsonConverter
                                                                          : PModeLegBusinessInformationJsonConverter.convertToNative (aBI);
 
     final IJsonObject aEH = aElement.getAsObject (ERROR_HANDLING);
-    final PModeLegErrorHandling aErrorHandling = aEH == null ? null : PModeLegErrorHandlingJsonConverter
-                                                                                                        .convertToNative (aEH);
+    final PModeLegErrorHandling aErrorHandling = aEH == null ? null
+                                                             : PModeLegErrorHandlingJsonConverter.convertToNative (aEH);
 
     final IJsonObject aR = aElement.getAsObject (RELIABILITY);
     final PModeLegReliability aReliability = aR == null ? null : PModeLegReliabilityJsonConverter.convertToNative (aR);

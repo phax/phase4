@@ -23,9 +23,8 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.ObjectFactory;
 
 /**
- * Marshaller for {@link Ebms3SignalMessage} objects. This should only simplify
- * the logging of returned signal messages but it is in itself not a valid Ebms3
- * message.
+ * Marshaller for {@link Ebms3SignalMessage} objects. This should only simplify the logging of
+ * returned signal messages but it is in itself not a valid Ebms3 message.
  *
  * @author Philip Helger
  * @since 2.7.5

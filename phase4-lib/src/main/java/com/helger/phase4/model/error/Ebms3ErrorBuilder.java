@@ -79,10 +79,10 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
   @Nonnull
   public Ebms3ErrorBuilder description (@Nullable final String s, @Nullable final Locale aLocale)
   {
-    return description (StringHelper.isEmpty (s) ? null : MessageHelperMethods.createEbms3Description (aLocale == null
-                                                                                                                         ? Locale.US
-                                                                                                                         : aLocale,
-                                                                                                         s));
+    return description (StringHelper.isEmpty (s) ? null
+                                                 : MessageHelperMethods.createEbms3Description (aLocale == null ? Locale.US
+                                                                                                                : aLocale,
+                                                                                                s));
   }
 
   @Nonnull

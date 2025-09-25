@@ -58,139 +58,127 @@ public class PModeLegSecurity implements Serializable
   public static final boolean DEFAULT_SEND_RECEIPT_NON_REPUDIATION = false;
 
   /**
-   * This parameter has two possible values, 1.0 and 1.1. The value of this
-   * parameter represents the version of WS-Security to be used.
+   * This parameter has two possible values, 1.0 and 1.1. The value of this parameter represents the
+   * version of WS-Security to be used.
    */
   private EWSSVersion m_eWSSVersion;
 
   /**
-   * The value of this parameter is a list of the names of XML elements (inside
-   * the SOAP envelope) that should be signed, as well as whether or not
-   * attachments should also be signed. The list is represented in two sublists
-   * that extend this parameter: Sign.Element[] and Sign.Attachment[]. An
-   * element within the Element[] list could be specified either by its XML name
-   * or by its qualified name (its XML name and the namespace to which it
-   * belongs). An element within the Attachment[] list is identified by the
-   * Content-Id.
+   * The value of this parameter is a list of the names of XML elements (inside the SOAP envelope)
+   * that should be signed, as well as whether or not attachments should also be signed. The list is
+   * represented in two sublists that extend this parameter: Sign.Element[] and Sign.Attachment[].
+   * An element within the Element[] list could be specified either by its XML name or by its
+   * qualified name (its XML name and the namespace to which it belongs). An element within the
+   * Attachment[] list is identified by the Content-Id.
    */
   private final ICommonsList <String> m_aX509SignElements = new CommonsArrayList <> ();
   private final ICommonsList <String> m_aX509SignAttachments = new CommonsArrayList <> ();
 
   /**
-   * The value of this parameter identifies the public certificate to use when
-   * verifying signed data.
+   * The value of this parameter identifies the public certificate to use when verifying signed
+   * data.
    */
   private String m_sX509SignatureCertificate;
 
   /**
-   * The value of this parameter identifies the algorithm that is used to
-   * compute the digest of the message being signed. The definitions for these
-   * values are in the [XMLDSIG] specification.
+   * The value of this parameter identifies the algorithm that is used to compute the digest of the
+   * message being signed. The definitions for these values are in the [XMLDSIG] specification.
    */
   private ECryptoAlgorithmSignDigest m_eX509SignatureHashFunction;
 
   /**
-   * The value of this parameter identifies the algorithm that is used to
-   * compute the value of the digital signature. The definitions for these
-   * values are found in the [XMLDSIG] or [XMLENC] specifications.
+   * The value of this parameter identifies the algorithm that is used to compute the value of the
+   * digital signature. The definitions for these values are found in the [XMLDSIG] or [XMLENC]
+   * specifications.
    */
   private ECryptoAlgorithmSign m_eX509SignatureAlgorithm;
 
   /**
-   * The value of this parameter lists the names of XML elements (inside the
-   * SOAP envelope) that should be encrypted, as well as whether or not
-   * attachments should also be encrypted. The list is represented in two
-   * sublists that extend this parameter: Encrypt.Element[] and
-   * Encrypt.Attachment[]. An element within these lists is identified as in
-   * Security.X509.Sign lists.
+   * The value of this parameter lists the names of XML elements (inside the SOAP envelope) that
+   * should be encrypted, as well as whether or not attachments should also be encrypted. The list
+   * is represented in two sublists that extend this parameter: Encrypt.Element[] and
+   * Encrypt.Attachment[]. An element within these lists is identified as in Security.X509.Sign
+   * lists.
    */
   private final ICommonsList <String> m_aX509EncryptionEncryptElements = new CommonsArrayList <> ();
   private final ICommonsList <String> m_aX509EncryptionEncryptAttachments = new CommonsArrayList <> ();
 
   /**
-   * The value of this parameter identifies the public certificate to use when
-   * encrypting data.
+   * The value of this parameter identifies the public certificate to use when encrypting data.
    */
   private String m_sX509EncryptionCertificate;
 
   /**
-   * The value of this parameter identifies the encryption algorithm to be used.
-   * The definitions for these values are found in the [XMLENC] specification.
+   * The value of this parameter identifies the encryption algorithm to be used. The definitions for
+   * these values are found in the [XMLENC] specification.
    */
   private ECryptoAlgorithmCrypt m_eX509EncryptionAlgorithm;
 
   /**
-   * The integer value of this parameter describes the effective strength the
-   * encryption algorithm MUST provide in terms of "effective" or random bits.
-   * The value is less than the key length in bits when check bits are used in
-   * the key. So, for example the 8 check bits of a 64-bit DES key would not be
-   * included in the count, and to require a minimum strength the same as
-   * supplied by DES would be reported by setting MinimumStrength to 56.
+   * The integer value of this parameter describes the effective strength the encryption algorithm
+   * MUST provide in terms of "effective" or random bits. The value is less than the key length in
+   * bits when check bits are used in the key. So, for example the 8 check bits of a 64-bit DES key
+   * would not be included in the count, and to require a minimum strength the same as supplied by
+   * DES would be reported by setting MinimumStrength to 56.
    */
   private Integer m_aX509EncryptionMinimumStrength;
 
   /**
-   * The value of this parameter is the username to include in a WSS Username
-   * Token.
+   * The value of this parameter is the username to include in a WSS Username Token.
    */
   private String m_sUsernameTokenUsername;
 
   /**
-   * The value of this parameter is the password to use inside a WSS Username
-   * Token.
+   * The value of this parameter is the password to use inside a WSS Username Token.
    */
   private String m_sUsernameTokenPassword;
 
   /**
-   * The Boolean value of this parameter indicates whether a password digest
-   * should be included in the WSS UsernameToken element.
+   * The Boolean value of this parameter indicates whether a password digest should be included in
+   * the WSS UsernameToken element.
    */
   private ETriState m_eUsernameTokenDigest = ETriState.UNDEFINED;
 
   /**
-   * The Boolean value of this parameter indicates whether the WSS UsernameToken
-   * element should contain a Nonce element.
+   * The Boolean value of this parameter indicates whether the WSS UsernameToken element should
+   * contain a Nonce element.
    */
   private ETriState m_eUsernameTokenNonce = ETriState.UNDEFINED;
 
   /**
-   * The Boolean value of this parameter indicates whether the WSS UsernameToken
-   * element should have a Created timestamp element.
+   * The Boolean value of this parameter indicates whether the WSS UsernameToken element should have
+   * a Created timestamp element.
    */
   private ETriState m_eUsernameTokenCreated = ETriState.UNDEFINED;
 
   /**
-   * The Boolean value of this parameter indicates whether messages on this MEP
-   * leg must be authorized for processing under this P-Mode. If the parameter
-   * is "true" this implies that either
-   * PMode.Responder.Authorization.{username/password}, if the message is sent
-   * by Responder, or PMode.Initiator.Authorization if the message is sent by
-   * Initiator, must be used for this purpose, as specified in Section 7.10. For
-   * example, when set to "true" for a PullRequest message sent by the
-   * Initiator, the pulling will only be authorized over the MPC indicated by
-   * this Pull signal if (a) the MPC is the same as specified in the P-Mode leg
-   * for the pulled message , and (b) the signal contains the right credentials
-   * (e.g. username/password).
+   * The Boolean value of this parameter indicates whether messages on this MEP leg must be
+   * authorized for processing under this P-Mode. If the parameter is "true" this implies that
+   * either PMode.Responder.Authorization.{username/password}, if the message is sent by Responder,
+   * or PMode.Initiator.Authorization if the message is sent by Initiator, must be used for this
+   * purpose, as specified in Section 7.10. For example, when set to "true" for a PullRequest
+   * message sent by the Initiator, the pulling will only be authorized over the MPC indicated by
+   * this Pull signal if (a) the MPC is the same as specified in the P-Mode leg for the pulled
+   * message , and (b) the signal contains the right credentials (e.g. username/password).
    */
   private ETriState m_ePModeAuthorize = ETriState.UNDEFINED;
 
   /**
-   * The Boolean value of this parameter indicates whether a signed receipt
-   * (Receipt ebMS signal) containing a digest of the message must be sent back.
+   * The Boolean value of this parameter indicates whether a signed receipt (Receipt ebMS signal)
+   * containing a digest of the message must be sent back.
    */
   private ETriState m_eSendReceipt = ETriState.UNDEFINED;
 
   /**
-   * This parameter indicates whether the Receipt signal is to be sent as a
-   * callback (value "callback"), or synchronously in the back-channel response
-   * (value "response"). If not present, any pattern may be used.
+   * This parameter indicates whether the Receipt signal is to be sent as a callback (value
+   * "callback"), or synchronously in the back-channel response (value "response"). If not present,
+   * any pattern may be used.
    */
   private EPModeSendReceiptReplyPattern m_eSendReceiptReplyPattern;
 
   /**
-   * This parameter indicates, that if a Receipt signal is to be sent, whether
-   * the Non-Repudiation of receipt information should be included in the
-   * Receipt signal or not.
+   * This parameter indicates, that if a Receipt signal is to be sent, whether the Non-Repudiation
+   * of receipt information should be included in the Receipt signal or not.
    */
   private ETriState m_eSendReceiptNonRepudiation = ETriState.UNDEFINED;
 
@@ -250,8 +238,7 @@ public class PModeLegSecurity implements Serializable
   }
 
   /**
-   * @return <code>true</code> if a WS Security version is defined,
-   *         <code>false</code> if not.
+   * @return <code>true</code> if a WS Security version is defined, <code>false</code> if not.
    */
   public final boolean hasWSSVersion ()
   {
@@ -259,8 +246,7 @@ public class PModeLegSecurity implements Serializable
   }
 
   /**
-   * @return The WS Security version string to use or <code>null</code> if none
-   *         is defined.
+   * @return The WS Security version string to use or <code>null</code> if none is defined.
    */
   @Nullable
   public final String getWSSVersionAsString ()
@@ -806,25 +792,25 @@ public class PModeLegSecurity implements Serializable
       return false;
     final PModeLegSecurity rhs = (PModeLegSecurity) o;
     return EqualsHelper.equals (m_eWSSVersion, rhs.m_eWSSVersion) &&
-           EqualsHelper.equals (m_aX509SignElements, rhs.m_aX509SignElements) &&
-           EqualsHelper.equals (m_aX509SignAttachments, rhs.m_aX509SignAttachments) &&
-           EqualsHelper.equals (m_sX509SignatureCertificate, rhs.m_sX509SignatureCertificate) &&
-           EqualsHelper.equals (m_eX509SignatureHashFunction, rhs.m_eX509SignatureHashFunction) &&
-           EqualsHelper.equals (m_eX509SignatureAlgorithm, rhs.m_eX509SignatureAlgorithm) &&
-           EqualsHelper.equals (m_aX509EncryptionEncryptElements, rhs.m_aX509EncryptionEncryptElements) &&
-           EqualsHelper.equals (m_aX509EncryptionEncryptAttachments, rhs.m_aX509EncryptionEncryptAttachments) &&
-           EqualsHelper.equals (m_sX509EncryptionCertificate, rhs.m_sX509EncryptionCertificate) &&
-           EqualsHelper.equals (m_eX509EncryptionAlgorithm, rhs.m_eX509EncryptionAlgorithm) &&
-           EqualsHelper.equals (m_aX509EncryptionMinimumStrength, rhs.m_aX509EncryptionMinimumStrength) &&
-           EqualsHelper.equals (m_sUsernameTokenUsername, rhs.m_sUsernameTokenUsername) &&
-           EqualsHelper.equals (m_sUsernameTokenPassword, rhs.m_sUsernameTokenPassword) &&
-           EqualsHelper.equals (m_eUsernameTokenDigest, rhs.m_eUsernameTokenDigest) &&
-           EqualsHelper.equals (m_eUsernameTokenNonce, rhs.m_eUsernameTokenNonce) &&
-           EqualsHelper.equals (m_eUsernameTokenCreated, rhs.m_eUsernameTokenCreated) &&
-           EqualsHelper.equals (m_ePModeAuthorize, rhs.m_ePModeAuthorize) &&
-           EqualsHelper.equals (m_eSendReceipt, rhs.m_eSendReceipt) &&
-           EqualsHelper.equals (m_eSendReceiptReplyPattern, rhs.m_eSendReceiptReplyPattern) &&
-           EqualsHelper.equals (m_eSendReceiptNonRepudiation, rhs.m_eSendReceiptNonRepudiation);
+      EqualsHelper.equals (m_aX509SignElements, rhs.m_aX509SignElements) &&
+      EqualsHelper.equals (m_aX509SignAttachments, rhs.m_aX509SignAttachments) &&
+      EqualsHelper.equals (m_sX509SignatureCertificate, rhs.m_sX509SignatureCertificate) &&
+      EqualsHelper.equals (m_eX509SignatureHashFunction, rhs.m_eX509SignatureHashFunction) &&
+      EqualsHelper.equals (m_eX509SignatureAlgorithm, rhs.m_eX509SignatureAlgorithm) &&
+      EqualsHelper.equals (m_aX509EncryptionEncryptElements, rhs.m_aX509EncryptionEncryptElements) &&
+      EqualsHelper.equals (m_aX509EncryptionEncryptAttachments, rhs.m_aX509EncryptionEncryptAttachments) &&
+      EqualsHelper.equals (m_sX509EncryptionCertificate, rhs.m_sX509EncryptionCertificate) &&
+      EqualsHelper.equals (m_eX509EncryptionAlgorithm, rhs.m_eX509EncryptionAlgorithm) &&
+      EqualsHelper.equals (m_aX509EncryptionMinimumStrength, rhs.m_aX509EncryptionMinimumStrength) &&
+      EqualsHelper.equals (m_sUsernameTokenUsername, rhs.m_sUsernameTokenUsername) &&
+      EqualsHelper.equals (m_sUsernameTokenPassword, rhs.m_sUsernameTokenPassword) &&
+      EqualsHelper.equals (m_eUsernameTokenDigest, rhs.m_eUsernameTokenDigest) &&
+      EqualsHelper.equals (m_eUsernameTokenNonce, rhs.m_eUsernameTokenNonce) &&
+      EqualsHelper.equals (m_eUsernameTokenCreated, rhs.m_eUsernameTokenCreated) &&
+      EqualsHelper.equals (m_ePModeAuthorize, rhs.m_ePModeAuthorize) &&
+      EqualsHelper.equals (m_eSendReceipt, rhs.m_eSendReceipt) &&
+      EqualsHelper.equals (m_eSendReceiptReplyPattern, rhs.m_eSendReceiptReplyPattern) &&
+      EqualsHelper.equals (m_eSendReceiptNonRepudiation, rhs.m_eSendReceiptNonRepudiation);
   }
 
   @Override

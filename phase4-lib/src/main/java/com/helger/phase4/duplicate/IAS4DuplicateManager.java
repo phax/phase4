@@ -36,8 +36,7 @@ import jakarta.annotation.Nullable;
 public interface IAS4DuplicateManager
 {
   /**
-   * @return <code>true</code> if there are no entries contained,
-   *         <code>false</code> otherwise.
+   * @return <code>true</code> if there are no entries contained, <code>false</code> otherwise.
    */
   boolean isEmpty ();
 
@@ -71,13 +70,12 @@ public interface IAS4DuplicateManager
    * @param sMessageID
    *        Message ID to check. May be <code>null</code>.
    * @param sProfileID
-   *        Active AS4 profile ID. May be used to define the PMode further. May
-   *        be <code>null</code>.
+   *        Active AS4 profile ID. May be used to define the PMode further. May be
+   *        <code>null</code>.
    * @param sPModeID
    *        Active AS4 PMode ID. May be <code>null</code>.
-   * @return {@link EContinue#CONTINUE} to continue processing a message,
-   *         because it is no duplicate. {@link EContinue#BREAK} if it was
-   *         determined as a duplicate.
+   * @return {@link EContinue#CONTINUE} to continue processing a message, because it is no
+   *         duplicate. {@link EContinue#BREAK} if it was determined as a duplicate.
    */
   @Nonnull
   EContinue registerAndCheck (@Nullable String sMessageID, @Nullable String sProfileID, @Nullable String sPModeID);

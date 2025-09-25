@@ -17,8 +17,8 @@
 package com.helger.phase4.crypto;
 
 /**
- * Defines the basic crypto operation mode - either signing and encrypting or
- * signature verifying and decrypting.
+ * Defines the basic crypto operation mode - either signing and encrypting or signature verifying
+ * and decrypting.
  *
  * @author Philip Helger
  * @since 2.4.0

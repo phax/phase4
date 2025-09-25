@@ -38,13 +38,11 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * A property is a data structure that consists of four values: the property
- * name, which can be used as an identifier of the property (e.g. a required
- * property named "messagetype" can be noted as:
- * <code>Properties[messagetype].required="true"</code>); the property
- * description; the property data type; and a Boolean value, indicating whether
- * the property is expected or optional, within the User message. This parameter
- * controls the contents of the element
+ * A property is a data structure that consists of four values: the property name, which can be used
+ * as an identifier of the property (e.g. a required property named "messagetype" can be noted as:
+ * <code>Properties[messagetype].required="true"</code>); the property description; the property
+ * data type; and a Boolean value, indicating whether the property is expected or optional, within
+ * the User message. This parameter controls the contents of the element
  * <code>eb:Messaging/eb:UserMessage/eb:MessageProperties.</code>
  *
  * @author Philip Helger
@@ -137,8 +135,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   }
 
   /**
-   * @return The PMode property data type. May neither be <code>null</code> nor
-   *         empty.
+   * @return The PMode property data type. May neither be <code>null</code> nor empty.
    */
   @Nonnull
   @Nonempty
@@ -167,8 +164,8 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   }
 
   /**
-   * @return <code>true</code> if the PMode property is mandatory,
-   *         <code>false</code> if it is optional.
+   * @return <code>true</code> if the PMode property is mandatory, <code>false</code> if it is
+   *         optional.
    */
   public final boolean isMandatory ()
   {
@@ -176,8 +173,8 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   }
 
   /**
-   * @return <code>true</code> if the PMode property is optional,
-   *         <code>false</code> if it is mandatory.
+   * @return <code>true</code> if the PMode property is optional, <code>false</code> if it is
+   *         mandatory.
    */
   @Override
   public final boolean isOptional ()
@@ -226,9 +223,9 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
       return false;
     final PModeProperty rhs = (PModeProperty) o;
     return m_sName.equals (rhs.m_sName) &&
-           EqualsHelper.equals (m_sDescription, rhs.m_sDescription) &&
-           m_sDataType.equals (rhs.m_sDataType) &&
-           m_eMandatory.equals (rhs.m_eMandatory);
+      EqualsHelper.equals (m_sDescription, rhs.m_sDescription) &&
+      m_sDataType.equals (rhs.m_sDataType) &&
+      m_eMandatory.equals (rhs.m_eMandatory);
   }
 
   @Override

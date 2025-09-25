@@ -20,8 +20,8 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * phase4 base runtime exception. It is just a in-between exception for easy
- * catching of all phase4 related runtime exceptions.
+ * phase4 base runtime exception. It is just a in-between exception for easy catching of all phase4
+ * related runtime exceptions.
  *
  * @author Philip Helger
  * @since 3.0.1

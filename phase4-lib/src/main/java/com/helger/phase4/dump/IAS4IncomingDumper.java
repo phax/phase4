@@ -34,30 +34,28 @@ import jakarta.annotation.Nullable;
 public interface IAS4IncomingDumper
 {
   /**
-   * Called for new incoming AS4 requests. It's the responsibility of the caller
-   * to close the created output stream.
+   * Called for new incoming AS4 requests. It's the responsibility of the caller to close the
+   * created output stream.
    *
    * @param aIncomingMessageMetadata
    *        Message metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaderMap
    *        The HTTP headers of the request. Never <code>null</code>.
-   * @return If <code>null</code> is returned, nothing is dumped, else each byte
-   *         read from the source stream is written to that output stream. The
-   *         OutputStream must be closed by the caller.
+   * @return If <code>null</code> is returned, nothing is dumped, else each byte read from the
+   *         source stream is written to that output stream. The OutputStream must be closed by the
+   *         caller.
    * @throws IOException
    *         in case of an error
-   * @since v0.9.6 the parameter changed from HttpServletRequest to
-   *        {@link HttpHeaderMap}
+   * @since v0.9.6 the parameter changed from HttpServletRequest to {@link HttpHeaderMap}
    */
   @Nullable
   OutputStream onNewRequest (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                              @Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
 
   /**
-   * Called after the AS4 request is handled internally. Can e.g. be used to
-   * cleanup resources belonging to the message. This method may not throw an
-   * exception. Since 1.3.0 this method is only called, if
-   * {@link #onNewRequest(IAS4IncomingMessageMetadata, HttpHeaderMap)} returned
+   * Called after the AS4 request is handled internally. Can e.g. be used to cleanup resources
+   * belonging to the message. This method may not throw an exception. Since 1.3.0 this method is
+   * only called, if {@link #onNewRequest(IAS4IncomingMessageMetadata, HttpHeaderMap)} returned
    * non-<code>null</code>.
    *
    * @param aIncomingMessageMetadata
@@ -66,5 +64,6 @@ public interface IAS4IncomingDumper
    *        An eventually caught exception.
    * @since v0.9.9
    */
-  void onEndRequest (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata, @Nullable Exception aCaughtException);
+  void onEndRequest (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                     @Nullable Exception aCaughtException);
 }

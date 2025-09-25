@@ -167,8 +167,8 @@ public class HttpRetrySettings
       return false;
     final HttpRetrySettings rhs = (HttpRetrySettings) o;
     return m_nMaxRetries == rhs.m_nMaxRetries &&
-           m_aDurationBeforeRetry.equals (rhs.m_aDurationBeforeRetry) &&
-           EqualsHelper.equals (m_aRetryIncreaseFactor, rhs.m_aRetryIncreaseFactor);
+      m_aDurationBeforeRetry.equals (rhs.m_aDurationBeforeRetry) &&
+      EqualsHelper.equals (m_aRetryIncreaseFactor, rhs.m_aRetryIncreaseFactor);
   }
 
   @Override

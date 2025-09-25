@@ -183,8 +183,8 @@ public final class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
-                                                                                                             .getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
+                                                                           : AS4DumpManager.getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -591,10 +591,10 @@ public final class AS4IncomingHandler
         // href
         final Ebms3PartInfo aPartInfo = CollectionFind.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
                                                                   x -> x.getHref () != null &&
-                                                                       (x.getHref ().equals (sAttachmentContentID) ||
-                                                                        x.getHref ()
-                                                                         .equals (MessageHelperMethods.PREFIX_CID +
-                                                                                  sAttachmentContentID)));
+                                                                    (x.getHref ().equals (sAttachmentContentID) ||
+                                                                      x.getHref ()
+                                                                       .equals (MessageHelperMethods.PREFIX_CID +
+                                                                                sAttachmentContentID)));
         if (aPartInfo != null && aPartInfo.getPartProperties () != null)
         {
           // Find "MimeType" property

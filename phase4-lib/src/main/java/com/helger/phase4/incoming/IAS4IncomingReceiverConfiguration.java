@@ -27,8 +27,8 @@ import jakarta.annotation.Nullable;
 public interface IAS4IncomingReceiverConfiguration
 {
   /**
-   * Get the URL of this receiving AS4 endpoint. This is used e.g. to resolve a
-   * PMode and use the correct address.
+   * Get the URL of this receiving AS4 endpoint. This is used e.g. to resolve a PMode and use the
+   * correct address.
    *
    * @return The URL of the receiving AS4 endpoint.
    */

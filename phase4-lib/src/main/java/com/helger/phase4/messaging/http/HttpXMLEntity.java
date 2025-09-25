@@ -26,8 +26,8 @@ import com.helger.phase4.util.AS4XMLHelper;
 import jakarta.annotation.Nonnull;
 
 /**
- * Special HttpClient HTTP POST entity that contains a DOM Node as a serialized
- * String. This entity is repeatable.
+ * Special HttpClient HTTP POST entity that contains a DOM Node as a serialized String. This entity
+ * is repeatable.
  *
  * @author Philip Helger
  */

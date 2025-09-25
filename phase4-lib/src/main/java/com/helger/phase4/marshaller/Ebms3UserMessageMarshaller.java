@@ -23,8 +23,8 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.ebms3header.ObjectFactory;
 
 /**
- * Marshaller for {@link Ebms3UserMessage} objects. This should only simplify
- * the logging of user messages but it is in itself not a valid Ebms3 message.
+ * Marshaller for {@link Ebms3UserMessage} objects. This should only simplify the logging of user
+ * messages but it is in itself not a valid Ebms3 message.
  *
  * @author Philip Helger
  * @since 3.0.0

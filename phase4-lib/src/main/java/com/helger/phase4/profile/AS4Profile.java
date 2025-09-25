@@ -53,15 +53,14 @@ public class AS4Profile implements IAS4Profile
    * @param sDisplayName
    *        Profile display name. May neither be <code>null</code> nor empty.
    * @param aProfileValidatorProvider
-   *        Profile validator supplier. May not be <code>null</code>. The
-   *        supplier may supply <code>null</code> values.
+   *        Profile validator supplier. May not be <code>null</code>. The supplier may supply
+   *        <code>null</code> values.
    * @param aDefaultPModeProvider
    *        Default PMode supplier. May not be <code>null</code>.
    * @param aPModeIDProvider
    *        PMode ID provider. May not be <code>null</code>.
    * @param bDeprecated
-   *        <code>true</code> if the profile is deprecated, <code>false</code>
-   *        if not.
+   *        <code>true</code> if the profile is deprecated, <code>false</code> if not.
    * @param bInvokeSPIForPingMessage
    *        <code>true</code> to invoke the custom SPI handler for received
    */

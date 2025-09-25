@@ -43,20 +43,18 @@ public final class AS4KeyStoreDescriptor
   {}
 
   /**
-   * Create the key store descriptor from the default configuration item. The
-   * following configuration properties are used, relative to the default
-   * configuration prefix:
+   * Create the key store descriptor from the default configuration item. The following
+   * configuration properties are used, relative to the default configuration prefix:
    * <ul>
    * <li><code>keystore.type</code> - the key store type</li>
    * <li><code>keystore.file</code> - the key store path</li>
    * <li><code>keystore.password</code> - the key store password</li>
    * <li><code>keystore.alias</code> - the key store alias</li>
-   * <li><code>keystore.private.password</code> - the key store key
-   * password</li>
+   * <li><code>keystore.private.password</code> - the key store key password</li>
    * </ul>
    *
-   * @return A new {@link KeyStoreAndKeyDescriptor} object or <code>null</code>
-   *         if a mandatory element is missing.
+   * @return A new {@link KeyStoreAndKeyDescriptor} object or <code>null</code> if a mandatory
+   *         element is missing.
    */
   @Nullable
   public static KeyStoreAndKeyDescriptor createFromConfig ()
@@ -65,28 +63,26 @@ public final class AS4KeyStoreDescriptor
   }
 
   /**
-   * Create the key store descriptor from the provided configuration item. The
-   * following configuration properties are used, relative to the configuration
-   * prefix:
+   * Create the key store descriptor from the provided configuration item. The following
+   * configuration properties are used, relative to the configuration prefix:
    * <ul>
    * <li><code>keystore.type</code> - the key store type</li>
    * <li><code>keystore.file</code> - the key store path</li>
    * <li><code>keystore.password</code> - the key store password</li>
    * <li><code>keystore.alias</code> - the key store alias</li>
-   * <li><code>keystore.private.password</code> - the key store key
-   * password</li>
+   * <li><code>keystore.private.password</code> - the key store key password</li>
    * </ul>
    *
    * @param aConfig
    *        The configuration object to be used. May not be <code>null</code>.
    * @param sConfigPrefix
-   *        The configuration prefix to be used. May neither be
-   *        <code>null</code> nor empty and must end with a dot ('.').
+   *        The configuration prefix to be used. May neither be <code>null</code> nor empty and must
+   *        end with a dot ('.').
    * @param aProvider
-   *        The Java security provider for loading the key store. May be
-   *        <code>null</code> to use the default.
-   * @return A new {@link KeyStoreAndKeyDescriptor} object or <code>null</code>
-   *         if a mandatory element is missing.
+   *        The Java security provider for loading the key store. May be <code>null</code> to use
+   *        the default.
+   * @return A new {@link KeyStoreAndKeyDescriptor} object or <code>null</code> if a mandatory
+   *         element is missing.
    */
   @Nullable
   public static KeyStoreAndKeyDescriptor createFromConfig (@Nonnull final IConfigWithFallback aConfig,

@@ -50,8 +50,8 @@ public final class AS4ServerInitializer
   {}
 
   /**
-   * Call this method in your AS4 server to initialize everything that is
-   * necessary to use initialize AS4 message receiving.
+   * Call this method in your AS4 server to initialize everything that is necessary to use
+   * initialize AS4 message receiving.
    */
   public static void initAS4Server ()
   {

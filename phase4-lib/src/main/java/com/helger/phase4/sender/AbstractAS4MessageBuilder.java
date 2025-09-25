@@ -134,15 +134,14 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the HTTP poster to be used. This is a very low level API and should
-   * only be used if you know what you are doing! It allows you to overwrite how
-   * the message is sent over the wire.<br>
+   * Set the HTTP poster to be used. This is a very low level API and should only be used if you
+   * know what you are doing! It allows you to overwrite how the message is sent over the wire.<br>
    * Note: if this method is used with a non-<code>null</code> parameter,
    * {@link #httpClientFactory()} becomes useless
    *
    * @param aCustomHttpPoster
-   *        The new HTTP poster to be used. May be <code>null</code> which means
-   *        "use the default" poster.
+   *        The new HTTP poster to be used. May be <code>null</code> which means "use the default"
+   *        poster.
    * @return this for chaining
    * @since 1.3.10
    */
@@ -154,8 +153,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link HttpClientFactory}. May be
-   *         <code>null</code>.
+   * @return The currently set {@link HttpClientFactory}. May be <code>null</code>.
    */
   @Nullable
   public final HttpClientFactory httpClientFactory ()
@@ -164,9 +162,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the HTTP client factory to be used. If the passed settings are
-   * non-<code>null</code>, a new {@link HttpClientFactory} is created with
-   * them, else a <code>null</code>-{@link HttpClientFactory} is set.
+   * Set the HTTP client factory to be used. If the passed settings are non-<code>null</code>, a new
+   * {@link HttpClientFactory} is created with them, else a
+   * <code>null</code>-{@link HttpClientFactory} is set.
    *
    * @param aHttpClientSettings
    *        The new HTTP client settings to be used. May be <code>null</code>.
@@ -180,8 +178,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   /**
    * Set the HTTP client factory to be used. By default a default instance of
-   * {@link HttpClientFactory} is used (set in the constructor) and there is no
-   * need to invoke this method.
+   * {@link HttpClientFactory} is used (set in the constructor) and there is no need to invoke this
+   * method.
    *
    * @param aHttpClientFactory
    *        The new HTTP client factory to be used. May be <code>null</code>.
@@ -195,8 +193,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link IAS4CryptoFactory} for signing. May be
-   *         <code>null</code>.
+   * @return The currently set {@link IAS4CryptoFactory} for signing. May be <code>null</code>.
    * @see #cryptoFactoryCrypt()
    * @since 2.2.0
    */
@@ -207,9 +204,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the crypto factory to be used for signing. The default crypto factory
-   * is set in the constructor to
-   * {@link AS4CryptoFactoryConfiguration#getDefaultInstance()}.
+   * Set the crypto factory to be used for signing. The default crypto factory is set in the
+   * constructor to {@link AS4CryptoFactoryConfiguration#getDefaultInstance()}.
    *
    * @param aCryptoFactorySign
    *        The crypto factory to be used. May be <code>null</code>.
@@ -224,8 +220,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link IAS4CryptoFactory} for crypting. May be
-   *         <code>null</code>.
+   * @return The currently set {@link IAS4CryptoFactory} for crypting. May be <code>null</code>.
    * @see #cryptoFactorySign()
    * @since 2.2.0
    */
@@ -236,9 +231,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the crypto factory to be used for crypting. The default crypto factory
-   * is set in the constructor to
-   * {@link AS4CryptoFactoryConfiguration#getDefaultInstanceOrNull()}.
+   * Set the crypto factory to be used for crypting. The default crypto factory is set in the
+   * constructor to {@link AS4CryptoFactoryConfiguration#getDefaultInstanceOrNull()}.
    *
    * @param aCryptoFactoryCrypt
    *        The crypto factory to be used. May be <code>null</code>.
@@ -253,9 +247,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the crypto factory to be used for signing and crypting. The default
-   * crypto factory is set in the constructor to
-   * {@link AS4CryptoFactoryConfiguration#getDefaultInstanceOrNull()}.
+   * Set the crypto factory to be used for signing and crypting. The default crypto factory is set
+   * in the constructor to {@link AS4CryptoFactoryConfiguration#getDefaultInstanceOrNull()}.
    *
    * @param aCryptoFactory
    *        The crypto factory to be used. May be <code>null</code>.
@@ -272,8 +265,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   /**
    * Get the mutable AS4 signing parameters.
    *
-   * @return The AS4 signing parameters to use for this message. Never
-   *         <code>null</code>.
+   * @return The AS4 signing parameters to use for this message. Never <code>null</code>.
    * @see #withSigningParams(Consumer)
    * @see #cryptParams()
    * @see #withCryptParams(Consumer)
@@ -287,12 +279,12 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Modify the AS4 signing parameters for this message. This is a version that
-   * maintains chainability of the API.
+   * Modify the AS4 signing parameters for this message. This is a version that maintains
+   * chainability of the API.
    *
    * @param aConsumer
-   *        Consumer for the AS4 signing parameters to use for this message.
-   *        Must not be <code>null</code>.
+   *        Consumer for the AS4 signing parameters to use for this message. Must not be
+   *        <code>null</code>.
    * @return this for chaining
    * @see #signingParams()
    * @see #cryptParams()
@@ -312,8 +304,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   /**
    * Get the mutable AS4 crypt parameters.
    *
-   * @return The AS4 crypt parameters to use for this message. Never
-   *         <code>null</code>.
+   * @return The AS4 crypt parameters to use for this message. Never <code>null</code>.
    * @see #signingParams()
    * @see #withSigningParams(Consumer)
    * @see #withCryptParams(Consumer)
@@ -327,12 +318,12 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Modify the AS4 crypt parameters for this message. This is a version that
-   * maintains chainability of the API.
+   * Modify the AS4 crypt parameters for this message. This is a version that maintains chainability
+   * of the API.
    *
    * @param aConsumer
-   *        Consumer for the AS4 crypt parameters to use for this message. Must
-   *        not be <code>null</code>.
+   *        Consumer for the AS4 crypt parameters to use for this message. Must not be
+   *        <code>null</code>.
    * @return this for chaining
    * @see #signingParams()
    * @see #withSigningParams(Consumer)
@@ -350,8 +341,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The specific AS4 message ID to use. May be <code>null</code> if a
-   *         random one should be generated.
+   * @return The specific AS4 message ID to use. May be <code>null</code> if a random one should be
+   *         generated.
    * @since 3.0.0
    */
   @Nullable
@@ -361,8 +352,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the optional AS4 message ID. If this field is not set, a random message
-   * ID is created.
+   * Set the optional AS4 message ID. If this field is not set, a random message ID is created.
    *
    * @param sMessageID
    *        The optional AS4 message ID to be used. May be <code>null</code>.
@@ -376,8 +366,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The optional AS4 reference to a previous message ID. May be
-   *         <code>null</code>.
+   * @return The optional AS4 reference to a previous message ID. May be <code>null</code>.
    * @since 3.0.0
    */
   @Nullable
@@ -387,12 +376,12 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the optional AS4 reference to a previous message ID. If this field is
-   * not set, it will not be emitted in the message.
+   * Set the optional AS4 reference to a previous message ID. If this field is not set, it will not
+   * be emitted in the message.
    *
    * @param sRefToMessageID
-   *        The optional AS4 reference to a previous message ID to be used. May
-   *        be <code>null</code>.
+   *        The optional AS4 reference to a previous message ID to be used. May be
+   *        <code>null</code>.
    * @return this for chaining
    * @since 1.3.2
    */
@@ -414,8 +403,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the optional sending date time. If no time is specified, the current
-   * date time will be used.
+   * Set the optional sending date time. If no time is specified, the current date time will be
+   * used.
    *
    * @param aSendingDateTime
    *        The sending date time to set. May be <code>null</code>.
@@ -439,8 +428,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the SOAP version to be used. The default is SOAP 1.2 and is set in the
-   * constructor. Usually you don't need to call that method.
+   * Set the SOAP version to be used. The default is SOAP 1.2 and is set in the constructor. Usually
+   * you don't need to call that method.
    *
    * @param eSoapVersion
    *        The SOAP version to be used. May be <code>null</code>.
@@ -464,8 +453,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the HTTP retry settings to be used. If none are set, the default values
-   * are used.
+   * Set the HTTP retry settings to be used. If none are set, the default values are used.
    *
    * @param a
    *        The HTTP retry settings to be used. May be <code>null</code>.
@@ -489,9 +477,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the locale to use. The main purpose is to use the correct language for
-   * processing error message in response messages. This field must be set. The
-   * default value is {@link #DEFAULT_LOCALE}.
+   * Set the locale to use. The main purpose is to use the correct language for processing error
+   * message in response messages. This field must be set. The default value is
+   * {@link #DEFAULT_LOCALE}.
    *
    * @param a
    *        The locale to use. May be <code>null</code>.
@@ -530,8 +518,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link IAS4PModeResolver}. May be
-   *         <code>null</code>.
+   * @return The currently set {@link IAS4PModeResolver}. May be <code>null</code>.
    */
   @Nullable
   public final IAS4PModeResolver pmodeResolver ()
@@ -540,8 +527,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the PMode resolver to be used. This is only used to determine the PMode
-   * of an eventually received synchronous response message.
+   * Set the PMode resolver to be used. This is only used to determine the PMode of an eventually
+   * received synchronous response message.
    *
    * @param aPModeResolver
    *        The PMode resolver to be used. May be <code>null</code>.
@@ -555,8 +542,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link IAS4IncomingAttachmentFactory}. Never
-   *         <code>null</code>.
+   * @return The currently set {@link IAS4IncomingAttachmentFactory}. Never <code>null</code>.
    */
   @Nonnull
   public final IAS4IncomingAttachmentFactory incomingAttachmentFactory ()
@@ -565,12 +551,11 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the incoming attachment factory to be used. This is only used for an
-   * eventually received synchronous response message.
+   * Set the incoming attachment factory to be used. This is only used for an eventually received
+   * synchronous response message.
    *
    * @param aIAF
-   *        The incoming attachment factory to be used. May not be
-   *        <code>null</code>.
+   *        The incoming attachment factory to be used. May not be <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
@@ -582,8 +567,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The profile selector for incoming AS4 messages. Never
-   *         <code>null</code>.
+   * @return The profile selector for incoming AS4 messages. Never <code>null</code>.
    * @since 0.13.0
    */
   @Nonnull
@@ -593,8 +577,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the selector for the AS4 profile of incoming messages. This is only
-   * used for an eventually received synchronous response message.
+   * Set the selector for the AS4 profile of incoming messages. This is only used for an eventually
+   * received synchronous response message.
    *
    * @param aIncomingProfileSelector
    *        The profile selector to use. May not be <code>null</code>.
@@ -610,8 +594,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link IAS4SenderInterrupt}. May be
-   *         <code>null</code>.
+   * @return The currently set {@link IAS4SenderInterrupt}. May be <code>null</code>.
    * @since 0.13.0
    */
   @Nullable
@@ -621,8 +604,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the sender interrupt to be used. This is only needed in very specific
-   * cases, is <code>null</code> by default and should be handled with care.
+   * Set the sender interrupt to be used. This is only needed in very specific cases, is
+   * <code>null</code> by default and should be handled with care.
    *
    * @param aSenderInterrupt
    *        The sender interrupt to be used. May be <code>null</code>.
@@ -637,8 +620,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link IAS4SendingDateTimeConsumer}. May be
-   *         <code>null</code>.
+   * @return The currently set {@link IAS4SendingDateTimeConsumer}. May be <code>null</code>.
    * @since 2.2.2
    */
   @Nullable
@@ -648,8 +630,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set the sending date time consumer to be used. This may e.g. be needed to
-   * get the effective sending date time for Peppol reporting.
+   * Set the sending date time consumer to be used. This may e.g. be needed to get the effective
+   * sending date time for Peppol reporting.
    *
    * @param aSendingDTConsumer
    *        The sender date time consumer to be used. May be <code>null</code>.
@@ -664,8 +646,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The internal message callback. Usually this method is NOT needed.
-   *         Use only when you know what you are doing.
+   * @return The internal message callback. Usually this method is NOT needed. Use only when you
+   *         know what you are doing.
    * @since 3.0.0
    */
   @Nullable
@@ -675,12 +657,11 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set a internal message callback. Usually this method is NOT needed. Use
-   * only when you know what you are doing.
+   * Set a internal message callback. Usually this method is NOT needed. Use only when you know what
+   * you are doing.
    *
    * @param aBuildMessageCallback
-   *        An internal to be used for the created message. May be
-   *        <code>null</code>.
+   *        An internal to be used for the created message. May be <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
@@ -691,8 +672,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The specific outgoing dumper of this builder. May be
-   *         <code>null</code>.
+   * @return The specific outgoing dumper of this builder. May be <code>null</code>.
    * @since 3.0.0
    */
   @Nullable
@@ -705,8 +685,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * Set a specific outgoing dumper for this builder.
    *
    * @param aOutgoingDumper
-   *        An outgoing dumper to be used. Maybe <code>null</code>. If
-   *        <code>null</code> the global outgoing dumper is used.
+   *        An outgoing dumper to be used. Maybe <code>null</code>. If <code>null</code> the global
+   *        outgoing dumper is used.
    * @return this for chaining
    */
   @Nonnull
@@ -717,8 +697,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The specific incoming dumper of this builder. May be
-   *         <code>null</code>.
+   * @return The specific incoming dumper of this builder. May be <code>null</code>.
    * @since 3.0.0
    */
   @Nullable
@@ -731,8 +710,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * Set a specific incoming dumper for this builder.
    *
    * @param aIncomingDumper
-   *        An incoming dumper to be used. Maybe <code>null</code>. If
-   *        <code>null</code> the global incoming dumper is used.
+   *        An incoming dumper to be used. Maybe <code>null</code>. If <code>null</code> the global
+   *        incoming dumper is used.
    * @return this for chaining
    */
   @Nonnull
@@ -753,9 +732,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set an optional customizing callback that is invoked when decrypting a
-   * message, to be able to modify the decryption configuration. This is an edge
-   * case e.g. to allow RSA 1.5 algorithm names.
+   * Set an optional customizing callback that is invoked when decrypting a message, to be able to
+   * modify the decryption configuration. This is an edge case e.g. to allow RSA 1.5 algorithm
+   * names.
    *
    * @param aDecryptParameterModifier
    *        The modifier callback. May be <code>null</code>.
@@ -780,8 +759,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set an optional handler that is notified if an http sending will be
-   * retried. This method is optional and must not be called prior to sending.
+   * Set an optional handler that is notified if an http sending will be retried. This method is
+   * optional and must not be called prior to sending.
    *
    * @param aRetryCallback
    *        The optional retry callback. May be <code>null</code>.
@@ -795,8 +774,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The optional handler for the received raw response, very similar to
-   *         the dumper. May be <code>null</code>.
+   * @return The optional handler for the received raw response, very similar to the dumper. May be
+   *         <code>null</code>.
    * @since 3.0.0
    */
   @Nullable
@@ -806,11 +785,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Set an optional handler for the synchronous result message received from
-   * the other side. This method is optional and must not be called prior to
-   * sending. This method is very similar to using an
-   * {@link #incomingDumper(IAS4IncomingDumper)} so you usually only need one or
-   * the other.
+   * Set an optional handler for the synchronous result message received from the other side. This
+   * method is optional and must not be called prior to sending. This method is very similar to
+   * using an {@link #incomingDumper(IAS4IncomingDumper)} so you usually only need one or the other.
    *
    * @param aResponseConsumer
    *        The optional response consumer. May be <code>null</code>.
@@ -824,17 +801,16 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Internal method that is invoked before the required field check is
-   * performed. Override to set additional dynamically created fields if
-   * necessary.<br>
-   * Don't add message properties in here, because if the required fields check
-   * fails than this method would be called again.<br>
+   * Internal method that is invoked before the required field check is performed. Override to set
+   * additional dynamically created fields if necessary.<br>
+   * Don't add message properties in here, because if the required fields check fails than this
+   * method would be called again.<br>
    * This is called before {@link #isEveryRequiredFieldSet()}
    *
    * @param aResHelper
    *        The AS4 resource helper to use. Never <code>null</code>.
-   * @return {@link ESuccess} - never <code>null</code>. Returning failure here
-   *         stops sending the message.
+   * @return {@link ESuccess} - never <code>null</code>. Returning failure here stops sending the
+   *         message.
    * @throws Phase4Exception
    *         if something goes wrong
    */
@@ -855,11 +831,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   /**
    * Check if all mandatory fields are set. This method is called after
-   * {@link #finishFields(AS4ResourceHelper)} and before
-   * {@link #customizeBeforeSending()}
+   * {@link #finishFields(AS4ResourceHelper)} and before {@link #customizeBeforeSending()}
    *
-   * @return <code>true</code> if all mandatory fields are set, and sending can
-   *         continue.
+   * @return <code>true</code> if all mandatory fields are set, and sending can continue.
    */
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
@@ -917,10 +891,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * Internal method that is invoked after the required fields are checked but
-   * before sending takes place. This is e.g. the perfect place to add custom
-   * message properties. This method is called after
-   * {@link #isEveryRequiredFieldSet()} and before {@link #mainSendMessage()}.
+   * Internal method that is invoked after the required fields are checked but before sending takes
+   * place. This is e.g. the perfect place to add custom message properties. This method is called
+   * after {@link #isEveryRequiredFieldSet()} and before {@link #mainSendMessage()}.
    *
    * @throws Phase4Exception
    *         if something goes wrong
@@ -931,8 +904,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   /**
    * Synchronously send the AS4 message. This method is called after
-   * {@link #customizeBeforeSending()}. This method may only be called by
-   * {@link #sendMessage()}.
+   * {@link #customizeBeforeSending()}. This method may only be called by {@link #sendMessage()}.
    *
    * @throws Phase4Exception
    *         In case of any error
@@ -940,10 +912,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected abstract void mainSendMessage () throws Phase4Exception;
 
   /**
-   * Internal method that is invoked after successful sending took place. This
-   * can e.g. be used to fulfill reporting requirements etc. This method must
-   * not throw an exception. This method is called after
-   * {@link #mainSendMessage()}.
+   * Internal method that is invoked after successful sending took place. This can e.g. be used to
+   * fulfill reporting requirements etc. This method must not throw an exception. This method is
+   * called after {@link #mainSendMessage()}.
    *
    * @since 2.2.2
    */
@@ -952,22 +923,19 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {}
 
   /**
-   * Synchronously send the AS4 message. First the internal "finishFields"
-   * method is called, to ensure all dynamic fields are filled - on failure this
-   * methods exits. Afterwards {@link #isEveryRequiredFieldSet()} is called to
-   * check that all mandatory elements are set - on failure this methods exits.
-   * Afterwards "customizeBeforeSending" is called to make final adjustments to
-   * the message. As the very last step, the customizable sender interrupt is
-   * invoked which may prevent the main message sending. As the last step
-   * "mainSendMessage" is invoked and "SUCCESS" is returned.<br>
+   * Synchronously send the AS4 message. First the internal "finishFields" method is called, to
+   * ensure all dynamic fields are filled - on failure this methods exits. Afterwards
+   * {@link #isEveryRequiredFieldSet()} is called to check that all mandatory elements are set - on
+   * failure this methods exits. Afterwards "customizeBeforeSending" is called to make final
+   * adjustments to the message. As the very last step, the customizable sender interrupt is invoked
+   * which may prevent the main message sending. As the last step "mainSendMessage" is invoked and
+   * "SUCCESS" is returned.<br>
    * Note: since 0.13.0 this common implementation is in place.
    *
-   * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set or
-   *         if sending failed, {@link ESuccess#SUCCESS} upon success. Never
-   *         <code>null</code>. This result code does not reflect the semantics
-   *         of a semantically correct message exchange or not. It just states,
-   *         if the message was sent or nor. The rest needs to be determined
-   *         separately.
+   * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set or if sending failed,
+   *         {@link ESuccess#SUCCESS} upon success. Never <code>null</code>. This result code does
+   *         not reflect the semantics of a semantically correct message exchange or not. It just
+   *         states, if the message was sent or nor. The rest needs to be determined separately.
    * @throws Phase4Exception
    *         In case of any error
    * @see #isEveryRequiredFieldSet()

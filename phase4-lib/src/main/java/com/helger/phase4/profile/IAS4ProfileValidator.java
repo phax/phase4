@@ -49,8 +49,7 @@ public interface IAS4ProfileValidator
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
    * @param eValidationMode
-   *        The validation mode to use. May not be <code>null</code>. Since
-   *        v3.0.0
+   *        The validation mode to use. May not be <code>null</code>. Since v3.0.0
    */
   default void validatePMode (@Nonnull final IPMode aPMode,
                               @Nonnull final ErrorList aErrorList,
@@ -63,11 +62,10 @@ public interface IAS4ProfileValidator
    * @param aUserMsg
    *        The message to use for comparison. May not be <code>null</code>.
    * @param aSignCert
-   *        The signature certificate used to sign the message. Can be
-   *        <code>null</code>.
+   *        The signature certificate used to sign the message. Can be <code>null</code>.
    * @param aMessageMetadata
-   *        Metadata of the message optionally containing the TLS client
-   *        certificate used. May not be <code>null</code>.
+   *        Metadata of the message optionally containing the TLS client certificate used. May not
+   *        be <code>null</code>.
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
    * @since 2.5.0

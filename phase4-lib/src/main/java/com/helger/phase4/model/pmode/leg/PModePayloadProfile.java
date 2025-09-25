@@ -36,13 +36,12 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * A payload part is a data structure that consists of five properties: name (or
- * Content-ID) that is the part identifier, and can be used as an index in the
- * notation PayloadProfile[]; MIME data type (<code>text/xml</code>,
- * <code>application/pdf</code>, etc.); name of the applicable XML Schema file
- * if the MIME data type is text/xml; maximum size in kilobytes; and a Boolean
- * value indicating whether the part is expected or optional, within the User
- * message. The message payload(s) must match this profile.
+ * A payload part is a data structure that consists of five properties: name (or Content-ID) that is
+ * the part identifier, and can be used as an index in the notation PayloadProfile[]; MIME data type
+ * (<code>text/xml</code>, <code>application/pdf</code>, etc.); name of the applicable XML Schema
+ * file if the MIME data type is text/xml; maximum size in kilobytes; and a Boolean value indicating
+ * whether the part is expected or optional, within the User message. The message payload(s) must
+ * match this profile.
  *
  * @author Philip Helger
  */
@@ -130,8 +129,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   }
 
   /**
-   * @return The name of the XML Schema filename to apply. May be
-   *         <code>null</code>.
+   * @return The name of the XML Schema filename to apply. May be <code>null</code>.
    */
   @Nullable
   public final String getXSDFilename ()
@@ -140,8 +138,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   }
 
   /**
-   * @return <code>true</code> if an XML Schema filename is present,
-   *         <code>false</code> if not.
+   * @return <code>true</code> if an XML Schema filename is present, <code>false</code> if not.
    */
   public final boolean hasXSDFilename ()
   {
@@ -175,8 +172,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   }
 
   /**
-   * @return <code>true</code> if a maximum size in kilobyte is present,
-   *         <code>false</code> if not.
+   * @return <code>true</code> if a maximum size in kilobyte is present, <code>false</code> if not.
    */
   public final boolean hasMaxSizeKB ()
   {
@@ -215,8 +211,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   }
 
   /**
-   * @return <code>true</code> if the part is mandatory, <code>false</code> if
-   *         it is optional.
+   * @return <code>true</code> if the part is mandatory, <code>false</code> if it is optional.
    */
   public final boolean isMandatory ()
   {
@@ -224,8 +219,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   }
 
   /**
-   * @return <code>true</code> if the part is optional, <code>false</code> if it
-   *         is mandatory.
+   * @return <code>true</code> if the part is optional, <code>false</code> if it is mandatory.
    */
   @Override
   public final boolean isOptional ()
@@ -274,10 +268,10 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
       return false;
     final PModePayloadProfile rhs = (PModePayloadProfile) o;
     return m_sName.equals (rhs.m_sName) &&
-           m_aMimeType.equals (rhs.m_aMimeType) &&
-           EqualsHelper.equals (m_sXSDFilename, rhs.m_sXSDFilename) &&
-           EqualsHelper.equals (m_aMaxSizeKB, rhs.m_aMaxSizeKB) &&
-           m_eMandatory.equals (rhs.m_eMandatory);
+      m_aMimeType.equals (rhs.m_aMimeType) &&
+      EqualsHelper.equals (m_sXSDFilename, rhs.m_sXSDFilename) &&
+      EqualsHelper.equals (m_aMaxSizeKB, rhs.m_aMaxSizeKB) &&
+      m_eMandatory.equals (rhs.m_eMandatory);
   }
 
   @Override

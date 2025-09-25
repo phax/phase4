@@ -31,8 +31,7 @@ import jakarta.annotation.Nullable;
 public interface IAS4ProfileManager extends IAS4ProfileRegistrar
 {
   /**
-   * @return A non-<code>null</code> but maybe empty list of all contained
-   *         profiles.
+   * @return A non-<code>null</code> but maybe empty list of all contained profiles.
    */
   @Nonnull
   @ReturnsMutableCopy

@@ -44,8 +44,7 @@ public interface IMPCManager
    *
    * @param aMPC
    *        The MPC to be updated. May not be <code>null</code>.
-   * @return {@link EChange#CHANGED} if something changed,
-   *         {@link EChange#UNCHANGED} otherwise.
+   * @return {@link EChange#CHANGED} if something changed, {@link EChange#UNCHANGED} otherwise.
    */
   @Nonnull
   EChange updateMPC (@Nonnull IMPC aMPC);
@@ -55,8 +54,8 @@ public interface IMPCManager
    *
    * @param sMPCID
    *        The ID of the MPC to be marked as deleted. May be <code>null</code>.
-   * @return {@link EChange#CHANGED} if marking as deleted succeeded,
-   *         {@link EChange#UNCHANGED} otherwise.
+   * @return {@link EChange#CHANGED} if marking as deleted succeeded, {@link EChange#UNCHANGED}
+   *         otherwise.
    */
   @Nonnull
   EChange markMPCDeleted (@Nullable String sMPCID);
@@ -66,8 +65,7 @@ public interface IMPCManager
    *
    * @param sMPCID
    *        The ID of the MPC to be deleted. May be <code>null</code>.
-   * @return {@link EChange#CHANGED} if deleting succeeded,
-   *         {@link EChange#UNCHANGED} otherwise.
+   * @return {@link EChange#CHANGED} if deleting succeeded, {@link EChange#UNCHANGED} otherwise.
    */
   @Nonnull
   EChange deleteMPC (@Nullable String sMPCID);
@@ -87,8 +85,7 @@ public interface IMPCManager
    * 
    * @param sID
    *        The ID to search. May be <code>null</code>.
-   * @return <code>true</code> if such an MPC is contained, <code>false</code>
-   *         otherwise.
+   * @return <code>true</code> if such an MPC is contained, <code>false</code> otherwise.
    */
   boolean containsWithID (@Nullable String sID);
 
@@ -96,8 +93,7 @@ public interface IMPCManager
    * Get the MPC with the specified ID, or the default MPC.
    *
    * @param sID
-   *        The ID to search. If it is <code>null</code> or empty, the default
-   *        MPC will be used.
+   *        The ID to search. If it is <code>null</code> or empty, the default MPC will be used.
    * @return <code>null</code> if no such MPC exists, the MPC otherwise.
    * @see CAS4#DEFAULT_MPC_ID
    */

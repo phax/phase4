@@ -32,16 +32,14 @@ import jakarta.annotation.Nullable;
 public interface IAS4IncomingSecurityConfiguration
 {
   /**
-   * @return The signing parameters to be used for incoming messages. May be
-   *         <code>null</code>.
+   * @return The signing parameters to be used for incoming messages. May be <code>null</code>.
    * @since 2.3.0
    */
   @Nullable
   AS4SigningParams getSigningParams ();
 
   /**
-   * @return A clone of the existing signing parameters or a new object. Never
-   *         <code>null</code>.
+   * @return A clone of the existing signing parameters or a new object. Never <code>null</code>.
    * @since 2.3.0
    */
   @Nonnull
@@ -52,16 +50,14 @@ public interface IAS4IncomingSecurityConfiguration
   }
 
   /**
-   * @return The crypt parameters to be used for incoming messages. May be
-   *         <code>null</code>.
+   * @return The crypt parameters to be used for incoming messages. May be <code>null</code>.
    * @since 2.3.0
    */
   @Nullable
   AS4CryptParams getCryptParams ();
 
   /**
-   * @return A clone of the existing crypt parameters or a new object. Never
-   *         <code>null</code>.
+   * @return A clone of the existing crypt parameters or a new object. Never <code>null</code>.
    * @since 2.3.0
    */
   @Nonnull
@@ -73,8 +69,8 @@ public interface IAS4IncomingSecurityConfiguration
 
   /**
    * @return An optional modifier to customize WSS4J
-   *         {@link org.apache.wss4j.dom.handler.RequestData} objects for
-   *         decrypting. This may e.g. be used to allow RSA 1.5 algorithms.
+   *         {@link org.apache.wss4j.dom.handler.RequestData} objects for decrypting. This may e.g.
+   *         be used to allow RSA 1.5 algorithms.
    * @since 2.2.0
    */
   @Nullable

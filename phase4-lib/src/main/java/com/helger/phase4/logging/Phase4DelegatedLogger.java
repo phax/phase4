@@ -29,8 +29,8 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * A specific implementation of {@link Logger} that allows to customize the message e.g. with
- * prefix and suffix.
+ * A specific implementation of {@link Logger} that allows to customize the message e.g. with prefix
+ * and suffix.
  *
  * @author Philip Helger
  * @since 3.1.0-beta3

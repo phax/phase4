@@ -30,8 +30,8 @@ public interface IAS4IncomingProfileSelector
   boolean DEFAULT_VALIDATE_AGAINST_PROFILE = true;
 
   /**
-   * Try to determine the AS4 profile to be used for an incoming message. This
-   * method is only called after the SOAP headers were processed successfully.
+   * Try to determine the AS4 profile to be used for an incoming message. This method is only called
+   * after the SOAP headers were processed successfully.
    *
    * @param aIncomingState
    *        The message state of processing. Never <code>null</code>.
@@ -41,12 +41,11 @@ public interface IAS4IncomingProfileSelector
   String getAS4ProfileID (@Nonnull IAS4IncomingMessageState aIncomingState);
 
   /**
-   * Configure if the profile validation rules should be applied or not. Usually
-   * this is recommended, but there might be edge cases where it is good to be
-   * able to deactivate them.
+   * Configure if the profile validation rules should be applied or not. Usually this is
+   * recommended, but there might be edge cases where it is good to be able to deactivate them.
    *
-   * @return <code>true</code> if profile validation should be performed,
-   *         <code>false</code> if not. The default is <code>true</code>.
+   * @return <code>true</code> if profile validation should be performed, <code>false</code> if not.
+   *         The default is <code>true</code>.
    * @since 0.13.1
    */
   boolean validateAgainstProfile ();

@@ -49,8 +49,7 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
   }
 
   /**
-   * @return The {@link Ebms3SignalMessage} passed in the constructor. Never
-   *         <code>null</code>.
+   * @return The {@link Ebms3SignalMessage} passed in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final Ebms3SignalMessage getEbms3SignalMessage ()

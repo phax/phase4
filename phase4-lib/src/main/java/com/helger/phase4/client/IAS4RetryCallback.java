@@ -30,28 +30,25 @@ import jakarta.annotation.Nonnull;
 public interface IAS4RetryCallback
 {
   /**
-   * Invoked when it is clear that a retry will happen, but before the waiting
-   * starts
+   * Invoked when it is clear that a retry will happen, but before the waiting starts
    *
    * @param sMessageID
    *        The AS4 message ID. May not be <code>null</code>.
    * @param sURL
-   *        The destination URL to which the transmission fails. May not be
-   *        <code>null</code>.
+   *        The destination URL to which the transmission fails. May not be <code>null</code>.
    * @param nTry
    *        The current try that will be retried later, 0-based.
    * @param nMaxTries
-   *        The maximum number of tries that will happen. 1-based. So e.g. 2
-   *        means that there will be 1 retry: one original try and one retry. If
-   *        the number is e.g. 11: one original try and 10 retries.
+   *        The maximum number of tries that will happen. 1-based. So e.g. 2 means that there will
+   *        be 1 retry: one original try and one retry. If the number is e.g. 11: one original try
+   *        and 10 retries.
    * @param nRetryIntervalMS
    *        The milliseconds to be waited before the next retry.
    * @param ex
-   *        The exception that occurred during sending. Usually an IOException.
-   *        Never <code>null</code>.
-   * @return {@link EContinue#CONTINUE} to continue with the procedure as
-   *         foreseen, {@link EContinue#BREAK} to interrupt resending. May not
-   *         be <code>null</code>.
+   *        The exception that occurred during sending. Usually an IOException. Never
+   *        <code>null</code>.
+   * @return {@link EContinue#CONTINUE} to continue with the procedure as foreseen,
+   *         {@link EContinue#BREAK} to interrupt resending. May not be <code>null</code>.
    */
   @Nonnull
   EContinue onBeforeRetry (@Nonnull String sMessageID,

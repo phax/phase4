@@ -34,9 +34,8 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import jakarta.annotation.Nonnull;
 
 /**
- * Internal WSS4J callback handler to check if a certain key alias is present in
- * the {@link IAS4CryptoFactory}, and if so return the password for accessing
- * it.
+ * Internal WSS4J callback handler to check if a certain key alias is present in the
+ * {@link IAS4CryptoFactory}, and if so return the password for accessing it.
  *
  * @author Philip Helger
  */

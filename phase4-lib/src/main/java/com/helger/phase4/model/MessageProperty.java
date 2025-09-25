@@ -93,8 +93,8 @@ public class MessageProperty
       return false;
     final MessageProperty rhs = (MessageProperty) o;
     return EqualsHelper.equals (m_sName, rhs.m_sName) &&
-           EqualsHelper.equals (m_sType, rhs.m_sType) &&
-           EqualsHelper.equals (m_sValue, rhs.m_sValue);
+      EqualsHelper.equals (m_sType, rhs.m_sType) &&
+      EqualsHelper.equals (m_sValue, rhs.m_sValue);
   }
 
   @Override

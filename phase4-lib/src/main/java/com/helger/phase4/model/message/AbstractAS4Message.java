@@ -214,7 +214,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
     }
 
     final Node aRealSoapBodyPayload = aSoapBodyPayload instanceof Document d ? d.getDocumentElement ()
-                                                                           : aSoapBodyPayload;
+                                                                             : aSoapBodyPayload;
 
     switch (m_eSoapVersion)
     {

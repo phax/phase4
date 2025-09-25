@@ -28,10 +28,9 @@ import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import jakarta.annotation.Nonnull;
 
 /**
- * A simple {@link IAS4IncomingDumper} that can be used for a single
- * transmission and dumps it to the {@link OutputStream} provided in the
- * constructor. As there are no retries for incoming messages, the
- * implementation is pretty straight forward.
+ * A simple {@link IAS4IncomingDumper} that can be used for a single transmission and dumps it to
+ * the {@link OutputStream} provided in the constructor. As there are no retries for incoming
+ * messages, the implementation is pretty straight forward.
  *
  * @author Philip Helger
  * @since 0.9.8

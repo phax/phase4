@@ -43,17 +43,16 @@ public final class AS4TrustStoreDescriptor
   {}
 
   /**
-   * Create the trust store descriptor from the default configuration item. The
-   * following configuration properties are used, relative to the default
-   * configuration prefix:
+   * Create the trust store descriptor from the default configuration item. The following
+   * configuration properties are used, relative to the default configuration prefix:
    * <ul>
    * <li><code>truststore.type</code> - the trust store type</li>
    * <li><code>truststore.file</code> - the trust store path</li>
    * <li><code>truststore.password</code> - the trust store password</li>
    * </ul>
    *
-   * @return A new {@link TrustStoreDescriptor} object or <code>null</code> if
-   *         path or password are not present.
+   * @return A new {@link TrustStoreDescriptor} object or <code>null</code> if path or password are
+   *         not present.
    */
   @Nullable
   public static TrustStoreDescriptor createFromConfig ()
@@ -62,9 +61,8 @@ public final class AS4TrustStoreDescriptor
   }
 
   /**
-   * Create the trust store descriptor from the provided configuration item. The
-   * following configuration properties are used, relative to the configuration
-   * prefix:
+   * Create the trust store descriptor from the provided configuration item. The following
+   * configuration properties are used, relative to the configuration prefix:
    * <ul>
    * <li><code>truststore.type</code> - the trust store type</li>
    * <li><code>truststore.file</code> - the trust store path</li>
@@ -74,13 +72,13 @@ public final class AS4TrustStoreDescriptor
    * @param aConfig
    *        The configuration object to be used. May not be <code>null</code>.
    * @param sConfigPrefix
-   *        The configuration prefix to be used. May neither be
-   *        <code>null</code> nor empty and must end with a dot ('.').
+   *        The configuration prefix to be used. May neither be <code>null</code> nor empty and must
+   *        end with a dot ('.').
    * @param aProvider
-   *        The Java security provider for loading the trust store. May be
-   *        <code>null</code> to use the default.
-   * @return A new {@link TrustStoreDescriptor} object or <code>null</code> if
-   *         path or password are not present.
+   *        The Java security provider for loading the trust store. May be <code>null</code> to use
+   *        the default.
+   * @return A new {@link TrustStoreDescriptor} object or <code>null</code> if path or password are
+   *         not present.
    */
   @Nullable
   public static TrustStoreDescriptor createFromConfig (@Nonnull final IConfigWithFallback aConfig,

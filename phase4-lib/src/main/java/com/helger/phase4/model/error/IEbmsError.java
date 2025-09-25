@@ -71,9 +71,8 @@ public interface IEbmsError
   EEbmsErrorCategory getCategory ();
 
   /**
-   * Create a new {@link Ebms3ErrorBuilder} with the information of this
-   * element. Sets description, category, errorCode, severity and
-   * shortDescription.
+   * Create a new {@link Ebms3ErrorBuilder} with the information of this element. Sets description,
+   * category, errorCode, severity and shortDescription.
    *
    * @param aContentLocale
    *        Content locale to use. May not be <code>null</code>.

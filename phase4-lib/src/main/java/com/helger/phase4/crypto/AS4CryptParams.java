@@ -81,10 +81,9 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   private IWSSecEncryptCustomizer m_aWSSecEncryptCustomizer;
 
   /**
-   * Default constructor using default
-   * {@link #setKeyIdentifierType(ECryptoKeyIdentifierType)},
-   * {@link #setKeyEncAlgorithm(ECryptoKeyEncryptionAlgorithm)},
-   * {@link #setMGFAlgorithm(String)} and {@link #setDigestAlgorithm(String)}
+   * Default constructor using default {@link #setKeyIdentifierType(ECryptoKeyIdentifierType)},
+   * {@link #setKeyEncAlgorithm(ECryptoKeyEncryptionAlgorithm)}, {@link #setMGFAlgorithm(String)}
+   * and {@link #setDigestAlgorithm(String)}
    */
   public AS4CryptParams ()
   {}
@@ -116,8 +115,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * Set the key identifier type to use. That defines how the information about
-   * the signing certificate is transmitted.
+   * Set the key identifier type to use. That defines how the information about the signing
+   * certificate is transmitted.
    *
    * @param eKeyIdentifierType
    *        The key identifier type to use. May not be <code>null</code>.
@@ -170,9 +169,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * @return The mask generation function (MGF) algorithm to use with the
-   *         RSA-OAEP key transport algorithm. The default is
-   *         {@link #DEFAULT_MGF_ALGORITHM}
+   * @return The mask generation function (MGF) algorithm to use with the RSA-OAEP key transport
+   *         algorithm. The default is {@link #DEFAULT_MGF_ALGORITHM}
    */
   @Nonnull
   @Nonempty
@@ -182,12 +180,11 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * Set the mask generation function (MGF) algorithm to use with the RSA-OAEP
-   * key transport algorithm.
+   * Set the mask generation function (MGF) algorithm to use with the RSA-OAEP key transport
+   * algorithm.
    *
    * @param sMGFAlgorithm
-   *        The MFG algorithm to use. May neither be <code>null</code> nor
-   *        empty.
+   *        The MFG algorithm to use. May neither be <code>null</code> nor empty.
    * @return this for chaining
    */
   @Nonnull
@@ -199,8 +196,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * @return The digest algorithm to use with the RSA-OAEP key transport
-   *         algorithm. The default is {@link #DEFAULT_DIGEST_ALGORITHM}
+   * @return The digest algorithm to use with the RSA-OAEP key transport algorithm. The default is
+   *         {@link #DEFAULT_DIGEST_ALGORITHM}
    */
   @Nonnull
   @Nonempty
@@ -213,8 +210,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * Set the digest algorithm to use with the RSA-OAEP key transport algorithm.
    *
    * @param sDigestAlgorithm
-   *        The digest algorithm to use. May neither be <code>null</code> nor
-   *        empty.
+   *        The digest algorithm to use. May neither be <code>null</code> nor empty.
    * @return this for chaining
    */
   @Nonnull
@@ -235,8 +231,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * @return <code>true</code> if an X509 certificate is present,
-   *         <code>false</code> if not.
+   * @return <code>true</code> if an X509 certificate is present, <code>false</code> if not.
    */
   public final boolean hasCertificate ()
   {
@@ -244,9 +239,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * Set the X509 certificate be used. The provided certificate is not checked
-   * for validity. If it is expired only a warning is logged but the certificate
-   * will still be used.
+   * Set the X509 certificate be used. The provided certificate is not checked for validity. If it
+   * is expired only a warning is logged but the certificate will still be used.
    *
    * @param aCert
    *        The certificate to be used. May be <code>null</code>.
@@ -305,8 +299,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * Set the session key provider to be used for encryption. The provided
-   * provider must never return a <code>null</code> key.
+   * Set the session key provider to be used for encryption. The provided provider must never return
+   * a <code>null</code> key.
    *
    * @param aSessionKeyProvider
    *        The session key provider to be used. May not be <code>null</code>.
@@ -324,8 +318,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   /**
    * Note: this is currently not used by WSS4J
    *
-   * @return The security provider to be used for encryption (not for
-   *         decryption). May be <code>null</code>.
+   * @return The security provider to be used for encryption (not for decryption). May be
+   *         <code>null</code>.
    * @since 2.4.0
    */
   @Nullable
@@ -335,8 +329,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * Set the security provider to be used for encryption (not for
-   * decryption).<br>
+   * Set the security provider to be used for encryption (not for decryption).<br>
    * Note: this is currently not used by WSS4J
    *
    * @param aSecurityProviderEncrypt
@@ -354,8 +347,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   /**
    * Note: this is currently not used by WSS4J
    *
-   * @return The security provider to be used for decryption (not for
-   *         encryption). May be <code>null</code>.
+   * @return The security provider to be used for decryption (not for encryption). May be
+   *         <code>null</code>.
    * @since 2.4.0
    */
   @Nullable
@@ -365,8 +358,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * Set the security provider to be used for decryption (not for
-   * encryption).<br>
+   * Set the security provider to be used for decryption (not for encryption).<br>
    * Note: this is currently not used by WSS4J
    *
    * @param aSecurityProviderDecrypt
@@ -396,9 +388,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * @return <code>true</code> if the symmetric session key should be part of
-   *         the transmission or <code>false</code> if not. Default is
-   *         {@link #DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY}
+   * @return <code>true</code> if the symmetric session key should be part of the transmission or
+   *         <code>false</code> if not. Default is {@link #DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY}
    * @since 2.1.4
    */
   public final boolean isEncryptSymmetricSessionKey ()
@@ -407,8 +398,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * Enable or disable the inclusion of the symmetric session key into the
-   * transmission or not.
+   * Enable or disable the inclusion of the symmetric session key into the transmission or not.
    *
    * @param b
    *        <code>true</code> to enabled, <code>false</code> to disable it.
@@ -441,9 +431,9 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * This method calls {@link #setAlgorithmCrypt(ECryptoAlgorithmCrypt)} based
-   * on the PMode parameters. If the PMode parameter is <code>null</code> the
-   * value will be set to <code>null</code>.
+   * This method calls {@link #setAlgorithmCrypt(ECryptoAlgorithmCrypt)} based on the PMode
+   * parameters. If the PMode parameter is <code>null</code> the value will be set to
+   * <code>null</code>.
    *
    * @param aSecurity
    *        The PMode security stuff to use. May be <code>null</code>.

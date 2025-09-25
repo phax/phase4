@@ -56,17 +56,16 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    */
   public AS4IncomingDumperFileBased ()
   {
-    this ( (aMessageMetadata,
-            aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
-                                         DEFAULT_BASE_PATH + IAS4IncomingDumperFileProvider.getDefaultDirectoryAndFilename (aMessageMetadata)));
+    this ( (aMessageMetadata, aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
+                                                           DEFAULT_BASE_PATH +
+                                                                                                    IAS4IncomingDumperFileProvider.getDefaultDirectoryAndFilename (aMessageMetadata)));
   }
 
   /**
    * Constructor with a custom file provider.
    *
    * @param aFileProvider
-   *        The file provider that defines where to store the files. May not be
-   *        <code>null</code>.
+   *        The file provider that defines where to store the files. May not be <code>null</code>.
    */
   public AS4IncomingDumperFileBased (@Nonnull final IAS4IncomingDumperFileProvider aFileProvider)
   {
@@ -99,8 +98,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   public static AS4IncomingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4IncomingDumperFileBased ( (aMessageMetadata,
-                                             aHttpHeaderMap) -> new File (aBaseDirectory,
-                                                                          IAS4IncomingDumperFileProvider.getDefaultDirectoryAndFilename (aMessageMetadata)));
+    return new AS4IncomingDumperFileBased ( (aMessageMetadata, aHttpHeaderMap) -> new File (aBaseDirectory,
+                                                                                            IAS4IncomingDumperFileProvider.getDefaultDirectoryAndFilename (aMessageMetadata)));
   }
 }

@@ -42,18 +42,15 @@ import jakarta.annotation.Nullable;
 public interface IHttpPoster
 {
   /**
-   * @return The internal http client factory used for http sending. May not be
-   *         <code>null</code>.
+   * @return The internal http client factory used for http sending. May not be <code>null</code>.
    */
   @Nonnull
   HttpClientFactory getHttpClientFactory ();
 
   /**
-   * Set the HTTP client provider to be used. This is e.g. necessary when a
-   * custom SSL context or a proxy server is to be used. See
-   * {@link BasicHttpPoster#createDefaultHttpClientFactory()} as the default
-   * implementation of {@link IHttpClientProvider}. This factory is used for
-   * http sending.
+   * Set the HTTP client provider to be used. This is e.g. necessary when a custom SSL context or a
+   * proxy server is to be used. See {@link BasicHttpPoster#createDefaultHttpClientFactory()} as the
+   * default implementation of {@link IHttpClientProvider}. This factory is used for http sending.
    *
    * @param aHttpClientFactory
    *        The HTTP client factory to be used. May not be <code>null</code>.
@@ -79,27 +76,25 @@ public interface IHttpPoster
   IHttpPoster setHttpCustomizer (@Nullable Consumer <? super HttpPost> aHttpCustomizer);
 
   /**
-   * @return <code>true</code> if HTTP header values should be quoted if they
-   *         contain forbidden characters, <code>false</code> if not.
+   * @return <code>true</code> if HTTP header values should be quoted if they contain forbidden
+   *         characters, <code>false</code> if not.
    */
   boolean isQuoteHttpHeaders ();
 
   /**
-   * Enable or disable, if HTTP header values should be quoted or not. For
-   * compatibility it is recommended, to not quote the values.
+   * Enable or disable, if HTTP header values should be quoted or not. For compatibility it is
+   * recommended, to not quote the values.
    *
    * @param bQuoteHttpHeaders
-   *        <code>true</code> to quote them, <code>false</code> to not quote
-   *        them.
+   *        <code>true</code> to quote them, <code>false</code> to not quote them.
    * @return this for chaining
    */
   @Nonnull
   IHttpPoster setQuoteHttpHeaders (boolean bQuoteHttpHeaders);
 
   /**
-   * Send an arbitrary HTTP POST message to the provided URL, using the
-   * contained HttpClientFactory as well as the customizer. Additionally the AS4
-   * HTTP debugging is invoked in here.<br>
+   * Send an arbitrary HTTP POST message to the provided URL, using the contained HttpClientFactory
+   * as well as the customizer. Additionally the AS4 HTTP debugging is invoked in here.<br>
    * This method does NOT retry
    *
    * @param <T>
@@ -107,16 +102,14 @@ public interface IHttpPoster
    * @param sURL
    *        The URL to send to. May neither be <code>null</code> nor empty.
    * @param aCustomHttpHeaders
-   *        An optional http header map that should be applied. May be
-   *        <code>null</code>.
+   *        An optional http header map that should be applied. May be <code>null</code>.
    * @param aHttpEntity
    *        The HTTP entity to be send. May not be <code>null</code>.
    * @param aResponseHandler
-   *        The HTTP response handler that should be used to convert the HTTP
-   *        response to a domain object.
-   * @return The HTTP response data as indicated by the ResponseHandler. Should
-   *         not be <code>null</code> but basically depends on the response
-   *         handler.
+   *        The HTTP response handler that should be used to convert the HTTP response to a domain
+   *        object.
+   * @return The HTTP response data as indicated by the ResponseHandler. Should not be
+   *         <code>null</code> but basically depends on the response handler.
    * @throws IOException
    *         In case of IO error
    */
@@ -127,15 +120,13 @@ public interface IHttpPoster
                             @Nonnull HttpClientResponseHandler <? extends T> aResponseHandler) throws IOException;
 
   /**
-   * Send an arbitrary HTTP POST message to the provided URL, using the
-   * contained HttpClientFactory as well as the customizer. Additionally the AS4
-   * HTTP debugging is invoked in here.
+   * Send an arbitrary HTTP POST message to the provided URL, using the contained HttpClientFactory
+   * as well as the customizer. Additionally the AS4 HTTP debugging is invoked in here.
    *
    * @param sURL
    *        The URL to send to. May neither be <code>null</code> nor empty.
    * @param aCustomHttpHeaders
-   *        An optional http header map that should be applied. May be
-   *        <code>null</code>.
+   *        An optional http header map that should be applied. May be <code>null</code>.
    * @param aHttpEntity
    *        The HTTP entity to be send. May not be <code>null</code>.
    * @param sMessageID
@@ -143,18 +134,17 @@ public interface IHttpPoster
    * @param aRetrySettings
    *        The retry settings to use. May not be <code>null</code>.
    * @param aResponseHandler
-   *        The HTTP response handler that should be used to convert the HTTP
-   *        response to a domain object.
+   *        The HTTP response handler that should be used to convert the HTTP response to a domain
+   *        object.
    * @param aOutgoingDumper
-   *        An optional outgoing dumper for this message. May be
-   *        <code>null</code> to use the global one.
+   *        An optional outgoing dumper for this message. May be <code>null</code> to use the global
+   *        one.
    * @param aRetryCallback
    *        An optional retry callback that is invoked, before a retry happens.
    * @param <T>
    *        Response data type
-   * @return The HTTP response data as indicated by the ResponseHandler. Should
-   *         not be <code>null</code> but basically depends on the response
-   *         handler.
+   * @return The HTTP response data as indicated by the ResponseHandler. Should not be
+   *         <code>null</code> but basically depends on the response handler.
    * @throws IOException
    *         In case of IO error
    */

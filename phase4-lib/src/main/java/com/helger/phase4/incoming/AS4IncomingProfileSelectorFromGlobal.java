@@ -23,8 +23,8 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Default implementation of {@link IAS4IncomingProfileSelector} taking the AS4
- * profile ID from the global {@link AS4ProfileSelector}.
+ * Default implementation of {@link IAS4IncomingProfileSelector} taking the AS4 profile ID from the
+ * global {@link AS4ProfileSelector}.
  *
  * @author Philip Helger
  * @since 0.13.0
@@ -47,8 +47,8 @@ public class AS4IncomingProfileSelectorFromGlobal implements IAS4IncomingProfile
    * Constructor
    *
    * @param bValidateAgainstProfile
-   *        <code>true</code> to enable validation, <code>false</code> to
-   *        disable validation against the profile
+   *        <code>true</code> to enable validation, <code>false</code> to disable validation against
+   *        the profile
    * @since 3.0.0
    */
   public AS4IncomingProfileSelectorFromGlobal (final boolean bValidateAgainstProfile)

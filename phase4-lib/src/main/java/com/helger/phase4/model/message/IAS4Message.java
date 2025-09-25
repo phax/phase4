@@ -46,8 +46,8 @@ public interface IAS4Message
   EAS4MessageType getMessageType ();
 
   /**
-   * @return The ID of the "Messaging" element for referencing in signing.
-   *         Should not be <code>null</code>. This is NOT the AS4 Message ID.
+   * @return The ID of the "Messaging" element for referencing in signing. Should not be
+   *         <code>null</code>. This is NOT the AS4 Message ID.
    */
   @Nonnull
   @Nonempty
@@ -77,12 +77,11 @@ public interface IAS4Message
   }
 
   /**
-   * Create a SOAP document from this message with the specified optional SOAP
-   * body payload. Attachments are not handled by this method.
+   * Create a SOAP document from this message with the specified optional SOAP body payload.
+   * Attachments are not handled by this method.
    *
    * @param aSoapBodyPayload
-   *        The payload to be added into the SOAP body. May be
-   *        <code>null</code>.
+   *        The payload to be added into the SOAP body. May be <code>null</code>.
    * @return The created DOM document.
    * @since v0.9.8
    * @see #getAsSoapDocument()

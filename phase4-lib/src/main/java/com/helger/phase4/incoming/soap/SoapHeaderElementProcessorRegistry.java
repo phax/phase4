@@ -44,9 +44,8 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * This class manages the SOAP header element processors. This is used to
- * validate the "must understand" SOAP requirement. It manages all instances of
- * {@link ISoapHeaderElementProcessor}.
+ * This class manages the SOAP header element processors. This is used to validate the "must
+ * understand" SOAP requirement. It manages all instances of {@link ISoapHeaderElementProcessor}.
  *
  * @author Philip Helger
  * @author Gregor Scholtysik
@@ -130,8 +129,8 @@ public class SoapHeaderElementProcessorRegistry
 
     // WSS4J must be after Ebms3Messaging handler!
     final AS4SigningParams aSigningParams = aIncomingSecurityConfiguration.getSigningParams ();
-    final Provider aSecurityProviderSignVerify = aSigningParams == null ? null : aSigningParams
-                                                                                               .getSecurityProviderVerify ();
+    final Provider aSecurityProviderSignVerify = aSigningParams == null ? null
+                                                                        : aSigningParams.getSecurityProviderVerify ();
     final Supplier <? extends IPMode> aFallbackPModeProvider = () -> aFallbackPMode;
     final IAS4DecryptParameterModifier aDecryptParameterModifier = aIncomingSecurityConfiguration.getDecryptParameterModifier ();
     ret.registerHeaderElementProcessor (SoapHeaderElementProcessorWSS4J.QNAME_SECURITY,

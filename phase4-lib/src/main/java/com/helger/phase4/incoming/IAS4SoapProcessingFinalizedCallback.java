@@ -28,8 +28,7 @@ public interface IAS4SoapProcessingFinalizedCallback
    * Indicate that processing has finished.
    *
    * @param bWasSynchronous
-   *        <code>true</code> if it was synchronous, <code>false</code> if it
-   *        was asynchronous.
+   *        <code>true</code> if it was synchronous, <code>false</code> if it was asynchronous.
    */
   void onProcessingFinalized (boolean bWasSynchronous);
 }

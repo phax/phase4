@@ -253,8 +253,8 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     {
       final String sName = aEntry.getKey ();
       if (!sName.equals (CHttpHeader.CONTENT_ID) &&
-          !sName.equals (CHttpHeader.CONTENT_TRANSFER_ENCODING) &&
-          !sName.equals (CHttpHeader.CONTENT_TYPE))
+        !sName.equals (CHttpHeader.CONTENT_TRANSFER_ENCODING) &&
+        !sName.equals (CHttpHeader.CONTENT_TYPE))
         aMimeBodyPart.setHeader (sName, aEntry.getValue ());
     }
 

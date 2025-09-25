@@ -22,8 +22,8 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import jakarta.annotation.Nonnull;
 
 /**
- * This is a special callback handler that is meant to be used in combination
- * with the Servlet handler to customize the incoming request handler.
+ * This is a special callback handler that is meant to be used in combination with the Servlet
+ * handler to customize the incoming request handler.
  *
  * @author Philip Helger
  * @since 3.0.0

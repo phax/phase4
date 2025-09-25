@@ -29,8 +29,8 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * This class represents a single "duplication check" item. It works for
- * incoming and outgoing duplication checks
+ * This class represents a single "duplication check" item. It works for incoming and outgoing
+ * duplication checks
  *
  * @author Martin Bayerl
  * @author Philip Helger
@@ -106,8 +106,8 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
     final AS4DuplicateItem rhs = (AS4DuplicateItem) o;
     // DT not contained!
     return m_sMessageID.equals (rhs.m_sMessageID) &&
-           EqualsHelper.equals (m_sProfileID, rhs.m_sProfileID) &&
-           EqualsHelper.equals (m_sPModeID, rhs.m_sPModeID);
+      EqualsHelper.equals (m_sProfileID, rhs.m_sProfileID) &&
+      EqualsHelper.equals (m_sPModeID, rhs.m_sPModeID);
   }
 
   @Override

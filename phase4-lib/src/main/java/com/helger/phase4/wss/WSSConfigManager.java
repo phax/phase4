@@ -55,14 +55,12 @@ public class WSSConfigManager extends AbstractGlobalSingleton
   {
     // init WSSConfig
     final boolean bContainsSTRTransform = Security.getProvider ("STRTransform") != null;
-    final boolean bContainsAttachmentContentSignatureTransform = Security.getProvider ("AttachmentContentSignatureTransform") !=
-                                                                 null;
-    final boolean bContainsAttachmentCompleteSignatureTransform = Security.getProvider ("AttachmentCompleteSignatureTransform") !=
-                                                                  null;
+    final boolean bContainsAttachmentContentSignatureTransform = Security.getProvider ("AttachmentContentSignatureTransform") != null;
+    final boolean bContainsAttachmentCompleteSignatureTransform = Security.getProvider ("AttachmentCompleteSignatureTransform") != null;
     final boolean bAddJCEProviders;
     if (bContainsSTRTransform &&
-        bContainsAttachmentContentSignatureTransform &&
-        bContainsAttachmentCompleteSignatureTransform)
+      bContainsAttachmentContentSignatureTransform &&
+      bContainsAttachmentCompleteSignatureTransform)
     {
       LOGGER.info ("All WSSConfig Security Providers are installed and therefore don't need to be installed again");
       bAddJCEProviders = false;
@@ -72,8 +70,8 @@ public class WSSConfigManager extends AbstractGlobalSingleton
       // at least one is missing
       bAddJCEProviders = true;
       if (!bContainsSTRTransform &&
-          !bContainsAttachmentContentSignatureTransform &&
-          !bContainsAttachmentCompleteSignatureTransform)
+        !bContainsAttachmentContentSignatureTransform &&
+        !bContainsAttachmentCompleteSignatureTransform)
       {
         // None of them is registered - that is understandable and we're
         // registering them now

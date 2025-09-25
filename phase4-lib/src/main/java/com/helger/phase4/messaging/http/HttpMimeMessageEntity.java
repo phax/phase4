@@ -54,8 +54,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   }
 
   /**
-   * @return The mime message passed in the constructor. Never
-   *         <code>null</code>.
+   * @return The mime message passed in the constructor. Never <code>null</code>.
    */
   @Nonnull
   public final MimeMessage getMimeMessage ()

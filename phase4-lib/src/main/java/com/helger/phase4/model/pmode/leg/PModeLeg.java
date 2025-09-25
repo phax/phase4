@@ -168,10 +168,10 @@ public class PModeLeg implements Serializable
       return false;
     final PModeLeg rhs = (PModeLeg) o;
     return EqualsHelper.equals (m_aProtocol, rhs.m_aProtocol) &&
-           EqualsHelper.equals (m_aBusinessInfo, rhs.m_aBusinessInfo) &&
-           EqualsHelper.equals (m_aErrorHandling, rhs.m_aErrorHandling) &&
-           EqualsHelper.equals (m_aReliability, rhs.m_aReliability) &&
-           EqualsHelper.equals (m_aSecurity, rhs.m_aSecurity);
+      EqualsHelper.equals (m_aBusinessInfo, rhs.m_aBusinessInfo) &&
+      EqualsHelper.equals (m_aErrorHandling, rhs.m_aErrorHandling) &&
+      EqualsHelper.equals (m_aReliability, rhs.m_aReliability) &&
+      EqualsHelper.equals (m_aSecurity, rhs.m_aSecurity);
   }
 
   @Override

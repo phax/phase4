@@ -201,8 +201,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         aRequestData.setEnableRevocation (true);
 
       final Collection <Pattern> aSignatureSubjectCertConstraints = m_aSigningParams != null &&
-                                                                    m_aSigningParams.hasSubjectCertConstraints () ? m_aSigningParams.getAllSubjectCertConstraints ()
-                                                                                                                  : null;
+        m_aSigningParams.hasSubjectCertConstraints () ? m_aSigningParams.getAllSubjectCertConstraints () : null;
       if (aSignatureSubjectCertConstraints != null)
       {
         if (LOGGER.isTraceEnabled ())
@@ -411,9 +410,11 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
     // Make sure a PMode is selected
     IPMode aPMode = aIncomingState.getPMode ();
     if (aPMode == null)
+    {
       aPMode = m_aFallbackPModeProvider.get ();
-    if (aPMode == null)
-      throw new IllegalStateException ("No PMode contained in AS4 state - seems like Ebms3 Messaging header is missing!");
+      if (aPMode == null)
+        throw new IllegalStateException ("No PMode contained in AS4 state - seems like Ebms3 Messaging header is missing!");
+    }
 
     // Default is Leg 1, gets overwritten when a reference to a message id
     // exists and then uses leg2

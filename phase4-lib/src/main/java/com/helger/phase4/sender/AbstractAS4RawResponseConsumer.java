@@ -23,8 +23,8 @@ import com.helger.base.trait.IGenericImplTrait;
 import jakarta.annotation.Nonnull;
 
 /**
- * Abstract base implementation of <code>IAS4RawResponseConsumer</code> to
- * provide basic customizability.
+ * Abstract base implementation of <code>IAS4RawResponseConsumer</code> to provide basic
+ * customizability.
  *
  * @author Philip Helger
  * @since 0.13.0

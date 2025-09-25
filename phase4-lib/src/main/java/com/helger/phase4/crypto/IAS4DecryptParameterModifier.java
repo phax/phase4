@@ -22,8 +22,7 @@ import org.apache.wss4j.dom.handler.RequestData;
 import jakarta.annotation.Nonnull;
 
 /**
- * Callback interface for modifying the decryption {@link RequestData} WSS4J
- * object.
+ * Callback interface for modifying the decryption {@link RequestData} WSS4J object.
  *
  * @author Philip Helger
  * @since 2.2.0
@@ -31,8 +30,8 @@ import jakarta.annotation.Nonnull;
 public interface IAS4DecryptParameterModifier
 {
   /**
-   * Modify the provided {@link WSSConfig} to add additional handlers. This was
-   * created based on issue #150.
+   * Modify the provided {@link WSSConfig} to add additional handlers. This was created based on
+   * issue #150.
    *
    * @param aWSSConfig
    *        The {@link WSSConfig} to be modified.
@@ -41,10 +40,9 @@ public interface IAS4DecryptParameterModifier
   {}
 
   /**
-   * Modify the provided {@link RequestData} object, e.g. by allowing RSA 1.5
-   * algorithms. This method is called after all the default setters, so be
-   * careful not to overwrite standard fields, to avoid creating unintended side
-   * effects.
+   * Modify the provided {@link RequestData} object, e.g. by allowing RSA 1.5 algorithms. This
+   * method is called after all the default setters, so be careful not to overwrite standard fields,
+   * to avoid creating unintended side effects.
    *
    * @param aRequestData
    *        The object to be modified. Never <code>null</code>.

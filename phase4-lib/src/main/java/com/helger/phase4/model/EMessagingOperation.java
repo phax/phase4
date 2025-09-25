@@ -24,33 +24,30 @@ package com.helger.phase4.model;
 public enum EMessagingOperation
 {
   /**
-   * This operation transfers enough data from the producer to the Sending MSH
-   * to generate an ebMS User Message Unit.
+   * This operation transfers enough data from the producer to the Sending MSH to generate an ebMS
+   * User Message Unit.
    */
   SUBMIT,
   /**
-   * This operation makes data of a previously received (via Receive operation)
-   * ebMS User Message Unit available to the Consumer.
+   * This operation makes data of a previously received (via Receive operation) ebMS User Message
+   * Unit available to the Consumer.
    */
   DELIVER,
   /**
-   * This operation notifies either a Producer or a Consumer about the status of
-   * a previously submitted or received ebMS User Message Unit, or about general
-   * MSH status.
+   * This operation notifies either a Producer or a Consumer about the status of a previously
+   * submitted or received ebMS User Message Unit, or about general MSH status.
    */
   NOTIFY,
   /**
-   * This operation initiates the transfer of an ebMS user message from the
-   * Sending MSH to the Receiving MSH, after all headers intended for the
-   * Receiving MSH have been added (including security and/or reliability, as
-   * required).
+   * This operation initiates the transfer of an ebMS user message from the Sending MSH to the
+   * Receiving MSH, after all headers intended for the Receiving MSH have been added (including
+   * security and/or reliability, as required).
    */
   SEND,
   /**
-   * This operation completes the transfer of an ebMS user message from the
-   * Sending MSH to the Receiving MSH. A successful reception means that a
-   * contained User Message Unit is now available for further processing by the
-   * Receiving MSH.
+   * This operation completes the transfer of an ebMS user message from the Sending MSH to the
+   * Receiving MSH. A successful reception means that a contained User Message Unit is now available
+   * for further processing by the Receiving MSH.
    */
   RECEIVE;
 }

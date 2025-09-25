@@ -25,8 +25,8 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Enumeration with all predefined EBMS errors based on the specs. Use
- * {@link IEbmsError} for a generic interface.
+ * Enumeration with all predefined EBMS errors based on the specs. Use {@link IEbmsError} for a
+ * generic interface.
  *
  * @author Philip Helger
  */

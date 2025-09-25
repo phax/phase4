@@ -27,8 +27,8 @@ import com.helger.base.tostring.ToStringGenerator;
 import jakarta.annotation.Nonnull;
 
 /**
- * This class represents a single DOM element in a SOAP header with some
- * metadata. It is used to mark headers as processed or not.
+ * This class represents a single DOM element in a SOAP header with some metadata. It is used to
+ * mark headers as processed or not.
  *
  * @author Philip Helger
  */
@@ -44,11 +44,10 @@ public class AS4SingleSoapHeader
    * @param aNode
    *        The DOM element. May not be <code>null</code>.
    * @param aQName
-   *        The QName of the DOM element. May not be <code>null</code>. Must
-   *        match the QName of the provided DOM node.
+   *        The QName of the DOM element. May not be <code>null</code>. Must match the QName of the
+   *        provided DOM node.
    * @param bIsMustUnderstand
-   *        <code>true</code> if this is a must understand header,
-   *        <code>false</code> otherwise.
+   *        <code>true</code> if this is a must understand header, <code>false</code> otherwise.
    */
   public AS4SingleSoapHeader (@Nonnull final Element aNode,
                               @Nonnull final QName aQName,

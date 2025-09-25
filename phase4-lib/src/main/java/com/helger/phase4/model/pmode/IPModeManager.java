@@ -50,8 +50,7 @@ public interface IPModeManager
    *
    * @param aPMode
    *        The PMode to be updated. May not be <code>null</code>.
-   * @return {@link EChange#CHANGED} if something changed,
-   *         {@link EChange#UNCHANGED} otherwise.
+   * @return {@link EChange#CHANGED} if something changed, {@link EChange#UNCHANGED} otherwise.
    */
   @Nonnull
   EChange updatePMode (@Nonnull IPMode aPMode);
@@ -68,8 +67,7 @@ public interface IPModeManager
    * Mark the provided PMode as deleted.
    *
    * @param sPModeID
-   *        The ID of the PMode to be marked as deleted. May be
-   *        <code>null</code>.
+   *        The ID of the PMode to be marked as deleted. May be <code>null</code>.
    * @return {@link EChange}
    */
   @Nonnull
@@ -120,8 +118,7 @@ public interface IPModeManager
   }
 
   /**
-   * Get a predicate that matches a PMode by ID or initiator and responder
-   * together.
+   * Get a predicate that matches a PMode by ID or initiator and responder together.
    *
    * @param sID
    *        PMode ID to search. May be <code>null</code>.
@@ -139,8 +136,7 @@ public interface IPModeManager
     // The same PMode exists either if the ID is identical or if Initiator and
     // Responder are identical
     return x -> x.getID ().equals (sID) ||
-                (EqualsHelper.equals (x.getInitiator (), aInitiator) &&
-                 EqualsHelper.equals (x.getResponder (), aResponder));
+      (EqualsHelper.equals (x.getInitiator (), aInitiator) && EqualsHelper.equals (x.getResponder (), aResponder));
   }
 
   /**
@@ -154,22 +150,20 @@ public interface IPModeManager
   IPMode getPModeOfID (@Nullable String sID);
 
   /**
-   * @return A non-<code>null</code> but maybe empty list of all contained
-   *         PModes.
+   * @return A non-<code>null</code> but maybe empty list of all contained PModes.
    */
   @Nonnull
   ICommonsList <IPMode> getAll ();
 
   /**
-   * @return A non-<code>null</code> but maybe empty set of the IDs of all
-   *         contained PModes.
+   * @return A non-<code>null</code> but maybe empty set of the IDs of all contained PModes.
    */
   @Nonnull
   ICommonsSet <String> getAllIDs ();
 
   /**
-   * Validate, that the provided PMode domain object is consistent according to
-   * the underlying requirements.
+   * Validate, that the provided PMode domain object is consistent according to the underlying
+   * requirements.
    *
    * @param aPMode
    *        The PMode to be validated. May be <code>null</code>.

@@ -21,8 +21,8 @@ import com.helger.base.state.EContinue;
 import jakarta.annotation.Nonnull;
 
 /**
- * A specific helper interface with the sole purpose to be able to interrupt the
- * sending of a document after all checks are performed.
+ * A specific helper interface with the sole purpose to be able to interrupt the sending of a
+ * document after all checks are performed.
  *
  * @author Philip Helger
  * @since 0.13.0
@@ -30,9 +30,8 @@ import jakarta.annotation.Nonnull;
 public interface IAS4SenderInterrupt
 {
   /**
-   * @return {@link EContinue#CONTINUE} to send the message,
-   *         {@link EContinue#BREAK} to not send the message. May not be
-   *         <code>null</code>.
+   * @return {@link EContinue#CONTINUE} to send the message, {@link EContinue#BREAK} to not send the
+   *         message. May not be <code>null</code>.
    */
   @Nonnull
   EContinue canSendDocument ();

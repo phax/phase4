@@ -79,8 +79,7 @@ public class PModeParty implements IHasID <String>, Serializable
   }
 
   /**
-   * @return <code>true</code> if an ID type is present, <code>false</code> if
-   *         not.
+   * @return <code>true</code> if an ID type is present, <code>false</code> if not.
    */
   public final boolean hasIDType ()
   {
@@ -133,8 +132,7 @@ public class PModeParty implements IHasID <String>, Serializable
   }
 
   /**
-   * Either <code>id-type:id-value</code> or just <code>id-value</code> if not
-   * id-type is present.
+   * Either <code>id-type:id-value</code> or just <code>id-value</code> if not id-type is present.
    */
   @Nonnull
   @Nonempty
@@ -183,8 +181,7 @@ public class PModeParty implements IHasID <String>, Serializable
   }
 
   /**
-   * @return <code>true</code> if a user name is present, <code>false</code> if
-   *         not.
+   * @return <code>true</code> if a user name is present, <code>false</code> if not.
    */
   public final boolean hasUserName ()
   {
@@ -218,8 +215,7 @@ public class PModeParty implements IHasID <String>, Serializable
   }
 
   /**
-   * @return <code>true</code> if a password is present, <code>false</code> if
-   *         not.
+   * @return <code>true</code> if a password is present, <code>false</code> if not.
    */
   public final boolean hasPassword ()
   {
@@ -252,10 +248,10 @@ public class PModeParty implements IHasID <String>, Serializable
       return false;
     final PModeParty rhs = (PModeParty) o;
     return EqualsHelper.equals (m_sIDType, rhs.m_sIDType) &&
-           m_sIDValue.equals (rhs.m_sIDValue) &&
-           m_sRole.equals (rhs.m_sRole) &&
-           EqualsHelper.equals (m_sUserName, rhs.m_sUserName) &&
-           EqualsHelper.equals (m_sPassword, rhs.m_sPassword);
+      m_sIDValue.equals (rhs.m_sIDValue) &&
+      m_sRole.equals (rhs.m_sRole) &&
+      EqualsHelper.equals (m_sUserName, rhs.m_sUserName) &&
+      EqualsHelper.equals (m_sPassword, rhs.m_sPassword);
   }
 
   @Override

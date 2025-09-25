@@ -33,10 +33,9 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * A simple {@link IAS4OutgoingDumper} that can be used for a single
- * transmission and dumps it to the {@link OutputStream} provided in the
- * constructor. As there are can be retries for outgoing messages, only the
- * first try is logged and consecutive calls don't result in dump.
+ * A simple {@link IAS4OutgoingDumper} that can be used for a single transmission and dumps it to
+ * the {@link OutputStream} provided in the constructor. As there are can be retries for outgoing
+ * messages, only the first try is logged and consecutive calls don't result in dump.
  *
  * @author Philip Helger
  * @since 0.9.8
