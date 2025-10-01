@@ -108,17 +108,13 @@ public class SoapHeaderElementProcessorRegistry
     // callback notifying a IAS4PModeAwareCryptoFactory about a successful PMode
     // resolution
     final Consumer <IPMode> aPModeConsumer = aPMode -> {
-      if (aCryptoFactorySign instanceof IAS4PModeAwareCryptoFactory)
-      {
-        ((IAS4PModeAwareCryptoFactory) aCryptoFactorySign).setContextPMode (aPMode);
-      }
+      if (aCryptoFactorySign instanceof final IAS4PModeAwareCryptoFactory aPMACF)
+        aPMACF.setContextPMode (aPMode);
 
       // Avoid setting it twice on the same object
-      if (!EqualsHelper.identityEqual (aCryptoFactorySign, aCryptoFactoryCrypt))
-        if (aCryptoFactoryCrypt instanceof IAS4PModeAwareCryptoFactory)
-        {
-          ((IAS4PModeAwareCryptoFactory) aCryptoFactoryCrypt).setContextPMode (aPMode);
-        }
+      if (EqualsHelper.identityDifferent (aCryptoFactorySign, aCryptoFactoryCrypt))
+        if (aCryptoFactoryCrypt instanceof final IAS4PModeAwareCryptoFactory aPMACF)
+          aPMACF.setContextPMode (aPMode);
     };
 
     // Ebms3Messaging handler first
