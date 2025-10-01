@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<env:Envelope xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+  <env:Header>
+    <eb:Messaging env:mustUnderstand="true" wsu:Id="eb-28a699c5-c7ae-4731-b0b8-ebf3b4bc8477">
+      <eb:SignalMessage>
+        <eb:MessageInfo>
+          <eb:Timestamp>2025-09-25T09:54:32.971659362+02:00</eb:Timestamp>
+          <eb:MessageId>28a699c5-c7ae-4731-b0b8-ebf3b4bc8477</eb:MessageId>
+          <eb:RefToMessageId>1234</eb:RefToMessageId>
+        </eb:MessageInfo>
+        <eb:Error category="Processing" errorCode="EBMS:0103" origin="ebMS" refToMessageInError="" severity="Failure" shortDescription="PolicyNoncompliance">
+          <eb:Description xml:lang="">Certificate revoked CN=POP000000,OU=PEPPOL TEST AP,O=OpenPEPPOL AISBL,C=BE</eb:Description>
+          <eb:ErrorDetail>java.lang.RuntimeException</eb:ErrorDetail>
+        </eb:Error>
+      </eb:SignalMessage>
+    </eb:Messaging>
+  </env:Header>
+  <env:Body wsu:Id="bi-28a699c5-c7ae-4731-b0b8-ebf3b4bc8477">
+    <env:Fault>
+      <env:Code>
+        <env:Value>env:Receiver</env:Value>
+      </env:Code>
+      <env:Reason>
+        <env:Text xml:lang="en">Certificate revoked CN=POP000000,OU=PEPPOL TEST AP,O=OpenPEPPOL AISBL,C=BE</env:Text>
+      </env:Reason>
+    </env:Fault>
+  </env:Body>
+</env:Envelope>

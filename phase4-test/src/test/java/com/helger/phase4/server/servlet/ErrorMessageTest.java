@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.server.servlet;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -32,7 +34,20 @@ public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   public void testSendErrorMessage () throws Exception
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessage.xml"));
+    assertNotNull (aDoc);
 
+    // This is handled by MockMessageProcessorSPI
+    sendPlainMessage (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()), true, null);
+  }
+
+  @Test
+  public void testSendErrorMessageWithFault () throws Exception
+  {
+    // Test file must not contain WSSE, because no default PMode is set
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageWithFault.xml"));
+    assertNotNull (aDoc);
+
+    // This is handled by MockMessageProcessorSPI
     sendPlainMessage (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()), true, null);
   }
 
@@ -41,6 +56,7 @@ public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   public void testSendErrorMessageNoRefToMessageID () throws Exception
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageNoRefToMessageID.xml"));
+    assertNotNull (aDoc);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()),
                       false,
