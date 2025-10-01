@@ -2,7 +2,7 @@
 
 ![Logo](https://github.com/phax/phase4/blob/master/docs/logo/phase4-logo-653-180.png)
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.helger.phase4/phase4-parent-pom/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.helger.phase4/phase4-parent-pom) 
+[![Maven Central](https://img.shields.io/maven-central/v/com.helger.phase4/phase4-parent-pom)](https://img.shields.io/maven-central/v/com.helger.phase4/phase4-parent-pom)
 [![javadoc](https://javadoc.io/badge2/com.helger.phase4/phase4-lib/javadoc.svg)](https://javadoc.io/doc/com.helger.phase4/phase4-lib)
 
 phase4 is an embeddable, lightweight Java library to send and receive AS4 messages for different profiles. 
@@ -15,7 +15,7 @@ Please see [phase4-pepol-standalone](https://github.com/phax/phase4-peppol-stand
 
 If you like the project, a star on GitHub is always appreciated.
 
-If you need commercial support, please reach out to me by email (see file `pom.xml` if you don't have it).
+If you need commercial support, please reach out to me by email (see file `pom.xml`).
 
 ---
 
