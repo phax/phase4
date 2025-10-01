@@ -392,6 +392,10 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
 
         _notifyPModeResolved (aPMode);
       }
+      else
+      {
+        LOGGER.error ("Ebms message is missing the mandatory CollaborationInfo element");
+      }
 
       // to use the configuration for leg2
       PModeLeg aPModeLeg1 = null;
@@ -666,6 +670,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
       final Ebms3Receipt aEbms3Receipt = aSignalMessage.getReceipt ();
       if (aEbms3PullRequest != null)
       {
+        // It's a PullRequest
         final String sMPC = aEbms3PullRequest.getMpc ();
         final IMPC aMPC = aMPCMgr.getMPCOfID (sMPC);
         if (aMPC == null)
@@ -710,6 +715,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
       else
         if (aEbms3Receipt != null)
         {
+          // It's a Receipt
           final String sRefToMessageID = aSignalMessage.getMessageInfo ().getRefToMessageId ();
           if (StringHelper.isEmpty (sRefToMessageID))
           {
@@ -723,7 +729,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
         }
         else
         {
-          // Error Message
+          // It's an Error Message
           if (!aSignalMessage.getError ().isEmpty ())
           {
             for (final Ebms3Error aError : aSignalMessage.getError ())
