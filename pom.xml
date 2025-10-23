@@ -84,7 +84,7 @@
     <ph-commons.version>12.0.4</ph-commons.version>
     <ph-schematron.version>9.0.1</ph-schematron.version>
     <ph-ubl.version>10.0.0</ph-ubl.version>
-    <ph-web.version>11.1.1</ph-web.version>
+    <ph-web.version>11.1.2</ph-web.version>
     <ph-xsds.version>4.0.0</ph-xsds.version>
     <phive.version>11.0.1</phive.version>
     <phive-rules.version>4.0.3</phive-rules.version>
@@ -130,7 +130,7 @@
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>10.0.1</version>
+        <version>10.0.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -344,7 +344,9 @@
     <module>phase4-profile-dbnalliance</module>
     <module>phase4-profile-entsog</module>
     <module>phase4-profile-euctp</module>
+    <!--
     <module>phase4-profile-hredelivery</module>
+    -->
     <module>phase4-profile-peppol</module>
     <!-- generic modules -->
     <module>phase4-test</module>
@@ -359,7 +361,9 @@
     <module>phase4-entsog-client</module>
     <module>phase4-euctp-client</module>
     <module>phase4-eudamed-client</module>
+    <!--
     <module>phase4-hredelivery-client</module>
+    -->
     <module>phase4-peppol-client</module>
     <module>phase4-peppol-servlet</module>
     <module>phase4-peppol-server-webapp</module>
