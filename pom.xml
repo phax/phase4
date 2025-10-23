@@ -162,15 +162,6 @@
         <artifactId>wss4j-ws-security-dom</artifactId>
         <version>${wss4j.version}</version>
         <exclusions>
-          <!-- Conflicts with javax.mail -->
-          <exclusion>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-javamail_1.4_spec</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.apache.geronimo.javamail</groupId>
-            <artifactId>geronimo-javamail_1.4_mail</artifactId>
-          </exclusion>
           <!-- Insecure and not needed -->
           <exclusion>
             <groupId>org.opensaml</groupId>
@@ -295,6 +286,13 @@
         <version>${project.version}</version>
       </dependency>
       
+      <!-- EUDAMED -->
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-eudamed-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      
       <!-- EUTCP -->
       <dependency>
         <groupId>com.helger.phase4</groupId>
@@ -307,10 +305,15 @@
         <version>${project.version}</version>
       </dependency>
       
-      <!-- EUDAMED -->
+      <!-- HR eDelivery -->
       <dependency>
         <groupId>com.helger.phase4</groupId>
-        <artifactId>phase4-eudamed-client</artifactId>
+        <artifactId>phase4-profile-hredelivery</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-hredelivery-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       
@@ -335,12 +338,15 @@
 
   <modules>
     <module>phase4-lib</module>
+    <!-- all profiles -->
     <module>phase4-profile-bdew</module>
     <module>phase4-profile-cef</module>
     <module>phase4-profile-dbnalliance</module>
     <module>phase4-profile-entsog</module>
     <module>phase4-profile-euctp</module>
+    <module>phase4-profile-hredelivery</module>
     <module>phase4-profile-peppol</module>
+    <!-- generic modules -->
     <module>phase4-test</module>
     <module>phase4-server-webapp</module>
     <module>phase4-dynamic-discovery</module>
@@ -353,6 +359,7 @@
     <module>phase4-entsog-client</module>
     <module>phase4-euctp-client</module>
     <module>phase4-eudamed-client</module>
+    <module>phase4-hredelivery-client</module>
     <module>phase4-peppol-client</module>
     <module>phase4-peppol-servlet</module>
     <module>phase4-peppol-server-webapp</module>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Philip Helger (www.helger.com)
+ * Copyright (C) 2025 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.peppol;
+package com.helger.phase4.hredelivery;
 
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
@@ -26,12 +26,12 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * Interface for handling Peppol certification validations results
+ * Interface for handling certification validations results
  *
  * @author Philip Helger
- * @since 0.9.5
+ * @since 4.0.1
  */
-public interface IPhase4PeppolCertificateCheckResultHandler
+public interface IPhase4HREdeliveryCertificateCheckResultHandler
 {
   /**
    * Invoked after certificate check.

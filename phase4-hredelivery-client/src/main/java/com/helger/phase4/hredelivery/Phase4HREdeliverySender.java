@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Philip Helger (www.helger.com)
+ * Copyright (C) 2025 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.peppol;
+package com.helger.phase4.hredelivery;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
@@ -41,40 +40,30 @@ import com.helger.base.state.ESuccess;
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
 import com.helger.diver.api.coord.DVRCoordinate;
+import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHData;
+import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHDataWriter;
+import com.helger.hredelivery.commons.url.HREDeliveryNaptrURLProvider;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
-import com.helger.peppol.reporting.api.PeppolReportingHelper;
-import com.helger.peppol.reporting.api.PeppolReportingItem;
-import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
-import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
-import com.helger.peppol.sbdh.CPeppolSBDH;
-import com.helger.peppol.sbdh.EPeppolMLSType;
-import com.helger.peppol.sbdh.PeppolSBDHData;
-import com.helger.peppol.sbdh.PeppolSBDHDataWriter;
-import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadBinaryMarshaller;
-import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
-import com.helger.peppol.sbdh.spec12.BinaryContentType;
-import com.helger.peppol.sbdh.spec12.TextContentType;
-import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
+import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.peppol.doctype.IPeppolDocumentTypeIdentifierParts;
 import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifierParts;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.EAS4CompressionMode;
-import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
-import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.MessageProperty;
-import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
-import com.helger.phase4.profile.peppol.PeppolPMode;
-import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
+import com.helger.phase4.profile.hredelivery.AS4HREDeliveryProfileRegistarSPI;
+import com.helger.phase4.profile.hredelivery.HREDeliveryPMode;
+import com.helger.phase4.profile.hredelivery.Phase4HREDeliveryHttpClientSettings;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -87,52 +76,48 @@ import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.security.revocation.ERevocationCheckMode;
-import com.helger.smpclient.peppol.SMPClientReadOnly;
-import com.helger.smpclient.url.IPeppolURLProvider;
-import com.helger.smpclient.url.PeppolConfigurableURLProvider;
+import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
+import com.helger.smpclient.url.ISMPURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
-import com.helger.xsds.peppol.smp1.EndpointType;
+import com.helger.xsds.bdxr.smp1.EndpointType;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
- * This class contains all the specifics to send AS4 messages to the Peppol Network. See
+ * This class contains all the specifics to send AS4 messages to HR eDelivery. See
  * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
  * customization.
  *
  * @author Philip Helger
+ * @since 4.0.1
  */
 @Immutable
-public final class Phase4PeppolSender
+public final class Phase4HREdeliverySender
 {
-  public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
-  public static final IPeppolURLProvider URL_PROVIDER = PeppolConfigurableURLProvider.INSTANCE;
+  // Seems to be fine to use the Peppol IDs for now
+  public static final IIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
+  public static final ISMPURLProvider URL_PROVIDER = HREDeliveryNaptrURLProvider.INSTANCE;
 
-  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolSender.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4HREdeliverySender.class);
 
-  private Phase4PeppolSender ()
+  private Phase4HREdeliverySender ()
   {}
 
   @Nullable
-  private static PeppolSBDHData _createPeppolSBDHData (@Nonnull final IParticipantIdentifier aSenderID,
-                                                       @Nonnull final IParticipantIdentifier aReceiverID,
-                                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                       @Nonnull final IProcessIdentifier aProcID,
-                                                       @Nullable final String sCountryC1,
-                                                       @Nullable final String sInstanceIdentifier,
-                                                       @Nullable final String sStandard,
-                                                       @Nullable final String sTypeVersion,
-                                                       @Nullable final String sType,
-                                                       @Nonnull final Element aPayloadElement,
-                                                       final boolean bClonePayloadElement)
+  private static HREDeliverySBDHData _createHREDeliverySBDHData (@Nonnull final IParticipantIdentifier aSenderID,
+                                                                 @Nonnull final IParticipantIdentifier aReceiverID,
+                                                                 @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                                 @Nullable final String sInstanceIdentifier,
+                                                                 @Nullable final String sStandard,
+                                                                 @Nullable final String sTypeVersion,
+                                                                 @Nullable final String sType,
+                                                                 @Nonnull final Element aPayloadElement,
+                                                                 final boolean bClonePayloadElement)
   {
-    final PeppolSBDHData aData = new PeppolSBDHData (IF);
+    final HREDeliverySBDHData aData = new HREDeliverySBDHData (IF);
     aData.setSender (aSenderID);
     aData.setReceiver (aReceiverID);
-    aData.setDocumentType (aDocTypeID);
-    aData.setProcess (aProcID);
-    aData.setCountryC1 (sCountryC1);
 
     String sRealStandard = sStandard;
     if (StringHelper.isEmpty (sRealStandard))
@@ -204,7 +189,7 @@ public final class Phase4PeppolSender
 
     // Check with logging
     if (!aData.areAllFieldsSet (true))
-      throw new IllegalArgumentException ("The Peppol SBDH data is incomplete. See logs for details.");
+      throw new IllegalArgumentException ("The HR eDelivery SBDH data is incomplete. See logs for details.");
 
     return aData;
   }
@@ -213,8 +198,6 @@ public final class Phase4PeppolSender
   private static StandardBusinessDocument _createSBD (@Nonnull final IParticipantIdentifier aSenderID,
                                                       @Nonnull final IParticipantIdentifier aReceiverID,
                                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                      @Nonnull final IProcessIdentifier aProcID,
-                                                      @Nullable final String sCountryC1,
                                                       @Nullable final String sInstanceIdentifier,
                                                       @Nullable final String sStandard,
                                                       @Nullable final String sTypeVersion,
@@ -222,23 +205,21 @@ public final class Phase4PeppolSender
                                                       @Nonnull final Element aPayloadElement,
                                                       final boolean bClonePayloadElement)
   {
-    final PeppolSBDHData aData = _createPeppolSBDHData (aSenderID,
-                                                        aReceiverID,
-                                                        aDocTypeID,
-                                                        aProcID,
-                                                        sCountryC1,
-                                                        sInstanceIdentifier,
-                                                        sStandard,
-                                                        sTypeVersion,
-                                                        sType,
-                                                        aPayloadElement,
-                                                        bClonePayloadElement);
+    final HREDeliverySBDHData aData = _createHREDeliverySBDHData (aSenderID,
+                                                                  aReceiverID,
+                                                                  aDocTypeID,
+                                                                  sInstanceIdentifier,
+                                                                  sStandard,
+                                                                  sTypeVersion,
+                                                                  sType,
+                                                                  aPayloadElement,
+                                                                  bClonePayloadElement);
     if (aData == null)
       return null;
 
     // We never need to clone the payload element here because it was evtl.
     // cloned before
-    return new PeppolSBDHDataWriter ().setFavourSpeed (true).createStandardBusinessDocument (aData);
+    return new HREDeliverySBDHDataWriter ().setFavourSpeed (true).createStandardBusinessDocument (aData);
   }
 
   /**
@@ -248,10 +229,6 @@ public final class Phase4PeppolSender
    *        Receiver participant ID. May not be <code>null</code>.
    * @param aDocTypeID
    *        Document type ID. May not be <code>null</code>.
-   * @param aProcID
-   *        Process ID. May not be <code>null</code>.
-   * @param sCountryC1
-   *        Country code of C1. May be <code>null</code>.
    * @param sInstanceIdentifier
    *        SBDH instance identifier. May be <code>null</code> to create a random ID.
    * @param sStandard
@@ -267,14 +244,11 @@ public final class Phase4PeppolSender
    *        Payload element to be wrapped. May not be <code>null</code>.
    * @return The domain object representation of the created SBDH or <code>null</code> if not all
    *         parameters are present.
-   * @since 3.1.0
    */
   @Nullable
   public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
                                                      @Nonnull final IParticipantIdentifier aReceiverID,
                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                     @Nonnull final IProcessIdentifier aProcID,
-                                                     @Nullable final String sCountryC1,
                                                      @Nullable final String sInstanceIdentifier,
                                                      @Nullable final String sStandard,
                                                      @Nullable final String sTypeVersion,
@@ -284,8 +258,6 @@ public final class Phase4PeppolSender
     return _createSBD (aSenderID,
                        aReceiverID,
                        aDocTypeID,
-                       aProcID,
-                       sCountryC1,
                        sInstanceIdentifier,
                        sStandard,
                        sTypeVersion,
@@ -310,43 +282,30 @@ public final class Phase4PeppolSender
   private static void _validatePayload (@Nonnull final Element aPayloadElement,
                                         @Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aRegistry,
                                         @Nullable final DVRCoordinate aVESID,
-                                        @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4Exception
+                                        @Nullable final IPhase4HREdeliveryValidationResultHandler aValidationResultHandler) throws Phase4Exception
   {
     // Client side validation
-    if (aVESID != null)
+    if (aRegistry != null && aVESID != null && aValidationResultHandler != null)
     {
-      if (aValidationResultHandler != null)
-      {
-        if (aRegistry == null)
-        {
-          // Default registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aVESID, aValidationResultHandler);
-        }
-        else
-        {
-          // Custom registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement,
-                                                                   aRegistry,
-                                                                   aVESID,
-                                                                   aValidationResultHandler);
-        }
-      }
-      else
-        LOGGER.warn ("A VES ID is present but no ValidationResultHandler - therefore no validation is performed");
+      // Custom registry
+      Phase4HREdeliveryValidation.validateOutgoingBusinessDocument (aPayloadElement,
+                                                                    aRegistry,
+                                                                    aVESID,
+                                                                    aValidationResultHandler);
     }
     else
     {
       if (aValidationResultHandler != null)
-        LOGGER.warn ("A ValidationResultHandler is present but no VESID - therefore no validation is performed");
+        LOGGER.warn ("A ValidationResultHandler is present but VESID or VES Registry is missing - therefore no validation is performed");
     }
   }
 
   /**
-   * Check if the provided certificate is a valid Peppol AP certificate.
+   * Check if the provided certificate is a valid HR eDelivery AP certificate.
    *
    * @param aCAChecker
-   *        The Peppol CA checker to be used to verify the Peppol AP certificate. May not be
-   *        <code>null</code>.
+   *        The HR eDelivery CA checker to be used to verify the HR eDelivery AP certificate. May
+   *        not be <code>null</code>.
    * @param aReceiverCert
    *        The determined receiver AP certificate to check. Never <code>null</code>.
    * @param aCertificateConsumer
@@ -365,7 +324,7 @@ public final class Phase4PeppolSender
    */
   private static void _checkReceiverAPCert (@Nonnull final TrustedCAChecker aCAChecker,
                                             @Nullable final X509Certificate aReceiverCert,
-                                            @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
+                                            @Nullable final IPhase4HREdeliveryCertificateCheckResultHandler aCertificateConsumer,
                                             @Nonnull final ETriState eCacheOSCResult,
                                             @Nullable final ERevocationCheckMode eCheckMode) throws Phase4Exception
   {
@@ -389,7 +348,7 @@ public final class Phase4PeppolSender
                           ") and cannot be used for sending towards. Aborting. Reason: " +
                           eCertCheckResult.getReason ();
       LOGGER.error (sMsg);
-      throw new Phase4PeppolException (sMsg).setRetryFeasible (false);
+      throw new Phase4HREdeliveryException (sMsg).setRetryFeasible (false);
     }
   }
 
@@ -397,26 +356,23 @@ public final class Phase4PeppolSender
    * @return Create a new Builder for AS4 messages if the payload is present and the SBDH is always
    *         created internally by phase4. Never <code>null</code>.
    * @see #sbdhBuilder() if you already have a ready Standard Business Document
-   * @since 0.9.4
    */
   @Nonnull
-  public static PeppolUserMessageBuilder builder ()
+  public static HREDeliveryUserMessageBuilder builder ()
   {
-    return new PeppolUserMessageBuilder ();
+    return new HREDeliveryUserMessageBuilder ();
   }
 
   /**
    * @return Create a new Builder for AS4 messages if the SBDH payload is already present. This
    *         builder is slightly more limited, because it doesn't offer validation, as it is
-   *         expected to be done before. Use this builder e.g. for the Peppol Testbed messages.
-   *         Never <code>null</code>.
+   *         expected to be done before. Never <code>null</code>.
    * @see #builder() if you want phase4 to create the Standard Business Document
-   * @since 0.9.6
    */
   @Nonnull
-  public static PeppolUserMessageSBDHBuilder sbdhBuilder ()
+  public static HREDeliveryUserMessageSBDHBuilder sbdhBuilder ()
   {
-    return new PeppolUserMessageSBDHBuilder ();
+    return new HREDeliveryUserMessageSBDHBuilder ();
   }
 
   /**
@@ -425,12 +381,11 @@ public final class Phase4PeppolSender
    * @author Philip Helger
    * @param <IMPLTYPE>
    *        The implementation type
-   * @since 0.9.6
    */
   @NotThreadSafe
-  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>>
-                                                                extends
-                                                                AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
+  public abstract static class AbstractHREDeliveryUserMessageBuilder <IMPLTYPE extends AbstractHREDeliveryUserMessageBuilder <IMPLTYPE>>
+                                                                     extends
+                                                                     AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     public static final boolean DEFAULT_COMPRESS_PAYLOAD = true;
     public static final boolean DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE = true;
@@ -441,7 +396,6 @@ public final class Phase4PeppolSender
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
-    protected String m_sCountryC1;
 
     protected IMimeType m_aPayloadMimeType;
     protected boolean m_bCompressPayload;
@@ -449,7 +403,7 @@ public final class Phase4PeppolSender
 
     // This value is set for backwards compatibility reasons
     protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
-    private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
+    private IPhase4HREdeliveryCertificateCheckResultHandler m_aCertificateConsumer;
     private Consumer <String> m_aAPEndpointURLConsumer;
     private Consumer <String> m_aAPTechnicalContactConsumer;
     private boolean m_bCheckReceiverAPCertificate;
@@ -462,31 +416,28 @@ public final class Phase4PeppolSender
      * Create a new builder, with the defaults from
      * {@link AbstractAS4UserMessageBuilderMIMEPayload#AbstractAS4UserMessageBuilderMIMEPayload()}
      */
-    public AbstractPeppolUserMessageBuilder ()
+    public AbstractHREDeliveryUserMessageBuilder ()
     {
       // Override default values
       try
       {
-        as4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
+        as4ProfileID (AS4HREDeliveryProfileRegistarSPI.AS4_PROFILE_ID);
 
-        // Use the Peppol specific timeout settings
-        httpClientFactory (new Phase4PeppolHttpClientSettings ());
-        agreementRef (PeppolPMode.DEFAULT_AGREEMENT_ID);
-        fromPartyIDType (PeppolPMode.DEFAULT_PARTY_TYPE_ID);
+        // Use the HR eDelivery specific timeout settings
+        httpClientFactory (new Phase4HREDeliveryHttpClientSettings ());
+        agreementRef (HREDeliveryPMode.DEFAULT_AGREEMENT_ID);
+        fromPartyIDType (HREDeliveryPMode.DEFAULT_PARTY_TYPE_ID);
         fromRole (CAS4.DEFAULT_INITIATOR_URL);
-        toPartyIDType (PeppolPMode.DEFAULT_PARTY_TYPE_ID);
+        toPartyIDType (HREDeliveryPMode.DEFAULT_PARTY_TYPE_ID);
         toRole (CAS4.DEFAULT_RESPONDER_URL);
         payloadMimeType (CMimeType.APPLICATION_XML);
         compressPayload (DEFAULT_COMPRESS_PAYLOAD);
 
         checkReceiverAPCertificate (DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE);
-        // This value is set for backwards compatibility reasons
-        peppolAP_CAChecker (PeppolTrustedCA.peppolAllAP ());
 
-        // Peppol uses its own root certificate, so no checks needed - this is
-        // only to quiet the
-        // warning
-        signingParams ().setSubjectCertConstraints (PeppolPMode.CERTIFICATE_SUBJECT_CONSTRAINT_PATTERN);
+        // HR eDelivery uses its own root certificate, so no checks needed - this is
+        // only to quiet the warning
+        signingParams ().setSubjectCertConstraints (HREDeliveryPMode.CERTIFICATE_SUBJECT_CONSTRAINT_PATTERN);
       }
       catch (final Exception ex)
       {
@@ -532,7 +483,6 @@ public final class Phase4PeppolSender
 
     /**
      * @return The currently set Document Type ID. May be <code>null</code>.
-     * @since 2.2.2
      */
     @Nullable
     public final IDocumentTypeIdentifier documentTypeID ()
@@ -560,7 +510,6 @@ public final class Phase4PeppolSender
 
     /**
      * @return The currently set Process ID. May be <code>null</code>.
-     * @since 2.2.2
      */
     @Nullable
     public final IProcessIdentifier processID ()
@@ -587,26 +536,9 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the country code of C1 to be used in the SBDH. This field was introduced in the Peppol
-     * Business Message Envelope specification 2.0. <br>
-     * Note: There is no date yet, when it becomes mandatory.
-     *
-     * @param sCountryC1
-     *        The country code of C1 to be used. May be <code>null</code>.
-     * @return this for chaining
-     * @since 2.1.3
-     */
-    @Nonnull
-    public final IMPLTYPE countryC1 (@Nullable final String sCountryC1)
-    {
-      m_sCountryC1 = sCountryC1;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the "sender party ID" which is the CN part of the Peppol AP certificate. An example value
-     * is e.g. "POP000123" but it MUST match the certificate you are using. This must be provided
-     * prior to sending. This is a shortcut to the {@link #fromPartyID(String)} method.
+     * Set the "sender party ID" which is the CN part of the HR eDelivery AP certificate. An example
+     * value is e.g. "POP000123" but it MUST match the certificate you are using. This must be
+     * provided prior to sending. This is a shortcut to the {@link #fromPartyID(String)} method.
      *
      * @param sSenderPartyID
      *        The sender party ID. May neither be <code>null</code> nor empty.
@@ -650,13 +582,13 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set an optional payload "Content-ID". This method is usually not needed, because in Peppol
-     * there are currently no rules on the Content-ID. By default a random Content-ID is created.
+     * Set an optional payload "Content-ID". This method is usually not needed, because in HR
+     * eDelivery there are currently no rules on the Content-ID. By default a random Content-ID is
+     * created.
      *
      * @param sPayloadContentID
      *        The new payload content ID. May be null.
      * @return this for chaining
-     * @since 1.3.1
      */
     @Nonnull
     public final IMPLTYPE payloadContentID (@Nullable final String sPayloadContentID)
@@ -672,7 +604,7 @@ public final class Phase4PeppolSender
      * @param aEndpointDetailProvider
      *        The endpoint detail provider to be used. May not be <code>null</code>.
      * @return this for chaining
-     * @see #smpClient(SMPClientReadOnly)
+     * @see #smpClient(BDXRClientReadOnly)
      */
     @Nonnull
     public final IMPLTYPE endpointDetailProvider (@Nonnull final IAS4EndpointDetailProvider aEndpointDetailProvider)
@@ -697,9 +629,9 @@ public final class Phase4PeppolSender
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
     @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final SMPClientReadOnly aSMPClient)
+    public final IMPLTYPE smpClient (@Nonnull final BDXRClientReadOnly aSMPClient)
     {
-      return endpointDetailProvider (AS4EndpointDetailProviderPeppol.create (aSMPClient));
+      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (aSMPClient));
     }
 
     /**
@@ -707,17 +639,16 @@ public final class Phase4PeppolSender
      * from a previous SMP query.
      *
      * @param aEndpoint
-     *        The Peppol SMP Endpoint instance. May not be <code>null</code>.
+     *        The HR eDelivery SMP Endpoint instance. May not be <code>null</code>.
      * @return this for chaining
      * @throws CertificateException
      *         In case the conversion from byte array to X509 certificate failed
-     * @since 2.7.6
      */
     @Nonnull
     public final IMPLTYPE receiverEndpointDetails (@Nonnull final EndpointType aEndpoint) throws CertificateException
     {
-      return receiverEndpointDetails (SMPClientReadOnly.getEndpointCertificate (aEndpoint),
-                                      SMPClientReadOnly.getEndpointAddress (aEndpoint));
+      return receiverEndpointDetails (BDXRClientReadOnly.getEndpointCertificate (aEndpoint),
+                                      BDXRClientReadOnly.getEndpointAddress (aEndpoint));
     }
 
     /**
@@ -725,8 +656,8 @@ public final class Phase4PeppolSender
      * externally (e.g. via an SMP call or for a static test case).
      *
      * @param aCert
-     *        The Peppol AP certificate that should be used to encrypt the message for the receiver.
-     *        May not be <code>null</code>.
+     *        The HR eDelivery AP certificate that should be used to encrypt the message for the
+     *        receiver. May not be <code>null</code>.
      * @param sDestURL
      *        The destination URL of the receiving AP to send the AS4 message to. Must be a valid
      *        URL and may neither be <code>null</code> nor empty.
@@ -749,7 +680,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE certificateConsumer (@Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer)
+    public final IMPLTYPE certificateConsumer (@Nullable final IPhase4HREdeliveryCertificateCheckResultHandler aCertificateConsumer)
     {
       m_aCertificateConsumer = aCertificateConsumer;
       return thisAsT ();
@@ -762,7 +693,6 @@ public final class Phase4PeppolSender
      * @param aAPEndpointURLConsumer
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
-     * @since 1.3.3
      */
     @Nonnull
     public final IMPLTYPE endpointURLConsumer (@Nullable final Consumer <String> aAPEndpointURLConsumer)
@@ -778,7 +708,6 @@ public final class Phase4PeppolSender
      * @param aAPTechnicalContactConsumer
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
-     * @since 3.2.0
      */
     @Nonnull
     public final IMPLTYPE technicalContactConsumer (@Nullable final Consumer <String> aAPTechnicalContactConsumer)
@@ -795,7 +724,6 @@ public final class Phase4PeppolSender
      * @param bCheckReceiverAPCertificate
      *        <code>true</code> to enable it, <code>false</code> to disable it.
      * @return this for chaining
-     * @since 1.3.10
      */
     @Nonnull
     public final IMPLTYPE checkReceiverAPCertificate (final boolean bCheckReceiverAPCertificate)
@@ -805,18 +733,16 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set a custom Peppol AP certificate CA checker. This is e.g. needed when a non-standard AP
-     * certificate (as for Peppol France PoC or Peppol eB2B) is needed. This CA checker checks the
-     * certificate provided by the endpoint detail provider (see below). This checker is only used,
-     * if {@link #checkReceiverAPCertificate(boolean)} was called with <code>true</code>.
+     * Set a custom HR eDelivery AP certificate CA checker. This CA checker checks the certificate
+     * provided by the endpoint detail provider (see below). This checker is only used, if
+     * {@link #checkReceiverAPCertificate(boolean)} was called with <code>true</code>.
      *
      * @param aCAChecker
      *        The Certificate CA checker to be used. May not be <code>null</code>.
      * @return this for chaining
-     * @since 3.0.0-rc1
      */
     @Nonnull
-    public final IMPLTYPE peppolAP_CAChecker (@Nonnull final TrustedCAChecker aCAChecker)
+    public final IMPLTYPE apCAChecker (@Nonnull final TrustedCAChecker aCAChecker)
     {
       ValueEnforcer.notNull (aCAChecker, "CAChecker");
       m_aCAChecker = aCAChecker;
@@ -829,7 +755,6 @@ public final class Phase4PeppolSender
      *
      * @return The effective sending date time or <code>null</code> if the messages was not sent
      *         yet.
-     * @since 2.2.2
      */
     @Nullable
     public final OffsetDateTime effectiveSendingDateTime ()
@@ -880,13 +805,13 @@ public final class Phase4PeppolSender
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
       if (m_bCheckReceiverAPCertificate)
       {
-        // Check if the received certificate is a valid Peppol AP certificate
-        // Throws Phase4PeppolException in case of error
+        // Check if the received certificate is a valid HR eDelivery AP certificate
+        // Throws Phase4HREDeliveryException in case of error
         _checkReceiverAPCert (m_aCAChecker, aReceiverCert, m_aCertificateConsumer, ETriState.UNDEFINED, null);
       }
       else
       {
-        LOGGER.warn ("The check of the receiver's Peppol AP certificate was explicitly disabled.");
+        LOGGER.warn ("The check of the receiver's HR eDelivery AP certificate was explicitly disabled.");
 
         // Interested in the certificate?
         if (m_aCertificateConsumer != null)
@@ -947,13 +872,6 @@ public final class Phase4PeppolSender
         return false;
       }
 
-      // m_sCountryC1 is mandatory since 1.1.2024
-      if (StringHelper.isEmpty (m_sCountryC1))
-      {
-        LOGGER.warn ("The field 'countryC1' is not set");
-        return false;
-      }
-
       // m_aPayloadMimeType may be null
       // m_bCompressPayload may be null
       // m_sPayloadContentID may be null
@@ -996,109 +914,25 @@ public final class Phase4PeppolSender
           aExistingSendingDTConsumer.onEffectiveSendingDateTime (aSendingDT);
       });
     }
-
-    /**
-     * Create a Peppol Reporting Item in case sending was successful. This The end user ID needs to
-     * be provided from the outside, because it cannot be used from the sending data. The end user
-     * ID is only needed for grouping the reporting data later on, and is NOT part of the
-     * transmission (neither in TSR nor in EUSR).<br>
-     * The item is simply created but not stored.
-     *
-     * @param sEndUserID
-     *        The local end user ID, required to group all reporting items. May neither be
-     *        <code>null</code> nor empty.
-     * @return The created reporting item. Never <code>null</code>.
-     * @throws Phase4Exception
-     *         in case something goes wrong
-     * @see #createAndStorePeppolReportingItemAfterSending(String)
-     * @since 2.2.2
-     */
-    @Nonnull
-    public final PeppolReportingItem createPeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4Exception
-    {
-      ValueEnforcer.notEmpty (sEndUserID, "EndUserID");
-      if (m_aEffectiveSendingDT == null)
-        throw new Phase4PeppolException ("A Peppol Reporting item can only be created AFTER sending").setRetryFeasible (false);
-
-      // No Country C4 necessary for sending
-      return PeppolReportingItem.builder ()
-                                .exchangeDateTime (m_aEffectiveSendingDT)
-                                .directionSending ()
-                                .c2ID (m_sFromPartyID)
-                                .c3ID (m_sToPartyID)
-                                .docTypeID (m_aDocTypeID)
-                                .processID (m_aProcessID)
-                                .transportProtocolPeppolAS4v2 ()
-                                .c1CountryCode (m_sCountryC1)
-                                .c4CountryCode (null)
-                                .endUserID (sEndUserID)
-                                .build ();
-    }
-
-    /**
-     * This is a shortcut for creating and storing a Peppol reporting item in a shot. See the
-     * creation method for the extended documentation.
-     *
-     * @param sEndUserID
-     *        The local end user ID, required to group all reporting items. May neither be
-     *        <code>null</code> nor empty.
-     * @throws Phase4Exception
-     *         in case something goes wrong
-     * @see #createPeppolReportingItemAfterSending(String)
-     * @since 2.2.2
-     */
-    public final void createAndStorePeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4Exception
-    {
-      // Consistency check
-      if (PeppolReportingBackend.getBackendService () == null)
-        throw new Phase4PeppolException ("No Peppol Reporting Backend is available. Cannot store Reporting Items").setRetryFeasible (false);
-
-      // Filter out document types on Reporting
-      if (PeppolReportingHelper.isDocumentTypeEligableForReporting (m_aDocTypeID))
-      {
-        try
-        {
-          LOGGER.info ("Creating Peppol Reporting Item and storing it");
-
-          // Create reporting item
-          final PeppolReportingItem aReportingItem = createPeppolReportingItemAfterSending (sEndUserID);
-
-          // Store it in configured backend
-          PeppolReportingBackend.withBackendDo (AS4Configuration.getConfig (),
-                                                aBackend -> aBackend.storeReportingItem (aReportingItem));
-        }
-        catch (final PeppolReportingBackendException ex)
-        {
-          throw new Phase4PeppolException ("Failed to store Peppol Reporting Item", ex);
-        }
-      }
-      else
-      {
-        LOGGER.info ("The Document Type ID is not eligible for Peppol Reporting: '" +
-                     m_aDocTypeID.getURIEncoded () +
-                     "'");
-      }
-    }
   }
 
   /**
-   * The builder class for sending AS4 messages using Peppol specifics. Use {@link #sendMessage()}
-   * or {@link #sendMessageAndCheckForReceipt()} to trigger the main transmission.<br>
+   * The builder class for sending AS4 messages using HR eDelivery specifics. Use
+   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to trigger the main
+   * transmission.<br>
    * This builder class assumes, that only the payload (e.g. the Invoice) is present, and that both
    * validation and SBDH creation happens inside.
    *
    * @author Philip Helger
-   * @since 0.9.4
    */
   @NotThreadSafe
-  public static class PeppolUserMessageBuilder extends AbstractPeppolUserMessageBuilder <PeppolUserMessageBuilder>
+  public static class HREDeliveryUserMessageBuilder extends
+                                                    AbstractHREDeliveryUserMessageBuilder <HREDeliveryUserMessageBuilder>
   {
     private String m_sSBDHInstanceIdentifier;
     private String m_sSBDHStandard;
     private String m_sSBDHTypeVersion;
     private String m_sSBDHType;
-    private IParticipantIdentifier m_aMLSTo;
-    private EPeppolMLSType m_eMLSType;
     private Element m_aPayloadElement;
     private byte [] m_aPayloadBytes;
     private IHasInputStream m_aPayloadHasIS;
@@ -1106,13 +940,13 @@ public final class Phase4PeppolSender
 
     private IValidationExecutorSetRegistry <IValidationSourceXML> m_aVESRegistry;
     private DVRCoordinate m_aVESID;
-    private IPhase4PeppolValidationResultHandler m_aValidationResultHandler;
+    private IPhase4HREdeliveryValidationResultHandler m_aValidationResultHandler;
 
     /**
      * Create a new builder, with the defaults from
-     * {@link AbstractPeppolUserMessageBuilder#AbstractPeppolUserMessageBuilder()}
+     * {@link AbstractHREDeliveryUserMessageBuilder#AbstractHREDeliveryUserMessageBuilder()}
      */
-    public PeppolUserMessageBuilder ()
+    public HREDeliveryUserMessageBuilder ()
     {}
 
     /**
@@ -1125,7 +959,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public PeppolUserMessageBuilder sbdhInstanceIdentifier (@Nullable final String sSBDHInstanceIdentifier)
+    public HREDeliveryUserMessageBuilder sbdhInstanceIdentifier (@Nullable final String sSBDHInstanceIdentifier)
     {
       m_sSBDHInstanceIdentifier = sSBDHInstanceIdentifier;
       return this;
@@ -1138,10 +972,9 @@ public final class Phase4PeppolSender
      * @param sSBDHStandard
      *        The SBDH document standard to be used. May be <code>null</code>.
      * @return this for chaining
-     * @since 3.1.0
      */
     @Nonnull
-    public PeppolUserMessageBuilder sbdhStandard (@Nullable final String sSBDHStandard)
+    public HREDeliveryUserMessageBuilder sbdhStandard (@Nullable final String sSBDHStandard)
     {
       m_sSBDHStandard = sSBDHStandard;
       return this;
@@ -1155,10 +988,9 @@ public final class Phase4PeppolSender
      * @param sSBDHTypeVersion
      *        The SBDH document identification type version to be used. May be <code>null</code>.
      * @return this for chaining
-     * @since 0.13.0
      */
     @Nonnull
-    public PeppolUserMessageBuilder sbdhTypeVersion (@Nullable final String sSBDHTypeVersion)
+    public HREDeliveryUserMessageBuilder sbdhTypeVersion (@Nullable final String sSBDHTypeVersion)
     {
       m_sSBDHTypeVersion = sSBDHTypeVersion;
       return this;
@@ -1171,43 +1003,11 @@ public final class Phase4PeppolSender
      * @param sSBDHType
      *        The SBDH document identification type to be used. May be <code>null</code>.
      * @return this for chaining
-     * @since 3.1.0
      */
     @Nonnull
-    public PeppolUserMessageBuilder sbdhType (@Nullable final String sSBDHType)
+    public HREDeliveryUserMessageBuilder sbdhType (@Nullable final String sSBDHType)
     {
       m_sSBDHType = sSBDHType;
-      return this;
-    }
-
-    /**
-     * Set the optional <code>MLS_TO</code> value of the Peppol SBDH providing the MLS receiver.
-     *
-     * @param aMLSTo
-     *        The optional participant identifier. May be <code>null</code>.
-     * @return this for chaining
-     * @since 3.1.1
-     */
-    @Nonnull
-    public PeppolUserMessageBuilder mlsTo (@Nullable final IParticipantIdentifier aMLSTo)
-    {
-      m_aMLSTo = aMLSTo;
-      return this;
-    }
-
-    /**
-     * Set the optional <code>MLS_TYPE</code> value of the Peppol SBDH providing the MLS
-     * orchestration.
-     *
-     * @param eMLSType
-     *        The optional MLS type. May be <code>null</code>.
-     * @return this for chaining
-     * @since 3.1.1
-     */
-    @Nonnull
-    public PeppolUserMessageBuilder mlsType (@Nullable final EPeppolMLSType eMLSType)
-    {
-      m_eMLSType = eMLSType;
       return this;
     }
 
@@ -1222,7 +1022,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public PeppolUserMessageBuilder payload (@Nonnull final Element aPayloadElement)
+    public HREDeliveryUserMessageBuilder payload (@Nonnull final Element aPayloadElement)
     {
       ValueEnforcer.notNull (aPayloadElement, "Payload");
       ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
@@ -1243,7 +1043,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public PeppolUserMessageBuilder payload (@Nonnull final byte [] aPayloadBytes)
+    public HREDeliveryUserMessageBuilder payload (@Nonnull final byte [] aPayloadBytes)
     {
       ValueEnforcer.notNull (aPayloadBytes, "PayloadBytes");
       m_aPayloadElement = null;
@@ -1263,7 +1063,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public PeppolUserMessageBuilder payload (@Nonnull final IHasInputStream aPayloadHasIS)
+    public HREDeliveryUserMessageBuilder payload (@Nonnull final IHasInputStream aPayloadHasIS)
     {
       ValueEnforcer.notNull (aPayloadHasIS, "PayloadHasIS");
       m_aPayloadElement = null;
@@ -1273,95 +1073,16 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Use the provided byte array as the binary (non-XML) content of the Peppol SBDH message.
-     * Internally the data will be wrapped in a predefined "BinaryContent" element.
-     *
-     * @param aBinaryPayload
-     *        The bytes to be wrapped. May not be <code>null</code>.
-     * @param aMimeType
-     *        The MIME type to use. May not be <code>null</code>.
-     * @param aCharset
-     *        The character set to be used, if the MIME type is text based. May be
-     *        <code>null</code>.
-     * @return this for chaining
-     * @since 0.12.1
-     */
-    @Nonnull
-    public PeppolUserMessageBuilder payloadBinaryContent (@Nonnull final byte [] aBinaryPayload,
-                                                          @Nonnull final IMimeType aMimeType,
-                                                          @Nullable final Charset aCharset)
-    {
-      ValueEnforcer.notNull (aBinaryPayload, "BinaryPayload");
-      ValueEnforcer.notNull (aMimeType, "MimeType");
-
-      final BinaryContentType aBC = new BinaryContentType ();
-      aBC.setValue (aBinaryPayload);
-      aBC.setMimeType (aMimeType.getAsString ());
-      aBC.setEncoding (aCharset == null ? null : aCharset.name ());
-      final Element aElement = new PeppolSBDHPayloadBinaryMarshaller ().getAsElement (aBC);
-      if (aElement == null)
-        throw new IllegalStateException ("Failed to create 'BinaryContent' element.");
-      return payload (aElement);
-    }
-
-    /**
-     * Use the provided byte array as the text (non-XML) content of the Peppol SBDH message.
-     * Internally the data will be wrapped in a predefined "TextContent" element.
-     *
-     * @param sTextPayload
-     *        The text to be wrapped. May not be <code>null</code>.
-     * @param aMimeType
-     *        The MIME type to use. May not be <code>null</code>.
-     * @return this for chaining
-     * @since 0.12.1
-     */
-    @Nonnull
-    public PeppolUserMessageBuilder payloadTextContent (@Nonnull final String sTextPayload,
-                                                        @Nonnull final IMimeType aMimeType)
-    {
-      ValueEnforcer.notNull (sTextPayload, "TextPayload");
-      ValueEnforcer.notNull (aMimeType, "MimeType");
-
-      final TextContentType aTC = new TextContentType ();
-      aTC.setValue (sTextPayload);
-      aTC.setMimeType (aMimeType.getAsString ());
-      final Element aElement = new PeppolSBDHPayloadTextMarshaller ().getAsElement (aTC);
-      if (aElement == null)
-        throw new IllegalStateException ("Failed to create 'TextContent' element.");
-      return payload (aElement);
-    }
-
-    /**
      * Set an optional Consumer for the created StandardBusinessDocument (SBD).
      *
      * @param aSBDDocumentConsumer
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
-     * @since 0.10.0
      */
     @Nonnull
-    public PeppolUserMessageBuilder sbdDocumentConsumer (@Nullable final Consumer <? super StandardBusinessDocument> aSBDDocumentConsumer)
+    public HREDeliveryUserMessageBuilder sbdDocumentConsumer (@Nullable final Consumer <? super StandardBusinessDocument> aSBDDocumentConsumer)
     {
       m_aSBDDocumentConsumer = aSBDDocumentConsumer;
-      return this;
-    }
-
-    /**
-     * Set a custom validation registry to use in VESID lookup. This may be needed if other Peppol
-     * formats like XRechnung or SimplerInvoicing should be send through this client. The same
-     * registry instance should be used for all sending operations to ensure that validation
-     * artefact caching works best.
-     *
-     * @param aVESRegistry
-     *        The registry to use. May be <code>null</code> to indicate that the default registry
-     *        (official Peppol artefacts only) should be used.
-     * @return this for chaining
-     * @since 0.10.1
-     */
-    @Nonnull
-    public PeppolUserMessageBuilder validationRegistry (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry)
-    {
-      m_aVESRegistry = aVESRegistry;
       return this;
     }
 
@@ -1370,19 +1091,21 @@ public final class Phase4PeppolSender
      * responsibility of the caller to validate the document prior to sending it. This method uses a
      * default "do nothing validation result handler".
      *
+     * @param aVESRegistry
+     *        The registry to use. May not be <code>null</code>.
      * @param aVESID
-     *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>. May be
-     *        <code>null</code>.
+     *        The Validation Execution Set ID to validate against. May be <code>null</code>.
      * @return this for chaining
-     * @see #validationConfiguration(DVRCoordinate, IPhase4PeppolValidationResultHandler)
+     * @see #validationConfiguration(IValidationExecutorSetRegistry,DVRCoordinate,
+     *      IPhase4HREdeliveryValidationResultHandler)
      */
     @Nonnull
-    public PeppolUserMessageBuilder validationConfiguration (@Nullable final DVRCoordinate aVESID)
+    public HREDeliveryUserMessageBuilder validationConfiguration (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
+                                                                  @Nullable final DVRCoordinate aVESID)
     {
-      final IPhase4PeppolValidationResultHandler aHdl = aVESID == null ? null
-                                                                       : new Phase4PeppolValidatonResultHandler ();
-      return validationConfiguration (aVESID, aHdl);
+      final IPhase4HREdeliveryValidationResultHandler aHdl = aVESID == null ? null
+                                                                            : new Phase4HREdeliveryValidatonResultHandler ();
+      return validationConfiguration (aVESRegistry, aVESID, aHdl);
     }
 
     /**
@@ -1390,19 +1113,21 @@ public final class Phase4PeppolSender
      * responsibility of the caller to validate the document prior to sending it. If the validation
      * should happen internally, both the VESID AND the result handler must be set.
      *
+     * @param aVESRegistry
+     *        The registry to use. May not be <code>null</code>.
      * @param aVESID
-     *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>. May be
-     *        <code>null</code>.
+     *        The Validation Execution Set ID to validate against. May be <code>null</code>.
      * @param aValidationResultHandler
      *        The validation result handler for positive and negative response handling. May be
      *        <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public PeppolUserMessageBuilder validationConfiguration (@Nullable final DVRCoordinate aVESID,
-                                                             @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler)
+    public HREDeliveryUserMessageBuilder validationConfiguration (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
+                                                                  @Nullable final DVRCoordinate aVESID,
+                                                                  @Nullable final IPhase4HREdeliveryValidationResultHandler aValidationResultHandler)
     {
+      m_aVESRegistry = aVESRegistry;
       m_aVESID = aVESID;
       m_aValidationResultHandler = aValidationResultHandler;
       return this;
@@ -1412,10 +1137,9 @@ public final class Phase4PeppolSender
      * Disable the validation for the outbound call.
      *
      * @return this for chaining
-     * @since 2.1.1
      */
     @Nonnull
-    public PeppolUserMessageBuilder disableValidation ()
+    public HREDeliveryUserMessageBuilder disableValidation ()
     {
       return validationConfiguration (null, null);
     }
@@ -1439,7 +1163,7 @@ public final class Phase4PeppolSender
           // Parse it
           final Document aDoc = DOMReader.readXMLDOM (m_aPayloadBytes);
           if (aDoc == null)
-            throw new Phase4PeppolException ("Failed to parse payload bytes to a DOM node").setRetryFeasible (false);
+            throw new Phase4HREdeliveryException ("Failed to parse payload bytes to a DOM node").setRetryFeasible (false);
           aPayloadElement = aDoc.getDocumentElement ();
         }
         else
@@ -1448,24 +1172,26 @@ public final class Phase4PeppolSender
             // Parse it
             final InputStream aIS = m_aPayloadHasIS.getBufferedInputStream ();
             if (aIS == null)
-              throw new Phase4PeppolException ("Failed to create payload InputStream from provider").setRetryFeasible (false);
+              throw new Phase4HREdeliveryException ("Failed to create payload InputStream from provider").setRetryFeasible (false);
             final Document aDoc = DOMReader.readXMLDOM (aIS);
             if (aDoc == null)
-              throw new Phase4PeppolException ("Failed to parse payload InputStream to a DOM node").setRetryFeasible (false);
+              throw new Phase4HREdeliveryException ("Failed to parse payload InputStream to a DOM node").setRetryFeasible (false);
             aPayloadElement = aDoc.getDocumentElement ();
           }
           else
             throw new IllegalStateException ("Unexpected - neither element nor bytes nor InputStream provider are present");
         if (aPayloadElement == null)
-          throw new Phase4PeppolException ("The parsed XML document must have a root element").setRetryFeasible (false);
+          throw new Phase4HREdeliveryException ("The parsed XML document must have a root element").setRetryFeasible (false);
         if (aPayloadElement.getNamespaceURI () == null)
-          throw new Phase4PeppolException ("The root element of the parsed XML document does not have a namespace URI").setRetryFeasible (false);
+          throw new Phase4HREdeliveryException ("The root element of the parsed XML document does not have a namespace URI").setRetryFeasible (false);
         bClonePayloadElement = false;
       }
 
       // Consistency check
       if (CSBDH.SBDH_NS.equals (aPayloadElement.getNamespaceURI ()))
-        throw new Phase4PeppolException ("You cannot set a Standard Business Document as the payload for the regular builder. The SBD is created automatically inside of this builder. Use Phase4PeppolSender.sbdhBuilder() if you have a pre-build SBD.").setRetryFeasible (false);
+        throw new Phase4HREdeliveryException ("You cannot set a Standard Business Document as the payload for the regular builder." +
+                                              " The SBD is created automatically inside of this builder." +
+                                              " Use Phase4HREDeliverySender.sbdhBuilder() if you have a pre-build SBD.").setRetryFeasible (false);
 
       // Optional payload validation
       _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
@@ -1478,45 +1204,26 @@ public final class Phase4PeppolSender
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Start creating SBDH for AS4 message");
 
-      final PeppolSBDHData aPeppolSBDH = _createPeppolSBDHData (m_aSenderID,
-                                                                m_aReceiverID,
-                                                                m_aDocTypeID,
-                                                                m_aProcessID,
-                                                                m_sCountryC1,
-                                                                m_sSBDHInstanceIdentifier,
-                                                                m_sSBDHStandard,
-                                                                m_sSBDHTypeVersion,
-                                                                m_sSBDHType,
-                                                                aPayloadElement,
-                                                                bClonePayloadElement);
+      final HREDeliverySBDHData aHREDeliverySBDH = _createHREDeliverySBDHData (m_aSenderID,
+                                                                               m_aReceiverID,
+                                                                               m_aDocTypeID,
+                                                                               m_sSBDHInstanceIdentifier,
+                                                                               m_sSBDHStandard,
+                                                                               m_sSBDHTypeVersion,
+                                                                               m_sSBDHType,
+                                                                               aPayloadElement,
+                                                                               bClonePayloadElement);
 
-      if (aPeppolSBDH == null)
+      if (aHREDeliverySBDH == null)
       {
         // A log message was already provided
         return ESuccess.FAILURE;
       }
 
-      // Set MLS stuff here before bloating the public API
-      if (m_aMLSTo != null)
-        aPeppolSBDH.setMLSToScheme (m_aMLSTo.getScheme ()).setMLSToValue (m_aMLSTo.getValue ());
-      aPeppolSBDH.setMLSType (m_eMLSType);
-
       // We never need to clone the payload element here because it was evtl.
       // cloned before
-      final StandardBusinessDocument aSBD = new PeppolSBDHDataWriter ().setFavourSpeed (true)
-                                                                       .createStandardBusinessDocument (aPeppolSBDH);
-
-      if (false)
-      {
-        // This is the developer code, to be able to send out messages without
-        // Country C1
-        // After all the checks, the Scope element is removed
-        LOGGER.error ("Explicitly removing COUNTRY_C1 from the SBDH. Development only!");
-        aSBD.getStandardBusinessDocumentHeader ()
-            .getBusinessScope ()
-            .getScope ()
-            .removeIf (x -> CPeppolSBDH.SCOPE_COUNTRY_C1.equals (x.getType ()));
-      }
+      final StandardBusinessDocument aSBD = new HREDeliverySBDHDataWriter ().setFavourSpeed (true)
+                                                                            .createStandardBusinessDocument (aHREDeliverySBDH);
 
       if (m_aSBDDocumentConsumer != null)
         m_aSBDDocumentConsumer.accept (aSBD);
@@ -1539,7 +1246,7 @@ public final class Phase4PeppolSender
         }
         catch (final IOException ex)
         {
-          throw new Phase4PeppolException ("Failed to create temporary file for SBDH", ex);
+          throw new Phase4HREdeliveryException ("Failed to create temporary file for SBDH", ex);
         }
       }
 
@@ -1548,25 +1255,25 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * A builder class for sending AS4 messages using Peppol specifics. Use {@link #sendMessage()} or
-   * {@link #sendMessageAndCheckForReceipt()} to trigger the main transmission.<br>
+   * A builder class for sending AS4 messages using HR eDelivery specifics. Use
+   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to trigger the main
+   * transmission.<br>
    * This builder class assumes, that the SBDH was created outside, therefore no validation can
    * occur.
    *
    * @author Philip Helger
-   * @since 0.9.6
    */
   @NotThreadSafe
-  public static class PeppolUserMessageSBDHBuilder extends
-                                                   AbstractPeppolUserMessageBuilder <PeppolUserMessageSBDHBuilder>
+  public static class HREDeliveryUserMessageSBDHBuilder extends
+                                                        AbstractHREDeliveryUserMessageBuilder <HREDeliveryUserMessageSBDHBuilder>
   {
     private byte [] m_aPayloadBytes;
 
     /**
      * Create a new builder with the defaults from
-     * {@link AbstractPeppolUserMessageBuilder#AbstractPeppolUserMessageBuilder()}
+     * {@link AbstractHREDeliveryUserMessageBuilder#AbstractHREDeliveryUserMessageBuilder()}
      */
-    public PeppolUserMessageSBDHBuilder ()
+    public HREDeliveryUserMessageSBDHBuilder ()
     {}
 
     /**
@@ -1581,10 +1288,9 @@ public final class Phase4PeppolSender
      * @see #receiverParticipantID(IParticipantIdentifier)
      * @see #documentTypeID(IDocumentTypeIdentifier)
      * @see #processID(IProcessIdentifier)
-     * @see #countryC1(String)
      */
     @Nonnull
-    public PeppolUserMessageSBDHBuilder payload (@Nonnull final byte [] aSBDHBytes)
+    public HREDeliveryUserMessageSBDHBuilder payload (@Nonnull final byte [] aSBDHBytes)
     {
       ValueEnforcer.notNull (aSBDHBytes, "SBDHBytes");
       m_aPayloadBytes = aSBDHBytes;
@@ -1598,28 +1304,21 @@ public final class Phase4PeppolSender
      * @param aSBDH
      *        The SBDH to use. May not be <code>null</code>.
      * @return this for chaining
-     * @since 0.10.2
      * @see #payload(byte[])
      * @see #senderParticipantID(IParticipantIdentifier)
      * @see #receiverParticipantID(IParticipantIdentifier)
-     * @see #documentTypeID(IDocumentTypeIdentifier)
-     * @see #processID(IProcessIdentifier)
-     * @see #countryC1(String)
      */
     @Nonnull
-    public PeppolUserMessageSBDHBuilder payloadAndMetadata (@Nonnull final PeppolSBDHData aSBDH)
+    public HREDeliveryUserMessageSBDHBuilder payloadAndMetadata (@Nonnull final HREDeliverySBDHData aSBDH)
     {
       ValueEnforcer.notNull (aSBDH, "SBDH");
 
       // Check with logging
       if (!aSBDH.areAllFieldsSet (true))
-        throw new IllegalArgumentException ("The provided Peppol SBDH data is incomplete. See logs for details.");
+        throw new IllegalArgumentException ("The provided HR eDelivery SBDH data is incomplete. See logs for details.");
 
-      final StandardBusinessDocument aJaxbSbdh = new PeppolSBDHDataWriter ().createStandardBusinessDocument (aSBDH);
+      final StandardBusinessDocument aJaxbSbdh = new HREDeliverySBDHDataWriter ().createStandardBusinessDocument (aSBDH);
       return senderParticipantID (aSBDH.getSenderAsIdentifier ()).receiverParticipantID (aSBDH.getReceiverAsIdentifier ())
-                                                                 .documentTypeID (aSBDH.getDocumentTypeAsIdentifier ())
-                                                                 .processID (aSBDH.getProcessAsIdentifier ())
-                                                                 .countryC1 (aSBDH.getCountryC1 ())
                                                                  .payload (new SBDMarshaller ().getAsBytes (aJaxbSbdh));
     }
 
