@@ -63,7 +63,7 @@ import com.helger.security.certificate.CertificateHelper;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
 import com.helger.smpclient.url.IPeppolURLProvider;
-import com.helger.smpclient.url.PeppolConfigurableURLProvider;
+import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.xsds.peppol.smp1.EndpointType;
 
 import jakarta.annotation.Nonnull;
@@ -71,7 +71,7 @@ import jakarta.annotation.Nonnull;
 public final class DropFolderUserMessage
 {
   private static final IIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
-  private static final IPeppolURLProvider UP = PeppolConfigurableURLProvider.INSTANCE;
+  private static final IPeppolURLProvider UP = PeppolNaptrURLProvider.INSTANCE;
   private static final String PATH_DONE = "done";
   private static final String PATH_ERROR = "error";
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (DropFolderUserMessage.class);
@@ -220,9 +220,9 @@ public final class DropFolderUserMessage
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("WatchEvent " + eAction + " - " + aCurFile);
         if (!eAction.equals (EWatchDirAction.DELETE) &&
-            aCurFile.toFile ().isFile () &&
-            aCurFile.getFileName () != null &&
-            aCurFile.getFileName ().toString ().endsWith (".xml"))
+          aCurFile.toFile ().isFile () &&
+          aCurFile.getFileName () != null &&
+          aCurFile.getFileName ().toString ().endsWith (".xml"))
         {
           _send (aCryptoFactory, aCurFile, aIncomingDir);
         }
@@ -232,10 +232,10 @@ public final class DropFolderUserMessage
       // Send initially for all existing files
       try (final DirectoryStream <Path> aStream = Files.newDirectoryStream (aOutgoingDir,
                                                                             x -> x.toFile ().isFile () &&
-                                                                                 x.getFileName () != null &&
-                                                                                 x.getFileName ()
-                                                                                  .toString ()
-                                                                                  .endsWith (".xml")))
+                                                                              x.getFileName () != null &&
+                                                                              x.getFileName ()
+                                                                               .toString ()
+                                                                               .endsWith (".xml")))
       {
         for (final Path aCur : aStream)
           _send (aCryptoFactory, aCur, aIncomingDir);

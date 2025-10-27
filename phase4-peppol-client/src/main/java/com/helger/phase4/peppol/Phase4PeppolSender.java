@@ -89,7 +89,7 @@ import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.IPeppolURLProvider;
-import com.helger.smpclient.url.PeppolConfigurableURLProvider;
+import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xsds.peppol.smp1.EndpointType;
 
@@ -107,7 +107,7 @@ import jakarta.annotation.Nullable;
 public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
-  public static final IPeppolURLProvider URL_PROVIDER = PeppolConfigurableURLProvider.INSTANCE;
+  public static final IPeppolURLProvider URL_PROVIDER = PeppolNaptrURLProvider.INSTANCE;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolSender.class);
 
