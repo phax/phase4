@@ -135,7 +135,7 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.helger</groupId>
+        <groupId>com.helger.peppol</groupId>
         <artifactId>peppol-smp-client</artifactId>
         <version>${peppol-commons.version}</version>
         <exclusions>
