@@ -37,7 +37,7 @@ import jakarta.annotation.Nonnull;
  * This class contains the client side validation required for outgoing Peppol messages.
  *
  * @author Philip Helger
- * @since 4.0.1
+ * @since 4.0.2
  */
 public final class Phase4HREdeliveryValidation
 {

@@ -57,6 +57,7 @@ import jakarta.annotation.Nonnull;
  * Validate certain requirements imposed by the HR eDelivery project.
  *
  * @author Philip Helger
+ * @since 4.0.2
  */
 public class HREDeliveryCompatibilityValidator implements IAS4ProfileValidator
 {

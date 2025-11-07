@@ -25,7 +25,7 @@ import jakarta.annotation.Nonnull;
  * Special {@link Phase4HREdeliveryException} exception for validation errors.
  *
  * @author Philip Helger
- * @since 4.0.1
+ * @since 4.0.2
  */
 public class Phase4HREdeliveryValidationException extends Phase4HREdeliveryException
 {

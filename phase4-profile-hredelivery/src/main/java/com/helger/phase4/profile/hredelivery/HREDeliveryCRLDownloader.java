@@ -33,6 +33,7 @@ import jakarta.annotation.Nonnull;
  * The HR eDelivery specific CRL downloader using the {@link HttpClientUrlDownloader} internally.
  *
  * @author Philip Helger
+ * @since 4.0.2
  */
 public class HREDeliveryCRLDownloader extends CRLDownloader
 {

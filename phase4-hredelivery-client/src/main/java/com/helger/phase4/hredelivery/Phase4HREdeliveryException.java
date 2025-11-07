@@ -25,7 +25,7 @@ import jakarta.annotation.Nullable;
  * Generic exception to be thrown from the phase4 Peppol sender.
  *
  * @author Philip Helger
- * @since 4.0.1
+ * @since 4.0.2
  */
 public class Phase4HREdeliveryException extends Phase4Exception
 {

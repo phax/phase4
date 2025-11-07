@@ -33,6 +33,7 @@ import com.helger.phase4.CAS4Version;
  * Special {@link HttpClientSettings} with better defaults for HR eDelivery
  *
  * @author Philip Helger
+ * @since 4.0.2
  */
 public class Phase4HREDeliveryHttpClientSettings extends HttpClientSettings
 {

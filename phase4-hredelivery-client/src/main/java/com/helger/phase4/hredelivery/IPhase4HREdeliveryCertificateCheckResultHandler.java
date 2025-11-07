@@ -29,7 +29,7 @@ import jakarta.annotation.Nullable;
  * Interface for handling certification validations results
  *
  * @author Philip Helger
- * @since 4.0.1
+ * @since 4.0.2
  */
 public interface IPhase4HREdeliveryCertificateCheckResultHandler
 {

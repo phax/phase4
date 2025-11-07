@@ -24,7 +24,7 @@ import jakarta.annotation.Nonnull;
  * The default implementation of {@link IPhase4HREdeliveryValidationResultHandler}.
  *
  * @author Philip Helger
- * @since 4.0.1
+ * @since 4.0.2
  */
 public class Phase4HREdeliveryValidatonResultHandler implements IPhase4HREdeliveryValidationResultHandler
 {

@@ -64,7 +64,7 @@ import jakarta.annotation.Nullable;
  * This class contains the structured information about what happens on HR eDelivery sending.
  *
  * @author Philip Helger
- * @since 4.0.1
+ * @since 4.0.2
  */
 @NotThreadSafe
 public class Phase4HREdeliverySendingReport

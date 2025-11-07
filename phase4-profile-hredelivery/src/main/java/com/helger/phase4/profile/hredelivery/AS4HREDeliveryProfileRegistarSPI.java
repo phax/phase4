@@ -32,6 +32,7 @@ import jakarta.annotation.Nonnull;
  * Library specific implementation of {@link IAS4ProfileRegistrarSPI}.
  *
  * @author Philip Helger
+ * @since 4.0.2
  */
 @IsSPIImplementation
 public final class AS4HREDeliveryProfileRegistarSPI implements IAS4ProfileRegistrarSPI
@@ -45,10 +46,10 @@ public final class AS4HREDeliveryProfileRegistarSPI implements IAS4ProfileRegist
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
     final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> HREDeliveryPMode.createHREdeliveryPMode (i,
-                                                                                                            r,
-                                                                                                            a,
-                                                                                                            PMODE_ID_PROVIDER,
-                                                                                                            true);
+                                                                                                                 r,
+                                                                                                                 a,
+                                                                                                                 PMODE_ID_PROVIDER,
+                                                                                                                 true);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");

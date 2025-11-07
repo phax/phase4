@@ -25,7 +25,7 @@ import jakarta.annotation.Nonnull;
  * Interface for handling validation errors
  *
  * @author Philip Helger
- * @since 4.0.1
+ * @since 4.0.2
  */
 public interface IPhase4HREdeliveryValidationResultHandler
 {
