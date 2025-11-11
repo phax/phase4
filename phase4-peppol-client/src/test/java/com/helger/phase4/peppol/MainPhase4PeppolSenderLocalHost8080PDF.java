@@ -26,6 +26,7 @@ import com.helger.mime.CMimeType;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.peppol.doctype.EPredefinedDocumentTypeIdentifier;
 import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifier;
+import com.helger.peppolid.peppol.process.EPredefinedProcessIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
@@ -72,7 +73,7 @@ public final class MainPhase4PeppolSenderLocalHost8080PDF
       final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
                                                                   .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
                                                                   .documentTypeID (aDocTypeID)
-                                                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:peppol:france:billing:regulated"))
+                                                                  .processID (EPredefinedProcessIdentifier.urn_peppol_france_billing_regulated)
                                                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
                                                                   .receiverParticipantID (aReceiverID)
                                                                   .senderPartyID ("POP000306")

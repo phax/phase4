@@ -35,13 +35,13 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Example for sending something to the Storecove [NL] Test endpoint.
+ * Example for sending something to the StratEDI [DE] Test endpoint.
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderStorecove
+public final class MainPhase4PeppolSenderStratEDI
 {
-  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderStorecove.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderStratEDI.class);
 
   public static void main (final String [] args)
   {
@@ -59,7 +59,7 @@ public final class MainPhase4PeppolSenderStorecove
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0106:sc998899889");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:stratedi1");
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
