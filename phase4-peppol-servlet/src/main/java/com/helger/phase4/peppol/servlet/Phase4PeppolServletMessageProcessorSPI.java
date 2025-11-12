@@ -521,6 +521,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       LOGGER.debug ("Invoking processAS4UserMessage");
 
     final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
+    final String sServiceType = aUserMessage.getCollaborationInfo ().getService ().getType ();
     final String sService = aUserMessage.getCollaborationInfo ().getServiceValue ();
     final String sAction = aUserMessage.getCollaborationInfo ().getAction ();
     final String sConversationID = aUserMessage.getCollaborationInfo ().getConversationId ();
@@ -539,6 +540,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       else
         LOGGER.debug (sLogPrefix + "  Source PMode = " + aSrcPMode.getID ());
       LOGGER.debug (sLogPrefix + "  AS4 Message ID = '" + sMessageID + "'");
+      LOGGER.debug (sLogPrefix + "  AS4 Service Type = '" + sServiceType + "'");
       LOGGER.debug (sLogPrefix + "  AS4 Service = '" + sService + "'");
       LOGGER.debug (sLogPrefix + "  AS4 Action = '" + sAction + "'");
       LOGGER.debug (sLogPrefix + "  AS4 ConversationId = '" + sConversationID + "'");
