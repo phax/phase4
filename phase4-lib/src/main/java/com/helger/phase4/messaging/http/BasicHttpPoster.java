@@ -345,8 +345,8 @@ public class BasicHttpPoster implements IHttpPoster
                              ": " +
                              ex.getClass ().getSimpleName () +
                              " - " +
-                             ex.getMessage () +
-                             " - retrying was explicitly stopped by the RetryCallback");
+                             ex.getMessage ());
+                LOGGER.info ("Retrying was explicitly stopped by the RetryCallback");
 
                 // Propagate Exception as if it would be the last retry
                 throw ex;
@@ -359,10 +359,8 @@ public class BasicHttpPoster implements IHttpPoster
                          "': " +
                          ex.getClass ().getSimpleName () +
                          " - " +
-                         ex.getMessage () +
-                         " - waiting " +
-                         aDurationBeforeRetry.toMillis () +
-                         " ms, than retrying");
+                         ex.getMessage ());
+            LOGGER.info ("Now waiting " + aDurationBeforeRetry.toMillis () + " ms, than retrying");
 
             // Sleep and try again afterwards
             ThreadHelper.sleep (aDurationBeforeRetry.toMillis ());
