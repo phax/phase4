@@ -36,7 +36,7 @@ public final class ThirdPartyModuleProvider_phase4_lib implements IThirdPartyMod
   private static final IThirdPartyModule WSS4J = new ThirdPartyModule ("Apache WSS4J",
                                                                        "Apache",
                                                                        ELicense.APACHE2,
-                                                                       new Version (4, 0, 0),
+                                                                       new Version (4, 0, 1),
                                                                        "https://ws.apache.org/wss4j/");
 
   @Nullable
