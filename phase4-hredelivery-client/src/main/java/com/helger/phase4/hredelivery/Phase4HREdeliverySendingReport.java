@@ -662,20 +662,9 @@ public class Phase4HREdeliverySendingReport
     if (hasReceiverID ())
       ret.addElementNS (sNamespaceURI, "ReceiverID").addText (m_aReceiverID.getURIEncoded ());
     if (hasDocTypeID ())
-    {
-      final String sDocTypeID = m_aDocTypeID.getURIEncoded ();
-      ret.addElementNS (sNamespaceURI, "DocTypeID")
-         .setAttribute ("inCodeList",
-                        PredefinedDocumentTypeIdentifierManager.containsDocumentTypeIdentifierWithID (sDocTypeID))
-         .addText (sDocTypeID);
-    }
+      ret.addElementNS (sNamespaceURI, "DocTypeID").addText (m_aDocTypeID.getURIEncoded ());
     if (hasProcessID ())
-    {
-      final String sProcessID = m_aProcessID.getURIEncoded ();
-      ret.addElementNS (sNamespaceURI, "ProcessID")
-         .setAttribute ("inCodeList", PredefinedProcessIdentifierManager.containsProcessIdentifierWithID (sProcessID))
-         .addText (sProcessID);
-    }
+      ret.addElementNS (sNamespaceURI, "ProcessID").addText (m_aProcessID.getURIEncoded ());
     if (hasSenderPartyID ())
       ret.addElementNS (sNamespaceURI, "SenderPartyID").addText (m_sSenderPartyID);
     if (hasTransportProfileID ())
