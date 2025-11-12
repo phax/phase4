@@ -38,67 +38,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.helger.commons</groupId>
-        <artifactId>ph-commons-parent-pom</artifactId>
-        <version>${ph-commons.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.ubl</groupId>
-        <artifactId>ph-ubl-parent-pom</artifactId>
-        <version>${ph-ubl.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.web</groupId>
-        <artifactId>ph-web-parent-pom</artifactId>
-        <version>${ph-web.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.peppol</groupId>
-        <artifactId>peppol-commons-parent-pom</artifactId>
-        <version>${peppol-commons.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.schematron</groupId>
-        <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>${ph-schematron.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.phive</groupId>
-        <artifactId>phive-parent-pom</artifactId>
-        <version>${phive.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.phive.rules</groupId>
-        <artifactId>phive-rules-parent-pom</artifactId>
-        <version>${phive-rules.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.peppol</groupId>
-        <artifactId>peppol-reporting-parent-pom</artifactId>
-        <version>${peppol-reporting.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -114,28 +53,34 @@
       <artifactId>phase4-dynamic-discovery</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
-      <artifactId>ph-sbdh</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-commons</artifactId>
+      <version>${peppol-commons.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-sbdh</artifactId>
+      <version>${peppol-commons.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-smp-client</artifactId>
+      <version>${peppol-commons.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-reporting-api</artifactId>
+      <version>${peppol-reporting.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.phive</groupId>
+      <artifactId>phive-xml</artifactId>
+      <version>${phive.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-peppol</artifactId>
+      <version>${phive-rules.version}</version>
     </dependency>
 
     <dependency>
@@ -157,6 +102,7 @@
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-xrechnung</artifactId>
+      <version>${phive-rules.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -172,6 +118,7 @@
     <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-reporting-backend-inmemory</artifactId>
+      <version>${peppol-reporting.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

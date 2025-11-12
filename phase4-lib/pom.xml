@@ -30,6 +30,7 @@
   <description>AS4 common library</description>
   <url>https://github.com/phax/phase4/phase4-lib</url>
   <inceptionYear>2015</inceptionYear>
+  
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -37,6 +38,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.wss4j</groupId>
@@ -126,11 +128,13 @@
       <groupId>org.slf4j</groupId>
       <artifactId>jul-to-slf4j</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -157,6 +161,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
   <build>
     <resources>
       <!-- Don't specify the targetPath because this leads to a broken JAR file 
