@@ -94,6 +94,7 @@ import jakarta.annotation.Nullable;
  * changing the state of this class may have unintended side effects.
  *
  * @author Philip Helger
+ * @since 4.0.2
  */
 @IsSPIImplementation
 public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI

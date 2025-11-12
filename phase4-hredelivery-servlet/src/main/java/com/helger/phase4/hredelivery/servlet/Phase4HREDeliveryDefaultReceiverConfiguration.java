@@ -44,6 +44,7 @@ import jakarta.annotation.Nullable;
  * See {@link Phase4HREDeliveryReceiverConfiguration} for the "per-request" version of this class.
  *
  * @author Philip Helger
+ * @since 4.0.2
  */
 @NotThreadSafe
 public final class Phase4HREDeliveryDefaultReceiverConfiguration

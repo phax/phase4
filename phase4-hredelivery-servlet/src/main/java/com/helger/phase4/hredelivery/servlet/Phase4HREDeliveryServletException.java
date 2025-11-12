@@ -25,6 +25,7 @@ import jakarta.annotation.Nullable;
  * Generic exception to be thrown from the phase4 HR eDelivery servlet.
  *
  * @author Philip Helger
+ * @since 4.0.2
  */
 public class Phase4HREDeliveryServletException extends Phase4Exception
 {

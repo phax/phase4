@@ -37,6 +37,7 @@ import jakarta.annotation.Nullable;
  * {@link Phase4HREDeliveryDefaultReceiverConfiguration}.
  *
  * @author Philip Helger
+ * @since 4.0.2
  */
 @Immutable
 public final class Phase4HREDeliveryReceiverConfiguration

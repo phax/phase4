@@ -37,6 +37,7 @@ import jakarta.annotation.Nullable;
  * This is the interface that must be implemented to handle incoming SBD documents.
  *
  * @author Philip Helger
+ * @since 4.0.2
  */
 @IsSPIInterface
 public interface IPhase4HREDeliveryIncomingSBDHandlerSPI
