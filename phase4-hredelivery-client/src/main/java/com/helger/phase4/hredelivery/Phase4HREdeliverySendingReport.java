@@ -40,8 +40,6 @@ import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
-import com.helger.peppolid.peppol.doctype.PredefinedDocumentTypeIdentifierManager;
-import com.helger.peppolid.peppol.process.PredefinedProcessIdentifierManager;
 import com.helger.phase4.CAS4Version;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -522,19 +520,9 @@ public class Phase4HREdeliverySendingReport
     if (hasReceiverID ())
       aJson.add ("receiverId", m_aReceiverID.getURIEncoded ());
     if (hasDocTypeID ())
-    {
-      final String sDocTypeID = m_aDocTypeID.getURIEncoded ();
-      aJson.add ("docTypeId", sDocTypeID);
-      aJson.add ("docTypeIdInCodeList",
-                 PredefinedDocumentTypeIdentifierManager.containsDocumentTypeIdentifierWithID (sDocTypeID));
-    }
+      aJson.add ("docTypeId", m_aDocTypeID.getURIEncoded ());
     if (hasProcessID ())
-    {
-      final String sProcessID = m_aProcessID.getURIEncoded ();
-      aJson.add ("processId", sProcessID);
-      aJson.add ("processIdInCodeList",
-                 PredefinedProcessIdentifierManager.containsProcessIdentifierWithID (sProcessID));
-    }
+      aJson.add ("processId", m_aProcessID.getURIEncoded ());
     if (hasSenderPartyID ())
       aJson.add ("senderPartyId", m_sSenderPartyID);
     if (hasTransportProfileID ())
