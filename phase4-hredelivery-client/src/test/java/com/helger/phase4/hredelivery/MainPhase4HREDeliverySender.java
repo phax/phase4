@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
 import com.helger.hredelivery.commons.EHREDeliverySML;
+import com.helger.hredelivery.commons.smp.HRMPSClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AS4DumpManager;
@@ -31,7 +32,6 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
-import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -74,9 +74,7 @@ public final class MainPhase4HREDeliverySender
                                        .receiverParticipantID (aReceiverID)
                                        .senderPartyID ("POP000306")
                                        .payload (aPayloadElement)
-                                       .smpClient (new BDXRClientReadOnly (Phase4HREdeliverySender.URL_PROVIDER,
-                                                                           aReceiverID,
-                                                                           EHREDeliverySML.DEMO))
+                                       .smpClient (new HRMPSClientReadOnly (aReceiverID, EHREDeliverySML.DEMO))
                                        .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

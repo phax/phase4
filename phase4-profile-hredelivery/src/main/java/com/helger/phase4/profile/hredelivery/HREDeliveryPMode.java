@@ -57,6 +57,7 @@ import jakarta.annotation.Nullable;
 public final class HREDeliveryPMode
 {
   public static final String PMODE_ID = "eRacun";
+  public static final String DEFAULT_AGREEMENT_TYPE = "T1";
   public static final String DEFAULT_AGREEMENT_ID = "urn:fdc:eracun.hr:2023:agreements:ap_provider";
   public static final String DEFAULT_PARTY_TYPE_ID = "urn:fdc:eRacun.hr:2023:identifiers:ap";
   public static final Pattern CERTIFICATE_SUBJECT_CONSTRAINT_PATTERN = RegExCache.getPattern ("^.+$");

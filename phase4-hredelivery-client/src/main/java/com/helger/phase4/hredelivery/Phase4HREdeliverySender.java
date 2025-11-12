@@ -42,9 +42,11 @@ import com.helger.base.string.StringHelper;
 import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHData;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHDataWriter;
+import com.helger.hredelivery.commons.smp.HRMPSClientReadOnly;
 import com.helger.hredelivery.commons.url.HREDeliveryNaptrURLProvider;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
+import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -435,6 +437,8 @@ public final class Phase4HREdeliverySender
 
         checkReceiverAPCertificate (DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE);
 
+        agreementType (HREDeliveryPMode.DEFAULT_AGREEMENT_TYPE);
+
         // HR eDelivery uses its own root certificate, so no checks needed - this is
         // only to quiet the warning
         signingParams ().setSubjectCertConstraints (HREDeliveryPMode.CERTIFICATE_SUBJECT_CONSTRAINT_PATTERN);
@@ -629,9 +633,9 @@ public final class Phase4HREdeliverySender
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
     @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final BDXRClientReadOnly aSMPClient)
+    public final IMPLTYPE smpClient (@Nonnull final HRMPSClientReadOnly aSMPClient)
     {
-      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (aSMPClient));
+      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (aSMPClient).setTransportProfile (ESMPTransportProfile.TRANSPORT_PROFILE_ERACUN_AS4_V1));
     }
 
     /**
