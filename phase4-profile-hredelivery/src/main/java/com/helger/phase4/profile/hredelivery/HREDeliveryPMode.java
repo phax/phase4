@@ -59,8 +59,7 @@ public final class HREDeliveryPMode
   public static final String PMODE_ID = "eRacun";
   public static final String DEFAULT_AGREEMENT_TYPE = "T1";
   public static final String DEFAULT_AGREEMENT_ID = "urn:fdc:eracun.hr:2023:agreements:ap_provider";
-  public static final String DEFAULT_PARTY_TYPE_ID = true ? "urn:oasis:names:tc:ebcore:partyid-type:unregistered"
-                                                          : "urn:fdc:eRacun.hr:2023:identifiers:ap";
+  public static final String DEFAULT_PARTY_TYPE_ID = "urn:oasis:names:tc:ebcore:partyid-type:unregistered";
   public static final Pattern CERTIFICATE_SUBJECT_CONSTRAINT_PATTERN = RegExCache.getPattern ("^.+$");
 
   private HREDeliveryPMode ()
