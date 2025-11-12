@@ -608,7 +608,7 @@ public final class Phase4HREdeliverySender
      * @param aEndpointDetailProvider
      *        The endpoint detail provider to be used. May not be <code>null</code>.
      * @return this for chaining
-     * @see #smpClient(BDXRClientReadOnly)
+     * @see #smpClient(HRMPSClientReadOnly)
      */
     @Nonnull
     public final IMPLTYPE endpointDetailProvider (@Nonnull final IAS4EndpointDetailProvider aEndpointDetailProvider)
