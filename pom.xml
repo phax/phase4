@@ -305,6 +305,11 @@
         <artifactId>phase4-hredelivery-client</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-hredelivery-servlet</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       
       <!-- Peppol -->
       <dependency>
@@ -343,14 +348,22 @@
     
     <!-- profile specific stuff -->
     <module>phase4-bdew-client</module>
+    
     <module>phase4-cef-client</module>
+    
     <module>phase4-dbnalliance-client</module>
     <module>phase4-dbnalliance-servlet</module>
     <module>phase4-dbnalliance-server-webapp</module>
+    
     <module>phase4-entsog-client</module>
+    
     <module>phase4-euctp-client</module>
+    
     <module>phase4-eudamed-client</module>
+    
     <module>phase4-hredelivery-client</module>
+    <module>phase4-hredelivery-servlet</module>
+    
     <module>phase4-peppol-client</module>
     <module>phase4-peppol-servlet</module>
     <module>phase4-peppol-server-webapp</module>
