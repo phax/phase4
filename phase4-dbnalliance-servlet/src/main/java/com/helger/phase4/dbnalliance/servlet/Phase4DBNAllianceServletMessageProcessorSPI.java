@@ -164,7 +164,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
     }
   }
 
-  public static final ESMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_DBNA_AS4_v1;
+  public static final ESMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_DBNA_AS4_V1;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4DBNAllianceServletMessageProcessorSPI.class);
 
@@ -428,8 +428,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
     final String sLogPrefix = "[" + sMessageID + "] ";
 
     // Start consistency checks if the receiver is supported or not
-    final Phase4DBNAllianceReceiverConfiguration aReceiverCheckData = m_aReceiverCheckData != null
-                                                                                                   ? m_aReceiverCheckData
+    final Phase4DBNAllianceReceiverConfiguration aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
                                                                                                    : Phase4DBNAllianceDefaultReceiverConfiguration.getAsReceiverCheckData ();
 
     // Debug log

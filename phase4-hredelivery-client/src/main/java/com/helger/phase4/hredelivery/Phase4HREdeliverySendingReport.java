@@ -37,11 +37,11 @@ import com.helger.json.JsonObject;
 import com.helger.json.serialize.IJsonWriterSettings;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.sml.ISMLInfo;
+import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.phase4.CAS4Version;
-import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
@@ -114,7 +114,7 @@ public class Phase4HREdeliverySendingReport
   {
     m_aCurrentDateTimeUTC = PDTFactory.getCurrentOffsetDateTimeMillisOnlyUTC ();
     m_sSMLDNSZone = aSMLInfo.getDNSZone ();
-    m_sTransportProfileID = AS4EndpointDetailProviderBDXR.DEFAULT_TRANSPORT_PROFILE.getID ();
+    m_sTransportProfileID = ESMPTransportProfile.TRANSPORT_PROFILE_ERACUN_AS4_V1.getID ();
   }
 
   public boolean hasSBDHParseException ()
