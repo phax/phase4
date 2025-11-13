@@ -437,6 +437,7 @@ public final class Phase4HREdeliverySender
 
         checkReceiverAPCertificate (DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE);
 
+        agreementRef (HREDeliveryPMode.DEFAULT_AGREEMENT_ID);
         agreementType (HREDeliveryPMode.DEFAULT_AGREEMENT_TYPE);
 
         // HR eDelivery uses its own root certificate, so no checks needed - this is
