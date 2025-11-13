@@ -810,6 +810,12 @@ public final class Phase4HREdeliverySender
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
       if (m_bCheckReceiverAPCertificate)
       {
+        if (m_aCAChecker == null)
+        {
+          LOGGER.error ("The verification of the receiver AP certificate is enabled, but no CA checker is installed.");
+          return ESuccess.FAILURE;
+        }
+
         // Check if the received certificate is a valid HR eDelivery AP certificate
         // Throws Phase4HREDeliveryException in case of error
         _checkReceiverAPCert (m_aCAChecker, aReceiverCert, m_aCertificateConsumer, ETriState.UNDEFINED, null);
