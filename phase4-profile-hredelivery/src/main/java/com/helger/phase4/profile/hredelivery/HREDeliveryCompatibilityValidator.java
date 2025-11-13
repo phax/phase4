@@ -441,8 +441,12 @@ public class HREDeliveryCompatibilityValidator implements IAS4ProfileValidator
                                         aAgreementRef.getValue () +
                                         "'"));
 
-        if (StringHelper.isNotEmpty (aAgreementRef.getType ()))
-          aErrorList.add (_createError ("CollaborationInfo/AgreementRef/@type must not be set"));
+        if (!HREDeliveryPMode.DEFAULT_AGREEMENT_TYPE.equals (aAgreementRef.getType ()))
+          aErrorList.add (_createError ("CollaborationInfo/AgreementRef/@type must be '" +
+                                        HREDeliveryPMode.DEFAULT_AGREEMENT_TYPE +
+                                        "' instead of '" +
+                                        aAgreementRef.getType () +
+                                        "'"));
       }
     }
   }
