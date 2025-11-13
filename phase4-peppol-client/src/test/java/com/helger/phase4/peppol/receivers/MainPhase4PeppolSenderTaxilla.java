@@ -21,6 +21,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
@@ -32,7 +33,6 @@ import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidationPintMY;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -76,6 +76,7 @@ public final class MainPhase4PeppolSenderTaxilla
       };
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
+                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:peppol:pint:billing-1@my-1::2.1"))
                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:peppol:bis:billing"))
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
@@ -87,7 +88,6 @@ public final class MainPhase4PeppolSenderTaxilla
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
                                   .buildMessageCallback (aBuildMessageCallback)
-                                  .validationConfiguration (PeppolValidationPintMY.VID_OPENPEPPOL_MY_PINT_UBL_INVOICE_1_2_1)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

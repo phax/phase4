@@ -25,6 +25,7 @@ import com.helger.base.wrapper.Wrapper;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.response.ExtendedHttpResponseException;
 import com.helger.io.resource.FileSystemResource;
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
@@ -63,6 +64,7 @@ public final class MainPhase4PeppolSenderHelgerLargeFileLocal
                                   .httpClientFactory (new HttpClientSettings ().setRetryCount (0)
                                                                                .setResponseTimeout (Timeout.ofMinutes (5)))
                                   .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
+                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
@@ -107,7 +109,6 @@ public final class MainPhase4PeppolSenderHelgerLargeFileLocal
                                                                                                                "-----END CERTIFICATE-----\r\n" +
                                                                                                                ""),
                                                             "http://localhost:8080/as4")
-                                  .disableValidation ()
                                   .sendMessageAndCheckForReceipt (aSendingExceptionKeeper::set);
       LOGGER.info ("Peppol send result: " + eResult);
 

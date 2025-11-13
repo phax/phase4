@@ -21,6 +21,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
@@ -57,19 +58,18 @@ public final class MainPhase4PeppolSenderHelgerWildcard
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
       final PeppolUserMessageBuilder aBuilder = Phase4PeppolSender.builder ()
-                                                 .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifier (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD,
-                                                                                                                      "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:peppol:pint:billing-1@jp-1::2.1"))
-                                                 .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:peppol:bis:billing"))
-                                                 .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
-                                                 .receiverParticipantID (aReceiverID)
-                                                 .senderPartyID ("POP000306")
-                                                 .countryC1 ("AT")
-                                                 .payload (aPayloadElement)
-                                                 .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                                    aReceiverID,
-                                                                                    ESML.DIGIT_TEST))
-                                                 .checkReceiverAPCertificate (true)
-                                                 .disableValidation ();
+                                                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
+                                                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifier (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD,
+                                                                                                                                       "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:peppol:pint:billing-1@jp-1::2.1"))
+                                                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:peppol:bis:billing"))
+                                                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
+                                                                  .receiverParticipantID (aReceiverID)
+                                                                  .senderPartyID ("POP000306")
+                                                                  .countryC1 ("AT")
+                                                                  .payload (aPayloadElement)
+                                                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                                                     aReceiverID,
+                                                                                                     ESML.DIGIT_TEST));
       final EAS4UserMessageSendResult eResult;
       eResult = aBuilder.sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);

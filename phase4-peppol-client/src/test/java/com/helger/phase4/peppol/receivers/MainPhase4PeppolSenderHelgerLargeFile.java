@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.io.resource.FileSystemResource;
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
@@ -31,9 +32,7 @@ import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation2024_11;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -54,7 +53,6 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
       final FileSystemResource aRes = new FileSystemResource (new File ("src/test/resources/external/examples/large-files/base-example-large-30m.xml"));
       if (!aRes.exists ())
         throw new IllegalStateException ("Failed to read XML file to be send");
-      final boolean bNoValidate = true;
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
@@ -63,6 +61,7 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
                                   .httpClientFactory (new HttpClientSettings ().setRetryCount (0)
                                                                                .setResponseTimeout (Timeout.ofMinutes (5)))
                                   .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
+                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
@@ -74,10 +73,6 @@ public final class MainPhase4PeppolSenderHelgerLargeFile
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
-                                  .validationConfiguration (bNoValidate ? null
-                                                                        : PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
-                                                            bNoValidate ? null
-                                                                        : new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

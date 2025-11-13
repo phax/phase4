@@ -21,6 +21,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
@@ -77,6 +78,7 @@ public final class MainPhase4PeppolSenderDT
         }
       };
       final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
+                                                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifier ("peppol-doctype-wildcard",
                                                                                                                                        "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:peppol:pint:billing-1@ae-1::2.1"))
                                                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:peppol:bis:billing"))

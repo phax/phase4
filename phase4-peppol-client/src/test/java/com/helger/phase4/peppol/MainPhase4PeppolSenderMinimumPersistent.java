@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
 import com.helger.base.system.SystemProperties;
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
@@ -66,6 +67,7 @@ public final class MainPhase4PeppolSenderMinimumPersistent
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:test");
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
+                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))

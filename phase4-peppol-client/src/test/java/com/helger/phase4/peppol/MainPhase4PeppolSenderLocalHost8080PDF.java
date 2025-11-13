@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import com.helger.base.debug.GlobalDebug;
 import com.helger.io.file.SimpleFileIO;
 import com.helger.mime.CMimeType;
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.peppol.doctype.EPredefinedDocumentTypeIdentifier;
 import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifier;
@@ -71,6 +72,7 @@ public final class MainPhase4PeppolSenderLocalHost8080PDF
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
       final PeppolDocumentTypeIdentifier aDocTypeID = EPredefinedDocumentTypeIdentifier.urn_peppol_doctype_pdf_xml__urn_cen_eu_en16931_2017_conformant_urn_peppol_france_billing_Factur_X_1_0__D22B.getAsDocumentTypeIdentifier ();
       final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
+                                                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                                                   .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (0))
                                                                   .documentTypeID (aDocTypeID)
                                                                   .processID (EPredefinedProcessIdentifier.urn_peppol_france_billing_regulated)

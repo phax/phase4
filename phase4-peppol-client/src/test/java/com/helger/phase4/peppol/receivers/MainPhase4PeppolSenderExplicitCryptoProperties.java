@@ -22,14 +22,13 @@ import org.slf4j.Logger;
 
 import com.helger.io.file.SimpleFileIO;
 import com.helger.peppol.security.PeppolTrustStores;
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidation2024_11;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.ITrustStoreDescriptor;
 import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
@@ -70,6 +69,7 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
       final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
                                                                   .cryptoFactory (new AS4CryptoFactoryInMemoryKeyStore (aKSD,
                                                                                                                         aTSD))
+                                                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                                                   .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                                                   .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
@@ -80,8 +80,6 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
                                                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                                                      aReceiverID,
                                                                                                      ESML.DIGIT_TEST))
-                                                                  .validationConfiguration (PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
-                                                                                            new Phase4PeppolValidatonResultHandler ())
                                                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

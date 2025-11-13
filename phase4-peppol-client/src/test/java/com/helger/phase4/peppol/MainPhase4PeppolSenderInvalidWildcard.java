@@ -21,6 +21,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
@@ -37,8 +38,8 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * The main class that requires manual configuration before it can be run. This
- * is a dummy and needs to be adopted to your needs.
+ * The main class that requires manual configuration before it can be run. This is a dummy and needs
+ * to be adopted to your needs.
  *
  * @author Philip Helger
  */
@@ -69,9 +70,9 @@ public final class MainPhase4PeppolSenderInvalidWildcard
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
+                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                   /*
-                                   * It is invalid to include the "*" in the SMP
-                                   * Query
+                                   * It is invalid to include the "*" in the SMP Query
                                    */
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifier (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD,
                                                                                                        "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:peppol:pint:billing-1@my-1*::2.1"))

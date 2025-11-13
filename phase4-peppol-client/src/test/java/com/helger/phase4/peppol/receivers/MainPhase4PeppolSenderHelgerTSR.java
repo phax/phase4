@@ -21,6 +21,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.peppol.doctype.EPredefinedDocumentTypeIdentifier;
@@ -75,21 +76,20 @@ public final class MainPhase4PeppolSenderHelgerTSR
         }
       };
       final PeppolUserMessageBuilder aBuilder = Phase4PeppolSender.builder ()
-                                                 .documentTypeID (EPredefinedDocumentTypeIdentifier.TRANSACTIONSTATISTICSREPORT_FDC_PEPPOL_EU_EDEC_TRNS_TRANSACTION_STATISTICS_REPORTING_1_0)
-                                                 .processID (EPredefinedProcessIdentifier.urn_fdc_peppol_eu_edec_bis_reporting_1_0)
-                                                 .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
-                                                 .receiverParticipantID (aReceiverID)
-                                                 .senderPartyID ("POP000306")
-                                                 .countryC1 ("AT")
-                                                 .payload (aPayloadElement)
-                                                 .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                                    aReceiverID,
-                                                                                    ESML.DIGIT_TEST))
-                                                 .checkReceiverAPCertificate (true)
-                                                 .disableValidation ()
-                                                 .sbdDocumentConsumer (x -> LOGGER.info (new SBDMarshaller ().setFormattedOutput (true)
-                                                                                                             .getAsString (x)))
-                                                 .buildMessageCallback (aBuildMessageCallback);
+                                                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
+                                                                  .documentTypeID (EPredefinedDocumentTypeIdentifier.TRANSACTIONSTATISTICSREPORT_FDC_PEPPOL_EU_EDEC_TRNS_TRANSACTION_STATISTICS_REPORTING_1_0)
+                                                                  .processID (EPredefinedProcessIdentifier.urn_fdc_peppol_eu_edec_bis_reporting_1_0)
+                                                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
+                                                                  .receiverParticipantID (aReceiverID)
+                                                                  .senderPartyID ("POP000306")
+                                                                  .countryC1 ("AT")
+                                                                  .payload (aPayloadElement)
+                                                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                                                     aReceiverID,
+                                                                                                     ESML.DIGIT_TEST))
+                                                                  .sbdDocumentConsumer (x -> LOGGER.info (new SBDMarshaller ().setFormattedOutput (true)
+                                                                                                                              .getAsString (x)))
+                                                                  .buildMessageCallback (aBuildMessageCallback);
       final EAS4UserMessageSendResult eResult;
       eResult = aBuilder.sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);

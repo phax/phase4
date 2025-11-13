@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
 import com.helger.base.timing.StopWatch;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsMap;
+import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.peppol.doctype.EPredefinedDocumentTypeIdentifier;
@@ -86,6 +87,7 @@ public final class MainPhase4PeppolSenderLDIXR23
           }
         };
         final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
+                                                                    .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                                                     .documentTypeID (EPredefinedDocumentTypeIdentifier.XRECHNUNG_INVOICE_UBL_V23)
                                                                     .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                                                     .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
