@@ -436,9 +436,9 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
     }
 
     // Check preconditions
-    if (!aState.isSoapDecrypted ())
+    if (aState.isSoapDecrypted ())
     {
-      final String sDetails = "The received HR eDelivery message seems not to be encrypted (properly).";
+      final String sDetails = "The received HR eDelivery message seems to be encrypted which is not in line with the specification.";
       LOGGER.error (sLogPrefix + sDetails);
       aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_DECRYPTION.errorBuilder (aDisplayLocale)
                                                                      .refToMessageInError (sMessageID)
