@@ -22,11 +22,11 @@ import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
 import com.helger.base.debug.GlobalDebug;
+import com.helger.hredelivery.commons.security.HREDeliveryTrustedCA;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.logging.Phase4LogCustomizer;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.security.certificate.CertificateHelper;
@@ -54,8 +54,6 @@ public final class MainPhase4HREDeliverySenderLocalHost8080
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
     AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ());
 
-    Phase4LogCustomizer.setThreadLocalLogPrefix ("[SendLocalHost8080] ");
-
     try
     {
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/base-example.xml"))
@@ -64,56 +62,62 @@ public final class MainPhase4HREDeliverySenderLocalHost8080
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4HREdeliverySender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
+      final IParticipantIdentifier aReceiverID = Phase4HREdeliverySender.IF.createParticipantIdentifierWithDefaultScheme ("9934:87550089326");
       final EAS4UserMessageSendResult eResult = Phase4HREdeliverySender.builder ()
-                                                                       .documentTypeID (Phase4HREdeliverySender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
-                                                                       .processID (Phase4HREdeliverySender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
+                                                                       .apCAChecker (HREDeliveryTrustedCA.hrEdeliveryFinaDemo ())
+                                                                       .documentTypeID (Phase4HREdeliverySender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0::2.1"))
+                                                                       .processID (Phase4HREdeliverySender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:eracun.hr:poacc:en16931:any"))
                                                                        .senderParticipantID (Phase4HREdeliverySender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
                                                                        .receiverParticipantID (aReceiverID)
                                                                        .senderPartyID ("POP000306")
                                                                        .payload (aPayloadElement)
                                                                        .receiverEndpointDetails (CertificateHelper.convertStringToCertficate ("-----BEGIN CERTIFICATE-----\n" +
-                                                                                                                                              "MIIF0TCCA7mgAwIBAgIQcyxSArntXaqTdp2N6B0D2DANBgkqhkiG9w0BAQsFADBr\n" +
-                                                                                                                                              "MQswCQYDVQQGEwJCRTEZMBcGA1UEChMQT3BlblBFUFBPTCBBSVNCTDEWMBQGA1UE\n" +
-                                                                                                                                              "CxMNRk9SIFRFU1QgT05MWTEpMCcGA1UEAxMgUEVQUE9MIEFDQ0VTUyBQT0lOVCBU\n" +
-                                                                                                                                              "RVNUIENBIC0gRzIwHhcNMjUwMjI1MDAwMDAwWhcNMjcwMjE1MjM1OTU5WjBeMQsw\n" +
-                                                                                                                                              "CQYDVQQGEwJBVDEiMCAGA1UECgwZSGVsZ2VyIElUIENvbnN1bHRpbmcgR21iSDEX\n" +
-                                                                                                                                              "MBUGA1UECwwOUEVQUE9MIFRFU1QgQVAxEjAQBgNVBAMMCVBPUDAwMDMwNjCCASIw\n" +
-                                                                                                                                              "DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK7YW/30et1kZK/l3hKrxJEr0NkC\n" +
-                                                                                                                                              "f/mzjkQPUh8jKyd4YZrgiod/Ry/xnp2eHcHV2Aiukk9kMkg8Ptf5W8jMgvlKeN58\n" +
-                                                                                                                                              "dHp890vupeh4iOPdq0sJ9B3HJhXQHgxhe90CZIsJi8fn7fFawMHPuVDmwvrnzYWl\n" +
-                                                                                                                                              "c0qF/xXFqM/NwBWiqKikp5lvVvZUehzJiRmEY0c1uFoXZClqUmcmmWGOBWzj8nW6\n" +
-                                                                                                                                              "IeIsZ9GurNG+9zlT6L3JRJoJCluzTjjbk4XKqEQFiP4aiDAa1nuIzMea3DkB2nx4\n" +
-                                                                                                                                              "0L8TwZEO2d8Xecr3xTfkyq92eHyStyIlEW1459bOSa56Yp6Mlu7JFKmTgLkCAwEA\n" +
-                                                                                                                                              "AaOCAXwwggF4MAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgOoMBYGA1UdJQEB\n" +
-                                                                                                                                              "/wQMMAoGCCsGAQUFBwMCMB0GA1UdDgQWBBSBn6GQ+OAyiDWmqpU18M9DwzYRwTBd\n" +
-                                                                                                                                              "BgNVHR8EVjBUMFKgUKBOhkxodHRwOi8vcGtpLWNybC5zeW1hdXRoLmNvbS9jYV82\n" +
-                                                                                                                                              "YTkzNzczNGEzOTNhMDgwNWJmMzNjZGE4YjMzMTA5My9MYXRlc3RDUkwuY3JsMDcG\n" +
-                                                                                                                                              "CCsGAQUFBwEBBCswKTAnBggrBgEFBQcwAYYbaHR0cDovL3BraS1vY3NwLnN5bWF1\n" +
-                                                                                                                                              "dGguY29tMB8GA1UdIwQYMBaAFGtvS7bxN7orPH8Yzborsrl8KjfrMC0GCmCGSAGG\n" +
-                                                                                                                                              "+EUBEAMEHzAdBhNghkgBhvhFARABAgMBAYGpkOEDFgY5NTc2MDgwOQYKYIZIAYb4\n" +
-                                                                                                                                              "RQEQBQQrMCkCAQAWJGFIUjBjSE02THk5d2Eya3RjbUV1YzNsdFlYVjBhQzVqYjIw\n" +
-                                                                                                                                              "PTANBgkqhkiG9w0BAQsFAAOCAgEAIWvpuipkFN2cSIIntNeoKfne7q9dFzJIqVTa\n" +
-                                                                                                                                              "y7ZeODtcoNqEsawMzGrAAgOzyzudq+rdF0FMaywTHHvtPfHWuK96UZVIPZs1CFcO\n" +
-                                                                                                                                              "lKYkQD0k47YxHc9VJUwoCB4PLgQk5pqdfbIigLd5oFXZmgI786Pkouu0LBHsH0Im\n" +
-                                                                                                                                              "2OPH6a9EdFBECBYnS+w2PTycF/mxEru0btz4i8ZIOj2pHRBAoBCItykIJwTbqknH\n" +
-                                                                                                                                              "H8CAm2mmEnnSxyE1qDui++c811Qn8H0NtQg9x2E57XkNQTrEDMOgNw5dyrp5izUm\n" +
-                                                                                                                                              "vNdLfxFvPmvadNWVRq52MD23jU2QM1byWoYyBynlvxII829ZshjUGlycnpc7NyuQ\n" +
-                                                                                                                                              "VbbPlb9Ku07ILaBDrI7qXJ3+Y8x7HOJ9qmX9nK4s5smWx6tsOUov9ZYlMvAqKipk\n" +
-                                                                                                                                              "ycBe6fTVwylzfZWNKPw/6hqMM0vOz49Yv5yxUvGHEvjyTUBrEgLJytrP4jvlvY1S\n" +
-                                                                                                                                              "ORISzCOn5IgZuHXYzTfd03+Z+uc0VgQHjyfNlTx/tMmrA4gCp4J6+G/mo5XXlSWF\n" +
-                                                                                                                                              "fAExypSh97GCTm+BKN5KkpyR7+1WevpyFEKK0ug+9Dr8KkSKnGSuVJ7XVhDbV5oP\n" +
-                                                                                                                                              "eTOT4HmMktEynedS61JX9We6Ilex07ak4tYouBdjwfyQmOJIgTrtchKmi5okoZeF\n" +
-                                                                                                                                              "ZShLhVM=\n" +
+                                                                                                                                              "MIIG1jCCBL6gAwIBAgIRAJ+/3S/qnzEAUbpIbmHvrwcwDQYJKoZIhvcNAQELBQAw\n" +
+                                                                                                                                              "SDELMAkGA1UEBhMCSFIxHTAbBgNVBAoTFEZpbmFuY2lqc2thIGFnZW5jaWphMRow\n" +
+                                                                                                                                              "GAYDVQQDExFGaW5hIERlbW8gQ0EgMjAyMDAeFw0yNTEwMzExMDI4MTRaFw0zMDA3\n" +
+                                                                                                                                              "MzExMjMwMThaMHUxCzAJBgNVBAYTAkhSMRMwEQYDVQQKEwpPUFVTQ0FQSVRBMRYw\n" +
+                                                                                                                                              "FAYDVQRhEw1IUjUyNDI0OTA5MjAyMQ4wDAYDVQQHEwVFU1BPTzEpMCcGA1UEAxMg\n" +
+                                                                                                                                              "T3B1c0NhcGl0YSBCdXNpbmVzcyBOZXR3b3JrLXRlc3QwggEiMA0GCSqGSIb3DQEB\n" +
+                                                                                                                                              "AQUAA4IBDwAwggEKAoIBAQC2GWaTK8HccJLWyOJG5s9AL7fUS3LGGRXYCxXZS8Zn\n" +
+                                                                                                                                              "5iPY5aKMuHBRNQ0pAb0sIjN1mQosRGs+t6ihKDZ1MS017LLpBFhskoNosIC5I8Iy\n" +
+                                                                                                                                              "BsFfy3UrPKkVH0YXshcBd4dSua8ZD8l0QwN8JZovzV0bhmrZT0H/1behTzOgdirf\n" +
+                                                                                                                                              "ep/WXT/4Q1Fmgy1QiT7D3aLO7SNuM02k8I1pWMBzKZr0G7wNsPBI3mLObbns2rpW\n" +
+                                                                                                                                              "+KPon/jD3XpYPFEycaxp4jbwYL7oDyQLLZkGvKya3SgXufuwyt5JPXohLqOqPgGQ\n" +
+                                                                                                                                              "0/oDv0ilt0hyZQX7esoiFBuYok6+SCjxLfc74XzYJSmzAgMBAAGjggKMMIICiDAO\n" +
+                                                                                                                                              "BgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMIGs\n" +
+                                                                                                                                              "BgNVHSAEgaQwgaEwgZQGCSt8iFAFIQ8DATCBhjBBBggrBgEFBQcCARY1aHR0cDov\n" +
+                                                                                                                                              "L2RlbW8tcGtpLmZpbmEuaHIvY3BzL2Nwc25xY2RlbW8yMDE0djItMC1oci5wZGYw\n" +
+                                                                                                                                              "QQYIKwYBBQUHAgEWNWh0dHA6Ly9kZW1vLXBraS5maW5hLmhyL2Nwcy9jcHNucWNk\n" +
+                                                                                                                                              "ZW1vMjAxNHYyLTAtZW4ucGRmMAgGBgQAj3oBATB9BggrBgEFBQcBAQRxMG8wKAYI\n" +
+                                                                                                                                              "KwYBBQUHMAGGHGh0dHA6Ly9kZW1vMjAxNC1vY3NwLmZpbmEuaHIwQwYIKwYBBQUH\n" +
+                                                                                                                                              "MAKGN2h0dHA6Ly9kZW1vLXBraS5maW5hLmhyL2NlcnRpZmlrYXRpL2RlbW8yMDIw\n" +
+                                                                                                                                              "X3N1Yl9jYS5jZXIwJwYDVR0RBCAwHoEca2F0aS5rYWl2YWFyYUBvcHVzY2FwaXRh\n" +
+                                                                                                                                              "LmNvbTCBtAYDVR0fBIGsMIGpMIGmoIGjoIGghihodHRwOi8vZGVtby1wa2kuZmlu\n" +
+                                                                                                                                              "YS5oci9jcmwvZGVtbzIwMjAuY3JshnRsZGFwOi8vZGVtby1sZGFwLmZpbmEuaHIv\n" +
+                                                                                                                                              "Y249RmluYSUyMERlbW8lMjBDQSUyMDIwMjAsbz1GaW5hbmNpanNrYSUyMGFnZW5j\n" +
+                                                                                                                                              "aWphLGM9SFI/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlzdCUzQmJpbmFyeTAfBgNV\n" +
+                                                                                                                                              "HSMEGDAWgBSVr1LVwunXN4Q+bkmPyR/qXCtfzzAdBgNVHQ4EFgQUqKuAUN9+zvY9\n" +
+                                                                                                                                              "VSRFkYA18DlUiAMwCQYDVR0TBAIwADANBgkqhkiG9w0BAQsFAAOCAgEAiHSUPJsk\n" +
+                                                                                                                                              "vwC0CSrcgVM+dVUGiRaoTcf/z/vtT3Ro3KKGLqiiR7zBgJBiC+Zu4uBdlhfZ7EgE\n" +
+                                                                                                                                              "yF4u8IGeTRwyXxa/gfGJd9Ve0S8ykT3CYoh/1UaeXQ/ftQ+H/4P8C0njKvPWp4MP\n" +
+                                                                                                                                              "ymw+jffOUGn4M1ut7QjMaXqQ3Z2cGLOK5bFHfNPUGl3CSte4G6CE0J6uRydfqz5+\n" +
+                                                                                                                                              "F0A5sIY+bKXQrw/AOq9T0zsjjwosz5oltW/45bmTX/JSJY3Z1jRUwD4x+76R4bXu\n" +
+                                                                                                                                              "9DREyEj0GJKzj0hCYaw8qUVvXTz5MExbElUxH4Imhn2IC3g1N+uJZotNgTxgqHJ3\n" +
+                                                                                                                                              "hj5DlD2cDt1zMy1WLecAnI3JDPyd6FHF2qI8jsCamwbO6OIApTJwyvVnGxkYzT6H\n" +
+                                                                                                                                              "kN8cViACc9YURrAUP8HMQ92lcWGLAH/cgj6BqdndHdWayz6AGe136nGVdPiOHrPp\n" +
+                                                                                                                                              "Zh6T/9XoZHJvFRp3uT34QeSBpatZFtWKdsUPC4CYzPGlE1UxW9T776BaziiDoAGT\n" +
+                                                                                                                                              "ASj6h3TSDXr9NehfxL5paVa9WRsU+A/v4DdVOhPNda2ClGMPVwUGz9krOatXULTH\n" +
+                                                                                                                                              "cBXMbhel+hwMxaAv/l8LcN/ftOgzpf+3rcK/MJTLM/oCT/YRpC10piXqvFyUAGf+\n" +
+                                                                                                                                              "785O5I8Zz8hZTkoJHPL6sy1n4qu4pj0FIzo=\n" +
                                                                                                                                               "-----END CERTIFICATE-----\n" +
                                                                                                                                               ""),
                                                                                                  "http://localhost:8080/as4")
                                                                        .sendMessageAndCheckForReceipt ();
-      LOGGER.info ("Peppol send result: " + eResult);
+      LOGGER.info ("HR eDelivery send result: " + eResult);
     }
     catch (final Exception ex)
     {
-      LOGGER.error ("Error sending Peppol message via AS4", ex);
+      LOGGER.error ("Error sending HR eDelivery message via AS4", ex);
     }
     finally
     {

@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
 import com.helger.hredelivery.commons.EHREDeliverySML;
+import com.helger.hredelivery.commons.security.HREDeliveryTrustedCA;
 import com.helger.hredelivery.commons.smp.HRMPSClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
@@ -68,6 +69,7 @@ public final class MainPhase4HREDeliverySender
       final IParticipantIdentifier aReceiverID = Phase4HREdeliverySender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4HREdeliverySender.builder ()
+                                       .apCAChecker (HREDeliveryTrustedCA.hrEdeliveryFinaDemo ())
                                        .documentTypeID (Phase4HREdeliverySender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                                        .processID (Phase4HREdeliverySender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                                        .senderParticipantID (Phase4HREdeliverySender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
@@ -76,11 +78,11 @@ public final class MainPhase4HREDeliverySender
                                        .payload (aPayloadElement)
                                        .smpClient (new HRMPSClientReadOnly (aReceiverID, EHREDeliverySML.DEMO))
                                        .sendMessageAndCheckForReceipt ();
-      LOGGER.info ("Peppol send result: " + eResult);
+      LOGGER.info ("HR eDelivery send result: " + eResult);
     }
     catch (final Exception ex)
     {
-      LOGGER.error ("Error sending Peppol message via AS4", ex);
+      LOGGER.error ("Error sending HR eDelivery message via AS4", ex);
     }
     finally
     {

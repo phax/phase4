@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import com.helger.hredelivery.commons.EHREDeliverySML;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHData;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHDataReader;
+import com.helger.hredelivery.commons.security.HREDeliveryTrustedCA;
 import com.helger.hredelivery.commons.smp.HRMPSClientReadOnly;
 import com.helger.io.resource.FileSystemResource;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
@@ -67,7 +68,10 @@ public final class MainPhase4HREDeliverySenderSbdh
       // Start configuring here
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4HREdeliverySender.sbdhBuilder ()
+                                       .apCAChecker (HREDeliveryTrustedCA.hrEdeliveryFinaDemo ())
                                        .payloadAndMetadata (aSbdh)
+                                       .documentTypeID (Phase4HREdeliverySender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0::2.1"))
+                                       .processID (Phase4HREdeliverySender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:eracun.hr:poacc:en16931:any"))
                                        .senderPartyID ("POP000306")
                                        .smpClient (new HRMPSClientReadOnly (aSbdh.getReceiverAsIdentifier (),
                                                                             EHREDeliverySML.DEMO))
