@@ -174,9 +174,9 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
       }
     }
 
-    // Add a small phase4 marker in the Receipt (since v3.0.0)
     if (!bNoCustomContentInReceipt)
     {
+      // Add a small phase4 marker in the Receipt (since v3.0.0)
       final Document aDoc = XMLFactory.newDocument ();
       final Element eRoot = (Element) aDoc.appendChild (aDoc.createElementNS (PHASE4_RECEIPT_INFO_NS, "phase4"));
       eRoot.setAttributeNS (PHASE4_RECEIPT_INFO_NS, "version", CAS4Version.BUILD_VERSION);
