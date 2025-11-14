@@ -117,7 +117,8 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 
     // This is only here for testing in the HR eDelivery environment
     final boolean bNoCustomContentInReceipt = AS4Configuration.getConfig ()
-                                                              .getAsBoolean ("as4.internal.no.custom.content.in.receipt");
+                                                              .getAsBoolean ("as4.internal.no.custom.content.in.receipt",
+                                                                             false);
 
     final Ebms3Receipt aEbms3Receipt = new Ebms3Receipt ();
     if (aDSRefs.isNotEmpty () && bShouldUseNonRepudiation)
