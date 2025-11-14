@@ -428,25 +428,9 @@ public class HREDeliveryCompatibilityValidator implements IAS4ProfileValidator
     else
     {
       final Ebms3AgreementRef aAgreementRef = aUserMsg.getCollaborationInfo ().getAgreementRef ();
-      if (aAgreementRef == null)
+      if (aAgreementRef != null)
       {
-        aErrorList.add (_createError ("CollaborationInfo/AgreementRef is missing"));
-      }
-      else
-      {
-        if (!HREDeliveryPMode.DEFAULT_AGREEMENT_ID.equals (aAgreementRef.getValue ()))
-          aErrorList.add (_createError ("CollaborationInfo/AgreementRef must be '" +
-                                        HREDeliveryPMode.DEFAULT_AGREEMENT_ID +
-                                        "' instead of '" +
-                                        aAgreementRef.getValue () +
-                                        "'"));
-
-        if (!HREDeliveryPMode.DEFAULT_AGREEMENT_TYPE.equals (aAgreementRef.getType ()))
-          aErrorList.add (_createError ("CollaborationInfo/AgreementRef/@type must be '" +
-                                        HREDeliveryPMode.DEFAULT_AGREEMENT_TYPE +
-                                        "' instead of '" +
-                                        aAgreementRef.getType () +
-                                        "'"));
+        aErrorList.add (_createError ("CollaborationInfo/AgreementRef must not be present"));
       }
     }
   }
