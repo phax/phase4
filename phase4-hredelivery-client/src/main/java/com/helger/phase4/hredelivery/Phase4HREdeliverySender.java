@@ -431,10 +431,13 @@ public final class Phase4HREdeliverySender
         fromRole (CAS4.DEFAULT_INITIATOR_URL);
         toPartyIDType (HREDeliveryPMode.DEFAULT_PARTY_TYPE_ID);
         toRole (CAS4.DEFAULT_RESPONDER_URL);
-        payloadMimeType (CMimeType.APPLICATION_XML);
         compressPayload (DEFAULT_COMPRESS_PAYLOAD);
 
         checkReceiverAPCertificate (DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE);
+
+        // Source: AS4 spec, Domibus example config
+        payloadContentID ("message");
+        payloadMimeType (CMimeType.TEXT_XML);
 
         // Explicitly NOT needed in message
         if (false)
