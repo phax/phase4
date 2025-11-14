@@ -115,8 +115,9 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
       aSignalMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo (sMessageID, sRefToMsgID));
     }
 
-    boolean bNoCustomContentInReceipt = AS4Configuration.getConfig ()
-                                                        .getAsBoolean ("as4.internal.no.custom.content.in.receipt");
+    // This is only here for testing in the HR eDelivery environment
+    final boolean bNoCustomContentInReceipt = AS4Configuration.getConfig ()
+                                                              .getAsBoolean ("as4.internal.no.custom.content.in.receipt");
 
     final Ebms3Receipt aEbms3Receipt = new Ebms3Receipt ();
     if (aDSRefs.isNotEmpty () && bShouldUseNonRepudiation)
@@ -143,29 +144,33 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
       else
         LOGGER.info ("Non-repudiation is disabled, hence returning the source UserMessage in the Receipt");
 
-      // If the original usermessage is not signed, the receipt will contain
-      // the original message part without wss4j security
-      final Document aWrappedDoc = XMLFactory.newDocument ();
-      if (aEbms3UserMessageToRespond != null)
+      if (!bNoCustomContentInReceipt)
       {
-        // It is not possible to directly contain the original UserMessage,
-        // because the XSD requires
-        // <xsd:any namespace="##other" processContents="lax"
-        // maxOccurs="unbounded"/>
-        // And UserMessage and SignalMessage share the same namespace NS
+        // If the original usermessage is not signed, the receipt will contain
+        // the original message part without wss4j security
+        final Document aWrappedDoc = XMLFactory.newDocument ();
+        if (aEbms3UserMessageToRespond != null)
+        {
+          // It is not possible to directly contain the original UserMessage,
+          // because the XSD requires
+          // <xsd:any namespace="##other" processContents="lax"
+          // maxOccurs="unbounded"/>
+          // And UserMessage and SignalMessage share the same namespace NS
 
-        // As the Receipt cannot be empty, it is wrapped in another element
-        // of another namespace instead to work
-        final Element eWrappedRoot = (Element) aWrappedDoc.appendChild (aWrappedDoc.createElementNS (PHASE4_RECEIPT_WRAPPER_NS,
-                                                                                                     "OriginalUserMessage"));
-        eWrappedRoot.appendChild (aWrappedDoc.adoptNode (new Ebms3UserMessageMarshaller ().getAsElement (aEbms3UserMessageToRespond)));
+          // As the Receipt cannot be empty, it is wrapped in another element
+          // of another namespace instead to work
+          final Element eWrappedRoot = (Element) aWrappedDoc.appendChild (aWrappedDoc.createElementNS (PHASE4_RECEIPT_WRAPPER_NS,
+                                                                                                       "OriginalUserMessage"));
+          eWrappedRoot.appendChild (aWrappedDoc.adoptNode (new Ebms3UserMessageMarshaller ().getAsElement (aEbms3UserMessageToRespond)));
+        }
+        else
+        {
+          // No user message provided
+          aWrappedDoc.appendChild (aWrappedDoc.createElementNS (PHASE4_RECEIPT_WRAPPER_NS,
+                                                                "WithoutOriginalUserMessage"));
+        }
+        aEbms3Receipt.addAny (aWrappedDoc.getDocumentElement ());
       }
-      else
-      {
-        // No user message provided
-        aWrappedDoc.appendChild (aWrappedDoc.createElementNS (PHASE4_RECEIPT_WRAPPER_NS, "WithoutOriginalUserMessage"));
-      }
-      aEbms3Receipt.addAny (aWrappedDoc.getDocumentElement ());
     }
 
     // Add a small phase4 marker in the Receipt (since v3.0.0)
