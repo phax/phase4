@@ -427,7 +427,6 @@ public final class Phase4HREdeliverySender
 
         // Use the HR eDelivery specific timeout settings
         httpClientFactory (new Phase4HREDeliveryHttpClientSettings ());
-        agreementRef (HREDeliveryPMode.DEFAULT_AGREEMENT_ID);
         fromPartyIDType (HREDeliveryPMode.DEFAULT_PARTY_TYPE_ID);
         fromRole (CAS4.DEFAULT_INITIATOR_URL);
         toPartyIDType (HREDeliveryPMode.DEFAULT_PARTY_TYPE_ID);
@@ -437,8 +436,12 @@ public final class Phase4HREdeliverySender
 
         checkReceiverAPCertificate (DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE);
 
-        agreementRef (HREDeliveryPMode.DEFAULT_AGREEMENT_ID);
-        agreementType (HREDeliveryPMode.DEFAULT_AGREEMENT_TYPE);
+        // Explicitly NOT needed in message
+        if (false)
+        {
+          agreementRef (HREDeliveryPMode.DEFAULT_AGREEMENT_ID);
+          agreementType (HREDeliveryPMode.DEFAULT_AGREEMENT_TYPE);
+        }
 
         // HR eDelivery uses its own root certificate, so no checks needed - this is
         // only to quiet the warning
