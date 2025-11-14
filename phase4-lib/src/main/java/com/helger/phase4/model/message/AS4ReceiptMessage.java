@@ -25,6 +25,7 @@ import com.helger.annotation.Nonempty;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.CAS4Version;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
@@ -114,6 +115,9 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
       aSignalMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo (sMessageID, sRefToMsgID));
     }
 
+    boolean bNoCustomContentInReceipt = AS4Configuration.getConfig ()
+                                                        .getAsBoolean ("as4.internal.no.custom.content.in.receipt");
+
     final Ebms3Receipt aEbms3Receipt = new Ebms3Receipt ();
     if (aDSRefs.isNotEmpty () && bShouldUseNonRepudiation)
     {
@@ -165,6 +169,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     }
 
     // Add a small phase4 marker in the Receipt (since v3.0.0)
+    if (!bNoCustomContentInReceipt)
     {
       final Document aDoc = XMLFactory.newDocument ();
       final Element eRoot = (Element) aDoc.appendChild (aDoc.createElementNS (PHASE4_RECEIPT_INFO_NS, "phase4"));
