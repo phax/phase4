@@ -18,6 +18,9 @@ package com.helger.phase4.incoming.spi;
 
 import java.util.Collection;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.enforce.ValueEnforcer;
@@ -29,9 +32,6 @@ import com.helger.collection.CollectionHelper;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.attachment.WSS4JAttachment;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class represents the result of a message processor SPI implementation.<br>
@@ -54,7 +54,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
    * @param sAsyncResponseURL
    *        The asynchronous response URLs. May be <code>null</code>.
    */
-  protected AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess,
+  protected AS4MessageProcessorResult (@NonNull final ESuccess eSuccess,
                                        @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                        @Nullable final String sAsyncResponseURL)
   {
@@ -70,7 +70,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
     return m_eSuccess.isSuccess ();
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public ICommonsList <WSS4JAttachment> getAllAttachments ()
   {
@@ -88,7 +88,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
    * @param aTarget
    *        The target collection. May not be <code>null</code>.
    */
-  public void addAllAttachmentsTo (@Nonnull final Collection <? super WSS4JAttachment> aTarget)
+  public void addAllAttachmentsTo (@NonNull final Collection <? super WSS4JAttachment> aTarget)
   {
     if (m_aAttachments != null)
       aTarget.addAll (m_aAttachments);
@@ -124,7 +124,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   /**
    * @return A new success object. No attachments, no nothing.
    */
-  @Nonnull
+  @NonNull
   public static AS4MessageProcessorResult createSuccess ()
   {
     return createSuccessExt (null, null);
@@ -142,7 +142,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
    * @see #createSuccess()
    * @since 0.9.7
    */
-  @Nonnull
+  @NonNull
   public static AS4MessageProcessorResult createSuccessExt (@Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                             @Nullable final String sAsyncResponseURL)
   {
@@ -155,7 +155,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
    * @return Never <code>null</code>.
    * @since 2.3.0
    */
-  @Nonnull
+  @NonNull
   public static AS4MessageProcessorResult createFailure ()
   {
     return new AS4MessageProcessorResult (ESuccess.FAILURE, (ICommonsList <WSS4JAttachment>) null, (String) null);

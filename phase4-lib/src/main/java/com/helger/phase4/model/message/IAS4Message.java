@@ -16,14 +16,13 @@
  */
 package com.helger.phase4.model.message;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.annotation.Nonempty;
 import com.helger.phase4.model.ESoapVersion;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Base interface for an AS4 message.
@@ -36,20 +35,20 @@ public interface IAS4Message
    * @return The SOAP version to use. May not be <code>null</code>.
    * @since v0.9.8
    */
-  @Nonnull
+  @NonNull
   ESoapVersion getSoapVersion ();
 
   /**
    * @return The type of the underlying message. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   EAS4MessageType getMessageType ();
 
   /**
    * @return The ID of the "Messaging" element for referencing in signing. Should not be
    *         <code>null</code>. This is NOT the AS4 Message ID.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   String getMessagingID ();
 
@@ -60,7 +59,7 @@ public interface IAS4Message
    *        <code>true</code> for must understand, <code>false</code> otherwise.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   IAS4Message setMustUnderstand (boolean bMustUnderstand);
 
   /**
@@ -70,7 +69,7 @@ public interface IAS4Message
    * @since v0.9.8
    * @see #getAsSoapDocument(Node)
    */
-  @Nonnull
+  @NonNull
   default Document getAsSoapDocument ()
   {
     return getAsSoapDocument ((Node) null);
@@ -86,6 +85,6 @@ public interface IAS4Message
    * @since v0.9.8
    * @see #getAsSoapDocument()
    */
-  @Nonnull
+  @NonNull
   Document getAsSoapDocument (@Nullable Node aSoapBodyPayload);
 }

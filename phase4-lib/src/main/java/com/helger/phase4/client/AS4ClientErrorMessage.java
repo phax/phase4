@@ -20,6 +20,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
 
 import com.helger.annotation.Nonempty;
@@ -40,9 +42,6 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xsds.xmldsig.ReferenceType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * AS4 client for {@link AS4ErrorMessage} objects.
  *
@@ -53,12 +52,12 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
   private final ICommonsList <Ebms3Error> m_aErrorMessages = new CommonsArrayList <> ();
   private boolean m_bErrorShouldBeSigned = false;
 
-  public AS4ClientErrorMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  public AS4ClientErrorMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     super (EAS4MessageType.ERROR_MESSAGE, aResHelper);
   }
 
-  public final void addErrorMessage (@Nonnull final IEbmsError aError, @Nonnull final Locale aLocale)
+  public final void addErrorMessage (@NonNull final IEbmsError aError, @NonNull final Locale aLocale)
   {
     ValueEnforcer.notNull (aError, "Error");
     ValueEnforcer.notNull (aLocale, "Locale");
@@ -66,7 +65,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
     m_aErrorMessages.add (aError.errorBuilder (aLocale).refToMessageInError (getRefToMessageID ()).build ());
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final ICommonsList <Ebms3Error> errorMessages ()
   {
@@ -78,7 +77,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
     return m_bErrorShouldBeSigned;
   }
 
-  @Nonnull
+  @NonNull
   public final AS4ClientErrorMessage setErrorShouldBeSigned (final boolean bErrorShouldBeSigned)
   {
     m_bErrorShouldBeSigned = bErrorShouldBeSigned;
@@ -99,7 +98,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
   }
 
   @Override
-  public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
+  public AS4ClientBuiltMessage buildMessage (@NonNull @Nonempty final String sMessageID,
                                              @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException
   {
     _checkMandatoryAttributes ();

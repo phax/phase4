@@ -18,8 +18,7 @@ package com.helger.phase4.crypto;
 
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
-
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Customize the {@link WSSecEncrypt} object additional to what is possible via the
@@ -37,8 +36,8 @@ public interface IWSSecEncryptCustomizer
    *        The security header to start with.
    * @return Never <code>null</code>.
    */
-  @Nonnull
-  default WSSecEncrypt createWSSecEncrypt (@Nonnull final WSSecHeader aSecHeader)
+  @NonNull
+  default WSSecEncrypt createWSSecEncrypt (@NonNull final WSSecHeader aSecHeader)
   {
     return new WSSecEncrypt (aSecHeader);
   }
@@ -50,6 +49,6 @@ public interface IWSSecEncryptCustomizer
    * @param aWSSecEncrypt
    *        The object to modify. May not be <code>null</code>.
    */
-  default void customize (@Nonnull final WSSecEncrypt aWSSecEncrypt)
+  default void customize (@NonNull final WSSecEncrypt aWSSecEncrypt)
   {}
 }

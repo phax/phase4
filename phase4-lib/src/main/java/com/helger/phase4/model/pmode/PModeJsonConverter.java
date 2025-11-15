@@ -19,6 +19,8 @@ package com.helger.phase4.model.pmode;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
@@ -34,8 +36,6 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegJsonConverter;
 import com.helger.photon.security.object.StubObject;
 import com.helger.tenancy.IBusinessObject;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PMode}.
@@ -69,7 +69,7 @@ public final class PModeJsonConverter
   private PModeJsonConverter ()
   {}
 
-  public static void setObjectFields (@Nonnull final IBusinessObject aValue, @Nonnull final IJsonObject aElement)
+  public static void setObjectFields (@NonNull final IBusinessObject aValue, @NonNull final IJsonObject aElement)
   {
     aElement.add (ATTR_ID, aValue.getID ());
     if (aValue.hasCreationDateTime ())
@@ -99,8 +99,8 @@ public final class PModeJsonConverter
     }
   }
 
-  @Nonnull
-  public static StubObject getStubObject (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static StubObject getStubObject (@NonNull final IJsonObject aElement)
   {
     // ID
     final String sID = aElement.getAsString (ATTR_ID);
@@ -133,8 +133,8 @@ public final class PModeJsonConverter
                            aCustomAttrs);
   }
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final IPMode aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final IPMode aValue)
   {
     final IJsonObject ret = new JsonObject ();
     setObjectFields (aValue, ret);
@@ -158,8 +158,8 @@ public final class PModeJsonConverter
     return ret;
   }
 
-  @Nonnull
-  public static PMode convertToNative (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static PMode convertToNative (@NonNull final IJsonObject aElement)
   {
     final IJsonObject aInit = aElement.getAsObject (ELEMENT_INITIATOR);
     final PModeParty aInitiator = aInit == null ? null : PModePartyJsonConverter.convertToNative (aInit);

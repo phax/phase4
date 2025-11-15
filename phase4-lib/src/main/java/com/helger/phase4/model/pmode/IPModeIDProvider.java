@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.model.pmode;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A nice little helper interface to dynamically create new PMode IDs based on Initiator ID and
@@ -42,6 +42,6 @@ public interface IPModeIDProvider
    *        Non-<code>null</code> responder party.
    * @return The created non-<code>null</code> PMode ID.
    */
-  @Nonnull
-  String getPModeID (@Nonnull PModeParty aInitiator, @Nonnull PModeParty aResponder);
+  @NonNull
+  String getPModeID (@NonNull PModeParty aInitiator, @NonNull PModeParty aResponder);
 }

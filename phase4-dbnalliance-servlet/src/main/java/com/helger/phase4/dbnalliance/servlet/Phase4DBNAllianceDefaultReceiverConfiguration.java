@@ -18,6 +18,8 @@ package com.helger.phase4.dbnalliance.servlet;
 
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.NotThreadSafe;
@@ -32,9 +34,6 @@ import com.helger.phase4.dbnalliance.servlet.Phase4DBNAllianceReceiverConfigurat
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class contains the references values against which incoming values are compared. These are
@@ -158,7 +157,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   /**
    * @return The default identifier factory used to parse XHE data. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static IIdentifierFactory getXHEIdentifierFactory ()
   {
     return s_aXHEIdentifierFactory;
@@ -170,7 +169,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
    * @param a
    *        The identifier factory to use. May not be <code>null</code>.
    */
-  public static void setXHEIdentifierFactory (@Nonnull final IIdentifierFactory a)
+  public static void setXHEIdentifierFactory (@NonNull final IIdentifierFactory a)
   {
     ValueEnforcer.notNull (a, "XHEIdentifierFactory");
     s_aXHEIdentifierFactory = a;
@@ -231,7 +230,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   /**
    * @return The DBNAlliance AP CA checker to be used. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static TrustedCAChecker getAPCAChecker ()
   {
     return s_aAPCAChecker;
@@ -243,7 +242,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
    * @param a
    *        The DBNAlliance CA checker to be used. May not be <code>null</code>.
    */
-  public static void setAPCAChecker (@Nonnull final TrustedCAChecker a)
+  public static void setAPCAChecker (@NonNull final TrustedCAChecker a)
   {
     ValueEnforcer.notNull (a, "APCAChecker");
 
@@ -261,7 +260,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
    *
    * @return Completely filled builder. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static Phase4DBNAllianceReceiverConfigurationBuilder getAsReceiverCheckDataBuilder ()
   {
     final IBDXR2ServiceMetadataProvider aSMPClient = getSMPClient ();
@@ -291,7 +290,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
    *
    * @return The instance data and never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static Phase4DBNAllianceReceiverConfiguration getAsReceiverCheckData ()
   {
     return getAsReceiverCheckDataBuilder ().build ();

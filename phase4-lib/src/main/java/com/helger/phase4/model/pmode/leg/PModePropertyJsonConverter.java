@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.EMandatory;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * XML converter for objects of class {@link PModeProperty}.
@@ -40,8 +40,8 @@ public final class PModePropertyJsonConverter
   private PModePropertyJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModeProperty aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModeProperty aValue)
   {
     final IJsonObject ret = new JsonObject ();
     ret.add (NAME, aValue.getName ());
@@ -52,8 +52,8 @@ public final class PModePropertyJsonConverter
     return ret;
   }
 
-  @Nonnull
-  public static PModeProperty convertToNative (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static PModeProperty convertToNative (@NonNull final IJsonObject aElement)
   {
     final String sName = aElement.getAsString (NAME);
     final String sDescription = aElement.getAsString (DESCRIPTION);

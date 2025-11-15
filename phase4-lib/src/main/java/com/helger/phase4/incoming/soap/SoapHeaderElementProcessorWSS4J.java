@@ -38,6 +38,8 @@ import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -71,9 +73,6 @@ import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.phase4.wss.WSSSynchronizer;
 import com.helger.xml.XMLHelper;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * This class manages the WSS4J SOAP header
  *
@@ -94,10 +93,10 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
   private final IAS4DecryptParameterModifier m_aDecryptParameterModifier;
   private final AS4SigningParams m_aSigningParams;
 
-  public SoapHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                          @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+  public SoapHeaderElementProcessorWSS4J (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                          @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                           @Nullable final Provider aSecurityProviderSignVerify,
-                                          @Nonnull final Supplier <? extends IPMode> aFallbackPModeProvider,
+                                          @NonNull final Supplier <? extends IPMode> aFallbackPModeProvider,
                                           @Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier,
                                           @Nullable final AS4SigningParams aSigningParams)
   {
@@ -112,12 +111,12 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
     m_aSigningParams = aSigningParams;
   }
 
-  @Nonnull
-  private ESuccess _verifyAndDecrypt (@Nonnull final Document aSOAPDoc,
-                                      @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
-                                      @Nonnull final AS4IncomingMessageState aIncomingState,
-                                      @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget,
-                                      @Nonnull final Supplier <? extends WSSConfig> aWSSConfigSupplier)
+  @NonNull
+  private ESuccess _verifyAndDecrypt (@NonNull final Document aSOAPDoc,
+                                      @NonNull final ICommonsList <WSS4JAttachment> aAttachments,
+                                      @NonNull final AS4IncomingMessageState aIncomingState,
+                                      @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget,
+                                      @NonNull final Supplier <? extends WSSConfig> aWSSConfigSupplier)
   {
     // Default is Leg 1, gets overwritten when a reference to a message id
     // exists and then uses leg2
@@ -396,12 +395,12 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
     }
   }
 
-  @Nonnull
-  public ESuccess processHeaderElement (@Nonnull final Document aSoapDoc,
-                                        @Nonnull final Element aSecurityNode,
-                                        @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
-                                        @Nonnull final AS4IncomingMessageState aIncomingState,
-                                        @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
+  @NonNull
+  public ESuccess processHeaderElement (@NonNull final Document aSoapDoc,
+                                        @NonNull final Element aSecurityNode,
+                                        @NonNull final ICommonsList <WSS4JAttachment> aAttachments,
+                                        @NonNull final AS4IncomingMessageState aIncomingState,
+                                        @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
     // Remember the crypto factories used for this message
     aIncomingState.setCryptoFactorySign (m_aCryptoFactorySign);

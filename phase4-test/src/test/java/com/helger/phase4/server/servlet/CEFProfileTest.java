@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.UUID;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,8 +43,6 @@ import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.xml.serialize.read.DOMReader;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Test for the CEF PMode
@@ -143,7 +142,7 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
                       "'finalRecipient' property is empty or not existant but mandatory");
   }
 
-  @Nonnull
+  @NonNull
   private static Ebms3Property _createRandomProperty ()
   {
     return MessageHelperMethods.createEbms3Property ("randomname" + UUID.randomUUID (),

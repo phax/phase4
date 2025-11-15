@@ -19,6 +19,8 @@ package com.helger.phase4.config;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.GuardedBy;
@@ -36,9 +38,6 @@ import com.helger.config.source.resource.properties.ConfigurationSourcePropertie
 import com.helger.io.resource.IReadableResource;
 import com.helger.io.resourceprovider.ReadableResourceProviderChain;
 import com.helger.phase4.logging.Phase4LoggerFactory;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class contains the central phase4 configuration. <br>
@@ -85,7 +84,7 @@ public final class AS4Configuration
    *         support.
    * @deprecated Use {@link ConfigFactory#createDefaultValueProvider()} instead
    */
-  @Nonnull
+  @NonNull
   @Deprecated (forRemoval = true, since = "4.0.1")
   public static MultiConfigurationValueProvider createPhase4ValueProvider ()
   {
@@ -128,7 +127,7 @@ public final class AS4Configuration
   /**
    * @return The current global configuration. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static IConfigWithFallback getConfig ()
   {
     // Inline for performance
@@ -150,8 +149,8 @@ public final class AS4Configuration
    *        The configuration to use globally. May not be <code>null</code>.
    * @return The old value of {@link IConfig}. Never <code>null</code>.
    */
-  @Nonnull
-  public static IConfigWithFallback setConfig (@Nonnull final IConfigWithFallback aNewConfig)
+  @NonNull
+  public static IConfigWithFallback setConfig (@NonNull final IConfigWithFallback aNewConfig)
   {
     ValueEnforcer.notNull (aNewConfig, "NewConfig");
     final IConfigWithFallback ret;
@@ -195,7 +194,7 @@ public final class AS4Configuration
     return getConfig ().getAsBoolean ("global.nostartupinfo", true);
   }
 
-  @Nonnull
+  @NonNull
   public static String getDataPath ()
   {
     // "phase4-data" relative to application startup directory
@@ -264,7 +263,7 @@ public final class AS4Configuration
    * @return The dumping base path. Taken from the configuration item <code>phase4.dump.path</code>.
    * @see #getDumpBasePathFile() for the same data as a {@link File}
    */
-  @Nonnull
+  @NonNull
   public static String getDumpBasePath ()
   {
     // "phase4-dumps" relative to application startup directory
@@ -276,7 +275,7 @@ public final class AS4Configuration
    *         <code>phase4.dump.path</code>.
    * @see #getDumpBasePath() for the plain String
    */
-  @Nonnull
+  @NonNull
   public static File getDumpBasePathFile ()
   {
     return new File (getDumpBasePath ()).getAbsoluteFile ();

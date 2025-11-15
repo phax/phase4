@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.config;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.phase4.duplicate.AS4DuplicateItem;
@@ -51,8 +53,6 @@ import com.helger.phase4.model.pmode.leg.PModePropertyMicroTypeConverter;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistry;
 
-import jakarta.annotation.Nonnull;
-
 /**
  * MicroType converter registry for this project. Invoked via SPI.
  * 
@@ -62,7 +62,7 @@ import jakarta.annotation.Nonnull;
 @IsSPIImplementation
 public final class AS4MicroTypeConverterRegistrar implements IMicroTypeConverterRegistrarSPI
 {
-  public void registerMicroTypeConverter (@Nonnull final IMicroTypeConverterRegistry aRegistry)
+  public void registerMicroTypeConverter (@NonNull final IMicroTypeConverterRegistry aRegistry)
   {
     // Register all MicroTypeConverter
     aRegistry.registerMicroElementTypeConverter (PModeParty.class, new PModePartyMicroTypeConverter ());

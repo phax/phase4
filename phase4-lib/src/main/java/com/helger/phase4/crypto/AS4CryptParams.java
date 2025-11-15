@@ -23,6 +23,8 @@ import java.security.cert.X509Certificate;
 import java.util.function.Consumer;
 
 import org.apache.wss4j.common.WSS4JConstants;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -36,9 +38,6 @@ import com.helger.base.string.StringHelper;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * AS4 encrypt/decrypt parameters
@@ -108,7 +107,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return The key identifier type. May not be <code>null</code>.
    * @since 0.11.0
    */
-  @Nonnull
+  @NonNull
   public final ECryptoKeyIdentifierType getKeyIdentifierType ()
   {
     return m_eKeyIdentifierType;
@@ -123,8 +122,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return this for chaining
    * @since 0.11.0
    */
-  @Nonnull
-  public final AS4CryptParams setKeyIdentifierType (@Nonnull final ECryptoKeyIdentifierType eKeyIdentifierType)
+  @NonNull
+  public final AS4CryptParams setKeyIdentifierType (@NonNull final ECryptoKeyIdentifierType eKeyIdentifierType)
   {
     ValueEnforcer.notNull (eKeyIdentifierType, "KeyIdentifierType");
     m_eKeyIdentifierType = eKeyIdentifierType;
@@ -148,21 +147,21 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    *        the encryption algorithm that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4CryptParams setAlgorithmCrypt (@Nullable final ECryptoAlgorithmCrypt eAlgorithmCrypt)
   {
     m_eAlgorithmCrypt = eAlgorithmCrypt;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   public final ECryptoKeyEncryptionAlgorithm getKeyEncAlgorithm ()
   {
     return m_eKeyEncAlgorithm;
   }
 
-  @Nonnull
-  public final AS4CryptParams setKeyEncAlgorithm (@Nonnull final ECryptoKeyEncryptionAlgorithm eKeyEncAlgorithm)
+  @NonNull
+  public final AS4CryptParams setKeyEncAlgorithm (@NonNull final ECryptoKeyEncryptionAlgorithm eKeyEncAlgorithm)
   {
     m_eKeyEncAlgorithm = eKeyEncAlgorithm;
     return this;
@@ -172,7 +171,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return The mask generation function (MGF) algorithm to use with the RSA-OAEP key transport
    *         algorithm. The default is {@link #DEFAULT_MGF_ALGORITHM}
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getMGFAlgorithm ()
   {
@@ -187,8 +186,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    *        The MFG algorithm to use. May neither be <code>null</code> nor empty.
    * @return this for chaining
    */
-  @Nonnull
-  public final AS4CryptParams setMGFAlgorithm (@Nonnull @Nonempty final String sMGFAlgorithm)
+  @NonNull
+  public final AS4CryptParams setMGFAlgorithm (@NonNull @Nonempty final String sMGFAlgorithm)
   {
     ValueEnforcer.notEmpty (sMGFAlgorithm, "MGFAlgorithm");
     m_sMGFAlgorithm = sMGFAlgorithm;
@@ -199,7 +198,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return The digest algorithm to use with the RSA-OAEP key transport algorithm. The default is
    *         {@link #DEFAULT_DIGEST_ALGORITHM}
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getDigestAlgorithm ()
   {
@@ -213,8 +212,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    *        The digest algorithm to use. May neither be <code>null</code> nor empty.
    * @return this for chaining
    */
-  @Nonnull
-  public final AS4CryptParams setDigestAlgorithm (@Nonnull @Nonempty final String sDigestAlgorithm)
+  @NonNull
+  public final AS4CryptParams setDigestAlgorithm (@NonNull @Nonempty final String sDigestAlgorithm)
   {
     ValueEnforcer.notEmpty (sDigestAlgorithm, "DigestAlgorithm");
     m_sDigestAlgorithm = sDigestAlgorithm;
@@ -246,7 +245,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    *        The certificate to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4CryptParams setCertificate (@Nullable final X509Certificate aCert)
   {
     m_aCert = aCert;
@@ -281,7 +280,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
     return StringHelper.isNotEmpty (m_sAlias);
   }
 
-  @Nonnull
+  @NonNull
   public final AS4CryptParams setAlias (@Nullable final String sAlias)
   {
     m_sAlias = sAlias;
@@ -292,7 +291,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return The session key provider to be used. Never <code>null</code>.
    * @since 2.1.2
    */
-  @Nonnull
+  @NonNull
   public final ICryptoSessionKeyProvider getSessionKeyProvider ()
   {
     return m_aSessionKeyProvider;
@@ -307,8 +306,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return this for chaining
    * @since 2.1.2
    */
-  @Nonnull
-  public final AS4CryptParams setSessionKeyProvider (@Nonnull final ICryptoSessionKeyProvider aSessionKeyProvider)
+  @NonNull
+  public final AS4CryptParams setSessionKeyProvider (@NonNull final ICryptoSessionKeyProvider aSessionKeyProvider)
   {
     ValueEnforcer.notNull (aSessionKeyProvider, "SessionKeyProvider");
     m_aSessionKeyProvider = aSessionKeyProvider;
@@ -337,7 +336,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return this for chaining
    * @since 2.4.0
    */
-  @Nonnull
+  @NonNull
   public final AS4CryptParams setSecurityProviderEncrypt (@Nullable final Provider aSecurityProviderEncrypt)
   {
     m_aSecurityProviderEncrypt = aSecurityProviderEncrypt;
@@ -366,7 +365,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return this for chaining
    * @since 2.4.0
    */
-  @Nonnull
+  @NonNull
   public final AS4CryptParams setSecurityProviderDecrypt (@Nullable final Provider aSecurityProviderDecrypt)
   {
     m_aSecurityProviderDecrypt = aSecurityProviderDecrypt;
@@ -381,7 +380,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return this for chaining
    * @since 2.1.4
    */
-  @Nonnull
+  @NonNull
   public final AS4CryptParams setSecurityProvider (@Nullable final Provider aSecurityProvider)
   {
     return setSecurityProviderEncrypt (aSecurityProvider).setSecurityProviderDecrypt (aSecurityProvider);
@@ -405,7 +404,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return this for chaining
    * @since 2.1.4
    */
-  @Nonnull
+  @NonNull
   public final AS4CryptParams setEncryptSymmetricSessionKey (final boolean b)
   {
     m_bEncryptSymmetricSessionKey = b;
@@ -423,7 +422,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
     return m_aWSSecEncryptCustomizer != null;
   }
 
-  @Nonnull
+  @NonNull
   public final AS4CryptParams setWSSecEncryptCustomizer (@Nullable final IWSSecEncryptCustomizer a)
   {
     m_aWSSecEncryptCustomizer = a;
@@ -440,7 +439,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return this for chaining
    * @see #setAlgorithmCrypt(ECryptoAlgorithmCrypt)
    */
-  @Nonnull
+  @NonNull
   public final AS4CryptParams setFromPMode (@Nullable final PModeLegSecurity aSecurity)
   {
     if (aSecurity == null)
@@ -455,7 +454,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   @OverridingMethodsMustInvokeSuper
-  public void cloneTo (@Nonnull final AS4CryptParams aTarget)
+  public void cloneTo (@NonNull final AS4CryptParams aTarget)
   {
     ValueEnforcer.notNull (aTarget, "Target");
     aTarget.setKeyIdentifierType (m_eKeyIdentifierType)
@@ -472,7 +471,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
            .setWSSecEncryptCustomizer (m_aWSSecEncryptCustomizer);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public AS4CryptParams getClone ()
   {
@@ -503,7 +502,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return A non-<code>null</code> default instance.
    * @see #setAlgorithmCrypt(ECryptoAlgorithmCrypt)
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public static AS4CryptParams createDefault ()
   {

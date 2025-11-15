@@ -24,6 +24,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.jspecify.annotations.NonNull;
 import org.w3c.dom.Node;
 
 import com.helger.base.CGlobal;
@@ -36,8 +37,6 @@ import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 import com.helger.xml.transform.LoggingTransformErrorListener;
 import com.helger.xml.transform.XMLTransformerFactory;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * AS4 XML helper methods.
@@ -57,14 +56,14 @@ public final class AS4XMLHelper
   private AS4XMLHelper ()
   {}
 
-  @Nonnull
-  private static String _serializePh (@Nonnull final Node aNode)
+  @NonNull
+  private static String _serializePh (@NonNull final Node aNode)
   {
     return XMLWriter.getNodeAsString (aNode, XWS);
   }
 
-  @Nonnull
-  private static String _serializeRT (@Nonnull final Node aNode)
+  @NonNull
+  private static String _serializeRT (@NonNull final Node aNode)
   {
     try
     {
@@ -85,8 +84,8 @@ public final class AS4XMLHelper
     }
   }
 
-  @Nonnull
-  public static String serializeXML (@Nonnull final Node aNode)
+  @NonNull
+  public static String serializeXML (@NonNull final Node aNode)
   {
     ValueEnforcer.notNull (aNode, "Node");
     // Use runtime serialization otherwise XMLDsig signature wont work

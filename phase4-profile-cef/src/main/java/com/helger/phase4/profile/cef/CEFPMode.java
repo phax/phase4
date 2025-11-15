@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.profile.cef;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.ETriState;
@@ -41,9 +44,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * CEF PMode creation code.
  *
@@ -57,14 +57,14 @@ public final class CEFPMode
   private CEFPMode ()
   {}
 
-  @Nonnull
+  @NonNull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
     // Set the endpoint URL
     return PModeLegProtocol.createForDefaultSoapVersion (sAddress);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     final String sService = null;
@@ -74,7 +74,7 @@ public final class CEFPMode
     return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegErrorHandling generatePModeLegErrorHandling ()
   {
     final PModeAddressList aReportSenderErrorsTo = null;
@@ -91,7 +91,7 @@ public final class CEFPMode
                                       eReportDeliveryFailuresNotifyProducer);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegSecurity generatePModeLegSecurity ()
   {
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
@@ -107,7 +107,7 @@ public final class CEFPMode
     return aPModeLegSecurity;
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress)
   {
     return new PModeLeg (generatePModeLegProtocol (sResponderAddress),
@@ -117,7 +117,7 @@ public final class CEFPMode
                          generatePModeLegSecurity ());
   }
 
-  @Nonnull
+  @NonNull
   public static PModeReceptionAwareness generatePModeReceptionAwareness ()
   {
     final ETriState eReceptionAwareness = ETriState.TRUE;
@@ -144,15 +144,15 @@ public final class CEFPMode
    * @param aPModeIDProvider
    *        PMode ID provider
    * @param bPersist
-   *        <code>true</code> to persist the PMode in the PModeManager,
-   *        <code>false</code> to have it only in memory.
+   *        <code>true</code> to persist the PMode in the PModeManager, <code>false</code> to have
+   *        it only in memory.
    * @return New PMode
    */
-  @Nonnull
-  public static PMode createCEFPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                      @Nonnull @Nonempty final String sResponderID,
+  @NonNull
+  public static PMode createCEFPMode (@NonNull @Nonempty final String sInitiatorID,
+                                      @NonNull @Nonempty final String sResponderID,
                                       @Nullable final String sResponderAddress,
-                                      @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                      @NonNull final IPModeIDProvider aPModeIDProvider,
                                       final boolean bPersist)
   {
     final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
@@ -191,15 +191,14 @@ public final class CEFPMode
    * @param aPModeIDProvider
    *        PMode ID provider
    * @param bPersist
-   *        <code>true</code> to persist the PMode <code>false</code> to have it
-   *        only in memory.
+   *        <code>true</code> to persist the PMode <code>false</code> to have it only in memory.
    * @return New PMode
    */
-  @Nonnull
-  public static PMode createCEFPModeTwoWay (@Nonnull @Nonempty final String sInitiatorID,
-                                            @Nonnull @Nonempty final String sResponderID,
+  @NonNull
+  public static PMode createCEFPModeTwoWay (@NonNull @Nonempty final String sInitiatorID,
+                                            @NonNull @Nonempty final String sResponderID,
                                             @Nullable final String sResponderAddress,
-                                            @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                            @NonNull final IPModeIDProvider aPModeIDProvider,
                                             final boolean bPersist)
   {
     final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);

@@ -17,11 +17,10 @@
 package com.helger.phase4.crypto;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Base interface for an encryption algorithm.
@@ -34,21 +33,21 @@ public interface ICryptoAlgorithmCrypt extends IHasID <String>
   /**
    * This is the internal algorithm ID for resolution.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   String getID ();
 
   /**
    * @return The OID of the algorithm to be used by the Security Provider.
    */
-  @Nonnull
+  @NonNull
   ASN1ObjectIdentifier getOID ();
 
   /**
    * @return The unique XMLDsig algorithm URI for this algorithm (as in
    *         <code>http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</code>)
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   String getAlgorithmURI ();
 }

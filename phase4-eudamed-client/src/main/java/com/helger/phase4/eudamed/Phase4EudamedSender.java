@@ -19,6 +19,8 @@ package com.helger.phase4.eudamed;
 import java.security.cert.X509Certificate;
 import java.util.function.Consumer;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -44,9 +46,6 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.IBDXLURLProvider;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * This class contains all the specifics to send AS4 messages with the CEF profile. See
  * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
@@ -70,7 +69,7 @@ public final class Phase4EudamedSender
    * @return Create a new Builder for AS4 messages if the payload is present. Never
    *         <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static EudamedUserMessageBuilder builder ()
   {
     return new EudamedUserMessageBuilder ();
@@ -119,7 +118,7 @@ public final class Phase4EudamedSender
      *        The sender participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE senderParticipantID (@Nullable final String s)
     {
       m_sSenderID = s;
@@ -134,7 +133,7 @@ public final class Phase4EudamedSender
      *        The receiver participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE receiverParticipantID (@Nullable final String s)
     {
       m_sReceiverID = s;
@@ -148,7 +147,7 @@ public final class Phase4EudamedSender
      *        The document type ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE documentTypeID (@Nullable final IDocumentTypeIdentifier a)
     {
       m_aDocTypeID = a;
@@ -162,7 +161,7 @@ public final class Phase4EudamedSender
      *        The process ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE processID (@Nullable final IProcessIdentifier a)
     {
       m_aProcessID = a;
@@ -176,7 +175,7 @@ public final class Phase4EudamedSender
      *        The from party ID. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE fromPartyID (@Nullable final IParticipantIdentifier a)
     {
       return fromPartyIDType (a == null ? null : a.getScheme ()).fromPartyID (a == null ? null : a.getValue ());
@@ -189,7 +188,7 @@ public final class Phase4EudamedSender
      *        The to party ID. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE toPartyID (@Nullable final IParticipantIdentifier a)
     {
       return toPartyIDType (a == null ? null : a.getScheme ()).toPartyID (a == null ? null : a.getValue ());
@@ -203,16 +202,16 @@ public final class Phase4EudamedSender
      *        The endpoint detail provider to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE endpointDetailProvider (@Nullable final IAS4EndpointDetailProvider a)
     {
       m_aEndpointDetailProvider = a;
       return thisAsT ();
     }
 
-    @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
-                                                   @Nonnull @Nonempty final String sDestURL)
+    @NonNull
+    public final IMPLTYPE receiverEndpointDetails (@NonNull final X509Certificate aCert,
+                                                   @NonNull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -224,7 +223,7 @@ public final class Phase4EudamedSender
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE certificateConsumer (@Nullable final Consumer <X509Certificate> a)
     {
       m_aCertificateConsumer = a;
@@ -238,7 +237,7 @@ public final class Phase4EudamedSender
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE endointURLConsumer (@Nullable final Consumer <String> a)
     {
       m_aAPEndointURLConsumer = a;
@@ -265,7 +264,7 @@ public final class Phase4EudamedSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
       {

@@ -18,6 +18,8 @@ package com.helger.phase4.model.pmode;
 
 import java.util.function.Predicate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.ELockType;
@@ -38,9 +40,6 @@ import com.helger.collection.commons.ICommonsSet;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.photon.security.object.BusinessObjectHelper;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Persisting manager for {@link PMode} objects.
  *
@@ -58,7 +57,7 @@ public class PModeManagerInMemory implements IPModeManager
   public PModeManagerInMemory ()
   {}
 
-  private void _validatePMode (@Nonnull final IPMode aPMode)
+  private void _validatePMode (@NonNull final IPMode aPMode)
   {
     try
     {
@@ -71,7 +70,7 @@ public class PModeManagerInMemory implements IPModeManager
   }
 
   @MustBeLocked (ELockType.WRITE)
-  private void _createPModeLocked (@Nonnull final PMode aPMode)
+  private void _createPModeLocked (@NonNull final PMode aPMode)
   {
     final String sID = aPMode.getID ();
     if (m_aMap.containsKey (sID))
@@ -82,7 +81,7 @@ public class PModeManagerInMemory implements IPModeManager
       LOGGER.debug ("Created PMode with ID '" + aPMode.getID () + "'");
   }
 
-  public void createPMode (@Nonnull final PMode aPMode)
+  public void createPMode (@NonNull final PMode aPMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     _validatePMode (aPMode);
@@ -90,8 +89,8 @@ public class PModeManagerInMemory implements IPModeManager
     m_aRWLock.writeLocked ( () -> _createPModeLocked (aPMode));
   }
 
-  @Nonnull
-  public EChange updatePMode (@Nonnull final IPMode aNewPMode)
+  @NonNull
+  public EChange updatePMode (@NonNull final IPMode aNewPMode)
   {
     ValueEnforcer.notNull (aNewPMode, "PMode");
     _validatePMode (aNewPMode);
@@ -129,7 +128,7 @@ public class PModeManagerInMemory implements IPModeManager
     return EChange.CHANGED;
   }
 
-  public void createOrUpdatePMode (@Nonnull final PMode aPMode)
+  public void createOrUpdatePMode (@NonNull final PMode aPMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     _validatePMode (aPMode);
@@ -168,7 +167,7 @@ public class PModeManagerInMemory implements IPModeManager
     }
   }
 
-  @Nonnull
+  @NonNull
   public EChange markPModeDeleted (@Nullable final String sPModeID)
   {
     final PMode aDeletedPMode = getOfID (sPModeID);
@@ -192,7 +191,7 @@ public class PModeManagerInMemory implements IPModeManager
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public EChange deletePMode (@Nullable final String sPModeID)
   {
     final PMode aDeletedPMode = getOfID (sPModeID);
@@ -227,19 +226,19 @@ public class PModeManagerInMemory implements IPModeManager
   }
 
   @Nullable
-  public IPMode findFirst (@Nonnull final Predicate <? super IPMode> aFilter)
+  public IPMode findFirst (@NonNull final Predicate <? super IPMode> aFilter)
   {
     return m_aRWLock.readLockedGet ( () -> CollectionFind.findFirst (m_aMap.values (), aFilter));
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public ICommonsList <IPMode> getAll ()
   {
     return m_aRWLock.readLockedGet ( () -> new CommonsArrayList <> (m_aMap.values ()));
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public ICommonsSet <String> getAllIDs ()
   {

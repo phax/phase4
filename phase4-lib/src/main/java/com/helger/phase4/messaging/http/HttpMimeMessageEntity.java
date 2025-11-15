@@ -21,13 +21,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
+import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 
-import jakarta.annotation.Nonnull;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -41,7 +41,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
 {
   private final AS4MimeMessage m_aMsg;
 
-  protected HttpMimeMessageEntity (@Nonnull @Nonempty final String sContentType, @Nonnull final AS4MimeMessage aMsg)
+  protected HttpMimeMessageEntity (@NonNull @Nonempty final String sContentType, @NonNull final AS4MimeMessage aMsg)
   {
     super (sContentType, null);
     m_aMsg = aMsg;
@@ -56,7 +56,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   /**
    * @return The mime message passed in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final MimeMessage getMimeMessage ()
   {
     return m_aMsg;
@@ -93,7 +93,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   }
 
   @Override
-  public void writeTo (@Nonnull final OutputStream aOS) throws IOException
+  public void writeTo (@NonNull final OutputStream aOS) throws IOException
   {
     ValueEnforcer.notNull (aOS, "OutputStream");
     try
@@ -112,8 +112,8 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
     return ToStringGenerator.getDerived (super.toString ()).append ("MimeMsg", m_aMsg).getToString ();
   }
 
-  @Nonnull
-  public static HttpMimeMessageEntity create (@Nonnull final AS4MimeMessage aMsg)
+  @NonNull
+  public static HttpMimeMessageEntity create (@NonNull final AS4MimeMessage aMsg)
   {
     ValueEnforcer.notNull (aMsg, "Msg");
     try

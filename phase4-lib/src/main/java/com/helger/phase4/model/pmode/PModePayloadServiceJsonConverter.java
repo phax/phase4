@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.pmode;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
 import com.helger.phase4.attachment.EAS4CompressionMode;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModePayloadService}.
@@ -37,8 +37,8 @@ public final class PModePayloadServiceJsonConverter
   private PModePayloadServiceJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModePayloadService aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModePayloadService aValue)
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.hasCompressionMode ())
@@ -46,8 +46,8 @@ public final class PModePayloadServiceJsonConverter
     return ret;
   }
 
-  @Nonnull
-  public static PModePayloadService convertToNative (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static PModePayloadService convertToNative (@NonNull final IJsonObject aElement)
   {
     final String sCompressionModeID = aElement.getAsString (COMPRESSION_MODE);
     final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromIDOrNull (sCompressionModeID);

@@ -18,6 +18,9 @@ package com.helger.phase4.crypto;
 
 import java.security.Provider;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.enforce.ValueEnforcer;
@@ -26,9 +29,6 @@ import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.TrustStoreDescriptor;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * A specific helper for {@link TrustStoreDescriptor}
@@ -81,8 +81,8 @@ public final class AS4TrustStoreDescriptor
    *         not present.
    */
   @Nullable
-  public static TrustStoreDescriptor createFromConfig (@Nonnull final IConfigWithFallback aConfig,
-                                                       @Nonnull @Nonempty final String sConfigPrefix,
+  public static TrustStoreDescriptor createFromConfig (@NonNull final IConfigWithFallback aConfig,
+                                                       @NonNull @Nonempty final String sConfigPrefix,
                                                        @Nullable final Provider aProvider)
   {
     ValueEnforcer.notNull (aConfig, "Config");

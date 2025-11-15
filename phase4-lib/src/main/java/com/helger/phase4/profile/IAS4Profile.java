@@ -16,15 +16,15 @@
  */
 package com.helger.phase4.profile;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.MustImplementEqualsAndHashcode;
 import com.helger.base.id.IHasID;
 import com.helger.base.name.IHasDisplayName;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.model.pmode.PMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Base interface for an AS4 profile - a group of settings that outline what features of AS4 are
@@ -53,15 +53,15 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName
    * @return A PMode that is NOT yet in the manager and is not complete! The following information
    *         is most likely not contained: URLs, certificates.
    */
-  @Nonnull
-  PMode createPModeTemplate (@Nonnull @Nonempty String sInitiatorID,
-                             @Nonnull @Nonempty String sResponderID,
+  @NonNull
+  PMode createPModeTemplate (@NonNull @Nonempty String sInitiatorID,
+                             @NonNull @Nonempty String sResponderID,
                              @Nullable String sAddress);
 
   /**
    * @return The PMode ID provider to be used for this profile. May not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   IPModeIDProvider getPModeIDProvider ();
 
   /**

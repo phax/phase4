@@ -28,6 +28,7 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.util.Timeout;
+import org.jspecify.annotations.NonNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -56,7 +57,6 @@ import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
 
-import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
@@ -103,7 +103,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
     MockJettySetup.shutDownServer ();
   }
 
-  @Nonnull
+  @NonNull
   private static HttpPost _createMockPostToLocalJetty ()
   {
     final String sURL = MockJettySetup.getServerAddressFromSettings ();
@@ -112,9 +112,9 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
     return new HttpPost (sURL);
   }
 
-  @Nonnull
-  private String _sendPlainMessage (@Nonnull final HttpPost aPost,
-                                    @Nonnull final HttpEntity aHttpEntity,
+  @NonNull
+  private String _sendPlainMessage (@NonNull final HttpPost aPost,
+                                    @NonNull final HttpEntity aHttpEntity,
                                     final boolean bExpectSuccess,
                                     @Nullable final String sExecptedResponseContent) throws IOException
   {
@@ -228,8 +228,8 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
    * @throws MessagingException
    *         in case there is some error with the MIME message
    */
-  @Nonnull
-  protected final String sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
+  @NonNull
+  protected final String sendMimeMessage (@NonNull final HttpMimeMessageEntity aHttpEntity,
                                           final boolean bExpectSuccess,
                                           @Nullable final String sExecptedResponseContent) throws IOException,
                                                                                            MessagingException
@@ -257,8 +257,8 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
    * @throws IOException
    *         In case HTTP sending fails
    */
-  @Nonnull
-  protected final String sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
+  @NonNull
+  protected final String sendPlainMessage (@NonNull final HttpEntity aHttpEntity,
                                            final boolean bExpectSuccess,
                                            @Nullable final String sExecptedResponseContent) throws IOException
   {

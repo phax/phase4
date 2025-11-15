@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonValue;
 import com.helger.json.JsonArray;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for {@link PModeAddressList} objects.
@@ -37,14 +37,14 @@ public final class PModeAddressListJsonConverter
   private PModeAddressListJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonArray convertToJson (@Nonnull final PModeAddressList aValue)
+  @NonNull
+  public static IJsonArray convertToJson (@NonNull final PModeAddressList aValue)
   {
     return new JsonArray ().addAll (aValue.addresses ());
   }
 
-  @Nonnull
-  public static PModeAddressList convertToNative (@Nonnull final IJsonArray aElement)
+  @NonNull
+  public static PModeAddressList convertToNative (@NonNull final IJsonArray aElement)
   {
     final ICommonsList <String> aAddresses = new CommonsArrayList <> ();
     for (final IJsonValue aItem : aElement.iteratorValues ())

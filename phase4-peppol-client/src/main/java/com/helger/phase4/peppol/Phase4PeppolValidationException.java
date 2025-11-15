@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.peppol;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.phive.api.result.ValidationResultList;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Special {@link Phase4PeppolException} exception for validation errors.
@@ -34,7 +34,7 @@ public class Phase4PeppolValidationException extends Phase4PeppolException
    * @param aValidationResult
    *        The validation result list that usually contains at least one error.
    */
-  public Phase4PeppolValidationException (@Nonnull final ValidationResultList aValidationResult)
+  public Phase4PeppolValidationException (@NonNull final ValidationResultList aValidationResult)
   {
     super ("Error validating business document");
     setRetryFeasible (false);
@@ -42,10 +42,9 @@ public class Phase4PeppolValidationException extends Phase4PeppolException
   }
 
   /**
-   * @return The validation results as provided in the constructor. Never
-   *         <code>null</code>.
+   * @return The validation results as provided in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final ValidationResultList getValidationResult ()
   {
     return m_aValidationResult;

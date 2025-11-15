@@ -19,14 +19,14 @@ package com.helger.phase4.dump;
 import java.io.File;
 import java.time.OffsetDateTime;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.base.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.io.file.FilenameHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Callback interface to create a file based on the provided metadata.
@@ -51,11 +51,11 @@ public interface IAS4IncomingDumperFileProvider
    * @return A non-<code>null</code> {@link File}.
    * @see AS4Configuration#getDumpBasePath()
    */
-  @Nonnull
-  File createFile (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata, @Nonnull HttpHeaderMap aHttpHeaderMap);
+  @NonNull
+  File createFile (@NonNull IAS4IncomingMessageMetadata aMessageMetadata, @NonNull HttpHeaderMap aHttpHeaderMap);
 
-  @Nonnull
-  static String getDefaultDirectoryName (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+  @NonNull
+  static String getDefaultDirectoryName (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
     final OffsetDateTime aODT = aMessageMetadata.getIncomingDT ();
     return aODT.getYear () +
@@ -65,8 +65,8 @@ public interface IAS4IncomingDumperFileProvider
            StringHelper.getLeadingZero (aODT.getDayOfMonth (), 2);
   }
 
-  @Nonnull
-  static String getDefaultFilename (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+  @NonNull
+  static String getDefaultFilename (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
     final OffsetDateTime aLDT = aMessageMetadata.getIncomingDT ();
     return PDTIOHelper.getTimeForFilename (aLDT.toLocalTime ()) +
@@ -75,8 +75,8 @@ public interface IAS4IncomingDumperFileProvider
            DEFAULT_FILE_EXTENSION;
   }
 
-  @Nonnull
-  static String getDefaultDirectoryAndFilename (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+  @NonNull
+  static String getDefaultDirectoryAndFilename (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
     return getDefaultDirectoryName (aMessageMetadata) + "/" + getDefaultFilename (aMessageMetadata);
   }

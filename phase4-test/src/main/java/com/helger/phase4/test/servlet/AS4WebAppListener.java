@@ -18,6 +18,8 @@ package com.helger.phase4.test.servlet;
 
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.httpclient.HttpDebugger;
@@ -29,8 +31,6 @@ import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.IUserManager;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.ServletContext;
 
 /**
@@ -47,33 +47,33 @@ public final class AS4WebAppListener extends WebAppListener
 
   @Override
   @Nullable
-  protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
+  protected String getInitParameterDebug (@NonNull final ServletContext aSC)
   {
     return Boolean.toString (AS4Configuration.isGlobalDebug ());
   }
 
   @Override
   @Nullable
-  protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
+  protected String getInitParameterProduction (@NonNull final ServletContext aSC)
   {
     return Boolean.toString (AS4Configuration.isGlobalProduction ());
   }
 
   @Override
   @Nullable
-  protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
+  protected String getInitParameterNoStartupInfo (@NonNull final ServletContext aSC)
   {
     return Boolean.toString (AS4Configuration.isNoStartupInfo ());
   }
 
   @Override
-  protected String getDataPath (@Nonnull final ServletContext aSC)
+  protected String getDataPath (@NonNull final ServletContext aSC)
   {
     return AS4Configuration.getDataPath ();
   }
 
   @Override
-  protected boolean shouldCheckFileAccess (@Nonnull final ServletContext aSC)
+  protected boolean shouldCheckFileAccess (@NonNull final ServletContext aSC)
   {
     return false;
   }

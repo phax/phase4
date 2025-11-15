@@ -17,6 +17,8 @@
 package com.helger.phase4.client;
 
 import org.apache.hc.core5.http.HttpEntity;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.NotThreadSafe;
@@ -30,8 +32,6 @@ import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.xsds.xmldsig.ReferenceType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**
@@ -47,8 +47,8 @@ public final class AS4ClientBuiltMessage
   private final HttpHeaderMap m_aCustomHttpHeaders;
   private final ICommonsList <ReferenceType> m_aDSReferences;
 
-  public AS4ClientBuiltMessage (@Nonnull @Nonempty final String sMessageID,
-                                @Nonnull final HttpXMLEntity aHttpEntity,
+  public AS4ClientBuiltMessage (@NonNull @Nonempty final String sMessageID,
+                                @NonNull final HttpXMLEntity aHttpEntity,
                                 @Nullable final ICommonsList <ReferenceType> aCreatedDSReferences)
   {
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
@@ -57,8 +57,8 @@ public final class AS4ClientBuiltMessage
     m_aDSReferences = aCreatedDSReferences;
   }
 
-  public AS4ClientBuiltMessage (@Nonnull @Nonempty final String sMessageID,
-                                @Nonnull final HttpMimeMessageEntity aHttpEntity,
+  public AS4ClientBuiltMessage (@NonNull @Nonempty final String sMessageID,
+                                @NonNull final HttpMimeMessageEntity aHttpEntity,
                                 @Nullable final ICommonsList <ReferenceType> aCreatedDSReferences) throws MessagingException
   {
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
@@ -67,7 +67,7 @@ public final class AS4ClientBuiltMessage
     m_aDSReferences = aCreatedDSReferences;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getMessageID ()
   {
@@ -77,7 +77,7 @@ public final class AS4ClientBuiltMessage
   /**
    * @return The {@link HttpEntity} provided in the constructor. Always the same object.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public HttpEntity getHttpEntity ()
   {

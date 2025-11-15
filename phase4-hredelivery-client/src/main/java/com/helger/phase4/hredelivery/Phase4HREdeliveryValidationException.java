@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.hredelivery;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.phive.api.result.ValidationResultList;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Special {@link Phase4HREdeliveryException} exception for validation errors.
@@ -35,7 +35,7 @@ public class Phase4HREdeliveryValidationException extends Phase4HREdeliveryExcep
    * @param aValidationResult
    *        The validation result list that usually contains at least one error.
    */
-  public Phase4HREdeliveryValidationException (@Nonnull final ValidationResultList aValidationResult)
+  public Phase4HREdeliveryValidationException (@NonNull final ValidationResultList aValidationResult)
   {
     super ("Error validating business document");
     setRetryFeasible (false);
@@ -45,7 +45,7 @@ public class Phase4HREdeliveryValidationException extends Phase4HREdeliveryExcep
   /**
    * @return The validation results as provided in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final ValidationResultList getValidationResult ()
   {
     return m_aValidationResult;

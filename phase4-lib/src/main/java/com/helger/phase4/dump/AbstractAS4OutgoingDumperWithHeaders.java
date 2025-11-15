@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.Nonnegative;
 import com.helger.base.trait.IGenericImplTrait;
@@ -29,9 +32,6 @@ import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.EAS4MessageMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Abstract implementation of {@link IAS4OutgoingDumper} that always adds the custom headers
@@ -97,18 +97,18 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
    *         On IO error
    */
   @Nullable
-  protected abstract OutputStream openOutputStream (@Nonnull EAS4MessageMode eMsgMode,
+  protected abstract OutputStream openOutputStream (@NonNull EAS4MessageMode eMsgMode,
                                                     @Nullable IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                     @Nullable IAS4IncomingMessageState aIncomingState,
-                                                    @Nonnull @Nonempty String sMessageID,
+                                                    @NonNull @Nonempty String sMessageID,
                                                     @Nullable HttpHeaderMap aCustomHeaders,
                                                     @Nonnegative int nTry) throws IOException;
 
   @Nullable
-  public OutputStream onBeginRequest (@Nonnull final EAS4MessageMode eMsgMode,
+  public OutputStream onBeginRequest (@NonNull final EAS4MessageMode eMsgMode,
                                       @Nullable final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                       @Nullable final IAS4IncomingMessageState aIncomingState,
-                                      @Nonnull @Nonempty final String sMessageID,
+                                      @NonNull @Nonempty final String sMessageID,
                                       @Nullable final HttpHeaderMap aCustomHeaders,
                                       @Nonnegative final int nTry) throws IOException
   {
@@ -139,10 +139,10 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders <IMPLTYPE extends Abs
     return ret;
   }
 
-  public void onEndRequest (@Nonnull final EAS4MessageMode eMsgMode,
+  public void onEndRequest (@NonNull final EAS4MessageMode eMsgMode,
                             @Nullable final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                             @Nullable final IAS4IncomingMessageState aIncomingState,
-                            @Nonnull @Nonempty final String sMessageID,
+                            @NonNull @Nonempty final String sMessageID,
                             @Nullable final Exception aCaughtException)
   {}
 }

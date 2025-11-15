@@ -1,19 +1,19 @@
 /*
- * Copyright (C) 2020-2025 Philip Helger (www.helger.com)
- * philip[at]helger[dot]com
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright (C) 2020-2025 Philip Helger (www.helger.com)
+* philip[at]helger[dot]com
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*         http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package com.helger.phase4.peppol.server.servlet;
 
 import java.io.File;
@@ -26,6 +26,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.hc.core5.http.HttpHost;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -75,8 +77,6 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
 import jakarta.activation.CommandMap;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.annotation.WebListener;
@@ -88,39 +88,39 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
   @Override
   @Nullable
-  protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
+  protected String getInitParameterDebug (@NonNull final ServletContext aSC)
   {
     return Boolean.toString (AS4Configuration.isGlobalDebug ());
   }
 
   @Override
   @Nullable
-  protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
+  protected String getInitParameterProduction (@NonNull final ServletContext aSC)
   {
     return Boolean.toString (AS4Configuration.isGlobalProduction ());
   }
 
   @Override
   @Nullable
-  protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
+  protected String getInitParameterNoStartupInfo (@NonNull final ServletContext aSC)
   {
     return Boolean.toString (AS4Configuration.isNoStartupInfo ());
   }
 
   @Override
-  protected String getDataPath (@Nonnull final ServletContext aSC)
+  protected String getDataPath (@NonNull final ServletContext aSC)
   {
     return AS4Configuration.getDataPath ();
   }
 
   @Override
-  protected boolean shouldCheckFileAccess (@Nonnull final ServletContext aSC)
+  protected boolean shouldCheckFileAccess (@NonNull final ServletContext aSC)
   {
     return false;
   }
 
   @Override
-  protected void afterContextInitialized (@Nonnull final ServletContext aSC)
+  protected void afterContextInitialized (@NonNull final ServletContext aSC)
   {
     super.afterContextInitialized (aSC);
 
@@ -145,8 +145,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
-        null)
+    if (CommandMap.getDefaultCommandMap ()
+                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -186,7 +186,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                                          ".as4in"))
     {
       @Override
-      public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+      public void onEndRequest (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                 @Nullable final Exception aCaughtException)
       {
         // Save the metadata also to a file
@@ -313,8 +313,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
     // Change the stage per configuration
     final EPeppolNetwork eStage = APConfig.getPeppolStage ();
-    final TrustedCAChecker aAPCAChecker = eStage.isTest () ? PeppolTrustedCA.peppolTestAP () : PeppolTrustedCA
-                                                                                                              .peppolProductionAP ();
+    final TrustedCAChecker aAPCAChecker = eStage.isTest () ? PeppolTrustedCA.peppolTestAP ()
+                                                           : PeppolTrustedCA.peppolProductionAP ();
 
     // Check if the certificate is really a Peppol AP certificate - fail early
     // if something is misconfigured
@@ -375,13 +375,13 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
   }
 
   @Override
-  protected void initAPI (@Nonnull final IAPIRegistry aAPIRegistry)
+  protected void initAPI (@NonNull final IAPIRegistry aAPIRegistry)
   {
     Phase4API.init (aAPIRegistry);
   }
 
   @Override
-  protected void beforeContextDestroyed (@Nonnull final ServletContext aSC)
+  protected void beforeContextDestroyed (@NonNull final ServletContext aSC)
   {
     // Shutdown the Peppol Reporting Backend service, if it was initialized
     final IPeppolReportingBackendSPI aPRBS = PeppolReportingBackend.getBackendService ();

@@ -18,6 +18,9 @@ package com.helger.phase4.model.error;
 
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.builder.IBuilder;
 import com.helger.base.rt.StackTraceHelper;
@@ -27,9 +30,6 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Description;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.model.message.MessageHelperMethods;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Builder class for {@link Ebms3Error}
@@ -65,7 +65,7 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
    * @param aContentLocale
    *        The locale to be used to resolve error texts.
    */
-  public Ebms3ErrorBuilder (@Nonnull final IEbmsError aError, @Nonnull final Locale aContentLocale)
+  public Ebms3ErrorBuilder (@NonNull final IEbmsError aError, @NonNull final Locale aContentLocale)
   {
     // Default to shortDescription if none provided
     description (StringHelper.getNotNull (aError.getDescription ().getDisplayText (aContentLocale),
@@ -76,7 +76,7 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
     shortDescription (aError.getShortDescription ());
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder description (@Nullable final String s, @Nullable final Locale aLocale)
   {
     return description (StringHelper.isEmpty (s) ? null
@@ -85,14 +85,14 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
                                                                                                 s));
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder description (@Nullable final Ebms3Description a)
   {
     m_aDescription = a;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder errorDetail (@Nullable final String s, @Nullable final Throwable t)
   {
     final StringBuilder sErrorDetail = new StringBuilder ().append (s);
@@ -111,62 +111,62 @@ public class Ebms3ErrorBuilder implements IBuilder <Ebms3Error>
     return errorDetail (sErrorDetail.toString ());
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder errorDetail (@Nullable final String s)
   {
     m_sErrorDetail = s;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder category (@Nullable final EEbmsErrorCategory e)
   {
     m_eCategory = e;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder refToMessageInError (@Nullable final String s)
   {
     m_sRefToMessageInError = s;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder errorCode (@Nullable final String s)
   {
     m_sErrorCode = s;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder origin (@Nullable final String s)
   {
     m_sOrigin = s;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder severity (@Nullable final IErrorLevel a)
   {
     return severity (EEbmsErrorSeverity.getFromErrorLevelOrNull (a));
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder severity (@Nullable final EEbmsErrorSeverity e)
   {
     m_eSeverity = e;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3ErrorBuilder shortDescription (@Nullable final String s)
   {
     m_sShortDescription = s;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   public Ebms3Error build ()
   {
     if (m_eSeverity == null)

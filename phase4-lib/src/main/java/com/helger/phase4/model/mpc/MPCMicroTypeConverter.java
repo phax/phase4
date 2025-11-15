@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.mpc;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.photon.security.object.AbstractBusinessObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for {@link MPC} objects.
@@ -30,18 +30,18 @@ import jakarta.annotation.Nullable;
  */
 public final class MPCMicroTypeConverter extends AbstractBusinessObjectMicroTypeConverter <MPC>
 {
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final MPC aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final MPC aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     setObjectFields (aValue, ret);
     return ret;
   }
 
-  @Nonnull
-  public MPC convertToNative (@Nonnull final IMicroElement aElement)
+  @NonNull
+  public MPC convertToNative (@NonNull final IMicroElement aElement)
   {
     return new MPC (getStubObject (aElement));
   }

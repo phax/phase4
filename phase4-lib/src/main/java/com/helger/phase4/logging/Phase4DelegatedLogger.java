@@ -18,15 +18,14 @@ package com.helger.phase4.logging;
 
 import java.util.function.Function;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.spi.LoggingEventBuilder;
 
 import com.helger.base.enforce.ValueEnforcer;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * A specific implementation of {@link Logger} that allows to customize the message e.g. with prefix
@@ -40,8 +39,8 @@ public final class Phase4DelegatedLogger implements Logger
   private final Logger m_aDelegate;
   private final Function <String, String> m_aMsgCustomizer;
 
-  public Phase4DelegatedLogger (@Nonnull final Logger aDelegate,
-                                @Nonnull final Function <String, String> aMsgCustomizer)
+  public Phase4DelegatedLogger (@NonNull final Logger aDelegate,
+                                @NonNull final Function <String, String> aMsgCustomizer)
   {
     ValueEnforcer.notNull (aDelegate, "Delegate");
     ValueEnforcer.notNull (aMsgCustomizer, "MsgCustomizer");
@@ -49,7 +48,7 @@ public final class Phase4DelegatedLogger implements Logger
     m_aMsgCustomizer = aMsgCustomizer;
   }
 
-  @Nonnull
+  @NonNull
   private String _getCustomized (@Nullable final String sMsg)
   {
     return m_aMsgCustomizer.apply (sMsg);

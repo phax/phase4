@@ -18,6 +18,9 @@ package com.helger.phase4.model.pmode.leg;
 
 import java.io.Serializable;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.MustImplementEqualsAndHashcode;
 import com.helger.annotation.style.ReturnsMutableObject;
@@ -30,9 +33,6 @@ import com.helger.base.tostring.ToStringGenerator;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Business information - This set of parameters only applies to user messages.
@@ -118,7 +118,7 @@ public class PModeLegBusinessInformation implements Serializable
     return StringHelper.isNotEmpty (m_sServiceValue);
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setService (@Nullable final String sService)
   {
     if (EqualsHelper.equals (sService, m_sServiceValue))
@@ -138,7 +138,7 @@ public class PModeLegBusinessInformation implements Serializable
     return StringHelper.isNotEmpty (m_sServiceType);
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setServiceType (@Nullable final String sServiceType)
   {
     if (EqualsHelper.equals (sServiceType, m_sServiceType))
@@ -158,7 +158,7 @@ public class PModeLegBusinessInformation implements Serializable
     return StringHelper.isNotEmpty (m_sAction);
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setAction (@Nullable final String sAction)
   {
     if (EqualsHelper.equals (sAction, m_sAction))
@@ -167,14 +167,14 @@ public class PModeLegBusinessInformation implements Serializable
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final ICommonsOrderedMap <String, PModeProperty> properties ()
   {
     return m_aProperties;
   }
 
-  public final void addProperty (@Nonnull final PModeProperty aProperty)
+  public final void addProperty (@NonNull final PModeProperty aProperty)
   {
     ValueEnforcer.notNull (aProperty, "Property");
     final String sKey = aProperty.getName ();
@@ -183,14 +183,14 @@ public class PModeLegBusinessInformation implements Serializable
     m_aProperties.put (sKey, aProperty);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final ICommonsOrderedMap <String, PModePayloadProfile> payloadProfiles ()
   {
     return m_aPayloadProfiles;
   }
 
-  public final void addPayloadProfile (@Nonnull final PModePayloadProfile aPayloadProfile)
+  public final void addPayloadProfile (@NonNull final PModePayloadProfile aPayloadProfile)
   {
     ValueEnforcer.notNull (aPayloadProfile, "PayloadProfile");
     final String sKey = aPayloadProfile.getName ();
@@ -210,7 +210,7 @@ public class PModeLegBusinessInformation implements Serializable
     return m_aPayloadProfileMaxKB != null;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setPayloadProfileMaxKB (@Nullable final Long nPayloadProfileMaxKB)
   {
     if (EqualsHelper.equals (nPayloadProfileMaxKB, m_aPayloadProfileMaxKB))
@@ -219,7 +219,7 @@ public class PModeLegBusinessInformation implements Serializable
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setPayloadProfileMaxKB (final long nPayloadProfileMaxKB)
   {
     return setPayloadProfileMaxKB (Long.valueOf (nPayloadProfileMaxKB));
@@ -236,7 +236,7 @@ public class PModeLegBusinessInformation implements Serializable
     return StringHelper.isNotEmpty (m_sMPCID);
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setMPCID (@Nullable final String sMPCID)
   {
     if (EqualsHelper.equals (sMPCID, m_sMPCID))
@@ -288,7 +288,7 @@ public class PModeLegBusinessInformation implements Serializable
                                        .getToString ();
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegBusinessInformation create (@Nullable final String sServiceValue,
                                                     @Nullable final String sAction,
                                                     @Nullable final Long nPayloadProfileMaxKB,

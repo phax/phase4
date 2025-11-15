@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.attachment;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Special exception type for decompression errors.
@@ -26,7 +26,7 @@ import jakarta.annotation.Nonnull;
  */
 public class AS4DecompressException extends RuntimeException
 {
-  public AS4DecompressException (@Nonnull final Exception ex)
+  public AS4DecompressException (@NonNull final Exception ex)
   {
     super (ex);
   }

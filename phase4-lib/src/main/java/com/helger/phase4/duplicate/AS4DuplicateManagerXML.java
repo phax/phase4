@@ -18,6 +18,9 @@ package com.helger.phase4.duplicate;
 
 import java.time.OffsetDateTime;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.state.EChange;
@@ -26,9 +29,6 @@ import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.dao.DAOException;
 import com.helger.photon.io.dao.AbstractPhotonMapBasedWALDAO;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This is the duplicate checker for avoiding duplicate messages.
@@ -45,7 +45,7 @@ public class AS4DuplicateManagerXML extends AbstractPhotonMapBasedWALDAO <IAS4Du
     super (AS4DuplicateItem.class, sFilename);
   }
 
-  @Nonnull
+  @NonNull
   public EContinue registerAndCheck (@Nullable final String sMessageID,
                                      @Nullable final String sProfileID,
                                      @Nullable final String sPModeID)
@@ -69,15 +69,15 @@ public class AS4DuplicateManagerXML extends AbstractPhotonMapBasedWALDAO <IAS4Du
     return EContinue.CONTINUE;
   }
 
-  @Nonnull
+  @NonNull
   public EChange clearCache ()
   {
     return m_aRWLock.writeLockedGet (this::internalRemoveAllItemsNoCallback);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
-  public ICommonsList <String> evictAllItemsBefore (@Nonnull final OffsetDateTime aRefDT)
+  public ICommonsList <String> evictAllItemsBefore (@NonNull final OffsetDateTime aRefDT)
   {
     // Get all message IDs to be removed
     final ICommonsList <String> aEvictItems = getAllMapped (x -> x.getDateTime ().isBefore (aRefDT),

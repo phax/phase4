@@ -19,6 +19,8 @@ package com.helger.phase4.dbnalliance.server.spi;
 import java.io.File;
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -43,9 +45,6 @@ import com.helger.phase4.model.error.EEbmsError;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.xhe.v10.XHE10XHEType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Logging implementation of {@link IPhase4DBNAllianceIncomingXHEHandlerSPI}.
  *
@@ -56,14 +55,14 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (StoringDBNAllianceIncomingXHEHandlerSPI.class);
 
-  public void handleIncomingXHE (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                 @Nonnull final HttpHeaderMap aHeaders,
-                                 @Nonnull final Ebms3UserMessage aUserMessage,
-                                 @Nonnull final byte [] aXHEBytes,
-                                 @Nonnull final XHE10XHEType aXHE,
-                                 @Nonnull final DBNAllianceXHEData aDBNAllianceXHE,
-                                 @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                 @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception
+  public void handleIncomingXHE (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                 @NonNull final HttpHeaderMap aHeaders,
+                                 @NonNull final Ebms3UserMessage aUserMessage,
+                                 @NonNull final byte [] aXHEBytes,
+                                 @NonNull final XHE10XHEType aXHE,
+                                 @NonNull final DBNAllianceXHEData aDBNAllianceXHE,
+                                 @NonNull final IAS4IncomingMessageState aIncomingState,
+                                 @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception
   {
     final String sMyPeppolSeatID = APConfig.getMySeatID ();
     final IIdentifierFactory aIdentifierFactory = SimpleIdentifierFactory.INSTANCE;
@@ -98,10 +97,10 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
 
     // TODO This is only demo code to force an error
     // Check if any "MessageProperty" with name "MockAction" is contained
-    final Ebms3Property aMockAction = aUserMessage.getMessageProperties () == null ? null : CollectionFind.findFirst (
-                                                                                                                      aUserMessage.getMessageProperties ()
-                                                                                                                                  .getProperty (),
-                                                                                                                      x -> "MockAction".equals (x.getName ()));
+    final Ebms3Property aMockAction = aUserMessage.getMessageProperties () == null ? null
+                                                                                   : CollectionFind.findFirst (aUserMessage.getMessageProperties ()
+                                                                                                                           .getProperty (),
+                                                                                                               x -> "MockAction".equals (x.getName ()));
     if (aMockAction != null)
     {
       // Explicitly return an Error - for testing errors
@@ -112,9 +111,9 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
     }
   }
 
-  public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                         @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                         @Nonnull @Nonempty final String sResponseMessageID,
+  public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                         @NonNull final IAS4IncomingMessageState aIncomingState,
+                                         @NonNull @Nonempty final String sResponseMessageID,
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {

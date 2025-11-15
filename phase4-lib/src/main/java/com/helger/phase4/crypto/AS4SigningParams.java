@@ -20,6 +20,9 @@ import java.security.Provider;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -29,9 +32,6 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * AS4 signing parameters
@@ -71,7 +71,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @return The key identifier type. May not be <code>null</code>.
    * @since 0.11.0
    */
-  @Nonnull
+  @NonNull
   public final ECryptoKeyIdentifierType getKeyIdentifierType ()
   {
     return m_eKeyIdentifierType;
@@ -86,8 +86,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @return this for chaining
    * @since 0.11.0
    */
-  @Nonnull
-  public final AS4SigningParams setKeyIdentifierType (@Nonnull final ECryptoKeyIdentifierType eKeyIdentifierType)
+  @NonNull
+  public final AS4SigningParams setKeyIdentifierType (@NonNull final ECryptoKeyIdentifierType eKeyIdentifierType)
   {
     ValueEnforcer.notNull (eKeyIdentifierType, "KeyIdentifierType");
     m_eKeyIdentifierType = eKeyIdentifierType;
@@ -112,7 +112,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    *        the signing algorithm that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4SigningParams setAlgorithmSign (@Nullable final ECryptoAlgorithmSign eAlgorithmSign)
   {
     m_eAlgorithmSign = eAlgorithmSign;
@@ -137,7 +137,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    *        the signing digest algorithm that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4SigningParams setAlgorithmSignDigest (@Nullable final ECryptoAlgorithmSignDigest eAlgorithmSignDigest)
   {
     m_eAlgorithmSignDigest = eAlgorithmSignDigest;
@@ -148,7 +148,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @return The canonicalization algorithm to use. Never <code>null</code>.
    * @since 0.10.6
    */
-  @Nonnull
+  @NonNull
   public final ECryptoAlgorithmC14N getAlgorithmC14N ()
   {
     return m_eAlgorithmC14N;
@@ -164,8 +164,8 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @return this for chaining
    * @since 0.10.6
    */
-  @Nonnull
-  public final AS4SigningParams setAlgorithmC14N (@Nonnull final ECryptoAlgorithmC14N eAlgorithmC14N)
+  @NonNull
+  public final AS4SigningParams setAlgorithmC14N (@NonNull final ECryptoAlgorithmC14N eAlgorithmC14N)
   {
     ValueEnforcer.notNull (eAlgorithmC14N, "AlgorithmC14N");
     m_eAlgorithmC14N = eAlgorithmC14N;
@@ -191,7 +191,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @return this for chaining
    * @since 2.4.0
    */
-  @Nonnull
+  @NonNull
   public final AS4SigningParams setSecurityProviderSign (@Nullable final Provider aSecurityProviderSign)
   {
     m_aSecurityProviderSign = aSecurityProviderSign;
@@ -217,7 +217,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @return this for chaining
    * @since 2.4.0
    */
-  @Nonnull
+  @NonNull
   public final AS4SigningParams setSecurityProviderVerify (@Nullable final Provider aSecurityProviderVerify)
   {
     m_aSecurityProviderVerify = aSecurityProviderVerify;
@@ -232,7 +232,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @return this for chaining
    * @since 2.1.3
    */
-  @Nonnull
+  @NonNull
   public final AS4SigningParams setSecurityProvider (@Nullable final Provider aSecurityProvider)
   {
     return setSecurityProviderSign (aSecurityProvider).setSecurityProviderVerify (aSecurityProvider);
@@ -258,7 +258,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @return this for chaining
    * @since 2.1.5
    */
-  @Nonnull
+  @NonNull
   public final AS4SigningParams setUseSingleCertificate (final boolean bUseSingleCertificate)
   {
     m_bUseSingleCertificate = bUseSingleCertificate;
@@ -276,7 +276,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
     return m_aWSSecSignatureCustomizer != null;
   }
 
-  @Nonnull
+  @NonNull
   public final AS4SigningParams setWSSecSignatureCustomizer (@Nullable final IWSSecSignatureCustomizer a)
   {
     m_aWSSecSignatureCustomizer = a;
@@ -304,7 +304,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    *         <code>null</code>.
    * @since 3.0.7
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public final Collection <Pattern> getAllSubjectCertConstraints ()
   {
@@ -335,7 +335,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @return this for chaining
    * @since 3.0.7
    */
-  @Nonnull
+  @NonNull
   public final AS4SigningParams setSubjectCertConstraints (@Nullable final Collection <Pattern> aSubjectCertConstraints)
   {
     m_aSubjectCertConstraints = aSubjectCertConstraints;
@@ -350,7 +350,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @return this for chaining
    * @since 3.0.7
    */
-  @Nonnull
+  @NonNull
   public final AS4SigningParams setSubjectCertConstraints (@Nullable final Pattern... aSubjectCertConstraints)
   {
     return setSubjectCertConstraints (aSubjectCertConstraints == null || aSubjectCertConstraints.length == 0 ? null
@@ -366,7 +366,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    *        The PMode security stuff to use. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4SigningParams setFromPMode (@Nullable final PModeLegSecurity aSecurity)
   {
     // Note: The canonicalization algorithm is not part of the PMode!
@@ -384,7 +384,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   }
 
   @OverridingMethodsMustInvokeSuper
-  public void cloneTo (@Nonnull final AS4SigningParams aTarget)
+  public void cloneTo (@NonNull final AS4SigningParams aTarget)
   {
     ValueEnforcer.notNull (aTarget, "Target");
     aTarget.setKeyIdentifierType (m_eKeyIdentifierType)
@@ -398,7 +398,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
            .setSubjectCertConstraints (m_aSubjectCertConstraints);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public AS4SigningParams getClone ()
   {
@@ -428,7 +428,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
    * @see #setAlgorithmSignDigest(ECryptoAlgorithmSignDigest)
    * @see #setAlgorithmC14N(ECryptoAlgorithmC14N)
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public static AS4SigningParams createDefault ()
   {

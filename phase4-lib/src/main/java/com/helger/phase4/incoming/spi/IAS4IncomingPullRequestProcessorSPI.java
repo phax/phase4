@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.incoming.spi;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.style.IsSPIInterface;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.model.pmode.IPMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Implement this SPI interface to handle incoming pull request appropriately and give the servlet
@@ -43,5 +43,5 @@ public interface IAS4IncomingPullRequestProcessorSPI
    * @return The resolved PMode. May be <code>null</code>.
    */
   @Nullable
-  IPMode findPMode (@Nonnull Ebms3SignalMessage aSignalMessage);
+  IPMode findPMode (@NonNull Ebms3SignalMessage aSignalMessage);
 }

@@ -20,6 +20,8 @@ import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -43,9 +45,6 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.phase4.wss.WSSSynchronizer;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Message singing helper.
  *
@@ -61,15 +60,15 @@ public final class AS4Signer
   private AS4Signer ()
   {}
 
-  @Nonnull
-  private static Document _createSignedMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                                @Nonnull final Document aPreSigningMessage,
-                                                @Nonnull final ESoapVersion eSoapVersion,
-                                                @Nonnull @Nonempty final String sMessagingID,
+  @NonNull
+  private static Document _createSignedMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                @NonNull final Document aPreSigningMessage,
+                                                @NonNull final ESoapVersion eSoapVersion,
+                                                @NonNull @Nonempty final String sMessagingID,
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                                 final boolean bMustUnderstand,
-                                                @Nonnull final AS4SigningParams aSigningParams) throws WSSecurityException
+                                                @NonNull final AS4SigningParams aSigningParams) throws WSSecurityException
   {
     ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
     ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");
@@ -177,15 +176,15 @@ public final class AS4Signer
    * @throws WSSecurityException
    *         If an error occurs during signing
    */
-  @Nonnull
-  public static Document createSignedMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                              @Nonnull final Document aPreSigningMessage,
-                                              @Nonnull final ESoapVersion eSoapVersion,
-                                              @Nonnull @Nonempty final String sMessagingID,
+  @NonNull
+  public static Document createSignedMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                              @NonNull final Document aPreSigningMessage,
+                                              @NonNull final ESoapVersion eSoapVersion,
+                                              @NonNull @Nonempty final String sMessagingID,
                                               @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                              @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                               final boolean bMustUnderstand,
-                                              @Nonnull final AS4SigningParams aSigningParams) throws WSSecurityException
+                                              @NonNull final AS4SigningParams aSigningParams) throws WSSecurityException
   {
     ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
     ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");

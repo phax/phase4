@@ -25,6 +25,8 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import org.w3c.dom.Document;
@@ -83,9 +85,6 @@ import com.helger.smpclient.url.ISMPURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xsds.bdxr.smp1.EndpointType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * This class contains all the specifics to send AS4 messages to HR eDelivery. See
  * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
@@ -107,14 +106,14 @@ public final class Phase4HREdeliverySender
   {}
 
   @Nullable
-  private static HREDeliverySBDHData _createHREDeliverySBDHData (@Nonnull final IParticipantIdentifier aSenderID,
-                                                                 @Nonnull final IParticipantIdentifier aReceiverID,
-                                                                 @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+  private static HREDeliverySBDHData _createHREDeliverySBDHData (@NonNull final IParticipantIdentifier aSenderID,
+                                                                 @NonNull final IParticipantIdentifier aReceiverID,
+                                                                 @NonNull final IDocumentTypeIdentifier aDocTypeID,
                                                                  @Nullable final String sInstanceIdentifier,
                                                                  @Nullable final String sStandard,
                                                                  @Nullable final String sTypeVersion,
                                                                  @Nullable final String sType,
-                                                                 @Nonnull final Element aPayloadElement,
+                                                                 @NonNull final Element aPayloadElement,
                                                                  final boolean bClonePayloadElement)
   {
     final HREDeliverySBDHData aData = new HREDeliverySBDHData (IF);
@@ -197,14 +196,14 @@ public final class Phase4HREdeliverySender
   }
 
   @Nullable
-  private static StandardBusinessDocument _createSBD (@Nonnull final IParticipantIdentifier aSenderID,
-                                                      @Nonnull final IParticipantIdentifier aReceiverID,
-                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+  private static StandardBusinessDocument _createSBD (@NonNull final IParticipantIdentifier aSenderID,
+                                                      @NonNull final IParticipantIdentifier aReceiverID,
+                                                      @NonNull final IDocumentTypeIdentifier aDocTypeID,
                                                       @Nullable final String sInstanceIdentifier,
                                                       @Nullable final String sStandard,
                                                       @Nullable final String sTypeVersion,
                                                       @Nullable final String sType,
-                                                      @Nonnull final Element aPayloadElement,
+                                                      @NonNull final Element aPayloadElement,
                                                       final boolean bClonePayloadElement)
   {
     final HREDeliverySBDHData aData = _createHREDeliverySBDHData (aSenderID,
@@ -248,14 +247,14 @@ public final class Phase4HREdeliverySender
    *         parameters are present.
    */
   @Nullable
-  public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
-                                                     @Nonnull final IParticipantIdentifier aReceiverID,
-                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+  public static StandardBusinessDocument createSBDH (@NonNull final IParticipantIdentifier aSenderID,
+                                                     @NonNull final IParticipantIdentifier aReceiverID,
+                                                     @NonNull final IDocumentTypeIdentifier aDocTypeID,
                                                      @Nullable final String sInstanceIdentifier,
                                                      @Nullable final String sStandard,
                                                      @Nullable final String sTypeVersion,
                                                      @Nullable final String sType,
-                                                     @Nonnull final Element aPayloadElement)
+                                                     @NonNull final Element aPayloadElement)
   {
     return _createSBD (aSenderID,
                        aReceiverID,
@@ -281,7 +280,7 @@ public final class Phase4HREdeliverySender
    * @throws Phase4Exception
    *         If the validation result handler decides to do so....
    */
-  private static void _validatePayload (@Nonnull final Element aPayloadElement,
+  private static void _validatePayload (@NonNull final Element aPayloadElement,
                                         @Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aRegistry,
                                         @Nullable final DVRCoordinate aVESID,
                                         @Nullable final IPhase4HREdeliveryValidationResultHandler aValidationResultHandler) throws Phase4Exception
@@ -324,10 +323,10 @@ public final class Phase4HREdeliverySender
    * @throws Phase4Exception
    *         in case of error
    */
-  private static void _checkReceiverAPCert (@Nonnull final TrustedCAChecker aCAChecker,
+  private static void _checkReceiverAPCert (@NonNull final TrustedCAChecker aCAChecker,
                                             @Nullable final X509Certificate aReceiverCert,
                                             @Nullable final IPhase4HREdeliveryCertificateCheckResultHandler aCertificateConsumer,
-                                            @Nonnull final ETriState eCacheOSCResult,
+                                            @NonNull final ETriState eCacheOSCResult,
                                             @Nullable final ERevocationCheckMode eCheckMode) throws Phase4Exception
   {
     if (LOGGER.isDebugEnabled ())
@@ -359,7 +358,7 @@ public final class Phase4HREdeliverySender
    *         created internally by phase4. Never <code>null</code>.
    * @see #sbdhBuilder() if you already have a ready Standard Business Document
    */
-  @Nonnull
+  @NonNull
   public static HREDeliveryUserMessageBuilder builder ()
   {
     return new HREDeliveryUserMessageBuilder ();
@@ -371,7 +370,7 @@ public final class Phase4HREdeliverySender
    *         expected to be done before. Never <code>null</code>.
    * @see #builder() if you want phase4 to create the Standard Business Document
    */
-  @Nonnull
+  @NonNull
   public static HREDeliveryUserMessageSBDHBuilder sbdhBuilder ()
   {
     return new HREDeliveryUserMessageSBDHBuilder ();
@@ -464,8 +463,8 @@ public final class Phase4HREdeliverySender
      *        The sender participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE senderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
+    @NonNull
+    public final IMPLTYPE senderParticipantID (@NonNull final IParticipantIdentifier aSenderID)
     {
       ValueEnforcer.notNull (aSenderID, "SenderID");
       if (m_aSenderID != null)
@@ -482,8 +481,8 @@ public final class Phase4HREdeliverySender
      *        The receiver participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE receiverParticipantID (@Nonnull final IParticipantIdentifier aReceiverID)
+    @NonNull
+    public final IMPLTYPE receiverParticipantID (@NonNull final IParticipantIdentifier aReceiverID)
     {
       ValueEnforcer.notNull (aReceiverID, "ReceiverID");
       if (m_aReceiverID != null)
@@ -509,8 +508,8 @@ public final class Phase4HREdeliverySender
      *        The document type ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE documentTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+    @NonNull
+    public final IMPLTYPE documentTypeID (@NonNull final IDocumentTypeIdentifier aDocTypeID)
     {
       ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
       if (m_aDocTypeID != null)
@@ -536,8 +535,8 @@ public final class Phase4HREdeliverySender
      *        The process ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE processID (@Nonnull final IProcessIdentifier aProcessID)
+    @NonNull
+    public final IMPLTYPE processID (@NonNull final IProcessIdentifier aProcessID)
     {
       ValueEnforcer.notNull (aProcessID, "ProcessID");
       if (m_aProcessID != null)
@@ -555,8 +554,8 @@ public final class Phase4HREdeliverySender
      *        The sender party ID. May neither be <code>null</code> nor empty.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE senderPartyID (@Nonnull @Nonempty final String sSenderPartyID)
+    @NonNull
+    public final IMPLTYPE senderPartyID (@NonNull @Nonempty final String sSenderPartyID)
     {
       ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
       return fromPartyID (sSenderPartyID);
@@ -570,8 +569,8 @@ public final class Phase4HREdeliverySender
      *        The payload MIME type. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE payloadMimeType (@Nonnull final IMimeType aPayloadMimeType)
+    @NonNull
+    public final IMPLTYPE payloadMimeType (@NonNull final IMimeType aPayloadMimeType)
     {
       ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
       m_aPayloadMimeType = aPayloadMimeType;
@@ -585,7 +584,7 @@ public final class Phase4HREdeliverySender
      *        <code>true</code> to compress the payload, <code>false</code> to not compress it.
      * @return this for chaining.
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE compressPayload (final boolean bCompressPayload)
     {
       m_bCompressPayload = bCompressPayload;
@@ -601,7 +600,7 @@ public final class Phase4HREdeliverySender
      *        The new payload content ID. May be null.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE payloadContentID (@Nullable final String sPayloadContentID)
     {
       m_sPayloadContentID = sPayloadContentID;
@@ -617,8 +616,8 @@ public final class Phase4HREdeliverySender
      * @return this for chaining
      * @see #smpClient(HRMPSClientReadOnly)
      */
-    @Nonnull
-    public final IMPLTYPE endpointDetailProvider (@Nonnull final IAS4EndpointDetailProvider aEndpointDetailProvider)
+    @NonNull
+    public final IMPLTYPE endpointDetailProvider (@NonNull final IAS4EndpointDetailProvider aEndpointDetailProvider)
     {
       ValueEnforcer.notNull (aEndpointDetailProvider, "EndpointDetailProvider");
       if (m_aEndpointDetailProvider != null)
@@ -639,8 +638,8 @@ public final class Phase4HREdeliverySender
      * @see #receiverEndpointDetails(X509Certificate, String)
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
-    @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final HRMPSClientReadOnly aSMPClient)
+    @NonNull
+    public final IMPLTYPE smpClient (@NonNull final HRMPSClientReadOnly aSMPClient)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (aSMPClient).setTransportProfile (ESMPTransportProfile.TRANSPORT_PROFILE_ERACUN_AS4_V1));
     }
@@ -655,8 +654,8 @@ public final class Phase4HREdeliverySender
      * @throws CertificateException
      *         In case the conversion from byte array to X509 certificate failed
      */
-    @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final EndpointType aEndpoint) throws CertificateException
+    @NonNull
+    public final IMPLTYPE receiverEndpointDetails (@NonNull final EndpointType aEndpoint) throws CertificateException
     {
       return receiverEndpointDetails (BDXRClientReadOnly.getEndpointCertificate (aEndpoint),
                                       BDXRClientReadOnly.getEndpointAddress (aEndpoint));
@@ -674,9 +673,9 @@ public final class Phase4HREdeliverySender
      *        URL and may neither be <code>null</code> nor empty.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
-                                                   @Nonnull @Nonempty final String sDestURL)
+    @NonNull
+    public final IMPLTYPE receiverEndpointDetails (@NonNull final X509Certificate aCert,
+                                                   @NonNull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -690,7 +689,7 @@ public final class Phase4HREdeliverySender
      *        parameter is the internal check result. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE certificateConsumer (@Nullable final IPhase4HREdeliveryCertificateCheckResultHandler aCertificateConsumer)
     {
       m_aCertificateConsumer = aCertificateConsumer;
@@ -705,7 +704,7 @@ public final class Phase4HREdeliverySender
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE endpointURLConsumer (@Nullable final Consumer <String> aAPEndpointURLConsumer)
     {
       m_aAPEndpointURLConsumer = aAPEndpointURLConsumer;
@@ -720,7 +719,7 @@ public final class Phase4HREdeliverySender
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE technicalContactConsumer (@Nullable final Consumer <String> aAPTechnicalContactConsumer)
     {
       m_aAPTechnicalContactConsumer = aAPTechnicalContactConsumer;
@@ -736,7 +735,7 @@ public final class Phase4HREdeliverySender
      *        <code>true</code> to enable it, <code>false</code> to disable it.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE checkReceiverAPCertificate (final boolean bCheckReceiverAPCertificate)
     {
       m_bCheckReceiverAPCertificate = bCheckReceiverAPCertificate;
@@ -752,8 +751,8 @@ public final class Phase4HREdeliverySender
      *        The Certificate CA checker to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE apCAChecker (@Nonnull final TrustedCAChecker aCAChecker)
+    @NonNull
+    public final IMPLTYPE apCAChecker (@NonNull final TrustedCAChecker aCAChecker)
     {
       ValueEnforcer.notNull (aCAChecker, "CAChecker");
       m_aCAChecker = aCAChecker;
@@ -801,7 +800,7 @@ public final class Phase4HREdeliverySender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
       {
@@ -975,7 +974,7 @@ public final class Phase4HREdeliverySender
      *        The SBDH instance identifier to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public HREDeliveryUserMessageBuilder sbdhInstanceIdentifier (@Nullable final String sSBDHInstanceIdentifier)
     {
       m_sSBDHInstanceIdentifier = sSBDHInstanceIdentifier;
@@ -990,7 +989,7 @@ public final class Phase4HREdeliverySender
      *        The SBDH document standard to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public HREDeliveryUserMessageBuilder sbdhStandard (@Nullable final String sSBDHStandard)
     {
       m_sSBDHStandard = sSBDHStandard;
@@ -1006,7 +1005,7 @@ public final class Phase4HREdeliverySender
      *        The SBDH document identification type version to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public HREDeliveryUserMessageBuilder sbdhTypeVersion (@Nullable final String sSBDHTypeVersion)
     {
       m_sSBDHTypeVersion = sSBDHTypeVersion;
@@ -1021,7 +1020,7 @@ public final class Phase4HREdeliverySender
      *        The SBDH document identification type to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public HREDeliveryUserMessageBuilder sbdhType (@Nullable final String sSBDHType)
     {
       m_sSBDHType = sSBDHType;
@@ -1038,8 +1037,8 @@ public final class Phase4HREdeliverySender
      *        not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public HREDeliveryUserMessageBuilder payload (@Nonnull final Element aPayloadElement)
+    @NonNull
+    public HREDeliveryUserMessageBuilder payload (@NonNull final Element aPayloadElement)
     {
       ValueEnforcer.notNull (aPayloadElement, "Payload");
       ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
@@ -1059,8 +1058,8 @@ public final class Phase4HREdeliverySender
      *        The payload bytes to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public HREDeliveryUserMessageBuilder payload (@Nonnull final byte [] aPayloadBytes)
+    @NonNull
+    public HREDeliveryUserMessageBuilder payload (@NonNull final byte [] aPayloadBytes)
     {
       ValueEnforcer.notNull (aPayloadBytes, "PayloadBytes");
       m_aPayloadElement = null;
@@ -1079,8 +1078,8 @@ public final class Phase4HREdeliverySender
      *        The payload input stream provider to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public HREDeliveryUserMessageBuilder payload (@Nonnull final IHasInputStream aPayloadHasIS)
+    @NonNull
+    public HREDeliveryUserMessageBuilder payload (@NonNull final IHasInputStream aPayloadHasIS)
     {
       ValueEnforcer.notNull (aPayloadHasIS, "PayloadHasIS");
       m_aPayloadElement = null;
@@ -1096,7 +1095,7 @@ public final class Phase4HREdeliverySender
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public HREDeliveryUserMessageBuilder sbdDocumentConsumer (@Nullable final Consumer <? super StandardBusinessDocument> aSBDDocumentConsumer)
     {
       m_aSBDDocumentConsumer = aSBDDocumentConsumer;
@@ -1116,7 +1115,7 @@ public final class Phase4HREdeliverySender
      * @see #validationConfiguration(IValidationExecutorSetRegistry,DVRCoordinate,
      *      IPhase4HREdeliveryValidationResultHandler)
      */
-    @Nonnull
+    @NonNull
     public HREDeliveryUserMessageBuilder validationConfiguration (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
                                                                   @Nullable final DVRCoordinate aVESID)
     {
@@ -1139,7 +1138,7 @@ public final class Phase4HREdeliverySender
      *        <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public HREDeliveryUserMessageBuilder validationConfiguration (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
                                                                   @Nullable final DVRCoordinate aVESID,
                                                                   @Nullable final IPhase4HREdeliveryValidationResultHandler aValidationResultHandler)
@@ -1155,14 +1154,14 @@ public final class Phase4HREdeliverySender
      *
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public HREDeliveryUserMessageBuilder disableValidation ()
     {
       return validationConfiguration (null, null);
     }
 
     @Override
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       // Ensure a DOM element is present
       final Element aPayloadElement;
@@ -1306,8 +1305,8 @@ public final class Phase4HREdeliverySender
      * @see #documentTypeID(IDocumentTypeIdentifier)
      * @see #processID(IProcessIdentifier)
      */
-    @Nonnull
-    public HREDeliveryUserMessageSBDHBuilder payload (@Nonnull final byte [] aSBDHBytes)
+    @NonNull
+    public HREDeliveryUserMessageSBDHBuilder payload (@NonNull final byte [] aSBDHBytes)
     {
       ValueEnforcer.notNull (aSBDHBytes, "SBDHBytes");
       m_aPayloadBytes = aSBDHBytes;
@@ -1325,8 +1324,8 @@ public final class Phase4HREdeliverySender
      * @see #senderParticipantID(IParticipantIdentifier)
      * @see #receiverParticipantID(IParticipantIdentifier)
      */
-    @Nonnull
-    public HREDeliveryUserMessageSBDHBuilder payloadAndMetadata (@Nonnull final HREDeliverySBDHData aSBDH)
+    @NonNull
+    public HREDeliveryUserMessageSBDHBuilder payloadAndMetadata (@NonNull final HREDeliverySBDHData aSBDH)
     {
       ValueEnforcer.notNull (aSBDH, "SBDH");
 
@@ -1357,7 +1356,7 @@ public final class Phase4HREdeliverySender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       // Perform SMP lookup
       if (super.finishFields (aResHelper).isFailure ())

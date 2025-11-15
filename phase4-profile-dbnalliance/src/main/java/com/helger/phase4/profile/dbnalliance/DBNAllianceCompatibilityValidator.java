@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.profile.dbnalliance;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.debug.GlobalDebug;
 import com.helger.base.enforce.ValueEnforcer;
@@ -47,8 +49,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.wss.EWSSVersion;
 
-import jakarta.annotation.Nonnull;
-
 /**
  * Validate certain requirements imposed by the DBNAlliance.
  *
@@ -60,21 +60,21 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
   public DBNAllianceCompatibilityValidator ()
   {}
 
-  @Nonnull
-  private static IError _createError (@Nonnull final String sMsg)
+  @NonNull
+  private static IError _createError (@NonNull final String sMsg)
   {
     return SingleError.builderError ().errorText (sMsg).build ();
   }
 
-  @Nonnull
-  private static IError _createWarn (@Nonnull final String sMsg)
+  @NonNull
+  private static IError _createWarn (@NonNull final String sMsg)
   {
     return SingleError.builderWarn ().errorText (sMsg).build ();
   }
 
-  private static void _checkIfLegIsValid (@Nonnull final ErrorList aErrorList,
-                                          @Nonnull final PModeLeg aPModeLeg,
-                                          @Nonnull @Nonempty final String sFieldPrefix)
+  private static void _checkIfLegIsValid (@NonNull final ErrorList aErrorList,
+                                          @NonNull final PModeLeg aPModeLeg,
+                                          @NonNull @Nonempty final String sFieldPrefix)
   {
     final PModeLegProtocol aLegProtocol = aPModeLeg.getProtocol ();
     if (aLegProtocol == null)
@@ -272,9 +272,9 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
-  public void validatePMode (@Nonnull final IPMode aPMode,
-                             @Nonnull final ErrorList aErrorList,
-                             @Nonnull final EAS4ProfileValidationMode eValidationMode)
+  public void validatePMode (@NonNull final IPMode aPMode,
+                             @NonNull final ErrorList aErrorList,
+                             @NonNull final EAS4ProfileValidationMode eValidationMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     ValueEnforcer.notNull (aErrorList, "ErrorList");
@@ -339,7 +339,7 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
-  public void validateUserMessage (@Nonnull final Ebms3UserMessage aUserMsg, @Nonnull final ErrorList aErrorList)
+  public void validateUserMessage (@NonNull final Ebms3UserMessage aUserMsg, @NonNull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
 
@@ -424,7 +424,7 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
-  public void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMsg, @Nonnull final ErrorList aErrorList)
+  public void validateSignalMessage (@NonNull final Ebms3SignalMessage aSignalMsg, @NonNull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aSignalMsg, "SignalMsg");
 

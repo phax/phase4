@@ -19,6 +19,8 @@ package com.helger.phase4.servlet;
 import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.style.OverrideOnDemand;
@@ -48,8 +50,6 @@ import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -88,19 +88,19 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    *        The new customizer. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4XServletHandler setRequestHandlerCustomizer (@Nullable final IAS4ServletRequestHandlerCustomizer aHandlerCustomizer)
   {
     m_aRequestHandlerCustomizer = aHandlerCustomizer;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   @Override
-  public AS4UnifiedResponse createUnifiedResponse (@Nonnull final EHttpVersion eHTTPVersion,
-                                                   @Nonnull final EHttpMethod eHTTPMethod,
-                                                   @Nonnull final HttpServletRequest aHttpRequest,
-                                                   @Nonnull final IRequestWebScope aRequestScope)
+  public AS4UnifiedResponse createUnifiedResponse (@NonNull final EHttpVersion eHTTPVersion,
+                                                   @NonNull final EHttpMethod eHTTPMethod,
+                                                   @NonNull final HttpServletRequest aHttpRequest,
+                                                   @NonNull final IRequestWebScope aRequestScope)
   {
     // Override from base class
     return new AS4UnifiedResponse (eHTTPVersion, eHTTPMethod, aHttpRequest);
@@ -116,9 +116,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @return New {@link AS4IncomingMessageMetadata} and never <code>null</code>.
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   @OverrideOnDemand
-  protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope)
+  protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@NonNull final IRequestWebScopeWithoutResponse aRequestScope)
   {
     X509Certificate [] aClientTlsCerts = null;
     try
@@ -149,24 +149,24 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    *        The unified response to be wrapped. May not be <code>null</code>.
    * @return Never <code>null</code>.
    */
-  @Nonnull
-  public static IAS4ResponseAbstraction createResponseAbstraction (@Nonnull final AS4UnifiedResponse aHttpResponse)
+  @NonNull
+  public static IAS4ResponseAbstraction createResponseAbstraction (@NonNull final AS4UnifiedResponse aHttpResponse)
   {
     return new IAS4ResponseAbstraction ()
     {
-      public void setContent (@Nonnull final byte [] aBytes, @Nonnull final Charset aCharset)
+      public void setContent (@NonNull final byte [] aBytes, @NonNull final Charset aCharset)
       {
         aHttpResponse.setContent (aBytes);
         aHttpResponse.setCharset (aCharset);
       }
 
-      public void setContent (@Nonnull final HttpHeaderMap aHeaderMap, @Nonnull final IHasInputStream aHasIS)
+      public void setContent (@NonNull final HttpHeaderMap aHeaderMap, @NonNull final IHasInputStream aHasIS)
       {
         aHttpResponse.addCustomResponseHeaders (aHeaderMap);
         aHttpResponse.setContent (aHasIS);
       }
 
-      public void setMimeType (@Nonnull final IMimeType aMimeType)
+      public void setMimeType (@NonNull final IMimeType aMimeType)
       {
         aHttpResponse.setMimeType (aMimeType);
       }
@@ -194,8 +194,8 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    *         In case of a processing error
    * @since 1.3.1
    */
-  protected void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                @Nonnull final AS4UnifiedResponse aHttpResponse,
+  protected void handleRequest (@NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                                @NonNull final AS4UnifiedResponse aHttpResponse,
                                 @Nullable final IAS4ServletRequestHandlerCustomizer aHandlerCustomizer) throws Exception
   {
     // Start metadata
@@ -257,8 +257,8 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     }
   }
 
-  public final void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                   @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  public final void handleRequest (@NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                                   @NonNull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     // Created above in #createUnifiedResponse
     final AS4UnifiedResponse aRealUnifiedResponse = (AS4UnifiedResponse) aUnifiedResponse;

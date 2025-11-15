@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.base.enforce.ValueEnforcer;
@@ -28,9 +30,6 @@ import com.helger.io.file.FileHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.logging.Phase4LoggerFactory;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Simple file based version of {@link IAS4IncomingDumper}.
@@ -67,7 +66,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    * @param aFileProvider
    *        The file provider that defines where to store the files. May not be <code>null</code>.
    */
-  public AS4IncomingDumperFileBased (@Nonnull final IAS4IncomingDumperFileProvider aFileProvider)
+  public AS4IncomingDumperFileBased (@NonNull final IAS4IncomingDumperFileProvider aFileProvider)
   {
     ValueEnforcer.notNull (aFileProvider, "FileProvider");
     m_aFileProvider = aFileProvider;
@@ -75,8 +74,8 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
 
   @Override
   @Nullable
-  protected OutputStream openOutputStream (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                           @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
+  protected OutputStream openOutputStream (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                           @NonNull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     final File aDumpFile = m_aFileProvider.createFile (aMessageMetadata, aHttpHeaderMap);
     LOGGER.info ("Logging incoming AS4 message to '" +
@@ -94,8 +93,8 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    * @return The created dumper. Never <code>null</code>.
    * @since 0.10.2
    */
-  @Nonnull
-  public static AS4IncomingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
+  @NonNull
+  public static AS4IncomingDumperFileBased createForDirectory (@NonNull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
     return new AS4IncomingDumperFileBased ( (aMessageMetadata, aHttpHeaderMap) -> new File (aBaseDirectory,

@@ -20,13 +20,13 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.misc.ContainsSoftMigration;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Micro type converter for class {@link AS4DuplicateItem}.
@@ -40,10 +40,10 @@ public final class AS4DuplicateItemMicroTypeConverter implements IMicroTypeConve
   private static final String ATTR_PROFILE_ID = "profileid";
   private static final String ATTR_PMODE_ID = "pmodeid";
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final AS4DuplicateItem aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final AS4DuplicateItem aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttributeWithConversion (ATTR_DT, aValue.getDateTime ());
@@ -53,9 +53,9 @@ public final class AS4DuplicateItemMicroTypeConverter implements IMicroTypeConve
     return ret;
   }
 
-  @Nonnull
+  @NonNull
   @ContainsSoftMigration
-  public AS4DuplicateItem convertToNative (@Nonnull final IMicroElement aElement)
+  public AS4DuplicateItem convertToNative (@NonNull final IMicroElement aElement)
   {
     OffsetDateTime aODT = aElement.getAttributeValueWithConversion (ATTR_DT, OffsetDateTime.class);
     if (aODT == null)

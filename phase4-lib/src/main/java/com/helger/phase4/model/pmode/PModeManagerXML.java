@@ -18,6 +18,8 @@ package com.helger.phase4.model.pmode;
 
 import java.util.function.Predicate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.ELockType;
@@ -30,9 +32,6 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.photon.audit.AuditHelper;
 import com.helger.photon.io.dao.AbstractPhotonMapBasedWALDAO;
 import com.helger.photon.security.object.BusinessObjectHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Persisting manager for {@link PMode} objects.
@@ -49,7 +48,7 @@ public class PModeManagerXML extends AbstractPhotonMapBasedWALDAO <IPMode, PMode
     super (PMode.class, sFilename);
   }
 
-  private void _validatePMode (@Nonnull final IPMode aPMode)
+  private void _validatePMode (@NonNull final IPMode aPMode)
   {
     try
     {
@@ -62,7 +61,7 @@ public class PModeManagerXML extends AbstractPhotonMapBasedWALDAO <IPMode, PMode
   }
 
   @MustBeLocked (ELockType.WRITE)
-  private void _createPModeLocked (@Nonnull final PMode aPMode)
+  private void _createPModeLocked (@NonNull final PMode aPMode)
   {
     internalCreateItem (aPMode);
     AuditHelper.onAuditCreateSuccess (PMode.OT, aPMode.getID ());
@@ -71,7 +70,7 @@ public class PModeManagerXML extends AbstractPhotonMapBasedWALDAO <IPMode, PMode
       LOGGER.debug ("Created PMode with ID '" + aPMode.getID () + "'");
   }
 
-  public void createPMode (@Nonnull final PMode aPMode)
+  public void createPMode (@NonNull final PMode aPMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     _validatePMode (aPMode);
@@ -79,8 +78,8 @@ public class PModeManagerXML extends AbstractPhotonMapBasedWALDAO <IPMode, PMode
     m_aRWLock.writeLocked ( () -> _createPModeLocked (aPMode));
   }
 
-  @Nonnull
-  public EChange updatePMode (@Nonnull final IPMode aPMode)
+  @NonNull
+  public EChange updatePMode (@NonNull final IPMode aPMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     _validatePMode (aPMode);
@@ -128,7 +127,7 @@ public class PModeManagerXML extends AbstractPhotonMapBasedWALDAO <IPMode, PMode
     return EChange.CHANGED;
   }
 
-  public void createOrUpdatePMode (@Nonnull final PMode aPMode)
+  public void createOrUpdatePMode (@NonNull final PMode aPMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     _validatePMode (aPMode);
@@ -162,7 +161,7 @@ public class PModeManagerXML extends AbstractPhotonMapBasedWALDAO <IPMode, PMode
       updatePMode (aExisting);
   }
 
-  @Nonnull
+  @NonNull
   public EChange markPModeDeleted (@Nullable final String sPModeID)
   {
     final PMode aDeletedPMode = getOfID (sPModeID);
@@ -194,7 +193,7 @@ public class PModeManagerXML extends AbstractPhotonMapBasedWALDAO <IPMode, PMode
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public EChange deletePMode (@Nullable final String sPModeID)
   {
     final PMode aDeletedPMode = getOfID (sPModeID);

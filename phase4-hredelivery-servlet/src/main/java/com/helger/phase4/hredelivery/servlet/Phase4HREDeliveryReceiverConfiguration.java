@@ -18,6 +18,9 @@ package com.helger.phase4.hredelivery.servlet;
 
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.builder.IBuilder;
 import com.helger.base.enforce.ValueEnforcer;
@@ -28,9 +31,6 @@ import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class contains the "per-request" data of
@@ -78,10 +78,10 @@ public final class Phase4HREDeliveryReceiverConfiguration
                                                  @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
                                                  @Nullable final String sAS4EndpointURL,
                                                  @Nullable final X509Certificate aAPCertificate,
-                                                 @Nonnull final IIdentifierFactory aSBDHIdentifierFactory,
+                                                 @NonNull final IIdentifierFactory aSBDHIdentifierFactory,
                                                  final boolean bPerformSBDHValueChecks,
                                                  final boolean bCheckSigningCertificateRevocation,
-                                                 @Nonnull final TrustedCAChecker aAPCAChecker)
+                                                 @NonNull final TrustedCAChecker aAPCAChecker)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -133,7 +133,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
    *         Never <code>null</code> if receiver checks are enabled.
    * @see #isReceiverCheckEnabled()
    */
-  @Nonnull
+  @NonNull
   public X509Certificate getAPCertificate ()
   {
     return m_aAPCertificate;
@@ -142,7 +142,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
   /**
    * @return The identifier factory to be used for SBDH parsing.
    */
-  @Nonnull
+  @NonNull
   public IIdentifierFactory getSBDHIdentifierFactory ()
   {
     return m_aSBDHIdentifierFactory;
@@ -161,7 +161,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
   /**
    * @return The HR eDelivery CA checker to be used. Must not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public TrustedCAChecker getAPCAChecker ()
   {
     return m_aAPCAChecker;
@@ -185,7 +185,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
   /**
    * @return An empty builder instance. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static Phase4HREDeliveryReceiverConfigurationBuilder builder ()
   {
     return new Phase4HREDeliveryReceiverConfigurationBuilder ();
@@ -199,8 +199,8 @@ public final class Phase4HREDeliveryReceiverConfiguration
    *        be <code>null</code>.
    * @return A non-<code>null</code> filled builder instance.
    */
-  @Nonnull
-  public static Phase4HREDeliveryReceiverConfigurationBuilder builder (@Nonnull final Phase4HREDeliveryReceiverConfiguration aSrc)
+  @NonNull
+  public static Phase4HREDeliveryReceiverConfigurationBuilder builder (@NonNull final Phase4HREDeliveryReceiverConfiguration aSrc)
   {
     return new Phase4HREDeliveryReceiverConfigurationBuilder (aSrc);
   }
@@ -225,7 +225,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
     public Phase4HREDeliveryReceiverConfigurationBuilder ()
     {}
 
-    public Phase4HREDeliveryReceiverConfigurationBuilder (@Nonnull final Phase4HREDeliveryReceiverConfiguration aSrc)
+    public Phase4HREDeliveryReceiverConfigurationBuilder (@NonNull final Phase4HREDeliveryReceiverConfiguration aSrc)
     {
       ValueEnforcer.notNull (aSrc, "Src");
       receiverCheckEnabled (aSrc.isReceiverCheckEnabled ()).serviceMetadataProvider (aSrc.getSMPClient ())
@@ -237,75 +237,75 @@ public final class Phase4HREDeliveryReceiverConfiguration
                                                            .apCAChecker (aSrc.getAPCAChecker ());
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfigurationBuilder receiverCheckEnabled (final boolean b)
     {
       m_bReceiverCheckEnabled = b;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfigurationBuilder serviceMetadataProvider (@Nullable final ISMPExtendedServiceMetadataProvider a)
     {
       m_aSMPClient = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfigurationBuilder as4EndpointUrl (@Nullable final String s)
     {
       m_sAS4EndpointURL = s;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfigurationBuilder apCertificate (@Nullable final X509Certificate a)
     {
       m_aAPCertificate = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfigurationBuilder sbdhIdentifierFactorySimple ()
     {
       return sbdhIdentifierFactory (SimpleIdentifierFactory.INSTANCE);
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfigurationBuilder sbdhIdentifierFactoryPeppol ()
     {
       return sbdhIdentifierFactory (PeppolIdentifierFactory.INSTANCE);
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfigurationBuilder sbdhIdentifierFactory (@Nullable final IIdentifierFactory a)
     {
       m_aSBDHIdentifierFactory = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfigurationBuilder performSBDHValueChecks (final boolean b)
     {
       m_bPerformSBDHValueChecks = b;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfigurationBuilder checkSigningCertificateRevocation (final boolean b)
     {
       m_bCheckSigningCertificateRevocation = b;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfigurationBuilder apCAChecker (@Nullable final TrustedCAChecker a)
     {
       m_aAPCAChecker = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4HREDeliveryReceiverConfiguration build ()
     {
       if (m_bReceiverCheckEnabled)

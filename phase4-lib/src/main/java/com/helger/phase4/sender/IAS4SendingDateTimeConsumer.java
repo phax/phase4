@@ -18,7 +18,7 @@ package com.helger.phase4.sender;
 
 import java.time.OffsetDateTime;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A specific callback interface to get the effective sending date time
@@ -35,5 +35,5 @@ public interface IAS4SendingDateTimeConsumer
    * @param aSendingDT
    *        The effective sending date time used. Never <code>null</code>.
    */
-  void onEffectiveSendingDateTime (@Nonnull OffsetDateTime aSendingDT);
+  void onEffectiveSendingDateTime (@NonNull OffsetDateTime aSendingDT);
 }

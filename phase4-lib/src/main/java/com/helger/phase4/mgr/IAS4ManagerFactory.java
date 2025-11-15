@@ -16,13 +16,13 @@
  */
 package com.helger.phase4.mgr;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.phase4.util.Phase4Exception;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Factory for global managers
@@ -37,7 +37,7 @@ public interface IAS4ManagerFactory
    * @throws Phase4Exception
    *         on error
    */
-  @Nonnull
+  @NonNull
   IMPCManager createMPCManager () throws Phase4Exception;
 
   /**
@@ -45,7 +45,7 @@ public interface IAS4ManagerFactory
    * @throws Phase4Exception
    *         on error
    */
-  @Nonnull
+  @NonNull
   IPModeManager createPModeManager () throws Phase4Exception;
 
   /**
@@ -53,7 +53,7 @@ public interface IAS4ManagerFactory
    * @throws Phase4Exception
    *         on error
    */
-  @Nonnull
+  @NonNull
   IAS4DuplicateManager createDuplicateManager () throws Phase4Exception;
 
   /**
@@ -62,12 +62,12 @@ public interface IAS4ManagerFactory
    *         on error
    * @since 0.10.4
    */
-  @Nonnull
+  @NonNull
   IAS4ProfileManager createProfileManager () throws Phase4Exception;
 
   /**
    * @return A new {@link IAS4TimestampManager} instance
    */
-  @Nonnull
+  @NonNull
   IAS4TimestampManager createTimestampManager ();
 }

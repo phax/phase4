@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.incoming.soap;
 
+import org.jspecify.annotations.NonNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -24,8 +25,6 @@ import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.incoming.AS4IncomingMessageState;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Base interface for SOAP header processors that are invoked for incoming messages.
@@ -54,10 +53,10 @@ public interface ISoapHeaderElementProcessor
    * @return Never <code>null</code>. If {@link ESuccess#FAILURE} than the header is treated as "not
    *         handled".
    */
-  @Nonnull
-  ESuccess processHeaderElement (@Nonnull Document aSoapDoc,
-                                 @Nonnull Element aHeaderElement,
-                                 @Nonnull ICommonsList <WSS4JAttachment> aAttachments,
-                                 @Nonnull AS4IncomingMessageState aIncomingState,
-                                 @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget);
+  @NonNull
+  ESuccess processHeaderElement (@NonNull Document aSoapDoc,
+                                 @NonNull Element aHeaderElement,
+                                 @NonNull ICommonsList <WSS4JAttachment> aAttachments,
+                                 @NonNull AS4IncomingMessageState aIncomingState,
+                                 @NonNull ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget);
 }

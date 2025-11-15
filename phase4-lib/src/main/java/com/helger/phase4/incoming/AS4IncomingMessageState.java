@@ -21,6 +21,8 @@ import java.time.OffsetDateTime;
 import java.util.Locale;
 
 import org.apache.wss4j.dom.WSConstants;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -46,9 +48,6 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.typeconvert.collection.AttributeContainerAny;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class keeps track of the status of an incoming message. It is basically a String to any
@@ -96,9 +95,9 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   private final AS4ResourceHelper m_aResHelper;
   private final Locale m_aLocale;
 
-  public AS4IncomingMessageState (@Nonnull final ESoapVersion eSoapVersion,
-                                  @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                  @Nonnull final Locale aLocale)
+  public AS4IncomingMessageState (@NonNull final ESoapVersion eSoapVersion,
+                                  @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
+                                  @NonNull final Locale aLocale)
   {
     m_aReceiptDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
     m_eSoapVersion = ValueEnforcer.notNull (eSoapVersion, "SOAPVersion");
@@ -106,25 +105,25 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
     m_aLocale = ValueEnforcer.notNull (aLocale, "Locale");
   }
 
-  @Nonnull
+  @NonNull
   public OffsetDateTime getReceiptDT ()
   {
     return m_aReceiptDT;
   }
 
-  @Nonnull
+  @NonNull
   public ESoapVersion getSoapVersion ()
   {
     return m_eSoapVersion;
   }
 
-  @Nonnull
+  @NonNull
   public AS4ResourceHelper getResourceHelper ()
   {
     return m_aResHelper;
   }
 
-  @Nonnull
+  @NonNull
   public Locale getLocale ()
   {
     return m_aLocale;
@@ -438,7 +437,6 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
     return getCastedValue (KEY_CRYPTO_FACTORY_SIGN);
   }
 
-  @Nullable
   public void setCryptoFactorySign (@Nullable final IAS4CryptoFactory aCryptoFactorySign)
   {
     putIn (KEY_CRYPTO_FACTORY_SIGN, aCryptoFactorySign);
@@ -450,7 +448,6 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
     return getCastedValue (KEY_CRYPTO_FACTORY_CRYPT);
   }
 
-  @Nullable
   public void setCryptoFactoryCrypt (@Nullable final IAS4CryptoFactory aCryptoFactoryCrypt)
   {
     putIn (KEY_CRYPTO_FACTORY_CRYPT, aCryptoFactoryCrypt);

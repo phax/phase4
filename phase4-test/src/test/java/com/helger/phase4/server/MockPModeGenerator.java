@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.server;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.base.state.ETriState;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
@@ -39,8 +41,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
 
-import jakarta.annotation.Nonnull;
-
 public final class MockPModeGenerator
 {
   public static final String SOAP11_SERVICE = "soap11";
@@ -51,22 +51,22 @@ public final class MockPModeGenerator
   private MockPModeGenerator ()
   {}
 
-  @Nonnull
+  @NonNull
   private static PModeParty _createInitiatorOrResponder (final boolean bInitiator,
-                                                         @Nonnull final ESoapVersion eSOAPVersion)
+                                                         @NonNull final ESoapVersion eSOAPVersion)
   {
     final String sPartyID = eSOAPVersion.equals (ESoapVersion.SOAP_11) ? SOAP_11_PARTY_ID : SOAP_12_PARTY_ID;
     return PModeParty.createSimple (sPartyID, bInitiator ? CAS4.DEFAULT_INITIATOR_URL : CAS4.DEFAULT_RESPONDER_URL);
   }
 
-  @Nonnull
-  private static PModeLegProtocol _createPModeLegProtocol (@Nonnull final ESoapVersion eSOAPVersion)
+  @NonNull
+  private static PModeLegProtocol _createPModeLegProtocol (@NonNull final ESoapVersion eSOAPVersion)
   {
     return new PModeLegProtocol ("http://localhost:8080", eSOAPVersion);
   }
 
-  @Nonnull
-  private static PModeLegBusinessInformation _createPModeLegBusinessInformation (@Nonnull final ESoapVersion eSOAPVersion)
+  @NonNull
+  private static PModeLegBusinessInformation _createPModeLegBusinessInformation (@NonNull final ESoapVersion eSOAPVersion)
   {
     return PModeLegBusinessInformation.create (eSOAPVersion.equals (ESoapVersion.SOAP_11) ? SOAP11_SERVICE : null,
                                                CAS4.DEFAULT_ACTION_URL,
@@ -74,14 +74,14 @@ public final class MockPModeGenerator
                                                CAS4.DEFAULT_MPC_ID);
   }
 
-  @Nonnull
+  @NonNull
   private static PModeLegErrorHandling _createPModeLegErrorHandling ()
   {
     return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.TRUE, ETriState.TRUE);
   }
 
-  @Nonnull
-  private static PModeLeg _createPModeLeg (@Nonnull final ESoapVersion eSOAPVersion)
+  @NonNull
+  private static PModeLeg _createPModeLeg (@NonNull final ESoapVersion eSOAPVersion)
   {
     final PModeLegReliability aPModeLegReliability = null;
     final PModeLegSecurity aPModeLegSecurity = null;
@@ -92,8 +92,8 @@ public final class MockPModeGenerator
                          aPModeLegSecurity);
   }
 
-  @Nonnull
-  public static PMode getTestPMode (@Nonnull final ESoapVersion eSOAPVersion)
+  @NonNull
+  public static PMode getTestPMode (@NonNull final ESoapVersion eSOAPVersion)
   {
     final PModeParty aInitiator = _createInitiatorOrResponder (true, eSOAPVersion);
     final PModeParty aResponder = _createInitiatorOrResponder (false, eSOAPVersion);
@@ -112,8 +112,8 @@ public final class MockPModeGenerator
     return aConfig;
   }
 
-  @Nonnull
-  public static PMode getTestPModeWithSecurity (@Nonnull final ESoapVersion eSOAPVersion)
+  @NonNull
+  public static PMode getTestPModeWithSecurity (@NonNull final ESoapVersion eSOAPVersion)
   {
     final PMode aPMode = getTestPMode (eSOAPVersion);
 

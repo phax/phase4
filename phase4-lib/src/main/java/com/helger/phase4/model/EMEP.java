@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.Nonnegative;
 import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
 import com.helger.base.string.StringHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Defines the available Message Exchange Patterns (MEPs).
@@ -50,13 +50,13 @@ public enum EMEP implements IHasID <String>
   private final String m_sID;
   private final String m_sURI;
 
-  EMEP (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sURI)
+  EMEP (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sURI)
   {
     m_sID = sID;
     m_sURI = sURI;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
@@ -83,7 +83,7 @@ public enum EMEP implements IHasID <String>
     return this == TWO_WAY;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getURI ()
   {

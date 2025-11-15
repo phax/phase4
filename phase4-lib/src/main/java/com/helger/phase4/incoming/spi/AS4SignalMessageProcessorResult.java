@@ -16,15 +16,15 @@
  */
 package com.helger.phase4.incoming.spi;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.ESuccess;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class represents the result of a message processor SPI implementation.<br>
@@ -47,7 +47,7 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
    * @param aPullReturnUserMessage
    *        The user message to return. May be <code>null</code>.
    */
-  protected AS4SignalMessageProcessorResult (@Nonnull final ESuccess eSuccess,
+  protected AS4SignalMessageProcessorResult (@NonNull final ESuccess eSuccess,
                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                              @Nullable final String sAsyncResponseURL,
                                              @Nullable final Ebms3UserMessage aPullReturnUserMessage)
@@ -74,13 +74,13 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
                             .getToString ();
   }
 
-  @Nonnull
+  @NonNull
   public static AS4SignalMessageProcessorResult createSuccess ()
   {
     return createSuccess (null, null, null);
   }
 
-  @Nonnull
+  @NonNull
   public static AS4SignalMessageProcessorResult createSuccess (@Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                                @Nullable final String sAsyncResponseURL,
                                                                @Nullable final Ebms3UserMessage aPullReturnUserMessage)
@@ -91,7 +91,7 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
                                                 aPullReturnUserMessage);
   }
 
-  @Nonnull
+  @NonNull
   public static AS4SignalMessageProcessorResult createFailure ()
   {
     return new AS4SignalMessageProcessorResult (ESuccess.FAILURE, null, null, null);

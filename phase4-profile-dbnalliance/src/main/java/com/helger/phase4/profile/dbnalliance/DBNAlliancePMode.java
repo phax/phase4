@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.profile.dbnalliance;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.CGlobal;
@@ -43,9 +46,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * DBNAlliance PMode creation code.
  *
@@ -61,14 +61,14 @@ public final class DBNAlliancePMode
   private DBNAlliancePMode ()
   {}
 
-  @Nonnull
+  @NonNull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
     // Set the endpoint URL
     return new PModeLegProtocol (sAddress, ESoapVersion.SOAP_12);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     // dynamic
@@ -80,7 +80,7 @@ public final class DBNAlliancePMode
     return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegErrorHandling generatePModeLegErrorHandling ()
   {
     final PModeAddressList aReportSenderErrorsTo = null;
@@ -98,7 +98,7 @@ public final class DBNAlliancePMode
                                       eReportDeliveryFailuresNotifyProducer);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegSecurity generatePModeLegSecurity ()
   {
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
@@ -114,7 +114,7 @@ public final class DBNAlliancePMode
     return aPModeLegSecurity;
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLeg generatePModeLeg (@Nullable final String sAddress)
   {
     return new PModeLeg (generatePModeLegProtocol (sAddress),
@@ -124,7 +124,7 @@ public final class DBNAlliancePMode
                          generatePModeLegSecurity ());
   }
 
-  @Nonnull
+  @NonNull
   public static PModeReceptionAwareness generatePModeReceptionAwareness ()
   {
     final ETriState eReceptionAwareness = ETriState.TRUE;
@@ -139,8 +139,8 @@ public final class DBNAlliancePMode
                                         eDuplicateDetection);
   }
 
-  @Nonnull
-  public static PModeParty createParty (@Nonnull @Nonempty final String sPartyID, @Nonnull @Nonempty final String sRole)
+  @NonNull
+  public static PModeParty createParty (@NonNull @Nonempty final String sPartyID, @NonNull @Nonempty final String sRole)
   {
     // Party type is needed for DBNAlliance
     return new PModeParty (DEFAULT_PARTY_TYPE_ID, sPartyID, sRole, null, null);
@@ -162,11 +162,11 @@ public final class DBNAlliancePMode
    *        <code>false</code> to have it only in memory.
    * @return New PMode
    */
-  @Nonnull
-  public static PMode createDBNAlliancePMode (@Nonnull @Nonempty final String sInitiatorID,
-                                              @Nonnull @Nonempty final String sResponderID,
+  @NonNull
+  public static PMode createDBNAlliancePMode (@NonNull @Nonempty final String sInitiatorID,
+                                              @NonNull @Nonempty final String sResponderID,
                                               @Nullable final String sAddress,
-                                              @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                              @NonNull final IPModeIDProvider aPModeIDProvider,
                                               final boolean bPersist)
   {
     final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);

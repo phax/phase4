@@ -18,6 +18,9 @@ package com.helger.phase4.profile.hredelivery;
 
 import java.util.regex.Pattern;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.CGlobal;
@@ -44,9 +47,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * PMode creation code.
  *
@@ -70,14 +70,14 @@ public final class HREDeliveryPMode
    *        The endpoint address URL. Maybe <code>null</code>.
    * @return The new {@link PModeLegProtocol}. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
     // Set the endpoint URL
     return PModeLegProtocol.createForDefaultSoapVersion (sAddress);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     // Process ID
@@ -91,7 +91,7 @@ public final class HREDeliveryPMode
     return new PModeLegBusinessInformation (sService, sServiceType, sAction, null, null, nPayloadProfileMaxKB, sMPCID);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegErrorHandling generatePModeLegErrorHandling ()
   {
     final PModeAddressList aReportSenderErrorsTo = null;
@@ -108,7 +108,7 @@ public final class HREDeliveryPMode
                                       eReportDeliveryFailuresNotifyProducer);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegSecurity generatePModeLegSecurity ()
   {
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
@@ -132,7 +132,7 @@ public final class HREDeliveryPMode
    * @return The new {@link PModeLeg}. Never <code>null</code>.
    * @see #generatePModeLegProtocol(String)
    */
-  @Nonnull
+  @NonNull
   public static PModeLeg generatePModeLeg (@Nullable final String sAddress)
   {
     return new PModeLeg (generatePModeLegProtocol (sAddress),
@@ -142,7 +142,7 @@ public final class HREDeliveryPMode
                          generatePModeLegSecurity ());
   }
 
-  @Nonnull
+  @NonNull
   public static PModeReceptionAwareness generatePModeReceptionAwareness ()
   {
     final ETriState eReceptionAwareness = ETriState.TRUE;
@@ -157,8 +157,8 @@ public final class HREDeliveryPMode
                                         eDuplicateDetection);
   }
 
-  @Nonnull
-  public static PModeParty createParty (@Nonnull @Nonempty final String sPartyID, @Nonnull @Nonempty final String sRole)
+  @NonNull
+  public static PModeParty createParty (@NonNull @Nonempty final String sPartyID, @NonNull @Nonempty final String sRole)
   {
     // Party type is needed for HR eDelivery
     return new PModeParty (DEFAULT_PARTY_TYPE_ID, sPartyID, sRole, null, null);
@@ -180,11 +180,11 @@ public final class HREDeliveryPMode
    *        it only in memory.
    * @return New PMode and never <code>null</code>.
    */
-  @Nonnull
-  public static PMode createHREdeliveryPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                              @Nonnull @Nonempty final String sResponderID,
+  @NonNull
+  public static PMode createHREdeliveryPMode (@NonNull @Nonempty final String sInitiatorID,
+                                              @NonNull @Nonempty final String sResponderID,
                                               @Nullable final String sAddress,
-                                              @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                              @NonNull final IPModeIDProvider aPModeIDProvider,
                                               final boolean bPersist)
   {
     final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);

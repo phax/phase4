@@ -26,6 +26,8 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import org.apache.wss4j.common.ext.Attachment;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.WillNotClose;
@@ -54,8 +56,6 @@ import com.helger.phase4.util.AS4ResourceHelper;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.mail.Header;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
@@ -86,7 +86,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   private String m_sUncompressedMimeType;
   private final ICommonsOrderedMap <String, String> m_aCustomPartProps = new CommonsLinkedHashMap <> ();
 
-  public WSS4JAttachment (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper, @Nullable final String sMimeType)
+  public WSS4JAttachment (@NonNull @WillNotClose final AS4ResourceHelper aResHelper, @Nullable final String sMimeType)
   {
     m_aResHelper = ValueEnforcer.notNull (aResHelper, "ResHelper");
     overwriteMimeType (sMimeType);
@@ -95,7 +95,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   /**
    * @return The resource helper provided in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final AS4ResourceHelper getResHelper ()
   {
     return m_aResHelper;
@@ -142,14 +142,14 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   }
 
   @Override
-  @Nonnull
+  @NonNull
   public InputStream getSourceStream ()
   {
     return getSourceStream (m_aResHelper);
   }
 
-  @Nonnull
-  public InputStream getSourceStream (@Nonnull final AS4ResourceHelper aResourceHelper)
+  @NonNull
+  public InputStream getSourceStream (@NonNull final AS4ResourceHelper aResourceHelper)
   {
     ValueEnforcer.notNull (aResourceHelper, "ResourceHelper");
 
@@ -180,20 +180,20 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     return m_aISP;
   }
 
-  public void setSourceStreamProvider (@Nonnull final IHasInputStream aISP)
+  public void setSourceStreamProvider (@NonNull final IHasInputStream aISP)
   {
     ValueEnforcer.notNull (aISP, "InputStreamProvider");
     m_aISP = aISP;
   }
 
-  @Nonnull
+  @NonNull
   public final EContentTransferEncoding getContentTransferEncoding ()
   {
     return m_eCTE;
   }
 
-  @Nonnull
-  public final WSS4JAttachment setContentTransferEncoding (@Nonnull final EContentTransferEncoding eCTE)
+  @NonNull
+  public final WSS4JAttachment setContentTransferEncoding (@NonNull final EContentTransferEncoding eCTE)
   {
     m_eCTE = ValueEnforcer.notNull (eCTE, "CTE");
     return this;
@@ -205,8 +205,8 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     return m_eCompressionMode;
   }
 
-  @Nonnull
-  public final WSS4JAttachment setCompressionMode (@Nonnull final EAS4CompressionMode eCompressionMode)
+  @NonNull
+  public final WSS4JAttachment setCompressionMode (@NonNull final EAS4CompressionMode eCompressionMode)
   {
     ValueEnforcer.notNull (eCompressionMode, "CompressionMode");
     m_eCompressionMode = eCompressionMode;
@@ -228,21 +228,21 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     return m_aCharset != null;
   }
 
-  @Nonnull
+  @NonNull
   public final WSS4JAttachment setCharset (@Nullable final Charset aCharset)
   {
     m_aCharset = aCharset;
     return this;
   }
 
-  @Nonnull
+  @NonNull
   private DataSource _getAsDataSource ()
   {
     final InputStreamProviderDataSource aDS = new InputStreamProviderDataSource (m_aISP, getId (), getMimeType ());
     return aDS.getEncodingAware (getContentTransferEncoding ());
   }
 
-  public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws MessagingException
+  public void addToMimeMultipart (@NonNull final MimeMultipart aMimeMultipart) throws MessagingException
   {
     ValueEnforcer.notNull (aMimeMultipart, "MimeMultipart");
 
@@ -290,7 +290,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     aMimeMultipart.addBodyPart (aMimeBodyPart);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public ICommonsOrderedMap <String, String> customPartProperties ()
   {
@@ -311,7 +311,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                        .getToString ();
   }
 
-  private static void _addOutgoingHeaders (@Nonnull final WSS4JAttachment aAttachment, @Nullable final String sFilename)
+  private static void _addOutgoingHeaders (@NonNull final WSS4JAttachment aAttachment, @Nullable final String sFilename)
   {
     // Ensure an ID is present
     if (StringHelper.isEmpty (aAttachment.getId ()))
@@ -331,9 +331,9 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     aAttachment.addHeader (CHttpHeader.CONTENT_TYPE, aAttachment.getMimeType ());
   }
 
-  @Nonnull
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final AS4OutgoingAttachment aAttachment,
-                                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
+  @NonNull
+  public static WSS4JAttachment createOutgoingFileAttachment (@NonNull final AS4OutgoingAttachment aAttachment,
+                                                              @NonNull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
   {
     if (aAttachment.hasDataBytes ())
     {
@@ -390,14 +390,14 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    *         In case something goes wrong during compression
    */
   @SuppressWarnings ("resource")
-  @Nonnull
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
+  @NonNull
+  public static WSS4JAttachment createOutgoingFileAttachment (@NonNull final File aSrcFile,
                                                               @Nullable final String sContentID,
                                                               @Nullable final String sFilename,
-                                                              @Nonnull final IMimeType aMimeType,
+                                                              @NonNull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nullable final Charset aCharset,
-                                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
+                                                              @NonNull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
   {
     ValueEnforcer.notNull (aSrcFile, "File");
     ValueEnforcer.notNull (aMimeType, "MimeType");
@@ -462,14 +462,14 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    *         In case something goes wrong during compression
    */
   @SuppressWarnings ("resource")
-  @Nonnull
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final byte [] aSrcData,
+  @NonNull
+  public static WSS4JAttachment createOutgoingFileAttachment (@NonNull final byte [] aSrcData,
                                                               @Nullable final String sContentID,
                                                               @Nullable final String sFilename,
-                                                              @Nonnull final IMimeType aMimeType,
+                                                              @NonNull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nullable final Charset aCharset,
-                                                              @Nonnull final AS4ResourceHelper aResHelper) throws IOException
+                                                              @NonNull final AS4ResourceHelper aResHelper) throws IOException
   {
     ValueEnforcer.notNull (aSrcData, "Data");
     ValueEnforcer.notNull (aMimeType, "MimeType");
@@ -519,9 +519,9 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   }
 
   @SuppressWarnings ("resource")
-  @Nonnull
-  public static WSS4JAttachment createIncomingFileAttachment (@Nonnull final MimeBodyPart aBodyPart,
-                                                              @Nonnull final AS4ResourceHelper aResHelper) throws MessagingException,
+  @NonNull
+  public static WSS4JAttachment createIncomingFileAttachment (@NonNull final MimeBodyPart aBodyPart,
+                                                              @NonNull final AS4ResourceHelper aResHelper) throws MessagingException,
                                                                                                            IOException
   {
     ValueEnforcer.notNull (aBodyPart, "BodyPart");

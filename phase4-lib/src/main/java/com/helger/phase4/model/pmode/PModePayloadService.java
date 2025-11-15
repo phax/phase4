@@ -18,6 +18,9 @@ package com.helger.phase4.model.pmode;
 
 import java.io.Serializable;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.MustImplementEqualsAndHashcode;
 import com.helger.base.equals.EqualsHelper;
@@ -25,9 +28,6 @@ import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.state.EChange;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.attachment.EAS4CompressionMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 @NotThreadSafe
 @MustImplementEqualsAndHashcode
@@ -73,7 +73,7 @@ public class PModePayloadService implements Serializable
    *        Compression mode to use. May be <code>null</code>.
    * @return {@link EChange}
    */
-  @Nonnull
+  @NonNull
   public final EChange setCompressionMode (@Nullable final EAS4CompressionMode eCompressionMode)
   {
     if (EqualsHelper.equals (eCompressionMode, m_eCompressionMode))

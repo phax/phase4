@@ -19,6 +19,9 @@ package com.helger.phase4.model.pmode.leg;
 import java.io.Serializable;
 import java.net.URL;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.MustImplementEqualsAndHashcode;
 import com.helger.base.enforce.ValueEnforcer;
@@ -29,9 +32,6 @@ import com.helger.base.string.StringHelper;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.base.url.URLHelper;
 import com.helger.phase4.model.ESoapVersion;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * PMode leg protocol parameters.
@@ -61,7 +61,7 @@ public class PModeLegProtocol implements Serializable
   public PModeLegProtocol ()
   {}
 
-  public PModeLegProtocol (@Nullable final String sAddress, @Nonnull final ESoapVersion eSoapVersion)
+  public PModeLegProtocol (@Nullable final String sAddress, @NonNull final ESoapVersion eSoapVersion)
   {
     setAddress (sAddress);
     setSoapVersion (eSoapVersion);
@@ -85,7 +85,7 @@ public class PModeLegProtocol implements Serializable
     return aURL == null ? null : aURL.getProtocol ();
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setAddress (@Nullable final String sAddress)
   {
     if (EqualsHelper.equals (sAddress, m_sAddress))
@@ -94,14 +94,14 @@ public class PModeLegProtocol implements Serializable
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public final ESoapVersion getSoapVersion ()
   {
     return m_eSoapVersion;
   }
 
-  @Nonnull
-  public final EChange setSoapVersion (@Nonnull final ESoapVersion eSoapVersion)
+  @NonNull
+  public final EChange setSoapVersion (@NonNull final ESoapVersion eSoapVersion)
   {
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     if (eSoapVersion.equals (m_eSoapVersion))
@@ -135,7 +135,7 @@ public class PModeLegProtocol implements Serializable
                                        .getToString ();
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegProtocol createForDefaultSoapVersion (@Nullable final String sAddress)
   {
     return new PModeLegProtocol (sAddress, ESoapVersion.AS4_DEFAULT);

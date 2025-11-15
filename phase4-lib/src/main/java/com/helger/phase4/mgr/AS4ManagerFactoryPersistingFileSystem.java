@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.mgr;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.dao.DAOException;
 import com.helger.phase4.duplicate.AS4DuplicateManagerXML;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
@@ -26,8 +28,6 @@ import com.helger.phase4.model.pmode.PModeManagerXML;
 import com.helger.phase4.profile.AS4ProfileManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.phase4.util.Phase4Exception;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Implementation of {@link IAS4ManagerFactory} creating managers that are persisting to disk.
@@ -41,7 +41,7 @@ public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
   private static final String PMODE_XML = "as4-pmode.xml";
   private static final String INCOMING_DUPLICATE_XML = "as4-duplicate-incoming.xml";
 
-  @Nonnull
+  @NonNull
   public IMPCManager createMPCManager () throws Phase4Exception
   {
     try
@@ -54,7 +54,7 @@ public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
     }
   }
 
-  @Nonnull
+  @NonNull
   public IPModeManager createPModeManager () throws Phase4Exception
   {
     try
@@ -67,7 +67,7 @@ public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
     }
   }
 
-  @Nonnull
+  @NonNull
   public IAS4DuplicateManager createDuplicateManager () throws Phase4Exception
   {
     try
@@ -80,14 +80,14 @@ public class AS4ManagerFactoryPersistingFileSystem implements IAS4ManagerFactory
     }
   }
 
-  @Nonnull
+  @NonNull
   public IAS4ProfileManager createProfileManager ()
   {
     // Always in memory
     return new AS4ProfileManager ();
   }
 
-  @Nonnull
+  @NonNull
   public IAS4TimestampManager createTimestampManager ()
   {
     return IAS4TimestampManager.createDefaultInstance ();

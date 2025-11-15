@@ -24,6 +24,8 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.base.wrapper.Wrapper;
@@ -52,8 +54,6 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.util.Phase4Exception;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**
@@ -68,19 +68,19 @@ public final class AS4BidirectionalClientHelper
   private AS4BidirectionalClientHelper ()
   {}
 
-  public static void sendAS4UserMessageAndReceiveAS4SignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                                   @Nonnull final IAS4PModeResolver aPModeResolver,
-                                                                   @Nonnull final IAS4IncomingAttachmentFactory aIAF,
-                                                                   @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
-                                                                   @Nonnull final AS4ClientUserMessage aClientUserMsg,
-                                                                   @Nonnull final Locale aLocale,
-                                                                   @Nonnull final String sURL,
+  public static void sendAS4UserMessageAndReceiveAS4SignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                   @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                                   @NonNull final IAS4PModeResolver aPModeResolver,
+                                                                   @NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                                                   @NonNull final IAS4IncomingProfileSelector aIncomingProfileSelector,
+                                                                   @NonNull final AS4ClientUserMessage aClientUserMsg,
+                                                                   @NonNull final Locale aLocale,
+                                                                   @NonNull final String sURL,
                                                                    @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                                   @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                                   @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
+                                                                   @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                   @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                                    @Nullable final IAS4RetryCallback aRetryCallback,
                                                                    @Nullable final IAS4RawResponseConsumer aRawResponseConsumer,
                                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
@@ -184,19 +184,19 @@ public final class AS4BidirectionalClientHelper
       LOGGER.info ("AS4 ResponseEntity is empty");
   }
 
-  public static void sendAS4PullRequestAndReceiveAS4UserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                                                 @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                                 @Nonnull final IAS4PModeResolver aPModeResolver,
-                                                                 @Nonnull final IAS4IncomingAttachmentFactory aIAF,
-                                                                 @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
-                                                                 @Nonnull final AS4ClientPullRequestMessage aClientPullRequest,
-                                                                 @Nonnull final Locale aLocale,
-                                                                 @Nonnull final String sURL,
+  public static void sendAS4PullRequestAndReceiveAS4UserMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                 @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                                 @NonNull final IAS4PModeResolver aPModeResolver,
+                                                                 @NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                                                 @NonNull final IAS4IncomingProfileSelector aIncomingProfileSelector,
+                                                                 @NonNull final AS4ClientPullRequestMessage aClientPullRequest,
+                                                                 @NonNull final Locale aLocale,
+                                                                 @NonNull final String sURL,
                                                                  @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                  @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                                 @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                                 @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
+                                                                 @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                 @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                                  @Nullable final IAS4RetryCallback aRetryCallback,
                                                                  @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                  @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
@@ -270,19 +270,19 @@ public final class AS4BidirectionalClientHelper
       LOGGER.info ("AS4 ResponseEntity is empty");
   }
 
-  public static void sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                                                         @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                                         @Nonnull final IAS4PModeResolver aPModeResolver,
-                                                                         @Nonnull final IAS4IncomingAttachmentFactory aIAF,
-                                                                         @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
-                                                                         @Nonnull final AS4ClientPullRequestMessage aClientPullRequest,
-                                                                         @Nonnull final Locale aLocale,
-                                                                         @Nonnull final String sURL,
+  public static void sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                         @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                                         @NonNull final IAS4PModeResolver aPModeResolver,
+                                                                         @NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                                                         @NonNull final IAS4IncomingProfileSelector aIncomingProfileSelector,
+                                                                         @NonNull final AS4ClientPullRequestMessage aClientPullRequest,
+                                                                         @NonNull final Locale aLocale,
+                                                                         @NonNull final String sURL,
                                                                          @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                                                          @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                          @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                                         @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                                         @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
+                                                                         @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                         @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                                          @Nullable final IAS4RetryCallback aRetryCallback,
                                                                          @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                          @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,

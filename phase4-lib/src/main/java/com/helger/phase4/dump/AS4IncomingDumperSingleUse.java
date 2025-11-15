@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.WillNotClose;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * A simple {@link IAS4IncomingDumper} that can be used for a single transmission and dumps it to
@@ -40,21 +40,21 @@ public class AS4IncomingDumperSingleUse extends AbstractAS4IncomingDumperWithHea
   private final AtomicBoolean m_aUsedOS = new AtomicBoolean (false);
   private final OutputStream m_aOS;
 
-  public AS4IncomingDumperSingleUse (@Nonnull @WillNotClose final OutputStream aOS)
+  public AS4IncomingDumperSingleUse (@NonNull @WillNotClose final OutputStream aOS)
   {
     ValueEnforcer.notNull (aOS, "OS");
     m_aOS = aOS;
   }
 
-  @Nonnull
+  @NonNull
   protected final OutputStream getOutputStream ()
   {
     return m_aOS;
   }
 
   @Override
-  protected OutputStream openOutputStream (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                           @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
+  protected OutputStream openOutputStream (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                           @NonNull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     if (!m_aUsedOS.compareAndSet (false, true))
       throw new IllegalStateException ("This single-use dumper was already used.");

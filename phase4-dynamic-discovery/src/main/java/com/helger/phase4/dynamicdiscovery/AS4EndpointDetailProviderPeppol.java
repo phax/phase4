@@ -19,6 +19,8 @@ package com.helger.phase4.dynamicdiscovery;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -46,9 +48,6 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Implementation of {@link IAS4EndpointDetailProvider} using a Peppol SMP Client to determine this
  * information from an endpoint.
@@ -67,8 +66,8 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   private ISMPTransportProfile m_aTP = DEFAULT_TRANSPORT_PROFILE;
   private EndpointType m_aEndpoint;
 
-  public AS4EndpointDetailProviderPeppol (@Nonnull final ISMPServiceGroupProvider aServiceGroupProvider,
-                                          @Nonnull final ISMPExtendedServiceMetadataProvider aServiceMetadataProvider)
+  public AS4EndpointDetailProviderPeppol (@NonNull final ISMPServiceGroupProvider aServiceGroupProvider,
+                                          @NonNull final ISMPExtendedServiceMetadataProvider aServiceMetadataProvider)
   {
     ValueEnforcer.notNull (aServiceGroupProvider, "ServiceGroupProvider");
     ValueEnforcer.notNull (aServiceMetadataProvider, "ServiceMetadataProvider");
@@ -79,7 +78,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   /**
    * @return The service group provider passed in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final ISMPServiceGroupProvider getServiceGroupProvider ()
   {
     return m_aServiceGroupProvider;
@@ -88,7 +87,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   /**
    * @return The service metadata provider passed in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final ISMPServiceMetadataProvider getServiceMetadataProvider ()
   {
     return m_aServiceMetadataProvider;
@@ -97,7 +96,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
   /**
    * @return The transport profile to be used. Defaults to {@link #DEFAULT_TRANSPORT_PROFILE}.
    */
-  @Nonnull
+  @NonNull
   public final ISMPTransportProfile getTransportProfile ()
   {
     return m_aTP;
@@ -111,8 +110,8 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
    *        The transport profile to be used. May not be <code>null</code>.
    * @return this for chaining.
    */
-  @Nonnull
-  public final AS4EndpointDetailProviderPeppol setTransportProfile (@Nonnull final ISMPTransportProfile aTP)
+  @NonNull
+  public final AS4EndpointDetailProviderPeppol setTransportProfile (@NonNull final ISMPTransportProfile aTP)
   {
     ValueEnforcer.notNull (aTP, "TransportProfile");
     m_aTP = aTP;
@@ -132,16 +131,16 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
 
   @Nullable
   @OverrideOnDemand
-  protected SignedServiceMetadataType resolvedSchemeSpecificServiceMetadata (@Nonnull final IParticipantIdentifier aReceiverID,
-                                                                             @Nonnull final IDocumentTypeIdentifier aDocTypeID) throws SMPClientException
+  protected SignedServiceMetadataType resolvedSchemeSpecificServiceMetadata (@NonNull final IParticipantIdentifier aReceiverID,
+                                                                             @NonNull final IDocumentTypeIdentifier aDocTypeID) throws SMPClientException
   {
     // Resolve per scheme
     return m_aServiceMetadataProvider.getSchemeSpecificServiceMetadataOrNull (aReceiverID, aDocTypeID);
   }
 
-  public void init (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                    @Nonnull final IProcessIdentifier aProcID,
-                    @Nonnull final IParticipantIdentifier aReceiverID) throws Phase4Exception
+  public void init (@NonNull final IDocumentTypeIdentifier aDocTypeID,
+                    @NonNull final IProcessIdentifier aProcID,
+                    @NonNull final IParticipantIdentifier aReceiverID) throws Phase4Exception
   {
     ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
     ValueEnforcer.notNull (aProcID, "ProcID");
@@ -243,7 +242,7 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
     }
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getReceiverAPEndpointURL () throws Phase4Exception
   {
@@ -277,8 +276,8 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
    * @return Never <code>null</code>.
    * @since 2.8.1
    */
-  @Nonnull
-  public static AS4EndpointDetailProviderPeppol create (@Nonnull final SMPClientReadOnly aSMPClient)
+  @NonNull
+  public static AS4EndpointDetailProviderPeppol create (@NonNull final SMPClientReadOnly aSMPClient)
   {
     return new AS4EndpointDetailProviderPeppol (aSMPClient, aSMPClient);
   }

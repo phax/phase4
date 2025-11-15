@@ -18,6 +18,7 @@ package com.helger.phase4.server;
 
 import java.io.File;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -37,8 +38,6 @@ import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
-import jakarta.annotation.Nonnull;
-
 public final class MockJettySetup extends AbstractAS4TestSetUp
 {
   public static final String SETTINGS_SERVER_JETTY_ENABLED = "server.jetty.enabled";
@@ -57,7 +56,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
   private MockJettySetup ()
   {}
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public static String getServerAddressFromSettings ()
   {
@@ -135,7 +134,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
     LOGGER.info ("MockJettySetup - stopped");
   }
 
-  @Nonnull
+  @NonNull
   public static AS4ResourceHelper getResourceManagerInstance ()
   {
     return s_aResMgr;

@@ -18,6 +18,7 @@ package com.helger.phase4.client;
 
 import static org.junit.Assert.fail;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,8 +38,6 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
 import com.helger.xml.serialize.read.DOMReader;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Test class for class {@link AS4ClientReceiptMessage}
@@ -64,7 +63,7 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
     MockJettySetup.shutDownServer ();
   }
 
-  private static void _ensureInvalidState (@Nonnull final AS4ClientReceiptMessage aClient) throws Exception
+  private static void _ensureInvalidState (@NonNull final AS4ClientReceiptMessage aClient) throws Exception
   {
     try
     {
@@ -77,7 +76,7 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
     }
   }
 
-  private static void _ensureValidState (@Nonnull final AS4ClientReceiptMessage aClient) throws Exception
+  private static void _ensureValidState (@NonNull final AS4ClientReceiptMessage aClient) throws Exception
   {
     try
     {

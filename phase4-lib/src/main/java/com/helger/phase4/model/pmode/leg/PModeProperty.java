@@ -18,6 +18,8 @@ package com.helger.phase4.model.pmode.leg;
 
 import java.io.Serializable;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -33,9 +35,6 @@ import com.helger.base.state.IMandatoryIndicator;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.text.IHasDescription;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * A property is a data structure that consists of four values: the property name, which can be used
@@ -61,7 +60,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   private String m_sDataType;
   private EMandatory m_eMandatory;
 
-  private static void _checkDataType (@Nonnull final String sDataType)
+  private static void _checkDataType (@NonNull final String sDataType)
   {
     if (!DATA_TYPE_STRING.equals (sDataType))
       LOGGER.warn ("A non-standard data type (everything besides '" + DATA_TYPE_STRING + "') is used: " + sDataType);
@@ -70,10 +69,10 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   public PModeProperty ()
   {}
 
-  public PModeProperty (@Nonnull @Nonempty final String sName,
+  public PModeProperty (@NonNull @Nonempty final String sName,
                         @Nullable final String sDescription,
-                        @Nonnull @Nonempty final String sDataType,
-                        @Nonnull final EMandatory eMandatory)
+                        @NonNull @Nonempty final String sDataType,
+                        @NonNull final EMandatory eMandatory)
   {
     setName (sName);
     setDescription (sDescription);
@@ -84,7 +83,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   /**
    * The PMode property name.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getName ()
   {
@@ -99,8 +98,8 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
-  public final EChange setName (@Nonnull @Nonempty final String sName)
+  @NonNull
+  public final EChange setName (@NonNull @Nonempty final String sName)
   {
     ValueEnforcer.notEmpty (sName, "Name");
     if (sName.equals (m_sName))
@@ -125,7 +124,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
    *        The description. May be <code>null</code>.
    * @return {@link EChange}
    */
-  @Nonnull
+  @NonNull
   public final EChange setDescription (@Nullable final String sDescription)
   {
     if (EqualsHelper.equals (sDescription, m_sDescription))
@@ -137,7 +136,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   /**
    * @return The PMode property data type. May neither be <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getDataType ()
   {
@@ -152,8 +151,8 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
-  public final EChange setDataType (@Nonnull @Nonempty final String sDataType)
+  @NonNull
+  public final EChange setDataType (@NonNull @Nonempty final String sDataType)
   {
     ValueEnforcer.notEmpty (sDataType, "DataType");
     if (sDataType.equals (m_sDataType))
@@ -190,8 +189,8 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
-  public final EChange setMandatory (@Nonnull final EMandatory eMandatory)
+  @NonNull
+  public final EChange setMandatory (@NonNull final EMandatory eMandatory)
   {
     ValueEnforcer.notNull (eMandatory, "Mandatory");
     if (eMandatory.equals (m_eMandatory))
@@ -208,7 +207,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public final EChange setMandatory (final boolean bMandatory)
   {
     return setMandatory (EMandatory.valueOf (bMandatory));

@@ -18,6 +18,9 @@ package com.helger.phase4.model.pmode;
 
 import java.io.Serializable;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.MustImplementEqualsAndHashcode;
@@ -28,9 +31,6 @@ import com.helger.base.id.IHasID;
 import com.helger.base.state.EChange;
 import com.helger.base.string.StringHelper;
 import com.helger.base.tostring.ToStringGenerator;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Party within a PMode
@@ -57,8 +57,8 @@ public class PModeParty implements IHasID <String>, Serializable
   private String m_sPassword;
 
   public PModeParty (@Nullable final String sIDType,
-                     @Nonnull @Nonempty final String sIDValue,
-                     @Nonnull @Nonempty final String sRole,
+                     @NonNull @Nonempty final String sIDValue,
+                     @NonNull @Nonempty final String sRole,
                      @Nullable final String sUserName,
                      @Nullable final String sPassword)
   {
@@ -94,7 +94,7 @@ public class PModeParty implements IHasID <String>, Serializable
    * @return {@link EChange}.
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public final EChange setIDType (@Nullable final String sIDType)
   {
     if (EqualsHelper.equals (sIDType, m_sIDType))
@@ -106,7 +106,7 @@ public class PModeParty implements IHasID <String>, Serializable
   /**
    * @return The ID value. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getIDValue ()
   {
@@ -121,8 +121,8 @@ public class PModeParty implements IHasID <String>, Serializable
    * @return {@link EChange}.
    * @since 0.12.0
    */
-  @Nonnull
-  public final EChange setIDValue (@Nonnull @Nonempty final String sIDValue)
+  @NonNull
+  public final EChange setIDValue (@NonNull @Nonempty final String sIDValue)
   {
     ValueEnforcer.notEmpty (sIDValue, "IDValue");
     if (sIDValue.equals (m_sIDValue))
@@ -134,7 +134,7 @@ public class PModeParty implements IHasID <String>, Serializable
   /**
    * Either <code>id-type:id-value</code> or just <code>id-value</code> if not id-type is present.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getID ()
   {
@@ -146,7 +146,7 @@ public class PModeParty implements IHasID <String>, Serializable
   /**
    * @return The party role. Never <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getRole ()
   {
@@ -161,8 +161,8 @@ public class PModeParty implements IHasID <String>, Serializable
    * @return {@link EChange}.
    * @since 0.12.0
    */
-  @Nonnull
-  public final EChange setRole (@Nonnull @Nonempty final String sRole)
+  @NonNull
+  public final EChange setRole (@NonNull @Nonempty final String sRole)
   {
     ValueEnforcer.notEmpty (sRole, "Role");
     if (sRole.equals (m_sRole))
@@ -196,7 +196,7 @@ public class PModeParty implements IHasID <String>, Serializable
    * @return {@link EChange}.
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public final EChange setUserName (@Nullable final String sUserName)
   {
     if (EqualsHelper.equals (sUserName, m_sUserName))
@@ -230,7 +230,7 @@ public class PModeParty implements IHasID <String>, Serializable
    * @return {@link EChange}.
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public final EChange setPassword (@Nullable final String sPassword)
   {
     if (EqualsHelper.equals (sPassword, m_sPassword))
@@ -276,9 +276,9 @@ public class PModeParty implements IHasID <String>, Serializable
                                        .getToString ();
   }
 
-  @Nonnull
-  public static PModeParty createSimple (@Nonnull @Nonempty final String sIDValue,
-                                         @Nonnull @Nonempty final String sRole)
+  @NonNull
+  public static PModeParty createSimple (@NonNull @Nonempty final String sIDValue,
+                                         @NonNull @Nonempty final String sRole)
   {
     return new PModeParty ((String) null, sIDValue, sRole, (String) null, (String) null);
   }

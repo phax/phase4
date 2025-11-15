@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.ETriState;
 import com.helger.collection.commons.CommonsArrayList;
@@ -30,8 +32,6 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.phase4.wss.EWSSVersion;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeLegSecurity}.
@@ -74,8 +74,8 @@ public final class PModeLegSecurityJsonConverter
    *        The value to be converted. May not be <code>null</code>.
    * @return The non-<code>null</code> JSON object filled with the necessary values.
    */
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModeLegSecurity aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModeLegSecurity aValue)
   {
     final IJsonObject ret = new JsonObject ();
 
@@ -136,8 +136,8 @@ public final class PModeLegSecurityJsonConverter
    * @throws IllegalStateException
    *         In case of an unsupported value
    */
-  @Nonnull
-  public static PModeLegSecurity convertToNative (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static PModeLegSecurity convertToNative (@NonNull final IJsonObject aElement)
   {
     final String sWSSVersion = aElement.getAsString (ATTR_WSS_VERSION);
     final EWSSVersion eWSSVersion = EWSSVersion.getFromVersionOrNull (sWSSVersion);

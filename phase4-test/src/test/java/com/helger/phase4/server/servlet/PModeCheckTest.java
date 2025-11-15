@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -54,8 +55,6 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.xml.serialize.read.DOMReader;
-
-import jakarta.annotation.Nonnull;
 
 public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 {
@@ -254,7 +253,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     sendPlainMessage (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()), false, "");
   }
 
-  @Nonnull
+  @NonNull
   private static Ebms3Property _createRandomProperty ()
   {
     return MessageHelperMethods.createEbms3Property ("randomname" + UUID.randomUUID (),

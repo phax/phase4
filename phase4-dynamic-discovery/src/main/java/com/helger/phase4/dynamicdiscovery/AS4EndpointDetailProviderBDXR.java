@@ -19,6 +19,8 @@ package com.helger.phase4.dynamicdiscovery;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -40,9 +42,6 @@ import com.helger.smpclient.exception.SMPClientException;
 import com.helger.smpclient.exception.SMPClientUnauthorizedException;
 import com.helger.xsds.bdxr.smp1.EndpointType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Implementation of {@link IAS4EndpointDetailProvider} using an OASIS BDXR SMP v1 Client to
  * determine this information from an endpoint.
@@ -60,7 +59,7 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
   private ISMPTransportProfile m_aTP = DEFAULT_TRANSPORT_PROFILE;
   private EndpointType m_aEndpoint;
 
-  public AS4EndpointDetailProviderBDXR (@Nonnull final IBDXRServiceMetadataProvider aSMPClient)
+  public AS4EndpointDetailProviderBDXR (@NonNull final IBDXRServiceMetadataProvider aSMPClient)
   {
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
     m_aSMPClient = aSMPClient;
@@ -69,7 +68,7 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
   /**
    * @return The service metadata provider passed in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final IBDXRServiceMetadataProvider getServiceMetadataProvider ()
   {
     return m_aSMPClient;
@@ -78,7 +77,7 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
   /**
    * @return The transport profile to be used. Defaults to {@link #DEFAULT_TRANSPORT_PROFILE}.
    */
-  @Nonnull
+  @NonNull
   public final ISMPTransportProfile getTransportProfile ()
   {
     return m_aTP;
@@ -92,8 +91,8 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
    *        The transport profile to be used. May not be <code>null</code>.
    * @return this for chaining.
    */
-  @Nonnull
-  public final AS4EndpointDetailProviderBDXR setTransportProfile (@Nonnull final ISMPTransportProfile aTP)
+  @NonNull
+  public final AS4EndpointDetailProviderBDXR setTransportProfile (@NonNull final ISMPTransportProfile aTP)
   {
     ValueEnforcer.notNull (aTP, "TransportProfile");
     m_aTP = aTP;
@@ -111,9 +110,9 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
     return m_aEndpoint;
   }
 
-  public void init (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                    @Nonnull final IProcessIdentifier aProcID,
-                    @Nonnull final IParticipantIdentifier aReceiverID) throws Phase4Exception
+  public void init (@NonNull final IDocumentTypeIdentifier aDocTypeID,
+                    @NonNull final IProcessIdentifier aProcID,
+                    @NonNull final IParticipantIdentifier aReceiverID) throws Phase4Exception
   {
     ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
     ValueEnforcer.notNull (aProcID, "ProcID");
@@ -192,7 +191,7 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
     }
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getReceiverAPEndpointURL () throws Phase4Exception
   {

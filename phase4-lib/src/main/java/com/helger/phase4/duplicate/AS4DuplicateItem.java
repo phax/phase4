@@ -18,15 +18,15 @@ package com.helger.phase4.duplicate;
 
 import java.time.OffsetDateTime;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.equals.EqualsHelper;
 import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.mgr.MetaAS4Manager;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class represents a single "duplication check" item. It works for incoming and outgoing
@@ -42,15 +42,15 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
   private final String m_sProfileID;
   private final String m_sPModeID;
 
-  public AS4DuplicateItem (@Nonnull @Nonempty final String sMessageID,
+  public AS4DuplicateItem (@NonNull @Nonempty final String sMessageID,
                            @Nullable final String sProfileID,
                            @Nullable final String sPModeID)
   {
     this (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), sMessageID, sProfileID, sPModeID);
   }
 
-  protected AS4DuplicateItem (@Nonnull final OffsetDateTime aDT,
-                              @Nonnull @Nonempty final String sMessageID,
+  protected AS4DuplicateItem (@NonNull final OffsetDateTime aDT,
+                              @NonNull @Nonempty final String sMessageID,
                               @Nullable final String sProfileID,
                               @Nullable final String sPModeID)
   {
@@ -60,7 +60,7 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
     m_sPModeID = sPModeID;
   }
 
-  @Nonnull
+  @NonNull
   public final OffsetDateTime getDateTime ()
   {
     return m_aDT;
@@ -70,14 +70,14 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
    * @return The message ID. Neither <code>null</code> nor empty.
    * @see #getMessageID()
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getID ()
   {
     return getMessageID ();
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getMessageID ()
   {

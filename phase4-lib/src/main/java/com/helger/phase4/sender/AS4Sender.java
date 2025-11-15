@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.sender;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.annotation.concurrent.NotThreadSafe;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * This class contains all the settings necessary to send AS4 messages using the builder pattern.
@@ -39,7 +39,7 @@ public final class AS4Sender
   /**
    * @return Create a new Builder for generic AS4 User Messages. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static BuilderUserMessage builderUserMessage ()
   {
     return new BuilderUserMessage ();
@@ -49,7 +49,7 @@ public final class AS4Sender
    * @return Create a new Builder for generic AS4 Pull Requests. Never <code>null</code>.
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public static BuilderPullRequest builderPullRequest ()
   {
     return new BuilderPullRequest ();

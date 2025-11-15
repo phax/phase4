@@ -19,6 +19,9 @@
  */
 package com.helger.phase4.profile.entsog;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.ETriState;
@@ -45,9 +48,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * PMode creation code.
  *
@@ -62,14 +62,14 @@ public final class ENTSOGPMode
   private ENTSOGPMode ()
   {}
 
-  @Nonnull
+  @NonNull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
     // Set the endpoint URL
     return PModeLegProtocol.createForDefaultSoapVersion (sAddress);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     final String sService = null;
@@ -79,7 +79,7 @@ public final class ENTSOGPMode
     return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegErrorHandling generatePModeLegErrorHandling ()
   {
     final PModeAddressList aReportSenderErrorsTo = null;
@@ -96,7 +96,7 @@ public final class ENTSOGPMode
                                       eReportDeliveryFailuresNotifyProducer);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegSecurity generatePModeLegSecurity ()
   {
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
@@ -112,7 +112,7 @@ public final class ENTSOGPMode
     return aPModeLegSecurity;
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress)
   {
     return new PModeLeg (generatePModeLegProtocol (sResponderAddress),
@@ -122,13 +122,13 @@ public final class ENTSOGPMode
                          generatePModeLegSecurity ());
   }
 
-  @Nonnull
+  @NonNull
   public static PModePayloadService generatePModePayloadSevice ()
   {
     return new PModePayloadService (EAS4CompressionMode.GZIP);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeReceptionAwareness generatePModeReceptionAwareness ()
   {
     final ETriState eReceptionAwareness = ETriState.TRUE;
@@ -155,15 +155,15 @@ public final class ENTSOGPMode
    * @param aPModeIDProvider
    *        PMode ID provider
    * @param bPersist
-   *        <code>true</code> to persist the PMode in the PModeManager,
-   *        <code>false</code> to have it only in memory.
+   *        <code>true</code> to persist the PMode in the PModeManager, <code>false</code> to have
+   *        it only in memory.
    * @return New PMode
    */
-  @Nonnull
-  public static PMode createENTSOGPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                         @Nonnull @Nonempty final String sResponderID,
+  @NonNull
+  public static PMode createENTSOGPMode (@NonNull @Nonempty final String sInitiatorID,
+                                         @NonNull @Nonempty final String sResponderID,
                                          @Nullable final String sResponderAddress,
-                                         @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                         @NonNull final IPModeIDProvider aPModeIDProvider,
                                          final boolean bPersist)
   {
     final PModeParty aInitiator = new PModeParty (ENTSOG_PARTY_ID_TYPE,

@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.Nonnegative;
 import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
 import com.helger.base.string.StringHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Predefines transport channel bindings.
@@ -72,21 +72,21 @@ public enum EMEPBinding implements IHasID <String>
   private final String m_sURI;
   private final int m_nRequiredLegs;
 
-  EMEPBinding (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sURI, final int nRequiredLegs)
+  EMEPBinding (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sURI, final int nRequiredLegs)
   {
     m_sID = sID;
     m_sURI = sURI;
     m_nRequiredLegs = nRequiredLegs;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
     return m_sID;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getURI ()
   {

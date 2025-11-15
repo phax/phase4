@@ -31,6 +31,8 @@ import java.util.Locale;
 
 import javax.xml.namespace.QName;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -57,9 +59,6 @@ import com.helger.phase4.soap12.Soap12Envelope;
 import com.helger.phase4.soap12.Soap12Header;
 import com.helger.xml.XMLHelper;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Abstract AS4 message implementation
  *
@@ -79,7 +78,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   private final String m_sMessagingID;
   protected final Ebms3Messaging m_aMessaging = new Ebms3Messaging ();
 
-  public AbstractAS4Message (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final EAS4MessageType eMsgType)
+  public AbstractAS4Message (@NonNull final ESoapVersion eSoapVersion, @NonNull final EAS4MessageType eMsgType)
   {
     m_eSoapVersion = ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     m_eMsgType = ValueEnforcer.notNull (eMsgType, "MessageType");
@@ -92,26 +91,26 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
     setMustUnderstand (true);
   }
 
-  @Nonnull
+  @NonNull
   public final ESoapVersion getSoapVersion ()
   {
     return m_eSoapVersion;
   }
 
-  @Nonnull
+  @NonNull
   public final EAS4MessageType getMessageType ()
   {
     return m_eMsgType;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getMessagingID ()
   {
     return m_sMessagingID;
   }
 
-  @Nonnull
+  @NonNull
   public final IMPLTYPE setMustUnderstand (final boolean bMustUnderstand)
   {
     switch (m_eSoapVersion)
@@ -175,7 +174,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
                                                            .withChronology (IsoChronology.INSTANCE);
   }
 
-  @Nonnull
+  @NonNull
   public final Document getAsSoapDocument (@Nullable final Node aSoapBodyPayload)
   {
     // Convert to DOM Node

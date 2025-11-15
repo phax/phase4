@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.incoming.crypto;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Default implementation of {@link IAS4IncomingSecurityConfiguration}.
@@ -47,7 +47,7 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
     return m_aSigningParams;
   }
 
-  @Nonnull
+  @NonNull
   public AS4IncomingSecurityConfiguration setSigningParams (@Nullable final AS4SigningParams a)
   {
     m_aSigningParams = a;
@@ -60,7 +60,7 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
     return m_aCryptParams;
   }
 
-  @Nonnull
+  @NonNull
   public AS4IncomingSecurityConfiguration setCryptParams (@Nullable final AS4CryptParams a)
   {
     m_aCryptParams = a;
@@ -73,7 +73,7 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
     return m_aDecryptParameterModifier;
   }
 
-  @Nonnull
+  @NonNull
   public AS4IncomingSecurityConfiguration setDecryptParameterModifier (@Nullable final IAS4DecryptParameterModifier a)
   {
     m_aDecryptParameterModifier = a;
@@ -89,7 +89,7 @@ public class AS4IncomingSecurityConfiguration implements IAS4IncomingSecurityCon
                                        .getToString ();
   }
 
-  @Nonnull
+  @NonNull
   public static AS4IncomingSecurityConfiguration createDefaultInstance ()
   {
     // No SigningParams

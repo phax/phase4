@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.profile.dbnalliance;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.style.IsSPIImplementation;
@@ -25,8 +26,6 @@ import com.helger.phase4.profile.AS4Profile;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
 import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Library specific implementation of {@link IAS4ProfileRegistrarSPI}.
@@ -43,7 +42,7 @@ public final class AS4DBNAllianceProfileRegistarSPI implements IAS4ProfileRegist
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4DBNAllianceProfileRegistarSPI.class);
 
-  public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
+  public void registerAS4Profile (@NonNull final IAS4ProfileRegistrar aRegistrar)
   {
     final IAS4ProfilePModeProvider aDefaultPModeProvider = (i,
                                                             r,

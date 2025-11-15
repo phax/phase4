@@ -19,10 +19,10 @@ package com.helger.phase4.util;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.enforce.ValueEnforcer;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * An output stream that writes to multiple output streams.
@@ -33,7 +33,7 @@ public class MultiOutputStream extends OutputStream
 {
   private final OutputStream [] m_aOSs;
 
-  public MultiOutputStream (@Nonnull @Nonempty final OutputStream... aOSs)
+  public MultiOutputStream (@NonNull @Nonempty final OutputStream... aOSs)
   {
     ValueEnforcer.notEmptyNoNullValue (aOSs, "OutputStreams");
     m_aOSs = aOSs;

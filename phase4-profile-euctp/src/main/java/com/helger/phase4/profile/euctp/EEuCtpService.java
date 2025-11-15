@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.profile.euctp;
 
-import com.helger.annotation.Nonempty;
+import org.jspecify.annotations.NonNull;
 
-import jakarta.annotation.Nonnull;
+import com.helger.annotation.Nonempty;
 
 /**
  * This enum contains all the EU CTP AS4 services.
@@ -33,12 +33,12 @@ public enum EEuCtpService
 
   private final String m_sValue;
 
-  EEuCtpService (@Nonnull @Nonempty final String sValue)
+  EEuCtpService (@NonNull @Nonempty final String sValue)
   {
     m_sValue = sValue;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getValue ()
   {

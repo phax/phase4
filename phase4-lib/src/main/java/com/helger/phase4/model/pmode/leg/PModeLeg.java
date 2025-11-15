@@ -18,15 +18,15 @@ package com.helger.phase4.model.pmode.leg;
 
 import java.io.Serializable;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.MustImplementEqualsAndHashcode;
 import com.helger.base.equals.EqualsHelper;
 import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.state.EChange;
 import com.helger.base.tostring.ToStringGenerator;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Contains the information for a single direction (leg) of a PMode
@@ -70,7 +70,7 @@ public class PModeLeg implements Serializable
     return m_aProtocol != null;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setProtocol (@Nullable final PModeLegProtocol aProtocol)
   {
     if (EqualsHelper.equals (aProtocol, m_aProtocol))
@@ -90,7 +90,7 @@ public class PModeLeg implements Serializable
     return m_aBusinessInfo != null;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setBusinessInfo (@Nullable final PModeLegBusinessInformation aBusinessInfo)
   {
     if (EqualsHelper.equals (aBusinessInfo, m_aBusinessInfo))
@@ -110,7 +110,7 @@ public class PModeLeg implements Serializable
     return m_aErrorHandling != null;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setErrorHandling (@Nullable final PModeLegErrorHandling aErrorHandling)
   {
     if (EqualsHelper.equals (aErrorHandling, m_aErrorHandling))
@@ -130,7 +130,7 @@ public class PModeLeg implements Serializable
     return m_aReliability != null;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setReliability (@Nullable final PModeLegReliability aReliability)
   {
     if (EqualsHelper.equals (aReliability, m_aReliability))
@@ -150,7 +150,7 @@ public class PModeLeg implements Serializable
     return m_aSecurity != null;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setSecurity (@Nullable final PModeLegSecurity aSecurity)
   {
     if (EqualsHelper.equals (aSecurity, m_aSecurity))

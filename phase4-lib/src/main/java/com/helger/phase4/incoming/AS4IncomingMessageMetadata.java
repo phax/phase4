@@ -20,6 +20,9 @@ import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -33,8 +36,6 @@ import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.Cookie;
 
 /**
@@ -64,7 +65,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    * @param eMode
    *        The messaging mode. May not be <code>null</code>.
    */
-  protected AS4IncomingMessageMetadata (@Nonnull final EAS4MessageMode eMode)
+  protected AS4IncomingMessageMetadata (@NonNull final EAS4MessageMode eMode)
   {
     this (UUID.randomUUID ().toString (), MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), eMode);
   }
@@ -79,9 +80,9 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    * @param eMode
    *        The messaging mode. May not be <code>null</code>.
    */
-  protected AS4IncomingMessageMetadata (@Nonnull @Nonempty final String sIncomingUniqueID,
-                                        @Nonnull final OffsetDateTime aIncomingDT,
-                                        @Nonnull final EAS4MessageMode eMode)
+  protected AS4IncomingMessageMetadata (@NonNull @Nonempty final String sIncomingUniqueID,
+                                        @NonNull final OffsetDateTime aIncomingDT,
+                                        @NonNull final EAS4MessageMode eMode)
   {
     ValueEnforcer.notEmpty (sIncomingUniqueID, "sIncomingUniqueID");
     ValueEnforcer.notNull (aIncomingDT, "IncomingDT");
@@ -92,20 +93,20 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     m_eMode = eMode;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getIncomingUniqueID ()
   {
     return m_sIncomingUniqueID;
   }
 
-  @Nonnull
+  @NonNull
   public final OffsetDateTime getIncomingDT ()
   {
     return m_aIncomingDT;
   }
 
-  @Nonnull
+  @NonNull
   public final EAS4MessageMode getMode ()
   {
     return m_eMode;
@@ -124,7 +125,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    *        The remote address. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public AS4IncomingMessageMetadata setRemoteAddr (@Nullable final String sRemoteAddr)
   {
     m_sRemoteAddr = sRemoteAddr;
@@ -144,7 +145,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    *        The remote host. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public AS4IncomingMessageMetadata setRemoteHost (@Nullable final String sRemoteHost)
   {
     m_sRemoteHost = sRemoteHost;
@@ -164,7 +165,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    *        The remote port.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public AS4IncomingMessageMetadata setRemotePort (final int nRemotePort)
   {
     m_nRemotePort = nRemotePort;
@@ -184,7 +185,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    *        The remote user. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public AS4IncomingMessageMetadata setRemoteUser (@Nullable final String sRemoteUser)
   {
     m_sRemoteUser = sRemoteUser;
@@ -207,7 +208,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    * @return this for chaining
    * @since 2.5.0
    */
-  @Nonnull
+  @NonNull
   public AS4IncomingMessageMetadata setRemoteTlsCerts (@Nullable final X509Certificate [] aRemoteTlsCerts)
   {
     if (ArrayHelper.isEmpty (aRemoteTlsCerts))
@@ -217,7 +218,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return this;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public ICommonsList <Cookie> cookies ()
   {
@@ -231,21 +232,21 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    *        The cookie array. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public AS4IncomingMessageMetadata setCookies (@Nullable final Cookie [] aCookies)
   {
     m_aCookies.setAll (aCookies);
     return this;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public HttpHeaderMap getAllHttpHeaders ()
   {
     return m_aHttpHeaderMap.getClone ();
   }
 
-  @Nonnull
+  @NonNull
   public AS4IncomingMessageMetadata setHttpHeaders (@Nullable final HttpHeaderMap aHttpHeaderMap)
   {
     m_aHttpHeaderMap.removeAll ();
@@ -270,7 +271,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    * @return this for chaining
    * @since 1.4.2
    */
-  @Nonnull
+  @NonNull
   public AS4IncomingMessageMetadata setRequestMessageID (@Nullable final String sRequestMessageID)
   {
     m_sRequestMessageID = sRequestMessageID;
@@ -292,14 +293,14 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
                                        .getToString ();
   }
 
-  @Nonnull
+  @NonNull
   public static AS4IncomingMessageMetadata createForRequest ()
   {
     return new AS4IncomingMessageMetadata (EAS4MessageMode.REQUEST);
   }
 
-  @Nonnull
-  public static AS4IncomingMessageMetadata createForResponse (@Nonnull @Nonempty final String sRequestMessageID)
+  @NonNull
+  public static AS4IncomingMessageMetadata createForResponse (@NonNull @Nonempty final String sRequestMessageID)
   {
     ValueEnforcer.notEmpty (sRequestMessageID, "RequestMessageID");
     return new AS4IncomingMessageMetadata (EAS4MessageMode.RESPONSE).setRequestMessageID (sRequestMessageID);

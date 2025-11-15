@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.pmode;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.MustImplementEqualsAndHashcode;
 import com.helger.base.enforce.ValueEnforcer;
@@ -29,9 +32,6 @@ import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.photon.security.object.StubObject;
 import com.helger.tenancy.AbstractBusinessObject;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Default implementation of {@link IPMode}
@@ -103,13 +103,13 @@ public class PMode extends AbstractBusinessObject implements IPMode
 
   private PModeReceptionAwareness m_aPModeReceptionAwareness;
 
-  public PMode (@Nonnull @Nonempty final String sPModeID,
-                @Nonnull final PModeParty aInitiator,
-                @Nonnull final PModeParty aResponder,
-                @Nonnull final String sAgreement,
-                @Nonnull final EMEP eMEP,
-                @Nonnull final EMEPBinding eMEPBinding,
-                @Nonnull final PModeLeg aLeg1,
+  public PMode (@NonNull @Nonempty final String sPModeID,
+                @NonNull final PModeParty aInitiator,
+                @NonNull final PModeParty aResponder,
+                @NonNull final String sAgreement,
+                @NonNull final EMEP eMEP,
+                @NonNull final EMEPBinding eMEPBinding,
+                @NonNull final PModeLeg aLeg1,
                 @Nullable final PModeLeg aLeg2,
                 @Nullable final PModePayloadService aPayloadService,
                 @Nullable final PModeReceptionAwareness aReceptionAwareness)
@@ -126,13 +126,13 @@ public class PMode extends AbstractBusinessObject implements IPMode
           aReceptionAwareness);
   }
 
-  PMode (@Nonnull final StubObject aObject,
-         @Nonnull final PModeParty aInitiator,
-         @Nonnull final PModeParty aResponder,
-         @Nonnull final String sAgreement,
-         @Nonnull final EMEP eMEP,
-         @Nonnull final EMEPBinding eMEPBinding,
-         @Nonnull final PModeLeg aLeg1,
+  PMode (@NonNull final StubObject aObject,
+         @NonNull final PModeParty aInitiator,
+         @NonNull final PModeParty aResponder,
+         @NonNull final String sAgreement,
+         @NonNull final EMEP eMEP,
+         @NonNull final EMEPBinding eMEPBinding,
+         @NonNull final PModeLeg aLeg1,
          @Nullable final PModeLeg aLeg2,
          @Nullable final PModePayloadService aPayloadService,
          @Nullable final PModeReceptionAwareness aReceptionAwareness)
@@ -149,7 +149,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
     setReceptionAwareness (aReceptionAwareness);
   }
 
-  @Nonnull
+  @NonNull
   public final ObjectType getObjectType ()
   {
     return OT;
@@ -161,7 +161,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_aInitiator;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setInitiator (@Nullable final PModeParty aInitiator)
   {
     if (EqualsHelper.equals (aInitiator, m_aInitiator))
@@ -176,7 +176,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_aResponder;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setResponder (@Nullable final PModeParty aResponder)
   {
     if (EqualsHelper.equals (aResponder, m_aResponder))
@@ -191,7 +191,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_sAgreement;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setAgreement (@Nullable final String sAgreement)
   {
     if (EqualsHelper.equals (sAgreement, m_sAgreement))
@@ -200,14 +200,14 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public final EMEP getMEP ()
   {
     return m_eMEP;
   }
 
-  @Nonnull
-  public final EChange setMEP (@Nonnull final EMEP eMEP)
+  @NonNull
+  public final EChange setMEP (@NonNull final EMEP eMEP)
   {
     ValueEnforcer.notNull (eMEP, "MEP");
     if (eMEP.equals (m_eMEP))
@@ -216,14 +216,14 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public final EMEPBinding getMEPBinding ()
   {
     return m_eMEPBinding;
   }
 
-  @Nonnull
-  public final EChange setMEPBinding (@Nonnull final EMEPBinding eMEPBinding)
+  @NonNull
+  public final EChange setMEPBinding (@NonNull final EMEPBinding eMEPBinding)
   {
     ValueEnforcer.notNull (eMEPBinding, "MEPBinding");
     if (eMEPBinding.equals (m_eMEPBinding))
@@ -238,7 +238,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_aLeg1;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setLeg1 (@Nullable final PModeLeg aLeg1)
   {
     if (EqualsHelper.equals (aLeg1, m_aLeg1))
@@ -253,7 +253,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_aLeg2;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setLeg2 (@Nullable final PModeLeg aLeg2)
   {
     if (EqualsHelper.equals (aLeg2, m_aLeg2))
@@ -268,7 +268,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_aPayloadService;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setPayloadService (@Nullable final PModePayloadService aPayloadService)
   {
     if (EqualsHelper.equals (aPayloadService, m_aPayloadService))
@@ -283,7 +283,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_aPModeReceptionAwareness;
   }
 
-  @Nonnull
+  @NonNull
   public final EChange setReceptionAwareness (@Nullable final PModeReceptionAwareness aPModeReceptionAwareness)
   {
     if (EqualsHelper.equals (aPModeReceptionAwareness, m_aPModeReceptionAwareness))

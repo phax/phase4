@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.profile.hredelivery;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.base.enforce.ValueEnforcer;
@@ -26,8 +27,6 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.crl.CRLCache;
 import com.helger.security.crl.CRLDownloader;
 import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * The HR eDelivery specific CRL downloader using the {@link HttpClientUrlDownloader} internally.
@@ -53,7 +52,7 @@ public class HREDeliveryCRLDownloader extends CRLDownloader
    * @param aHCS
    *        The {@link HttpClientSettings} to use. May not be <code>null</code>.
    */
-  public HREDeliveryCRLDownloader (@Nonnull final HttpClientSettings aHCS)
+  public HREDeliveryCRLDownloader (@NonNull final HttpClientSettings aHCS)
   {
     super (new HttpClientUrlDownloader (aHCS));
   }
@@ -64,7 +63,7 @@ public class HREDeliveryCRLDownloader extends CRLDownloader
    * @param aHCF
    *        The {@link HttpClientFactory} to use. May not be <code>null</code>.
    */
-  public HREDeliveryCRLDownloader (@Nonnull final HttpClientFactory aHCF)
+  public HREDeliveryCRLDownloader (@NonNull final HttpClientFactory aHCF)
   {
     super (new HttpClientUrlDownloader (aHCF));
   }
@@ -76,7 +75,7 @@ public class HREDeliveryCRLDownloader extends CRLDownloader
    * @param aHCS
    *        The {@link HttpClientSettings} to be used. May not be <code>null</code>.
    */
-  public static void setAsDefaultCRLCache (@Nonnull final HttpClientSettings aHCS)
+  public static void setAsDefaultCRLCache (@NonNull final HttpClientSettings aHCS)
   {
     ValueEnforcer.notNull (aHCS, "HttpClientSettings");
 

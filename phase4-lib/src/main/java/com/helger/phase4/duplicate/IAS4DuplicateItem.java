@@ -19,12 +19,12 @@ package com.helger.phase4.duplicate;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
 import com.helger.base.string.StringHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Base interface for a single duplication check item.
@@ -36,13 +36,13 @@ public interface IAS4DuplicateItem extends IHasID <String>, Serializable
   /**
    * @return The date time when the entry was created. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   OffsetDateTime getDateTime ();
 
   /**
    * @return The message ID. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   String getMessageID ();
 

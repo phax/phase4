@@ -18,6 +18,9 @@ package com.helger.phase4.model;
 
 import java.nio.charset.Charset;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.array.ArrayHelper;
@@ -25,9 +28,6 @@ import com.helger.base.string.StringHelper;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
 import com.helger.mime.MimeType;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Enumeration with all known and supported SOAP versions.
@@ -47,10 +47,10 @@ public enum ESoapVersion
   private final IMimeType m_aMimeType;
   private final String m_sVersion;
 
-  ESoapVersion (@Nonnull @Nonempty final String sNamespaceURI,
-                @Nonnull @Nonempty final String sNamespacePrefix,
-                @Nonnull final IMimeType aMimeType,
-                @Nonnull @Nonempty final String sVersion)
+  ESoapVersion (@NonNull @Nonempty final String sNamespaceURI,
+                @NonNull @Nonempty final String sNamespacePrefix,
+                @NonNull final IMimeType aMimeType,
+                @NonNull @Nonempty final String sVersion)
   {
     m_sNamespaceURI = sNamespaceURI;
     m_sNamespacePrefix = sNamespacePrefix;
@@ -61,7 +61,7 @@ public enum ESoapVersion
   /**
    * @return The namespace URI for this SOAP version. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getNamespaceURI ()
   {
@@ -71,7 +71,7 @@ public enum ESoapVersion
   /**
    * @return The default namespace prefix to be used. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getNamespacePrefix ()
   {
@@ -81,7 +81,7 @@ public enum ESoapVersion
   /**
    * @return The mime type of this SOAP version. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public IMimeType getMimeType ()
   {
     return m_aMimeType;
@@ -94,9 +94,9 @@ public enum ESoapVersion
    *        The charset to be used. May not be <code>null</code>.
    * @return Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
-  public MimeType getMimeType (@Nonnull final Charset aCharset)
+  public MimeType getMimeType (@NonNull final Charset aCharset)
   {
     return new MimeType (m_aMimeType).addParameter (CMimeType.PARAMETER_NAME_CHARSET, aCharset.name ());
   }
@@ -104,7 +104,7 @@ public enum ESoapVersion
   /**
    * @return The human readable version string. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getVersion ()
   {
@@ -118,7 +118,7 @@ public enum ESoapVersion
    *        must understand value
    * @return A non-<code>null</code> non-empty string.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getMustUnderstandValue (final boolean bMustUnderstand)
   {
@@ -130,7 +130,7 @@ public enum ESoapVersion
   /**
    * @return The XML element local name of the SOAP header element.
    */
-  @Nonnull
+  @NonNull
   public String getHeaderElementName ()
   {
     return "Header";
@@ -139,7 +139,7 @@ public enum ESoapVersion
   /**
    * @return The XML element local name of the SOAP body element.
    */
-  @Nonnull
+  @NonNull
   public String getBodyElementName ()
   {
     return "Body";

@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.wss;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.lang.EnumHelper;
 import com.helger.base.string.StringHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Specifies the different WS Security versions available
@@ -40,9 +40,9 @@ public enum EWSSVersion
   private final String m_sNamespacePrefix;
   private final String m_sVersion;
 
-  EWSSVersion (@Nonnull @Nonempty final String sNamespaceURI,
-               @Nonnull @Nonempty final String sNamespacePrefix,
-               @Nonnull @Nonempty final String sVersion)
+  EWSSVersion (@NonNull @Nonempty final String sNamespaceURI,
+               @NonNull @Nonempty final String sNamespacePrefix,
+               @NonNull @Nonempty final String sVersion)
   {
     m_sNamespaceURI = sNamespaceURI;
     m_sNamespacePrefix = sNamespacePrefix;
@@ -52,7 +52,7 @@ public enum EWSSVersion
   /**
    * @return The namespace URI of the specification. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getNamespaceURI ()
   {
@@ -62,7 +62,7 @@ public enum EWSSVersion
   /**
    * @return The intended namespace prefix to be used. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getNamespacePrefix ()
   {
@@ -72,7 +72,7 @@ public enum EWSSVersion
   /**
    * @return The specification version number. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getVersion ()
   {

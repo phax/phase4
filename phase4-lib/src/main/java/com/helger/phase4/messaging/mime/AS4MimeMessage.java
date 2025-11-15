@@ -18,10 +18,11 @@ package com.helger.phase4.messaging.mime;
 
 import java.io.InputStream;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.tostring.ToStringGenerator;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
@@ -36,7 +37,7 @@ public class AS4MimeMessage extends MimeMessage
 {
   private final boolean m_bIsRepeatable;
 
-  @Nonnull
+  @NonNull
   private static Session _getSafeMailSession (@Nullable final Session aSession)
   {
     return aSession != null ? aSession : Session.getDefaultInstance (System.getProperties (), null);
@@ -48,7 +49,7 @@ public class AS4MimeMessage extends MimeMessage
     m_bIsRepeatable = bIsRepeatable;
   }
 
-  public AS4MimeMessage (@Nullable final Session aSession, @Nonnull final InputStream aIS) throws MessagingException
+  public AS4MimeMessage (@Nullable final Session aSession, @NonNull final InputStream aIS) throws MessagingException
   {
     super (_getSafeMailSession (aSession), aIS);
     // Assume InputStreams to be non-repeatable

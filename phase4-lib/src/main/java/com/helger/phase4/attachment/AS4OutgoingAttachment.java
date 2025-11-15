@@ -19,6 +19,9 @@ package com.helger.phase4.attachment;
 import java.io.File;
 import java.nio.charset.Charset;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -33,9 +36,6 @@ import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
 import com.helger.phase4.model.message.MessageHelperMethods;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This represents a single payload for an outgoing message.
@@ -59,7 +59,7 @@ public class AS4OutgoingAttachment
                                    @Nullable final File aDataFile,
                                    @Nullable final String sContentID,
                                    @Nullable final String sFilename,
-                                   @Nonnull final IMimeType aMimeType,
+                                   @NonNull final IMimeType aMimeType,
                                    @Nullable final EAS4CompressionMode eCompressionMode,
                                    @Nullable final Charset aCharset,
                                    @Nullable final ICommonsOrderedMap <String, String> aCustomProperties)
@@ -144,7 +144,7 @@ public class AS4OutgoingAttachment
   /**
    * @return The MIME type to be used. May not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final IMimeType getMimeType ()
   {
     return m_aMimeType;
@@ -173,7 +173,7 @@ public class AS4OutgoingAttachment
    * @return All custom properties contained. Never <code>null</code>.
    * @since 2.8.6
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final ICommonsOrderedMap <String, String> customProperties ()
   {
@@ -184,7 +184,7 @@ public class AS4OutgoingAttachment
    * @return All custom properties contained. Never <code>null</code>.
    * @since 2.8.6
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public final ICommonsOrderedMap <String, String> getAllCustomProperties ()
   {
@@ -210,7 +210,7 @@ public class AS4OutgoingAttachment
    *
    * @return Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static Builder builder ()
   {
     return new Builder ();
@@ -236,13 +236,13 @@ public class AS4OutgoingAttachment
     public Builder ()
     {}
 
-    @Nonnull
+    @NonNull
     public Builder data (@Nullable final byte [] a)
     {
       return data (a == null ? null : new ByteArrayWrapper (a, false));
     }
 
-    @Nonnull
+    @NonNull
     public Builder data (@Nullable final ByteArrayWrapper a)
     {
       m_aDataBytes = a;
@@ -250,7 +250,7 @@ public class AS4OutgoingAttachment
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Builder data (@Nullable final File a)
     {
       m_aDataBytes = null;
@@ -258,20 +258,20 @@ public class AS4OutgoingAttachment
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Builder reandomContentID ()
     {
       return contentID (MessageHelperMethods.createRandomContentID ());
     }
 
-    @Nonnull
+    @NonNull
     public Builder contentID (@Nullable final String s)
     {
       m_sContentID = s;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Builder filename (@Nullable final String s)
     {
       m_sFilename = s;
@@ -283,13 +283,13 @@ public class AS4OutgoingAttachment
      *
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public Builder mimeTypeXML ()
     {
       return mimeType (CMimeType.APPLICATION_XML);
     }
 
-    @Nonnull
+    @NonNull
     public Builder mimeType (@Nullable final IMimeType a)
     {
       m_aMimeType = a;
@@ -301,13 +301,13 @@ public class AS4OutgoingAttachment
      *
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public Builder compressionGZIP ()
     {
       return compression (EAS4CompressionMode.GZIP);
     }
 
-    @Nonnull
+    @NonNull
     public Builder compression (@Nullable final EAS4CompressionMode e)
     {
       m_eCompressionMode = e;
@@ -322,7 +322,7 @@ public class AS4OutgoingAttachment
      * @return this for chaining
      * @since 0.14.0
      */
-    @Nonnull
+    @NonNull
     public Builder charset (@Nullable final Charset a)
     {
       m_aCharset = a;
@@ -340,7 +340,7 @@ public class AS4OutgoingAttachment
      * @return this for chaining
      * @since 2.8.6
      */
-    @Nonnull
+    @NonNull
     public Builder addCustomProperty (@Nullable final String sKey, @Nullable final String sValue)
     {
       if (StringHelper.isNotEmpty (sKey))
@@ -357,7 +357,7 @@ public class AS4OutgoingAttachment
      * @return this for chaining
      * @since 2.8.6
      */
-    @Nonnull
+    @NonNull
     public Builder addCustomProperties (@Nullable final ICommonsOrderedMap <String, String> a)
     {
       m_aCustomProperties.putAllIfNotNull (a);
@@ -375,7 +375,7 @@ public class AS4OutgoingAttachment
      * @return this for chaining
      * @since 2.8.6
      */
-    @Nonnull
+    @NonNull
     public Builder customProperty (@Nullable final String sKey, @Nullable final String sValue)
     {
       if (StringHelper.isNotEmpty (sKey))
@@ -394,7 +394,7 @@ public class AS4OutgoingAttachment
      * @return this for chaining
      * @since 2.8.6
      */
-    @Nonnull
+    @NonNull
     public Builder customProperties (@Nullable final ICommonsOrderedMap <String, String> a)
     {
       m_aCustomProperties.setAll (a);
@@ -410,7 +410,7 @@ public class AS4OutgoingAttachment
         throw new IllegalStateException ("Phase4OutgoingAttachment has no 'mimeType' element");
     }
 
-    @Nonnull
+    @NonNull
     public AS4OutgoingAttachment build ()
     {
       checkConsistency ();

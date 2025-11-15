@@ -21,13 +21,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 
 import com.helger.json.IJsonObject;
 import com.helger.unittest.support.TestHelper;
 import com.helger.xml.mock.XMLTestHelper;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Test class for class {@link PModeParty}
@@ -36,7 +35,7 @@ import jakarta.annotation.Nonnull;
  */
 public final class PModePartyTest
 {
-  private static void _testJson (@Nonnull final PModeParty p)
+  private static void _testJson (@NonNull final PModeParty p)
   {
     final IJsonObject o = PModePartyJsonConverter.convertToJson (p);
     final PModeParty p2 = PModePartyJsonConverter.convertToNative (o);

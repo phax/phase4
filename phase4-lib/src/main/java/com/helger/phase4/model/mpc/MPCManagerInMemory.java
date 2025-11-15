@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.mpc;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.GuardedBy;
 import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.base.concurrent.SimpleReadWriteLock;
@@ -26,9 +29,6 @@ import com.helger.collection.commons.CommonsHashMap;
 import com.helger.collection.commons.ICommonsMap;
 import com.helger.phase4.CAS4;
 import com.helger.photon.security.object.BusinessObjectHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Manager for {@link MPC} objects.
@@ -48,7 +48,7 @@ public class MPCManagerInMemory implements IMPCManager
     createMPC (new MPC (CAS4.DEFAULT_MPC_ID));
   }
 
-  public final void createMPC (@Nonnull final MPC aMPC)
+  public final void createMPC (@NonNull final MPC aMPC)
   {
     ValueEnforcer.notNull (aMPC, "MPC");
 
@@ -60,8 +60,8 @@ public class MPCManagerInMemory implements IMPCManager
     });
   }
 
-  @Nonnull
-  public EChange updateMPC (@Nonnull final IMPC aMPC)
+  @NonNull
+  public EChange updateMPC (@NonNull final IMPC aMPC)
   {
     ValueEnforcer.notNull (aMPC, "MPC");
     final MPC aRealMPC = getOfID (aMPC.getID ());
@@ -81,7 +81,7 @@ public class MPCManagerInMemory implements IMPCManager
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public EChange markMPCDeleted (@Nullable final String sMPCID)
   {
     final MPC aDeletedMPC = getOfID (sMPCID);
@@ -102,7 +102,7 @@ public class MPCManagerInMemory implements IMPCManager
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public EChange deleteMPC (@Nullable final String sMPCID)
   {
     final MPC aDeletedMPC = getOfID (sMPCID);

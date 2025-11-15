@@ -24,15 +24,14 @@ import javax.net.ssl.SSLContext;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.Timeout;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.http.tls.ETLSVersion;
 import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.CAS4Version;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Special {@link HttpClientSettings} with better defaults for euctp.
@@ -83,7 +82,7 @@ public class Phase4EuCtpHttpClientSettings extends HttpClientSettings
     setUserAgent (CAS4.LIB_NAME + "/" + CAS4Version.BUILD_VERSION + " " + CAS4.LIB_URL);
   }
 
-  @Nonnull
+  @NonNull
   public static Phase4EuCtpHttpClientSettings createWithoutKeyStore () throws GeneralSecurityException
   {
     return new Phase4EuCtpHttpClientSettings (null, null);

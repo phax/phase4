@@ -18,13 +18,12 @@ package com.helger.phase4.incoming.soap;
 
 import javax.xml.namespace.QName;
 
+import org.jspecify.annotations.NonNull;
 import org.w3c.dom.Element;
 
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.tostring.ToStringGenerator;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * This class represents a single DOM element in a SOAP header with some metadata. It is used to
@@ -49,8 +48,8 @@ public class AS4SingleSoapHeader
    * @param bIsMustUnderstand
    *        <code>true</code> if this is a must understand header, <code>false</code> otherwise.
    */
-  public AS4SingleSoapHeader (@Nonnull final Element aNode,
-                              @Nonnull final QName aQName,
+  public AS4SingleSoapHeader (@NonNull final Element aNode,
+                              @NonNull final QName aQName,
                               final boolean bIsMustUnderstand)
   {
     m_aNode = ValueEnforcer.notNull (aNode, "Node");
@@ -58,13 +57,13 @@ public class AS4SingleSoapHeader
     m_bIsMustUnderstand = bIsMustUnderstand;
   }
 
-  @Nonnull
+  @NonNull
   public Element getNode ()
   {
     return m_aNode;
   }
 
-  @Nonnull
+  @NonNull
   public QName getQName ()
   {
     return m_aQName;

@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -36,8 +37,6 @@ import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.server.external.IHolodeckTests;
 import com.helger.xml.serialize.read.DOMReader;
 
-import jakarta.annotation.Nonnull;
-
 @RunWith (Parameterized.class)
 @Category (IHolodeckTests.class)
 public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
@@ -50,7 +49,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
 
   private final ESoapVersion m_eSoapVersion;
 
-  public ReceiptMessageTest (@Nonnull final ESoapVersion eSOAPVersion)
+  public ReceiptMessageTest (@NonNull final ESoapVersion eSOAPVersion)
   {
     m_eSoapVersion = eSOAPVersion;
   }

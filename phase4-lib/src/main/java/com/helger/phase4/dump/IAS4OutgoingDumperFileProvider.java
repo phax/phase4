@@ -19,6 +19,8 @@ package com.helger.phase4.dump;
 import java.io.File;
 import java.time.OffsetDateTime;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.Nonnegative;
 import com.helger.base.string.StringHelper;
@@ -27,8 +29,6 @@ import com.helger.io.file.FilenameHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.mgr.MetaAS4Manager;
-
-import jakarta.annotation.Nonnull;
 
 @FunctionalInterface
 public interface IAS4OutgoingDumperFileProvider
@@ -50,11 +50,11 @@ public interface IAS4OutgoingDumperFileProvider
    * @return A non-<code>null</code> {@link File}.
    * @see AS4Configuration#getDumpBasePath()
    */
-  @Nonnull
-  File getFile (@Nonnull EAS4MessageMode eMsgMode, @Nonnull @Nonempty String sAS4MessageID, @Nonnegative int nTry);
+  @NonNull
+  File getFile (@NonNull EAS4MessageMode eMsgMode, @NonNull @Nonempty String sAS4MessageID, @Nonnegative int nTry);
 
-  @Nonnull
-  static String getDefaultDirectoryName (@Nonnull final OffsetDateTime aNow)
+  @NonNull
+  static String getDefaultDirectoryName (@NonNull final OffsetDateTime aNow)
   {
     return aNow.getYear () +
            "/" +
@@ -63,9 +63,9 @@ public interface IAS4OutgoingDumperFileProvider
            StringHelper.getLeadingZero (aNow.getDayOfMonth (), 2);
   }
 
-  @Nonnull
-  static String getDefaultFilename (@Nonnull final OffsetDateTime aNow,
-                                    @Nonnull @Nonempty final String sAS4MessageID,
+  @NonNull
+  static String getDefaultFilename (@NonNull final OffsetDateTime aNow,
+                                    @NonNull @Nonempty final String sAS4MessageID,
                                     @Nonnegative final int nTry)
   {
     return PDTIOHelper.getTimeForFilename (aNow.toLocalTime ()) +
@@ -76,8 +76,8 @@ public interface IAS4OutgoingDumperFileProvider
            DEFAULT_FILE_EXTENSION;
   }
 
-  @Nonnull
-  static String getDefaultDirectoryAndFilename (@Nonnull @Nonempty final String sAS4MessageID,
+  @NonNull
+  static String getDefaultDirectoryAndFilename (@NonNull @Nonempty final String sAS4MessageID,
                                                 @Nonnegative final int nTry)
   {
     final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();

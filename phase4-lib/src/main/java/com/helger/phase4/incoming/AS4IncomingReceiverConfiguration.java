@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.incoming;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.config.AS4Configuration;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Default implementation of {@link IAS4IncomingReceiverConfiguration}.
@@ -46,7 +46,7 @@ public class AS4IncomingReceiverConfiguration implements IAS4IncomingReceiverCon
     return m_sReceiverEndpointAddress;
   }
 
-  @Nonnull
+  @NonNull
   public final AS4IncomingReceiverConfiguration setReceiverEndpointAddress (@Nullable final String s)
   {
     m_sReceiverEndpointAddress = s;

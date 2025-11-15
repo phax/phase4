@@ -18,6 +18,8 @@ package com.helger.phase4.model.pmode;
 
 import java.io.Serializable;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonnegative;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.MustImplementEqualsAndHashcode;
@@ -27,8 +29,6 @@ import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.state.EChange;
 import com.helger.base.state.ETriState;
 import com.helger.base.tostring.ToStringGenerator;
-
-import jakarta.annotation.Nonnull;
 
 @NotThreadSafe
 @MustImplementEqualsAndHashcode
@@ -46,11 +46,11 @@ public class PModeReceptionAwareness implements Serializable
   private long m_nRetryIntervalMS;
   private ETriState m_eDuplicateDetection = ETriState.UNDEFINED;
 
-  public PModeReceptionAwareness (@Nonnull final ETriState eReceptionAwareness,
-                                  @Nonnull final ETriState eRetry,
+  public PModeReceptionAwareness (@NonNull final ETriState eReceptionAwareness,
+                                  @NonNull final ETriState eRetry,
                                   final int nMaxRetries,
                                   final long nRetryIntervalMS,
-                                  @Nonnull final ETriState eDuplicateDetection)
+                                  @NonNull final ETriState eDuplicateDetection)
   {
     setReceptionAwareness (eReceptionAwareness);
     setRetry (eRetry);
@@ -84,7 +84,7 @@ public class PModeReceptionAwareness implements Serializable
    *        <code>true</code> to enable it, <code>false</code> to disable it.
    * @return {@link EChange}
    */
-  @Nonnull
+  @NonNull
   public final EChange setReceptionAwareness (final boolean bReceptionAwareness)
   {
     return setReceptionAwareness (ETriState.valueOf (bReceptionAwareness));
@@ -97,8 +97,8 @@ public class PModeReceptionAwareness implements Serializable
    *        Value to use. May not be <code>null</code>.
    * @return {@link EChange}
    */
-  @Nonnull
-  public final EChange setReceptionAwareness (@Nonnull final ETriState eReceptionAwareness)
+  @NonNull
+  public final EChange setReceptionAwareness (@NonNull final ETriState eReceptionAwareness)
   {
     ValueEnforcer.notNull (eReceptionAwareness, "ReceptionAwareness");
     if (eReceptionAwareness.equals (m_eReceptionAwareness))
@@ -131,7 +131,7 @@ public class PModeReceptionAwareness implements Serializable
    *        <code>true</code> to enable it, <code>false</code> to disable it.
    * @return {@link EChange}
    */
-  @Nonnull
+  @NonNull
   public final EChange setRetry (final boolean bRetry)
   {
     return setRetry (ETriState.valueOf (bRetry));
@@ -144,8 +144,8 @@ public class PModeReceptionAwareness implements Serializable
    *        Value to use. May not be <code>null</code>.
    * @return {@link EChange}
    */
-  @Nonnull
-  public final EChange setRetry (@Nonnull final ETriState eRetry)
+  @NonNull
+  public final EChange setRetry (@NonNull final ETriState eRetry)
   {
     ValueEnforcer.notNull (eRetry, "Retry");
     if (eRetry.equals (m_eRetry))
@@ -170,7 +170,7 @@ public class PModeReceptionAwareness implements Serializable
    *        The maximum number of retries to use. Must be &ge; 0.
    * @return {@link EChange}
    */
-  @Nonnull
+  @NonNull
   public final EChange setMaxRetries (@Nonnegative final int nMaxRetries)
   {
     ValueEnforcer.isGE0 (nMaxRetries, "MaxRetries");
@@ -197,7 +197,7 @@ public class PModeReceptionAwareness implements Serializable
    *        Milliseconds to wait. Must be &ge; 0.
    * @return {@link EChange}
    */
-  @Nonnull
+  @NonNull
   public final EChange setRetryIntervalMS (@Nonnegative final long nRetryIntervalMS)
   {
     ValueEnforcer.isGE0 (nRetryIntervalMS, "RetryIntervalMS");
@@ -232,7 +232,7 @@ public class PModeReceptionAwareness implements Serializable
    *        <code>true</code> to enable it, <code>false</code> to disable it.
    * @return {@link EChange}
    */
-  @Nonnull
+  @NonNull
   public final EChange setDuplicateDetection (final boolean bDuplicateDetection)
   {
     return setDuplicateDetection (ETriState.valueOf (bDuplicateDetection));
@@ -245,8 +245,8 @@ public class PModeReceptionAwareness implements Serializable
    *        Value to use. May not be <code>null</code>.
    * @return {@link EChange}
    */
-  @Nonnull
-  public final EChange setDuplicateDetection (@Nonnull final ETriState eDuplicateDetection)
+  @NonNull
+  public final EChange setDuplicateDetection (@NonNull final ETriState eDuplicateDetection)
   {
     ValueEnforcer.notNull (eDuplicateDetection, "DuplicateDetection");
     if (eDuplicateDetection.equals (m_eDuplicateDetection))
@@ -300,7 +300,7 @@ public class PModeReceptionAwareness implements Serializable
    * @see #DEFAULT_RETRY_INTERVAL_MS
    * @see #DEFAULT_DUPLICATE_DETECTION
    */
-  @Nonnull
+  @NonNull
   public static PModeReceptionAwareness createDefault ()
   {
     return new PModeReceptionAwareness (ETriState.valueOf (DEFAULT_RECEPTION_AWARENESS),

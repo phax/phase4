@@ -23,6 +23,8 @@ import java.util.function.Consumer;
 
 import javax.xml.namespace.QName;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,9 +70,6 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.xml.XMLHelper;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * This class manages the EBMS Messaging SOAP header element
  *
@@ -101,9 +100,9 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
    * @param aIRC
    *        The incoming receiver configuration. May not be <code>null</code>. Since v3.0.0.
    */
-  public SoapHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IAS4PModeResolver aPModeResolver,
+  public SoapHeaderElementProcessorExtractEbms3Messaging (@NonNull final IAS4PModeResolver aPModeResolver,
                                                           @Nullable final Consumer <? super IPMode> aPModeConsumer,
-                                                          @Nonnull final IAS4IncomingReceiverConfiguration aIRC)
+                                                          @NonNull final IAS4IncomingReceiverConfiguration aIRC)
   {
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     m_aPModeResolver = aPModeResolver;
@@ -118,7 +117,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
    *        needed to get the message ids
    * @return true if leg1 should be used else false
    */
-  private static boolean _isUseLeg1 (@Nonnull final Ebms3UserMessage aUserMessage)
+  private static boolean _isUseLeg1 (@NonNull final Ebms3UserMessage aUserMessage)
   {
     final Ebms3MessageInfo aMessageInfo = aUserMessage.getMessageInfo ();
     final String sThisMessageID = aMessageInfo.getMessageId ();
@@ -143,8 +142,8 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
    * @return the MPCID
    */
   @Nullable
-  private static String _getMPCIDOfUserMsg (@Nonnull final Ebms3UserMessage aUserMessage,
-                                            @Nonnull final PModeLeg aPModeLeg)
+  private static String _getMPCIDOfUserMsg (@NonNull final Ebms3UserMessage aUserMessage,
+                                            @NonNull final PModeLeg aPModeLeg)
   {
     String sEffectiveMPCID = aUserMessage.getMpc ();
     if (sEffectiveMPCID == null)
@@ -168,11 +167,11 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
    *        to write errors to if they occur
    * @return Success if everything is all right, else Failure
    */
-  @Nonnull
-  private static ESuccess _checkMPCOfPMode (@Nonnull final PModeLeg aPModeLeg,
-                                            @Nonnull final IMPCManager aMPCMgr,
-                                            @Nonnull final Locale aLocale,
-                                            @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
+  @NonNull
+  private static ESuccess _checkMPCOfPMode (@NonNull final PModeLeg aPModeLeg,
+                                            @NonNull final IMPCManager aMPCMgr,
+                                            @NonNull final Locale aLocale,
+                                            @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
     // Check if MPC is contained in PMode and if so, if it is valid
     if (aPModeLeg.getBusinessInfo () != null)
@@ -200,7 +199,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
    *        the document that should be checked if it contains a SOAPBodyPayload
    * @return true if it contains a SOAPBodyPayload else false
    */
-  private static boolean _checkSoapBodyHasPayload (@Nonnull final PModeLeg aPModeLeg, @Nonnull final Document aSoapDoc)
+  private static boolean _checkSoapBodyHasPayload (@NonNull final PModeLeg aPModeLeg, @NonNull final Document aSoapDoc)
   {
     // Check if a SOAP-Body payload exists
     final Element aBody = XMLHelper.getFirstChildElementOfName (aSoapDoc.getFirstChild (),
@@ -210,18 +209,18 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
     return aBody != null && aBody.hasChildNodes ();
   }
 
-  private void _notifyPModeResolved (@Nonnull final IPMode aPMode)
+  private void _notifyPModeResolved (@NonNull final IPMode aPMode)
   {
     if (m_aPModeConsumer != null)
       m_aPModeConsumer.accept (aPMode);
   }
 
-  @Nonnull
-  public ESuccess processHeaderElement (@Nonnull final Document aSoapDoc,
-                                        @Nonnull final Element aElement,
-                                        @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
-                                        @Nonnull final AS4IncomingMessageState aIncomingState,
-                                        @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
+  @NonNull
+  public ESuccess processHeaderElement (@NonNull final Document aSoapDoc,
+                                        @NonNull final Element aElement,
+                                        @NonNull final ICommonsList <WSS4JAttachment> aAttachments,
+                                        @NonNull final AS4IncomingMessageState aIncomingState,
+                                        @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
   {
     final IMPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
     IPMode aPMode = null;

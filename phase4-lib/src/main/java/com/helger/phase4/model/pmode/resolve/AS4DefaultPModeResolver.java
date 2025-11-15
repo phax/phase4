@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.model.pmode.resolve;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -27,9 +29,6 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.profile.IAS4Profile;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Default implementation of {@link IAS4PModeResolver} based on an AS4 Profile ID. If no PMode is
@@ -76,8 +75,8 @@ public class AS4DefaultPModeResolver implements IAS4PModeResolver
 
   @Nullable
   @OverrideOnDemand
-  protected IPMode createDefaultPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                       @Nonnull @Nonempty final String sResponderID,
+  protected IPMode createDefaultPMode (@NonNull @Nonempty final String sInitiatorID,
+                                       @NonNull @Nonempty final String sResponderID,
                                        @Nullable final String sAddress)
   {
     if (m_aAS4Profile != null)
@@ -92,10 +91,10 @@ public class AS4DefaultPModeResolver implements IAS4PModeResolver
 
   @Nullable
   public IPMode findPMode (@Nullable final String sPModeID,
-                           @Nonnull final String sService,
-                           @Nonnull final String sAction,
-                           @Nonnull @Nonempty final String sInitiatorID,
-                           @Nonnull @Nonempty final String sResponderID,
+                           @NonNull final String sService,
+                           @NonNull final String sAction,
+                           @NonNull @Nonempty final String sInitiatorID,
+                           @NonNull @Nonempty final String sResponderID,
                            @Nullable final String sAgreementRef,
                            @Nullable final String sAddress)
   {

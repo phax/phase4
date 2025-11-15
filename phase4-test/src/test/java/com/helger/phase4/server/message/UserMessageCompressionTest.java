@@ -19,6 +19,7 @@ package com.helger.phase4.server.message;
 import java.io.InputStream;
 import java.util.Collection;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -43,8 +44,6 @@ import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.server.external.IHolodeckTests;
 
-import jakarta.annotation.Nonnull;
-
 @RunWith (Parameterized.class)
 public final class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
 {
@@ -56,7 +55,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
 
   private final ESoapVersion m_eSOAPVersion;
 
-  public UserMessageCompressionTest (@Nonnull final ESoapVersion eSOAPVersion)
+  public UserMessageCompressionTest (@NonNull final ESoapVersion eSOAPVersion)
   {
     m_eSOAPVersion = eSOAPVersion;
   }

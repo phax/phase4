@@ -17,11 +17,10 @@
 package com.helger.phase4.wss;
 
 import org.apache.wss4j.dom.WsuIdAllocator;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.base.string.StringHelper;
 import com.helger.phase4.model.message.MessageHelperMethods;
-
-import jakarta.annotation.Nullable;
 
 /**
  * phase4 specific implementation of {@link WsuIdAllocator}.

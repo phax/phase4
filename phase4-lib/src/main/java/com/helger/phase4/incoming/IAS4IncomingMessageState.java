@@ -20,6 +20,8 @@ import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -45,9 +47,6 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.util.AS4ResourceHelper;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Read-only AS4 message state for incoming messages.<br/>
  * Old name before v3: <code>IAS4MessageState</code>
@@ -60,7 +59,7 @@ public interface IAS4IncomingMessageState
    * @return Date and time when the receipt started. This must be set in the implementation and
    *         never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   OffsetDateTime getReceiptDT ();
 
   /**
@@ -68,19 +67,19 @@ public interface IAS4IncomingMessageState
    *         <code>null</code>.
    * @since v0.9.8
    */
-  @Nonnull
+  @NonNull
   ESoapVersion getSoapVersion ();
 
   /**
    * @return The resource manager as specified in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   AS4ResourceHelper getResourceHelper ();
 
   /**
    * @return The request locale to use. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   Locale getLocale ();
 
   /**

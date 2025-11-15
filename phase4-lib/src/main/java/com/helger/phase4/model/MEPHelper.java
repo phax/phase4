@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.model;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.phase4.model.message.EAS4MessageType;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Message Exchange Pattern helper
@@ -32,9 +32,9 @@ public final class MEPHelper
   private MEPHelper ()
   {}
 
-  private static boolean _isValidResponseType (@Nonnull final EMEP eMEP,
-                                               @Nonnull final EMEPBinding eMEPBinding,
-                                               @Nonnull final EAS4MessageType eMsgType,
+  private static boolean _isValidResponseType (@NonNull final EMEP eMEP,
+                                               @NonNull final EMEPBinding eMEPBinding,
+                                               @NonNull final EAS4MessageType eMsgType,
                                                final boolean bLeg1)
   {
     switch (eMEP)
@@ -86,16 +86,16 @@ public final class MEPHelper
     throw new IllegalStateException ("Unhandled combination: " + eMEP + "/" + eMEPBinding + "/" + eMsgType);
   }
 
-  public static boolean isValidResponseTypeLeg1 (@Nonnull final EMEP eMEP,
-                                                 @Nonnull final EMEPBinding eMEPBinding,
-                                                 @Nonnull final EAS4MessageType eMsgType)
+  public static boolean isValidResponseTypeLeg1 (@NonNull final EMEP eMEP,
+                                                 @NonNull final EMEPBinding eMEPBinding,
+                                                 @NonNull final EAS4MessageType eMsgType)
   {
     return _isValidResponseType (eMEP, eMEPBinding, eMsgType, true);
   }
 
-  public static boolean isValidResponseTypeLeg2 (@Nonnull final EMEP eMEP,
-                                                 @Nonnull final EMEPBinding eMEPBinding,
-                                                 @Nonnull final EAS4MessageType eMsgType)
+  public static boolean isValidResponseTypeLeg2 (@NonNull final EMEP eMEP,
+                                                 @NonNull final EMEPBinding eMEPBinding,
+                                                 @NonNull final EAS4MessageType eMsgType)
   {
     return _isValidResponseType (eMEP, eMEPBinding, eMsgType, false);
   }

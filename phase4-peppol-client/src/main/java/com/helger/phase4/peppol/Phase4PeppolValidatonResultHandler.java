@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.peppol;
 
-import com.helger.phive.api.result.ValidationResultList;
+import org.jspecify.annotations.NonNull;
 
-import jakarta.annotation.Nonnull;
+import com.helger.phive.api.result.ValidationResultList;
 
 /**
  * The default implementation of {@link IPhase4PeppolValidationResultHandler}.
@@ -28,12 +28,12 @@ import jakarta.annotation.Nonnull;
  */
 public class Phase4PeppolValidatonResultHandler implements IPhase4PeppolValidationResultHandler
 {
-  public void onValidationSuccess (@Nonnull final ValidationResultList aValidationResult)
+  public void onValidationSuccess (@NonNull final ValidationResultList aValidationResult)
   {
     // empty
   }
 
-  public void onValidationErrors (@Nonnull final ValidationResultList aValidationResult) throws Phase4PeppolValidationException
+  public void onValidationErrors (@NonNull final ValidationResultList aValidationResult) throws Phase4PeppolValidationException
   {
     throw new Phase4PeppolValidationException (aValidationResult);
   }

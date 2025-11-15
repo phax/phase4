@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.hc.core5.http.HttpEntity;
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -50,7 +51,6 @@ import com.helger.phase4.soap12.Soap12Envelope;
 import com.helger.phase4.soap12.Soap12Header;
 import com.helger.xml.serialize.read.DOMReader;
 
-import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
@@ -65,7 +65,7 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
   private static final ESoapVersion SOAP_VERSION = ESoapVersion.SOAP_12;
 
   @Nullable
-  private Document _getMessagingAsSoapDocument (@Nonnull final Ebms3Messaging aEbms3Messaging)
+  private Document _getMessagingAsSoapDocument (@NonNull final Ebms3Messaging aEbms3Messaging)
   {
     final Document aEbms3Document = new Ebms3MessagingMarshaller ().getAsDocument (aEbms3Messaging);
     if (aEbms3Document == null)

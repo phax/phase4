@@ -17,6 +17,8 @@
 package com.helger.phase4.client;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -33,9 +35,6 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xsds.xmldsig.ReferenceType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * AS4 client for {@link AS4ReceiptMessage} objects.
  *
@@ -48,7 +47,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
   private Ebms3UserMessage m_aEbms3UserMessage;
   private boolean m_bReceiptShouldBeSigned = false;
 
-  public AS4ClientReceiptMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  public AS4ClientReceiptMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     super (EAS4MessageType.RECEIPT, aResHelper);
   }
@@ -63,7 +62,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
     return m_bNonRepudiation;
   }
 
-  @Nonnull
+  @NonNull
   public final AS4ClientReceiptMessage setNonRepudiation (final boolean bNonRepudiation)
   {
     m_bNonRepudiation = bNonRepudiation;
@@ -84,7 +83,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
    *        Signed UserMessage
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientReceiptMessage setSoapDocument (@Nullable final Node aSoapDocument)
   {
     m_aSoapDocument = aSoapDocument;
@@ -105,7 +104,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
    *        UserMessage which this receipt should be the response for
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientReceiptMessage setEbms3UserMessage (@Nullable final Ebms3UserMessage aEbms3UserMessage)
   {
     m_aEbms3UserMessage = aEbms3UserMessage;
@@ -117,7 +116,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
     return m_bReceiptShouldBeSigned;
   }
 
-  @Nonnull
+  @NonNull
   public final AS4ClientReceiptMessage setReceiptShouldBeSigned (final boolean bReceiptShouldBeSigned)
   {
     m_bReceiptShouldBeSigned = bReceiptShouldBeSigned;
@@ -144,7 +143,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
   }
 
   @Override
-  public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
+  public AS4ClientBuiltMessage buildMessage (@NonNull @Nonempty final String sMessageID,
                                              @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException
   {
     _checkMandatoryAttributes ();

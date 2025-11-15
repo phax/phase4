@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model.pmode;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.state.ETriState;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModeReceptionAwareness}.
@@ -38,10 +38,10 @@ public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicr
   private static final IMicroQName ATTR_RETRY_INTERVAL_MS = new MicroQName ("RetryIntervalMS");
   private static final IMicroQName ATTR_DUPLICATE_DETECTION = new MicroQName ("DuplicateDetection");
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final PModeReceptionAwareness aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final PModeReceptionAwareness aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     if (aValue.isReceptionAwarenessDefined ())
@@ -55,7 +55,7 @@ public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicr
     return ret;
   }
 
-  @Nonnull
+  @NonNull
   public PModeReceptionAwareness convertToNative (final IMicroElement aElement)
   {
     final ETriState eReceptionAwareness = getTriState (aElement.getAttributeValue (ATTR_RECEPTION_AWARENESS),

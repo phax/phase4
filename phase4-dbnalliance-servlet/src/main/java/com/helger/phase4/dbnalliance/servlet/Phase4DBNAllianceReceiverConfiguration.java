@@ -18,6 +18,9 @@ package com.helger.phase4.dbnalliance.servlet;
 
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.builder.IBuilder;
 import com.helger.base.enforce.ValueEnforcer;
@@ -27,9 +30,6 @@ import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class contains the "per-request" data of
@@ -76,10 +76,10 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                                  @Nullable final IBDXR2ServiceMetadataProvider aSMPClient,
                                                  @Nullable final String sAS4EndpointURL,
                                                  @Nullable final X509Certificate aAPCertificate,
-                                                 @Nonnull final IIdentifierFactory aXHEIdentifierFactory,
+                                                 @NonNull final IIdentifierFactory aXHEIdentifierFactory,
                                                  final boolean bPerformXHEValueChecks,
                                                  final boolean bCheckSigningCertificateRevocation,
-                                                 @Nonnull final TrustedCAChecker aAPCAChecker)
+                                                 @NonNull final TrustedCAChecker aAPCAChecker)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -131,7 +131,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
    *         Never <code>null</code> if receiver checks are enabled.
    * @see #isReceiverCheckEnabled()
    */
-  @Nonnull
+  @NonNull
   public X509Certificate getAPCertificate ()
   {
     return m_aAPCertificate;
@@ -140,7 +140,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
   /**
    * @return The identifier factory to be used for XHE parsing.
    */
-  @Nonnull
+  @NonNull
   public IIdentifierFactory getXHEIdentifierFactory ()
   {
     return m_aXHEIdentifierFactory;
@@ -159,7 +159,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
   /**
    * @return The DBNAlliance CA checker to be used. Must not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public TrustedCAChecker getAPCAChecker ()
   {
     return m_aAPCAChecker;
@@ -183,7 +183,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
   /**
    * @return An empty builder instance. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static Phase4DBNAllianceReceiverConfigurationBuilder builder ()
   {
     return new Phase4DBNAllianceReceiverConfigurationBuilder ();
@@ -197,8 +197,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
    *        be <code>null</code>.
    * @return A non-<code>null</code> filled builder instance.
    */
-  @Nonnull
-  public static Phase4DBNAllianceReceiverConfigurationBuilder builder (@Nonnull final Phase4DBNAllianceReceiverConfiguration aSrc)
+  @NonNull
+  public static Phase4DBNAllianceReceiverConfigurationBuilder builder (@NonNull final Phase4DBNAllianceReceiverConfiguration aSrc)
   {
     return new Phase4DBNAllianceReceiverConfigurationBuilder (aSrc);
   }
@@ -223,7 +223,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
     public Phase4DBNAllianceReceiverConfigurationBuilder ()
     {}
 
-    public Phase4DBNAllianceReceiverConfigurationBuilder (@Nonnull final Phase4DBNAllianceReceiverConfiguration aSrc)
+    public Phase4DBNAllianceReceiverConfigurationBuilder (@NonNull final Phase4DBNAllianceReceiverConfiguration aSrc)
     {
       ValueEnforcer.notNull (aSrc, "Src");
       receiverCheckEnabled (aSrc.isReceiverCheckEnabled ()).serviceMetadataProvider (aSrc.getSMPClient ())
@@ -235,69 +235,69 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                                            .apCAChecker (aSrc.getAPCAChecker ());
     }
 
-    @Nonnull
+    @NonNull
     public Phase4DBNAllianceReceiverConfigurationBuilder receiverCheckEnabled (final boolean b)
     {
       m_bReceiverCheckEnabled = b;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4DBNAllianceReceiverConfigurationBuilder serviceMetadataProvider (@Nullable final IBDXR2ServiceMetadataProvider a)
     {
       m_aSMPClient = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4DBNAllianceReceiverConfigurationBuilder as4EndpointUrl (@Nullable final String s)
     {
       m_sAS4EndpointURL = s;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4DBNAllianceReceiverConfigurationBuilder apCertificate (@Nullable final X509Certificate a)
     {
       m_aAPCertificate = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4DBNAllianceReceiverConfigurationBuilder xheIdentifierFactorySimple ()
     {
       return xheIdentifierFactory (SimpleIdentifierFactory.INSTANCE);
     }
 
-    @Nonnull
+    @NonNull
     public Phase4DBNAllianceReceiverConfigurationBuilder xheIdentifierFactory (@Nullable final IIdentifierFactory a)
     {
       m_aXHEIdentifierFactory = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4DBNAllianceReceiverConfigurationBuilder performXHEValueChecks (final boolean b)
     {
       m_bPerformXHEValueChecks = b;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4DBNAllianceReceiverConfigurationBuilder checkSigningCertificateRevocation (final boolean b)
     {
       m_bCheckSigningCertificateRevocation = b;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4DBNAllianceReceiverConfigurationBuilder apCAChecker (@Nullable final TrustedCAChecker a)
     {
       m_aAPCAChecker = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4DBNAllianceReceiverConfiguration build ()
     {
       if (m_bReceiverCheckEnabled)

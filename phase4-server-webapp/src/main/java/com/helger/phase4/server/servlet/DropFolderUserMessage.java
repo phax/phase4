@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
@@ -66,8 +67,6 @@ import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.xsds.peppol.smp1.EndpointType;
 
-import jakarta.annotation.Nonnull;
-
 public final class DropFolderUserMessage
 {
   private static final IIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
@@ -80,7 +79,7 @@ public final class DropFolderUserMessage
   private DropFolderUserMessage ()
   {}
 
-  private static void _send (@Nonnull final IAS4CryptoFactory aCF, final Path aSendFile, final Path aIncomingDir)
+  private static void _send (@NonNull final IAS4CryptoFactory aCF, final Path aSendFile, final Path aIncomingDir)
   {
     final StopWatch aSW = StopWatch.createdStarted ();
     boolean bSuccess = false;
@@ -199,7 +198,7 @@ public final class DropFolderUserMessage
     }
   }
 
-  public static void init (@Nonnull final IAS4CryptoFactory aCryptoFactory)
+  public static void init (@NonNull final IAS4CryptoFactory aCryptoFactory)
   {
     if (s_aWatch != null)
       throw new IllegalStateException ("Already inited!");

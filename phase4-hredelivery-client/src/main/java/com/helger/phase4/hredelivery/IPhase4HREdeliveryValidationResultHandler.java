@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.hredelivery;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.phive.api.result.ValidationResultList;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Interface for handling validation errors
@@ -38,7 +38,7 @@ public interface IPhase4HREdeliveryValidationResultHandler
    * @throws Phase4Exception
    *         Implementation dependent
    */
-  void onValidationSuccess (@Nonnull ValidationResultList aValidationResult) throws Phase4Exception;
+  void onValidationSuccess (@NonNull ValidationResultList aValidationResult) throws Phase4Exception;
 
   /**
    * Invoked, if at least one validation error is present.
@@ -48,5 +48,5 @@ public interface IPhase4HREdeliveryValidationResultHandler
    * @throws Phase4Exception
    *         Implementation dependent
    */
-  void onValidationErrors (@Nonnull ValidationResultList aValidationResult) throws Phase4Exception;
+  void onValidationErrors (@NonNull ValidationResultList aValidationResult) throws Phase4Exception;
 }

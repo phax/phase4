@@ -18,7 +18,7 @@ package com.helger.phase4.cef;
 
 import com.helger.phase4.util.Phase4Exception;
 
-import jakarta.annotation.Nonnull;
+
 import jakarta.annotation.Nullable;
 
 /**
@@ -33,7 +33,7 @@ public class Phase4CEFException extends Phase4Exception
    * @param sMessage
    *        Error message
    */
-  public Phase4CEFException (@Nonnull final String sMessage)
+  public Phase4CEFException (@NonNull final String sMessage)
   {
     super (sMessage);
   }
@@ -44,7 +44,7 @@ public class Phase4CEFException extends Phase4Exception
    * @param aCause
    *        Optional causing exception
    */
-  public Phase4CEFException (@Nonnull final String sMessage, @Nullable final Throwable aCause)
+  public Phase4CEFException (@NonNull final String sMessage, @Nullable final Throwable aCause)
   {
     super (sMessage, aCause);
   }

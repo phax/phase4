@@ -19,12 +19,11 @@ package com.helger.phase4.crypto;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.cms.CMSAlgorithm;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.lang.EnumHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Enumeration with all message encryption algorithms supported.
@@ -48,23 +47,23 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   private final ASN1ObjectIdentifier m_aOID;
   private final String m_sAlgorithmURI;
 
-  ECryptoAlgorithmCrypt (@Nonnull @Nonempty final String sID,
-                         @Nonnull final ASN1ObjectIdentifier aOID,
-                         @Nonnull @Nonempty final String sAlgorithmURI)
+  ECryptoAlgorithmCrypt (@NonNull @Nonempty final String sID,
+                         @NonNull final ASN1ObjectIdentifier aOID,
+                         @NonNull @Nonempty final String sAlgorithmURI)
   {
     m_sID = sID;
     m_aOID = aOID;
     m_sAlgorithmURI = sAlgorithmURI;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
     return m_sID;
   }
 
-  @Nonnull
+  @NonNull
   public ASN1ObjectIdentifier getOID ()
   {
     return m_aOID;
@@ -73,7 +72,7 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   /**
    * @return The algorithm ID for XMLDsig base encryption
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getAlgorithmURI ()
   {
@@ -86,7 +85,7 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
     return EnumHelper.getFromIDOrNull (ECryptoAlgorithmCrypt.class, sID);
   }
 
-  @Nonnull
+  @NonNull
   public static ECryptoAlgorithmCrypt getFromIDOrThrow (@Nullable final String sID)
   {
     return EnumHelper.getFromIDOrThrow (ECryptoAlgorithmCrypt.class, sID);

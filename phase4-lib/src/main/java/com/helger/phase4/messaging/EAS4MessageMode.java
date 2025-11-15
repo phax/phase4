@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.messaging;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Message mode.<br>
@@ -39,12 +39,12 @@ public enum EAS4MessageMode implements IHasID <String>
 
   private final String m_sID;
 
-  EAS4MessageMode (@Nonnull @Nonempty final String sID)
+  EAS4MessageMode (@NonNull @Nonempty final String sID)
   {
     m_sID = sID;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {

@@ -22,6 +22,8 @@ package com.helger.phase4.bdew;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
@@ -40,13 +42,10 @@ import com.helger.phase4.profile.bdew.BDEWPMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
- * This class contains all the specifics to send AS4 messages with the BDEW
- * profile. See <code>sendAS4Message</code> as the main method to trigger the
- * sending, with all potential customization.
+ * This class contains all the specifics to send AS4 messages with the BDEW profile. See
+ * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
+ * customization.
  *
  * @author Gregor Scholtysik
  * @author Philip Helger
@@ -60,10 +59,10 @@ public final class Phase4BDEWSender
   {}
 
   /**
-   * @return Create a new Builder for AS4 messages if the payload is present.
-   *         Never <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the payload is present. Never
+   *         <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static BDEWUserMessageBuilder builder ()
   {
     return new BDEWUserMessageBuilder ();
@@ -126,11 +125,11 @@ public final class Phase4BDEWSender
      * Encryption Key Identifier Type.
      *
      * @param eEncryptionKeyIdentifierType
-     *        {@link ECryptoKeyIdentifierType}. Defaults to
-     *        BST_DIRECT_REFERENCE. May be <code>null</code>.
+     *        {@link ECryptoKeyIdentifierType}. Defaults to BST_DIRECT_REFERENCE. May be
+     *        <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE encryptionKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eEncryptionKeyIdentifierType)
     {
       if (eEncryptionKeyIdentifierType != null)
@@ -142,11 +141,11 @@ public final class Phase4BDEWSender
      * Signing Key Identifier Type.
      *
      * @param eSigningKeyIdentifierType
-     *        {@link ECryptoKeyIdentifierType}. Defaults to
-     *        BST_DIRECT_REFERENCE. May be <code>null</code>.
+     *        {@link ECryptoKeyIdentifierType}. Defaults to BST_DIRECT_REFERENCE. May be
+     *        <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE signingKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
     {
       if (eSigningKeyIdentifierType != null)
@@ -158,14 +157,13 @@ public final class Phase4BDEWSender
      * Set the payload to be send out.
      *
      * @param aBuilder
-     *        The payload builder to be used. GZip compression is automatically.
-     *        enforced.
+     *        The payload builder to be used. GZip compression is automatically. enforced.
      * @param aPayloadParams
      *        The payload params to use. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE payload (@Nullable final AS4OutgoingAttachment.Builder aBuilder,
+    @NonNull
+    public final IMPLTYPE payload (final AS4OutgoingAttachment.@Nullable Builder aBuilder,
                                    @Nullable final BDEWPayloadParams aPayloadParams)
     {
       payload (aBuilder != null ? aBuilder.compressionGZIP ().build () : null);
@@ -183,11 +181,7 @@ public final class Phase4BDEWSender
       if (m_aPayload == null)
       {
         // See #180 for the specifics
-        if (m_sAction.equals (BDEWPMode.ACTION_REQUEST_SWITCH) || m_sAction.equals (BDEWPMode.ACTION_CONFIRM_SWITCH))
-        {
-          // Payload is optional
-        }
-        else
+        if (!m_sAction.equals (BDEWPMode.ACTION_REQUEST_SWITCH) && !m_sAction.equals (BDEWPMode.ACTION_CONFIRM_SWITCH))
         {
           // Payload is mandatory
           LOGGER.warn ("The field 'payload' is not set");
@@ -207,8 +201,8 @@ public final class Phase4BDEWSender
 
     @Override
     @Nullable
-    protected WSS4JAttachment createMainAttachment (@Nonnull final AS4OutgoingAttachment aPayload,
-                                                    @Nonnull final AS4ResourceHelper aResHelper) throws IOException
+    protected WSS4JAttachment createMainAttachment (@NonNull final AS4OutgoingAttachment aPayload,
+                                                    @NonNull final AS4ResourceHelper aResHelper) throws IOException
     {
       final WSS4JAttachment aPayloadAttachment = WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);
 
@@ -244,8 +238,8 @@ public final class Phase4BDEWSender
   }
 
   /**
-   * The builder class for sending AS4 messages using BDEW profile specifics.
-   * Use {@link #sendMessage()} to trigger the main transmission.
+   * The builder class for sending AS4 messages using BDEW profile specifics. Use
+   * {@link #sendMessage()} to trigger the main transmission.
    *
    * @author Philip Helger
    */
@@ -272,8 +266,7 @@ public final class Phase4BDEWSender
     private String m_sApplicationReference;
 
     /**
-     * @return BDEW payload document type for payload identifier
-     *         <code>BDEWDocumentType</code>
+     * @return BDEW payload document type for payload identifier <code>BDEWDocumentType</code>
      */
     @Nullable
     public String getDocumentType ()
@@ -288,7 +281,7 @@ public final class Phase4BDEWSender
      *        Document type to use. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public BDEWPayloadParams setDocumentType (@Nullable final String sDocumentType)
     {
       m_sDocumentType = sDocumentType;
@@ -296,8 +289,7 @@ public final class Phase4BDEWSender
     }
 
     /**
-     * @return BDEW payload document date for payload identifier
-     *         <code>BDEWDocumentDate</code>
+     * @return BDEW payload document date for payload identifier <code>BDEWDocumentDate</code>
      */
     @Nullable
     public LocalDate getDocumentDate ()
@@ -312,7 +304,7 @@ public final class Phase4BDEWSender
      *        Document date to use. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public BDEWPayloadParams setDocumentDate (@Nullable final LocalDate sDocumentDate)
     {
       m_aDocumentDate = sDocumentDate;
@@ -320,11 +312,9 @@ public final class Phase4BDEWSender
     }
 
     /**
-     * Note: type change in 2.1.3 from <code>Integer</code> to
-     * <code>String</code>
+     * Note: type change in 2.1.3 from <code>Integer</code> to <code>String</code>
      *
-     * @return BDEW payload document number for payload identifier
-     *         <code>BDEWDocumentNo</code>
+     * @return BDEW payload document number for payload identifier <code>BDEWDocumentNo</code>
      */
     @Nullable
     public String getDocumentNumber ()
@@ -340,7 +330,7 @@ public final class Phase4BDEWSender
      * @return this for chaining
      * @since 2.1.2
      */
-    @Nonnull
+    @NonNull
     public BDEWPayloadParams setDocumentNumber (final int nDocumentNumber)
     {
       return setDocumentNumber (Integer.toString (nDocumentNumber));
@@ -348,14 +338,13 @@ public final class Phase4BDEWSender
 
     /**
      * BDEW payload document number.<br>
-     * Note: type change in 2.1.3 from <code>Integer</code> to
-     * <code>String</code>
+     * Note: type change in 2.1.3 from <code>Integer</code> to <code>String</code>
      *
      * @param sDocumentNumber
      *        Document number to use. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public BDEWPayloadParams setDocumentNumber (@Nullable final String sDocumentNumber)
     {
       m_sDocumentNumber = sDocumentNumber;
@@ -363,8 +352,7 @@ public final class Phase4BDEWSender
     }
 
     /**
-     * @return BDEW payload fulfillment date for payload identifier
-     *         <code>BDEWFulfillmentDate</code>
+     * @return BDEW payload fulfillment date for payload identifier <code>BDEWFulfillmentDate</code>
      */
     @Nullable
     public LocalDate getFulfillmentDate ()
@@ -379,7 +367,7 @@ public final class Phase4BDEWSender
      *        Fulfillment date to use. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public BDEWPayloadParams setFulfillmentDate (@Nullable final LocalDate sFulfillmenttDate)
     {
       m_aFulfillmentDate = sFulfillmenttDate;
@@ -387,8 +375,7 @@ public final class Phase4BDEWSender
     }
 
     /**
-     * @return BDEW payload subject party ID for payload identifier
-     *         <code>BDEWSubjectPartyID</code>
+     * @return BDEW payload subject party ID for payload identifier <code>BDEWSubjectPartyID</code>
      */
     @Nullable
     public String getSubjectPartyId ()
@@ -403,7 +390,7 @@ public final class Phase4BDEWSender
      *        Subject party ID to use. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public BDEWPayloadParams setSubjectPartyId (@Nullable final String sSubjectPartyId)
     {
       m_sSubjectPartyID = sSubjectPartyId;
@@ -427,7 +414,7 @@ public final class Phase4BDEWSender
      *        Subject party role to use. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public BDEWPayloadParams setSubjectPartyRole (@Nullable final String sSubjectPartyRole)
     {
       m_sSubjectPartyRole = sSubjectPartyRole;
@@ -453,7 +440,7 @@ public final class Phase4BDEWSender
      * @return this for chaining
      * @since 3.0.1
      */
-    @Nonnull
+    @NonNull
     public BDEWPayloadParams setApplicationReference (@Nullable final String sApplicationReference)
     {
       m_sApplicationReference = sApplicationReference;

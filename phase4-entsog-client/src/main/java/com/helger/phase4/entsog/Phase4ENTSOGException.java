@@ -19,10 +19,10 @@
  */
 package com.helger.phase4.entsog;
 
-import com.helger.phase4.util.Phase4Exception;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Generic exception to be thrown from the phase4 ENTSOG sender.
@@ -36,7 +36,7 @@ public class Phase4ENTSOGException extends Phase4Exception
    * @param sMessage
    *        Error message
    */
-  public Phase4ENTSOGException (@Nonnull final String sMessage)
+  public Phase4ENTSOGException (@NonNull final String sMessage)
   {
     super (sMessage);
   }
@@ -47,7 +47,7 @@ public class Phase4ENTSOGException extends Phase4Exception
    * @param aCause
    *        Optional causing exception
    */
-  public Phase4ENTSOGException (@Nonnull final String sMessage, @Nullable final Throwable aCause)
+  public Phase4ENTSOGException (@NonNull final String sMessage, @Nullable final Throwable aCause)
   {
     super (sMessage, aCause);
   }

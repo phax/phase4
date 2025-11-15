@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -54,7 +55,6 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
-import jakarta.annotation.Nonnull;
 import jakarta.mail.internet.MimeBodyPart;
 
 /**
@@ -74,7 +74,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
 
   private final ESoapVersion m_eSoapVersion;
 
-  public UserMessageFailureForgeryTest (@Nonnull final ESoapVersion eSOAPVersion)
+  public UserMessageFailureForgeryTest (@NonNull final ESoapVersion eSOAPVersion)
   {
     m_eSoapVersion = eSOAPVersion;
   }

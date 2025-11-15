@@ -19,6 +19,8 @@ package com.helger.phase4.client;
 import java.time.OffsetDateTime;
 
 import org.apache.hc.core5.http.message.StatusLine;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.NotThreadSafe;
@@ -27,9 +29,6 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.mgr.MetaAS4Manager;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class correlates the built source message ({@link AS4ClientBuiltMessage}) with the HTTP
@@ -58,9 +57,9 @@ public class AS4ClientSentMessage <T>
    * @param aResponseContent
    *        The response payload. May be <code>null</code>.
    */
-  public AS4ClientSentMessage (@Nonnull final AS4ClientBuiltMessage aBuiltMsg,
+  public AS4ClientSentMessage (@NonNull final AS4ClientBuiltMessage aBuiltMsg,
                                @Nullable final StatusLine aResponseStatusLine,
-                               @Nonnull final HttpHeaderMap aResponseHeaders,
+                               @NonNull final HttpHeaderMap aResponseHeaders,
                                @Nullable final T aResponseContent)
   {
     this (aBuiltMsg,
@@ -82,11 +81,11 @@ public class AS4ClientSentMessage <T>
    * @param aSentDateTime
    *        The sending date time. May not be <code>null</code>.
    */
-  protected AS4ClientSentMessage (@Nonnull final AS4ClientBuiltMessage aBuiltMsg,
+  protected AS4ClientSentMessage (@NonNull final AS4ClientBuiltMessage aBuiltMsg,
                                   @Nullable final StatusLine aResponseStatusLine,
-                                  @Nonnull final HttpHeaderMap aResponseHeaders,
+                                  @NonNull final HttpHeaderMap aResponseHeaders,
                                   @Nullable final T aResponseContent,
-                                  @Nonnull final OffsetDateTime aSentDateTime)
+                                  @NonNull final OffsetDateTime aSentDateTime)
   {
     ValueEnforcer.notNull (aBuiltMsg, "BuiltMsg");
     ValueEnforcer.notNull (aResponseHeaders, "ResponseHeaders");
@@ -101,7 +100,7 @@ public class AS4ClientSentMessage <T>
   /**
    * @return The built message as provided in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientBuiltMessage getBuiltMessage ()
   {
     return m_aBuiltMsg;
@@ -111,7 +110,7 @@ public class AS4ClientSentMessage <T>
    * @return The AS4 message ID of the sent out message. Neither <code>null</code> nor empty. This
    *         is a shortcut for <code>getBuiltMessage().getMessageID ()</code>.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getMessageID ()
   {
@@ -144,7 +143,7 @@ public class AS4ClientSentMessage <T>
    * @return The HTTP response headers as a mutable map. Never <code>null</code>.
    * @since 0.13.0
    */
-  @Nonnull
+  @NonNull
   public final HttpHeaderMap getResponseHeaders ()
   {
     return m_aResponseHeaders;
@@ -174,7 +173,7 @@ public class AS4ClientSentMessage <T>
    * @return The sent date time. Never <code>null</code>.
    * @since 0.10.0
    */
-  @Nonnull
+  @NonNull
   public final OffsetDateTime getSentDateTime ()
   {
     return m_aSentDateTime;

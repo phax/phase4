@@ -25,6 +25,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
@@ -83,9 +85,6 @@ import com.helger.xhe.v10.XHE10XHEType;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.bdxr.smp2.ac.CertificateType;
 import com.helger.xsds.bdxr.smp2.ac.EndpointType;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This is the SPI implementation to handle generic incoming AS4 requests. The main goal of this
@@ -149,14 +148,14 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
       return m_eCompressionMode;
     }
 
-    @Nonnull
+    @NonNull
     @ReturnsMutableObject
     public byte [] payloadBytes ()
     {
       return m_aPayloadBytes;
     }
 
-    @Nonnull
+    @NonNull
     @ReturnsMutableObject
     public XHE10XHEType xhe ()
     {
@@ -188,7 +187,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
    * @return A list of all contained DBNAlliance specific SBD handlers. Never <code>null</code> but
    *         maybe empty.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public final ICommonsList <IPhase4DBNAllianceIncomingXHEHandlerSPI> getAllHandler ()
   {
@@ -204,8 +203,8 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
    *        message is basically discarded).
    * @return this for chaining
    */
-  @Nonnull
-  public final Phase4DBNAllianceServletMessageProcessorSPI setAllHandler (@Nonnull final Iterable <? extends IPhase4DBNAllianceIncomingXHEHandlerSPI> aHandlers)
+  @NonNull
+  public final Phase4DBNAllianceServletMessageProcessorSPI setAllHandler (@NonNull final Iterable <? extends IPhase4DBNAllianceIncomingXHEHandlerSPI> aHandlers)
   {
     ValueEnforcer.notNull (aHandlers, "Handlers");
     m_aHandlers = new CommonsArrayList <> (aHandlers);
@@ -218,7 +217,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
    * @return the transport profile to be handled. Never <code>null</code>. By default it is
    *         "DBNAlliance AS4 v1" (see {@link #DEFAULT_TRANSPORT_PROFILE}).
    */
-  @Nonnull
+  @NonNull
   public final ISMPTransportProfile getTransportProfile ()
   {
     return m_aTransportProfile;
@@ -231,8 +230,8 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
    *        The transport profile to be used. May not be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  public final Phase4DBNAllianceServletMessageProcessorSPI setTransportProfile (@Nonnull final ISMPTransportProfile aTransportProfile)
+  @NonNull
+  public final Phase4DBNAllianceServletMessageProcessorSPI setTransportProfile (@NonNull final ISMPTransportProfile aTransportProfile)
   {
     ValueEnforcer.notNull (aTransportProfile, "TransportProfile");
     m_aTransportProfile = aTransportProfile;
@@ -256,7 +255,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
    *        The customer receiver check data to use. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final Phase4DBNAllianceServletMessageProcessorSPI setReceiverCheckData (@Nullable final Phase4DBNAllianceReceiverConfiguration aReceiverCheckData)
   {
     m_aReceiverCheckData = aReceiverCheckData;
@@ -264,8 +263,8 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
   }
 
   @Nullable
-  private EndpointType _getReceiverEndpoint (@Nonnull final String sLogPrefix,
-                                             @Nonnull final IBDXR2ServiceMetadataProvider aSMPClient,
+  private EndpointType _getReceiverEndpoint (@NonNull final String sLogPrefix,
+                                             @NonNull final IBDXR2ServiceMetadataProvider aSMPClient,
                                              @Nullable final IParticipantIdentifier aRecipientID,
                                              @Nullable final IDocumentTypeIdentifier aDocTypeID,
                                              @Nullable final IProcessIdentifier aProcessID) throws Phase4DBNAllianceServletException
@@ -308,9 +307,9 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
     }
   }
 
-  private static void _checkIfReceiverEndpointURLMatches (@Nonnull final String sLogPrefix,
-                                                          @Nonnull @Nonempty final String sOwnAPUrl,
-                                                          @Nonnull final EndpointType aRecipientEndpoint) throws Phase4DBNAllianceServletException
+  private static void _checkIfReceiverEndpointURLMatches (@NonNull final String sLogPrefix,
+                                                          @NonNull @Nonempty final String sOwnAPUrl,
+                                                          @NonNull final EndpointType aRecipientEndpoint) throws Phase4DBNAllianceServletException
   {
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug (sLogPrefix + "Our AP URL is " + sOwnAPUrl);
@@ -333,9 +332,9 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
     }
   }
 
-  private static void _checkIfEndpointCertificateMatches (@Nonnull final String sLogPrefix,
-                                                          @Nonnull final X509Certificate aOurCert,
-                                                          @Nonnull final EndpointType aRecipientEndpoint) throws Phase4DBNAllianceServletException
+  private static void _checkIfEndpointCertificateMatches (@NonNull final String sLogPrefix,
+                                                          @NonNull final X509Certificate aOurCert,
+                                                          @NonNull final EndpointType aRecipientEndpoint) throws Phase4DBNAllianceServletException
   {
     final CertificateType aCertificate = CollectionFind.findFirst (aRecipientEndpoint.getCertificate (),
                                                                    x -> CERT_TYPE_CODE_SMP.equals (x.getTypeCodeValue ()));
@@ -401,20 +400,20 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
    *        The processing state of the incoming message. Never <code>null</code>.
    */
   @OverrideOnDemand
-  protected void afterSuccessfulDBNAllianceProcessing (@Nonnull final Ebms3UserMessage aUserMessage,
-                                                       @Nonnull final DBNAllianceXHEData aDBNAllianceXHE,
-                                                       @Nonnull final IAS4IncomingMessageState aState)
+  protected void afterSuccessfulDBNAllianceProcessing (@NonNull final Ebms3UserMessage aUserMessage,
+                                                       @NonNull final DBNAllianceXHEData aDBNAllianceXHE,
+                                                       @NonNull final IAS4IncomingMessageState aState)
   {}
 
-  @Nonnull
-  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                          @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                          @Nonnull final Ebms3UserMessage aUserMessage,
-                                                          @Nonnull final IPMode aSrcPMode,
+  @NonNull
+  public AS4MessageProcessorResult processAS4UserMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                          @NonNull final HttpHeaderMap aHttpHeaders,
+                                                          @NonNull final Ebms3UserMessage aUserMessage,
+                                                          @NonNull final IPMode aSrcPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nonnull final IAS4IncomingMessageState aState,
-                                                          @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                          @NonNull final IAS4IncomingMessageState aState,
+                                                          @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Invoking processAS4UserMessage");
@@ -772,22 +771,22 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
     return AS4MessageProcessorResult.createSuccess ();
   }
 
-  @Nonnull
+  @NonNull
   @UnsupportedOperation
-  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                                  @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                                  @Nonnull final Ebms3SignalMessage aSignalMessage,
+  public AS4SignalMessageProcessorResult processAS4SignalMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                                  @NonNull final HttpHeaderMap aHttpHeaders,
+                                                                  @NonNull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
-                                                                  @Nonnull final IAS4IncomingMessageState aState,
-                                                                  @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                                  @NonNull final IAS4IncomingMessageState aState,
+                                                                  @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     LOGGER.error ("Invoking processAS4SignalMessage is not supported");
     throw new UnsupportedOperationException ();
   }
 
-  public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                         @Nonnull final IAS4IncomingMessageState aState,
-                                         @Nonnull @Nonempty final String sResponseMessageID,
+  public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                         @NonNull final IAS4IncomingMessageState aState,
+                                         @NonNull @Nonempty final String sResponseMessageID,
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {

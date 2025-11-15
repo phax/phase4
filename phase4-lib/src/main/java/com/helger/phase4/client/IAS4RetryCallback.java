@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.client;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonnegative;
 import com.helger.base.state.EContinue;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Callback to be informed on http retries
@@ -50,11 +50,11 @@ public interface IAS4RetryCallback
    * @return {@link EContinue#CONTINUE} to continue with the procedure as foreseen,
    *         {@link EContinue#BREAK} to interrupt resending. May not be <code>null</code>.
    */
-  @Nonnull
-  EContinue onBeforeRetry (@Nonnull String sMessageID,
-                           @Nonnull String sURL,
+  @NonNull
+  EContinue onBeforeRetry (@NonNull String sMessageID,
+                           @NonNull String sURL,
                            @Nonnegative int nTry,
                            @Nonnegative int nMaxTries,
                            long nRetryIntervalMS,
-                           @Nonnull Exception ex);
+                           @NonNull Exception ex);
 }

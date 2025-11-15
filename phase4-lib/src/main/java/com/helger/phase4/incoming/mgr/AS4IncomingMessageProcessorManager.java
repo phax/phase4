@@ -18,6 +18,7 @@ package com.helger.phase4.incoming.mgr;
 
 import java.util.List;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.GuardedBy;
@@ -29,8 +30,6 @@ import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessorSPI;
 import com.helger.phase4.logging.Phase4LoggerFactory;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * This class manages all the {@link IAS4IncomingMessageProcessorSPI} SPI implementations.
@@ -73,7 +72,7 @@ public final class AS4IncomingMessageProcessorManager
   /**
    * @return A list of all registered receiver handlers. Never <code>null</code> but maybe empty.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsList <IAS4IncomingMessageProcessorSPI> getAllProcessors ()
   {

@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.mpc;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.state.EChange;
@@ -24,9 +27,6 @@ import com.helger.phase4.CAS4;
 import com.helger.photon.audit.AuditHelper;
 import com.helger.photon.io.dao.AbstractPhotonMapBasedWALDAO;
 import com.helger.photon.security.object.BusinessObjectHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Manager for {@link MPC} objects.
@@ -42,7 +42,7 @@ public class MPCManagerXML extends AbstractPhotonMapBasedWALDAO <IMPC, MPC> impl
   }
 
   @Override
-  @Nonnull
+  @NonNull
   protected EChange onInit ()
   {
     // Create default MPC
@@ -50,7 +50,7 @@ public class MPCManagerXML extends AbstractPhotonMapBasedWALDAO <IMPC, MPC> impl
     return EChange.CHANGED;
   }
 
-  public void createMPC (@Nonnull final MPC aMPC)
+  public void createMPC (@NonNull final MPC aMPC)
   {
     ValueEnforcer.notNull (aMPC, "MPC");
 
@@ -58,8 +58,8 @@ public class MPCManagerXML extends AbstractPhotonMapBasedWALDAO <IMPC, MPC> impl
     AuditHelper.onAuditCreateSuccess (MPC.OT, aMPC.getID ());
   }
 
-  @Nonnull
-  public EChange updateMPC (@Nonnull final IMPC aMPC)
+  @NonNull
+  public EChange updateMPC (@NonNull final IMPC aMPC)
   {
     ValueEnforcer.notNull (aMPC, "MPC");
     final MPC aRealMPC = getOfID (aMPC.getID ());
@@ -89,7 +89,7 @@ public class MPCManagerXML extends AbstractPhotonMapBasedWALDAO <IMPC, MPC> impl
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public EChange markMPCDeleted (@Nullable final String sMPCID)
   {
     final MPC aDeletedMPC = getOfID (sMPCID);
@@ -118,7 +118,7 @@ public class MPCManagerXML extends AbstractPhotonMapBasedWALDAO <IMPC, MPC> impl
     return EChange.CHANGED;
   }
 
-  @Nonnull
+  @NonNull
   public EChange deleteMPC (@Nullable final String sMPCID)
   {
     final MPC aDeletedMPC = getOfID (sMPCID);

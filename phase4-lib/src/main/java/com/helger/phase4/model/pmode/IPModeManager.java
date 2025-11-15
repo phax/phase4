@@ -18,6 +18,9 @@ package com.helger.phase4.model.pmode;
 
 import java.util.function.Predicate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.equals.EqualsHelper;
 import com.helger.base.state.EChange;
@@ -26,9 +29,6 @@ import com.helger.collection.commons.ICommonsList;
 import com.helger.collection.commons.ICommonsSet;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Interface for a manager for {@link PMode} objects.
@@ -43,7 +43,7 @@ public interface IPModeManager
    * @param aPMode
    *        The PMode to be created. May not be <code>null</code>.
    */
-  void createPMode (@Nonnull PMode aPMode);
+  void createPMode (@NonNull PMode aPMode);
 
   /**
    * Update an existing PMode.
@@ -52,8 +52,8 @@ public interface IPModeManager
    *        The PMode to be updated. May not be <code>null</code>.
    * @return {@link EChange#CHANGED} if something changed, {@link EChange#UNCHANGED} otherwise.
    */
-  @Nonnull
-  EChange updatePMode (@Nonnull IPMode aPMode);
+  @NonNull
+  EChange updatePMode (@NonNull IPMode aPMode);
 
   /**
    * Create or update the provided PMode.
@@ -61,7 +61,7 @@ public interface IPModeManager
    * @param aPMode
    *        The PMode to be created or updated.
    */
-  void createOrUpdatePMode (@Nonnull PMode aPMode);
+  void createOrUpdatePMode (@NonNull PMode aPMode);
 
   /**
    * Mark the provided PMode as deleted.
@@ -70,7 +70,7 @@ public interface IPModeManager
    *        The ID of the PMode to be marked as deleted. May be <code>null</code>.
    * @return {@link EChange}
    */
-  @Nonnull
+  @NonNull
   EChange markPModeDeleted (@Nullable String sPModeID);
 
   /**
@@ -80,7 +80,7 @@ public interface IPModeManager
    *        The ID of the PMode to be deleted. May be <code>null</code>.
    * @return {@link EChange}
    */
-  @Nonnull
+  @NonNull
   EChange deletePMode (@Nullable String sPModeID);
 
   /**
@@ -91,7 +91,7 @@ public interface IPModeManager
    * @return <code>null</code> if no such PMode exists.
    */
   @Nullable
-  IPMode findFirst (@Nonnull Predicate <? super IPMode> aFilter);
+  IPMode findFirst (@NonNull Predicate <? super IPMode> aFilter);
 
   /**
    * Find the first PMode that has the provided service and action.
@@ -128,8 +128,8 @@ public interface IPModeManager
    *        Responder to search. May be <code>null</code>.
    * @return Never <code>null</code>.
    */
-  @Nonnull
-  static Predicate <IPMode> getPModeFilter (@Nonnull final String sID,
+  @NonNull
+  static Predicate <IPMode> getPModeFilter (@NonNull final String sID,
                                             @Nullable final PModeParty aInitiator,
                                             @Nullable final PModeParty aResponder)
   {
@@ -152,13 +152,13 @@ public interface IPModeManager
   /**
    * @return A non-<code>null</code> but maybe empty list of all contained PModes.
    */
-  @Nonnull
+  @NonNull
   ICommonsList <IPMode> getAll ();
 
   /**
    * @return A non-<code>null</code> but maybe empty set of the IDs of all contained PModes.
    */
-  @Nonnull
+  @NonNull
   ICommonsSet <String> getAllIDs ();
 
   /**

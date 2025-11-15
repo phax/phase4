@@ -26,6 +26,8 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import org.w3c.dom.Document;
@@ -93,9 +95,6 @@ import com.helger.smpclient.url.PeppolNaptrURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xsds.peppol.smp1.EndpointType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * This class contains all the specifics to send AS4 messages to the Peppol Network. See
  * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
@@ -115,16 +114,16 @@ public final class Phase4PeppolSender
   {}
 
   @Nullable
-  private static PeppolSBDHData _createPeppolSBDHData (@Nonnull final IParticipantIdentifier aSenderID,
-                                                       @Nonnull final IParticipantIdentifier aReceiverID,
-                                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                       @Nonnull final IProcessIdentifier aProcID,
+  private static PeppolSBDHData _createPeppolSBDHData (@NonNull final IParticipantIdentifier aSenderID,
+                                                       @NonNull final IParticipantIdentifier aReceiverID,
+                                                       @NonNull final IDocumentTypeIdentifier aDocTypeID,
+                                                       @NonNull final IProcessIdentifier aProcID,
                                                        @Nullable final String sCountryC1,
                                                        @Nullable final String sInstanceIdentifier,
                                                        @Nullable final String sStandard,
                                                        @Nullable final String sTypeVersion,
                                                        @Nullable final String sType,
-                                                       @Nonnull final Element aPayloadElement,
+                                                       @NonNull final Element aPayloadElement,
                                                        final boolean bClonePayloadElement)
   {
     final PeppolSBDHData aData = new PeppolSBDHData (IF);
@@ -210,16 +209,16 @@ public final class Phase4PeppolSender
   }
 
   @Nullable
-  private static StandardBusinessDocument _createSBD (@Nonnull final IParticipantIdentifier aSenderID,
-                                                      @Nonnull final IParticipantIdentifier aReceiverID,
-                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                      @Nonnull final IProcessIdentifier aProcID,
+  private static StandardBusinessDocument _createSBD (@NonNull final IParticipantIdentifier aSenderID,
+                                                      @NonNull final IParticipantIdentifier aReceiverID,
+                                                      @NonNull final IDocumentTypeIdentifier aDocTypeID,
+                                                      @NonNull final IProcessIdentifier aProcID,
                                                       @Nullable final String sCountryC1,
                                                       @Nullable final String sInstanceIdentifier,
                                                       @Nullable final String sStandard,
                                                       @Nullable final String sTypeVersion,
                                                       @Nullable final String sType,
-                                                      @Nonnull final Element aPayloadElement,
+                                                      @NonNull final Element aPayloadElement,
                                                       final boolean bClonePayloadElement)
   {
     final PeppolSBDHData aData = _createPeppolSBDHData (aSenderID,
@@ -270,16 +269,16 @@ public final class Phase4PeppolSender
    * @since 3.1.0
    */
   @Nullable
-  public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
-                                                     @Nonnull final IParticipantIdentifier aReceiverID,
-                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                     @Nonnull final IProcessIdentifier aProcID,
+  public static StandardBusinessDocument createSBDH (@NonNull final IParticipantIdentifier aSenderID,
+                                                     @NonNull final IParticipantIdentifier aReceiverID,
+                                                     @NonNull final IDocumentTypeIdentifier aDocTypeID,
+                                                     @NonNull final IProcessIdentifier aProcID,
                                                      @Nullable final String sCountryC1,
                                                      @Nullable final String sInstanceIdentifier,
                                                      @Nullable final String sStandard,
                                                      @Nullable final String sTypeVersion,
                                                      @Nullable final String sType,
-                                                     @Nonnull final Element aPayloadElement)
+                                                     @NonNull final Element aPayloadElement)
   {
     return _createSBD (aSenderID,
                        aReceiverID,
@@ -307,7 +306,7 @@ public final class Phase4PeppolSender
    * @throws Phase4Exception
    *         If the validation result handler decides to do so....
    */
-  private static void _validatePayload (@Nonnull final Element aPayloadElement,
+  private static void _validatePayload (@NonNull final Element aPayloadElement,
                                         @Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aRegistry,
                                         @Nullable final DVRCoordinate aVESID,
                                         @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4Exception
@@ -363,10 +362,10 @@ public final class Phase4PeppolSender
    * @throws Phase4Exception
    *         in case of error
    */
-  private static void _checkReceiverAPCert (@Nonnull final TrustedCAChecker aCAChecker,
+  private static void _checkReceiverAPCert (@NonNull final TrustedCAChecker aCAChecker,
                                             @Nullable final X509Certificate aReceiverCert,
                                             @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
-                                            @Nonnull final ETriState eCacheOSCResult,
+                                            @NonNull final ETriState eCacheOSCResult,
                                             @Nullable final ERevocationCheckMode eCheckMode) throws Phase4Exception
   {
     if (LOGGER.isDebugEnabled ())
@@ -399,7 +398,7 @@ public final class Phase4PeppolSender
    * @see #sbdhBuilder() if you already have a ready Standard Business Document
    * @since 0.9.4
    */
-  @Nonnull
+  @NonNull
   public static PeppolUserMessageBuilder builder ()
   {
     return new PeppolUserMessageBuilder ();
@@ -413,7 +412,7 @@ public final class Phase4PeppolSender
    * @see #builder() if you want phase4 to create the Standard Business Document
    * @since 0.9.6
    */
-  @Nonnull
+  @NonNull
   public static PeppolUserMessageSBDHBuilder sbdhBuilder ()
   {
     return new PeppolUserMessageSBDHBuilder ();
@@ -502,8 +501,8 @@ public final class Phase4PeppolSender
      *        The sender participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE senderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
+    @NonNull
+    public final IMPLTYPE senderParticipantID (@NonNull final IParticipantIdentifier aSenderID)
     {
       ValueEnforcer.notNull (aSenderID, "SenderID");
       if (m_aSenderID != null)
@@ -520,8 +519,8 @@ public final class Phase4PeppolSender
      *        The receiver participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE receiverParticipantID (@Nonnull final IParticipantIdentifier aReceiverID)
+    @NonNull
+    public final IMPLTYPE receiverParticipantID (@NonNull final IParticipantIdentifier aReceiverID)
     {
       ValueEnforcer.notNull (aReceiverID, "ReceiverID");
       if (m_aReceiverID != null)
@@ -548,8 +547,8 @@ public final class Phase4PeppolSender
      *        The document type ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE documentTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+    @NonNull
+    public final IMPLTYPE documentTypeID (@NonNull final IDocumentTypeIdentifier aDocTypeID)
     {
       ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
       if (m_aDocTypeID != null)
@@ -576,8 +575,8 @@ public final class Phase4PeppolSender
      *        The process ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE processID (@Nonnull final IProcessIdentifier aProcessID)
+    @NonNull
+    public final IMPLTYPE processID (@NonNull final IProcessIdentifier aProcessID)
     {
       ValueEnforcer.notNull (aProcessID, "ProcessID");
       if (m_aProcessID != null)
@@ -596,7 +595,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 2.1.3
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE countryC1 (@Nullable final String sCountryC1)
     {
       m_sCountryC1 = sCountryC1;
@@ -612,8 +611,8 @@ public final class Phase4PeppolSender
      *        The sender party ID. May neither be <code>null</code> nor empty.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE senderPartyID (@Nonnull @Nonempty final String sSenderPartyID)
+    @NonNull
+    public final IMPLTYPE senderPartyID (@NonNull @Nonempty final String sSenderPartyID)
     {
       ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
       return fromPartyID (sSenderPartyID);
@@ -627,8 +626,8 @@ public final class Phase4PeppolSender
      *        The payload MIME type. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE payloadMimeType (@Nonnull final IMimeType aPayloadMimeType)
+    @NonNull
+    public final IMPLTYPE payloadMimeType (@NonNull final IMimeType aPayloadMimeType)
     {
       ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
       m_aPayloadMimeType = aPayloadMimeType;
@@ -642,7 +641,7 @@ public final class Phase4PeppolSender
      *        <code>true</code> to compress the payload, <code>false</code> to not compress it.
      * @return this for chaining.
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE compressPayload (final boolean bCompressPayload)
     {
       m_bCompressPayload = bCompressPayload;
@@ -658,7 +657,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 1.3.1
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE payloadContentID (@Nullable final String sPayloadContentID)
     {
       m_sPayloadContentID = sPayloadContentID;
@@ -674,8 +673,8 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @see #smpClient(SMPClientReadOnly)
      */
-    @Nonnull
-    public final IMPLTYPE endpointDetailProvider (@Nonnull final IAS4EndpointDetailProvider aEndpointDetailProvider)
+    @NonNull
+    public final IMPLTYPE endpointDetailProvider (@NonNull final IAS4EndpointDetailProvider aEndpointDetailProvider)
     {
       ValueEnforcer.notNull (aEndpointDetailProvider, "EndpointDetailProvider");
       if (m_aEndpointDetailProvider != null)
@@ -696,8 +695,8 @@ public final class Phase4PeppolSender
      * @see #receiverEndpointDetails(X509Certificate, String)
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
-    @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final SMPClientReadOnly aSMPClient)
+    @NonNull
+    public final IMPLTYPE smpClient (@NonNull final SMPClientReadOnly aSMPClient)
     {
       return endpointDetailProvider (AS4EndpointDetailProviderPeppol.create (aSMPClient));
     }
@@ -713,8 +712,8 @@ public final class Phase4PeppolSender
      *         In case the conversion from byte array to X509 certificate failed
      * @since 2.7.6
      */
-    @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final EndpointType aEndpoint) throws CertificateException
+    @NonNull
+    public final IMPLTYPE receiverEndpointDetails (@NonNull final EndpointType aEndpoint) throws CertificateException
     {
       return receiverEndpointDetails (SMPClientReadOnly.getEndpointCertificate (aEndpoint),
                                       SMPClientReadOnly.getEndpointAddress (aEndpoint));
@@ -732,9 +731,9 @@ public final class Phase4PeppolSender
      *        URL and may neither be <code>null</code> nor empty.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
-                                                   @Nonnull @Nonempty final String sDestURL)
+    @NonNull
+    public final IMPLTYPE receiverEndpointDetails (@NonNull final X509Certificate aCert,
+                                                   @NonNull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -748,7 +747,7 @@ public final class Phase4PeppolSender
      *        parameter is the internal check result. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE certificateConsumer (@Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer)
     {
       m_aCertificateConsumer = aCertificateConsumer;
@@ -764,7 +763,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 1.3.3
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE endpointURLConsumer (@Nullable final Consumer <String> aAPEndpointURLConsumer)
     {
       m_aAPEndpointURLConsumer = aAPEndpointURLConsumer;
@@ -780,7 +779,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 3.2.0
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE technicalContactConsumer (@Nullable final Consumer <String> aAPTechnicalContactConsumer)
     {
       m_aAPTechnicalContactConsumer = aAPTechnicalContactConsumer;
@@ -797,7 +796,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 1.3.10
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE checkReceiverAPCertificate (final boolean bCheckReceiverAPCertificate)
     {
       m_bCheckReceiverAPCertificate = bCheckReceiverAPCertificate;
@@ -815,8 +814,8 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 3.0.0-rc1
      */
-    @Nonnull
-    public final IMPLTYPE peppolAP_CAChecker (@Nonnull final TrustedCAChecker aCAChecker)
+    @NonNull
+    public final IMPLTYPE peppolAP_CAChecker (@NonNull final TrustedCAChecker aCAChecker)
     {
       ValueEnforcer.notNull (aCAChecker, "CAChecker");
       m_aCAChecker = aCAChecker;
@@ -865,7 +864,7 @@ public final class Phase4PeppolSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
       {
@@ -1013,8 +1012,8 @@ public final class Phase4PeppolSender
      * @see #createAndStorePeppolReportingItemAfterSending(String)
      * @since 2.2.2
      */
-    @Nonnull
-    public final PeppolReportingItem createPeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4Exception
+    @NonNull
+    public final PeppolReportingItem createPeppolReportingItemAfterSending (@NonNull @Nonempty final String sEndUserID) throws Phase4Exception
     {
       ValueEnforcer.notEmpty (sEndUserID, "EndUserID");
       if (m_aEffectiveSendingDT == null)
@@ -1047,7 +1046,7 @@ public final class Phase4PeppolSender
      * @see #createPeppolReportingItemAfterSending(String)
      * @since 2.2.2
      */
-    public final void createAndStorePeppolReportingItemAfterSending (@Nonnull @Nonempty final String sEndUserID) throws Phase4Exception
+    public final void createAndStorePeppolReportingItemAfterSending (@NonNull @Nonempty final String sEndUserID) throws Phase4Exception
     {
       // Consistency check
       if (PeppolReportingBackend.getBackendService () == null)
@@ -1124,7 +1123,7 @@ public final class Phase4PeppolSender
      *        The SBDH instance identifier to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder sbdhInstanceIdentifier (@Nullable final String sSBDHInstanceIdentifier)
     {
       m_sSBDHInstanceIdentifier = sSBDHInstanceIdentifier;
@@ -1140,7 +1139,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 3.1.0
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder sbdhStandard (@Nullable final String sSBDHStandard)
     {
       m_sSBDHStandard = sSBDHStandard;
@@ -1157,7 +1156,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 0.13.0
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder sbdhTypeVersion (@Nullable final String sSBDHTypeVersion)
     {
       m_sSBDHTypeVersion = sSBDHTypeVersion;
@@ -1173,7 +1172,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 3.1.0
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder sbdhType (@Nullable final String sSBDHType)
     {
       m_sSBDHType = sSBDHType;
@@ -1188,7 +1187,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 3.1.1
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder mlsTo (@Nullable final IParticipantIdentifier aMLSTo)
     {
       m_aMLSTo = aMLSTo;
@@ -1204,7 +1203,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 3.1.1
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder mlsType (@Nullable final EPeppolMLSType eMLSType)
     {
       m_eMLSType = eMLSType;
@@ -1221,8 +1220,8 @@ public final class Phase4PeppolSender
      *        not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public PeppolUserMessageBuilder payload (@Nonnull final Element aPayloadElement)
+    @NonNull
+    public PeppolUserMessageBuilder payload (@NonNull final Element aPayloadElement)
     {
       ValueEnforcer.notNull (aPayloadElement, "Payload");
       ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
@@ -1242,8 +1241,8 @@ public final class Phase4PeppolSender
      *        The payload bytes to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public PeppolUserMessageBuilder payload (@Nonnull final byte [] aPayloadBytes)
+    @NonNull
+    public PeppolUserMessageBuilder payload (@NonNull final byte [] aPayloadBytes)
     {
       ValueEnforcer.notNull (aPayloadBytes, "PayloadBytes");
       m_aPayloadElement = null;
@@ -1262,8 +1261,8 @@ public final class Phase4PeppolSender
      *        The payload input stream provider to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public PeppolUserMessageBuilder payload (@Nonnull final IHasInputStream aPayloadHasIS)
+    @NonNull
+    public PeppolUserMessageBuilder payload (@NonNull final IHasInputStream aPayloadHasIS)
     {
       ValueEnforcer.notNull (aPayloadHasIS, "PayloadHasIS");
       m_aPayloadElement = null;
@@ -1286,9 +1285,9 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 0.12.1
      */
-    @Nonnull
-    public PeppolUserMessageBuilder payloadBinaryContent (@Nonnull final byte [] aBinaryPayload,
-                                                          @Nonnull final IMimeType aMimeType,
+    @NonNull
+    public PeppolUserMessageBuilder payloadBinaryContent (@NonNull final byte [] aBinaryPayload,
+                                                          @NonNull final IMimeType aMimeType,
                                                           @Nullable final Charset aCharset)
     {
       ValueEnforcer.notNull (aBinaryPayload, "BinaryPayload");
@@ -1315,9 +1314,9 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 0.12.1
      */
-    @Nonnull
-    public PeppolUserMessageBuilder payloadTextContent (@Nonnull final String sTextPayload,
-                                                        @Nonnull final IMimeType aMimeType)
+    @NonNull
+    public PeppolUserMessageBuilder payloadTextContent (@NonNull final String sTextPayload,
+                                                        @NonNull final IMimeType aMimeType)
     {
       ValueEnforcer.notNull (sTextPayload, "TextPayload");
       ValueEnforcer.notNull (aMimeType, "MimeType");
@@ -1339,7 +1338,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 0.10.0
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder sbdDocumentConsumer (@Nullable final Consumer <? super StandardBusinessDocument> aSBDDocumentConsumer)
     {
       m_aSBDDocumentConsumer = aSBDDocumentConsumer;
@@ -1358,7 +1357,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 0.10.1
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder validationRegistry (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry)
     {
       m_aVESRegistry = aVESRegistry;
@@ -1377,7 +1376,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @see #validationConfiguration(DVRCoordinate, IPhase4PeppolValidationResultHandler)
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder validationConfiguration (@Nullable final DVRCoordinate aVESID)
     {
       final IPhase4PeppolValidationResultHandler aHdl = aVESID == null ? null
@@ -1399,7 +1398,7 @@ public final class Phase4PeppolSender
      *        <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder validationConfiguration (@Nullable final DVRCoordinate aVESID,
                                                              @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler)
     {
@@ -1414,14 +1413,14 @@ public final class Phase4PeppolSender
      * @return this for chaining
      * @since 2.1.1
      */
-    @Nonnull
+    @NonNull
     public PeppolUserMessageBuilder disableValidation ()
     {
       return validationConfiguration (null, null);
     }
 
     @Override
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       // Ensure a DOM element is present
       final Element aPayloadElement;
@@ -1583,8 +1582,8 @@ public final class Phase4PeppolSender
      * @see #processID(IProcessIdentifier)
      * @see #countryC1(String)
      */
-    @Nonnull
-    public PeppolUserMessageSBDHBuilder payload (@Nonnull final byte [] aSBDHBytes)
+    @NonNull
+    public PeppolUserMessageSBDHBuilder payload (@NonNull final byte [] aSBDHBytes)
     {
       ValueEnforcer.notNull (aSBDHBytes, "SBDHBytes");
       m_aPayloadBytes = aSBDHBytes;
@@ -1606,8 +1605,8 @@ public final class Phase4PeppolSender
      * @see #processID(IProcessIdentifier)
      * @see #countryC1(String)
      */
-    @Nonnull
-    public PeppolUserMessageSBDHBuilder payloadAndMetadata (@Nonnull final PeppolSBDHData aSBDH)
+    @NonNull
+    public PeppolUserMessageSBDHBuilder payloadAndMetadata (@NonNull final PeppolSBDHData aSBDH)
     {
       ValueEnforcer.notNull (aSBDH, "SBDH");
 
@@ -1641,7 +1640,7 @@ public final class Phase4PeppolSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       // Perform SMP lookup
       if (super.finishFields (aResHelper).isFailure ())

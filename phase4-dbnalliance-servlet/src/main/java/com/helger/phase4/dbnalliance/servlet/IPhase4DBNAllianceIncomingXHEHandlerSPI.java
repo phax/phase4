@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.dbnalliance.servlet;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIInterface;
 import com.helger.collection.commons.ICommonsList;
@@ -26,9 +29,6 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.xhe.v10.XHE10XHEType;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This is the interface that must be implemented to handle incoming SBD documents.
@@ -65,14 +65,14 @@ public interface IPhase4DBNAllianceIncomingXHEHandlerSPI
    * @throws Exception
    *         In case it cannot be processed.
    */
-  void handleIncomingXHE (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
-                          @Nonnull HttpHeaderMap aHeaders,
-                          @Nonnull Ebms3UserMessage aUserMessage,
-                          @Nonnull byte [] aSBDBytes,
-                          @Nonnull XHE10XHEType aXHE,
-                          @Nonnull DBNAllianceXHEData aDBNAllianceXHE,
-                          @Nonnull IAS4IncomingMessageState aState,
-                          @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
+  void handleIncomingXHE (@NonNull IAS4IncomingMessageMetadata aMessageMetadata,
+                          @NonNull HttpHeaderMap aHeaders,
+                          @NonNull Ebms3UserMessage aUserMessage,
+                          @NonNull byte [] aSBDBytes,
+                          @NonNull XHE10XHEType aXHE,
+                          @NonNull DBNAllianceXHEData aDBNAllianceXHE,
+                          @NonNull IAS4IncomingMessageState aState,
+                          @NonNull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
 
   /**
    * Optional callback to process a response message
@@ -95,9 +95,9 @@ public interface IPhase4DBNAllianceIncomingXHEHandlerSPI
    *        returned message.
    * @since v3.1.0
    */
-  void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                  @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                  @Nonnull @Nonempty final String sResponseMessageID,
+  void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                  @NonNull final IAS4IncomingMessageState aIncomingState,
+                                  @NonNull @Nonempty final String sResponseMessageID,
                                   @Nullable final byte [] aResponseBytes,
                                   final boolean bResponsePayloadIsAvailable);
 }

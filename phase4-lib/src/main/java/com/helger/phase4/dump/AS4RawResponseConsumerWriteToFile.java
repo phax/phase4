@@ -23,6 +23,8 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.base.enforce.ValueEnforcer;
@@ -40,9 +42,6 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.sender.AbstractAS4RawResponseConsumer;
 import com.helger.phase4.sender.IAS4RawResponseConsumer;
 import com.helger.phase4.util.Phase4Exception;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Example implementation of {@link IAS4RawResponseConsumer} writing to a file.
@@ -73,11 +72,11 @@ public class AS4RawResponseConsumerWriteToFile extends
      * @return A non-<code>null</code> {@link File}.
      * @see AS4Configuration#getDumpBasePath()
      */
-    @Nonnull
-    File createFile (@Nonnull String sAS4MessageID);
+    @NonNull
+    File createFile (@NonNull String sAS4MessageID);
 
-    @Nonnull
-    static String getFilename (@Nonnull final String sAS4MessageID)
+    @NonNull
+    static String getFilename (@NonNull final String sAS4MessageID)
     {
       final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
       return aNow.getYear () +
@@ -118,7 +117,7 @@ public class AS4RawResponseConsumerWriteToFile extends
    *        The file provider to be used. May not be <code>null</code>.
    * @since 0.10.2
    */
-  public AS4RawResponseConsumerWriteToFile (@Nonnull final IFileProvider aFileProvider)
+  public AS4RawResponseConsumerWriteToFile (@NonNull final IFileProvider aFileProvider)
   {
     ValueEnforcer.notNull (aFileProvider, "FileProvider");
     m_aFileProvider = aFileProvider;
@@ -143,14 +142,14 @@ public class AS4RawResponseConsumerWriteToFile extends
    * @return this for chaining
    * @since 1.4.1
    */
-  @Nonnull
-  public final AS4RawResponseConsumerWriteToFile setFileOpenCallback (@Nonnull final Consumer <? super File> aFileOpenCallback)
+  @NonNull
+  public final AS4RawResponseConsumerWriteToFile setFileOpenCallback (@NonNull final Consumer <? super File> aFileOpenCallback)
   {
     m_aFileOpenCallback = aFileOpenCallback;
     return this;
   }
 
-  public void handleResponse (@Nonnull final AS4ClientSentMessage <byte []> aResponseEntity) throws Phase4Exception
+  public void handleResponse (@NonNull final AS4ClientSentMessage <byte []> aResponseEntity) throws Phase4Exception
   {
     final boolean bUseStatusLine = isHandleStatusLine () && aResponseEntity.hasResponseStatusLine ();
     final boolean bUseHttpHeaders = isHandleHttpHeaders () && aResponseEntity.getResponseHeaders ().isNotEmpty ();
@@ -225,8 +224,8 @@ public class AS4RawResponseConsumerWriteToFile extends
    * @return The created instance. Never <code>null</code>.
    * @since 0.10.2
    */
-  @Nonnull
-  public static AS4RawResponseConsumerWriteToFile createForDirectory (@Nonnull final File aBaseDirectory)
+  @NonNull
+  public static AS4RawResponseConsumerWriteToFile createForDirectory (@NonNull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
     return new AS4RawResponseConsumerWriteToFile (sMessageID -> new File (aBaseDirectory,

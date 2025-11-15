@@ -18,12 +18,11 @@ package com.helger.phase4.messaging.http;
 
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.jspecify.annotations.NonNull;
 import org.w3c.dom.Node;
 
 import com.helger.mime.IMimeType;
 import com.helger.phase4.util.AS4XMLHelper;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Special HttpClient HTTP POST entity that contains a DOM Node as a serialized String. This entity
@@ -33,7 +32,7 @@ import jakarta.annotation.Nonnull;
  */
 public class HttpXMLEntity extends StringEntity
 {
-  public HttpXMLEntity (@Nonnull final Node aNode, @Nonnull final IMimeType aMimeType)
+  public HttpXMLEntity (@NonNull final Node aNode, @NonNull final IMimeType aMimeType)
   {
     // ContentType Required for AS4.NET
     super (AS4XMLHelper.serializeXML (aNode),

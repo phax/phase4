@@ -48,7 +48,7 @@ import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.IBDXLURLProvider;
 
-import jakarta.annotation.Nonnull;
+
 import jakarta.annotation.Nullable;
 
 /**
@@ -74,7 +74,7 @@ public final class Phase4CEFSender
    * @return Create a new Builder for AS4 messages if the payload is present. Never
    *         <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static CEFUserMessageBuilder builder ()
   {
     return new CEFUserMessageBuilder ();
@@ -133,7 +133,7 @@ public final class Phase4CEFSender
      *        The sender participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE senderParticipantID (@Nullable final IParticipantIdentifier a)
     {
       m_aSenderID = a;
@@ -148,7 +148,7 @@ public final class Phase4CEFSender
      *        The receiver participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE receiverParticipantID (@Nullable final IParticipantIdentifier a)
     {
       m_aReceiverID = a;
@@ -162,7 +162,7 @@ public final class Phase4CEFSender
      *        The document type ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE documentTypeID (@Nullable final IDocumentTypeIdentifier a)
     {
       m_aDocTypeID = a;
@@ -176,7 +176,7 @@ public final class Phase4CEFSender
      *        The process ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE processID (@Nullable final IProcessIdentifier a)
     {
       m_aProcessID = a;
@@ -190,7 +190,7 @@ public final class Phase4CEFSender
      *        The from party ID. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE fromPartyID (@Nullable final IParticipantIdentifier a)
     {
       return fromPartyIDType (a == null ? null : a.getScheme ()).fromPartyID (a == null ? null : a.getValue ());
@@ -203,7 +203,7 @@ public final class Phase4CEFSender
      *        The to party ID. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE toPartyID (@Nullable final IParticipantIdentifier a)
     {
       return toPartyIDType (a == null ? null : a.getScheme ()).toPartyID (a == null ? null : a.getValue ());
@@ -219,7 +219,7 @@ public final class Phase4CEFSender
      * @see #smpClient(IBDXRServiceMetadataProvider)
      * @see #smpClient(IBDXR2ServiceMetadataProvider)
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE endpointDetailProvider (@Nullable final IAS4EndpointDetailProvider a)
     {
       m_aEndpointDetailProvider = a;
@@ -235,8 +235,8 @@ public final class Phase4CEFSender
      * @return this for chaining
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
-    @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final IBDXRServiceMetadataProvider a)
+    @NonNull
+    public final IMPLTYPE smpClient (@NonNull final IBDXRServiceMetadataProvider a)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (a));
     }
@@ -251,15 +251,15 @@ public final class Phase4CEFSender
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      * @since 0.10.6
      */
-    @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final IBDXR2ServiceMetadataProvider a)
+    @NonNull
+    public final IMPLTYPE smpClient (@NonNull final IBDXR2ServiceMetadataProvider a)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderBDXR2 (a));
     }
 
-    @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
-                                                   @Nonnull @Nonempty final String sDestURL)
+    @NonNull
+    public final IMPLTYPE receiverEndpointDetails (@NonNull final X509Certificate aCert,
+                                                   @NonNull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -271,7 +271,7 @@ public final class Phase4CEFSender
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE certificateConsumer (@Nullable final Consumer <X509Certificate> a)
     {
       m_aCertificateConsumer = a;
@@ -285,7 +285,7 @@ public final class Phase4CEFSender
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE endointURLConsumer (@Nullable final Consumer <String> a)
     {
       m_aAPEndointURLConsumer = a;
@@ -301,7 +301,7 @@ public final class Phase4CEFSender
      * @return this for chaining
      * @since 0.10.3
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE useOriginalSenderFinalRecipientTypeAttr (final boolean b)
     {
       m_bUseOriginalSenderFinalRecipientTypeAttr = b;
@@ -328,7 +328,7 @@ public final class Phase4CEFSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
       {

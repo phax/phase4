@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.ETriState;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeLegErrorHandling}.
@@ -44,8 +44,8 @@ public final class PModeLegErrorHandlingJsonConverter
   private PModeLegErrorHandlingJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModeLegErrorHandling aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModeLegErrorHandling aValue)
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.hasReportSenderErrorsTo ())
@@ -65,8 +65,8 @@ public final class PModeLegErrorHandlingJsonConverter
     return ret;
   }
 
-  @Nonnull
-  public static PModeLegErrorHandling convertToNative (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static PModeLegErrorHandling convertToNative (@NonNull final IJsonObject aElement)
   {
     final IJsonArray aSender = aElement.getAsArray (REPORT_SENDER_ERRORS_TO);
     final PModeAddressList aSenderAddresses = aSender == null ? null

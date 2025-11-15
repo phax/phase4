@@ -20,6 +20,8 @@ import java.time.OffsetDateTime;
 import java.util.Locale;
 import java.util.function.Consumer;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
@@ -52,9 +54,6 @@ import com.helger.phase4.model.pmode.resolve.AS4DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Abstract builder base class with the requirements for all message types.
@@ -145,7 +144,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    * @since 1.3.10
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE customHttpPoster (@Nullable final IHttpPoster aCustomHttpPoster)
   {
     m_aCustomHttpPoster = aCustomHttpPoster;
@@ -170,7 +169,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        The new HTTP client settings to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE httpClientFactory (@Nullable final HttpClientSettings aHttpClientSettings)
   {
     return httpClientFactory (aHttpClientSettings == null ? null : new HttpClientFactory (aHttpClientSettings));
@@ -185,7 +184,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        The new HTTP client factory to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE httpClientFactory (@Nullable final HttpClientFactory aHttpClientFactory)
   {
     m_aHttpClientFactory = aHttpClientFactory;
@@ -212,7 +211,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    * @since 2.2.0
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE cryptoFactorySign (@Nullable final IAS4CryptoFactory aCryptoFactorySign)
   {
     m_aCryptoFactorySign = aCryptoFactorySign;
@@ -239,7 +238,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    * @since 2.2.0
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE cryptoFactoryCrypt (@Nullable final IAS4CryptoFactory aCryptoFactoryCrypt)
   {
     m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
@@ -256,7 +255,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @see #cryptoFactorySign(IAS4CryptoFactory)
    * @see #cryptoFactoryCrypt(IAS4CryptoFactory)
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE cryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
   {
     return cryptoFactorySign (aCryptoFactory).cryptoFactoryCrypt (aCryptoFactory);
@@ -271,7 +270,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @see #withCryptParams(Consumer)
    * @since 2.1.4
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final AS4SigningParams signingParams ()
   {
@@ -291,9 +290,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @see #withCryptParams(Consumer)
    * @since 2.1.4
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
-  public final IMPLTYPE withSigningParams (@Nonnull final Consumer <? super AS4SigningParams> aConsumer)
+  public final IMPLTYPE withSigningParams (@NonNull final Consumer <? super AS4SigningParams> aConsumer)
   {
     ValueEnforcer.notNull (aConsumer, "Consumer");
 
@@ -310,7 +309,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @see #withCryptParams(Consumer)
    * @since 2.1.4
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final AS4CryptParams cryptParams ()
   {
@@ -330,9 +329,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @see #cryptParams()
    * @since 2.1.4
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
-  public final IMPLTYPE withCryptParams (@Nonnull final Consumer <? super AS4CryptParams> aConsumer)
+  public final IMPLTYPE withCryptParams (@NonNull final Consumer <? super AS4CryptParams> aConsumer)
   {
     ValueEnforcer.notNull (aConsumer, "Consumer");
 
@@ -358,7 +357,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        The optional AS4 message ID to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE messageID (@Nullable final String sMessageID)
   {
     m_sMessageID = sMessageID;
@@ -385,7 +384,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    * @since 1.3.2
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE refToMessageID (@Nullable final String sRefToMessageID)
   {
     m_sRefToMessageID = sRefToMessageID;
@@ -411,7 +410,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE sendingDateTime (@Nullable final OffsetDateTime aSendingDateTime)
   {
     m_aSendingDateTime = aSendingDateTime;
@@ -435,7 +434,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        The SOAP version to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE soapVersion (@Nullable final ESoapVersion eSoapVersion)
   {
     m_eSoapVersion = eSoapVersion;
@@ -459,7 +458,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        The HTTP retry settings to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE httpRetrySettings (@Nullable final HttpRetrySettings a)
   {
     m_aHttpRetrySettings = a;
@@ -485,7 +484,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        The locale to use. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE locale (@Nullable final Locale a)
   {
     m_aLocale = a;
@@ -510,7 +509,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    * @since 2.8.2
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE as4ProfileID (@Nullable final String sAS4ProfileID)
   {
     m_sAS4ProfileID = sAS4ProfileID;
@@ -534,7 +533,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        The PMode resolver to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE pmodeResolver (@Nullable final IAS4PModeResolver aPModeResolver)
   {
     m_aPModeResolver = aPModeResolver;
@@ -544,7 +543,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   /**
    * @return The currently set {@link IAS4IncomingAttachmentFactory}. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final IAS4IncomingAttachmentFactory incomingAttachmentFactory ()
   {
     return m_aIAF;
@@ -558,8 +557,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        The incoming attachment factory to be used. May not be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  public final IMPLTYPE incomingAttachmentFactory (@Nonnull final IAS4IncomingAttachmentFactory aIAF)
+  @NonNull
+  public final IMPLTYPE incomingAttachmentFactory (@NonNull final IAS4IncomingAttachmentFactory aIAF)
   {
     ValueEnforcer.notNull (aIAF, "IncomingAttachmentFactory");
     m_aIAF = aIAF;
@@ -570,7 +569,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return The profile selector for incoming AS4 messages. Never <code>null</code>.
    * @since 0.13.0
    */
-  @Nonnull
+  @NonNull
   public final IAS4IncomingProfileSelector incomingProfileSelector ()
   {
     return m_aIncomingProfileSelector;
@@ -585,8 +584,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    * @since 0.13.0
    */
-  @Nonnull
-  public final IMPLTYPE incomingProfileSelector (@Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector)
+  @NonNull
+  public final IMPLTYPE incomingProfileSelector (@NonNull final IAS4IncomingProfileSelector aIncomingProfileSelector)
   {
     ValueEnforcer.notNull (aIncomingProfileSelector, "IncomingProfileSelector");
     m_aIncomingProfileSelector = aIncomingProfileSelector;
@@ -612,7 +611,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    * @since 0.13.0
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE senderInterrupt (@Nullable final IAS4SenderInterrupt aSenderInterrupt)
   {
     m_aSenderInterrupt = aSenderInterrupt;
@@ -638,7 +637,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    * @since 2.2.2
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE sendingDateTimeConsumer (@Nullable final IAS4SendingDateTimeConsumer aSendingDTConsumer)
   {
     m_aSendingDTConsumer = aSendingDTConsumer;
@@ -664,7 +663,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        An internal to be used for the created message. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE buildMessageCallback (@Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback)
   {
     m_aBuildMessageCallback = aBuildMessageCallback;
@@ -689,7 +688,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        outgoing dumper is used.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE outgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
   {
     m_aOutgoingDumper = aOutgoingDumper;
@@ -714,7 +713,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        incoming dumper is used.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE incomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
   {
     m_aIncomingDumper = aIncomingDumper;
@@ -741,7 +740,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    * @since 2.2.0
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE decryptRequestDataModifier (@Nullable final IAS4DecryptParameterModifier aDecryptParameterModifier)
   {
     m_aDecryptParameterModifier = aDecryptParameterModifier;
@@ -766,7 +765,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        The optional retry callback. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE retryCallback (@Nullable final IAS4RetryCallback aRetryCallback)
   {
     m_aRetryCallback = aRetryCallback;
@@ -793,7 +792,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *        The optional response consumer. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE rawResponseConsumer (@Nullable final IAS4RawResponseConsumer aResponseConsumer)
   {
     m_aResponseConsumer = aResponseConsumer;
@@ -816,7 +815,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    */
   @OverrideOnDemand
   @OverridingMethodsMustInvokeSuper
-  protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+  protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
   {
     if (StringHelper.isNotEmpty (m_sAS4ProfileID))
     {
@@ -941,7 +940,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @see #isEveryRequiredFieldSet()
    * @see #senderInterrupt()
    */
-  @Nonnull
+  @NonNull
   public final ESuccess sendMessage () throws Phase4Exception
   {
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())

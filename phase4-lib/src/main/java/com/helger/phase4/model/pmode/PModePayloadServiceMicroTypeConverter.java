@@ -16,15 +16,15 @@
  */
 package com.helger.phase4.model.pmode;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModePayloadService}.
@@ -35,18 +35,18 @@ public final class PModePayloadServiceMicroTypeConverter implements IMicroTypeCo
 {
   private static final IMicroQName ATTR_COMPRESSION_MODE = new MicroQName ("CompressionMode");
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final PModePayloadService aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final PModePayloadService aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_COMPRESSION_MODE, aValue.getCompressionModeID ());
     return ret;
   }
 
-  @Nonnull
-  public PModePayloadService convertToNative (@Nonnull final IMicroElement aElement)
+  @NonNull
+  public PModePayloadService convertToNative (@NonNull final IMicroElement aElement)
   {
     final String sCompressionModeID = aElement.getAttributeValue (ATTR_COMPRESSION_MODE);
     final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromIDOrNull (sCompressionModeID);

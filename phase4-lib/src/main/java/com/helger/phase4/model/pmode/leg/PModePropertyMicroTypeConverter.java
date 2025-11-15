@@ -16,15 +16,15 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.state.EMandatory;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModeProperty}.
@@ -38,10 +38,10 @@ public class PModePropertyMicroTypeConverter extends AbstractPModeMicroTypeConve
   private static final IMicroQName ATTR_DATA_TYPE = new MicroQName ("DataType");
   private static final IMicroQName ATTR_MANDATORY = new MicroQName ("Mandatory");
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final PModeProperty aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final PModeProperty aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_NAME, aValue.getName ());
@@ -51,8 +51,8 @@ public class PModePropertyMicroTypeConverter extends AbstractPModeMicroTypeConve
     return ret;
   }
 
-  @Nonnull
-  public PModeProperty convertToNative (@Nonnull final IMicroElement aElement)
+  @NonNull
+  public PModeProperty convertToNative (@NonNull final IMicroElement aElement)
   {
     final String sName = aElement.getAttributeValue (ATTR_NAME);
     final String sDescription = aElement.getAttributeValue (ATTR_DESCRIPTION);

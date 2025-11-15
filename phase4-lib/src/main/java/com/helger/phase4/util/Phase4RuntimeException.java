@@ -16,8 +16,8 @@
  */
 package com.helger.phase4.util;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * phase4 base runtime exception. It is just a in-between exception for easy catching of all phase4
@@ -32,7 +32,7 @@ public class Phase4RuntimeException extends RuntimeException
    * @param sMessage
    *        Error message
    */
-  public Phase4RuntimeException (@Nonnull final String sMessage)
+  public Phase4RuntimeException (@NonNull final String sMessage)
   {
     super (sMessage);
   }
@@ -53,7 +53,7 @@ public class Phase4RuntimeException extends RuntimeException
    * @param aCause
    *        Optional causing exception
    */
-  public Phase4RuntimeException (@Nonnull final String sMessage, @Nullable final Throwable aCause)
+  public Phase4RuntimeException (@NonNull final String sMessage, @Nullable final Throwable aCause)
   {
     super (sMessage, aCause);
   }

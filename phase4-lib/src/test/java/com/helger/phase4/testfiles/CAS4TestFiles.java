@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.testfiles;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Constants for test files
@@ -50,28 +50,28 @@ public final class CAS4TestFiles
   private CAS4TestFiles ()
   {}
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsList <String> getTestFilesSoap11ValidXML ()
   {
     return new CommonsArrayList <> (SOAP_11_VALID_XML);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsList <String> getTestFilesSoap12ValidXML ()
   {
     return new CommonsArrayList <> (SOAP_12_VALID_XML);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsList <String> getTestFilesSoap11InvalidXML ()
   {
     return new CommonsArrayList <> (SOAP_11_INVALID_XML);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsList <String> getTestFilesSoap12InvalidXML ()
   {

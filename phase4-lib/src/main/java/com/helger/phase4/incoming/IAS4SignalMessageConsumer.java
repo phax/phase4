@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.incoming;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.util.Phase4Exception;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Specialized interface for the EBMS 3 Signal Message consumer.
@@ -46,7 +46,7 @@ public interface IAS4SignalMessageConsumer
    * @throws Phase4Exception
    *         in case of error
    */
-  void handleSignalMessage (@Nonnull Ebms3SignalMessage aEbmsSignalMsg,
-                            @Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                            @Nonnull IAS4IncomingMessageState aIncomingState) throws Phase4Exception;
+  void handleSignalMessage (@NonNull Ebms3SignalMessage aEbmsSignalMsg,
+                            @NonNull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                            @NonNull IAS4IncomingMessageState aIncomingState) throws Phase4Exception;
 }

@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.pmode;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.ETriState;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeReceptionAwareness}.
@@ -41,8 +41,8 @@ public class PModeReceptionAwarenessJsonConverter
   private PModeReceptionAwarenessJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModeReceptionAwareness aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModeReceptionAwareness aValue)
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.isReceptionAwarenessDefined ())
@@ -56,7 +56,7 @@ public class PModeReceptionAwarenessJsonConverter
     return ret;
   }
 
-  @Nonnull
+  @NonNull
   public static PModeReceptionAwareness convertToNative (final IJsonObject aElement)
   {
     final ETriState eReceptionAwareness = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (RECEPTION_AWARENESS),

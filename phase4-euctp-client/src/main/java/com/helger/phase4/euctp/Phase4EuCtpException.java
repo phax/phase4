@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.euctp;
 
-import com.helger.phase4.util.Phase4Exception;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Generic exception to be thrown from the phase4 euctp sender.
@@ -32,7 +32,7 @@ public class Phase4EuCtpException extends Phase4Exception
    * @param sMessage
    *        Error message
    */
-  public Phase4EuCtpException (@Nonnull final String sMessage)
+  public Phase4EuCtpException (@NonNull final String sMessage)
   {
     super (sMessage);
   }
@@ -43,7 +43,7 @@ public class Phase4EuCtpException extends Phase4Exception
    * @param aCause
    *        Optional causing exception
    */
-  public Phase4EuCtpException (@Nonnull final String sMessage, @Nullable final Throwable aCause)
+  public Phase4EuCtpException (@NonNull final String sMessage, @Nullable final Throwable aCause)
   {
     super (sMessage, aCause);
   }

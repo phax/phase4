@@ -20,6 +20,8 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.UUID;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
@@ -33,9 +35,6 @@ import com.helger.phase4.profile.euctp.EEuCtpAction;
 import com.helger.phase4.profile.euctp.EEuCtpService;
 import com.helger.phase4.profile.euctp.EuCtpPMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Abstract EuCTP UserMessage builder class with sanity methods
@@ -87,23 +86,23 @@ public abstract class AbstractEuCtpUserMessageBuilder <IMPLTYPE extends Abstract
     }
   }
 
-  @Nonnull
+  @NonNull
   public IMPLTYPE httpClientFactory (@Nullable final KeyStore aKeyStore, @Nullable final char [] aKeyPassword)
                                                                                                                throws GeneralSecurityException
   {
     return httpClientFactory (new Phase4EuCtpHttpClientSettings (aKeyStore, aKeyPassword));
   }
 
-  @Nonnull
-  public IMPLTYPE service (@Nullable final String sServiceType, @Nonnull final EEuCtpService eEuCtpService)
+  @NonNull
+  public IMPLTYPE service (@Nullable final String sServiceType, @NonNull final EEuCtpService eEuCtpService)
   {
     ValueEnforcer.notNull (eEuCtpService, "EuCtpService");
 
     return service (sServiceType, eEuCtpService.getValue ());
   }
 
-  @Nonnull
-  public IMPLTYPE action (@Nonnull final EEuCtpAction eEuCtpAction)
+  @NonNull
+  public IMPLTYPE action (@NonNull final EEuCtpAction eEuCtpAction)
   {
     ValueEnforcer.notNull (eEuCtpAction, "EuCtpAction");
 
@@ -119,11 +118,7 @@ public abstract class AbstractEuCtpUserMessageBuilder <IMPLTYPE extends Abstract
 
     if (m_aPayload == null)
     {
-      if (EuCtpPMode.ACTION_TEST.equals (m_sAction))
-      {
-        // Payload is optional
-      }
-      else
+      if (!EuCtpPMode.ACTION_TEST.equals (m_sAction))
       {
         // Payload is mandatory
         LOGGER.warn ("The field 'payload' is not set");

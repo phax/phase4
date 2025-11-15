@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model;
 
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
-
-import jakarta.annotation.Nullable;
 
 /**
  * Generic AS4 helper for specification related things.

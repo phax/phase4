@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
@@ -23,8 +25,6 @@ import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeLegBusinessInformation}.
@@ -46,8 +46,8 @@ public final class PModeLegBusinessInformationJsonConverter
   private PModeLegBusinessInformationJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModeLegBusinessInformation aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModeLegBusinessInformation aValue)
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.hasService ())
@@ -71,8 +71,8 @@ public final class PModeLegBusinessInformationJsonConverter
     return ret;
   }
 
-  @Nonnull
-  public static PModeLegBusinessInformation convertToNative (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static PModeLegBusinessInformation convertToNative (@NonNull final IJsonObject aElement)
   {
     final String sService = aElement.getAsString (SERVICE);
     final String sServiceType = aElement.getAsString (SERVICE_TYPE);

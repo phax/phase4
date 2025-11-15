@@ -18,11 +18,11 @@ package com.helger.phase4.model.error;
 
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.text.display.IHasDisplayText;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Translatable error texts for EBMS error messages
@@ -53,13 +53,13 @@ public enum EEbmsErrorText implements IHasDisplayText
 
   private final String m_sErrorText;
 
-  EEbmsErrorText (@Nonnull @Nonempty final String sErrorText)
+  EEbmsErrorText (@NonNull @Nonempty final String sErrorText)
   {
     m_sErrorText = sErrorText;
   }
 
   @Nullable
-  public String getDisplayText (@Nonnull final Locale aContentLocale)
+  public String getDisplayText (@NonNull final Locale aContentLocale)
   {
     return m_sErrorText;
   }

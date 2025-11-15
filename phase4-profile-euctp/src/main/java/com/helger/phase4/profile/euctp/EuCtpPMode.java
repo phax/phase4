@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.profile.euctp;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.ETriState;
@@ -41,9 +44,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * PMode creation code.
@@ -74,14 +74,14 @@ public final class EuCtpPMode
    *        The endpoint address URL. Maybe <code>null</code>.
    * @return The new {@link PModeLegProtocol}. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
     // Set the endpoint URL
     return PModeLegProtocol.createForDefaultSoapVersion (sAddress);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     // Process ID
@@ -94,7 +94,7 @@ public final class EuCtpPMode
     return new PModeLegBusinessInformation (sService, sServiceType, sAction, null, null, nPayloadProfileMaxKB, sMPCID);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegErrorHandling generatePModeLegErrorHandling ()
   {
     final PModeAddressList aReportSenderErrorsTo = null;
@@ -111,7 +111,7 @@ public final class EuCtpPMode
                                       eReportDeliveryFailuresNotifyProducer);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegSecurity generatePModeLegSecurity ()
   {
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
@@ -133,7 +133,7 @@ public final class EuCtpPMode
    * @return The new {@link PModeLeg}. Never <code>null</code>.
    * @see #generatePModeLegProtocol(String)
    */
-  @Nonnull
+  @NonNull
   public static PModeLeg generatePModeLeg (@Nullable final String sAddress)
   {
     return new PModeLeg (generatePModeLegProtocol (sAddress),
@@ -143,7 +143,7 @@ public final class EuCtpPMode
                          generatePModeLegSecurity ());
   }
 
-  @Nonnull
+  @NonNull
   public static PModeReceptionAwareness generatePModeReceptionAwareness ()
   {
     final ETriState eReceptionAwareness = ETriState.TRUE;
@@ -158,16 +158,16 @@ public final class EuCtpPMode
                                         eDuplicateDetection);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeParty createParty (@Nullable final String sPartyTypeID,
-                                        @Nonnull @Nonempty final String sPartyID,
-                                        @Nonnull @Nonempty final String sRole)
+                                        @NonNull @Nonempty final String sPartyID,
+                                        @NonNull @Nonempty final String sRole)
   {
     // Party type is needed for EuCTP
     return new PModeParty (sPartyTypeID, sPartyID, sRole, null, null);
   }
 
-  @Nonnull
+  @NonNull
   public static PModePayloadService generatePModePayloadService ()
   {
     return new PModePayloadService (EAS4CompressionMode.GZIP);
@@ -185,15 +185,15 @@ public final class EuCtpPMode
    * @param aPModeIDProvider
    *        PMode ID provider. May not be <code>null</code>.
    * @param bPersist
-   *        <code>true</code> to persist the PMode in the PModeManager,
-   *        <code>false</code> to have it only in memory.
+   *        <code>true</code> to persist the PMode in the PModeManager, <code>false</code> to have
+   *        it only in memory.
    * @return New PMode and never <code>null</code>.
    */
-  @Nonnull
-  public static PMode createEuCtpPushPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                            @Nonnull @Nonempty final String sResponderID,
+  @NonNull
+  public static PMode createEuCtpPushPMode (@NonNull @Nonempty final String sInitiatorID,
+                                            @NonNull @Nonempty final String sResponderID,
                                             @Nullable final String sAddress,
-                                            @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                            @NonNull final IPModeIDProvider aPModeIDProvider,
                                             final boolean bPersist)
   {
     final PModeParty aInitiator = createParty (DEFAULT_PARTY_TYPE_ID, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
@@ -230,15 +230,15 @@ public final class EuCtpPMode
    * @param aPModeIDProvider
    *        PMode ID provider. May not be <code>null</code>.
    * @param bPersist
-   *        <code>true</code> to persist the PMode in the PModeManager,
-   *        <code>false</code> to have it only in memory.
+   *        <code>true</code> to persist the PMode in the PModeManager, <code>false</code> to have
+   *        it only in memory.
    * @return New PMode and never <code>null</code>.
    */
-  @Nonnull
-  public static PMode createEuCtpPullPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                            @Nonnull @Nonempty final String sResponderID,
+  @NonNull
+  public static PMode createEuCtpPullPMode (@NonNull @Nonempty final String sInitiatorID,
+                                            @NonNull @Nonempty final String sResponderID,
                                             @Nullable final String sAddress,
-                                            @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                            @NonNull final IPModeIDProvider aPModeIDProvider,
                                             final boolean bPersist)
   {
     final PModeParty aInitiator = createParty (DEFAULT_PARTY_TYPE_ID, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);

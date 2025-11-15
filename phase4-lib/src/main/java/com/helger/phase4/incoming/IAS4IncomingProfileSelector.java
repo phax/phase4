@@ -16,8 +16,8 @@
  */
 package com.helger.phase4.incoming;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Callback interface to determine the used AS4 profile of an incoming message.
@@ -38,7 +38,7 @@ public interface IAS4IncomingProfileSelector
    * @return The AS4 profile ID or <code>null</code> if none was found.
    */
   @Nullable
-  String getAS4ProfileID (@Nonnull IAS4IncomingMessageState aIncomingState);
+  String getAS4ProfileID (@NonNull IAS4IncomingMessageState aIncomingState);
 
   /**
    * Configure if the profile validation rules should be applied or not. Usually this is

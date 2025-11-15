@@ -19,6 +19,7 @@ package com.helger.phase4.server.spi;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
@@ -54,7 +55,6 @@ import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
-import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
@@ -70,15 +70,15 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MockMessageProcessorCheckingStreamsSPI.class);
 
-  @Nonnull
-  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                          @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                          @Nonnull final Ebms3UserMessage aUserMessage,
-                                                          @Nonnull final IPMode aPMode,
+  @NonNull
+  public AS4MessageProcessorResult processAS4UserMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                          @NonNull final HttpHeaderMap aHttpHeaders,
+                                                          @NonNull final Ebms3UserMessage aUserMessage,
+                                                          @NonNull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nonnull final IAS4IncomingMessageState aState,
-                                                          @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget)
+                                                          @NonNull final IAS4IncomingMessageState aState,
+                                                          @NonNull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget)
   {
     // Needed for AS4_TA13 because we want to force a decompression failure and
     // for that to happen the stream has to be read
@@ -123,13 +123,13 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
     return AS4MessageProcessorResult.createSuccess ();
   }
 
-  @Nonnull
-  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                                  @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                                  @Nonnull final Ebms3SignalMessage aSignalMessage,
-                                                                  @Nonnull final IPMode aPmode,
-                                                                  @Nonnull final IAS4IncomingMessageState aState,
-                                                                  @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+  @NonNull
+  public AS4SignalMessageProcessorResult processAS4SignalMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                                  @NonNull final HttpHeaderMap aHttpHeaders,
+                                                                  @NonNull final Ebms3SignalMessage aSignalMessage,
+                                                                  @NonNull final IPMode aPmode,
+                                                                  @NonNull final IAS4IncomingMessageState aState,
+                                                                  @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     if (aSignalMessage.getReceipt () != null)
     {
@@ -188,9 +188,9 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
     return AS4SignalMessageProcessorResult.createSuccess (null, null, aUserMessage);
   }
 
-  public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                         @Nonnull final IAS4IncomingMessageState aState,
-                                         @Nonnull @Nonempty final String sResponseMessageID,
+  public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                         @NonNull final IAS4IncomingMessageState aState,
+                                         @NonNull @Nonempty final String sResponseMessageID,
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {}

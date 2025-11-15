@@ -18,6 +18,7 @@ package com.helger.phase4.server.servlet;
 
 import java.util.function.Consumer;
 
+import org.jspecify.annotations.NonNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -37,7 +38,6 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.xml.serialize.read.DOMReader;
 
-import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 /**
@@ -73,7 +73,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    * @throws Exception
    *         In case of error
    */
-  @Nonnull
+  @NonNull
   protected static final Document modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
                                                      @Nullable final String sAnotherOrWrongPartyIdInitiator,
                                                      @Nullable final String sAnotherOrWrongPartyIdResponder,
@@ -127,7 +127,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     return aAttachments != null ? aMsg.getAsSoapDocument (null) : aMsg.getAsSoapDocument (aPayload);
   }
 
-  @Nonnull
+  @NonNull
   protected static final Ebms3MessageProperties createDefaultProperties ()
   {
     return MessageHelperMethods.createEbms3MessageProperties (AS4TestConstants.getEBMSProperties ());

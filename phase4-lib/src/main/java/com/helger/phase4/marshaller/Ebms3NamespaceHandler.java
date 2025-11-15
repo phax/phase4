@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.marshaller;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.phase4.CAS4;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 import com.helger.xsds.xlink.CXLink;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * A special XML namespace context that contains all default Ebms3 mappings.
@@ -56,7 +56,7 @@ public class Ebms3NamespaceHandler extends MapBasedNamespaceContext
    *         To modify it, please clone it and go from there.
    * @since 1.3.3
    */
-  @Nonnull
+  @NonNull
   public static Ebms3NamespaceHandler getInstance ()
   {
     return SingletonHolder.INSTANCE;

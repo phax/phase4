@@ -16,15 +16,15 @@
  */
 package com.helger.phase4.model.error;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
 import com.helger.diagnostics.error.level.EErrorLevel;
 import com.helger.diagnostics.error.level.IErrorLevel;
 import com.helger.diagnostics.error.level.IHasErrorLevelComparable;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * EBMS error severity with mapping to {@link IErrorLevel}.
@@ -39,7 +39,7 @@ public enum EEbmsErrorSeverity implements IHasID <String>, IHasErrorLevelCompara
   private final String m_sSeverity;
   private final IErrorLevel m_aErrorLevel;
 
-  EEbmsErrorSeverity (@Nonnull @Nonempty final String sSeverity, @Nonnull final IErrorLevel aErrorLevel)
+  EEbmsErrorSeverity (@NonNull @Nonempty final String sSeverity, @NonNull final IErrorLevel aErrorLevel)
   {
     m_sSeverity = sSeverity;
     m_aErrorLevel = aErrorLevel;
@@ -48,7 +48,7 @@ public enum EEbmsErrorSeverity implements IHasID <String>, IHasErrorLevelCompara
   /**
    * @return The token for the EBMS3 message
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
@@ -58,14 +58,14 @@ public enum EEbmsErrorSeverity implements IHasID <String>, IHasErrorLevelCompara
   /**
    * @return The token for the EBMS3 message
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getSeverity ()
   {
     return m_sSeverity;
   }
 
-  @Nonnull
+  @NonNull
   public IErrorLevel getErrorLevel ()
   {
     return m_aErrorLevel;

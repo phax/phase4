@@ -22,6 +22,8 @@ import java.security.KeyStore;
 import java.util.Locale;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -49,8 +51,6 @@ import com.helger.photon.security.user.IUserManager;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
 import jakarta.activation.CommandMap;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRegistration;
 import jakarta.servlet.annotation.WebListener;
@@ -62,39 +62,39 @@ public final class AS4WebAppListener extends WebAppListener
 
   @Override
   @Nullable
-  protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
+  protected String getInitParameterDebug (@NonNull final ServletContext aSC)
   {
     return Boolean.toString (AS4Configuration.isGlobalDebug ());
   }
 
   @Override
   @Nullable
-  protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
+  protected String getInitParameterProduction (@NonNull final ServletContext aSC)
   {
     return Boolean.toString (AS4Configuration.isGlobalProduction ());
   }
 
   @Override
   @Nullable
-  protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
+  protected String getInitParameterNoStartupInfo (@NonNull final ServletContext aSC)
   {
     return Boolean.toString (AS4Configuration.isNoStartupInfo ());
   }
 
   @Override
-  protected String getDataPath (@Nonnull final ServletContext aSC)
+  protected String getDataPath (@NonNull final ServletContext aSC)
   {
     return AS4Configuration.getDataPath ();
   }
 
   @Override
-  protected boolean shouldCheckFileAccess (@Nonnull final ServletContext aSC)
+  protected boolean shouldCheckFileAccess (@NonNull final ServletContext aSC)
   {
     return false;
   }
 
   @Override
-  protected void afterContextInitialized (@Nonnull final ServletContext aSC)
+  protected void afterContextInitialized (@NonNull final ServletContext aSC)
   {
     super.afterContextInitialized (aSC);
 
@@ -119,8 +119,8 @@ public final class AS4WebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) ==
-        null)
+    if (CommandMap.getDefaultCommandMap ()
+                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -172,7 +172,7 @@ public final class AS4WebAppListener extends WebAppListener
                                                                                                                          ".as4in"))
     {
       @Override
-      public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+      public void onEndRequest (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                 @Nullable final Exception aCaughtException)
       {
         // Save the metadata also to a file
@@ -203,7 +203,7 @@ public final class AS4WebAppListener extends WebAppListener
   }
 
   @Override
-  protected void beforeContextDestroyed (@Nonnull final ServletContext aSC)
+  protected void beforeContextDestroyed (@NonNull final ServletContext aSC)
   {
     DropFolderUserMessage.destroy ();
     AS4ServerInitializer.shutdownAS4Server ();

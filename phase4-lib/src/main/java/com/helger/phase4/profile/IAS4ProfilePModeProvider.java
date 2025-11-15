@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.profile;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.phase4.model.pmode.PMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * PMode provider interface
@@ -42,7 +42,7 @@ public interface IAS4ProfilePModeProvider
    * @return The PMode matching the params or <code>null</code>.
    */
   @Nullable
-  PMode getOrCreatePMode (@Nonnull @Nonempty String sInitiatorID,
-                          @Nonnull @Nonempty String sResponderID,
+  PMode getOrCreatePMode (@NonNull @Nonempty String sInitiatorID,
+                          @NonNull @Nonempty String sResponderID,
                           @Nullable String sAddress);
 }

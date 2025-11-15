@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,7 +63,6 @@ import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.serialize.read.DOMReader;
 
-import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
@@ -99,14 +99,14 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
 
   private static final class TestClientUserMessage extends AS4ClientUserMessage
   {
-    public TestClientUserMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+    public TestClientUserMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper)
     {
       super (aResHelper);
     }
 
     @Nullable
     @VisibleForTesting
-    public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws WSSecurityException,
+    public IMicroDocument sendMessageAndGetMicroDocument (@NonNull final String sURL) throws WSSecurityException,
                                                                                       IOException,
                                                                                       MessagingException
     {
@@ -140,7 +140,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
    *
    * @return the AS4Client with the set attributes to continue
    */
-  @Nonnull
+  @NonNull
   private static TestClientUserMessage _createMandatoryAttributesSuccessMessage ()
   {
     final TestClientUserMessage aClient = new TestClientUserMessage (s_aResMgr);
@@ -172,8 +172,8 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
    *        the client on which these attributes should be set
    * @return the client to continue working with it
    */
-  @Nonnull
-  private static AS4ClientUserMessage _setKeyStoreTestData (@Nonnull final AS4ClientUserMessage aClient)
+  @NonNull
+  private static AS4ClientUserMessage _setKeyStoreTestData (@NonNull final AS4ClientUserMessage aClient)
   {
     final IKeyStoreAndKeyDescriptor aKSD = KeyStoreAndKeyDescriptor.builder ()
                                                                    .type (EKeyStoreType.JKS)
@@ -187,7 +187,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
     return aClient;
   }
 
-  private static void _ensureInvalidState (@Nonnull final AS4ClientUserMessage aClient)
+  private static void _ensureInvalidState (@NonNull final AS4ClientUserMessage aClient)
   {
     try
     {
@@ -200,7 +200,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
     }
   }
 
-  private static void _ensureValidState (@Nonnull final AS4ClientUserMessage aClient)
+  private static void _ensureValidState (@NonNull final AS4ClientUserMessage aClient)
   {
     try
     {

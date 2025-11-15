@@ -18,6 +18,7 @@ package com.helger.phase4.model.pmode;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -55,8 +56,6 @@ import com.helger.phase4.wss.EWSSVersion;
 import com.helger.unittest.support.TestHelper;
 import com.helger.xml.mock.XMLTestHelper;
 
-import jakarta.annotation.Nonnull;
-
 /**
  * Test class for class {@link PModeMicroTypeConverter}.
  *
@@ -67,7 +66,7 @@ public final class PModeMicroTypeConverterTest
   @Rule
   public final TestRule m_aTestRule = new AS4TestRule ();
 
-  private static void _testPMode (@Nonnull final PMode aPMode)
+  private static void _testPMode (@NonNull final PMode aPMode)
   {
     XMLTestHelper.testMicroTypeConversion (aPMode);
     if (aPMode.hasInitiator ())
@@ -118,19 +117,19 @@ public final class PModeMicroTypeConverterTest
                            null));
   }
 
-  @Nonnull
+  @NonNull
   private PModePayloadService _createPayloadService ()
   {
     return new PModePayloadService (EAS4CompressionMode.GZIP);
   }
 
-  @Nonnull
+  @NonNull
   private PModeReceptionAwareness _createPModeReceptionAwareness ()
   {
     return PModeReceptionAwareness.createDefault ();
   }
 
-  @Nonnull
+  @NonNull
   private PModeParty _createInitiatorOrResponder (final boolean bInitiator)
   {
     if (bInitiator)
@@ -138,7 +137,7 @@ public final class PModeMicroTypeConverterTest
     return new PModeParty ("responder-type", "idvalue2", CAS4.DEFAULT_RESPONDER_URL, "test2", "test2pw");
   }
 
-  @Nonnull
+  @NonNull
   private PModeLeg _createPModeLeg ()
   {
     return new PModeLeg (_createPModeLegProtocol (),
@@ -148,7 +147,7 @@ public final class PModeMicroTypeConverterTest
                          _createPModeLegSecurity ());
   }
 
-  @Nonnull
+  @NonNull
   private PModeLegBusinessInformation _createPModeLegBusinessInformation ()
   {
     return new PModeLegBusinessInformation ("service",
@@ -160,7 +159,7 @@ public final class PModeMicroTypeConverterTest
                                             "mpcexample");
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   private ICommonsOrderedMap <String, PModePayloadProfile> _createPModePayloadProfile ()
   {
@@ -175,7 +174,7 @@ public final class PModeMicroTypeConverterTest
     return aPModePayloadProfiles;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   private ICommonsOrderedMap <String, PModeProperty> _createPModeProperties ()
   {
@@ -188,7 +187,7 @@ public final class PModeMicroTypeConverterTest
     return aPModeProperties;
   }
 
-  @Nonnull
+  @NonNull
   private PModeLegErrorHandling _createPModeLegErrorHandling ()
   {
     return new PModeLegErrorHandling (_createPModeAddressList (),
@@ -199,19 +198,19 @@ public final class PModeMicroTypeConverterTest
                                       ETriState.TRUE);
   }
 
-  @Nonnull
+  @NonNull
   private PModeAddressList _createPModeAddressList ()
   {
     return new PModeAddressList ("address1");
   }
 
-  @Nonnull
+  @NonNull
   private PModeLegProtocol _createPModeLegProtocol ()
   {
     return new PModeLegProtocol ("addressProtocol", ESoapVersion.SOAP_11);
   }
 
-  @Nonnull
+  @NonNull
   private PModeLegReliability _createPModeLegReliability ()
   {
     final ICommonsList <String> aCorrelation = new CommonsArrayList <> ("correlation", "correlation2");
@@ -227,7 +226,7 @@ public final class PModeMicroTypeConverterTest
                                     ETriState.TRUE);
   }
 
-  @Nonnull
+  @NonNull
   private PModeLegSecurity _createPModeLegSecurity ()
   {
     final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList <> ("X509EncryptionEncrypt",

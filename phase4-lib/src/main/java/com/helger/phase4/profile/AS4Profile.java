@@ -18,6 +18,9 @@ package com.helger.phase4.profile;
 
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.enforce.ValueEnforcer;
@@ -25,9 +28,6 @@ import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.model.pmode.PMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Default implementation of {@link IAS4Profile}.
@@ -64,11 +64,11 @@ public class AS4Profile implements IAS4Profile
    * @param bInvokeSPIForPingMessage
    *        <code>true</code> to invoke the custom SPI handler for received
    */
-  public AS4Profile (@Nonnull @Nonempty final String sID,
-                     @Nonnull @Nonempty final String sDisplayName,
-                     @Nonnull final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
-                     @Nonnull final IAS4ProfilePModeProvider aDefaultPModeProvider,
-                     @Nonnull final IPModeIDProvider aPModeIDProvider,
+  public AS4Profile (@NonNull @Nonempty final String sID,
+                     @NonNull @Nonempty final String sDisplayName,
+                     @NonNull final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
+                     @NonNull final IAS4ProfilePModeProvider aDefaultPModeProvider,
+                     @NonNull final IPModeIDProvider aPModeIDProvider,
                      final boolean bDeprecated,
                      final boolean bInvokeSPIForPingMessage)
   {
@@ -87,14 +87,14 @@ public class AS4Profile implements IAS4Profile
     m_bInvokeSPIForPingMessage = bInvokeSPIForPingMessage;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
     return m_sID;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getDisplayName ()
   {
@@ -107,15 +107,15 @@ public class AS4Profile implements IAS4Profile
     return m_aProfileValidatorProvider.get ();
   }
 
-  @Nonnull
-  public PMode createPModeTemplate (@Nonnull @Nonempty final String sInitiatorID,
-                                    @Nonnull @Nonempty final String sResponderID,
+  @NonNull
+  public PMode createPModeTemplate (@NonNull @Nonempty final String sInitiatorID,
+                                    @NonNull @Nonempty final String sResponderID,
                                     @Nullable final String sAddress)
   {
     return m_aDefaultPModeProvider.getOrCreatePMode (sInitiatorID, sResponderID, sAddress);
   }
 
-  @Nonnull
+  @NonNull
   public IPModeIDProvider getPModeIDProvider ()
   {
     return m_aPModeIDProvider;

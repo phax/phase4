@@ -22,6 +22,8 @@ import java.util.function.Supplier;
 
 import javax.xml.namespace.QName;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.NotThreadSafe;
@@ -40,9 +42,6 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * This class manages the SOAP header element processors. This is used to validate the "must
  * understand" SOAP requirement. It manages all instances of {@link ISoapHeaderElementProcessor}.
@@ -59,8 +58,8 @@ public class SoapHeaderElementProcessorRegistry
   public SoapHeaderElementProcessorRegistry ()
   {}
 
-  public void registerHeaderElementProcessor (@Nonnull final QName aQName,
-                                              @Nonnull final ISoapHeaderElementProcessor aProcessor)
+  public void registerHeaderElementProcessor (@NonNull final QName aQName,
+                                              @NonNull final ISoapHeaderElementProcessor aProcessor)
   {
     ValueEnforcer.notNull (aQName, "QName");
     ValueEnforcer.notNull (aProcessor, "Processor");
@@ -86,20 +85,20 @@ public class SoapHeaderElementProcessorRegistry
     return aQName != null && m_aMap.containsKey (aQName);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public ICommonsOrderedMap <QName, ISoapHeaderElementProcessor> getAllElementProcessors ()
   {
     return m_aMap.getClone ();
   }
 
-  @Nonnull
-  public static SoapHeaderElementProcessorRegistry createDefault (@Nonnull final IAS4PModeResolver aPModeResolver,
-                                                                  @Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                                                  @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+  @NonNull
+  public static SoapHeaderElementProcessorRegistry createDefault (@NonNull final IAS4PModeResolver aPModeResolver,
+                                                                  @NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                  @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                                   @Nullable final IPMode aFallbackPMode,
-                                                                  @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                                  @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration)
+                                                                  @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                  @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration)
   {
     // Register all SOAP header element processors
     // Registration order matches execution order!

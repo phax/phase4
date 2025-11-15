@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.model.message;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -38,9 +40,6 @@ import com.helger.phase4.model.ESoapVersion;
 import com.helger.xml.XMLFactory;
 import com.helger.xsds.xmldsig.ReferenceType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * AS4 receipt message
  *
@@ -55,7 +54,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4ReceiptMessage (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
+  public AS4ReceiptMessage (@NonNull final ESoapVersion eSoapVersion, @NonNull final Ebms3SignalMessage aSignalMessage)
   {
     super (eSoapVersion, EAS4MessageType.RECEIPT);
 
@@ -68,7 +67,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
   /**
    * @return The {@link Ebms3SignalMessage} passed in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final Ebms3SignalMessage getEbms3SignalMessage ()
   {
     return m_aSignalMessage;
@@ -93,9 +92,9 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
    *        <code>null</code>. Since v3.0.0
    * @return AS4ReceiptMessage
    */
-  @Nonnull
-  public static AS4ReceiptMessage create (@Nonnull final ESoapVersion eSoapVersion,
-                                          @Nonnull @Nonempty final String sMessageID,
+  @NonNull
+  public static AS4ReceiptMessage create (@NonNull final ESoapVersion eSoapVersion,
+                                          @NonNull @Nonempty final String sMessageID,
                                           @Nullable final Ebms3UserMessage aEbms3UserMessageToRespond,
                                           @Nullable final Node aSoapDocument,
                                           final boolean bShouldUseNonRepudiation,

@@ -18,6 +18,8 @@ package com.helger.phase4.sender;
 
 import java.io.IOException;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonnegative;
@@ -34,9 +36,6 @@ import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Abstract builder base class for a user messages that puts also the main payload in a single MIME
@@ -83,8 +82,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
    *        The payload builder to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  public final IMPLTYPE payload (@Nullable final AS4OutgoingAttachment.Builder aBuilder)
+  @NonNull
+  public final IMPLTYPE payload (final AS4OutgoingAttachment.@Nullable Builder aBuilder)
   {
     return payload (aBuilder == null ? null : aBuilder.build ());
   }
@@ -96,7 +95,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
    *        The payload to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE payload (@Nullable final AS4OutgoingAttachment aPayload)
   {
     m_aPayload = aPayload;
@@ -126,8 +125,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
    */
   @Nullable
   @OverrideOnDemand
-  protected WSS4JAttachment createMainAttachment (@Nonnull final AS4OutgoingAttachment aPayload,
-                                                  @Nonnull final AS4ResourceHelper aResHelper) throws IOException
+  protected WSS4JAttachment createMainAttachment (@NonNull final AS4OutgoingAttachment aPayload,
+                                                  @NonNull final AS4ResourceHelper aResHelper) throws IOException
   {
     return WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);
   }
@@ -149,8 +148,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
    */
   @Nullable
   @OverrideOnDemand
-  protected WSS4JAttachment createOtherAttachment (@Nonnull final AS4OutgoingAttachment aPayload,
-                                                   @Nonnull final AS4ResourceHelper aResHelper,
+  protected WSS4JAttachment createOtherAttachment (@NonNull final AS4OutgoingAttachment aPayload,
+                                                   @NonNull final AS4ResourceHelper aResHelper,
                                                    @Nonnegative final int nAttachmentIndex) throws IOException
   {
     return WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);

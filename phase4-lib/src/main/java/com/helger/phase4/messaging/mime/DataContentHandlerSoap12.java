@@ -28,6 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.eclipse.angus.mail.handlers.text_plain;
+import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.WillNotClose;
 import com.helger.annotation.style.ReturnsMutableObject;
@@ -38,7 +39,6 @@ import com.helger.xml.transform.XMLTransformerFactory;
 
 import jakarta.activation.ActivationDataFlavor;
 import jakarta.activation.DataSource;
-import jakarta.annotation.Nonnull;
 
 /**
  * Special DataContentHandler for SOAP 1.2 messages with the special MIME type.
@@ -53,7 +53,7 @@ public class DataContentHandlerSoap12 extends text_plain
                                                                                      "SOAP") };
 
   @Override
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject ("design")
   protected ActivationDataFlavor [] getDataFlavors ()
   {
@@ -61,8 +61,8 @@ public class DataContentHandlerSoap12 extends text_plain
   }
 
   @Override
-  @Nonnull
-  protected Object getData (@Nonnull final ActivationDataFlavor aFlavor, @Nonnull final DataSource aDataSource)
+  @NonNull
+  protected Object getData (@NonNull final ActivationDataFlavor aFlavor, @NonNull final DataSource aDataSource)
                                                                                                                 throws IOException
   {
     if (aFlavor.getRepresentationClass () == StreamSource.class)
@@ -72,9 +72,9 @@ public class DataContentHandlerSoap12 extends text_plain
   }
 
   @Override
-  public void writeTo (@Nonnull final Object aObj,
-                       @Nonnull final String sMimeType,
-                       @Nonnull @WillNotClose final OutputStream aOS) throws IOException
+  public void writeTo (@NonNull final Object aObj,
+                       @NonNull final String sMimeType,
+                       @NonNull @WillNotClose final OutputStream aOS) throws IOException
   {
     try
     {

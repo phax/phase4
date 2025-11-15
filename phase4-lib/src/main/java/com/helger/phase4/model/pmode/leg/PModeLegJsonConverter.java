@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for {@link PModeLeg}.
@@ -40,8 +40,8 @@ public final class PModeLegJsonConverter
   private PModeLegJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModeLeg aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModeLeg aValue)
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.hasProtocol ())
@@ -58,8 +58,8 @@ public final class PModeLegJsonConverter
     return ret;
   }
 
-  @Nonnull
-  public static PModeLeg convertToNative (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static PModeLeg convertToNative (@NonNull final IJsonObject aElement)
   {
     final IJsonObject aProt = aElement.getAsObject (PROTOCOL);
     final PModeLegProtocol aProtocol = aProt == null ? null : PModeLegProtocolJsonConverter.convertToNative (aProt);

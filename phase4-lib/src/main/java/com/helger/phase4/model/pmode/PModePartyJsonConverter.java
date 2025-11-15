@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.model.pmode;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeParty}.
@@ -40,8 +40,8 @@ public final class PModePartyJsonConverter
   private PModePartyJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModeParty aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModeParty aValue)
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.hasIDType ())
@@ -55,8 +55,8 @@ public final class PModePartyJsonConverter
     return ret;
   }
 
-  @Nonnull
-  public static PModeParty convertToNative (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static PModeParty convertToNative (@NonNull final IJsonObject aElement)
   {
     final String sIDType = aElement.getAsString (ID_TYPE);
     final String sIDValue = aElement.getAsString (ID_VALUE);

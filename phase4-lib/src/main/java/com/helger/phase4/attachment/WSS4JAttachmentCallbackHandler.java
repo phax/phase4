@@ -25,6 +25,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.AttachmentRequestCallback;
 import org.apache.wss4j.common.ext.AttachmentResultCallback;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.WillNotClose;
@@ -39,9 +41,6 @@ import com.helger.collection.commons.ICommonsList;
 import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.AS4ResourceHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * A Callback Handler implementation for the case of signing/encrypting Attachments via the SwA
@@ -61,7 +60,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   private final AS4ResourceHelper m_aResHelper;
 
   public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <? extends WSS4JAttachment> aSrcAttachments,
-                                         @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+                                         @NonNull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     ValueEnforcer.notNull (aResHelper, "ResHelper");
 
@@ -83,7 +82,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   /**
    * @return The resource manager as passed in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final AS4ResourceHelper getResourceHelper ()
   {
     return m_aResHelper;
@@ -96,7 +95,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
    *        Attachment ID to search
    * @return Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   private ICommonsList <Attachment> _getAttachmentsToAdd (@Nullable final String sAttachmentID)
   {
@@ -115,7 +114,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
                                      m_aAttachmentMap.keySet ());
   }
 
-  public void handle (@Nonnull final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
+  public void handle (@NonNull final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
   {
     for (final Callback aCallback : aCallbacks)
     {
@@ -182,14 +181,14 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
     }
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public ICommonsList <WSS4JAttachment> getAllResponseAttachments ()
   {
     return m_aAttachmentMap.copyOfValues ();
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public ICommonsOrderedMap <String, WSS4JAttachment> responseAttachments ()
   {

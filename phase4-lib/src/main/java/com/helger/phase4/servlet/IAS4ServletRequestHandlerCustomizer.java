@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.servlet;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * This is a special callback handler that is meant to be used in combination with the Servlet
@@ -41,9 +41,9 @@ public interface IAS4ServletRequestHandlerCustomizer
    * @param aRequestHandler
    *        The main handler doing the hard work. Never <code>null</code>.
    */
-  void customizeBeforeHandling (@Nonnull IRequestWebScopeWithoutResponse aRequestScope,
-                                @Nonnull AS4UnifiedResponse aUnifiedResponse,
-                                @Nonnull AS4RequestHandler aRequestHandler);
+  void customizeBeforeHandling (@NonNull IRequestWebScopeWithoutResponse aRequestScope,
+                                @NonNull AS4UnifiedResponse aUnifiedResponse,
+                                @NonNull AS4RequestHandler aRequestHandler);
 
   /**
    * Called after the message was handled, and no exception was thrown.
@@ -56,7 +56,7 @@ public interface IAS4ServletRequestHandlerCustomizer
    *        The main handler doing the hard work. Never <code>null</code>.
    * @since 0.9.5
    */
-  void customizeAfterHandling (@Nonnull IRequestWebScopeWithoutResponse aRequestScope,
-                               @Nonnull AS4UnifiedResponse aUnifiedResponse,
-                               @Nonnull AS4RequestHandler aRequestHandler);
+  void customizeAfterHandling (@NonNull IRequestWebScopeWithoutResponse aRequestScope,
+                               @NonNull AS4UnifiedResponse aUnifiedResponse,
+                               @NonNull AS4RequestHandler aRequestHandler);
 }
