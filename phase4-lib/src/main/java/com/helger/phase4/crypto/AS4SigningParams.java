@@ -25,6 +25,7 @@ import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.CodingStyleguideUnaware;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.clone.ICloneable;
@@ -54,6 +55,7 @@ public class AS4SigningParams implements ICloneable <AS4SigningParams>
   private Provider m_aSecurityProviderVerify;
   private boolean m_bUseSingleCertificate = DEFAULT_USE_SINGLE_CERTIFICATE;
   private IWSSecSignatureCustomizer m_aWSSecSignatureCustomizer;
+  @CodingStyleguideUnaware
   private Collection <Pattern> m_aSubjectCertConstraints;
 
   public AS4SigningParams ()

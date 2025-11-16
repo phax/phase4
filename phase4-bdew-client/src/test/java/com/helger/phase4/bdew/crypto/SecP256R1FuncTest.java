@@ -70,7 +70,7 @@ import com.helger.security.keystore.EKeyStoreType;
  *
  * @author Philip Helger
  */
-public class SecP256R1FuncTest
+public final class SecP256R1FuncTest
 {
   public static void main (final String [] args) throws Exception
   {
@@ -129,7 +129,7 @@ public class SecP256R1FuncTest
     {
       pemObj = pemParser.readObject ();
     }
-    final PrivateKeyInfo privateKeyInfo = pemObj instanceof PEMKeyPair ? ((PEMKeyPair) pemObj).getPrivateKeyInfo ()
+    final PrivateKeyInfo privateKeyInfo = pemObj instanceof PEMKeyPair p ? p.getPrivateKeyInfo ()
                                                                        : PrivateKeyInfo.getInstance (pemObj);
     final JcaPEMKeyConverter converter = new JcaPEMKeyConverter ();
     final BCECPrivateKey privKey = (BCECPrivateKey) converter.getPrivateKey (privateKeyInfo);

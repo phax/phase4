@@ -18,6 +18,7 @@ package com.helger.phase4.marshaller;
 
 import java.util.List;
 
+import com.helger.annotation.style.CodingStyleguideUnaware;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.jaxb.GenericJAXBMarshaller;
@@ -36,6 +37,7 @@ import com.helger.xsds.xmldsig.CXMLDSig;
  */
 public class Ebms3MessagingMarshaller extends GenericJAXBMarshaller <Ebms3Messaging>
 {
+  @CodingStyleguideUnaware
   public static final List <ClassPathResource> XSDS = new CommonsArrayList <> (CXML_XSD.getXSDResource (),
                                                                                CXLink.getXSDResource (),
                                                                                CXMLDSig.getXSDResource (),

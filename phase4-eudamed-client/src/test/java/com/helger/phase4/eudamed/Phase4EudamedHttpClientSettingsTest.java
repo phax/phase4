@@ -25,7 +25,7 @@ import org.junit.Test;
  *
  * @author Philip Helger
  */
-public class Phase4EudamedHttpClientSettingsTest
+public final class Phase4EudamedHttpClientSettingsTest
 {
   @Test
   public void testBasic () throws GeneralSecurityException

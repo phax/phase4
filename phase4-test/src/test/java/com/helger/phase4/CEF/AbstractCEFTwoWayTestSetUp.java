@@ -18,6 +18,7 @@ package com.helger.phase4.CEF;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -51,8 +52,6 @@ import com.helger.phase4.test.profile.TestPMode;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;
-
-import jakarta.annotation.Nullable;
 
 public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTestSetUp
 {

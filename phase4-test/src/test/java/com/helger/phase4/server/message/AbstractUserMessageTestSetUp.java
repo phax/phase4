@@ -29,6 +29,7 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.util.Timeout;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -57,7 +58,6 @@ import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
 
-import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp

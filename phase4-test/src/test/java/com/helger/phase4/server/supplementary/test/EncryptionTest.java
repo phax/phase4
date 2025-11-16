@@ -30,6 +30,7 @@ import org.apache.wss4j.common.util.KeyUtils;
 import org.apache.wss4j.common.util.XMLUtils;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
+import org.jspecify.annotations.Nullable;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,8 +49,6 @@ import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.scope.mock.ScopeTestRule;
 import com.helger.xml.serialize.read.DOMReader;
-
-import jakarta.annotation.Nullable;
 
 /**
  * A set of test-cases for encrypting and decrypting SOAP requests.

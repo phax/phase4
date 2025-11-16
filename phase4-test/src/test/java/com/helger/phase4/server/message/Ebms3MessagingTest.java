@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.hc.core5.http.HttpEntity;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -50,8 +51,6 @@ import com.helger.phase4.soap12.Soap12Body;
 import com.helger.phase4.soap12.Soap12Envelope;
 import com.helger.phase4.soap12.Soap12Header;
 import com.helger.xml.serialize.read.DOMReader;
-
-import jakarta.annotation.Nullable;
 
 /**
  * Test class for class {@link Ebms3Messaging}.

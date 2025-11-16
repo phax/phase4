@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -63,7 +64,6 @@ import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.serialize.read.DOMReader;
 
-import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**

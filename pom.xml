@@ -109,14 +109,14 @@
       <dependency>
         <groupId>com.helger.schedule</groupId>
         <artifactId>ph-schedule-parent-pom</artifactId>
-        <version>6.0.1</version>
+        <version>6.1.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.masterdata</groupId>
         <artifactId>ph-masterdata-parent-pom</artifactId>
-        <version>8.0.2</version>
+        <version>8.1.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -130,7 +130,7 @@
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>10.0.2</version>
+        <version>10.1.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

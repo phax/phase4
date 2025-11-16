@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  * @author Philip Helger
  */
-public class Phase4ENTSOGHttpClientSettingsTest
+public final class Phase4ENTSOGHttpClientSettingsTest
 {
   @Test
   public void testBasic () throws GeneralSecurityException

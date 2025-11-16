@@ -25,7 +25,7 @@ import org.junit.Test;
  *
  * @author Philip Helger
  */
-public class Phase4CEFHttpClientSettingsTest
+public final class Phase4CEFHttpClientSettingsTest
 {
   @Test
   public void testBasic () throws GeneralSecurityException

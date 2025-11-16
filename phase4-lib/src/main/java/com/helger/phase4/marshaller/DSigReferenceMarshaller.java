@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import com.helger.annotation.style.CodingStyleguideUnaware;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.jaxb.GenericJAXBMarshaller;
@@ -34,6 +35,7 @@ import com.helger.xsds.xmldsig.ReferenceType;
  */
 public class DSigReferenceMarshaller extends GenericJAXBMarshaller <ReferenceType>
 {
+  @CodingStyleguideUnaware
   public static final List <ClassPathResource> XSDS = new CommonsArrayList <> (CXMLDSig.getXSDResource ()).getAsUnmodifiable ();
   public static final QName ROOT_ELEMENT_QNAME = new QName (CXMLDSig.NAMESPACE_URI,
                                                             "ReferenceType",

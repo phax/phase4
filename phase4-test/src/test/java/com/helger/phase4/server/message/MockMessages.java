@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -49,8 +50,6 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.server.spi.MockMessageProcessorCheckingStreamsSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
-
-import jakarta.annotation.Nullable;
 
 public final class MockMessages
 {

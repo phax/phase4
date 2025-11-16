@@ -30,7 +30,7 @@ import com.helger.security.keystore.EKeyStoreType;
  * @author Ulrik Stehling
  * @author Philip Helger
  */
-public class Phase4EuCtpHttpClientSettingsTest
+public final class Phase4EuCtpHttpClientSettingsTest
 {
   @Test
   public void testBasic () throws GeneralSecurityException, IOException

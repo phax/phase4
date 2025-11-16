@@ -19,6 +19,7 @@ package com.helger.phase4.server.servlet;
 import java.util.function.Consumer;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -37,8 +38,6 @@ import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.xml.serialize.read.DOMReader;
-
-import jakarta.annotation.Nullable;
 
 /**
  * The test classes for the usermessage, are split up for a better overview. Since all these classes

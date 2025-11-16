@@ -33,6 +33,7 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import org.w3c.dom.Node;
 
 import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.CodingStyleguideUnaware;
 import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.annotation.style.OverrideOnDemand;
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -168,6 +169,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolServletMessageProcessorSPI.class);
 
+  @CodingStyleguideUnaware
   private List <IPhase4PeppolIncomingSBDHandlerSPI> m_aHandlers;
   private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;
   private Phase4PeppolReceiverConfiguration m_aReceiverCheckData;

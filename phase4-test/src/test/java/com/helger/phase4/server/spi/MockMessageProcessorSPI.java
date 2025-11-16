@@ -17,6 +17,7 @@
 package com.helger.phase4.server.spi;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
@@ -51,8 +52,6 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.xml.serialize.read.DOMReader;
-
-import jakarta.annotation.Nullable;
 
 /**
  * Test implementation of {@link IAS4IncomingMessageProcessorSPI}

@@ -23,7 +23,7 @@ import org.junit.Test;
  *
  * @author Philip Helger
  */
-public class Phase4DBNAllianceHttpClientSettingsTest
+public final class Phase4DBNAllianceHttpClientSettingsTest
 {
   @Test
   public void testBasic ()

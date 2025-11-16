@@ -23,7 +23,7 @@ import org.junit.Test;
  *
  * @author Philip Helger
  */
-public class Phase4HREDeliveryHttpClientSettingsTest
+public final class Phase4HREDeliveryHttpClientSettingsTest
 {
   @Test
   public void testBasic ()

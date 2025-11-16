@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import com.helger.annotation.style.CodingStyleguideUnaware;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.jaxb.GenericJAXBMarshaller;
@@ -36,6 +37,7 @@ import com.helger.xsds.xml.CXML_XSD;
  */
 public class Soap12EnvelopeMarshaller extends GenericJAXBMarshaller <Soap12Envelope>
 {
+  @CodingStyleguideUnaware
   public static final List <ClassPathResource> XSDS = new CommonsArrayList <> (CXML_XSD.getXSDResource (),
                                                                                CAS4.XSD_SOAP12).getAsUnmodifiable ();
   public static final QName ROOT_ELEMENT_QNAME = new QName (ESoapVersion.SOAP_12.getNamespaceURI (),

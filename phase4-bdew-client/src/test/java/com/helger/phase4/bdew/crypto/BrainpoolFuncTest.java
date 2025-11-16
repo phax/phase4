@@ -64,7 +64,7 @@ import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.httpclient.security.TrustStrategyTrustAll;
 import com.helger.security.keystore.EKeyStoreType;
 
-public class BrainpoolFuncTest
+public final class BrainpoolFuncTest
 {
   public static void main (final String [] args) throws Exception
   {
@@ -131,7 +131,7 @@ public class BrainpoolFuncTest
     {
       pemObj = pemParser.readObject ();
     }
-    final PrivateKeyInfo privateKeyInfo = pemObj instanceof PEMKeyPair ? ((PEMKeyPair) pemObj).getPrivateKeyInfo ()
+    final PrivateKeyInfo privateKeyInfo = pemObj instanceof PEMKeyPair p ? p.getPrivateKeyInfo ()
                                                                        : PrivateKeyInfo.getInstance (pemObj);
     final JcaPEMKeyConverter converter = new JcaPEMKeyConverter ();
     final BCECPrivateKey privKey = (BCECPrivateKey) converter.getPrivateKey (privateKeyInfo);
@@ -213,8 +213,7 @@ public class BrainpoolFuncTest
           // Tested with nginx 1.25.1 and openssl 3.0.9
           // - Does not work with native JSSE 17.0.4: handshake_failure
           // - Does not work with native JSSE 11.0.16: handshake_failure
-          final String [] cipherSuites = { "TLS_AES_256_GCM_SHA384",
-                                           "TLS_AES_128_GCM_SHA256",
+          final String [] cipherSuites = { "TLS_AES_256_GCM_SHA384", "TLS_AES_128_GCM_SHA256",
                                            "TLS_AES_128_CCM_SHA256" };
           aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13 },
                                                                   cipherSuites));

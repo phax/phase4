@@ -23,7 +23,7 @@ import org.junit.Test;
  *
  * @author Philip Helger
  */
-public class Phase4PeppolHttpClientSettingsTest
+public final class Phase4PeppolHttpClientSettingsTest
 {
   @Test
   public void testBasic ()
