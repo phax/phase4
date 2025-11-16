@@ -19,6 +19,8 @@ package com.helger.phase4.cef;
 import java.security.cert.X509Certificate;
 import java.util.function.Consumer;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -47,9 +49,6 @@ import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.IBDXLURLProvider;
-
-
-import jakarta.annotation.Nullable;
 
 /**
  * This class contains all the specifics to send AS4 messages with the CEF profile. See

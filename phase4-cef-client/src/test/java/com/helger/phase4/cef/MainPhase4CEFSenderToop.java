@@ -46,11 +46,13 @@ import com.helger.web.scope.mgr.WebScoped;
 public final class MainPhase4CEFSenderToop
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4CEFSenderToop.class);
-  private static final ISMLInfo SML_TOOP = new SMLInfo ("tooptest",
-                                                        "SMK TOOP",
-                                                        "toop.acc.edelivery.tech.ec.europa.eu.",
-                                                        "https://acc.edelivery.tech.ec.europa.eu/edelivery-sml",
-                                                        true);
+  private static final ISMLInfo SML_TOOP = SMLInfo.builder ()
+                                                  .id ("tooptest")
+                                                  .displayName ("SMK TOOP")
+                                                  .dnsZone ("toop.acc.edelivery.tech.ec.europa.eu.")
+                                                  .managementServiceURL ("https://acc.edelivery.tech.ec.europa.eu/edelivery-sml")
+                                                  .clientCertificateRequired (true)
+                                                  .build ();
 
   public static void main (final String [] args)
   {

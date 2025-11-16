@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.cef;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.phase4.util.Phase4Exception;
-
-
-import jakarta.annotation.Nullable;
 
 /**
  * Generic exception to be thrown from the phase4 CEF sender.
