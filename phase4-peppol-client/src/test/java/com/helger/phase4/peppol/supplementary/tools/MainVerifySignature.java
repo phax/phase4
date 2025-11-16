@@ -27,6 +27,7 @@ import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
@@ -51,15 +52,12 @@ import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
-
-
 /**
- * This is a small tool that takes the dump of an incoming AS4 message (from a
- * File) and tries to verify if the signature is correct or not. Therefore
- * relevant parts of the phase4 signature verification process have been
- * extracted.<br>
- * This tool can currently only check receipts that are SOAP messages only. MIME
- * messages are currently not supported.
+ * This is a small tool that takes the dump of an incoming AS4 message (from a File) and tries to
+ * verify if the signature is correct or not. Therefore relevant parts of the phase4 signature
+ * verification process have been extracted.<br>
+ * This tool can currently only check receipts that are SOAP messages only. MIME messages are
+ * currently not supported.
  *
  * @author Philip Helger
  */

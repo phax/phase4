@@ -55,7 +55,6 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderHelgerXRechnung12CII.class);
 
-  @SuppressWarnings ("deprecation")
   public static void send ()
   {
     try
