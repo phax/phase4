@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
@@ -69,14 +70,13 @@ import com.helger.security.keystore.TrustStoreDescriptor;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 
-import jakarta.annotation.Nonnull;
 import jakarta.mail.MessagingException;
 
 public class MainPhase4EuCtpSenderExample
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4EuCtpSenderExample.class);
 
-  @Nonnull
+  @NonNull
   private static IAS4CryptoFactory _buildAs4CryptoFactory ()
   {
     return new AS4CryptoFactoryInMemoryKeyStore (KeyStoreAndKeyDescriptor.builder ()

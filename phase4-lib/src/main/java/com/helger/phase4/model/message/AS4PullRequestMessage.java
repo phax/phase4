@@ -18,15 +18,15 @@ package com.helger.phase4.model.message;
 
 import java.util.List;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.model.ESoapVersion;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * AS4 pull request message
@@ -37,8 +37,8 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
 {
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4PullRequestMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                @Nonnull final Ebms3SignalMessage aSignalMessage)
+  public AS4PullRequestMessage (@NonNull final ESoapVersion eSoapVersion,
+                                @NonNull final Ebms3SignalMessage aSignalMessage)
   {
     super (eSoapVersion, EAS4MessageType.PULL_REQUEST);
 
@@ -51,15 +51,15 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
   /**
    * @return The {@link Ebms3SignalMessage} passed in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final Ebms3SignalMessage getEbms3SignalMessage ()
   {
     return m_aSignalMessage;
   }
 
-  @Nonnull
-  public static AS4PullRequestMessage create (@Nonnull final ESoapVersion eSoapVersion,
-                                              @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+  @NonNull
+  public static AS4PullRequestMessage create (@NonNull final ESoapVersion eSoapVersion,
+                                              @NonNull final Ebms3MessageInfo aEbms3MessageInfo,
                                               @Nullable final String sMPC,
                                               @Nullable final List <Object> aAny)
   {

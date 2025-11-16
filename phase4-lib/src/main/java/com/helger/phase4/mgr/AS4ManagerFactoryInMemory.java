@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.mgr;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.phase4.duplicate.AS4DuplicateManagerInMemory;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
@@ -25,8 +27,6 @@ import com.helger.phase4.model.pmode.PModeManagerInMemory;
 import com.helger.phase4.profile.AS4ProfileManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
 
-import jakarta.annotation.Nonnull;
-
 /**
  * Implementation of {@link IAS4ManagerFactory} creating managers that are in-memory only.
  *
@@ -35,31 +35,31 @@ import jakarta.annotation.Nonnull;
  */
 public class AS4ManagerFactoryInMemory implements IAS4ManagerFactory
 {
-  @Nonnull
+  @NonNull
   public IMPCManager createMPCManager ()
   {
     return new MPCManagerInMemory ();
   }
 
-  @Nonnull
+  @NonNull
   public IPModeManager createPModeManager ()
   {
     return new PModeManagerInMemory ();
   }
 
-  @Nonnull
+  @NonNull
   public IAS4DuplicateManager createDuplicateManager ()
   {
     return new AS4DuplicateManagerInMemory ();
   }
 
-  @Nonnull
+  @NonNull
   public IAS4ProfileManager createProfileManager ()
   {
     return new AS4ProfileManager ();
   }
 
-  @Nonnull
+  @NonNull
   public IAS4TimestampManager createTimestampManager ()
   {
     return IAS4TimestampManager.createDefaultInstance ();

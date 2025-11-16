@@ -18,6 +18,9 @@ package com.helger.phase4.peppol.servlet;
 
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.builder.IBuilder;
 import com.helger.base.enforce.ValueEnforcer;
@@ -28,9 +31,6 @@ import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class contains the "per-request" data of
@@ -57,28 +57,25 @@ public final class Phase4PeppolReceiverConfiguration
    * Constructor
    *
    * @param bReceiverCheckEnabled
-   *        <code>true</code> if the receiver checks are enabled,
-   *        <code>false</code> otherwise
+   *        <code>true</code> if the receiver checks are enabled, <code>false</code> otherwise
    * @param aSMPClient
-   *        The SMP metadata provider to be used. May not be <code>null</code>
-   *        if receiver checks are enabled.
+   *        The SMP metadata provider to be used. May not be <code>null</code> if receiver checks
+   *        are enabled.
    * @param sAS4EndpointURL
-   *        The endpoint URL to check against. May neither be <code>null</code>
-   *        nor empty if receiver checks are enabled.
+   *        The endpoint URL to check against. May neither be <code>null</code> nor empty if
+   *        receiver checks are enabled.
    * @param aAPCertificate
-   *        The AP certificate to be used for compatibility. May not be
-   *        <code>null</code> if receiver checks are enabled.
+   *        The AP certificate to be used for compatibility. May not be <code>null</code> if
+   *        receiver checks are enabled.
    * @param aSBDHIdentifierFactory
-   *        The identifier factory to be used for SBDH parsing. May not be
-   *        <code>null</code>.
+   *        The identifier factory to be used for SBDH parsing. May not be <code>null</code>.
    * @param bPerformSBDHValueChecks
    *        <code>true</code> if SBDH value checks should be performed.
    * @param bCheckSBDHForMandatoryCountryC1
-   *        <code>true</code> if SBDH value checks should be performed for
-   *        mandatory C1 country code.
+   *        <code>true</code> if SBDH value checks should be performed for mandatory C1 country
+   *        code.
    * @param bCheckSigningCertificateRevocation
-   *        <code>true</code> if signing certificate revocation checks should be
-   *        performed.
+   *        <code>true</code> if signing certificate revocation checks should be performed.
    * @param aAPCAChecker
    *        The Peppol AP CA checker. May not be <code>null</code>.
    * @since 3.0.3
@@ -87,11 +84,11 @@ public final class Phase4PeppolReceiverConfiguration
                                             @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
                                             @Nullable final String sAS4EndpointURL,
                                             @Nullable final X509Certificate aAPCertificate,
-                                            @Nonnull final IIdentifierFactory aSBDHIdentifierFactory,
+                                            @NonNull final IIdentifierFactory aSBDHIdentifierFactory,
                                             final boolean bPerformSBDHValueChecks,
                                             final boolean bCheckSBDHForMandatoryCountryC1,
                                             final boolean bCheckSigningCertificateRevocation,
-                                            @Nonnull final TrustedCAChecker aAPCAChecker)
+                                            @NonNull final TrustedCAChecker aAPCAChecker)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -117,10 +114,9 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * @return The SMP client object that should be used for the SMP lookup. It is
-   *         customizable because it depends either on the SML or a direct URL
-   *         to the SMP may be provided. Never <code>null</code> if receiver
-   *         checks are enabled.
+   * @return The SMP client object that should be used for the SMP lookup. It is customizable
+   *         because it depends either on the SML or a direct URL to the SMP may be provided. Never
+   *         <code>null</code> if receiver checks are enabled.
    * @see #isReceiverCheckEnabled()
    */
   @Nullable
@@ -130,9 +126,8 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * @return The URL of this AP to compare to against the SMP lookup result upon
-   *         retrieval. Neither <code>null</code> nor empty if receiver checks
-   *         are enabled.
+   * @return The URL of this AP to compare to against the SMP lookup result upon retrieval. Neither
+   *         <code>null</code> nor empty if receiver checks are enabled.
    * @see #isReceiverCheckEnabled()
    */
   @Nullable
@@ -142,12 +137,11 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * @return The certificate of this AP to compare to against the SMP lookup
-   *         result upon retrieval. Never <code>null</code> if receiver checks
-   *         are enabled.
+   * @return The certificate of this AP to compare to against the SMP lookup result upon retrieval.
+   *         Never <code>null</code> if receiver checks are enabled.
    * @see #isReceiverCheckEnabled()
    */
-  @Nonnull
+  @NonNull
   public X509Certificate getAPCertificate ()
   {
     return m_aAPCertificate;
@@ -157,7 +151,7 @@ public final class Phase4PeppolReceiverConfiguration
    * @return The identifier factory to be used for SBDH parsing.
    * @since 3.0.1
    */
-  @Nonnull
+  @NonNull
   public IIdentifierFactory getSBDHIdentifierFactory ()
   {
     return m_aSBDHIdentifierFactory;
@@ -182,7 +176,7 @@ public final class Phase4PeppolReceiverConfiguration
    * @return The Peppol CA checker to be used. Must not be <code>null</code>.
    * @since 3.0.3
    */
-  @Nonnull
+  @NonNull
   public TrustedCAChecker getAPCAChecker ()
   {
     return m_aAPCAChecker;
@@ -198,7 +192,8 @@ public final class Phase4PeppolReceiverConfiguration
                                        .append ("SBDHIdentifierFactory", m_aSBDHIdentifierFactory)
                                        .append ("PerformSBDHValueChecks", m_bPerformSBDHValueChecks)
                                        .append ("CheckSBDHForMandatoryCountryC1", m_bCheckSBDHForMandatoryCountryC1)
-                                       .append ("CheckSigningCertificateRevocation", m_bCheckSigningCertificateRevocation)
+                                       .append ("CheckSigningCertificateRevocation",
+                                                m_bCheckSigningCertificateRevocation)
                                        .append ("APCAChecker", m_aAPCAChecker)
                                        .getToString ();
   }
@@ -206,23 +201,22 @@ public final class Phase4PeppolReceiverConfiguration
   /**
    * @return An empty builder instance. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static Phase4PeppolReceiverConfigurationBuilder builder ()
   {
     return new Phase4PeppolReceiverConfigurationBuilder ();
   }
 
   /**
-   * Create a builder instance with the data of the provided object already
-   * filled in.
+   * Create a builder instance with the data of the provided object already filled in.
    *
    * @param aSrc
-   *        The source {@link Phase4PeppolReceiverConfiguration} to take the
-   *        data from. May not be <code>null</code>.
+   *        The source {@link Phase4PeppolReceiverConfiguration} to take the data from. May not be
+   *        <code>null</code>.
    * @return A non-<code>null</code> filled builder instance.
    */
-  @Nonnull
-  public static Phase4PeppolReceiverConfigurationBuilder builder (@Nonnull final Phase4PeppolReceiverConfiguration aSrc)
+  @NonNull
+  public static Phase4PeppolReceiverConfigurationBuilder builder (@NonNull final Phase4PeppolReceiverConfiguration aSrc)
   {
     return new Phase4PeppolReceiverConfigurationBuilder (aSrc);
   }
@@ -248,7 +242,7 @@ public final class Phase4PeppolReceiverConfiguration
     public Phase4PeppolReceiverConfigurationBuilder ()
     {}
 
-    public Phase4PeppolReceiverConfigurationBuilder (@Nonnull final Phase4PeppolReceiverConfiguration aSrc)
+    public Phase4PeppolReceiverConfigurationBuilder (@NonNull final Phase4PeppolReceiverConfiguration aSrc)
     {
       ValueEnforcer.notNull (aSrc, "Src");
       receiverCheckEnabled (aSrc.isReceiverCheckEnabled ()).serviceMetadataProvider (aSrc.getSMPClient ())
@@ -261,82 +255,82 @@ public final class Phase4PeppolReceiverConfiguration
                                                            .apCAChecker (aSrc.getAPCAChecker ());
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder receiverCheckEnabled (final boolean b)
     {
       m_bReceiverCheckEnabled = b;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder serviceMetadataProvider (@Nullable final ISMPExtendedServiceMetadataProvider a)
     {
       m_aSMPClient = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder as4EndpointUrl (@Nullable final String s)
     {
       m_sAS4EndpointURL = s;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder apCertificate (@Nullable final X509Certificate a)
     {
       m_aAPCertificate = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder sbdhIdentifierFactorySimple ()
     {
       return sbdhIdentifierFactory (SimpleIdentifierFactory.INSTANCE);
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder sbdhIdentifierFactoryPeppol ()
     {
       return sbdhIdentifierFactory (PeppolIdentifierFactory.INSTANCE);
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder sbdhIdentifierFactory (@Nullable final IIdentifierFactory a)
     {
       m_aSBDHIdentifierFactory = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder performSBDHValueChecks (final boolean b)
     {
       m_bPerformSBDHValueChecks = b;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder checkSBDHForMandatoryCountryC1 (final boolean b)
     {
       m_bCheckSBDHForMandatoryCountryC1 = b;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder checkSigningCertificateRevocation (final boolean b)
     {
       m_bCheckSigningCertificateRevocation = b;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfigurationBuilder apCAChecker (@Nullable final TrustedCAChecker a)
     {
       m_aAPCAChecker = a;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Phase4PeppolReceiverConfiguration build ()
     {
       if (m_bReceiverCheckEnabled)

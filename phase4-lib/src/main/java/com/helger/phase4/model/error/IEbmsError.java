@@ -18,9 +18,9 @@ package com.helger.phase4.model.error;
 
 import java.util.Locale;
 
-import com.helger.text.display.IHasDisplayText;
+import org.jspecify.annotations.NonNull;
 
-import jakarta.annotation.Nonnull;
+import com.helger.text.display.IHasDisplayText;
 
 /**
  * Base interface for a single EBMS error
@@ -34,7 +34,7 @@ public interface IEbmsError
    *
    * @return possible object is {@link String }
    */
-  @Nonnull
+  @NonNull
   String getErrorCode ();
 
   /**
@@ -42,7 +42,7 @@ public interface IEbmsError
    *
    * @return possible object is {@link String }
    */
-  @Nonnull
+  @NonNull
   EEbmsErrorSeverity getSeverity ();
 
   /**
@@ -50,7 +50,7 @@ public interface IEbmsError
    *
    * @return Short description. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   String getShortDescription ();
 
   /**
@@ -59,7 +59,7 @@ public interface IEbmsError
    * @return The multilingual description.
    * @since 2.6.0
    */
-  @Nonnull
+  @NonNull
   IHasDisplayText getDescription ();
 
   /**
@@ -67,7 +67,7 @@ public interface IEbmsError
    *
    * @return possible object is {@link EEbmsErrorCategory }
    */
-  @Nonnull
+  @NonNull
   EEbmsErrorCategory getCategory ();
 
   /**
@@ -79,8 +79,8 @@ public interface IEbmsError
    * @return Never <code>null</code>.
    * @since 2.6.0
    */
-  @Nonnull
-  default Ebms3ErrorBuilder errorBuilder (@Nonnull final Locale aContentLocale)
+  @NonNull
+  default Ebms3ErrorBuilder errorBuilder (@NonNull final Locale aContentLocale)
   {
     return new Ebms3ErrorBuilder (this, aContentLocale);
   }

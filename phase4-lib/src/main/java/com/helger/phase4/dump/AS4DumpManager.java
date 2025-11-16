@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.WillNotClose;
 import com.helger.annotation.concurrent.GuardedBy;
 import com.helger.annotation.concurrent.ThreadSafe;
@@ -29,9 +32,6 @@ import com.helger.base.io.stream.WrappedInputStream;
 import com.helger.base.wrapper.Wrapper;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class holds the global stream dumpers.
@@ -111,12 +111,12 @@ public final class AS4DumpManager
    * @throws IOException
    *         In case of IO error
    */
-  @Nonnull
+  @NonNull
   public static InputStream getIncomingDumpAwareInputStream (@Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                             @Nonnull @WillNotClose final InputStream aRequestInputStream,
-                                                             @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                             @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                             @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
+                                                             @NonNull @WillNotClose final InputStream aRequestInputStream,
+                                                             @NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                             @NonNull final HttpHeaderMap aHttpHeaders,
+                                                             @NonNull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
   {
     if (aIncomingDumper == null)
     {

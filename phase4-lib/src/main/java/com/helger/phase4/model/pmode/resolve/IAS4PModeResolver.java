@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.model.pmode.resolve;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.phase4.model.pmode.IPMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Resolve PMode from ID
@@ -53,10 +53,10 @@ public interface IAS4PModeResolver
    */
   @Nullable
   IPMode findPMode (@Nullable String sPModeID,
-                    @Nonnull String sService,
-                    @Nonnull String sAction,
-                    @Nonnull @Nonempty String sInitiatorID,
-                    @Nonnull @Nonempty String sResponderID,
+                    @NonNull String sService,
+                    @NonNull String sAction,
+                    @NonNull @Nonempty String sInitiatorID,
+                    @NonNull @Nonempty String sResponderID,
                     @Nullable String sAgreementRef,
                     @Nullable String sAddress);
 }

@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 
 import com.helger.annotation.WillClose;
@@ -33,8 +34,6 @@ import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.io.resource.ClassPathResource;
 
-import jakarta.annotation.Nonnull;
-
 /**
  * Test class for class {@link EAS4CompressionMode}.
  *
@@ -42,8 +41,8 @@ import jakarta.annotation.Nonnull;
  */
 public final class EAS4CompressionModeTest
 {
-  private static void _compressPayload (@Nonnull @WillClose final InputStream aUncompressed,
-                                        @Nonnull @WillClose final OutputStream aOut) throws IOException
+  private static void _compressPayload (@NonNull @WillClose final InputStream aUncompressed,
+                                        @NonNull @WillClose final OutputStream aOut) throws IOException
   {
     try (final InputStream aSrc = aUncompressed; final GZIPOutputStream aGZIPOut = new GZIPOutputStream (aOut))
     {
@@ -51,8 +50,8 @@ public final class EAS4CompressionModeTest
     }
   }
 
-  private static void _decompressPayload (@Nonnull @WillClose final InputStream aIn,
-                                          @Nonnull @WillClose final OutputStream aOut) throws IOException
+  private static void _decompressPayload (@NonNull @WillClose final InputStream aIn,
+                                          @NonNull @WillClose final OutputStream aOut) throws IOException
   {
     try (final GZIPInputStream aGZIPIn = new GZIPInputStream (aIn))
     {

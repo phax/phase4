@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.Nonnegative;
 import com.helger.annotation.WillNotClose;
@@ -28,9 +31,6 @@ import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.messaging.EAS4MessageMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * A simple {@link IAS4OutgoingDumper} that can be used for a single transmission and dumps it to
@@ -45,23 +45,23 @@ public class AS4OutgoingDumperSingleUse extends AbstractAS4OutgoingDumperWithHea
   private final AtomicBoolean m_aUsedOS = new AtomicBoolean (false);
   private final OutputStream m_aOS;
 
-  public AS4OutgoingDumperSingleUse (@Nonnull @WillNotClose final OutputStream aOS)
+  public AS4OutgoingDumperSingleUse (@NonNull @WillNotClose final OutputStream aOS)
   {
     ValueEnforcer.notNull (aOS, "OS");
     m_aOS = aOS;
   }
 
-  @Nonnull
+  @NonNull
   protected final OutputStream getOutputStream ()
   {
     return m_aOS;
   }
 
   @Override
-  protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
+  protected OutputStream openOutputStream (@NonNull final EAS4MessageMode eMsgMode,
                                            @Nullable final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                            @Nullable final IAS4IncomingMessageState aIncomingState,
-                                           @Nonnull @Nonempty final String sMessageID,
+                                           @NonNull @Nonempty final String sMessageID,
                                            @Nullable final HttpHeaderMap aCustomHeaders,
                                            @Nonnegative final int nTry) throws IOException
   {

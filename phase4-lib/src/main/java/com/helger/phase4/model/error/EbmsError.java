@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.error;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.text.display.IHasDisplayText;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Generic implementation of {@link IEbmsError} to represent other errors besides
@@ -39,11 +39,11 @@ public class EbmsError implements IEbmsError
   private final IHasDisplayText m_aDescription;
   private final EEbmsErrorCategory m_eCategory;
 
-  public EbmsError (@Nonnull final String sErrorCode,
-                    @Nonnull final EEbmsErrorSeverity eSeverity,
-                    @Nonnull final String sShortDescription,
-                    @Nonnull final IHasDisplayText aDescription,
-                    @Nonnull final EEbmsErrorCategory eCategory)
+  public EbmsError (@NonNull final String sErrorCode,
+                    @NonNull final EEbmsErrorSeverity eSeverity,
+                    @NonNull final String sShortDescription,
+                    @NonNull final IHasDisplayText aDescription,
+                    @NonNull final EEbmsErrorCategory eCategory)
   {
     ValueEnforcer.notNull (sErrorCode, "ErrorCode");
     ValueEnforcer.notNull (eSeverity, "Severity");
@@ -57,31 +57,31 @@ public class EbmsError implements IEbmsError
     m_eCategory = eCategory;
   }
 
-  @Nonnull
+  @NonNull
   public String getErrorCode ()
   {
     return m_sErrorCode;
   }
 
-  @Nonnull
+  @NonNull
   public EEbmsErrorSeverity getSeverity ()
   {
     return m_eSeverity;
   }
 
-  @Nonnull
+  @NonNull
   public String getShortDescription ()
   {
     return m_sShortDescription;
   }
 
-  @Nonnull
+  @NonNull
   public IHasDisplayText getDescription ()
   {
     return m_aDescription;
   }
 
-  @Nonnull
+  @NonNull
   public EEbmsErrorCategory getCategory ()
   {
     return m_eCategory;

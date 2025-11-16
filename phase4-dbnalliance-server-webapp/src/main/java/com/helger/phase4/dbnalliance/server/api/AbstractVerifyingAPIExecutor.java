@@ -18,6 +18,7 @@ package com.helger.phase4.dbnalliance.server.api;
 
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -29,8 +30,6 @@ import com.helger.photon.api.IAPIExecutor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
-import jakarta.annotation.Nonnull;
-
 /**
  * Abstract API executor class. Contains the check for the "X-Token" HTTP
  * header.
@@ -41,17 +40,17 @@ public abstract class AbstractVerifyingAPIExecutor implements IAPIExecutor
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AbstractVerifyingAPIExecutor.class);
 
-  protected abstract void verifiedInvokeAPI (@Nonnull IAPIDescriptor aAPIDescriptor,
-                                             @Nonnull @Nonempty String sPath,
-                                             @Nonnull Map <String, String> aPathVariables,
-                                             @Nonnull IRequestWebScopeWithoutResponse aRequestScope,
-                                             @Nonnull UnifiedResponse aUnifiedResponse) throws Exception;
+  protected abstract void verifiedInvokeAPI (@NonNull IAPIDescriptor aAPIDescriptor,
+                                             @NonNull @Nonempty String sPath,
+                                             @NonNull Map <String, String> aPathVariables,
+                                             @NonNull IRequestWebScopeWithoutResponse aRequestScope,
+                                             @NonNull UnifiedResponse aUnifiedResponse) throws Exception;
 
-  public void invokeAPI (@Nonnull final IAPIDescriptor aAPIDescriptor,
-                         @Nonnull @Nonempty final String sPath,
-                         @Nonnull final Map <String, String> aPathVariables,
-                         @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                         @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  public void invokeAPI (@NonNull final IAPIDescriptor aAPIDescriptor,
+                         @NonNull @Nonempty final String sPath,
+                         @NonNull final Map <String, String> aPathVariables,
+                         @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                         @NonNull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     final String sXToken = aRequestScope.headers ().getFirstHeaderValue ("X-Token");
     if (StringHelper.isEmpty (sXToken))

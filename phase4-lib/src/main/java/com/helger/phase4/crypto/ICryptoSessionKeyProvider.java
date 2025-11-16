@@ -22,8 +22,7 @@ import javax.crypto.SecretKey;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.KeyUtils;
-
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Interface for a "session key" provider, that is used for encrypting documents. Default instances
@@ -38,7 +37,7 @@ public interface ICryptoSessionKeyProvider
    *
    * @return A new session key. Must not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   SecretKey getSessionKey ();
 
   /**

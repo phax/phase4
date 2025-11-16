@@ -19,6 +19,7 @@ package com.helger.phase4.messaging.http;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.ThreadSafe;
@@ -28,8 +29,6 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.IXMLWriterSettings;
 import com.helger.xml.serialize.write.XMLWriterSettings;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Turn on/off AS4 HTTP debug logging.<br>
@@ -75,7 +74,7 @@ public final class AS4HttpDebug
    * @param aMsg
    *        The message supplier. May not be <code>null</code>. Invoked only if {@link #isEnabled()}
    */
-  public static void debug (@Nonnull final Supplier <? super String> aMsg)
+  public static void debug (@NonNull final Supplier <? super String> aMsg)
   {
     if (isEnabled ())
       LOGGER.info ("$$$ AS4 HTTP [" +
@@ -88,7 +87,7 @@ public final class AS4HttpDebug
    * @return XML writer setting to debug XML documents. It uses formatting and a predefined
    *         namespace context. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static IXMLWriterSettings getDebugXMLWriterSettings ()
   {
     return XWS;

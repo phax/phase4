@@ -20,6 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.YearMonth;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.string.StringParser;
 import com.helger.mime.CMimeType;
@@ -27,8 +29,6 @@ import com.helger.phase4.peppol.server.reporting.AppReportingHelper;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * This API creates a TSR and EUSR report for the provided year and month, validate them, store them
@@ -39,11 +39,11 @@ import jakarta.annotation.Nonnull;
 public final class APIGetDoPeppolReporting extends AbstractVerifyingAPIExecutor
 {
   @Override
-  protected void verifiedInvokeAPI (@Nonnull final IAPIDescriptor aAPIDescriptor,
-                                    @Nonnull @Nonempty final String sPath,
-                                    @Nonnull final Map <String, String> aPathVariables,
-                                    @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                    @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  protected void verifiedInvokeAPI (@NonNull final IAPIDescriptor aAPIDescriptor,
+                                    @NonNull @Nonempty final String sPath,
+                                    @NonNull final Map <String, String> aPathVariables,
+                                    @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                                    @NonNull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     final String sYear = aPathVariables.get (Phase4API.PARAM_YEAR);
     final String sMonth = aPathVariables.get (Phase4API.PARAM_MONTH);

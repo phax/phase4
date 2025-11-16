@@ -17,6 +17,8 @@
 package com.helger.phase4.client;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
 
 import com.helger.annotation.Nonempty;
@@ -33,9 +35,6 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xsds.xmldsig.ReferenceType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * AS4 client for {@link AS4PullRequestMessage} objects.
  *
@@ -45,7 +44,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
 {
   private String m_sMPC;
 
-  public AS4ClientPullRequestMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  public AS4ClientPullRequestMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     super (EAS4MessageType.PULL_REQUEST, aResHelper);
   }
@@ -56,7 +55,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
     return m_sMPC;
   }
 
-  @Nonnull
+  @NonNull
   public final AS4ClientPullRequestMessage setMPC (@Nullable final String sMPC)
   {
     m_sMPC = sMPC;
@@ -71,7 +70,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
   }
 
   @Override
-  public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
+  public AS4ClientBuiltMessage buildMessage (@NonNull @Nonempty final String sMessageID,
                                              @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException
   {
     _checkMandatoryAttributes ();

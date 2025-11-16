@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -44,8 +45,6 @@ import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.server.external.IHolodeckTests;
 
-import jakarta.annotation.Nonnull;
-
 @RunWith (Parameterized.class)
 @Category (IHolodeckTests.class)
 public final class UserMessageNoAttachmentTest extends AbstractUserMessageTestSetUp
@@ -58,7 +57,7 @@ public final class UserMessageNoAttachmentTest extends AbstractUserMessageTestSe
 
   private final ESoapVersion m_eSOAPVersion;
 
-  public UserMessageNoAttachmentTest (@Nonnull final ESoapVersion eSOAPVersion)
+  public UserMessageNoAttachmentTest (@NonNull final ESoapVersion eSOAPVersion)
   {
     m_eSOAPVersion = eSOAPVersion;
   }

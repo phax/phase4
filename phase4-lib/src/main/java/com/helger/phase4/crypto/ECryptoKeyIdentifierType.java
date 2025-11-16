@@ -17,13 +17,12 @@
 package com.helger.phase4.crypto;
 
 import org.apache.wss4j.dom.WSConstants;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Enumeration with all crypto key identification types (how the key identification is transmitted).
@@ -140,7 +139,7 @@ public enum ECryptoKeyIdentifierType implements IHasID <String>
   private final String m_sID;
   private final int m_nTypeID;
 
-  ECryptoKeyIdentifierType (@Nonnull @Nonempty final String sID, final int nTypeID)
+  ECryptoKeyIdentifierType (@NonNull @Nonempty final String sID, final int nTypeID)
   {
     m_sID = sID;
     m_nTypeID = nTypeID;
@@ -149,7 +148,7 @@ public enum ECryptoKeyIdentifierType implements IHasID <String>
   /**
    * The String ID for usage in phase4.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
@@ -170,7 +169,7 @@ public enum ECryptoKeyIdentifierType implements IHasID <String>
     return EnumHelper.getFromIDOrNull (ECryptoKeyIdentifierType.class, sID);
   }
 
-  @Nonnull
+  @NonNull
   public static ECryptoKeyIdentifierType getFromIDOrThrow (@Nullable final String sID)
   {
     return EnumHelper.getFromIDOrThrow (ECryptoKeyIdentifierType.class, sID);

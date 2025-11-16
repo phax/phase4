@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.sender;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.base.trait.IGenericImplTrait;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Abstract base implementation of <code>IAS4RawResponseConsumer</code> to provide basic
@@ -51,7 +51,7 @@ public abstract class AbstractAS4RawResponseConsumer <IMPLTYPE extends AbstractA
     return m_bHandleStatusLine;
   }
 
-  @Nonnull
+  @NonNull
   public final IMPLTYPE setHandleStatusLine (final boolean bHandleStatusLine)
   {
     m_bHandleStatusLine = bHandleStatusLine;
@@ -63,7 +63,7 @@ public abstract class AbstractAS4RawResponseConsumer <IMPLTYPE extends AbstractA
     return m_bHandleHttpHeaders;
   }
 
-  @Nonnull
+  @NonNull
   public final IMPLTYPE setHandleHttpHeaders (final boolean bHandleHttpHeaders)
   {
     m_bHandleHttpHeaders = bHandleHttpHeaders;

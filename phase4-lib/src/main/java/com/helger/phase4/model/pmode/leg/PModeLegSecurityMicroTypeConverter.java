@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.state.ETriState;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
@@ -29,9 +32,6 @@ import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.util.MicroHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModeLegSecurity}.
@@ -61,10 +61,10 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
   private static final IMicroQName ATTR_SEND_RECEIPT_REPLY_PATTERN = new MicroQName ("SendReceiptReplyPattern");
   private static final IMicroQName ATTR_SEND_RECEIPT_NON_REPUDIATION = new MicroQName ("SendReceiptNonRepudiation");
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final PModeLegSecurity aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final PModeLegSecurity aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 
@@ -114,8 +114,8 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
     return ret;
   }
 
-  @Nonnull
-  public PModeLegSecurity convertToNative (@Nonnull final IMicroElement aElement)
+  @NonNull
+  public PModeLegSecurity convertToNative (@NonNull final IMicroElement aElement)
   {
     final String sWSSVersion = aElement.getAttributeValue (ATTR_WSS_VERSION);
     final EWSSVersion eWSSVersion = EWSSVersion.getFromVersionOrNull (sWSSVersion);

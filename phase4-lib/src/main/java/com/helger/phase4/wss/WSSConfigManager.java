@@ -19,6 +19,7 @@ package com.helger.phase4.wss;
 import java.security.Security;
 
 import org.apache.wss4j.dom.engine.WSSConfig;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -26,8 +27,6 @@ import com.helger.annotation.style.UsedViaReflection;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.scope.IScope;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * A utility class to handle the life cycle of the {@link WSSConfig} objects.
@@ -44,14 +43,14 @@ public class WSSConfigManager extends AbstractGlobalSingleton
   public WSSConfigManager ()
   {}
 
-  @Nonnull
+  @NonNull
   public static WSSConfigManager getInstance ()
   {
     return getGlobalSingleton (WSSConfigManager.class);
   }
 
   @Override
-  protected void onAfterInstantiation (@Nonnull final IScope aScope)
+  protected void onAfterInstantiation (@NonNull final IScope aScope)
   {
     // init WSSConfig
     final boolean bContainsSTRTransform = Security.getProvider ("STRTransform") != null;
@@ -107,7 +106,7 @@ public class WSSConfigManager extends AbstractGlobalSingleton
       LOGGER.debug ("Finished cleaning up WSSConfig");
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static WSSConfig createStaticWSSConfig ()
   {
@@ -118,7 +117,7 @@ public class WSSConfigManager extends AbstractGlobalSingleton
     return ret;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public WSSConfig createWSSConfig ()
   {

@@ -22,6 +22,8 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -72,9 +74,6 @@ import com.helger.xhe.v10.XHE10Marshaller;
 import com.helger.xhe.v10.XHE10XHEType;
 import com.helger.xhe.v10.cac.XHE10PayloadType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * This class contains all the specifics to send AS4 messages with the DBNAlliance profile. See
  * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
@@ -96,11 +95,11 @@ public final class Phase4DBNAllianceSender
   {}
 
   @Nullable
-  private static XHE10XHEType _createDBNAllianceXHE (@Nonnull final IParticipantIdentifier aSenderID,
-                                                     @Nonnull final IParticipantIdentifier aReceiverID,
-                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                     @Nonnull final IProcessIdentifier aProcID,
-                                                     @Nonnull final Element aPayloadElement,
+  private static XHE10XHEType _createDBNAllianceXHE (@NonNull final IParticipantIdentifier aSenderID,
+                                                     @NonNull final IParticipantIdentifier aReceiverID,
+                                                     @NonNull final IDocumentTypeIdentifier aDocTypeID,
+                                                     @NonNull final IProcessIdentifier aProcID,
+                                                     @NonNull final Element aPayloadElement,
                                                      final boolean bClonePayloadElement) throws Phase4DBNAllianceException
   {
     final DBNAllianceXHEData aData = new DBNAllianceXHEData (IF);
@@ -153,10 +152,10 @@ public final class Phase4DBNAllianceSender
    * @throws Phase4DBNAllianceException
    *         in case of error
    */
-  private static void _checkReceiverAPCert (@Nonnull final TrustedCAChecker aCAChecker,
+  private static void _checkReceiverAPCert (@NonNull final TrustedCAChecker aCAChecker,
                                             @Nullable final X509Certificate aReceiverCert,
                                             @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
-                                            @Nonnull final ETriState eCacheOSCResult,
+                                            @NonNull final ETriState eCacheOSCResult,
                                             @Nullable final ERevocationCheckMode eCheckMode) throws Phase4DBNAllianceException
   {
     if (LOGGER.isDebugEnabled ())
@@ -187,7 +186,7 @@ public final class Phase4DBNAllianceSender
    * @return Create a new Builder for AS4 messages if the XHE payload is present. Never
    *         <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static DBNAllianceUserMessageBuilder builder ()
   {
     return new DBNAllianceUserMessageBuilder ();
@@ -198,7 +197,7 @@ public final class Phase4DBNAllianceSender
    *         <code>null</code>.
    * @since 3.0.0
    */
-  @Nonnull
+  @NonNull
   public static DBNAllianceUserMessageXHEBuilder xheBuilder ()
   {
     return new DBNAllianceUserMessageXHEBuilder ();
@@ -268,8 +267,8 @@ public final class Phase4DBNAllianceSender
      *        The sender participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE senderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
+    @NonNull
+    public final IMPLTYPE senderParticipantID (@NonNull final IParticipantIdentifier aSenderID)
     {
       ValueEnforcer.notNull (aSenderID, "SenderID");
       if (m_aSenderID != null)
@@ -286,8 +285,8 @@ public final class Phase4DBNAllianceSender
      *        The receiver participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE receiverParticipantID (@Nonnull final IParticipantIdentifier aReceiverID)
+    @NonNull
+    public final IMPLTYPE receiverParticipantID (@NonNull final IParticipantIdentifier aReceiverID)
     {
       ValueEnforcer.notNull (aReceiverID, "ReceiverID");
       if (m_aReceiverID != null)
@@ -313,8 +312,8 @@ public final class Phase4DBNAllianceSender
      *        The document type ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE documentTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+    @NonNull
+    public final IMPLTYPE documentTypeID (@NonNull final IDocumentTypeIdentifier aDocTypeID)
     {
       ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
       if (m_aDocTypeID != null)
@@ -340,8 +339,8 @@ public final class Phase4DBNAllianceSender
      *        The process ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE processID (@Nonnull final IProcessIdentifier aProcessID)
+    @NonNull
+    public final IMPLTYPE processID (@NonNull final IProcessIdentifier aProcessID)
     {
       ValueEnforcer.notNull (aProcessID, "ProcessID");
       if (m_aProcessID != null)
@@ -359,8 +358,8 @@ public final class Phase4DBNAllianceSender
      * @return this for chaining
      * @see #smpClient(IBDXR2ServiceMetadataProvider)
      */
-    @Nonnull
-    public final IMPLTYPE endpointDetailProvider (@Nonnull final IAS4EndpointDetailProvider aEndpointDetailProvider)
+    @NonNull
+    public final IMPLTYPE endpointDetailProvider (@NonNull final IAS4EndpointDetailProvider aEndpointDetailProvider)
     {
       ValueEnforcer.notNull (aEndpointDetailProvider, "EndpointDetailProvider");
       if (m_aEndpointDetailProvider != null)
@@ -381,8 +380,8 @@ public final class Phase4DBNAllianceSender
      * @see #receiverEndpointDetails(X509Certificate, String)
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
-    @Nonnull
-    public final IMPLTYPE smpClient (@Nonnull final IBDXR2ServiceMetadataProvider aSMPClient)
+    @NonNull
+    public final IMPLTYPE smpClient (@NonNull final IBDXR2ServiceMetadataProvider aSMPClient)
     {
       final AS4EndpointDetailProviderBDXR2 aEndpointDetailProvider = new AS4EndpointDetailProviderBDXR2 (aSMPClient);
       aEndpointDetailProvider.setTransportProfile (ESMPTransportProfile.TRANSPORT_PROFILE_DBNA_AS4_V1);
@@ -401,9 +400,9 @@ public final class Phase4DBNAllianceSender
      *        URL and may neither be <code>null</code> nor empty.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
-                                                   @Nonnull @Nonempty final String sDestURL)
+    @NonNull
+    public final IMPLTYPE receiverEndpointDetails (@NonNull final X509Certificate aCert,
+                                                   @NonNull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -416,7 +415,7 @@ public final class Phase4DBNAllianceSender
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE certificateConsumer (@Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer)
     {
       m_aCertificateConsumer = aCertificateConsumer;
@@ -431,7 +430,7 @@ public final class Phase4DBNAllianceSender
      *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE endpointURLConsumer (@Nullable final Consumer <String> aAPEndpointURLConsumer)
     {
       m_aAPEndpointURLConsumer = aAPEndpointURLConsumer;
@@ -448,7 +447,7 @@ public final class Phase4DBNAllianceSender
      * @return this for chaining
      * @since 3.1.0
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE checkReceiverAPCertificate (final boolean bCheckReceiverAPCertificate)
     {
       m_bCheckReceiverAPCertificate = bCheckReceiverAPCertificate;
@@ -466,8 +465,8 @@ public final class Phase4DBNAllianceSender
      * @return this for chaining
      * @since 3.1.0
      */
-    @Nonnull
-    public final IMPLTYPE apCAChecker (@Nonnull final TrustedCAChecker aCAChecker)
+    @NonNull
+    public final IMPLTYPE apCAChecker (@NonNull final TrustedCAChecker aCAChecker)
     {
       ValueEnforcer.notNull (aCAChecker, "CAChecker");
       m_aCAChecker = aCAChecker;
@@ -515,7 +514,7 @@ public final class Phase4DBNAllianceSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
       {
@@ -646,8 +645,8 @@ public final class Phase4DBNAllianceSender
      * @return this for chaining
      * @since 2.8.6
      */
-    @Nonnull
-    public DBNAllianceUserMessageBuilder payloadElement (@Nonnull final Element aPayloadElement)
+    @NonNull
+    public DBNAllianceUserMessageBuilder payloadElement (@NonNull final Element aPayloadElement)
     {
       ValueEnforcer.notNull (aPayloadElement, "Payload");
       ValueEnforcer.notEmpty (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
@@ -663,7 +662,7 @@ public final class Phase4DBNAllianceSender
      * @return this for chaining
      * @since 3.1.0
      */
-    @Nonnull
+    @NonNull
     public DBNAllianceUserMessageBuilder xheDocumentConsumer (@Nullable final Consumer <? super XHE10XHEType> aXHEDocumentConsumer)
     {
       m_aXHEDocumentConsumer = aXHEDocumentConsumer;
@@ -678,7 +677,7 @@ public final class Phase4DBNAllianceSender
      * @return this for chaining
      * @since 3.1.0
      */
-    @Nonnull
+    @NonNull
     public DBNAllianceUserMessageBuilder xheBytesConsumer (@Nullable final Consumer <byte []> aXHEBytesConsumer)
     {
       m_aXHEBytesConsumer = aXHEBytesConsumer;
@@ -687,7 +686,7 @@ public final class Phase4DBNAllianceSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       // Perform SMP lookup
       if (super.finishFields (aResHelper).isFailure ())
@@ -784,8 +783,8 @@ public final class Phase4DBNAllianceSender
      * @see #senderParticipantID(IParticipantIdentifier)
      * @see #receiverParticipantID(IParticipantIdentifier)
      */
-    @Nonnull
-    public DBNAllianceUserMessageXHEBuilder payload (@Nonnull final byte [] aXHEBytes)
+    @NonNull
+    public DBNAllianceUserMessageXHEBuilder payload (@NonNull final byte [] aXHEBytes)
     {
       ValueEnforcer.notNull (aXHEBytes, "XHEBytes");
       m_aPayloadBytes = aXHEBytes;
@@ -803,8 +802,8 @@ public final class Phase4DBNAllianceSender
      * @see #senderParticipantID(IParticipantIdentifier)
      * @see #receiverParticipantID(IParticipantIdentifier)
      */
-    @Nonnull
-    public DBNAllianceUserMessageXHEBuilder payloadAndMetadata (@Nonnull final DBNAllianceXHEData aXHE)
+    @NonNull
+    public DBNAllianceUserMessageXHEBuilder payloadAndMetadata (@NonNull final DBNAllianceXHEData aXHE)
     {
       ValueEnforcer.notNull (aXHE, "SBDH");
 
@@ -848,7 +847,7 @@ public final class Phase4DBNAllianceSender
 
     @Override
     @OverridingMethodsMustInvokeSuper
-    protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+    protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
       // Perform SMP lookup
       if (super.finishFields (aResHelper).isFailure ())

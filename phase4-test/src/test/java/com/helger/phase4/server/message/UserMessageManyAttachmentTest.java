@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -46,7 +47,6 @@ import com.helger.phase4.messaging.mime.AS4MimeMessageHelper;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.AS4UserMessage;
 
-import jakarta.annotation.Nonnull;
 import jakarta.mail.MessagingException;
 
 /**
@@ -67,7 +67,7 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
 
   private final ESoapVersion m_eSOAPVersion;
 
-  public UserMessageManyAttachmentTest (@Nonnull final ESoapVersion eSOAPVersion)
+  public UserMessageManyAttachmentTest (@NonNull final ESoapVersion eSOAPVersion)
   {
     m_eSOAPVersion = eSOAPVersion;
   }

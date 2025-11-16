@@ -26,6 +26,8 @@ import java.util.function.Supplier;
 
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -112,8 +114,6 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.io.PhotonWorkerPool;
 import com.helger.xml.serialize.write.XMLWriter;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**
@@ -129,10 +129,10 @@ public class AS4RequestHandler implements AutoCloseable
 {
   private interface IAS4ResponseFactory
   {
-    @Nonnull
-    HttpEntity getHttpEntityForSending (@Nonnull IMimeType aMimeType);
+    @NonNull
+    HttpEntity getHttpEntityForSending (@NonNull IMimeType aMimeType);
 
-    void applyToResponse (@Nonnull IAS4ResponseAbstraction aHttpResponse, @Nullable IAS4OutgoingDumper aOutgoingDumper);
+    void applyToResponse (@NonNull IAS4ResponseAbstraction aHttpResponse, @Nullable IAS4OutgoingDumper aOutgoingDumper);
   }
 
   private static final class AS4ResponseFactoryXML implements IAS4ResponseFactory
@@ -143,11 +143,11 @@ public class AS4RequestHandler implements AutoCloseable
     private final Document m_aDoc;
     private final IMimeType m_aMimeType;
 
-    public AS4ResponseFactoryXML (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                  @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                  @Nonnull @Nonempty final String sResponseMessageID,
-                                  @Nonnull final Document aDoc,
-                                  @Nonnull final IMimeType aMimeType)
+    public AS4ResponseFactoryXML (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                  @NonNull final IAS4IncomingMessageState aIncomingState,
+                                  @NonNull @Nonempty final String sResponseMessageID,
+                                  @NonNull final Document aDoc,
+                                  @NonNull final IMimeType aMimeType)
     {
       ValueEnforcer.notNull (aIncomingMessageMetadata, "IncomingMessageMetadata");
       ValueEnforcer.notNull (aIncomingState, "IncomingState");
@@ -161,13 +161,13 @@ public class AS4RequestHandler implements AutoCloseable
       m_aMimeType = aMimeType;
     }
 
-    @Nonnull
-    public HttpEntity getHttpEntityForSending (@Nonnull final IMimeType aMimType)
+    @NonNull
+    public HttpEntity getHttpEntityForSending (@NonNull final IMimeType aMimType)
     {
       return new HttpXMLEntity (m_aDoc, m_aMimeType);
     }
 
-    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse,
+    public void applyToResponse (@NonNull final IAS4ResponseAbstraction aHttpResponse,
                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper)
     {
       final String sXML = AS4XMLHelper.serializeXML (m_aDoc);
@@ -218,10 +218,10 @@ public class AS4RequestHandler implements AutoCloseable
     private final AS4MimeMessage m_aMimeMsg;
     private final HttpHeaderMap m_aHttpHeaders;
 
-    public AS4ResponseFactoryMIME (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                   @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                   @Nonnull @Nonempty final String sResponseMessageID,
-                                   @Nonnull final AS4MimeMessage aMimeMsg) throws MessagingException
+    public AS4ResponseFactoryMIME (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                   @NonNull final IAS4IncomingMessageState aIncomingState,
+                                   @NonNull @Nonempty final String sResponseMessageID,
+                                   @NonNull final AS4MimeMessage aMimeMsg) throws MessagingException
     {
       ValueEnforcer.notNull (aIncomingMessageMetadata, "IncomingMessageMetadata");
       ValueEnforcer.notNull (aIncomingState, "IncomingState");
@@ -236,14 +236,14 @@ public class AS4RequestHandler implements AutoCloseable
         LOGGER.warn ("The response MIME message is not repeatable");
     }
 
-    @Nonnull
-    public HttpMimeMessageEntity getHttpEntityForSending (@Nonnull final IMimeType aMimType)
+    @NonNull
+    public HttpMimeMessageEntity getHttpEntityForSending (@NonNull final IMimeType aMimType)
     {
       // Repeatable if the underlying Mime message is repeatable
       return HttpMimeMessageEntity.create (m_aMimeMsg);
     }
 
-    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse,
+    public void applyToResponse (@NonNull final IAS4ResponseAbstraction aHttpResponse,
                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper)
     {
       final IHasInputStream aContent = HasInputStream.multiple ( () -> {
@@ -317,7 +317,7 @@ public class AS4RequestHandler implements AutoCloseable
       m_bSuccess = bSuccess;
     }
 
-    void setPullReturnUserMsg (@Nonnull final Ebms3UserMessage aPullReturnUserMsg)
+    void setPullReturnUserMsg (@NonNull final Ebms3UserMessage aPullReturnUserMsg)
     {
       m_aPullReturnUserMsg = aPullReturnUserMsg;
     }
@@ -333,7 +333,7 @@ public class AS4RequestHandler implements AutoCloseable
       return m_aPullReturnUserMsg != null;
     }
 
-    void setAsyncResponseURL (@Nonnull final String sAsyncResponseURL)
+    void setAsyncResponseURL (@NonNull final String sAsyncResponseURL)
     {
       m_sAsyncResponseURL = sAsyncResponseURL;
     }
@@ -372,7 +372,7 @@ public class AS4RequestHandler implements AutoCloseable
   private Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> m_aProcessorSupplier = AS4IncomingMessageProcessorManager::getAllProcessors;
   private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
 
-  public AS4RequestHandler (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+  public AS4RequestHandler (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
     // Create dynamically here, to avoid leaving too many streams open
@@ -389,7 +389,7 @@ public class AS4RequestHandler implements AutoCloseable
   /**
    * @return The incoming message metadata as provided in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   protected final IAS4IncomingMessageMetadata getMessageMetadata ()
   {
     return m_aMessageMetadata;
@@ -416,8 +416,8 @@ public class AS4RequestHandler implements AutoCloseable
    * @see #setCryptoFactoryCrypt(IAS4CryptoFactory)
    * @since 3.0.0
    */
-  @Nonnull
-  public final AS4RequestHandler setCryptoFactorySign (@Nonnull final IAS4CryptoFactory aCryptoFactorySign)
+  @NonNull
+  public final AS4RequestHandler setCryptoFactorySign (@NonNull final IAS4CryptoFactory aCryptoFactorySign)
   {
     ValueEnforcer.notNull (aCryptoFactorySign, "CryptoFactorySign");
     m_aCryptoFactorySign = aCryptoFactorySign;
@@ -446,8 +446,8 @@ public class AS4RequestHandler implements AutoCloseable
    * @see #setCryptoFactorySign(IAS4CryptoFactory)
    * @since 3.0.0
    */
-  @Nonnull
-  public final AS4RequestHandler setCryptoFactoryCrypt (@Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt)
+  @NonNull
+  public final AS4RequestHandler setCryptoFactoryCrypt (@NonNull final IAS4CryptoFactory aCryptoFactoryCrypt)
   {
     ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
     m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
@@ -465,8 +465,8 @@ public class AS4RequestHandler implements AutoCloseable
    * @see #setCryptoFactorySign(IAS4CryptoFactory)
    * @since 3.0.0
    */
-  @Nonnull
-  public final AS4RequestHandler setCryptoFactory (@Nonnull final IAS4CryptoFactory aCryptoFactory)
+  @NonNull
+  public final AS4RequestHandler setCryptoFactory (@NonNull final IAS4CryptoFactory aCryptoFactory)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     return setCryptoFactorySign (aCryptoFactory).setCryptoFactoryCrypt (aCryptoFactory);
@@ -488,8 +488,8 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    * @since 3.0.0
    */
-  @Nonnull
-  public final AS4RequestHandler setPModeResolver (@Nonnull final IAS4PModeResolver aPModeResolver)
+  @NonNull
+  public final AS4RequestHandler setPModeResolver (@NonNull final IAS4PModeResolver aPModeResolver)
   {
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     m_aPModeResolver = aPModeResolver;
@@ -513,8 +513,8 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    * @since 3.0.0
    */
-  @Nonnull
-  public final AS4RequestHandler setIncomingAttachmentFactory (@Nonnull final IAS4IncomingAttachmentFactory aIAF)
+  @NonNull
+  public final AS4RequestHandler setIncomingAttachmentFactory (@NonNull final IAS4IncomingAttachmentFactory aIAF)
   {
     ValueEnforcer.notNull (aIAF, "IAF");
     m_aIncomingAttachmentFactory = aIAF;
@@ -538,8 +538,8 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    * @since 3.0.0
    */
-  @Nonnull
-  public final AS4RequestHandler setIncomingSecurityConfiguration (@Nonnull final IAS4IncomingSecurityConfiguration aICS)
+  @NonNull
+  public final AS4RequestHandler setIncomingSecurityConfiguration (@NonNull final IAS4IncomingSecurityConfiguration aICS)
   {
     ValueEnforcer.notNull (aICS, "ICS");
     m_aIncomingSecurityConfig = aICS;
@@ -563,8 +563,8 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    * @since 3.0.0
    */
-  @Nonnull
-  public final AS4RequestHandler setIncomingReceiverConfiguration (@Nonnull final IAS4IncomingReceiverConfiguration aIRC)
+  @NonNull
+  public final AS4RequestHandler setIncomingReceiverConfiguration (@NonNull final IAS4IncomingReceiverConfiguration aIRC)
   {
     ValueEnforcer.notNull (aIRC, "ICS");
     m_aIncomingReceiverConfig = aIRC;
@@ -575,7 +575,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return The current AS4 profile selector for incoming messages. Never <code>null</code>.
    * @since 0.13.0
    */
-  @Nonnull
+  @NonNull
   public final IAS4IncomingProfileSelector getIncomingProfileSelector ()
   {
     return m_aIncomingProfileSelector;
@@ -589,8 +589,8 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    * @since 0.13.0
    */
-  @Nonnull
-  public final AS4RequestHandler setIncomingProfileSelector (@Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector)
+  @NonNull
+  public final AS4RequestHandler setIncomingProfileSelector (@NonNull final IAS4IncomingProfileSelector aIncomingProfileSelector)
   {
     ValueEnforcer.notNull (aIncomingProfileSelector, "IncomingProfileSelector");
     m_aIncomingProfileSelector = aIncomingProfileSelector;
@@ -600,7 +600,7 @@ public class AS4RequestHandler implements AutoCloseable
   /**
    * @return The locale for error messages. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final Locale getLocale ()
   {
     return m_aLocale;
@@ -613,8 +613,8 @@ public class AS4RequestHandler implements AutoCloseable
    *        The locale. May not be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  public final AS4RequestHandler setLocale (@Nonnull final Locale aLocale)
+  @NonNull
+  public final AS4RequestHandler setLocale (@NonNull final Locale aLocale)
   {
     ValueEnforcer.notNull (aLocale, "Locale");
     m_aLocale = aLocale;
@@ -640,7 +640,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    * @since v0.9.7
    */
-  @Nonnull
+  @NonNull
   public final AS4RequestHandler setIncomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
   {
     m_aIncomingDumper = aIncomingDumper;
@@ -666,7 +666,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    * @since v0.9.9
    */
-  @Nonnull
+  @NonNull
   public final AS4RequestHandler setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
   {
     m_aOutgoingDumper = aOutgoingDumper;
@@ -691,7 +691,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    * @since v0.9.14
    */
-  @Nonnull
+  @NonNull
   public final AS4RequestHandler setRetryCallback (@Nullable final IAS4RetryCallback aRetryCallback)
   {
     m_aRetryCallback = aRetryCallback;
@@ -719,7 +719,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    * @since 0.13.1
    */
-  @Nonnull
+  @NonNull
   public final AS4RequestHandler setSoapProcessingFinalizedCallback (@Nullable final IAS4SoapProcessingFinalizedCallback aSoapProcessingFinalizedCB)
   {
     m_aSoapProcessingFinalizedCB = aSoapProcessingFinalizedCB;
@@ -730,7 +730,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return The supplier used to get all SPIs. By default this is
    *         {@link AS4IncomingMessageProcessorManager#getAllProcessors()}.
    */
-  @Nonnull
+  @NonNull
   public final Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> getProcessorSupplier ()
   {
     return m_aProcessorSupplier;
@@ -744,8 +744,8 @@ public class AS4RequestHandler implements AutoCloseable
    * @return <code>null</code> if no such processor was found
    * @since 2.8.2
    */
-  @Nonnull
-  public final <T extends IAS4IncomingMessageProcessorSPI> T getProcessorOfType (@Nonnull final Class <T> aTargetClass)
+  @NonNull
+  public final <T extends IAS4IncomingMessageProcessorSPI> T getProcessorOfType (@NonNull final Class <T> aTargetClass)
   {
     for (final IAS4IncomingMessageProcessorSPI aEntry : m_aProcessorSupplier.get ())
       if (aTargetClass.isInstance (aEntry))
@@ -760,8 +760,8 @@ public class AS4RequestHandler implements AutoCloseable
    *        The processor supplier to be used. May not be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  public final AS4RequestHandler setProcessorSupplier (@Nonnull final Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> aProcessorSupplier)
+  @NonNull
+  public final AS4RequestHandler setProcessorSupplier (@NonNull final Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> aProcessorSupplier)
   {
     ValueEnforcer.notNull (aProcessorSupplier, "ProcessorSupplier");
     m_aProcessorSupplier = aProcessorSupplier;
@@ -789,7 +789,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    * @since 0.9.7
    */
-  @Nonnull
+  @NonNull
   public final AS4RequestHandler setErrorConsumer (@Nullable final IAS4RequestHandlerErrorConsumer aErrorConsumer)
   {
     m_aErrorConsumer = aErrorConsumer;
@@ -822,16 +822,16 @@ public class AS4RequestHandler implements AutoCloseable
    * @param aSPIResult
    *        The result object to be filled. May not be <code>null</code>.
    */
-  private void _invokeSPIsForIncoming (@Nonnull final HttpHeaderMap aHttpHeaders,
+  private void _invokeSPIsForIncoming (@NonNull final HttpHeaderMap aHttpHeaders,
                                        @Nullable final Ebms3UserMessage aEbmsUserMessage,
                                        @Nullable final Ebms3SignalMessage aEbmsSignalMessage,
                                        @Nullable final Node aPayloadNode,
                                        @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                        @Nullable final IPMode aPMode,
-                                       @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                       @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget,
-                                       @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachmentsTarget,
-                                       @Nonnull final SPIInvocationResult aSPIResult)
+                                       @NonNull final IAS4IncomingMessageState aIncomingState,
+                                       @NonNull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget,
+                                       @NonNull final ICommonsList <WSS4JAttachment> aResponseAttachmentsTarget,
+                                       @NonNull final SPIInvocationResult aSPIResult)
   {
     ValueEnforcer.isTrue (aEbmsUserMessage != null || aEbmsSignalMessage != null,
                           "User OR Signal Message must be present");
@@ -1065,10 +1065,10 @@ public class AS4RequestHandler implements AutoCloseable
     aSPIResult.setSuccess (true);
   }
 
-  private void _invokeSPIsForResponse (@Nonnull final IAS4IncomingMessageState aIncomingState,
+  private void _invokeSPIsForResponse (@NonNull final IAS4IncomingMessageState aIncomingState,
                                        @Nullable final IAS4ResponseFactory aResponseFactory,
                                        @Nullable final HttpEntity aHttpEntity,
-                                       @Nonnull final IMimeType aMimeType,
+                                       @NonNull final IMimeType aMimeType,
                                        @Nullable final String sResponseMessageID)
   {
     // Get response payload as byte array for multiple processing by the SPIs
@@ -1154,11 +1154,11 @@ public class AS4RequestHandler implements AutoCloseable
    *        attachment that should be added
    * @return the reversed usermessage in document form
    */
-  @Nonnull
-  private static AS4UserMessage _createReversedUserMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                                            @Nonnull @Nonempty final String sResponseMessageID,
-                                                            @Nonnull final Ebms3UserMessage aUserMessage,
-                                                            @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments)
+  @NonNull
+  private static AS4UserMessage _createReversedUserMessage (@NonNull final ESoapVersion eSoapVersion,
+                                                            @NonNull @Nonempty final String sResponseMessageID,
+                                                            @NonNull final Ebms3UserMessage aUserMessage,
+                                                            @NonNull final ICommonsList <WSS4JAttachment> aResponseAttachments)
   {
     // Use current time
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sResponseMessageID,
@@ -1276,12 +1276,12 @@ public class AS4RequestHandler implements AutoCloseable
    * @throws WSSecurityException
    *         if something in the signing process goes wrong from WSS4j
    */
-  @Nonnull
+  @NonNull
   private Document _signResponseIfNeeded (@Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                          @Nonnull final AS4SigningParams aSigningParams,
-                                          @Nonnull final Document aDocToBeSigned,
-                                          @Nonnull final ESoapVersion eSoapVersion,
-                                          @Nonnull @Nonempty final String sMessagingID) throws WSSecurityException
+                                          @NonNull final AS4SigningParams aSigningParams,
+                                          @NonNull final Document aDocToBeSigned,
+                                          @NonNull final ESoapVersion eSoapVersion,
+                                          @NonNull @Nonempty final String sMessagingID) throws WSSecurityException
   {
     final Document ret;
     if (aSigningParams.isSigningEnabled ())
@@ -1312,7 +1312,7 @@ public class AS4RequestHandler implements AutoCloseable
    *        The PMode leg to check. May not be <code>null</code>.
    * @return Returns the value if set, else DEFAULT <code>false</code>.
    */
-  private static boolean _isSendNonRepudiationInformation (@Nonnull final PModeLeg aLeg)
+  private static boolean _isSendNonRepudiationInformation (@NonNull final PModeLeg aLeg)
   {
     if (aLeg.hasSecurity ())
       if (aLeg.getSecurity ().isSendReceiptNonRepudiationDefined ())
@@ -1338,12 +1338,12 @@ public class AS4RequestHandler implements AutoCloseable
    *        that should be sent back if needed. Can be <code>null</code>.
    * @throws WSSecurityException
    */
-  @Nonnull
-  private IAS4ResponseFactory _createResponseReceiptMessage (@Nonnull final IAS4IncomingMessageState aIncomingState,
+  @NonNull
+  private IAS4ResponseFactory _createResponseReceiptMessage (@NonNull final IAS4IncomingMessageState aIncomingState,
                                                              @Nullable final Document aSoapDocument,
-                                                             @Nonnull final ESoapVersion eSoapVersion,
-                                                             @Nonnull @Nonempty final String sResponseMessageID,
-                                                             @Nonnull final PModeLeg aEffectiveLeg,
+                                                             @NonNull final ESoapVersion eSoapVersion,
+                                                             @NonNull @Nonempty final String sResponseMessageID,
+                                                             @NonNull final PModeLeg aEffectiveLeg,
                                                              @Nullable final Ebms3UserMessage aUserMessage,
                                                              @Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
   {
@@ -1397,12 +1397,12 @@ public class AS4RequestHandler implements AutoCloseable
                                       eResponseSoapVersion.getMimeType ());
   }
 
-  @Nonnull
-  private IAS4ResponseFactory _createResponseErrorMessage (@Nonnull final IAS4IncomingMessageState aIncomingState,
-                                                           @Nonnull final ESoapVersion eSoapVersion,
-                                                           @Nonnull @Nonempty final String sResponseMessageID,
+  @NonNull
+  private IAS4ResponseFactory _createResponseErrorMessage (@NonNull final IAS4IncomingMessageState aIncomingState,
+                                                           @NonNull final ESoapVersion eSoapVersion,
+                                                           @NonNull @Nonempty final String sResponseMessageID,
                                                            @Nullable final PModeLeg aEffectiveLeg,
-                                                           @Nonnull @Nonempty final ICommonsList <Ebms3Error> aEbmsErrorMessages)
+                                                           @NonNull @Nonempty final ICommonsList <Ebms3Error> aEbmsErrorMessages)
   {
     // Start building response error message
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion,
@@ -1499,11 +1499,11 @@ public class AS4RequestHandler implements AutoCloseable
    * @throws MessagingException
    * @throws WSSecurityException
    */
-  @Nonnull
-  private AS4MimeMessage _createMimeMessageForResponse (@Nonnull final Document aResponseDoc,
-                                                        @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                        @Nonnull final ESoapVersion eSoapVersion,
-                                                        @Nonnull final AS4CryptParams aCryptParms) throws WSSecurityException,
+  @NonNull
+  private AS4MimeMessage _createMimeMessageForResponse (@NonNull final Document aResponseDoc,
+                                                        @NonNull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                                        @NonNull final ESoapVersion eSoapVersion,
+                                                        @NonNull final AS4CryptParams aCryptParms) throws WSSecurityException,
                                                                                                    MessagingException
   {
     final AS4MimeMessage aMimeMsg;
@@ -1560,13 +1560,13 @@ public class AS4RequestHandler implements AutoCloseable
    * @throws MessagingException
    *         on error
    */
-  @Nonnull
-  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final IAS4IncomingMessageState aIncomingState,
-                                                          @Nonnull final ESoapVersion eSoapVersion,
-                                                          @Nonnull final AS4UserMessage aResponseUserMsg,
-                                                          @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                          @Nonnull final AS4SigningParams aSigningParams,
-                                                          @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
+  @NonNull
+  private IAS4ResponseFactory _createResponseUserMessage (@NonNull final IAS4IncomingMessageState aIncomingState,
+                                                          @NonNull final ESoapVersion eSoapVersion,
+                                                          @NonNull final AS4UserMessage aResponseUserMsg,
+                                                          @NonNull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                                          @NonNull final AS4SigningParams aSigningParams,
+                                                          @NonNull final AS4CryptParams aCryptParams) throws WSSecurityException,
                                                                                                       MessagingException
   {
     final String sResponseMessageID = aResponseUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
@@ -1623,11 +1623,11 @@ public class AS4RequestHandler implements AutoCloseable
    *         On phase4 issues.
    */
   @Nullable
-  private IAS4ResponseFactory _handleSoapMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
-                                                  @Nonnull final Document aSoapDocument,
-                                                  @Nonnull final ESoapVersion eSoapVersion,
-                                                  @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                  @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws WSSecurityException,
+  private IAS4ResponseFactory _handleSoapMessage (@NonNull final HttpHeaderMap aHttpHeaders,
+                                                  @NonNull final Document aSoapDocument,
+                                                  @NonNull final ESoapVersion eSoapVersion,
+                                                  @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                  @NonNull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws WSSecurityException,
                                                                                                                      MessagingException,
                                                                                                                      Phase4Exception
   {
@@ -2076,9 +2076,9 @@ public class AS4RequestHandler implements AutoCloseable
    *         In case of WSS4J errors
    * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction) for a more generic API
    */
-  public void handleRequest (@Nonnull @WillClose final InputStream aRequestInputStream,
-                             @Nonnull final HttpHeaderMap aRequestHttpHeaders,
-                             @Nonnull final IAS4ResponseAbstraction aHttpResponse) throws Phase4Exception,
+  public void handleRequest (@NonNull @WillClose final InputStream aRequestInputStream,
+                             @NonNull final HttpHeaderMap aRequestHttpHeaders,
+                             @NonNull final IAS4ResponseAbstraction aHttpResponse) throws Phase4Exception,
                                                                                    IOException,
                                                                                    MessagingException,
                                                                                    WSSecurityException

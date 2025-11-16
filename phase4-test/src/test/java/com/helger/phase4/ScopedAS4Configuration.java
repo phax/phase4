@@ -16,6 +16,8 @@
  */
 package com.helger.phase4;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.config.IConfig;
@@ -29,8 +31,6 @@ import com.helger.io.resource.FileSystemResource;
 import com.helger.io.resource.IReadableResource;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.typeconvert.collection.IStringMap;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Helper class to apply a certain {@link IConfig} for a certain code area. Use via the
@@ -46,7 +46,7 @@ public final class ScopedAS4Configuration implements AutoCloseable
 
   private final IConfigWithFallback m_aOldConfig;
 
-  private ScopedAS4Configuration (@Nonnull final IConfigWithFallback aConfig)
+  private ScopedAS4Configuration (@NonNull final IConfigWithFallback aConfig)
   {
     m_aOldConfig = AS4Configuration.setConfig (aConfig);
   }
@@ -57,8 +57,8 @@ public final class ScopedAS4Configuration implements AutoCloseable
     AS4Configuration.setConfig (m_aOldConfig);
   }
 
-  @Nonnull
-  public static ScopedAS4Configuration create (@Nonnull final IStringMap aMap)
+  @NonNull
+  public static ScopedAS4Configuration create (@NonNull final IStringMap aMap)
   {
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
     aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString),
@@ -66,8 +66,8 @@ public final class ScopedAS4Configuration implements AutoCloseable
     return new ScopedAS4Configuration (new ConfigWithFallback (aVP));
   }
 
-  @Nonnull
-  public static ScopedAS4Configuration create (@Nonnull final IReadableResource aRes)
+  @NonNull
+  public static ScopedAS4Configuration create (@NonNull final IReadableResource aRes)
   {
     ValueEnforcer.notNull (aRes, "Res");
     ValueEnforcer.isTrue (aRes.exists (), () -> "Resource does not exist: " + aRes);
@@ -79,14 +79,14 @@ public final class ScopedAS4Configuration implements AutoCloseable
     return new ScopedAS4Configuration (new ConfigWithFallback (aVP));
   }
 
-  @Nonnull
+  @NonNull
   public static ScopedAS4Configuration createTestConfig ()
   {
     return create (new FileSystemResource (TEST_CONFIG_FILE));
   }
 
-  @Nonnull
-  public static ScopedAS4Configuration createTestConfig (@Nonnull final IStringMap aMap)
+  @NonNull
+  public static ScopedAS4Configuration createTestConfig (@NonNull final IStringMap aMap)
   {
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
     aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString),

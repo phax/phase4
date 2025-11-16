@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.peppol.servlet;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.annotation.Nonempty;
@@ -27,9 +29,6 @@ import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This is the interface that must be implemented to handle incoming SBD documents.
@@ -67,14 +66,14 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    * @throws Exception
    *         In case it cannot be processed.
    */
-  void handleIncomingSBD (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
-                          @Nonnull HttpHeaderMap aHeaders,
-                          @Nonnull Ebms3UserMessage aUserMessage,
-                          @Nonnull byte [] aSBDBytes,
-                          @Nonnull StandardBusinessDocument aSBD,
-                          @Nonnull PeppolSBDHData aPeppolSBD,
-                          @Nonnull IAS4IncomingMessageState aState,
-                          @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
+  void handleIncomingSBD (@NonNull IAS4IncomingMessageMetadata aMessageMetadata,
+                          @NonNull HttpHeaderMap aHeaders,
+                          @NonNull Ebms3UserMessage aUserMessage,
+                          @NonNull byte [] aSBDBytes,
+                          @NonNull StandardBusinessDocument aSBD,
+                          @NonNull PeppolSBDHData aPeppolSBD,
+                          @NonNull IAS4IncomingMessageState aState,
+                          @NonNull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
 
   /**
    * Optional callback to process a response message
@@ -97,9 +96,9 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    *        returned message.
    * @since v3.1.0
    */
-  default void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                          @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                          @Nonnull @Nonempty final String sResponseMessageID,
+  default void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                          @NonNull final IAS4IncomingMessageState aIncomingState,
+                                          @NonNull @Nonempty final String sResponseMessageID,
                                           @Nullable final byte [] aResponseBytes,
                                           final boolean bResponsePayloadIsAvailable)
   {}

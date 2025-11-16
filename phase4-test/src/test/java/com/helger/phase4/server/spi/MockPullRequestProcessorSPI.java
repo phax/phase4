@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.server.spi;
 
+import org.jspecify.annotations.NonNull;
 import org.w3c.dom.Element;
 
 import com.helger.annotation.style.IsSPIImplementation;
@@ -26,13 +27,11 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.test.profile.TestPMode;
 
-import jakarta.annotation.Nonnull;
-
 @IsSPIImplementation
 public class MockPullRequestProcessorSPI implements IAS4IncomingPullRequestProcessorSPI
 {
-  @Nonnull
-  public IPMode findPMode (@Nonnull final Ebms3SignalMessage aSignalMessage)
+  @NonNull
+  public IPMode findPMode (@NonNull final Ebms3SignalMessage aSignalMessage)
   {
     final PMode aPMode = TestPMode.createTestPMode ("pullinitiator",
                                                     "pullresponder",

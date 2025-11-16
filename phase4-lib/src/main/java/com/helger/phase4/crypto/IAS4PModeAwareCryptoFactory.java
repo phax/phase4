@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.crypto;
 
-import com.helger.phase4.model.pmode.IPMode;
+import org.jspecify.annotations.NonNull;
 
-import jakarta.annotation.Nonnull;
+import com.helger.phase4.model.pmode.IPMode;
 
 /**
  * An extended {@link IAS4CryptoFactory} with the capability to receive a P-Mode that was
@@ -39,5 +39,5 @@ public interface IAS4PModeAwareCryptoFactory extends IAS4CryptoFactory
    * @param pMode
    *        the P-Mode resolved during reception
    */
-  void setContextPMode (@Nonnull IPMode pMode);
+  void setContextPMode (@NonNull IPMode pMode);
 }

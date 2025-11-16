@@ -19,6 +19,7 @@ package com.helger.phase4.peppol.server.api;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -35,8 +36,6 @@ import com.helger.photon.api.IAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
-import jakarta.annotation.Nonnull;
-
 /**
  * API to send a document via Peppol. The SBDH is created internally.
  *
@@ -48,17 +47,17 @@ public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
 
   private final EPeppolNetwork m_eStage;
 
-  public APIPostSendDocument (@Nonnull final EPeppolNetwork eStage)
+  public APIPostSendDocument (@NonNull final EPeppolNetwork eStage)
   {
     m_eStage = eStage;
   }
 
   @Override
-  protected void verifiedInvokeAPI (@Nonnull final IAPIDescriptor aAPIDescriptor,
-                                    @Nonnull @Nonempty final String sPath,
-                                    @Nonnull final Map <String, String> aPathVariables,
-                                    @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                    @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  protected void verifiedInvokeAPI (@NonNull final IAPIDescriptor aAPIDescriptor,
+                                    @NonNull @Nonempty final String sPath,
+                                    @NonNull final Map <String, String> aPathVariables,
+                                    @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                                    @NonNull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     final String sSenderID = aPathVariables.get (Phase4API.PARAM_SENDER_ID);
     final String sReceiverID = aPathVariables.get (Phase4API.PARAM_RECEIVER_ID);

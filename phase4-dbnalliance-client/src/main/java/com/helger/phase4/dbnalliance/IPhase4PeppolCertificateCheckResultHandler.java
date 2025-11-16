@@ -19,10 +19,10 @@ package com.helger.phase4.dbnalliance;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 
-import com.helger.security.certificate.ECertificateCheckResult;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import com.helger.security.certificate.ECertificateCheckResult;
 
 /**
  * Interface for handling certification validations results
@@ -45,6 +45,6 @@ public interface IPhase4PeppolCertificateCheckResultHandler
    *         Implementation dependent
    */
   void onCertificateCheckResult (@Nullable X509Certificate aAPCertificate,
-                                 @Nonnull OffsetDateTime aCheckDT,
-                                 @Nonnull ECertificateCheckResult eCertCheckResult) throws Phase4DBNAllianceException;
+                                 @NonNull OffsetDateTime aCheckDT,
+                                 @NonNull ECertificateCheckResult eCertCheckResult) throws Phase4DBNAllianceException;
 }

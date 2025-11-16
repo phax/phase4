@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.pmode;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.phase4.CAS4;
@@ -29,9 +32,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Default PMode configuration Specification from
@@ -47,13 +47,13 @@ public final class DefaultPMode
   private DefaultPMode ()
   {}
 
-  @Nonnull
+  @NonNull
   private static PModeLegProtocol _generatePModeLegProtocol (@Nullable final String sAddress)
   {
     return PModeLegProtocol.createForDefaultSoapVersion (sAddress);
   }
 
-  @Nonnull
+  @NonNull
   private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
     return PModeLegBusinessInformation.create (CAS4.DEFAULT_SERVICE_URL,
@@ -62,7 +62,7 @@ public final class DefaultPMode
                                                CAS4.DEFAULT_MPC_ID);
   }
 
-  @Nonnull
+  @NonNull
   private static PModeLeg _generatePModeLeg (@Nullable final String sAddress)
   {
     final PModeLegErrorHandling aErrorHandling = PModeLegErrorHandling.createUndefined ();
@@ -81,9 +81,9 @@ public final class DefaultPMode
                          aSecurity);
   }
 
-  @Nonnull
-  public static IPMode getOrCreateDefaultPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                                @Nonnull @Nonempty final String sResponderID,
+  @NonNull
+  public static IPMode getOrCreateDefaultPMode (@NonNull @Nonempty final String sInitiatorID,
+                                                @NonNull @Nonempty final String sResponderID,
                                                 @Nullable final String sAddress,
                                                 final boolean bPersist)
   {

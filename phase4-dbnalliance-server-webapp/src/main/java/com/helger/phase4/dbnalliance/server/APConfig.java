@@ -16,13 +16,13 @@
  */
 package com.helger.phase4.dbnalliance.server;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.dbnalliance.commons.EDBNAllianceStage;
 import com.helger.phase4.config.AS4Configuration;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 @Immutable
 public final class APConfig
@@ -30,13 +30,13 @@ public final class APConfig
   private APConfig ()
   {}
 
-  @Nonnull
+  @NonNull
   public static IConfigWithFallback getConfig ()
   {
     return AS4Configuration.getConfig ();
   }
 
-  @Nonnull
+  @NonNull
   public static EDBNAllianceStage getStage ()
   {
     final String sStageID = getConfig ().getAsString ("dbnalliance.stage");

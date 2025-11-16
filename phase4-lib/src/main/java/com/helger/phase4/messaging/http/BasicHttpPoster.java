@@ -27,6 +27,8 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.HttpEntityWrapper;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -51,9 +53,6 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.util.MultiOutputStream;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * A generic HTTP POST wrapper based on {@link IHttpClientProvider} and {@link HttpPost}. Since
  * 0.13.0 this is a standalone class which is injected as a member into the respective AS4 clients.
@@ -66,7 +65,7 @@ public class BasicHttpPoster implements IHttpPoster
    * @return The default {@link HttpClientFactory} to be used. Never <code>null</code>.
    * @since 0.8.3
    */
-  @Nonnull
+  @NonNull
   public static HttpClientFactory createDefaultHttpClientFactory ()
   {
     return new HttpClientFactory ();
@@ -83,14 +82,14 @@ public class BasicHttpPoster implements IHttpPoster
   public BasicHttpPoster ()
   {}
 
-  @Nonnull
+  @NonNull
   public final HttpClientFactory getHttpClientFactory ()
   {
     return m_aHttpClientFactory;
   }
 
-  @Nonnull
-  public final BasicHttpPoster setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
+  @NonNull
+  public final BasicHttpPoster setHttpClientFactory (@NonNull final HttpClientFactory aHttpClientFactory)
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     m_aHttpClientFactory = aHttpClientFactory;
@@ -103,7 +102,7 @@ public class BasicHttpPoster implements IHttpPoster
     return m_aHttpCustomizer;
   }
 
-  @Nonnull
+  @NonNull
   public final BasicHttpPoster setHttpCustomizer (@Nullable final Consumer <? super HttpPost> aHttpCustomizer)
   {
     m_aHttpCustomizer = aHttpCustomizer;
@@ -115,7 +114,7 @@ public class BasicHttpPoster implements IHttpPoster
     return m_bQuoteHttpHeaders;
   }
 
-  @Nonnull
+  @NonNull
   public final BasicHttpPoster setQuoteHttpHeaders (final boolean bQuoteHttpHeaders)
   {
     m_bQuoteHttpHeaders = bQuoteHttpHeaders;
@@ -143,10 +142,10 @@ public class BasicHttpPoster implements IHttpPoster
    *         In case of IO error
    */
   @Nullable
-  public <T> T sendGenericMessage (@Nonnull @Nonempty final String sURL,
+  public <T> T sendGenericMessage (@NonNull @Nonempty final String sURL,
                                    @Nullable final HttpHeaderMap aCustomHttpHeaders,
-                                   @Nonnull final HttpEntity aHttpEntity,
-                                   @Nonnull final HttpClientResponseHandler <? extends T> aResponseHandler) throws IOException
+                                   @NonNull final HttpEntity aHttpEntity,
+                                   @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler) throws IOException
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -222,13 +221,13 @@ public class BasicHttpPoster implements IHttpPoster
     }
   }
 
-  @Nonnull
+  @NonNull
   protected static HttpEntity createDumpingHttpEntity (@Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                       @Nonnull final HttpEntity aSrcEntity,
-                                                       @Nonnull @Nonempty final String sMessageID,
+                                                       @NonNull final HttpEntity aSrcEntity,
+                                                       @NonNull @Nonempty final String sMessageID,
                                                        @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                                        @Nonnegative final int nTry,
-                                                       @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
+                                                       @NonNull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
   {
     if (aOutgoingDumper == null)
     {
@@ -263,7 +262,7 @@ public class BasicHttpPoster implements IHttpPoster
     return new HttpEntityWrapper (aSrcEntity)
     {
       @Override
-      public void writeTo (@Nonnull @WillNotClose final OutputStream aHttpOS) throws IOException
+      public void writeTo (@NonNull @WillNotClose final OutputStream aHttpOS) throws IOException
       {
         // Write to multiple output streams
         final MultiOutputStream aMultiOS = new MultiOutputStream (aHttpOS, aDumpOS);
@@ -276,12 +275,12 @@ public class BasicHttpPoster implements IHttpPoster
   }
 
   @Nullable
-  public <T> T sendGenericMessageWithRetries (@Nonnull final String sURL,
+  public <T> T sendGenericMessageWithRetries (@NonNull final String sURL,
                                               @Nullable final HttpHeaderMap aCustomHttpHeaders,
-                                              @Nonnull final HttpEntity aHttpEntity,
-                                              @Nonnull final String sMessageID,
-                                              @Nonnull final HttpRetrySettings aRetrySettings,
-                                              @Nonnull final HttpClientResponseHandler <? extends T> aResponseHandler,
+                                              @NonNull final HttpEntity aHttpEntity,
+                                              @NonNull final String sMessageID,
+                                              @NonNull final HttpRetrySettings aRetrySettings,
+                                              @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                               @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                               @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
   {

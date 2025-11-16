@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.sender;
 
-import com.helger.annotation.Nonempty;
+import org.jspecify.annotations.NonNull;
 
-import jakarta.annotation.Nonnull;
+import com.helger.annotation.Nonempty;
 
 /**
  * Specific callback interface for {@link ValidatingAS4SignalMsgConsumer} to handle the results in a
@@ -41,7 +41,7 @@ public interface IAS4SignalMessageValidationResultHandler
    *        The error text in human readable string what went wrong. May neither be
    *        <code>null</code> nor empty.
    */
-  void onError (@Nonnull @Nonempty String sErrorMsg);
+  void onError (@NonNull @Nonempty String sErrorMsg);
 
   /**
    * This method is only called if sent and/or received message did not contain DSig references, so

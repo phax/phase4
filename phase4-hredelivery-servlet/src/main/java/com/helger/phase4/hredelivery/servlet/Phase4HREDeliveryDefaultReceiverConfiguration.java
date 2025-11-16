@@ -18,6 +18,8 @@ package com.helger.phase4.hredelivery.servlet;
 
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.NotThreadSafe;
@@ -32,9 +34,6 @@ import com.helger.phase4.hredelivery.servlet.Phase4HREDeliveryReceiverConfigurat
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class contains the references values against which incoming values are compared. These are
@@ -160,7 +159,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
   /**
    * @return The default identifier factory used to parse SBDH data. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static IIdentifierFactory getSBDHIdentifierFactory ()
   {
     return s_aSBDHIdentifierFactory;
@@ -172,7 +171,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
    * @param a
    *        The identifier factory to use. May not be <code>null</code>.
    */
-  public static void setSBDHIdentifierFactory (@Nonnull final IIdentifierFactory a)
+  public static void setSBDHIdentifierFactory (@NonNull final IIdentifierFactory a)
   {
     ValueEnforcer.notNull (a, "SBDHIdentifierFactory");
     s_aSBDHIdentifierFactory = a;
@@ -261,7 +260,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
    *
    * @return Completely filled builder. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static Phase4HREDeliveryReceiverConfigurationBuilder getAsReceiverCheckDataBuilder ()
   {
     final ISMPExtendedServiceMetadataProvider aSMPClient = getSMPClient ();
@@ -291,7 +290,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
    *
    * @return The instance data and never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static Phase4HREDeliveryReceiverConfiguration getAsReceiverCheckData ()
   {
     return getAsReceiverCheckDataBuilder ().build ();

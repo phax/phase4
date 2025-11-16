@@ -17,6 +17,7 @@
 package com.helger.phase4.CEF;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
 import org.junit.Before;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -45,7 +46,6 @@ import com.helger.phase4.test.profile.TestPMode;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
-import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
@@ -69,11 +69,11 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
     m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
   }
 
-  @Nonnull
-  protected Document createTestSignedUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
+  @NonNull
+  protected Document createTestSignedUserMessage (@NonNull final ESoapVersion eSOAPVersion,
                                                   @Nullable final Node aPayload,
                                                   @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                  @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
+                                                  @NonNull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = createTestUserMessageSoapNotSigned (aPayload, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
@@ -87,7 +87,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
     return aSignedDoc;
   }
 
-  @Nonnull
+  @NonNull
   protected AS4UserMessage createTestUserMessageSoapNotSigned (@Nullable final Node aPayload,
                                                                @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {

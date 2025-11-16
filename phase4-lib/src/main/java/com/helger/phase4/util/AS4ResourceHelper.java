@@ -26,6 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.FileEntity;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.GuardedBy;
@@ -39,9 +41,6 @@ import com.helger.io.file.FileHelper;
 import com.helger.io.file.FileIOError;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.logging.Phase4LoggerFactory;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * A resource manager that keeps track of temporary files and other closables that will be closed
@@ -105,7 +104,7 @@ public class AS4ResourceHelper implements Closeable
    * @throws IllegalStateException
    *         If {@link #close()} was already called before
    */
-  @Nonnull
+  @NonNull
   public File createTempFile () throws IOException
   {
     if (m_aInClose.get ())
@@ -129,7 +128,7 @@ public class AS4ResourceHelper implements Closeable
    * @return A list of all known temp files. Never <code>null</code> but maybe empty.
    * @since 0.8.3
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public ICommonsList <File> getAllTempFiles ()
   {
@@ -144,7 +143,7 @@ public class AS4ResourceHelper implements Closeable
    * @throws IllegalStateException
    *         If {@link #close()} was already called before
    */
-  public void addCloseable (@Nonnull final Closeable aCloseable)
+  public void addCloseable (@NonNull final Closeable aCloseable)
   {
     ValueEnforcer.notNull (aCloseable, "Closeable");
 
@@ -158,7 +157,7 @@ public class AS4ResourceHelper implements Closeable
    * @return A list of all known closables. Never <code>null</code> but maybe empty.
    * @since 0.8.3
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public ICommonsList <Closeable> getAllCloseables ()
   {
@@ -227,8 +226,8 @@ public class AS4ResourceHelper implements Closeable
    *         on IO error
    * @since v0.9.9
    */
-  @Nonnull
-  public HttpEntity createRepeatableHttpEntity (@Nonnull final HttpEntity aSrcEntity) throws IOException
+  @NonNull
+  public HttpEntity createRepeatableHttpEntity (@NonNull final HttpEntity aSrcEntity) throws IOException
   {
     ValueEnforcer.notNull (aSrcEntity, "SrcEntity");
 

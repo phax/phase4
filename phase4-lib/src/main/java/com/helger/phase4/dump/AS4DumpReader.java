@@ -23,6 +23,8 @@ import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
@@ -63,8 +65,6 @@ import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**
@@ -88,7 +88,7 @@ public final class AS4DumpReader
      * @param aPayload
      *        Decrypted payload. Never <code>null</code>.
      */
-    void accept (@Nonnegative int nAttachmentIndex, @Nonnull byte [] aPayload);
+    void accept (@Nonnegative int nAttachmentIndex, @NonNull byte [] aPayload);
   }
 
   private AS4DumpReader ()
@@ -108,7 +108,7 @@ public final class AS4DumpReader
    *        of the payload can easily be determined. May be <code>null</code>.
    * @since 2.1.0
    */
-  public static void readAndSkipInitialHttpHeaders (@Nonnull final byte [] aAS4InData,
+  public static void readAndSkipInitialHttpHeaders (@NonNull final byte [] aAS4InData,
                                                     @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
                                                     @Nullable final IntConsumer aHttpEndIndexConsumer)
   {
@@ -190,12 +190,12 @@ public final class AS4DumpReader
    * @throws MessagingException
    *         In case of error
    */
-  public static void decryptAS4In (@Nonnull @Nonempty final String sAS4ProfileID,
-                                   @Nonnull final byte [] aAS4InData,
-                                   @Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+  public static void decryptAS4In (@NonNull @Nonempty final String sAS4ProfileID,
+                                   @NonNull final byte [] aAS4InData,
+                                   @NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                   @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                    @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
-                                   @Nonnull final IDecryptedPayloadConsumer aDecryptedConsumer) throws WSSecurityException,
+                                   @NonNull final IDecryptedPayloadConsumer aDecryptedConsumer) throws WSSecurityException,
                                                                                                 Phase4Exception,
                                                                                                 IOException,
                                                                                                 MessagingException
@@ -238,14 +238,14 @@ public final class AS4DumpReader
 
       final IAS4IncomingMessageProcessorSPI aSPI = new IAS4IncomingMessageProcessorSPI ()
       {
-        public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                                                @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                                @Nonnull final Ebms3UserMessage aUserMessage,
-                                                                @Nonnull final IPMode aPMode,
+        public AS4MessageProcessorResult processAS4UserMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                                                @NonNull final HttpHeaderMap aHttpHeaders,
+                                                                @NonNull final Ebms3UserMessage aUserMessage,
+                                                                @NonNull final IPMode aPMode,
                                                                 @Nullable final Node aPayload,
                                                                 @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                                @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                                                @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                                @NonNull final IAS4IncomingMessageState aIncomingState,
+                                                                @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
         {
           try
           {
@@ -290,9 +290,9 @@ public final class AS4DumpReader
           return AS4SignalMessageProcessorResult.createSuccess ();
         }
 
-        public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                               @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                               @Nonnull @Nonempty final String sResponseMessageID,
+        public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                               @NonNull final IAS4IncomingMessageState aIncomingState,
+                                               @NonNull @Nonempty final String sResponseMessageID,
                                                @Nullable final byte [] aResponseBytes,
                                                final boolean bResponsePayloadIsAvailable)
         {}

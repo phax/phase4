@@ -18,6 +18,8 @@ package com.helger.phase4.servlet;
 
 import java.nio.charset.StandardCharsets;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonnegative;
@@ -28,8 +30,6 @@ import com.helger.mime.CMimeType;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.servlet.response.UnifiedResponse;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -41,9 +41,9 @@ public class AS4UnifiedResponse extends UnifiedResponse
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4UnifiedResponse.class);
 
-  public AS4UnifiedResponse (@Nonnull final EHttpVersion eHTTPVersion,
-                             @Nonnull final EHttpMethod eHTTPMethod,
-                             @Nonnull final HttpServletRequest aHttpRequest)
+  public AS4UnifiedResponse (@NonNull final EHttpVersion eHTTPVersion,
+                             @NonNull final EHttpMethod eHTTPMethod,
+                             @NonNull final HttpServletRequest aHttpRequest)
   {
     super (eHTTPVersion, eHTTPMethod, aHttpRequest);
     // Never cache the responses on client side
@@ -52,7 +52,7 @@ public class AS4UnifiedResponse extends UnifiedResponse
   }
 
   public void setResponseError (@Nonnegative final int nStatusCode,
-                                @Nonnull final String sMsg,
+                                @NonNull final String sMsg,
                                 @Nullable final Throwable t)
   {
     LOGGER.error ("HTTP " + nStatusCode + ": " + sMsg, t);

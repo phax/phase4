@@ -26,6 +26,8 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -54,8 +56,6 @@ import com.helger.phase4.model.pmode.PModeReceptionAwareness;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**
@@ -72,7 +72,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The default message ID factory to be used.
    * @since 0.8.3
    */
-  @Nonnull
+  @NonNull
   public static Supplier <String> createDefaultMessageIDFactory ()
   {
     return MessageHelperMethods::createRandomMessageID;
@@ -99,8 +99,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   // Retry handling
   private final HttpRetrySettings m_aHttpRetrySettings = new HttpRetrySettings ();
 
-  protected AbstractAS4Client (@Nonnull final EAS4MessageType eMessageType,
-                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  protected AbstractAS4Client (@NonNull final EAS4MessageType eMessageType,
+                               @NonNull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     ValueEnforcer.notNull (eMessageType, "MessageType");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
@@ -112,7 +112,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The message type handled by this client. Never <code>null</code>.
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public final EAS4MessageType getMessageType ()
   {
     return m_eMessageType;
@@ -121,7 +121,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   /**
    * @return The resource helper provided in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final AS4ResourceHelper getAS4ResourceHelper ()
   {
     return m_aResHelper;
@@ -146,7 +146,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @see #setCryptoFactoryCrypt(IAS4CryptoFactory)
    * @since 2.2.0
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE setCryptoFactorySign (@Nullable final IAS4CryptoFactory aCryptoFactorySign)
   {
     m_aCryptoFactorySign = aCryptoFactorySign;
@@ -172,7 +172,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @see #setCryptoFactorySign(IAS4CryptoFactory)
    * @since 2.2.0
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE setCryptoFactoryCrypt (@Nullable final IAS4CryptoFactory aCryptoFactoryCrypt)
   {
     m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
@@ -186,7 +186,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        The crypto factory to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE setCryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
   {
     return setCryptoFactorySign (aCryptoFactory).setCryptoFactoryCrypt (aCryptoFactory);
@@ -196,7 +196,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The signing algorithm to use. Never <code>null</code>.
    * @since 0.9.0
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final AS4SigningParams signingParams ()
   {
@@ -207,7 +207,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The encrypt and decrypt parameters to use. Never null <code>null</code>.
    * @since 0.9.0
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final AS4CryptParams cryptParams ()
   {
@@ -218,7 +218,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The underlying HTTP poster to use. May not be <code>null</code>.
    * @since 0.13.0
    */
-  @Nonnull
+  @NonNull
   public final IHttpPoster getHttpPoster ()
   {
     return m_aHttpPoster;
@@ -233,8 +233,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return this for chaining
    * @since 0.13.0
    */
-  @Nonnull
-  public final IMPLTYPE setHttpPoster (@Nonnull final IHttpPoster aHttpPoster)
+  @NonNull
+  public final IMPLTYPE setHttpPoster (@NonNull final IHttpPoster aHttpPoster)
   {
     ValueEnforcer.notNull (aHttpPoster, "HttpPoster");
     m_aHttpPoster = aHttpPoster;
@@ -244,7 +244,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   /**
    * @return The Message ID factory to be used. May not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final Supplier <String> getMessageIDFactory ()
   {
     return m_aMessageIDFactory;
@@ -257,8 +257,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        Message to be used. May neither be <code>null</code> nor empty.
    * @return this for chaining
    */
-  @Nonnull
-  public final IMPLTYPE setMessageID (@Nonnull @Nonempty final String sMessageID)
+  @NonNull
+  public final IMPLTYPE setMessageID (@NonNull @Nonempty final String sMessageID)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
     return setMessageIDFactory ( () -> sMessageID);
@@ -271,8 +271,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        Factory to be used. May not be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  public final IMPLTYPE setMessageIDFactory (@Nonnull final Supplier <String> aMessageIDFactory)
+  @NonNull
+  public final IMPLTYPE setMessageIDFactory (@NonNull final Supplier <String> aMessageIDFactory)
   {
     ValueEnforcer.notNull (aMessageIDFactory, "MessageIDFactory");
     m_aMessageIDFactory = aMessageIDFactory;
@@ -282,7 +282,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   /**
    * @return A new message ID created by the contained factory. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String createMessageID ()
   {
@@ -316,7 +316,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        The Message ID of the original AS4 message. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE setRefToMessageID (@Nullable final String sRefToMessageID)
   {
     m_sRefToMessageID = sRefToMessageID;
@@ -341,7 +341,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return this for chaining Never <code>null</code>.
    * @since 2.2.2
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE ensureSendingDateTime ()
   {
     if (m_aSendingDateTime == null)
@@ -357,7 +357,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        The sending date time to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE setSendingDateTime (@Nullable final OffsetDateTime aSendingDateTime)
   {
     m_aSendingDateTime = aSendingDateTime;
@@ -368,7 +368,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The SOAP version to be used. May not be <code>null</code>.
    * @since v0.9.8
    */
-  @Nonnull
+  @NonNull
   public final ESoapVersion getSoapVersion ()
   {
     return m_eSoapVersion;
@@ -382,8 +382,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return this for chaining
    * @since v0.9.8
    */
-  @Nonnull
-  public final IMPLTYPE setSoapVersion (@Nonnull final ESoapVersion eSoapVersion)
+  @NonNull
+  public final IMPLTYPE setSoapVersion (@NonNull final ESoapVersion eSoapVersion)
   {
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     m_eSoapVersion = eSoapVersion;
@@ -395,13 +395,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *         object.
    * @since 0.13.0
    */
-  @Nonnull
+  @NonNull
   public final HttpRetrySettings httpRetrySettings ()
   {
     return m_aHttpRetrySettings;
   }
 
-  @Nonnull
+  @NonNull
   protected IAS4CryptoFactory internalGetCryptoFactorySign ()
   {
     if (m_aCryptoFactorySign == null)
@@ -410,7 +410,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     return m_aCryptoFactorySign;
   }
 
-  @Nonnull
+  @NonNull
   protected IAS4CryptoFactory internalGetCryptoFactoryCrypt ()
   {
     if (m_aCryptoFactoryCrypt == null)
@@ -458,8 +458,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @throws MessagingException
    *         in case something happens in MIME wrapping
    */
-  @Nonnull
-  public abstract AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty String sMessageID,
+  @NonNull
+  public abstract AS4ClientBuiltMessage buildMessage (@NonNull @Nonempty String sMessageID,
                                                       @Nullable IAS4ClientBuildMessageCallback aCallback) throws IOException,
                                                                                                           WSSecurityException,
                                                                                                           MessagingException;
@@ -495,9 +495,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *         in case something happens in MIME wrapping
    * @since 0.9.14
    */
-  @Nonnull
-  public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@Nonnull final String sURL,
-                                                                    @Nonnull final HttpClientResponseHandler <? extends T> aResponseHandler,
+  @NonNull
+  public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@NonNull final String sURL,
+                                                                    @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                                                     @Nullable final IAS4ClientBuildMessageCallback aCallback,
                                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                     @Nullable final IAS4RetryCallback aRetryCallback) throws IOException,

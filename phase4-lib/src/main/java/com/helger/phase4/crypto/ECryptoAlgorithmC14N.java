@@ -17,13 +17,12 @@
 package com.helger.phase4.crypto;
 
 import org.apache.wss4j.common.WSS4JConstants;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.lang.EnumHelper;
 import com.helger.base.string.StringHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Enumeration with all message canonicalization algorithms supported when signing.
@@ -43,20 +42,20 @@ public enum ECryptoAlgorithmC14N implements ICryptoAlgorithmC14N
   private final String m_sID;
   private final String m_sAlgorithmURI;
 
-  ECryptoAlgorithmC14N (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sAlgorithmURI)
+  ECryptoAlgorithmC14N (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sAlgorithmURI)
   {
     m_sID = sID;
     m_sAlgorithmURI = sAlgorithmURI;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
     return m_sID;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getAlgorithmURI ()
   {
@@ -69,7 +68,7 @@ public enum ECryptoAlgorithmC14N implements ICryptoAlgorithmC14N
     return EnumHelper.getFromIDOrNull (ECryptoAlgorithmC14N.class, sID);
   }
 
-  @Nonnull
+  @NonNull
   public static ECryptoAlgorithmC14N getFromIDOrThrow (@Nullable final String sID)
   {
     return EnumHelper.getFromIDOrThrow (ECryptoAlgorithmC14N.class, sID);

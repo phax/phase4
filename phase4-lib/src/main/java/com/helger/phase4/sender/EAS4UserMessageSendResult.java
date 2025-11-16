@@ -16,13 +16,13 @@
  */
 package com.helger.phase4.sender;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
 import com.helger.base.state.ISuccessIndicator;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Specific enumeration with the result error codes of the
@@ -67,7 +67,7 @@ public enum EAS4UserMessageSendResult implements IHasID <String>, ISuccessIndica
 
   private final String m_sID;
 
-  EAS4UserMessageSendResult (@Nonnull @Nonempty final String sID)
+  EAS4UserMessageSendResult (@NonNull @Nonempty final String sID)
   {
     m_sID = sID;
   }
@@ -76,7 +76,7 @@ public enum EAS4UserMessageSendResult implements IHasID <String>, ISuccessIndica
    * @return The ID of the of the error message.
    * @since 1.0.0-rc1
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {

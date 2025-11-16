@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.state.ETriState;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
@@ -24,9 +27,6 @@ import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModeLegReliability}.
@@ -46,10 +46,10 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
   private static final String ELEMENT_CORRELATION = "Correlation";
   private static final IMicroQName ATTR_TERMINATE_GROUP = new MicroQName ("TerminateGroup");
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final PModeLegReliability aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final PModeLegReliability aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 
@@ -74,8 +74,8 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
     return ret;
   }
 
-  @Nonnull
-  public PModeLegReliability convertToNative (@Nonnull final IMicroElement aElement)
+  @NonNull
+  public PModeLegReliability convertToNative (@NonNull final IMicroElement aElement)
   {
     final ETriState eAtLeastOnceContract = getTriState (aElement.getAttributeValue (ATTR_AT_LEAST_ONCE_CONTRACT),
                                                         PModeLegReliability.DEFAULT_AT_LEAST_ONCE_CONTRACT);

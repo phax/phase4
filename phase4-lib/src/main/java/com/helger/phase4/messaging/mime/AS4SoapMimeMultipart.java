@@ -16,9 +16,10 @@
  */
 package com.helger.phase4.messaging.mime;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.phase4.model.ESoapVersion;
 
-import jakarta.annotation.Nonnull;
 import jakarta.mail.internet.ContentType;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.internet.ParseException;
@@ -35,7 +36,7 @@ public class AS4SoapMimeMultipart extends MimeMultipart
   public static final String RELATED = "related";
   public static final String CT_PARAM_TYPE = "type";
 
-  public AS4SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion) throws ParseException
+  public AS4SoapMimeMultipart (@NonNull final ESoapVersion eSoapVersion) throws ParseException
   {
     super (RELATED);
 

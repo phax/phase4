@@ -18,9 +18,10 @@ package com.helger.phase4.attachment;
 
 import java.io.IOException;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.phase4.util.AS4ResourceHelper;
 
-import jakarta.annotation.Nonnull;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
 
@@ -45,8 +46,8 @@ public interface IAS4IncomingAttachmentFactory
    * @throws MessagingException
    *         In case MIME part reading fails.
    */
-  @Nonnull
-  WSS4JAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart, @Nonnull AS4ResourceHelper aResHelper)
+  @NonNull
+  WSS4JAttachment createAttachment (@NonNull MimeBodyPart aBodyPart, @NonNull AS4ResourceHelper aResHelper)
                                                                                                             throws IOException,
                                                                                                             MessagingException;
 
@@ -54,6 +55,6 @@ public interface IAS4IncomingAttachmentFactory
    * The default instance of {@link IAS4IncomingAttachmentFactory} that uses
    * {@link WSS4JAttachment#createIncomingFileAttachment(MimeBodyPart, AS4ResourceHelper)}
    */
-  @Nonnull
+  @NonNull
   IAS4IncomingAttachmentFactory DEFAULT_INSTANCE = WSS4JAttachment::createIncomingFileAttachment;
 }

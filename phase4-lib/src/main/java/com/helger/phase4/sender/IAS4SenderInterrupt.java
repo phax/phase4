@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.sender;
 
-import com.helger.base.state.EContinue;
+import org.jspecify.annotations.NonNull;
 
-import jakarta.annotation.Nonnull;
+import com.helger.base.state.EContinue;
 
 /**
  * A specific helper interface with the sole purpose to be able to interrupt the sending of a
@@ -33,6 +33,6 @@ public interface IAS4SenderInterrupt
    * @return {@link EContinue#CONTINUE} to send the message, {@link EContinue#BREAK} to not send the
    *         message. May not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   EContinue canSendDocument ();
 }

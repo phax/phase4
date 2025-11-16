@@ -18,6 +18,7 @@ package com.helger.phase4.client;
 
 import static org.junit.Assert.fail;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,8 +29,6 @@ import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.util.AS4ResourceHelper;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Test class for class {@link AS4ClientPullRequestMessage}
@@ -55,7 +54,7 @@ public final class AS4ClientPullRequestMessageTest extends AbstractAS4TestSetUp
     MockJettySetup.shutDownServer ();
   }
 
-  private static void _ensureInvalidState (@Nonnull final AS4ClientPullRequestMessage aClient) throws Exception
+  private static void _ensureInvalidState (@NonNull final AS4ClientPullRequestMessage aClient) throws Exception
   {
     try
     {
@@ -68,7 +67,7 @@ public final class AS4ClientPullRequestMessageTest extends AbstractAS4TestSetUp
     }
   }
 
-  private static void _ensureValidState (@Nonnull final AS4ClientPullRequestMessage aClient) throws Exception
+  private static void _ensureValidState (@NonNull final AS4ClientPullRequestMessage aClient) throws Exception
   {
     try
     {

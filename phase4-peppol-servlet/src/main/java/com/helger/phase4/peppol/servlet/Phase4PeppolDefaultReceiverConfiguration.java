@@ -18,6 +18,8 @@ package com.helger.phase4.peppol.servlet;
 
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.NotThreadSafe;
@@ -32,9 +34,6 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverConfiguration.Phase4PeppolReceiverConfigurationBuilder;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class contains the references values against which incoming values are compared. These are
@@ -162,7 +161,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return The default identifier factory used to parse SBDH data. Never <code>null</code>.
    * @since 3.0.1
    */
-  @Nonnull
+  @NonNull
   public static IIdentifierFactory getSBDHIdentifierFactory ()
   {
     return s_aSBDHIdentifierFactory;
@@ -175,7 +174,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *        The identifier factory to use. May not be <code>null</code>.
    * @since 3.0.1
    */
-  public static void setSBDHIdentifierFactory (@Nonnull final IIdentifierFactory a)
+  public static void setSBDHIdentifierFactory (@NonNull final IIdentifierFactory a)
   {
     ValueEnforcer.notNull (a, "SBDHIdentifierFactory");
     s_aSBDHIdentifierFactory = a;
@@ -302,7 +301,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return Completely filled builder. Never <code>null</code>.
    * @since 3.0.0 Beta7
    */
-  @Nonnull
+  @NonNull
   public static Phase4PeppolReceiverConfigurationBuilder getAsReceiverCheckDataBuilder ()
   {
     final ISMPExtendedServiceMetadataProvider aSMPClient = getSMPClient ();
@@ -333,7 +332,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return The instance data and never <code>null</code>.
    * @since 0.9.13
    */
-  @Nonnull
+  @NonNull
   public static Phase4PeppolReceiverConfiguration getAsReceiverCheckData ()
   {
     return getAsReceiverCheckDataBuilder ().build ();

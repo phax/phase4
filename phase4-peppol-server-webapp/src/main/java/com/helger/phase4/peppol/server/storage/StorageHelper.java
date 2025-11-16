@@ -20,6 +20,8 @@ import java.io.File;
 import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.Nonnegative;
 import com.helger.annotation.concurrent.Immutable;
@@ -30,8 +32,6 @@ import com.helger.io.file.FilenameHelper;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.photon.io.WebFileIO;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Central storage helper
@@ -47,8 +47,8 @@ public final class StorageHelper
   private StorageHelper ()
   {}
 
-  @Nonnull
-  private static File _getStorageFile (@Nonnull final OffsetDateTime aLDT, @Nonnull final String sExt)
+  @NonNull
+  private static File _getStorageFile (@NonNull final OffsetDateTime aLDT, @NonNull final String sExt)
   {
     final String sYear = StringHelper.getLeadingZero (aLDT.getYear (), 4);
     final String sMonth = StringHelper.getLeadingZero (aLDT.getMonthValue (), 2);
@@ -61,9 +61,9 @@ public final class StorageHelper
     return WebFileIO.getDataIO ().getFile ("as4dump/" + sYear + "/" + sMonth + "/" + sDay + "/" + sFilename);
   }
 
-  @Nonnull
-  public static File getStorageFile (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                     @Nonnull final String sExt)
+  @NonNull
+  public static File getStorageFile (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                     @NonNull final String sExt)
   {
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
     ValueEnforcer.notEmpty (sExt, "Ext");
@@ -72,10 +72,10 @@ public final class StorageHelper
     return _getStorageFile (aMessageMetadata.getIncomingDT (), aMessageMetadata.getIncomingUniqueID () + sExt);
   }
 
-  @Nonnull
-  public static File getStorageFile (@Nonnull @Nonempty final String sMessageID,
+  @NonNull
+  public static File getStorageFile (@NonNull @Nonempty final String sMessageID,
                                      @Nonnegative final int nTry,
-                                     @Nonnull final String sExt)
+                                     @NonNull final String sExt)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
     ValueEnforcer.notEmpty (sExt, "Ext");

@@ -18,8 +18,7 @@ package com.helger.phase4.crypto;
 
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.handler.RequestData;
-
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Callback interface for modifying the decryption {@link RequestData} WSS4J object.
@@ -36,7 +35,7 @@ public interface IAS4DecryptParameterModifier
    * @param aWSSConfig
    *        The {@link WSSConfig} to be modified.
    */
-  default void modifyWSSConfig (@Nonnull final WSSConfig aWSSConfig)
+  default void modifyWSSConfig (@NonNull final WSSConfig aWSSConfig)
   {}
 
   /**
@@ -47,6 +46,6 @@ public interface IAS4DecryptParameterModifier
    * @param aRequestData
    *        The object to be modified. Never <code>null</code>.
    */
-  default void modifyRequestData (@Nonnull final RequestData aRequestData)
+  default void modifyRequestData (@NonNull final RequestData aRequestData)
   {}
 }

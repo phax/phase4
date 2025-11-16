@@ -17,13 +17,12 @@
 package com.helger.phase4.crypto;
 
 import org.apache.wss4j.common.WSS4JConstants;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.lang.EnumHelper;
 import com.helger.base.string.StringHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This enum contains all signing supported crypto algorithms.
@@ -41,20 +40,20 @@ public enum ECryptoAlgorithmSignDigest implements ICryptoAlgorithmSignDigest
   private final String m_sID;
   private final String m_sAlgorithmURI;
 
-  ECryptoAlgorithmSignDigest (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sAlgorithmURI)
+  ECryptoAlgorithmSignDigest (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sAlgorithmURI)
   {
     m_sID = sID;
     m_sAlgorithmURI = sAlgorithmURI;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
     return m_sID;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getAlgorithmURI ()
   {
@@ -67,7 +66,7 @@ public enum ECryptoAlgorithmSignDigest implements ICryptoAlgorithmSignDigest
     return EnumHelper.getFromIDOrNull (ECryptoAlgorithmSignDigest.class, sID);
   }
 
-  @Nonnull
+  @NonNull
   public static ECryptoAlgorithmSignDigest getFromIDOrThrow (@Nullable final String sID)
   {
     return EnumHelper.getFromIDOrThrow (ECryptoAlgorithmSignDigest.class, sID);

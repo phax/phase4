@@ -22,6 +22,8 @@ import java.util.function.Consumer;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.http.header.HttpHeaderMap;
@@ -29,9 +31,6 @@ import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.IHttpClientProvider;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Interface for an HTTP POST sender.
@@ -44,7 +43,7 @@ public interface IHttpPoster
   /**
    * @return The internal http client factory used for http sending. May not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   HttpClientFactory getHttpClientFactory ();
 
   /**
@@ -56,8 +55,8 @@ public interface IHttpPoster
    *        The HTTP client factory to be used. May not be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  IHttpPoster setHttpClientFactory (@Nonnull HttpClientFactory aHttpClientFactory);
+  @NonNull
+  IHttpPoster setHttpClientFactory (@NonNull HttpClientFactory aHttpClientFactory);
 
   /**
    * @return The HTTP Post customizer to be used. May be <code>null</code>.
@@ -72,7 +71,7 @@ public interface IHttpPoster
    *        The new customizer. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   IHttpPoster setHttpCustomizer (@Nullable Consumer <? super HttpPost> aHttpCustomizer);
 
   /**
@@ -89,7 +88,7 @@ public interface IHttpPoster
    *        <code>true</code> to quote them, <code>false</code> to not quote them.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   IHttpPoster setQuoteHttpHeaders (boolean bQuoteHttpHeaders);
 
   /**
@@ -114,10 +113,10 @@ public interface IHttpPoster
    *         In case of IO error
    */
   @Nullable
-  <T> T sendGenericMessage (@Nonnull @Nonempty String sURL,
+  <T> T sendGenericMessage (@NonNull @Nonempty String sURL,
                             @Nullable HttpHeaderMap aCustomHttpHeaders,
-                            @Nonnull HttpEntity aHttpEntity,
-                            @Nonnull HttpClientResponseHandler <? extends T> aResponseHandler) throws IOException;
+                            @NonNull HttpEntity aHttpEntity,
+                            @NonNull HttpClientResponseHandler <? extends T> aResponseHandler) throws IOException;
 
   /**
    * Send an arbitrary HTTP POST message to the provided URL, using the contained HttpClientFactory
@@ -149,12 +148,12 @@ public interface IHttpPoster
    *         In case of IO error
    */
   @Nullable
-  <T> T sendGenericMessageWithRetries (@Nonnull String sURL,
+  <T> T sendGenericMessageWithRetries (@NonNull String sURL,
                                        @Nullable HttpHeaderMap aCustomHttpHeaders,
-                                       @Nonnull HttpEntity aHttpEntity,
-                                       @Nonnull String sMessageID,
-                                       @Nonnull HttpRetrySettings aRetrySettings,
-                                       @Nonnull HttpClientResponseHandler <? extends T> aResponseHandler,
+                                       @NonNull HttpEntity aHttpEntity,
+                                       @NonNull String sMessageID,
+                                       @NonNull HttpRetrySettings aRetrySettings,
+                                       @NonNull HttpClientResponseHandler <? extends T> aResponseHandler,
                                        @Nullable IAS4OutgoingDumper aOutgoingDumper,
                                        @Nullable IAS4RetryCallback aRetryCallback) throws IOException;
 }

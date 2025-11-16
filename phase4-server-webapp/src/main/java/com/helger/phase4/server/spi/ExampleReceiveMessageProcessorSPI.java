@@ -20,6 +20,8 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -48,9 +50,6 @@ import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Example implementation of {@link IAS4IncomingMessageProcessorSPI}
  *
@@ -61,8 +60,8 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4IncomingMessagePro
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (ExampleReceiveMessageProcessorSPI.class);
 
-  private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                 @Nonnull final IAS4IncomingMessageState aState)
+  private static void _dumpSoap (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                 @NonNull final IAS4IncomingMessageState aState)
   {
     // Write formatted SOAP
     {
@@ -92,15 +91,15 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4IncomingMessagePro
     }
   }
 
-  @Nonnull
-  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                          @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                          @Nonnull final Ebms3UserMessage aUserMessage,
-                                                          @Nonnull final IPMode aPMode,
+  @NonNull
+  public AS4MessageProcessorResult processAS4UserMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                          @NonNull final HttpHeaderMap aHttpHeaders,
+                                                          @NonNull final Ebms3UserMessage aUserMessage,
+                                                          @NonNull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nonnull final IAS4IncomingMessageState aState,
-                                                          @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                          @NonNull final IAS4IncomingMessageState aState,
+                                                          @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     LOGGER.info ("Received AS4 user message");
     _dumpSoap (aMessageMetadata, aState);
@@ -127,13 +126,13 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4IncomingMessagePro
     return AS4MessageProcessorResult.createSuccess ();
   }
 
-  @Nonnull
-  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                                  @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                                  @Nonnull final Ebms3SignalMessage aSignalMessage,
+  @NonNull
+  public AS4SignalMessageProcessorResult processAS4SignalMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                                  @NonNull final HttpHeaderMap aHttpHeaders,
+                                                                  @NonNull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
-                                                                  @Nonnull final IAS4IncomingMessageState aState,
-                                                                  @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                                  @NonNull final IAS4IncomingMessageState aState,
+                                                                  @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     if (aSignalMessage.getReceipt () != null)
     {

@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.profile;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonnegative;
@@ -31,9 +33,6 @@ import com.helger.collection.commons.CommonsTreeMap;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.collection.commons.ICommonsMap;
 import com.helger.phase4.logging.Phase4LoggerFactory;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * AS4 profile manager. All profiles are registered by SPI - {@link IAS4ProfileRegistrarSPI}.
@@ -69,7 +68,7 @@ public class AS4ProfileManager implements IAS4ProfileManager
     _registerAll ();
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public ICommonsList <IAS4Profile> getAllProfiles ()
   {
@@ -91,7 +90,7 @@ public class AS4ProfileManager implements IAS4ProfileManager
     return m_aRWLock.readLockedGet ( () -> m_aProfiles.get (sID));
   }
 
-  public void registerProfile (@Nonnull final IAS4Profile aAS4Profile)
+  public void registerProfile (@NonNull final IAS4Profile aAS4Profile)
   {
     ValueEnforcer.notNull (aAS4Profile, "AS4Profile");
 

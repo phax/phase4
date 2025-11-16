@@ -21,6 +21,8 @@ import java.util.function.BiConsumer;
 
 import javax.xml.transform.dom.DOMSource;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
 
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -39,8 +41,6 @@ import jakarta.activation.CommandInfo;
 import jakarta.activation.CommandMap;
 import jakarta.activation.DataHandler;
 import jakarta.activation.MailcapCommandMap;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.mail.Header;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
@@ -106,9 +106,9 @@ public final class AS4MimeMessageHelper
   private AS4MimeMessageHelper ()
   {}
 
-  @Nonnull
-  public static AS4MimeMessage generateMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                                    @Nonnull final Document aSoapEnvelope,
+  @NonNull
+  public static AS4MimeMessage generateMimeMessage (@NonNull final ESoapVersion eSoapVersion,
+                                                    @NonNull final Document aSoapEnvelope,
                                                     @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws MessagingException
   {
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
@@ -162,8 +162,8 @@ public final class AS4MimeMessageHelper
    * @throws MessagingException
    *         In case of MIME message processing problems
    */
-  public static void forEachHeaderAndRemoveAfterwards (@Nonnull final MimeMessage aMimeMsg,
-                                                       @Nonnull final BiConsumer <String, String> aConsumer,
+  public static void forEachHeaderAndRemoveAfterwards (@NonNull final MimeMessage aMimeMsg,
+                                                       @NonNull final BiConsumer <String, String> aConsumer,
                                                        final boolean bUnifyValues) throws MessagingException
   {
     // Create a copy
@@ -183,9 +183,9 @@ public final class AS4MimeMessageHelper
       aMimeMsg.removeHeader (aHeader.getName ());
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
-  public static HttpHeaderMap getAndRemoveAllHeaders (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
+  public static HttpHeaderMap getAndRemoveAllHeaders (@NonNull final MimeMessage aMimeMsg) throws MessagingException
   {
     final HttpHeaderMap ret = new HttpHeaderMap ();
     // Unification happens on the result header map

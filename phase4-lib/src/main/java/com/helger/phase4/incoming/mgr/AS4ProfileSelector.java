@@ -16,13 +16,13 @@
  */
 package com.helger.phase4.incoming.mgr;
 
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.GuardedBy;
 import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.base.concurrent.SimpleReadWriteLock;
 import com.helger.base.string.StringHelper;
 import com.helger.phase4.config.AS4Configuration;
-
-import jakarta.annotation.Nullable;
 
 /**
  * Static helper class for the fallback AS4 profile selection.

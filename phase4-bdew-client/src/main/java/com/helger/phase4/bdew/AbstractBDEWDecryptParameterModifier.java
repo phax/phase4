@@ -21,13 +21,12 @@ package com.helger.phase4.bdew;
 
 import org.apache.wss4j.common.bsp.BSPRule;
 import org.apache.wss4j.dom.handler.RequestData;
+import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.annotation.style.OverrideOnDemand;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Abstract base implementation of {@link IAS4DecryptParameterModifier} show
@@ -39,7 +38,7 @@ public abstract class AbstractBDEWDecryptParameterModifier implements IAS4Decryp
 {
   @OverrideOnDemand
   @OverridingMethodsMustInvokeSuper
-  public void modifyRequestData (@Nonnull final RequestData aRequestData)
+  public void modifyRequestData (@NonNull final RequestData aRequestData)
   {
     // Ignore this rule; see #170
     aRequestData.setIgnoredBSPRules (new CommonsArrayList <> (BSPRule.R3058));

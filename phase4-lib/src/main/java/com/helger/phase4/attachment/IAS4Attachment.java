@@ -20,14 +20,14 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.io.iface.IHasInputStream;
 import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.phase4.util.AS4ResourceHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Read-only interface for an attachment.
@@ -64,7 +64,7 @@ public interface IAS4Attachment
    *
    * @return A non-<code>null</code> InputStream on the source.
    */
-  @Nonnull
+  @NonNull
   InputStream getSourceStream ();
 
   /**
@@ -76,8 +76,8 @@ public interface IAS4Attachment
    *        The resource helper to use. May not be <code>null</code>.
    * @return A non-<code>null</code> InputStream on the source.
    */
-  @Nonnull
-  InputStream getSourceStream (@Nonnull AS4ResourceHelper aResourceHelper);
+  @NonNull
+  InputStream getSourceStream (@NonNull AS4ResourceHelper aResourceHelper);
 
   /**
    * This is primarily an internal method. If you use it, you need to make sure to close the streams
@@ -102,7 +102,7 @@ public interface IAS4Attachment
    * @return The content transfer encoding to be used. Required for MIME multipart handling only.
    *         May not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   EContentTransferEncoding getContentTransferEncoding ();
 
   /**
@@ -122,7 +122,7 @@ public interface IAS4Attachment
   /**
    * @return The defined character set, falling back to ISO-8859-1 if none is defined.
    */
-  @Nonnull
+  @NonNull
   default Charset getCharset ()
   {
     return getCharsetOrDefault (StandardCharsets.ISO_8859_1);
@@ -150,7 +150,7 @@ public interface IAS4Attachment
    *         UserMessage.
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   ICommonsOrderedMap <String, String> customPartProperties ();
 }

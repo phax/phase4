@@ -21,6 +21,9 @@ import java.time.OffsetDateTime;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.Nonnegative;
 import com.helger.annotation.concurrent.NotThreadSafe;
@@ -56,9 +59,6 @@ import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.IXMLWriterSettings;
 import com.helger.xml.serialize.write.XMLWriterSettings;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class contains the structured information about what happens on Peppol sending.
@@ -113,7 +113,7 @@ public class Phase4PeppolSendingReport
   private boolean m_bSendingSuccess = false;
   private boolean m_bOverallSuccess = false;
 
-  public Phase4PeppolSendingReport (@Nonnull final ISMLInfo aSMLInfo)
+  public Phase4PeppolSendingReport (@NonNull final ISMLInfo aSMLInfo)
   {
     m_aCurrentDateTimeUTC = PDTFactory.getCurrentOffsetDateTimeMillisOnlyUTC ();
     m_sSMLDNSZone = aSMLInfo.getDNSZone ();
@@ -518,7 +518,7 @@ public class Phase4PeppolSendingReport
    *
    * @return The sending report as a JSON object. May not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public IJsonObject getAsJsonObject ()
   {
     // Function to convert Exception to JSON
@@ -629,7 +629,7 @@ public class Phase4PeppolSendingReport
    * @return The JSON representation of the sending report, as a formatted string. Never
    *         <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public String getAsJsonString ()
   {
     return getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED);
@@ -640,8 +640,8 @@ public class Phase4PeppolSendingReport
    *        The JSON writer settings to use. May not be <code>null</code>.
    * @return The JSON representation of the sending report, as a string. Never <code>null</code>.
    */
-  @Nonnull
-  public String getAsJsonString (@Nonnull final IJsonWriterSettings aJWS)
+  @NonNull
+  public String getAsJsonString (@NonNull final IJsonWriterSettings aJWS)
   {
     return getAsJsonObject ().getAsJsonString (aJWS);
   }
@@ -656,9 +656,9 @@ public class Phase4PeppolSendingReport
    *        The tag name to use for the root element. May neither be <code>null</code> nor empty.
    * @return The created micro element and never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public IMicroElement getAsMicroElement (@Nullable final String sNamespaceURI,
-                                          @Nonnull @Nonempty final String sTagName)
+                                          @NonNull @Nonempty final String sTagName)
   {
     final BiFunction <Exception, String, IMicroElement> fEx = (ex, tag) -> {
       final IMicroElement ret = new MicroElement (sNamespaceURI, tag);
@@ -769,14 +769,14 @@ public class Phase4PeppolSendingReport
     return ret;
   }
 
-  @Nonnull
+  @NonNull
   public String getAsXMLString ()
   {
     return getAsXMLString (null, new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
   }
 
-  @Nonnull
-  public String getAsXMLString (@Nullable final String sNamespaceURI, @Nonnull final IXMLWriterSettings aXWS)
+  @NonNull
+  public String getAsXMLString (@Nullable final String sNamespaceURI, @NonNull final IXMLWriterSettings aXWS)
   {
     return MicroWriter.getNodeAsString (getAsMicroElement (sNamespaceURI, "PeppolSendingReport"), aXWS);
   }

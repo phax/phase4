@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.sender;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
@@ -34,9 +36,6 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Abstract builder base class for a Pull Request.
@@ -86,7 +85,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    *        The PMode to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE pmode (@Nullable final IPMode aPMode)
   {
     if (aPMode == null)
@@ -114,7 +113,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    * @since 3.0.0
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE pmodeID (@Nullable final String s)
   {
     m_sPModeID = s;
@@ -138,7 +137,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    * @since 2.7.8
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE useLeg1 (final boolean bUseLeg1)
   {
     m_bUseLeg1 = bUseLeg1;
@@ -162,7 +161,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    *        The MPC to use. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE mpc (@Nullable final String sMPC)
   {
     m_sMPC = sMPC;
@@ -186,7 +185,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    *        The endpoint URL to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE endpointURL (@Nullable final String sEndointURL)
   {
     m_sEndpointURL = sEndointURL;
@@ -211,7 +210,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    *        The optional User Message consumer. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE userMsgConsumer (@Nullable final IAS4UserMessageConsumer aUserMsgConsumer)
   {
     m_aUserMsgConsumer = aUserMsgConsumer;
@@ -237,7 +236,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    *        The optional signal message consumer. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
   {
     m_aSignalMsgConsumer = aSignalMsgConsumer;
@@ -264,7 +263,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    * @since 3.0.1
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE signalMsgValidationResultHdl (@Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHdl)
   {
     m_aSignalMsgValidationResultHdl = aSignalMsgValidationResultHdl;
@@ -272,9 +271,9 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   @Override
-  @Nonnull
+  @NonNull
   @OverridingMethodsMustInvokeSuper
-  protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+  protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
   {
     if (super.finishFields (aResHelper).isFailure ())
       return ESuccess.FAILURE;
@@ -322,7 +321,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    * @param aPullRequestMsg
    *        The Pull request the parameters should be applied to. May not be <code>null</code>.
    */
-  protected final void applyToPullRequest (@Nonnull final AS4ClientPullRequestMessage aPullRequestMsg)
+  protected final void applyToPullRequest (@NonNull final AS4ClientPullRequestMessage aPullRequestMsg)
   {
     if (m_aCustomHttpPoster != null)
     {

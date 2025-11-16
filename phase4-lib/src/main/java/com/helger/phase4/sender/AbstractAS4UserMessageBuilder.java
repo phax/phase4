@@ -19,6 +19,8 @@ package com.helger.phase4.sender;
 import java.security.cert.X509Certificate;
 import java.util.function.Consumer;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
@@ -41,9 +43,6 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Abstract builder base class for a user message.
@@ -112,7 +111,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The PMode to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE pmode (@Nullable final IPMode aPMode)
   {
     m_aPMode = aPMode;
@@ -146,7 +145,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        Service value. May be <code>null</code>.
    * @return this for chaining.
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE service (@Nullable final String sServiceValue)
   {
     return service (null, sServiceValue);
@@ -163,7 +162,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        Service value. May be <code>null</code>.
    * @return this for chaining.
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE service (@Nullable final String sServiceType, @Nullable final String sServiceValue)
   {
     m_sServiceType = sServiceType;
@@ -189,7 +188,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        Action value. May be <code>null</code>.
    * @return this for chaining.
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE action (@Nullable final String sAction)
   {
     m_sAction = sAction;
@@ -213,7 +212,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        Agreement reference. May be <code>null</code>.
    * @return this for chaining.
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE agreementRef (@Nullable final String sAgreementRef)
   {
     m_sAgreementRef = sAgreementRef;
@@ -262,7 +261,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        PMode ID. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE pmodeID (@Nullable final String s)
   {
     m_sPModeID = s;
@@ -286,7 +285,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The from party ID.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE fromPartyIDType (@Nullable final String sFromPartyIDType)
   {
     m_sFromPartyIDType = sFromPartyIDType;
@@ -310,7 +309,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The from party ID.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE fromPartyID (@Nullable final String sFromPartyID)
   {
     m_sFromPartyID = sFromPartyID;
@@ -334,7 +333,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The from role. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE fromRole (@Nullable final String sFromRole)
   {
     m_sFromRole = sFromRole;
@@ -358,7 +357,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The to party ID.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE toPartyIDType (@Nullable final String sToPartyIDType)
   {
     m_sToPartyIDType = sToPartyIDType;
@@ -382,7 +381,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The to party ID.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE toPartyID (@Nullable final String sToPartyID)
   {
     m_sToPartyID = sToPartyID;
@@ -406,7 +405,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The to role. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE toRole (@Nullable final String sToRole)
   {
     m_sToRole = sToRole;
@@ -431,40 +430,40 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The optional AS4 conversation ID to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE conversationID (@Nullable final String sConversationID)
   {
     m_sConversationID = sConversationID;
     return thisAsT ();
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final ICommonsList <MessageProperty> messageProperties ()
   {
     return m_aMessageProperties;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public final ICommonsList <MessageProperty> getAllMessageProperties ()
   {
     return m_aMessageProperties.getClone ();
   }
 
-  @Nonnull
+  @NonNull
   public final IMPLTYPE addMessageProperty (@Nullable final Ebms3Property a)
   {
     return addMessageProperty (a == null ? null : MessageProperty.builder (a));
   }
 
-  @Nonnull
-  public final IMPLTYPE addMessageProperty (@Nullable final MessageProperty.Builder a)
+  @NonNull
+  public final IMPLTYPE addMessageProperty (final MessageProperty.@Nullable Builder a)
   {
     return addMessageProperty (a == null ? null : a.build ());
   }
 
-  @Nonnull
+  @NonNull
   public final IMPLTYPE addMessageProperty (@Nullable final MessageProperty a)
   {
     if (a != null)
@@ -472,19 +471,19 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     return thisAsT ();
   }
 
-  @Nonnull
+  @NonNull
   public final IMPLTYPE messageProperty (@Nullable final Ebms3Property a)
   {
     return messageProperty (a == null ? null : MessageProperty.builder (a));
   }
 
-  @Nonnull
-  public final IMPLTYPE messageProperty (@Nullable final MessageProperty.Builder a)
+  @NonNull
+  public final IMPLTYPE messageProperty (final MessageProperty.@Nullable Builder a)
   {
     return messageProperty (a == null ? null : a.build ());
   }
 
-  @Nonnull
+  @NonNull
   public final IMPLTYPE messageProperty (@Nullable final MessageProperty a)
   {
     if (a == null)
@@ -494,14 +493,14 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     return thisAsT ();
   }
 
-  @Nonnull
+  @NonNull
   public final IMPLTYPE messageProperties (@Nullable final MessageProperty... a)
   {
     m_aMessageProperties.setAll (a);
     return thisAsT ();
   }
 
-  @Nonnull
+  @NonNull
   public final IMPLTYPE messageProperties (@Nullable final Iterable <? extends MessageProperty> a)
   {
     m_aMessageProperties.setAll (a);
@@ -517,7 +516,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    * @see #receiverCertificateAlias(String)
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE receiverCertificate (@Nullable final X509Certificate aCertificate)
   {
     if (StringHelper.isNotEmpty (cryptParams ().getAlias ()))
@@ -538,7 +537,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @see #receiverCertificate(X509Certificate)
    * @since 2.1.4
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE receiverCertificateAlias (@Nullable final String sAlias)
   {
     if (cryptParams ().getCertificate () != null)
@@ -565,21 +564,21 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The endpoint URL to be used. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE endpointURL (@Nullable final String sEndointURL)
   {
     m_sEndpointURL = sEndointURL;
     return thisAsT ();
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final ICommonsList <AS4OutgoingAttachment> attachments ()
   {
     return m_aAttachments;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public final ICommonsList <AS4OutgoingAttachment> getAllAttachments ()
   {
@@ -593,8 +592,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The attachment to be added. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  public final IMPLTYPE addAttachment (@Nullable final AS4OutgoingAttachment.Builder a)
+  @NonNull
+  public final IMPLTYPE addAttachment (final AS4OutgoingAttachment.@Nullable Builder a)
   {
     return addAttachment (a == null ? null : a.build ());
   }
@@ -606,7 +605,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The attachment to be added. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE addAttachment (@Nullable final AS4OutgoingAttachment a)
   {
     if (a != null)
@@ -621,8 +620,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The attachment to be set. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  public final IMPLTYPE attachment (@Nullable final AS4OutgoingAttachment.Builder a)
+  @NonNull
+  public final IMPLTYPE attachment (final AS4OutgoingAttachment.@Nullable Builder a)
   {
     return attachment (a == null ? null : a.build ());
   }
@@ -634,7 +633,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The attachment to be set. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE attachment (@Nullable final AS4OutgoingAttachment a)
   {
     if (a == null)
@@ -651,7 +650,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The attachment to be set. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE attachments (@Nullable final AS4OutgoingAttachment... a)
   {
     m_aAttachments.setAll (a);
@@ -665,7 +664,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The attachment to be set. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE attachments (@Nullable final Iterable <? extends AS4OutgoingAttachment> a)
   {
     m_aAttachments.setAll (a);
@@ -691,7 +690,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    * @since 2.5.1
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE forceMimeMessage (final boolean b)
   {
     m_bForceMimeMessage = b;
@@ -717,7 +716,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The optional signal message consumer. May be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
   {
     m_aSignalMsgConsumer = aSignalMsgConsumer;
@@ -744,7 +743,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    * @since 3.0.1
    */
-  @Nonnull
+  @NonNull
   public final IMPLTYPE signalMsgValidationResultHdl (@Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHdl)
   {
     m_aSignalMsgValidationResultHdl = aSignalMsgValidationResultHdl;
@@ -752,9 +751,9 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   @Override
-  @Nonnull
+  @NonNull
   @OverridingMethodsMustInvokeSuper
-  protected ESuccess finishFields (@Nonnull final AS4ResourceHelper aResHelper) throws Phase4Exception
+  protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
   {
     if (super.finishFields (aResHelper).isFailure ())
       return ESuccess.FAILURE;
@@ -839,7 +838,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The user message the parameters should be applied to. May not be <code>null</code>.
    */
   @OverridingMethodsMustInvokeSuper
-  protected void applyToUserMessage (@Nonnull final AS4ClientUserMessage aUserMsg)
+  protected void applyToUserMessage (@NonNull final AS4ClientUserMessage aUserMsg)
   {
     if (m_aCustomHttpPoster != null)
     {
@@ -914,7 +913,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *         <code>null</code>.
    * @since 0.13.0
    */
-  @Nonnull
+  @NonNull
   public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt ()
   {
     // This information might be crucial to determine what went wrong
@@ -935,7 +934,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *         <code>null</code>.
    * @since 1.0.0-rc1
    */
-  @Nonnull
+  @NonNull
   public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer)
   {
     final IAS4SignalMessageConsumer aOriginalSignalMsgConsumer = m_aSignalMsgConsumer;

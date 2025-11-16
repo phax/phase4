@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.crypto;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Base interface for a canonicalization algorithm.
@@ -32,7 +32,7 @@ public interface ICryptoAlgorithmC14N extends IHasID <String>
   /**
    * This is the internal algorithm ID for resolution.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   String getID ();
 
@@ -40,7 +40,7 @@ public interface ICryptoAlgorithmC14N extends IHasID <String>
    * @return The unique XMLDsig algorithm URI for this algorithm (as in
    *         <code>http://www.w3.org/TR/2001/REC-xml-c14n-20010315</code>)
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   String getAlgorithmURI ();
 }

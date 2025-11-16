@@ -23,6 +23,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.wss4j.common.ext.WSPasswordCallback;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -30,8 +31,6 @@ import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.logging.Phase4LoggerFactory;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Internal WSS4J callback handler to check if a certain key alias is present in the
@@ -46,13 +45,13 @@ public final class AS4KeyStoreCallbackHandler implements CallbackHandler
 
   private final IAS4CryptoFactory m_aCryptoFactoryCrypt;
 
-  public AS4KeyStoreCallbackHandler (@Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt)
+  public AS4KeyStoreCallbackHandler (@NonNull final IAS4CryptoFactory aCryptoFactoryCrypt)
   {
     ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
     m_aCryptoFactoryCrypt = aCryptoFactoryCrypt;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   private static String _getUsage (final int nUsage)
   {

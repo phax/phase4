@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.model.pmode;
 
-import com.helger.phase4.util.Phase4Exception;
+import org.jspecify.annotations.NonNull;
 
-import jakarta.annotation.Nonnull;
+import com.helger.phase4.util.Phase4Exception;
 
 /**
  * A special exception thrown in PMode validation.
@@ -28,7 +28,7 @@ import jakarta.annotation.Nonnull;
  */
 public class PModeValidationException extends Phase4Exception
 {
-  public PModeValidationException (@Nonnull final String sMsg)
+  public PModeValidationException (@NonNull final String sMsg)
   {
     super (sMsg);
     setRetryFeasible (false);

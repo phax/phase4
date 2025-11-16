@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.hredelivery;
 
-import com.helger.phive.api.result.ValidationResultList;
+import org.jspecify.annotations.NonNull;
 
-import jakarta.annotation.Nonnull;
+import com.helger.phive.api.result.ValidationResultList;
 
 /**
  * The default implementation of {@link IPhase4HREdeliveryValidationResultHandler}.
@@ -28,12 +28,12 @@ import jakarta.annotation.Nonnull;
  */
 public class Phase4HREdeliveryValidatonResultHandler implements IPhase4HREdeliveryValidationResultHandler
 {
-  public void onValidationSuccess (@Nonnull final ValidationResultList aValidationResult)
+  public void onValidationSuccess (@NonNull final ValidationResultList aValidationResult)
   {
     // empty
   }
 
-  public void onValidationErrors (@Nonnull final ValidationResultList aValidationResult) throws Phase4HREdeliveryValidationException
+  public void onValidationErrors (@NonNull final ValidationResultList aValidationResult) throws Phase4HREdeliveryValidationException
   {
     throw new Phase4HREdeliveryValidationException (aValidationResult);
   }

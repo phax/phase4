@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.EMandatory;
 import com.helger.json.IJsonObject;
@@ -23,8 +25,6 @@ import com.helger.json.JsonObject;
 import com.helger.mime.IMimeType;
 import com.helger.mime.parse.MimeTypeParser;
 import com.helger.mime.parse.MimeTypeParserException;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModePayloadProfile}.
@@ -44,8 +44,8 @@ public final class PModePayloadProfileJsonConverter
   private PModePayloadProfileJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModePayloadProfile aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModePayloadProfile aValue)
   {
     final IJsonObject ret = new JsonObject ();
     ret.add (NAME, aValue.getName ());
@@ -58,7 +58,7 @@ public final class PModePayloadProfileJsonConverter
     return ret;
   }
 
-  @Nonnull
+  @NonNull
   public static PModePayloadProfile convertToNative (final IJsonObject aElement)
   {
     final String sName = aElement.getAsString (NAME);

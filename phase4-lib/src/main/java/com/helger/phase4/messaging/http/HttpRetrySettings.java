@@ -19,6 +19,8 @@ package com.helger.phase4.messaging.http;
 import java.math.BigDecimal;
 import java.time.Duration;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonnegative;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
@@ -26,8 +28,6 @@ import com.helger.base.equals.EqualsHelper;
 import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.numeric.BigHelper;
 import com.helger.base.tostring.ToStringGenerator;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * An object encapsulating the HTTP retry settings. By default retries are disabled.
@@ -75,7 +75,7 @@ public class HttpRetrySettings
    *        New maximum. Any value &le; 0 means "no retries".
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final HttpRetrySettings setMaxRetries (final int nMaxRetries)
   {
     m_nMaxRetries = nMaxRetries;
@@ -90,7 +90,7 @@ public class HttpRetrySettings
    * @see #getRetryIncreaseFactor()
    * @see #getIncreased(Duration, BigDecimal)
    */
-  @Nonnull
+  @NonNull
   public final Duration getDurationBeforeRetry ()
   {
     return m_aDurationBeforeRetry;
@@ -103,8 +103,8 @@ public class HttpRetrySettings
    *        The duration to use. May not be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  public final HttpRetrySettings setDurationBeforeRetry (@Nonnull final Duration aDurationBeforeRetry)
+  @NonNull
+  public final HttpRetrySettings setDurationBeforeRetry (@NonNull final Duration aDurationBeforeRetry)
   {
     ValueEnforcer.notNull (aDurationBeforeRetry, "DurationBeforeRetry");
     m_aDurationBeforeRetry = aDurationBeforeRetry;
@@ -116,7 +116,7 @@ public class HttpRetrySettings
    *         Never <code>null</code>. An increase factor of 1 means no increase. An increase factor
    *         of 2 means the waiting time doubles. The default is 1. Return values are always &gt; 0.
    */
-  @Nonnull
+  @NonNull
   @Nonnegative
   public final BigDecimal getRetryIncreaseFactor ()
   {
@@ -131,17 +131,17 @@ public class HttpRetrySettings
    *        The retry increase factor. May not be <code>null</code> and must be &gt; 0.
    * @return this for chaining
    */
-  @Nonnull
-  public final HttpRetrySettings setRetryIncreaseFactor (@Nonnull final BigDecimal aRetryIncreaseFactor)
+  @NonNull
+  public final HttpRetrySettings setRetryIncreaseFactor (@NonNull final BigDecimal aRetryIncreaseFactor)
   {
     ValueEnforcer.isGT0 (aRetryIncreaseFactor, "RetryIncreaseFactor");
     m_aRetryIncreaseFactor = aRetryIncreaseFactor;
     return this;
   }
 
-  @Nonnull
-  public static Duration getIncreased (@Nonnull final Duration aDuration,
-                                       @Nonnull final BigDecimal aRetryIncreaseFactor)
+  @NonNull
+  public static Duration getIncreased (@NonNull final Duration aDuration,
+                                       @NonNull final BigDecimal aRetryIncreaseFactor)
   {
     if (BigHelper.isEQ0 (aRetryIncreaseFactor))
       return Duration.ZERO;
@@ -150,7 +150,7 @@ public class HttpRetrySettings
     return Duration.ofNanos (aRetryIncreaseFactor.multiply (BigDecimal.valueOf (aDuration.toNanos ())).longValue ());
   }
 
-  public final void assignFrom (@Nonnull final HttpRetrySettings aOther)
+  public final void assignFrom (@NonNull final HttpRetrySettings aOther)
   {
     ValueEnforcer.notNull (aOther, "Other");
     setMaxRetries (aOther.getMaxRetries ());

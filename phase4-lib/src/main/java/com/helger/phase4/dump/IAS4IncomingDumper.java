@@ -19,11 +19,11 @@ package com.helger.phase4.dump;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Interface for dumping incoming requests
@@ -49,8 +49,8 @@ public interface IAS4IncomingDumper
    * @since v0.9.6 the parameter changed from HttpServletRequest to {@link HttpHeaderMap}
    */
   @Nullable
-  OutputStream onNewRequest (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                             @Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
+  OutputStream onNewRequest (@NonNull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                             @NonNull HttpHeaderMap aHttpHeaderMap) throws IOException;
 
   /**
    * Called after the AS4 request is handled internally. Can e.g. be used to cleanup resources
@@ -64,6 +64,6 @@ public interface IAS4IncomingDumper
    *        An eventually caught exception.
    * @since v0.9.9
    */
-  void onEndRequest (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+  void onEndRequest (@NonNull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                      @Nullable Exception aCaughtException);
 }

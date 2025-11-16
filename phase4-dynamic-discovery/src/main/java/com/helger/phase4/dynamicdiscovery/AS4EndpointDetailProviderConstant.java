@@ -20,6 +20,8 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -30,9 +32,6 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.Phase4Exception;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Implementation of {@link IAS4EndpointDetailProvider} that uses constant values.
@@ -49,13 +48,13 @@ public class AS4EndpointDetailProviderConstant implements IAS4EndpointDetailProv
   private final String m_sTechnicalContact;
 
   public AS4EndpointDetailProviderConstant (@Nullable final X509Certificate aReceiverCert,
-                                            @Nonnull @Nonempty final String sDestURL)
+                                            @NonNull @Nonempty final String sDestURL)
   {
     this (aReceiverCert, sDestURL, (String) null);
   }
 
   public AS4EndpointDetailProviderConstant (@Nullable final X509Certificate aReceiverCert,
-                                            @Nonnull @Nonempty final String sDestURL,
+                                            @NonNull @Nonempty final String sDestURL,
                                             @Nullable final String sTechnicalContact)
   {
     ValueEnforcer.notEmpty (sDestURL, "DestURL");
@@ -84,9 +83,9 @@ public class AS4EndpointDetailProviderConstant implements IAS4EndpointDetailProv
     }
   }
 
-  public void init (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                    @Nonnull final IProcessIdentifier aProcID,
-                    @Nonnull final IParticipantIdentifier aReceiverID)
+  public void init (@NonNull final IDocumentTypeIdentifier aDocTypeID,
+                    @NonNull final IProcessIdentifier aProcID,
+                    @NonNull final IParticipantIdentifier aReceiverID)
   {
     // Not needed for this implementation
   }
@@ -97,7 +96,7 @@ public class AS4EndpointDetailProviderConstant implements IAS4EndpointDetailProv
     return m_aReceiverCert;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getReceiverAPEndpointURL ()
   {

@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.crypto;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Base interface for a signing crypto algorithm.
@@ -32,7 +32,7 @@ public interface ICryptoAlgorithmSign extends IHasID <String>
   /**
    * This is the internal algorithm ID for resolution.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   String getID ();
 
@@ -40,7 +40,7 @@ public interface ICryptoAlgorithmSign extends IHasID <String>
    * @return The unique XMLDsig algorithm URI for this algorithm (as in
    *         <code>http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</code>)
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   String getAlgorithmURI ();
 }

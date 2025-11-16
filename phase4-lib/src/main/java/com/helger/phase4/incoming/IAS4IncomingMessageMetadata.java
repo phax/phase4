@@ -19,6 +19,9 @@ package com.helger.phase4.incoming;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -28,8 +31,6 @@ import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.messaging.EAS4MessageMode;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.Cookie;
 
 /**
@@ -51,20 +52,20 @@ public interface IAS4IncomingMessageMetadata
    *         because in case of a corrupted message, the AS4 message ID may be missing or misplaced.
    *         Never <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   String getIncomingUniqueID ();
 
   /**
    * @return The date and time when the request was received. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   OffsetDateTime getIncomingDT ();
 
   /**
    * @return The message mode. May be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   EAS4MessageMode getMode ();
 
   /**
@@ -168,7 +169,7 @@ public interface IAS4IncomingMessageMetadata
    *         empty. The returned list is mutable so handle with care.
    * @since 0.9.10
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   ICommonsList <Cookie> cookies ();
 
@@ -177,7 +178,7 @@ public interface IAS4IncomingMessageMetadata
    *         maybe empty.
    * @since 2.7.3
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   default ICommonsList <Cookie> getAllCookies ()
   {
@@ -189,7 +190,7 @@ public interface IAS4IncomingMessageMetadata
    *         maybe empty.
    * @since 2.7.3
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   HttpHeaderMap getAllHttpHeaders ();
 

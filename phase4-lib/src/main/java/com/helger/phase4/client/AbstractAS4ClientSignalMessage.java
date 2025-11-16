@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.client;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.WillNotClose;
 import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.model.message.EAS4MessageType;
 import com.helger.phase4.util.AS4ResourceHelper;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Abstract AS4 client for signal messages with arbitrary content.
@@ -38,8 +38,8 @@ public abstract class AbstractAS4ClientSignalMessage <IMPLTYPE extends AbstractA
 {
   private final ICommonsList <Object> m_aAny = new CommonsArrayList <> ();
 
-  protected AbstractAS4ClientSignalMessage (@Nonnull final EAS4MessageType eMessageType,
-                                            @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  protected AbstractAS4ClientSignalMessage (@NonNull final EAS4MessageType eMessageType,
+                                            @NonNull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     super (eMessageType, aResHelper);
   }
@@ -48,7 +48,7 @@ public abstract class AbstractAS4ClientSignalMessage <IMPLTYPE extends AbstractA
    * @return The SignalMessage payload, usually from a different namespace URI than the main
    *         message. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final ICommonsList <Object> any ()
   {

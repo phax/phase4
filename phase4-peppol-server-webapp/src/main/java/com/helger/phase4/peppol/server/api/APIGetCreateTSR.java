@@ -19,6 +19,7 @@ package com.helger.phase4.peppol.server.api;
 import java.time.YearMonth;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -40,8 +41,6 @@ import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
-import jakarta.annotation.Nonnull;
-
 /**
  * API to create a Peppol Reporting TSR.
  *
@@ -52,11 +51,11 @@ public final class APIGetCreateTSR extends AbstractVerifyingAPIExecutor
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (APIGetCreateTSR.class);
 
   @Override
-  protected void verifiedInvokeAPI (@Nonnull final IAPIDescriptor aAPIDescriptor,
-                                    @Nonnull @Nonempty final String sPath,
-                                    @Nonnull final Map <String, String> aPathVariables,
-                                    @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                    @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  protected void verifiedInvokeAPI (@NonNull final IAPIDescriptor aAPIDescriptor,
+                                    @NonNull @Nonempty final String sPath,
+                                    @NonNull final Map <String, String> aPathVariables,
+                                    @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                                    @NonNull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     final String sYear = aPathVariables.get (Phase4API.PARAM_YEAR);
     final String sMonth = aPathVariables.get (Phase4API.PARAM_MONTH);

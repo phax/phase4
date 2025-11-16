@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.peppol;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.phive.api.result.ValidationResultList;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Interface for handling Peppol validation errors
@@ -37,7 +37,7 @@ public interface IPhase4PeppolValidationResultHandler
    * @throws Phase4Exception
    *         Implementation dependent
    */
-  void onValidationSuccess (@Nonnull final ValidationResultList aValidationResult) throws Phase4Exception;
+  void onValidationSuccess (@NonNull final ValidationResultList aValidationResult) throws Phase4Exception;
 
   /**
    * Invoked, if at least one validation error is present.
@@ -47,5 +47,5 @@ public interface IPhase4PeppolValidationResultHandler
    * @throws Phase4Exception
    *         Implementation dependent
    */
-  void onValidationErrors (@Nonnull final ValidationResultList aValidationResult) throws Phase4Exception;
+  void onValidationErrors (@NonNull final ValidationResultList aValidationResult) throws Phase4Exception;
 }

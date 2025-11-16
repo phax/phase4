@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.state.EMandatory;
 import com.helger.mime.IMimeType;
 import com.helger.mime.parse.MimeTypeParser;
@@ -25,9 +28,6 @@ import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModePayloadProfile}.
@@ -42,10 +42,10 @@ public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTyp
   private static final IMicroQName ATTR_MAX_SIZE_KB = new MicroQName ("MaxSizeKB");
   private static final IMicroQName ATTR_MANDATORY = new MicroQName ("Mandatory");
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final PModePayloadProfile aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final PModePayloadProfile aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 
@@ -58,7 +58,7 @@ public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTyp
     return ret;
   }
 
-  @Nonnull
+  @NonNull
   public PModePayloadProfile convertToNative (final IMicroElement aElement)
   {
     final String sName = aElement.getAttributeValue (ATTR_NAME);

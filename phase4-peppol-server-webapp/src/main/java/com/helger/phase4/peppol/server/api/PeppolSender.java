@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.peppol.server.api;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
@@ -46,8 +47,6 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xml.serialize.read.DOMReader;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * This contains the main Peppol sending code. It was extracted from the controller to make it more
@@ -84,15 +83,15 @@ public final class PeppolSender
    *        The Country Code of the sender (C1)
    * @return The created sending report and never <code>null</code>.
    */
-  @Nonnull
-  public static Phase4PeppolSendingReport sendPeppolMessageCreatingSbdh (@Nonnull final ISMLInfo aSmlInfo,
-                                                                         @Nonnull final TrustedCAChecker aAPCAChecker,
-                                                                         @Nonnull final byte [] aPayloadBytes,
-                                                                         @Nonnull @Nonempty final String sSenderID,
-                                                                         @Nonnull @Nonempty final String sReceiverID,
-                                                                         @Nonnull @Nonempty final String sDocTypeID,
-                                                                         @Nonnull @Nonempty final String sProcessID,
-                                                                         @Nonnull @Nonempty final String sCountryCodeC1)
+  @NonNull
+  public static Phase4PeppolSendingReport sendPeppolMessageCreatingSbdh (@NonNull final ISMLInfo aSmlInfo,
+                                                                         @NonNull final TrustedCAChecker aAPCAChecker,
+                                                                         @NonNull final byte [] aPayloadBytes,
+                                                                         @NonNull @Nonempty final String sSenderID,
+                                                                         @NonNull @Nonempty final String sReceiverID,
+                                                                         @NonNull @Nonempty final String sDocTypeID,
+                                                                         @NonNull @Nonempty final String sProcessID,
+                                                                         @NonNull @Nonempty final String sCountryCodeC1)
   {
     final IIdentifierFactory aIF = PeppolIdentifierFactory.INSTANCE;
     final String sMyPeppolSeatID = APConfig.getMyPeppolSeatID ();
@@ -193,7 +192,7 @@ public final class PeppolSender
                                                                   .sendingDateTimeConsumer (aSendingReport::setAS4SendingDT)
                                                                   .buildMessageCallback (new IAS4ClientBuildMessageCallback ()
                                                                   {
-                                                                    public void onAS4Message (@Nonnull final AbstractAS4Message <?> aMsg)
+                                                                    public void onAS4Message (@NonNull final AbstractAS4Message <?> aMsg)
                                                                     {
                                                                       // Created AS4 fields
                                                                       final AS4UserMessage aUserMsg = (AS4UserMessage) aMsg;
@@ -269,10 +268,10 @@ public final class PeppolSender
    * @param aSendingReport
    *        The sending report to be filled.
    */
-  static void sendPeppolMessagePredefinedSbdh (@Nonnull final PeppolSBDHData aData,
-                                               @Nonnull final ISMLInfo aSmlInfo,
-                                               @Nonnull final TrustedCAChecker aAPCAChecker,
-                                               @Nonnull final Phase4PeppolSendingReport aSendingReport)
+  static void sendPeppolMessagePredefinedSbdh (@NonNull final PeppolSBDHData aData,
+                                               @NonNull final ISMLInfo aSmlInfo,
+                                               @NonNull final TrustedCAChecker aAPCAChecker,
+                                               @NonNull final Phase4PeppolSendingReport aSendingReport)
   {
     final String sMyPeppolSeatID = APConfig.getMyPeppolSeatID ();
     aSendingReport.setSenderPartyID (sMyPeppolSeatID);
@@ -322,7 +321,7 @@ public final class PeppolSender
                                                                       .sendingDateTimeConsumer (aSendingReport::setAS4SendingDT)
                                                                       .buildMessageCallback (new IAS4ClientBuildMessageCallback ()
                                                                       {
-                                                                        public void onAS4Message (@Nonnull final AbstractAS4Message <?> aMsg)
+                                                                        public void onAS4Message (@NonNull final AbstractAS4Message <?> aMsg)
                                                                         {
                                                                           // Created AS4 fields
                                                                           final AS4UserMessage aUserMsg = (AS4UserMessage) aMsg;

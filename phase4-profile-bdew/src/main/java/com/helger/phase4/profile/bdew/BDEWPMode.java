@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.profile.bdew;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.ETriState;
@@ -42,9 +45,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * PMode creation code.
@@ -92,20 +92,20 @@ public final class BDEWPMode
   private BDEWPMode ()
   {}
 
-  @Nonnull
+  @NonNull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
     // Set the endpoint URL
     return PModeLegProtocol.createForDefaultSoapVersion (sAddress);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     return generatePModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation (@Nullable final String sService,
                                                                                  @Nullable final String sAction)
   {
@@ -114,7 +114,7 @@ public final class BDEWPMode
     return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegErrorHandling generatePModeLegErrorHandling ()
   {
     final PModeAddressList aReportSenderErrorsTo = null;
@@ -131,7 +131,7 @@ public final class BDEWPMode
                                       eReportDeliveryFailuresNotifyProducer);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegSecurity generatePModeLegSecurity ()
   {
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
@@ -150,7 +150,7 @@ public final class BDEWPMode
     return aPModeLegSecurity;
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress,
                                            @Nullable final String sService,
                                            @Nullable final String sAction)
@@ -162,13 +162,13 @@ public final class BDEWPMode
                          generatePModeLegSecurity ());
   }
 
-  @Nonnull
+  @NonNull
   public static PModePayloadService generatePModePayloadSevice ()
   {
     return new PModePayloadService (EAS4CompressionMode.GZIP);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeReceptionAwareness generatePModeReceptionAwareness ()
   {
     final ETriState eReceptionAwareness = ETriState.TRUE;
@@ -199,17 +199,17 @@ public final class BDEWPMode
    * @param aPModeIDProvider
    *        PMode ID provider
    * @param bPersist
-   *        <code>true</code> to persist the PMode in the PModeManager,
-   *        <code>false</code> to have it only in memory.
+   *        <code>true</code> to persist the PMode in the PModeManager, <code>false</code> to have
+   *        it only in memory.
    * @return New PMode
    */
-  @Nonnull
-  public static PMode createBDEWPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                       @Nonnull @Nonempty final String sInitiatorType,
-                                       @Nonnull @Nonempty final String sResponderID,
-                                       @Nonnull @Nonempty final String sResponderType,
+  @NonNull
+  public static PMode createBDEWPMode (@NonNull @Nonempty final String sInitiatorID,
+                                       @NonNull @Nonempty final String sInitiatorType,
+                                       @NonNull @Nonempty final String sResponderID,
+                                       @NonNull @Nonempty final String sResponderType,
                                        @Nullable final String sResponderAddress,
-                                       @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                       @NonNull final IPModeIDProvider aPModeIDProvider,
                                        final boolean bPersist)
   {
     final String sService = null;
@@ -245,20 +245,20 @@ public final class BDEWPMode
    * @param aPModeIDProvider
    *        PMode ID provider
    * @param bPersist
-   *        <code>true</code> to persist the PMode in the PModeManager,
-   *        <code>false</code> to have it only in memory.
+   *        <code>true</code> to persist the PMode in the PModeManager, <code>false</code> to have
+   *        it only in memory.
    * @return New PMode
    * @since 2.8.0
    */
-  @Nonnull
-  public static PMode createBDEWPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                       @Nonnull @Nonempty final String sInitiatorType,
-                                       @Nonnull @Nonempty final String sResponderID,
-                                       @Nonnull @Nonempty final String sResponderType,
+  @NonNull
+  public static PMode createBDEWPMode (@NonNull @Nonempty final String sInitiatorID,
+                                       @NonNull @Nonempty final String sInitiatorType,
+                                       @NonNull @Nonempty final String sResponderID,
+                                       @NonNull @Nonempty final String sResponderType,
                                        @Nullable final String sService,
                                        @Nullable final String sAction,
                                        @Nullable final String sResponderAddress,
-                                       @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                       @NonNull final IPModeIDProvider aPModeIDProvider,
                                        final boolean bPersist)
   {
     final PModeParty aInitiator = new PModeParty (sInitiatorType, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, null, null);
@@ -285,12 +285,12 @@ public final class BDEWPMode
     return aPMode;
   }
 
-  public static boolean containsService (@Nonnull final String sService)
+  public static boolean containsService (@NonNull final String sService)
   {
     return ALL_SERVICES.contains (sService);
   }
 
-  public static boolean containsAction (@Nonnull final String sAction)
+  public static boolean containsAction (@NonNull final String sAction)
   {
     return ALL_ACTIONS.contains (sAction);
   }

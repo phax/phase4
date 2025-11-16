@@ -16,9 +16,9 @@
  */
 package com.helger.phase4.profile;
 
-import com.helger.annotation.style.IsSPIInterface;
+import org.jspecify.annotations.NonNull;
 
-import jakarta.annotation.Nonnull;
+import com.helger.annotation.style.IsSPIInterface;
 
 /**
  * AS4 profile registrar SPI interface
@@ -34,5 +34,5 @@ public interface IAS4ProfileRegistrarSPI
    * @param aRegistrar
    *        The registrar to register at. Never <code>null</code>.
    */
-  void registerAS4Profile (@Nonnull IAS4ProfileRegistrar aRegistrar);
+  void registerAS4Profile (@NonNull IAS4ProfileRegistrar aRegistrar);
 }

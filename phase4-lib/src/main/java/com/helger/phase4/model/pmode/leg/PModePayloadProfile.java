@@ -18,6 +18,9 @@ package com.helger.phase4.model.pmode.leg;
 
 import java.io.Serializable;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.MustImplementEqualsAndHashcode;
@@ -31,9 +34,6 @@ import com.helger.base.state.IMandatoryIndicator;
 import com.helger.base.string.StringHelper;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.mime.IMimeType;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * A payload part is a data structure that consists of five properties: name (or Content-ID) that is
@@ -60,11 +60,11 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   public PModePayloadProfile ()
   {}
 
-  public PModePayloadProfile (@Nonnull @Nonempty final String sName,
-                              @Nonnull final IMimeType aMimeType,
+  public PModePayloadProfile (@NonNull @Nonempty final String sName,
+                              @NonNull final IMimeType aMimeType,
                               @Nullable final String sXSDFilename,
                               @Nullable final Integer aMaxSizeKB,
-                              @Nonnull final EMandatory eMandatory)
+                              @NonNull final EMandatory eMandatory)
   {
     setName (sName);
     setMimeType (aMimeType);
@@ -76,7 +76,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   /**
    * The PMode payload profile name.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getName ()
   {
@@ -91,8 +91,8 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
-  public final EChange setName (@Nonnull @Nonempty final String sName)
+  @NonNull
+  public final EChange setName (@NonNull @Nonempty final String sName)
   {
     ValueEnforcer.notEmpty (sName, "Name");
     if (sName.equals (m_sName))
@@ -104,7 +104,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   /**
    * @return The MIME type. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final IMimeType getMimeType ()
   {
     return m_aMimeType;
@@ -118,8 +118,8 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
-  public final EChange setMimeType (@Nonnull final IMimeType aMimeType)
+  @NonNull
+  public final EChange setMimeType (@NonNull final IMimeType aMimeType)
   {
     ValueEnforcer.notNull (aMimeType, "MimeType");
     if (aMimeType.equals (m_aMimeType))
@@ -153,7 +153,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public final EChange setXSDFilename (@Nullable final String sXSDFilename)
   {
     if (EqualsHelper.equals (sXSDFilename, m_sXSDFilename))
@@ -187,7 +187,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public final EChange setMaxSizeKB (@Nullable final Integer aMaxSizeKB)
   {
     if (EqualsHelper.equals (aMaxSizeKB, m_aMaxSizeKB))
@@ -204,7 +204,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public final EChange setMaxSizeKB (final int nMaxSizeKB)
   {
     return setMaxSizeKB (Integer.valueOf (nMaxSizeKB));
@@ -235,8 +235,8 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
-  public final EChange setMandatory (@Nonnull final EMandatory eMandatory)
+  @NonNull
+  public final EChange setMandatory (@NonNull final EMandatory eMandatory)
   {
     ValueEnforcer.notNull (eMandatory, "Mandatory");
     if (eMandatory.equals (m_eMandatory))
@@ -253,7 +253,7 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
    * @return {@link EChange}
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   public final EChange setMandatory (final boolean bMandatory)
   {
     return setMandatory (EMandatory.valueOf (bMandatory));

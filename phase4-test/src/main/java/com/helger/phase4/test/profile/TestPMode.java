@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.test.profile;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.enforce.ValueEnforcer;
@@ -42,9 +45,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Test PMode creation code.
  *
@@ -59,14 +59,14 @@ public final class TestPMode
   private TestPMode ()
   {}
 
-  @Nonnull
+  @NonNull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
     // Set the endpoint URL
     return PModeLegProtocol.createForDefaultSoapVersion (sAddress);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     final String sService = null;
@@ -76,7 +76,7 @@ public final class TestPMode
     return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegErrorHandling generatePModeLegErrorHandling ()
   {
     final PModeAddressList aReportSenderErrorsTo = null;
@@ -93,7 +93,7 @@ public final class TestPMode
                                       eReportDeliveryFailuresNotifyProducer);
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLegSecurity generatePModeLegSecurity ()
   {
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
@@ -109,7 +109,7 @@ public final class TestPMode
     return aPModeLegSecurity;
   }
 
-  @Nonnull
+  @NonNull
   public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress)
   {
     return new PModeLeg (generatePModeLegProtocol (sResponderAddress),
@@ -119,7 +119,7 @@ public final class TestPMode
                          generatePModeLegSecurity ());
   }
 
-  @Nonnull
+  @NonNull
   public static PModeReceptionAwareness generatePModeReceptionAwareness ()
   {
     final ETriState eReceptionAwareness = ETriState.TRUE;
@@ -146,15 +146,15 @@ public final class TestPMode
    * @param aPModeIDProvider
    *        PMode ID provider
    * @param bPersist
-   *        <code>true</code> to persist the PMode in the PModeManager,
-   *        <code>false</code> to have it only in memory.
+   *        <code>true</code> to persist the PMode in the PModeManager, <code>false</code> to have
+   *        it only in memory.
    * @return New PMode
    */
-  @Nonnull
-  public static PMode createTestPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                       @Nonnull @Nonempty final String sResponderID,
-                                       @Nonnull @Nonempty final String sResponderAddress,
-                                       @Nonnull final IPModeIDProvider aPModeIDProvider,
+  @NonNull
+  public static PMode createTestPMode (@NonNull @Nonempty final String sInitiatorID,
+                                       @NonNull @Nonempty final String sResponderID,
+                                       @NonNull @Nonempty final String sResponderAddress,
+                                       @NonNull final IPModeIDProvider aPModeIDProvider,
                                        final boolean bPersist)
   {
     ValueEnforcer.notEmpty (sInitiatorID, "InitiatorID");
@@ -197,15 +197,14 @@ public final class TestPMode
    * @param aPModeIDProvider
    *        PMode ID provider
    * @param bPersist
-   *        <code>true</code> to persist the PMode <code>false</code> to have it
-   *        only in memory.
+   *        <code>true</code> to persist the PMode <code>false</code> to have it only in memory.
    * @return New PMode
    */
-  @Nonnull
-  public static PMode createTestPModeTwoWay (@Nonnull @Nonempty final String sInitiatorID,
-                                             @Nonnull @Nonempty final String sResponderID,
+  @NonNull
+  public static PMode createTestPModeTwoWay (@NonNull @Nonempty final String sInitiatorID,
+                                             @NonNull @Nonempty final String sResponderID,
                                              @Nullable final String sResponderAddress,
-                                             @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                             @NonNull final IPModeIDProvider aPModeIDProvider,
                                              final boolean bPersist)
   {
     final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);

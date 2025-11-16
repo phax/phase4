@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.state.ETriState;
 import com.helger.collection.commons.CommonsArrayList;
@@ -26,8 +28,6 @@ import com.helger.json.IJsonValue;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeLegReliability}.
@@ -52,8 +52,8 @@ public final class PModeLegReliabilityJsonConverter
   private PModeLegReliabilityJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModeLegReliability aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModeLegReliability aValue)
   {
     final IJsonObject ret = new JsonObject ();
 
@@ -80,8 +80,8 @@ public final class PModeLegReliabilityJsonConverter
     return ret;
   }
 
-  @Nonnull
-  public static PModeLegReliability convertToNative (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static PModeLegReliability convertToNative (@NonNull final IJsonObject aElement)
   {
     final ETriState eAtLeastOnceContract = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (AT_LEAST_ONCE_CONTRACT),
                                                                                         PModeLegReliability.DEFAULT_AT_LEAST_ONCE_CONTRACT);

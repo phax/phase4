@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.pmode;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.equals.EqualsHelper;
 import com.helger.base.string.StringHelper;
@@ -24,9 +27,6 @@ import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.tenancy.IBusinessObject;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Base read-only interface for a single {@link PMode}.
@@ -132,14 +132,14 @@ public interface IPMode extends IBusinessObject
   /**
    * @return The Message Exchange Profile (MEP) to be used. May not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   EMEP getMEP ();
 
   /**
    * @return The ID of the Message Exchange Profile to be used. May neither be <code>null</code> nor
    *         empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   default String getMEPID ()
   {
@@ -149,13 +149,13 @@ public interface IPMode extends IBusinessObject
   /**
    * @return The MEP binding to be used. May not be <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   EMEPBinding getMEPBinding ();
 
   /**
    * @return The ID of the MEP binding to be used. May neither be <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   default String getMEPBindingID ()
   {
@@ -222,7 +222,7 @@ public interface IPMode extends IBusinessObject
    * @return The JSON representation of the PMode. Never <code>null</code>.
    * @since 0.12.0
    */
-  @Nonnull
+  @NonNull
   default IJsonObject getAsJson ()
   {
     return PModeJsonConverter.convertToJson (this);

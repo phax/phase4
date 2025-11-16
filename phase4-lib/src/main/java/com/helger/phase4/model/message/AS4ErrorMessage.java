@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.message;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.ICommonsList;
@@ -23,9 +26,6 @@ import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.model.ESoapVersion;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * AS4 error message.<br>
@@ -40,7 +40,7 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
 {
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4ErrorMessage (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
+  public AS4ErrorMessage (@NonNull final ESoapVersion eSoapVersion, @NonNull final Ebms3SignalMessage aSignalMessage)
   {
     super (eSoapVersion, EAS4MessageType.ERROR_MESSAGE);
 
@@ -57,26 +57,26 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
   /**
    * @return The {@link Ebms3SignalMessage} passed in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final Ebms3SignalMessage getEbms3SignalMessage ()
   {
     return m_aSignalMessage;
   }
 
-  @Nonnull
-  public static AS4ErrorMessage create (@Nonnull final ESoapVersion eSoapVersion,
+  @NonNull
+  public static AS4ErrorMessage create (@NonNull final ESoapVersion eSoapVersion,
                                         @Nullable final String sRefToMessageID,
-                                        @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
+                                        @NonNull final ICommonsList <Ebms3Error> aErrorMessages)
   {
     // Creates a random message ID
     final Ebms3MessageInfo aMessageInfo = MessageHelperMethods.createEbms3MessageInfo (sRefToMessageID);
     return create (eSoapVersion, aMessageInfo, aErrorMessages);
   }
 
-  @Nonnull
-  public static AS4ErrorMessage create (@Nonnull final ESoapVersion eSoapVersion,
-                                        @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                        @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
+  @NonNull
+  public static AS4ErrorMessage create (@NonNull final ESoapVersion eSoapVersion,
+                                        @NonNull final Ebms3MessageInfo aEbms3MessageInfo,
+                                        @NonNull final ICommonsList <Ebms3Error> aErrorMessages)
   {
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 

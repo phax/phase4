@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.incoming;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.string.StringHelper;
@@ -26,7 +28,6 @@ import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
 
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.Cookie;
 
 /**
@@ -49,9 +50,9 @@ public final class AS4IncomingHelper
    *        The message metadata to convert. May not be <code>null</code>.
    * @return A non-<code>null</code> JSON object.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
-  public static IJsonObject getIncomingMetadataAsJson (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+  public static IJsonObject getIncomingMetadataAsJson (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
     final IJsonObject aMap = new JsonObject ();
     aMap.add ("IncomingUniqueID", aMessageMetadata.getIncomingUniqueID ());

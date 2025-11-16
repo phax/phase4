@@ -19,6 +19,8 @@ package com.helger.phase4.incoming.mgr;
 import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.base.lang.clazz.ClassHelper;
@@ -34,9 +36,6 @@ import com.helger.quartz.TriggerKey;
 import com.helger.schedule.quartz.GlobalQuartzScheduler;
 import com.helger.schedule.quartz.trigger.JDK8TriggerBuilder;
 import com.helger.web.scope.util.AbstractScopeAwareJob;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * A special job, that removes all entries
@@ -54,7 +53,7 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
   {}
 
   @Override
-  protected void onExecute (@Nonnull final JobDataMap aJobDataMap, @Nonnull final IJobExecutionContext aContext)
+  protected void onExecute (@NonNull final JobDataMap aJobDataMap, @NonNull final IJobExecutionContext aContext)
                                                                                                                  throws JobExecutionException
   {
     final long nMins = aJobDataMap.getAsLong (KEY_MINUTES);

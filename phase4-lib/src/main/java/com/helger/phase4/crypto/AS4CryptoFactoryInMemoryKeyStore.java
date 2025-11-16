@@ -20,6 +20,8 @@ import java.security.KeyStore;
 
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.Merlin;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
@@ -27,9 +29,6 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.security.keystore.IKeyStoreAndKeyDescriptor;
 import com.helger.security.keystore.ITrustStoreDescriptor;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This class contains an implementation of {@link IAS4CryptoFactory} in which case the
@@ -60,7 +59,7 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    *        certs list will be used.
    * @since 3.0.0
    */
-  public AS4CryptoFactoryInMemoryKeyStore (@Nonnull final IKeyStoreAndKeyDescriptor aKeyStoreDesc,
+  public AS4CryptoFactoryInMemoryKeyStore (@NonNull final IKeyStoreAndKeyDescriptor aKeyStoreDesc,
                                            @Nullable final ITrustStoreDescriptor aTrustStoreDesc)
   {
     this (aKeyStoreDesc.loadKeyStore ().getKeyStore (),
@@ -82,9 +81,9 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    *        The optional trust store to be used. If none is provided the default Java runtime
    *        truststore (cacerts) is used.
    */
-  public AS4CryptoFactoryInMemoryKeyStore (@Nonnull final KeyStore aKeyStore,
-                                           @Nonnull @Nonempty final String sKeyAlias,
-                                           @Nonnull final char [] aKeyPassword,
+  public AS4CryptoFactoryInMemoryKeyStore (@NonNull final KeyStore aKeyStore,
+                                           @NonNull @Nonempty final String sKeyAlias,
+                                           @NonNull final char [] aKeyPassword,
                                            @Nullable final KeyStore aTrustStore)
   {
     ValueEnforcer.notNull (aKeyStore, "KeyStore");
@@ -101,8 +100,8 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    * constructor. Removed "final" in v3 to allow users to use a different {@link Crypto}
    * implementation if needed.
    */
-  @Nonnull
-  public Crypto getCrypto (@Nonnull final ECryptoMode eCryptoMode)
+  @NonNull
+  public Crypto getCrypto (@NonNull final ECryptoMode eCryptoMode)
   {
     Merlin ret = m_aCrypto;
     if (ret == null)
@@ -116,13 +115,13 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
     return ret;
   }
 
-  @Nonnull
+  @NonNull
   public final KeyStore getKeyStore ()
   {
     return m_aKeyStore;
   }
 
-  @Nonnull
+  @NonNull
   public final String getKeyAlias ()
   {
     return m_sKeyAlias;

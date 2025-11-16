@@ -18,11 +18,11 @@ package com.helger.phase4.incoming;
 
 import java.nio.charset.Charset;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.base.io.iface.IHasInputStream;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.mime.IMimeType;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * A synthetic wrapper for an AS4 HTTP response.
@@ -42,7 +42,7 @@ public interface IAS4ResponseAbstraction
    *        The character set of the byte array. May not be <code>null</code>.
    * @since 0.9.7 this was merged from setContent and setCharset
    */
-  void setContent (@Nonnull byte [] aBytes, @Nonnull Charset aCharset);
+  void setContent (@NonNull byte [] aBytes, @NonNull Charset aCharset);
 
   /**
    * Set the content as an input stream provider. This is used if a MIME response is sent back.
@@ -53,7 +53,7 @@ public interface IAS4ResponseAbstraction
    *        The input stream provider.
    * @since 0.9.9 this was merged from addCustomResponseHeaders and setContent
    */
-  void setContent (@Nonnull HttpHeaderMap aHeaderMap, @Nonnull IHasInputStream aHasIS);
+  void setContent (@NonNull HttpHeaderMap aHeaderMap, @NonNull IHasInputStream aHasIS);
 
   /**
    * Set the MIME type (Content-Type) of the response.
@@ -61,7 +61,7 @@ public interface IAS4ResponseAbstraction
    * @param aMimeType
    *        Mime type to use. May not be <code>null</code>.
    */
-  void setMimeType (@Nonnull IMimeType aMimeType);
+  void setMimeType (@NonNull IMimeType aMimeType);
 
   /**
    * Set the HTTP status code to be returned.

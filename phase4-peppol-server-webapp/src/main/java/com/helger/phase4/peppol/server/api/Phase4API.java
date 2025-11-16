@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.peppol.server.api;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.photon.api.APIDescriptor;
 import com.helger.photon.api.APIPath;
 import com.helger.photon.api.IAPIExceptionMapper;
 import com.helger.photon.api.IAPIRegistry;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * This class contains the API registration and global parameters.
@@ -44,7 +44,7 @@ public final class Phase4API
   private Phase4API ()
   {}
 
-  public static void init (@Nonnull final IAPIRegistry aAPIRegistry)
+  public static void init (@NonNull final IAPIRegistry aAPIRegistry)
   {
     final IAPIExceptionMapper aExceptionMapper = new APIExceptionMapper ();
 

@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.hredelivery;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -30,8 +31,6 @@ import com.helger.phive.api.result.ValidationResultList;
 import com.helger.phive.api.validity.IValidityDeterminator;
 import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.phive.xml.source.ValidationSourceXML;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * This class contains the client side validation required for outgoing Peppol messages.
@@ -62,10 +61,10 @@ public final class Phase4HREdeliveryValidation
    *         In case e.g. the validation failed. This usually implies, that the document will NOT be
    *         send out.
    */
-  public static void validateOutgoingBusinessDocument (@Nonnull final Element aXML,
-                                                       @Nonnull final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
-                                                       @Nonnull final DVRCoordinate aVESID,
-                                                       @Nonnull final IPhase4HREdeliveryValidationResultHandler aValidationResultHandler) throws Phase4Exception
+  public static void validateOutgoingBusinessDocument (@NonNull final Element aXML,
+                                                       @NonNull final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
+                                                       @NonNull final DVRCoordinate aVESID,
+                                                       @NonNull final IPhase4HREdeliveryValidationResultHandler aValidationResultHandler) throws Phase4Exception
   {
     ValueEnforcer.notNull (aXML, "XMLElement");
     ValueEnforcer.notNull (aVESRegistry, "VESRegistry");

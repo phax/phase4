@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
@@ -24,9 +27,6 @@ import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModeLegBusinessInformation}.
@@ -44,10 +44,10 @@ public class PModeLegBusinessInformationMicroTypeConverter extends
   private static final IMicroQName ATTR_PAYLOAD_PROFILE_MAX_KB = new MicroQName ("PayloadProfileMaxKB");
   private static final IMicroQName ATTR_MPCID = new MicroQName ("MPCID");
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final PModeLegBusinessInformation aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final PModeLegBusinessInformation aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_SERVICE, aValue.getService ());
@@ -67,8 +67,8 @@ public class PModeLegBusinessInformationMicroTypeConverter extends
     return ret;
   }
 
-  @Nonnull
-  public PModeLegBusinessInformation convertToNative (@Nonnull final IMicroElement aElement)
+  @NonNull
+  public PModeLegBusinessInformation convertToNative (@NonNull final IMicroElement aElement)
   {
     final String sService = aElement.getAttributeValue (ATTR_SERVICE);
     final String sServiceType = aElement.getAttributeValue (ATTR_SERVICE_TYPE);

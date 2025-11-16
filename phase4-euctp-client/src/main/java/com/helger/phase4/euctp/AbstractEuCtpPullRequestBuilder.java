@@ -19,13 +19,13 @@ package com.helger.phase4.euctp;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.profile.euctp.AS4EuCtpProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4PullRequestBuilder;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Abstract EuCTP PullRequest builder class with sanity methods
@@ -62,7 +62,7 @@ public abstract class AbstractEuCtpPullRequestBuilder <IMPLTYPE extends Abstract
     }
   }
 
-  @Nonnull
+  @NonNull
   public IMPLTYPE httpClientFactory (@Nullable final KeyStore aKeyStore, @Nullable final char [] aKeyPassword)
                                                                                                                throws GeneralSecurityException
   {

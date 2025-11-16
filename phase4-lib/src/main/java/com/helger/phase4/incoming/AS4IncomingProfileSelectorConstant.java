@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.incoming;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.tostring.ToStringGenerator;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Implementation of {@link IAS4IncomingProfileSelector} taking a constant AS4 profile ID.
@@ -47,7 +47,7 @@ public class AS4IncomingProfileSelectorConstant implements IAS4IncomingProfileSe
   }
 
   @Nullable
-  public String getAS4ProfileID (@Nonnull final IAS4IncomingMessageState aIncomingState)
+  public String getAS4ProfileID (@NonNull final IAS4IncomingMessageState aIncomingState)
   {
     return m_sAS4ProfileID;
   }

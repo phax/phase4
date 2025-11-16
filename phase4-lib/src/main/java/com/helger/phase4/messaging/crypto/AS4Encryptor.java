@@ -23,6 +23,7 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.ext.WSSecurityException.ErrorCode;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -49,7 +50,6 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.phase4.wss.WSSSynchronizer;
 
-import jakarta.annotation.Nonnull;
 import jakarta.mail.MessagingException;
 
 /**
@@ -65,9 +65,9 @@ public final class AS4Encryptor
   private AS4Encryptor ()
   {}
 
-  @Nonnull
-  private static WSSecEncrypt _createEncrypt (@Nonnull final WSSecHeader aSecHeader,
-                                              @Nonnull final AS4CryptParams aCryptParams)
+  @NonNull
+  private static WSSecEncrypt _createEncrypt (@NonNull final WSSecHeader aSecHeader,
+                                              @NonNull final AS4CryptParams aCryptParams)
   {
     final WSSecEncrypt aBuilder = aCryptParams.hasWSSecEncryptCustomizer () ? aCryptParams.getWSSecEncryptCustomizer ()
                                                                                           .createWSSecEncrypt (aSecHeader)
@@ -110,12 +110,12 @@ public final class AS4Encryptor
     return aBuilder;
   }
 
-  @Nonnull
-  private static Document _encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                   @Nonnull final ESoapVersion eSoapVersion,
-                                                   @Nonnull final Document aDoc,
+  @NonNull
+  private static Document _encryptSoapBodyPayload (@NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                   @NonNull final ESoapVersion eSoapVersion,
+                                                   @NonNull final Document aDoc,
                                                    final boolean bMustUnderstand,
-                                                   @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
+                                                   @NonNull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     LOGGER.info ("Now encrypting AS4 SOAP message. KeyIdentifierType=" +
                  aCryptParams.getKeyIdentifierType ().name () +
@@ -171,12 +171,12 @@ public final class AS4Encryptor
    * @throws WSSecurityException
    *         in case of error
    */
-  @Nonnull
-  public static Document encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                 @Nonnull final ESoapVersion eSoapVersion,
-                                                 @Nonnull final Document aDoc,
+  @NonNull
+  public static Document encryptSoapBodyPayload (@NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                 @NonNull final ESoapVersion eSoapVersion,
+                                                 @NonNull final Document aDoc,
                                                  final boolean bMustUnderstand,
-                                                 @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
+                                                 @NonNull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
@@ -208,14 +208,14 @@ public final class AS4Encryptor
     return ret;
   }
 
-  @Nonnull
-  private static AS4MimeMessage _encryptToMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                                       @Nonnull final Document aDoc,
-                                                       @Nonnull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments,
-                                                       @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+  @NonNull
+  private static AS4MimeMessage _encryptToMimeMessage (@NonNull final ESoapVersion eSoapVersion,
+                                                       @NonNull final Document aDoc,
+                                                       @NonNull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments,
+                                                       @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                        final boolean bMustUnderstand,
-                                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                       @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
+                                                       @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                       @NonNull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     LOGGER.info ("Now encrypting AS4 MIME message. KeyIdentifierType=" +
                  aCryptParams.getKeyIdentifierType ().name () +
@@ -283,14 +283,14 @@ public final class AS4Encryptor
     }
   }
 
-  @Nonnull
-  public static AS4MimeMessage encryptToMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                                     @Nonnull final Document aDoc,
-                                                     @Nonnull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments,
-                                                     @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
+  @NonNull
+  public static AS4MimeMessage encryptToMimeMessage (@NonNull final ESoapVersion eSoapVersion,
+                                                     @NonNull final Document aDoc,
+                                                     @NonNull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments,
+                                                     @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                      final boolean bMustUnderstand,
-                                                     @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                     @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
+                                                     @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                     @NonNull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     ValueEnforcer.notNull (aCryptoFactoryCrypt, "CryptoFactoryCrypt");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");

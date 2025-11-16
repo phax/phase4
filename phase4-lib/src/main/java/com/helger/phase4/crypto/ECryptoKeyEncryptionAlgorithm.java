@@ -17,13 +17,12 @@
 package com.helger.phase4.crypto;
 
 import org.apache.wss4j.common.WSS4JConstants;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Enumeration of all key encryption algorithms.
@@ -47,12 +46,12 @@ public enum ECryptoKeyEncryptionAlgorithm implements IHasID <String>
 
   private final String m_sID;
 
-  ECryptoKeyEncryptionAlgorithm (@Nonnull @Nonempty final String sID)
+  ECryptoKeyEncryptionAlgorithm (@NonNull @Nonempty final String sID)
   {
     m_sID = sID;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {

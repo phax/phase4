@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.mpc;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.type.ObjectType;
 import com.helger.photon.security.object.StubObject;
 import com.helger.tenancy.AbstractBusinessObject;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Default implementation for an MPC
@@ -32,17 +32,17 @@ public class MPC extends AbstractBusinessObject implements IMPC
 {
   public static final ObjectType OT = new ObjectType ("as4.mpc");
 
-  public MPC (@Nonnull @Nonempty final String sID)
+  public MPC (@NonNull @Nonempty final String sID)
   {
     this (StubObject.createForCurrentUserAndID (sID));
   }
 
-  protected MPC (@Nonnull final StubObject aStubObject)
+  protected MPC (@NonNull final StubObject aStubObject)
   {
     super (aStubObject);
   }
 
-  @Nonnull
+  @NonNull
   public final ObjectType getObjectType ()
   {
     return OT;

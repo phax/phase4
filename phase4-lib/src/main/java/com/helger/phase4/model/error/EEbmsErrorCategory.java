@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.model.error;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.name.IHasDisplayName;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * EBMS error category enumeration
@@ -35,12 +35,12 @@ public enum EEbmsErrorCategory implements IHasDisplayName
 
   private final String m_sContent;
 
-  EEbmsErrorCategory (@Nonnull @Nonempty final String sContent)
+  EEbmsErrorCategory (@NonNull @Nonempty final String sContent)
   {
     m_sContent = sContent;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getDisplayName ()
   {

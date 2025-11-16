@@ -18,14 +18,13 @@ package com.helger.phase4.logging;
 
 import java.util.function.Function;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.PresentForCodeCoverage;
 import com.helger.base.string.StringHelper;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Specific logger factory for the phase4 library that allows an easy customization of log messages.
@@ -73,8 +72,8 @@ public final class Phase4LoggerFactory
    *        The class to use. May not be <code>null</code>.
    * @return The wrapped {@link Phase4DelegatedLogger}. Never <code>null</code>.
    */
-  @Nonnull
-  public static Phase4DelegatedLogger getLogger (@Nonnull final Class <?> aClass)
+  @NonNull
+  public static Phase4DelegatedLogger getLogger (@NonNull final Class <?> aClass)
   {
     // This is the only place, where the original SLF4J Logger Factory is invoked
     final Logger aLogger = LoggerFactory.getLogger (aClass);
@@ -88,8 +87,8 @@ public final class Phase4LoggerFactory
    *        The logger name to use. May neither be <code>null</code> nor empty.
    * @return The wrapped {@link Phase4DelegatedLogger}. Never <code>null</code>.
    */
-  @Nonnull
-  public static Phase4DelegatedLogger getLogger (@Nonnull @Nonempty final String sLoggerName)
+  @NonNull
+  public static Phase4DelegatedLogger getLogger (@NonNull @Nonempty final String sLoggerName)
   {
     // This is the only place, where the original SLF4J Logger Factory is invoked
     final Logger aLogger = LoggerFactory.getLogger (sLoggerName);

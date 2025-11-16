@@ -29,6 +29,8 @@ import javax.xml.namespace.QName;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -97,8 +99,6 @@ import com.helger.xml.sax.WrappedCollectingSAXErrorHandler;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.read.DOMReaderSettings;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
 
@@ -135,10 +135,10 @@ public final class AS4IncomingHandler
      * @throws Phase4Exception
      *         In case of a processing error (since 0.9.11)
      */
-    void handle (@Nonnull HttpHeaderMap aHttpHeaders,
-                 @Nonnull Document aSoapDocument,
-                 @Nonnull ESoapVersion eSoapVersion,
-                 @Nonnull ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
+    void handle (@NonNull HttpHeaderMap aHttpHeaders,
+                 @NonNull Document aSoapDocument,
+                 @NonNull ESoapVersion eSoapVersion,
+                 @NonNull ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
                                                                                MessagingException,
                                                                                Phase4Exception;
   }
@@ -148,12 +148,12 @@ public final class AS4IncomingHandler
   private AS4IncomingHandler ()
   {}
 
-  public static void parseAS4Message (@Nonnull final IAS4IncomingAttachmentFactory aIAF,
-                                      @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                      @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                      @Nonnull @WillClose final InputStream aPayloadIS,
-                                      @Nonnull final HttpHeaderMap aHttpHeaders,
-                                      @Nonnull final IAS4ParsedMessageCallback aCallback,
+  public static void parseAS4Message (@NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                      @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
+                                      @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                      @NonNull @WillClose final InputStream aPayloadIS,
+                                      @NonNull final HttpHeaderMap aHttpHeaders,
+                                      @NonNull final IAS4ParsedMessageCallback aCallback,
                                       @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception,
                                                                                           IOException,
                                                                                           MessagingException,
@@ -432,11 +432,11 @@ public final class AS4IncomingHandler
     }
   }
 
-  private static void _processSoapHeaderElements (@Nonnull final SoapHeaderElementProcessorRegistry aRegistry,
-                                                  @Nonnull final Document aSoapDocument,
-                                                  @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                  @Nonnull final AS4IncomingMessageState aIncomingState,
-                                                  @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws Phase4Exception
+  private static void _processSoapHeaderElements (@NonNull final SoapHeaderElementProcessorRegistry aRegistry,
+                                                  @NonNull final Document aSoapDocument,
+                                                  @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                  @NonNull final AS4IncomingMessageState aIncomingState,
+                                                  @NonNull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws Phase4Exception
   {
     final ESoapVersion eSoapVersion = aIncomingState.getSoapVersion ();
     final ICommonsList <AS4SingleSoapHeader> aHeadersInMessage = new CommonsArrayList <> ();
@@ -548,9 +548,9 @@ public final class AS4IncomingHandler
     }
   }
 
-  private static void _decompressAttachments (@Nonnull final ICommonsList <WSS4JAttachment> aIncomingDecryptedAttachments,
-                                              @Nonnull final Ebms3UserMessage aUserMessage,
-                                              @Nonnull final IAS4IncomingMessageState aIncomingState)
+  private static void _decompressAttachments (@NonNull final ICommonsList <WSS4JAttachment> aIncomingDecryptedAttachments,
+                                              @NonNull final Ebms3UserMessage aUserMessage,
+                                              @NonNull final IAS4IncomingMessageState aIncomingState)
   {
     // For all incoming attachments
     for (final WSS4JAttachment aIncomingAttachment : aIncomingDecryptedAttachments.getClone ())
@@ -617,17 +617,17 @@ public final class AS4IncomingHandler
     }
   }
 
-  @Nonnull
-  public static IAS4IncomingMessageState processEbmsMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                             @Nonnull final Locale aLocale,
-                                                             @Nonnull final SoapHeaderElementProcessorRegistry aRegistry,
-                                                             @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                             @Nonnull final Document aSoapDocument,
-                                                             @Nonnull final ESoapVersion eSoapVersion,
-                                                             @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                             @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
-                                                             @Nonnull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget,
-                                                             @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata) throws Phase4Exception
+  @NonNull
+  public static IAS4IncomingMessageState processEbmsMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                             @NonNull final Locale aLocale,
+                                                             @NonNull final SoapHeaderElementProcessorRegistry aRegistry,
+                                                             @NonNull final HttpHeaderMap aHttpHeaders,
+                                                             @NonNull final Document aSoapDocument,
+                                                             @NonNull final ESoapVersion eSoapVersion,
+                                                             @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                             @NonNull final IAS4IncomingProfileSelector aAS4ProfileSelector,
+                                                             @NonNull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget,
+                                                             @NonNull final IAS4IncomingMessageMetadata aMessageMetadata) throws Phase4Exception
   {
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aLocale, "Locale");
@@ -876,20 +876,20 @@ public final class AS4IncomingHandler
   }
 
   @Nullable
-  private static IAS4IncomingMessageState _parseMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                                         @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                         @Nonnull final IAS4PModeResolver aPModeResolver,
-                                                         @Nonnull final IAS4IncomingAttachmentFactory aIAF,
-                                                         @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
-                                                         @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+  private static IAS4IncomingMessageState _parseMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                         @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                         @NonNull final IAS4PModeResolver aPModeResolver,
+                                                         @NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                                         @NonNull final IAS4IncomingProfileSelector aAS4ProfileSelector,
+                                                         @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                                          @Nullable final IPMode aSendingPMode,
-                                                         @Nonnull final Locale aLocale,
-                                                         @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                                         @Nonnull final HttpResponse aHttpResponse,
-                                                         @Nonnull final byte [] aMessagePayload,
+                                                         @NonNull final Locale aLocale,
+                                                         @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                                         @NonNull final HttpResponse aHttpResponse,
+                                                         @NonNull final byte [] aMessagePayload,
                                                          @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                         @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                         @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration) throws Phase4Exception
+                                                         @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                         @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration) throws Phase4Exception
   {
     // This wrapper will take the result
     final Wrapper <IAS4IncomingMessageState> aRetWrapper = new Wrapper <> ();
@@ -962,20 +962,20 @@ public final class AS4IncomingHandler
 
   // Parse an AS4 SignalMessage
   @Nullable
-  public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                                       @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                       @Nonnull final IAS4PModeResolver aPModeResolver,
-                                                       @Nonnull final IAS4IncomingAttachmentFactory aIAF,
-                                                       @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
-                                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+  public static Ebms3SignalMessage parseSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                       @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                       @NonNull final IAS4PModeResolver aPModeResolver,
+                                                       @NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                                       @NonNull final IAS4IncomingProfileSelector aAS4ProfileSelector,
+                                                       @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                                        @Nullable final IPMode aSendingPMode,
-                                                       @Nonnull final Locale aLocale,
-                                                       @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                                       @Nonnull final HttpResponse aHttpResponse,
-                                                       @Nonnull final byte [] aMessagePayload,
+                                                       @NonNull final Locale aLocale,
+                                                       @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                                       @NonNull final HttpResponse aHttpResponse,
+                                                       @NonNull final byte [] aMessagePayload,
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                       @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                       @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
+                                                       @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                       @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                        @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
     final IAS4IncomingMessageState aIncomingState = _parseMessage (aCryptoFactorySign,
@@ -1017,20 +1017,20 @@ public final class AS4IncomingHandler
 
   // Parse an AS4 UserMessage
   @Nullable
-  public static Ebms3UserMessage parseUserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                   @Nonnull final IAS4PModeResolver aPModeResolver,
-                                                   @Nonnull final IAS4IncomingAttachmentFactory aIAF,
-                                                   @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
-                                                   @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+  public static Ebms3UserMessage parseUserMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                   @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                   @NonNull final IAS4PModeResolver aPModeResolver,
+                                                   @NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                                   @NonNull final IAS4IncomingProfileSelector aAS4ProfileSelector,
+                                                   @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                                    @Nullable final IPMode aSendingPMode,
-                                                   @Nonnull final Locale aLocale,
-                                                   @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                                   @Nonnull final HttpResponse aHttpResponse,
-                                                   @Nonnull final byte [] aMessagePayload,
+                                                   @NonNull final Locale aLocale,
+                                                   @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                                   @NonNull final HttpResponse aHttpResponse,
+                                                   @NonNull final byte [] aMessagePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                   @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                   @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
+                                                   @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                   @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws Phase4Exception
   {
     final IAS4IncomingMessageState aIncomingState = _parseMessage (aCryptoFactorySign,
@@ -1071,21 +1071,21 @@ public final class AS4IncomingHandler
   }
 
   // Parse as an AS4 UserMessage or an AS4 SignalMessage
-  @Nonnull
-  public static ESuccess parseUserOrSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactorySign,
-                                                   @Nonnull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                   @Nonnull final IAS4PModeResolver aPModeResolver,
-                                                   @Nonnull final IAS4IncomingAttachmentFactory aIAF,
-                                                   @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
-                                                   @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+  @NonNull
+  public static ESuccess parseUserOrSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                   @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                   @NonNull final IAS4PModeResolver aPModeResolver,
+                                                   @NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                                   @NonNull final IAS4IncomingProfileSelector aAS4ProfileSelector,
+                                                   @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                                    @Nullable final IPMode aSendingPMode,
-                                                   @Nonnull final Locale aLocale,
-                                                   @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                                   @Nonnull final HttpResponse aHttpResponse,
-                                                   @Nonnull final byte [] aMessagePayload,
+                                                   @NonNull final Locale aLocale,
+                                                   @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                                   @NonNull final HttpResponse aHttpResponse,
+                                                   @NonNull final byte [] aMessagePayload,
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                   @Nonnull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                   @Nonnull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
+                                                   @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                   @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {

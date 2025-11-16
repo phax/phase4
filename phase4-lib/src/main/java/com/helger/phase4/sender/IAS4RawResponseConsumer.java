@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.sender;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.util.Phase4Exception;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Specialized interface for the raw HTTP response consumer.
@@ -39,7 +39,7 @@ public interface IAS4RawResponseConsumer
    * @throws Phase4Exception
    *         In case of error.
    */
-  void handleResponse (@Nonnull AS4ClientSentMessage <byte []> aResponseMsg) throws Phase4Exception;
+  void handleResponse (@NonNull AS4ClientSentMessage <byte []> aResponseMsg) throws Phase4Exception;
 
   /**
    * Chain this instance with another instance of the same type. This handler is called first.
@@ -49,7 +49,7 @@ public interface IAS4RawResponseConsumer
    * @return A non-<code>null</code> response consumer.
    * @since 0.13.0
    */
-  @Nonnull
+  @NonNull
   default IAS4RawResponseConsumer and (@Nullable final IAS4RawResponseConsumer rhs)
   {
     return and (this, rhs);

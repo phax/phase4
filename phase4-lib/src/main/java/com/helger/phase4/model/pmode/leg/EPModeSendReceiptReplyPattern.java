@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Defines the different sendReceipt reply-patterns
@@ -35,12 +35,12 @@ public enum EPModeSendReceiptReplyPattern implements IHasID <String>
 
   private final String m_sID;
 
-  EPModeSendReceiptReplyPattern (@Nonnull @Nonempty final String sID)
+  EPModeSendReceiptReplyPattern (@NonNull @Nonempty final String sID)
   {
     m_sID = sID;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {

@@ -16,6 +16,8 @@
  */
 package com.helger.phase4;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -23,8 +25,6 @@ import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.model.message.MessageHelperMethods;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Reusable constants for testing.
@@ -67,7 +67,7 @@ public final class AS4TestConstants
   private AS4TestConstants ()
   {}
 
-  @Nonnull
+  @NonNull
   @Nonempty
   @ReturnsMutableCopy
   public static ICommonsList <Ebms3Property> getEBMSProperties ()

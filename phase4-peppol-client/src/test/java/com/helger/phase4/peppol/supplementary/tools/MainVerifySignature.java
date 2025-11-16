@@ -51,7 +51,7 @@ import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
-import jakarta.annotation.Nonnull;
+
 
 /**
  * This is a small tool that takes the dump of an incoming AS4 message (from a
@@ -67,12 +67,12 @@ public class MainVerifySignature
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainVerifySignature.class);
 
-  @Nonnull
-  private static ESuccess _verifyAndDecrypt (@Nonnull final AS4ResourceHelper aResHelper,
-                                             @Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                             @Nonnull final Document aSOAPDoc,
-                                             @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
-                                             @Nonnull final Supplier <WSSConfig> aWSSConfigSupplier)
+  @NonNull
+  private static ESuccess _verifyAndDecrypt (@NonNull final AS4ResourceHelper aResHelper,
+                                             @NonNull final IAS4CryptoFactory aCryptoFactory,
+                                             @NonNull final Document aSOAPDoc,
+                                             @NonNull final ICommonsList <WSS4JAttachment> aAttachments,
+                                             @NonNull final Supplier <WSSConfig> aWSSConfigSupplier)
   {
     // Signing verification and Decryption
     try

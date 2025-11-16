@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.peppol;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -36,11 +37,8 @@ import com.helger.phive.peppol.PeppolValidation;
 import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.phive.xml.source.ValidationSourceXML;
 
-import jakarta.annotation.Nonnull;
-
 /**
- * This class contains the client side validation required for outgoing Peppol
- * messages.
+ * This class contains the client side validation required for outgoing Peppol messages.
  *
  * @author Philip Helger
  */
@@ -58,7 +56,7 @@ public final class Phase4PeppolValidation
    * @return Get the existing default VES registry. Handle with care.
    * @since 1.3.1
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public static IValidationExecutorSetRegistry <IValidationSourceXML> getDefaultRegistry ()
   {
@@ -66,12 +64,11 @@ public final class Phase4PeppolValidation
   }
 
   /**
-   * @return A new {@link ValidationExecutorSetRegistry} initialized with the
-   *         Peppol rules only.
+   * @return A new {@link ValidationExecutorSetRegistry} initialized with the Peppol rules only.
    * @since 0.10.1
    * @see PeppolValidation
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ValidationExecutorSetRegistry <IValidationSourceXML> createDefaultRegistry ()
   {
@@ -82,54 +79,49 @@ public final class Phase4PeppolValidation
   }
 
   /**
-   * Validate the passed DOM element using the provided VESID using the default
-   * registry.
+   * Validate the passed DOM element using the provided VESID using the default registry.
    *
    * @param aXML
    *        The XML element to be validated. May not be <code>null</code>.
    * @param aVESID
-   *        The {@link DVRCoordinate} to be used. Must be contained in the
-   *        default registry. May not be <code>null</code>.
+   *        The {@link DVRCoordinate} to be used. Must be contained in the default registry. May not
+   *        be <code>null</code>.
    * @param aValidationResultHandler
-   *        The validation result handler to be used. May not be
-   *        <code>null</code>.
+   *        The validation result handler to be used. May not be <code>null</code>.
    * @throws Phase4Exception
-   *         In case e.g. the validation failed. This usually implies, that the
-   *         document will NOT be send out.
-   * @see #validateOutgoingBusinessDocument(Element,
-   *      IValidationExecutorSetRegistry, DVRCoordinate,
+   *         In case e.g. the validation failed. This usually implies, that the document will NOT be
+   *         send out.
+   * @see #validateOutgoingBusinessDocument(Element, IValidationExecutorSetRegistry, DVRCoordinate,
    *      IPhase4PeppolValidationResultHandler)
    */
-  public static void validateOutgoingBusinessDocument (@Nonnull final Element aXML,
-                                                       @Nonnull final DVRCoordinate aVESID,
-                                                       @Nonnull final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4Exception
+  public static void validateOutgoingBusinessDocument (@NonNull final Element aXML,
+                                                       @NonNull final DVRCoordinate aVESID,
+                                                       @NonNull final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4Exception
   {
     validateOutgoingBusinessDocument (aXML, VES_REGISTRY, aVESID, aValidationResultHandler);
   }
 
   /**
-   * Validate the passed DOM element using the provided VESID using the provided
-   * registry.
+   * Validate the passed DOM element using the provided VESID using the provided registry.
    *
    * @param aXML
    *        The XML element to be validated. May not be <code>null</code>.
    * @param aVESRegistry
    *        The VES registry the VESID is looked up in.
    * @param aVESID
-   *        The {@link DVRCoordinate} to be used. Must be contained in the
-   *        provided registry. May not be <code>null</code>.
+   *        The {@link DVRCoordinate} to be used. Must be contained in the provided registry. May
+   *        not be <code>null</code>.
    * @param aValidationResultHandler
-   *        The validation result handler to be used. May not be
-   *        <code>null</code>.
+   *        The validation result handler to be used. May not be <code>null</code>.
    * @throws Phase4Exception
-   *         In case e.g. the validation failed. This usually implies, that the
-   *         document will NOT be send out.
+   *         In case e.g. the validation failed. This usually implies, that the document will NOT be
+   *         send out.
    * @since 0.10.1
    */
-  public static void validateOutgoingBusinessDocument (@Nonnull final Element aXML,
-                                                       @Nonnull final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
-                                                       @Nonnull final DVRCoordinate aVESID,
-                                                       @Nonnull final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4Exception
+  public static void validateOutgoingBusinessDocument (@NonNull final Element aXML,
+                                                       @NonNull final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
+                                                       @NonNull final DVRCoordinate aVESID,
+                                                       @NonNull final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4Exception
   {
     ValueEnforcer.notNull (aXML, "XMLElement");
     ValueEnforcer.notNull (aVESRegistry, "VESRegistry");

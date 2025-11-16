@@ -22,6 +22,8 @@ import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.enforce.ValueEnforcer;
@@ -62,9 +64,6 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.wss.EWSSVersion;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Validate certain requirements imposed by the BDEW project.
  *
@@ -79,21 +78,21 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   public BDEWCompatibilityValidator ()
   {}
 
-  @Nonnull
-  private static IError _createError (@Nonnull final String sMsg)
+  @NonNull
+  private static IError _createError (@NonNull final String sMsg)
   {
     return SingleError.builderError ().errorText (sMsg).build ();
   }
 
-  @Nonnull
-  private static IError _createWarn (@Nonnull final String sMsg)
+  @NonNull
+  private static IError _createWarn (@NonNull final String sMsg)
   {
     return SingleError.builderWarn ().errorText (sMsg).build ();
   }
 
-  private static void _checkIfLegIsValid (@Nonnull final ErrorList aErrorList,
-                                          @Nonnull final PModeLeg aPModeLeg,
-                                          @Nonnull @Nonempty final String sFieldPrefix)
+  private static void _checkIfLegIsValid (@NonNull final ErrorList aErrorList,
+                                          @NonNull final PModeLeg aPModeLeg,
+                                          @NonNull @Nonempty final String sFieldPrefix)
   {
     final PModeLegProtocol aLegProtocol = aPModeLeg.getProtocol ();
     if (aLegProtocol == null)
@@ -231,10 +230,10 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       }
 
       if (aPModeLegSecurity.isUsernameTokenCreatedDefined () ||
-          aPModeLegSecurity.isUsernameTokenDigestDefined () ||
-          aPModeLegSecurity.isUsernameTokenNonceDefined () ||
-          aPModeLegSecurity.hasUsernameTokenPassword () ||
-          aPModeLegSecurity.hasUsernameTokenUsername ())
+        aPModeLegSecurity.isUsernameTokenDigestDefined () ||
+        aPModeLegSecurity.isUsernameTokenNonceDefined () ||
+        aPModeLegSecurity.hasUsernameTokenPassword () ||
+        aPModeLegSecurity.hasUsernameTokenUsername ())
       {
         aErrorList.add (_createError (sFieldPrefix + "Username nor its part MUST NOT be set"));
       }
@@ -309,8 +308,8 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       }
 
       if (aErrorHandling.getReportSenderErrorsTo () != null &&
-          aErrorHandling.getReportSenderErrorsTo ().addresses () != null &&
-          aErrorHandling.getReportSenderErrorsTo ().addresses ().isNotEmpty ())
+        aErrorHandling.getReportSenderErrorsTo ().addresses () != null &&
+        aErrorHandling.getReportSenderErrorsTo ().addresses ().isNotEmpty ())
       {
         aErrorList.add (_createError (sFieldPrefix + "ReportSenderErrorsTo must not be set"));
       }
@@ -322,9 +321,9 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   }
 
   @Override
-  public void validatePMode (@Nonnull final IPMode aPMode,
-                             @Nonnull final ErrorList aErrorList,
-                             @Nonnull final EAS4ProfileValidationMode eValidationMode)
+  public void validatePMode (@NonNull final IPMode aPMode,
+                             @NonNull final ErrorList aErrorList,
+                             @NonNull final EAS4ProfileValidationMode eValidationMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     ValueEnforcer.notNull (aErrorList, "ErrorList");
@@ -424,7 +423,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
         }
 
         if (!aPModeReceptionAwareness.isDuplicateDetectionDefined () ||
-            !aPModeReceptionAwareness.isDuplicateDetection ())
+          !aPModeReceptionAwareness.isDuplicateDetection ())
         {
           aErrorList.add (_createError ("PMode[1].ReceptionAwareness.DuplicateDetection must be defined and set to 'true'"));
         }
@@ -433,10 +432,10 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   }
 
   @Override
-  public void validateInitiatorIdentity (@Nonnull final Ebms3UserMessage aUserMsg,
+  public void validateInitiatorIdentity (@NonNull final Ebms3UserMessage aUserMsg,
                                          @Nullable final X509Certificate aSignatureCert,
-                                         @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                         @Nonnull final ErrorList aErrorList)
+                                         @NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                         @NonNull final ErrorList aErrorList)
   {
     X509Certificate aTlsClientEndCert = null;
     if (aMessageMetadata.hasRemoteTlsCerts ())
@@ -520,7 +519,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   }
 
   @Override
-  public void validateUserMessage (@Nonnull final Ebms3UserMessage aUserMsg, @Nonnull final ErrorList aErrorList)
+  public void validateUserMessage (@NonNull final Ebms3UserMessage aUserMsg, @NonNull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
 
@@ -635,7 +634,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   }
 
   @Override
-  public void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMsg, @Nonnull final ErrorList aErrorList)
+  public void validateSignalMessage (@NonNull final Ebms3SignalMessage aSignalMsg, @NonNull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aSignalMsg, "SignalMsg");
 

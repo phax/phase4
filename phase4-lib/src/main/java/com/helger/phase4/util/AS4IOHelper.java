@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.util;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.diagnostics.error.SingleError;
 import com.helger.io.file.FileOperationManager;
 import com.helger.io.file.LoggingFileOperationCallback;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * IO related helper classes
@@ -40,14 +40,14 @@ public final class AS4IOHelper
   private AS4IOHelper ()
   {}
 
-  @Nonnull
+  @NonNull
   public static FileOperationManager getFileOperationManager ()
   {
     return FOM;
   }
 
-  @Nonnull
-  public static SingleError createError (@Nonnull final String sErrorText)
+  @NonNull
+  public static SingleError createError (@NonNull final String sErrorText)
   {
     return SingleError.builderError ().errorText (sErrorText).build ();
   }

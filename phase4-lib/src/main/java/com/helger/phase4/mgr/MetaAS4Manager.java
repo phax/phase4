@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.mgr;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.style.UsedViaReflection;
@@ -30,8 +31,6 @@ import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.scope.IScope;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Meta manager with all known managers.
@@ -63,7 +62,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
    * @return The current manager factory. Never <code>null</code>.
    * @since 0.9.14
    */
-  @Nonnull
+  @NonNull
   public static IAS4ManagerFactory getFactory ()
   {
     return s_aFactory;
@@ -77,7 +76,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
    *        The new factory. May not be <code>null</code>.
    * @since 0.9.14
    */
-  public static void setFactory (@Nonnull final IAS4ManagerFactory aFactory)
+  public static void setFactory (@NonNull final IAS4ManagerFactory aFactory)
   {
     ValueEnforcer.notNull (aFactory, "Factory");
     s_aFactory = aFactory;
@@ -95,7 +94,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   {}
 
   @Override
-  protected void onAfterInstantiation (@Nonnull final IScope aScope)
+  protected void onAfterInstantiation (@NonNull final IScope aScope)
   {
     try
     {
@@ -118,37 +117,37 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
     }
   }
 
-  @Nonnull
+  @NonNull
   public static MetaAS4Manager getInstance ()
   {
     return getGlobalSingleton (MetaAS4Manager.class);
   }
 
-  @Nonnull
+  @NonNull
   public static IMPCManager getMPCMgr ()
   {
     return getInstance ().m_aMPCMgr;
   }
 
-  @Nonnull
+  @NonNull
   public static IPModeManager getPModeMgr ()
   {
     return getInstance ().m_aPModeMgr;
   }
 
-  @Nonnull
+  @NonNull
   public static IAS4DuplicateManager getIncomingDuplicateMgr ()
   {
     return getInstance ().m_aIncomingDuplicateMgr;
   }
 
-  @Nonnull
+  @NonNull
   public static IAS4ProfileManager getProfileMgr ()
   {
     return getInstance ().m_aProfileMgr;
   }
 
-  @Nonnull
+  @NonNull
   public static IAS4TimestampManager getTimestampMgr ()
   {
     // The timestamp manager may be needed during initialization of a singleton,

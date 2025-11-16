@@ -16,12 +16,11 @@
  */
 package com.helger.phase4.sender;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
 import com.helger.phase4.logging.Phase4LoggerFactory;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * A logging implementation of {@link IAS4SignalMessageValidationResultHandler}.
@@ -37,7 +36,7 @@ public class LoggingAS4SignalMsgValidationResultHandler implements IAS4SignalMes
     LOGGER.info ("All sent DSig references were contained in the AS4 Receipt message - good.");
   }
 
-  public void onError (@Nonnull @Nonempty final String sErrorMsg)
+  public void onError (@NonNull @Nonempty final String sErrorMsg)
   {
     LOGGER.error (sErrorMsg);
   }

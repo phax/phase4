@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.profile.bdew;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -26,8 +27,6 @@ import com.helger.phase4.profile.AS4Profile;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
 import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Library specific implementation of {@link IAS4ProfileRegistrarSPI}.
@@ -44,9 +43,9 @@ public final class AS4BDEWProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4BDEWProfileRegistarSPI.class);
 
-  @Nonnull
+  @NonNull
   @Nonempty
-  private static String _getTypeFromID (@Nonnull @Nonempty final String sID)
+  private static String _getTypeFromID (@NonNull @Nonempty final String sID)
   {
     if (sID.startsWith ("99"))
       return BDEWPMode.BDEW_PARTY_ID_TYPE_BDEW;
@@ -57,7 +56,7 @@ public final class AS4BDEWProfileRegistarSPI implements IAS4ProfileRegistrarSPI
     return BDEWPMode.BDEW_PARTY_ID_TYPE_GLN;
   }
 
-  public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
+  public void registerAS4Profile (@NonNull final IAS4ProfileRegistrar aRegistrar)
   {
     final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> BDEWPMode.createBDEWPMode (i,
                                                                                                    _getTypeFromID (i),

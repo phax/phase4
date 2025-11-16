@@ -19,6 +19,9 @@ package com.helger.phase4.duplicate;
 import java.time.OffsetDateTime;
 import java.util.function.Predicate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonnegative;
 import com.helger.annotation.concurrent.GuardedBy;
 import com.helger.annotation.concurrent.ThreadSafe;
@@ -33,9 +36,6 @@ import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.CommonsHashMap;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.collection.commons.ICommonsMap;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This is the duplicate checker for avoiding duplicate messages.
@@ -52,7 +52,7 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   public AS4DuplicateManagerInMemory ()
   {}
 
-  @Nonnull
+  @NonNull
   public EContinue registerAndCheck (@Nullable final String sMessageID,
                                      @Nullable final String sProfileID,
                                      @Nullable final String sPModeID)
@@ -82,15 +82,15 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
     return EContinue.CONTINUE;
   }
 
-  @Nonnull
+  @NonNull
   public EChange clearCache ()
   {
     return m_aRWLock.writeLockedGet (m_aMap::removeAll);
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
-  public ICommonsList <String> evictAllItemsBefore (@Nonnull final OffsetDateTime aRefDT)
+  public ICommonsList <String> evictAllItemsBefore (@NonNull final OffsetDateTime aRefDT)
   {
     // Get all message IDs to be removed
     final ICommonsList <String> aEvictItems = new CommonsArrayList <> ();
@@ -124,7 +124,7 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   }
 
   @Nullable
-  public IAS4DuplicateItem findFirst (@Nonnull final Predicate <? super IAS4DuplicateItem> aFilter)
+  public IAS4DuplicateItem findFirst (@NonNull final Predicate <? super IAS4DuplicateItem> aFilter)
   {
     return m_aRWLock.readLockedGet ( () -> CollectionFind.findFirst (m_aMap.values (), aFilter));
   }
@@ -138,7 +138,7 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
     return findFirst (x -> x.getMessageID ().equals (sMessageID));
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public ICommonsList <IAS4DuplicateItem> getAll ()
   {

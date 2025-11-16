@@ -19,6 +19,9 @@ package com.helger.phase4.model.pmode.leg;
 import java.io.Serializable;
 import java.util.List;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.MustImplementEqualsAndHashcode;
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -30,9 +33,6 @@ import com.helger.base.string.StringImplode;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * List of addresses in a PMode
@@ -65,7 +65,7 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
   /**
    * @return A mutable list of all contained addresses. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final ICommonsList <String> addresses ()
   {
@@ -75,7 +75,7 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
   /**
    * @return A copy of all contained addresses. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public final ICommonsList <String> getAllAddresses ()
   {
@@ -85,13 +85,13 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
   /**
    * @return All addresses as a single string, separated by a "comma char". Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public String getAsString ()
   {
     return StringImplode.imploder ().source (m_aAddresses).separator (ADDRESS_SEPARATOR).build ();
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public PModeAddressList getClone ()
   {
@@ -128,7 +128,7 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
    *        The address string to be split. May be <code>null</code>.
    * @return A non-<code>null</code> but maybe empty list.
    */
-  @Nonnull
+  @NonNull
   public static PModeAddressList createFromString (@Nullable final String sAddressString)
   {
     final List <String> aAddresses = StringHelper.getExploded (ADDRESS_SEPARATOR, sAddressString);

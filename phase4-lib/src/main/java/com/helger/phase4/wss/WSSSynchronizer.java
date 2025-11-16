@@ -20,14 +20,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.wss4j.dom.engine.WSSConfig;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.functional.IThrowingSupplier;
 import com.helger.phase4.config.AS4Configuration;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * A helper class to run all WSS stuff in a lock. {@link WSSConfig#init()} and
@@ -52,7 +51,7 @@ public final class WSSSynchronizer
    * @param aRunnable
    *        The runnable to be run. May not be <code>null</code>.
    */
-  public static void run (@Nonnull final Runnable aRunnable)
+  public static void run (@NonNull final Runnable aRunnable)
   {
     ValueEnforcer.notNull (aRunnable, "Runnable");
 
@@ -64,7 +63,7 @@ public final class WSSSynchronizer
   }
 
   @Nullable
-  public static <T, EX extends Exception> T call (@Nonnull final IThrowingSupplier <T, EX> aSupplier) throws EX
+  public static <T, EX extends Exception> T call (@NonNull final IThrowingSupplier <T, EX> aSupplier) throws EX
   {
     ValueEnforcer.notNull (aSupplier, "Supplier");
 

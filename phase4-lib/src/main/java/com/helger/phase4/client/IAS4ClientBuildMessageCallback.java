@@ -16,12 +16,11 @@
  */
 package com.helger.phase4.client;
 
+import org.jspecify.annotations.NonNull;
 import org.w3c.dom.Document;
 
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Callback interface for AS4 client message creation.
@@ -37,7 +36,7 @@ public interface IAS4ClientBuildMessageCallback
    * @param aMsg
    *        The created message
    */
-  default void onAS4Message (@Nonnull final AbstractAS4Message <?> aMsg)
+  default void onAS4Message (@NonNull final AbstractAS4Message <?> aMsg)
   {}
 
   /**
@@ -46,7 +45,7 @@ public interface IAS4ClientBuildMessageCallback
    * @param aDoc
    *        The created SOAP document
    */
-  default void onSoapDocument (@Nonnull final Document aDoc)
+  default void onSoapDocument (@NonNull final Document aDoc)
   {}
 
   /**
@@ -55,7 +54,7 @@ public interface IAS4ClientBuildMessageCallback
    * @param aDoc
    *        The signed SOAP document
    */
-  default void onSignedSoapDocument (@Nonnull final Document aDoc)
+  default void onSignedSoapDocument (@NonNull final Document aDoc)
   {}
 
   /**
@@ -65,7 +64,7 @@ public interface IAS4ClientBuildMessageCallback
    * @param aDoc
    *        The encrypted SOAP document
    */
-  default void onEncryptedSoapDocument (@Nonnull final Document aDoc)
+  default void onEncryptedSoapDocument (@NonNull final Document aDoc)
   {}
 
   /**
@@ -75,6 +74,6 @@ public interface IAS4ClientBuildMessageCallback
    * @param aMimeMsg
    *        The encrypted MIME message
    */
-  default void onEncryptedMimeMessage (@Nonnull final AS4MimeMessage aMimeMsg)
+  default void onEncryptedMimeMessage (@NonNull final AS4MimeMessage aMimeMsg)
   {}
 }

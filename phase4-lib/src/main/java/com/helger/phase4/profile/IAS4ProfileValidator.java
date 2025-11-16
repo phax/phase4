@@ -18,14 +18,14 @@ package com.helger.phase4.profile;
 
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Generic AS4 profile validator
@@ -51,9 +51,9 @@ public interface IAS4ProfileValidator
    * @param eValidationMode
    *        The validation mode to use. May not be <code>null</code>. Since v3.0.0
    */
-  default void validatePMode (@Nonnull final IPMode aPMode,
-                              @Nonnull final ErrorList aErrorList,
-                              @Nonnull final EAS4ProfileValidationMode eValidationMode)
+  default void validatePMode (@NonNull final IPMode aPMode,
+                              @NonNull final ErrorList aErrorList,
+                              @NonNull final EAS4ProfileValidationMode eValidationMode)
   {}
 
   /**
@@ -70,10 +70,10 @@ public interface IAS4ProfileValidator
    *        The error list to be filled. May not be <code>null</code>.
    * @since 2.5.0
    */
-  default void validateInitiatorIdentity (@Nonnull final Ebms3UserMessage aUserMsg,
+  default void validateInitiatorIdentity (@NonNull final Ebms3UserMessage aUserMsg,
                                           @Nullable final X509Certificate aSignCert,
-                                          @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                          @Nonnull final ErrorList aErrorList)
+                                          @NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                          @NonNull final ErrorList aErrorList)
   {}
 
   /**
@@ -84,7 +84,7 @@ public interface IAS4ProfileValidator
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
    */
-  default void validateUserMessage (@Nonnull final Ebms3UserMessage aUserMsg, @Nonnull final ErrorList aErrorList)
+  default void validateUserMessage (@NonNull final Ebms3UserMessage aUserMsg, @NonNull final ErrorList aErrorList)
   {}
 
   /**
@@ -95,6 +95,6 @@ public interface IAS4ProfileValidator
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
    */
-  default void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMsg, @Nonnull final ErrorList aErrorList)
+  default void validateSignalMessage (@NonNull final Ebms3SignalMessage aSignalMsg, @NonNull final ErrorList aErrorList)
   {}
 }

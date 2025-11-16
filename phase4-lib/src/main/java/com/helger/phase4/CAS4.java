@@ -16,11 +16,11 @@
  */
 package com.helger.phase4;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.xsds.xmldsig.CXMLDSig;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * AS4 constants
@@ -30,7 +30,7 @@ import jakarta.annotation.Nonnull;
 @Immutable
 public final class CAS4
 {
-  @Nonnull
+  @NonNull
   private static ClassLoader _getCL ()
   {
     return CAS4.class.getClassLoader ();

@@ -19,9 +19,8 @@ package com.helger.phase4.crypto;
 import java.security.KeyStore;
 
 import org.apache.wss4j.common.crypto.Crypto;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The basic phase4 crypto interface.
@@ -40,8 +39,8 @@ public interface IAS4CryptoFactory
    *        The crypto mode to use. Never <code>null</code>.
    * @return A WSS4J {@link Crypto} instance and never <code>null</code>.
    */
-  @Nonnull
-  Crypto getCrypto (@Nonnull ECryptoMode eCryptoMode);
+  @NonNull
+  Crypto getCrypto (@NonNull ECryptoMode eCryptoMode);
 
   /**
    * @return The underlying key store, or <code>null</code> if none is available (the reasons depend
@@ -54,8 +53,7 @@ public interface IAS4CryptoFactory
    * @return The underlying private key entry from the keystore or <code>null</code> if none is
    *         available (the reasons depend on the used implementation).
    */
-  @Nullable
-  KeyStore.PrivateKeyEntry getPrivateKeyEntry ();
+  KeyStore.@Nullable PrivateKeyEntry getPrivateKeyEntry ();
 
   /**
    * @return The keystore alias to resolve the private key entry. May be <code>null</code>.

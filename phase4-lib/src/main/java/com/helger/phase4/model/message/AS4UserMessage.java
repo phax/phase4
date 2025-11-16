@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.message;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
@@ -24,9 +27,6 @@ import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.model.ESoapVersion;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * AS4 user message
@@ -37,7 +37,7 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
 {
   private final Ebms3UserMessage m_aUserMessage;
 
-  public AS4UserMessage (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Ebms3UserMessage aUserMessage)
+  public AS4UserMessage (@NonNull final ESoapVersion eSoapVersion, @NonNull final Ebms3UserMessage aUserMessage)
   {
     super (eSoapVersion, EAS4MessageType.USER_MESSAGE);
 
@@ -50,27 +50,27 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
   /**
    * @return The {@link Ebms3UserMessage} passed in the constructor. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public final Ebms3UserMessage getEbms3UserMessage ()
   {
     return m_aUserMessage;
   }
 
-  @Nonnull
-  public static AS4UserMessage create (@Nonnull final ESoapVersion eSoapVersion,
-                                       @Nonnull final Ebms3UserMessage aUserMessage)
+  @NonNull
+  public static AS4UserMessage create (@NonNull final ESoapVersion eSoapVersion,
+                                       @NonNull final Ebms3UserMessage aUserMessage)
   {
     return new AS4UserMessage (eSoapVersion, aUserMessage);
   }
 
-  @Nonnull
-  public static AS4UserMessage create (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+  @NonNull
+  public static AS4UserMessage create (@NonNull final Ebms3MessageInfo aEbms3MessageInfo,
                                        @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
-                                       @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
-                                       @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
+                                       @NonNull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
+                                       @NonNull final Ebms3PartyInfo aEbms3PartyInfo,
                                        @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
                                        @Nullable final String sMPC,
-                                       @Nonnull final ESoapVersion eSoapVersion)
+                                       @NonNull final ESoapVersion eSoapVersion)
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
 

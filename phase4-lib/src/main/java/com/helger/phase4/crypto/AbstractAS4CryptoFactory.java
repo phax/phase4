@@ -19,9 +19,9 @@ package com.helger.phase4.crypto;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
-import com.helger.security.keystore.KeyStoreHelper;
+import org.jspecify.annotations.Nullable;
 
-import jakarta.annotation.Nullable;
+import com.helger.security.keystore.KeyStoreHelper;
 
 /**
  * Abstract implementation of {@link IAS4CryptoFactory}.
@@ -41,8 +41,7 @@ public abstract class AbstractAS4CryptoFactory implements IAS4CryptoFactory
    * @see #getKeyAlias()
    * @see #getKeyPasswordPerAlias(String)
    */
-  @Nullable
-  public KeyStore.PrivateKeyEntry getPrivateKeyEntry ()
+  public KeyStore.@Nullable PrivateKeyEntry getPrivateKeyEntry ()
   {
     final KeyStore aKeyStore = getKeyStore ();
     if (aKeyStore == null)

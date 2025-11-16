@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.incoming.spi;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Node;
 
 import com.helger.annotation.Nonempty;
@@ -29,9 +31,6 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.model.pmode.IPMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Implement this SPI interface to handle incoming messages appropriate.<br/>
@@ -68,15 +67,15 @@ public interface IAS4IncomingMessageProcessorSPI
    * @return A non-<code>null</code> result object. If a failure is returned, the message of the
    *         failure object itself is returned as an EBMS_OTHER error.
    */
-  @Nonnull
-  AS4MessageProcessorResult processAS4UserMessage (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                                   @Nonnull HttpHeaderMap aHttpHeaders,
-                                                   @Nonnull Ebms3UserMessage aUserMessage,
-                                                   @Nonnull IPMode aPMode,
+  @NonNull
+  AS4MessageProcessorResult processAS4UserMessage (@NonNull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                                   @NonNull HttpHeaderMap aHttpHeaders,
+                                                   @NonNull Ebms3UserMessage aUserMessage,
+                                                   @NonNull IPMode aPMode,
                                                    @Nullable Node aPayload,
                                                    @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                   @Nonnull IAS4IncomingMessageState aIncomingState,
-                                                   @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages);
+                                                   @NonNull IAS4IncomingMessageState aIncomingState,
+                                                   @NonNull ICommonsList <Ebms3Error> aProcessingErrorMessages);
 
   /**
    * Process incoming AS4 signal message - pull-request and receipt.<br>
@@ -99,13 +98,13 @@ public interface IAS4IncomingMessageProcessorSPI
    * @return A non-<code>null</code> result object. If a failure is returned, the message of the
    *         failure object itself is returned as an EBMS_OTHER error.
    */
-  @Nonnull
-  AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                                           @Nonnull HttpHeaderMap aHttpHeaders,
-                                                           @Nonnull Ebms3SignalMessage aSignalMessage,
+  @NonNull
+  AS4SignalMessageProcessorResult processAS4SignalMessage (@NonNull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                                           @NonNull HttpHeaderMap aHttpHeaders,
+                                                           @NonNull Ebms3SignalMessage aSignalMessage,
                                                            @Nullable IPMode aPMode,
-                                                           @Nonnull IAS4IncomingMessageState aIncomingState,
-                                                           @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages);
+                                                           @NonNull IAS4IncomingMessageState aIncomingState,
+                                                           @NonNull ICommonsList <Ebms3Error> aProcessingErrorMessages);
 
   /**
    * Optional callback to process a response message
@@ -128,9 +127,9 @@ public interface IAS4IncomingMessageProcessorSPI
    *        returned message.
    * @since v0.9.8
    */
-  void processAS4ResponseMessage (@Nonnull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                  @Nonnull IAS4IncomingMessageState aIncomingState,
-                                  @Nonnull @Nonempty String sResponseMessageID,
+  void processAS4ResponseMessage (@NonNull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                  @NonNull IAS4IncomingMessageState aIncomingState,
+                                  @NonNull @Nonempty String sResponseMessageID,
                                   @Nullable byte [] aResponseBytes,
                                   boolean bResponsePayloadIsAvailable);
 }

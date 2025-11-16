@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.config;
 
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.base.thirdparty.ELicense;
 import com.helger.base.thirdparty.IThirdPartyModule;
 import com.helger.base.thirdparty.IThirdPartyModuleProviderSPI;
 import com.helger.base.thirdparty.ThirdPartyModule;
 import com.helger.base.version.Version;
-
-import jakarta.annotation.Nullable;
 
 /**
  * Implement this SPI interface if your JAR file contains external third party modules.

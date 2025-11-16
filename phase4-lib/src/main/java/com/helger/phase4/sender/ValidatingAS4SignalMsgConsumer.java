@@ -19,6 +19,9 @@ package com.helger.phase4.sender;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.equals.EqualsHelper;
 import com.helger.collection.CollectionFind;
@@ -33,9 +36,6 @@ import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.xsds.xmldsig.ReferenceType;
 import com.helger.xsds.xmldsig.TransformType;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Specific wrapped {@link IAS4SignalMessageConsumer} that verifies the DSig References between the
@@ -66,7 +66,7 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
    *        The result handler to be invoked. May be <code>null</code> in which case some default
    *        messages will be logged.
    */
-  public ValidatingAS4SignalMsgConsumer (@Nonnull final AS4ClientSentMessage <?> aClientSetMsg,
+  public ValidatingAS4SignalMsgConsumer (@NonNull final AS4ClientSentMessage <?> aClientSetMsg,
                                          @Nullable final IAS4SignalMessageConsumer aOriginalConsumer,
                                          @Nullable final IAS4SignalMessageValidationResultHandler aResultHandler)
   {
@@ -118,8 +118,8 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
    * @return <code>true</code> if they are equivalent, <code>false</code> if not.
    * @since 3.0.7
    */
-  public static boolean areSemanticallyEquivalent (@Nonnull final ReferenceType aRef1,
-                                                   @Nonnull final ReferenceType aRef2)
+  public static boolean areSemanticallyEquivalent (@NonNull final ReferenceType aRef1,
+                                                   @NonNull final ReferenceType aRef2)
   {
     // Reference URI
     if (!EqualsHelper.equals (aRef1.getURI (), aRef2.getURI ()))
@@ -148,9 +148,9 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
     return true;
   }
 
-  public void handleSignalMessage (@Nonnull final Ebms3SignalMessage aEbmsSignalMsg,
-                                   @Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                   @Nonnull final IAS4IncomingMessageState aIncomingState) throws Phase4Exception
+  public void handleSignalMessage (@NonNull final Ebms3SignalMessage aEbmsSignalMsg,
+                                   @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                   @NonNull final IAS4IncomingMessageState aIncomingState) throws Phase4Exception
   {
     boolean bComparedReferences = false;
     if (m_aClientSetMsg.getBuiltMessage ().hasDSReferences () &&

@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.incoming.crypto;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Interface to configure the security configuration for incoming messages.
@@ -42,7 +42,7 @@ public interface IAS4IncomingSecurityConfiguration
    * @return A clone of the existing signing parameters or a new object. Never <code>null</code>.
    * @since 2.3.0
    */
-  @Nonnull
+  @NonNull
   default AS4SigningParams getSigningParamsCloneOrNew ()
   {
     final AS4SigningParams a = getSigningParams ();
@@ -60,7 +60,7 @@ public interface IAS4IncomingSecurityConfiguration
    * @return A clone of the existing crypt parameters or a new object. Never <code>null</code>.
    * @since 2.3.0
    */
-  @Nonnull
+  @NonNull
   default AS4CryptParams getCryptParamsCloneOrNew ()
   {
     final AS4CryptParams a = getCryptParams ();

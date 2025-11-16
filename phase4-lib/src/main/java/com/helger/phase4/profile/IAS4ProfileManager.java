@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.profile;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.collection.commons.ICommonsList;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Base interface for an AS4 profile manager.
@@ -33,7 +33,7 @@ public interface IAS4ProfileManager extends IAS4ProfileRegistrar
   /**
    * @return A non-<code>null</code> but maybe empty list of all contained profiles.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   ICommonsList <IAS4Profile> getAllProfiles ();
 

@@ -18,11 +18,11 @@ package com.helger.phase4.logging;
 
 import java.util.concurrent.Callable;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * The logging customizer for the phase4 library.
@@ -105,7 +105,7 @@ public final class Phase4LogCustomizer
    */
   public static void runWithLogPrefixAndSuffix (@Nullable final String sPrefix,
                                                 @Nullable final String sSuffix,
-                                                @Nonnull final Runnable aRunnable)
+                                                @NonNull final Runnable aRunnable)
   {
     ValueEnforcer.notNull (aRunnable, "Runnable");
 
@@ -138,7 +138,7 @@ public final class Phase4LogCustomizer
    */
   public static <T> T callWithLogPrefixAndSuffix (@Nullable final String sPrefix,
                                                   @Nullable final String sSuffix,
-                                                  @Nonnull final Callable <T> aCallable) throws Exception
+                                                  @NonNull final Callable <T> aCallable) throws Exception
   {
     ValueEnforcer.notNull (aCallable, "Callable");
 

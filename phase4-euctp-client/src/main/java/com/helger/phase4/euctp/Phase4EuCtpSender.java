@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.euctp;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 
-import jakarta.annotation.Nonnull;
-
 /**
- * This class contains all the specifics to send AS4 messages with the euctp
- * profile. See <code>sendAS4Message</code> as the main method to trigger the
- * sending, with all potential customization.
+ * This class contains all the specifics to send AS4 messages with the euctp profile. See
+ * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
+ * customization.
  *
  * @author Ulrik Stehling
  */
@@ -34,30 +34,29 @@ public final class Phase4EuCtpSender
   {}
 
   /**
-   * @return Create a new Builder for AS4 User Messages if the payload is
-   *         present. Never <code>null</code>.
+   * @return Create a new Builder for AS4 User Messages if the payload is present. Never
+   *         <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static EuCtpUserMessageBuilder builderUserMessage ()
   {
     return new EuCtpUserMessageBuilder ();
   }
 
   /**
-   * @return Create a new Builder for AS4 Pull Requests. Never
-   *         <code>null</code>.
+   * @return Create a new Builder for AS4 Pull Requests. Never <code>null</code>.
    * @since 3.0.0
    */
-  @Nonnull
+  @NonNull
   public static EuCtpPullRequestBuilder builderPullRequest ()
   {
     return new EuCtpPullRequestBuilder ();
   }
 
   /**
-   * The builder class for sending AS4 User Messages using EuCTP profile
-   * specifics. Use {@link #sendMessage()} or
-   * {@link #sendMessageAndCheckForReceipt()} to trigger the main transmission.
+   * The builder class for sending AS4 User Messages using EuCTP profile specifics. Use
+   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to trigger the main
+   * transmission.
    *
    * @author Ulrik Stehling
    */
@@ -65,13 +64,12 @@ public final class Phase4EuCtpSender
   {
     public EuCtpUserMessageBuilder ()
     {
-      super ();
     }
   }
 
   /**
-   * The builder class for sending AS4 Pull Requests using EuCTP profile
-   * specifics. Use {@link #sendMessage()} to trigger the main transmission.
+   * The builder class for sending AS4 Pull Requests using EuCTP profile specifics. Use
+   * {@link #sendMessage()} to trigger the main transmission.
    *
    * @author Philip Helger
    */
@@ -79,7 +77,6 @@ public final class Phase4EuCtpSender
   {
     public EuCtpPullRequestBuilder ()
     {
-      super ();
     }
   }
 }

@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -32,9 +34,6 @@ import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.EAS4MessageMode;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * File based implementation of {@link IAS4OutgoingDumper}.
@@ -72,23 +71,23 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
    * @param aFileProvider
    *        The file provider that defines where to store the files. May not be <code>null</code>.
    */
-  public AS4OutgoingDumperFileBased (@Nonnull final IAS4OutgoingDumperFileProvider aFileProvider)
+  public AS4OutgoingDumperFileBased (@NonNull final IAS4OutgoingDumperFileProvider aFileProvider)
   {
     ValueEnforcer.notNull (aFileProvider, "FileProvider");
     m_aFileProvider = aFileProvider;
   }
 
-  @Nonnull
+  @NonNull
   protected final IAS4OutgoingDumperFileProvider getFileProvider ()
   {
     return m_aFileProvider;
   }
 
   @Override
-  protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
+  protected OutputStream openOutputStream (@NonNull final EAS4MessageMode eMsgMode,
                                            @Nullable final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                            @Nullable final IAS4IncomingMessageState aIncomingState,
-                                           @Nonnull @Nonempty final String sMessageID,
+                                           @NonNull @Nonempty final String sMessageID,
                                            @Nullable final HttpHeaderMap aCustomHeaders,
                                            @Nonnegative final int nTry) throws IOException
   {
@@ -108,8 +107,8 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
    * @return The created dumper. Never <code>null</code>.
    * @since 0.10.2
    */
-  @Nonnull
-  public static AS4OutgoingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
+  @NonNull
+  public static AS4OutgoingDumperFileBased createForDirectory (@NonNull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
     return new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> new File (aBaseDirectory,

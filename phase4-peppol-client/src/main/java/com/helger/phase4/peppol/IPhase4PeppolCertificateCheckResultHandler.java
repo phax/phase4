@@ -19,11 +19,11 @@ package com.helger.phase4.peppol;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.certificate.ECertificateCheckResult;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Interface for handling Peppol certification validations results
@@ -46,6 +46,6 @@ public interface IPhase4PeppolCertificateCheckResultHandler
    *         Implementation dependent
    */
   void onCertificateCheckResult (@Nullable X509Certificate aAPCertificate,
-                                 @Nonnull OffsetDateTime aCheckDT,
-                                 @Nonnull ECertificateCheckResult eCertCheckResult) throws Phase4Exception;
+                                 @NonNull OffsetDateTime aCheckDT,
+                                 @NonNull ECertificateCheckResult eCertCheckResult) throws Phase4Exception;
 }

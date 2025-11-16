@@ -17,6 +17,8 @@
 package com.helger.phase4.dbnalliance.server.api;
 
 import org.apache.hc.client5.http.HttpResponseException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.base.debug.GlobalDebug;
@@ -28,8 +30,6 @@ import com.helger.photon.api.InvokableAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
@@ -41,12 +41,12 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (APIExceptionMapper.class);
 
-  private static void _logRestException (@Nonnull final String sMsg, @Nonnull final Throwable t)
+  private static void _logRestException (@NonNull final String sMsg, @NonNull final Throwable t)
   {
     LOGGER.error (sMsg, t);
   }
 
-  private static void _setSimpleTextResponse (@Nonnull final UnifiedResponse aUnifiedResponse,
+  private static void _setSimpleTextResponse (@NonNull final UnifiedResponse aUnifiedResponse,
                                               final int nStatusCode,
                                               @Nullable final String sContent)
   {
@@ -56,17 +56,16 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
       aUnifiedResponse.disableCaching ();
   }
 
-  @Nonnull
-  public EHandled applyExceptionOnResponse (@Nonnull final InvokableAPIDescriptor aInvokableDescriptor,
-                                            @Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                            @Nonnull final UnifiedResponse aUnifiedResponse,
-                                            @Nonnull final Throwable aThrowable)
+  @NonNull
+  public EHandled applyExceptionOnResponse (@NonNull final InvokableAPIDescriptor aInvokableDescriptor,
+                                            @NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                                            @NonNull final UnifiedResponse aUnifiedResponse,
+                                            @NonNull final Throwable aThrowable)
   {
     // From specific to general
-    if (aThrowable instanceof HttpResponseException)
+    if (aThrowable instanceof final HttpResponseException aEx)
     {
       _logRestException ("HttpResponse exception", aThrowable);
-      final HttpResponseException aEx = (HttpResponseException) aThrowable;
       _setSimpleTextResponse (aUnifiedResponse, aEx.getStatusCode (), aEx.getReasonPhrase ());
       return EHandled.HANDLED;
     }

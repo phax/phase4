@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -26,9 +29,6 @@ import com.helger.base.hashcode.HashCodeGenerator;
 import com.helger.base.string.StringHelper;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.phase4.ebms3header.Ebms3Property;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Represents a single message property.
@@ -42,9 +42,9 @@ public class MessageProperty
   private final String m_sType;
   private final String m_sValue;
 
-  public MessageProperty (@Nonnull @Nonempty final String sName,
+  public MessageProperty (@NonNull @Nonempty final String sName,
                           @Nullable final String sType,
-                          @Nonnull @Nonempty final String sValue)
+                          @NonNull @Nonempty final String sValue)
   {
     ValueEnforcer.notEmpty (sName, "Name");
     ValueEnforcer.notEmpty (sValue, "Value");
@@ -53,7 +53,7 @@ public class MessageProperty
     m_sValue = sValue;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getName ()
   {
@@ -66,14 +66,14 @@ public class MessageProperty
     return m_sType;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public final String getValue ()
   {
     return m_sValue;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public Ebms3Property getAsEbms3Property ()
   {
@@ -112,13 +112,13 @@ public class MessageProperty
                                        .getToString ();
   }
 
-  @Nonnull
+  @NonNull
   public static Builder builder ()
   {
     return new Builder ();
   }
 
-  @Nonnull
+  @NonNull
   public static Builder builder (@Nullable final Ebms3Property a)
   {
     final Builder ret = new Builder ();
@@ -136,21 +136,21 @@ public class MessageProperty
     protected Builder ()
     {}
 
-    @Nonnull
+    @NonNull
     public Builder name (@Nullable final String s)
     {
       m_sName = s;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Builder type (@Nullable final String s)
     {
       m_sType = s;
       return this;
     }
 
-    @Nonnull
+    @NonNull
     public Builder value (@Nullable final String s)
     {
       m_sValue = s;
@@ -166,7 +166,7 @@ public class MessageProperty
         throw new IllegalStateException ("Value MUST be present");
     }
 
-    @Nonnull
+    @NonNull
     public MessageProperty build ()
     {
       checkConsistency ();

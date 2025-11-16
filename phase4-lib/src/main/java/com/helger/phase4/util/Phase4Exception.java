@@ -16,8 +16,8 @@
  */
 package com.helger.phase4.util;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * phase4 base exception. It is just a in-between exception for easy catching of all phase4 related
@@ -36,7 +36,7 @@ public class Phase4Exception extends Exception
    * @param sMessage
    *        Error message
    */
-  public Phase4Exception (@Nonnull final String sMessage)
+  public Phase4Exception (@NonNull final String sMessage)
   {
     super (sMessage);
   }
@@ -47,7 +47,7 @@ public class Phase4Exception extends Exception
    * @param aCause
    *        Optional causing exception
    */
-  public Phase4Exception (@Nonnull final String sMessage, @Nullable final Throwable aCause)
+  public Phase4Exception (@NonNull final String sMessage, @Nullable final Throwable aCause)
   {
     super (sMessage, aCause);
   }
@@ -69,7 +69,7 @@ public class Phase4Exception extends Exception
    * @return this for chaining
    * @since 3.2.0
    */
-  @Nonnull
+  @NonNull
   public final Phase4Exception setRetryFeasible (final boolean b)
   {
     m_bRetryFeasible = b;

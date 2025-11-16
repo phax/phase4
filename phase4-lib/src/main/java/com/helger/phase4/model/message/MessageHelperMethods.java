@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
@@ -64,9 +66,6 @@ import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.xmldsig.ReferenceType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * This class contains every method, static variables which are used by more than one message
  * creating classes in this package.
@@ -95,7 +94,7 @@ public final class MessageHelperMethods
   private MessageHelperMethods ()
   {}
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public static String createRandomConversationID ()
   {
@@ -144,7 +143,7 @@ public final class MessageHelperMethods
    *
    * @return A new random AS4 Message ID. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public static String createRandomMessageID ()
   {
@@ -156,7 +155,7 @@ public final class MessageHelperMethods
   /**
    * @return A random Content-ID that adheres to RFC 822. Neither <code>null</code> nor empty.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public static String createRandomContentID ()
   {
@@ -164,7 +163,7 @@ public final class MessageHelperMethods
     return CAS4.LIB_NAME + "-att-" + UUID.randomUUID ().toString () + "@cid";
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public static String createRandomMessagingID ()
   {
@@ -174,7 +173,7 @@ public final class MessageHelperMethods
     return CAS4.LIB_NAME + "-msg-" + UUID.randomUUID ().toString ();
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public static String createRandomWSUID ()
   {
@@ -186,7 +185,7 @@ public final class MessageHelperMethods
    *
    * @return Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static Ebms3MessageInfo createEbms3MessageInfo ()
   {
     return createEbms3MessageInfo (createRandomMessageID (), null);
@@ -199,7 +198,7 @@ public final class MessageHelperMethods
    *        The message ID of the referenced message. May be <code>null</code>.
    * @return Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sRefToMessageID)
   {
     return createEbms3MessageInfo (createRandomMessageID (), sRefToMessageID);
@@ -214,8 +213,8 @@ public final class MessageHelperMethods
    *        to set the reference to the previous message needed for two way exchanges
    * @return Never <code>null</code>.
    */
-  @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
+  @NonNull
+  public static Ebms3MessageInfo createEbms3MessageInfo (@NonNull @Nonempty final String sMessageID,
                                                          @Nullable final String sRefToMessageID)
   {
     return createEbms3MessageInfo (sMessageID,
@@ -235,10 +234,10 @@ public final class MessageHelperMethods
    * @return Never <code>null</code>.
    * @since 0.12.0
    */
-  @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
+  @NonNull
+  public static Ebms3MessageInfo createEbms3MessageInfo (@NonNull @Nonempty final String sMessageID,
                                                          @Nullable final String sRefToMessageID,
-                                                         @Nonnull final OffsetDateTime aDateTime)
+                                                         @NonNull final OffsetDateTime aDateTime)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
     ValueEnforcer.notNull (aDateTime, "DateTime");
@@ -254,9 +253,9 @@ public final class MessageHelperMethods
     return aMessageInfo;
   }
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
-  public static Ebms3Description createEbms3Description (@Nonnull final Locale aLocale, @Nonnull final String sText)
+  public static Ebms3Description createEbms3Description (@NonNull final Locale aLocale, @NonNull final String sText)
   {
     ValueEnforcer.notNull (aLocale, "Locale");
     ValueEnforcer.notNull (sText, "Text");
@@ -267,16 +266,16 @@ public final class MessageHelperMethods
     return aDesc;
   }
 
-  @Nonnull
-  public static Ebms3Property createEbms3Property (@Nonnull @Nonempty final String sName, @Nonnull final String sValue)
+  @NonNull
+  public static Ebms3Property createEbms3Property (@NonNull @Nonempty final String sName, @NonNull final String sValue)
   {
     return createEbms3Property (sName, null, sValue);
   }
 
-  @Nonnull
-  public static Ebms3Property createEbms3Property (@Nonnull @Nonempty final String sName,
+  @NonNull
+  public static Ebms3Property createEbms3Property (@NonNull @Nonempty final String sName,
                                                    @Nullable final String sType,
-                                                   @Nonnull final String sValue)
+                                                   @NonNull final String sValue)
   {
     ValueEnforcer.notEmpty (sName, "Name");
     ValueEnforcer.notNull (sValue, "Value");
@@ -288,14 +287,14 @@ public final class MessageHelperMethods
     return aProp;
   }
 
-  @Nonnull
-  public static Ebms3PartyId createEbms3PartyId (@Nonnull @Nonempty final String sValue)
+  @NonNull
+  public static Ebms3PartyId createEbms3PartyId (@NonNull @Nonempty final String sValue)
   {
     return createEbms3PartyId (null, sValue);
   }
 
-  @Nonnull
-  public static Ebms3PartyId createEbms3PartyId (@Nullable final String sType, @Nonnull @Nonempty final String sValue)
+  @NonNull
+  public static Ebms3PartyId createEbms3PartyId (@Nullable final String sType, @NonNull @Nonempty final String sValue)
   {
     ValueEnforcer.notEmpty (sValue, "Value");
 
@@ -305,8 +304,8 @@ public final class MessageHelperMethods
     return ret;
   }
 
-  @Nonnull
-  public static Ebms3PartyInfo createEbms3ReversePartyInfo (@Nonnull final Ebms3PartyInfo aOrigPartyInfo)
+  @NonNull
+  public static Ebms3PartyInfo createEbms3ReversePartyInfo (@NonNull final Ebms3PartyInfo aOrigPartyInfo)
   {
     ValueEnforcer.notNull (aOrigPartyInfo, "OriginalPartyInfo");
 
@@ -317,22 +316,22 @@ public final class MessageHelperMethods
                                  aOrigPartyInfo.getFrom ().getPartyIdAtIndex (0).getValue ());
   }
 
-  @Nonnull
-  public static Ebms3PartyInfo createEbms3PartyInfo (@Nonnull @Nonempty final String sFromRole,
-                                                     @Nonnull @Nonempty final String sFromPartyID,
-                                                     @Nonnull @Nonempty final String sToRole,
-                                                     @Nonnull @Nonempty final String sToPartyID)
+  @NonNull
+  public static Ebms3PartyInfo createEbms3PartyInfo (@NonNull @Nonempty final String sFromRole,
+                                                     @NonNull @Nonempty final String sFromPartyID,
+                                                     @NonNull @Nonempty final String sToRole,
+                                                     @NonNull @Nonempty final String sToPartyID)
   {
     return createEbms3PartyInfo (sFromRole, null, sFromPartyID, sToRole, null, sToPartyID);
   }
 
-  @Nonnull
-  public static Ebms3PartyInfo createEbms3PartyInfo (@Nonnull @Nonempty final String sFromRole,
+  @NonNull
+  public static Ebms3PartyInfo createEbms3PartyInfo (@NonNull @Nonempty final String sFromRole,
                                                      @Nullable final String sFromPartyIDType,
-                                                     @Nonnull @Nonempty final String sFromPartyID,
-                                                     @Nonnull @Nonempty final String sToRole,
+                                                     @NonNull @Nonempty final String sFromPartyID,
+                                                     @NonNull @Nonempty final String sToRole,
                                                      @Nullable final String sToPartyIDType,
-                                                     @Nonnull @Nonempty final String sToPartyID)
+                                                     @NonNull @Nonempty final String sToPartyID)
   {
     ValueEnforcer.notEmpty (sFromRole, "FromRole");
     ValueEnforcer.notEmpty (sFromPartyID, "FromPartyID");
@@ -376,14 +375,14 @@ public final class MessageHelperMethods
     return aEbms3MessageProperties;
   }
 
-  @Nonnull
+  @NonNull
   public static Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nullable final String sAgreementRefPMode,
                                                                      @Nullable final String sAgreementRefValue,
                                                                      @Nullable final String sAgreementTypeValue,
                                                                      @Nullable final String sServiceType,
-                                                                     @Nonnull @Nonempty final String sServiceValue,
-                                                                     @Nonnull @Nonempty final String sAction,
-                                                                     @Nonnull final String sConversationID)
+                                                                     @NonNull @Nonempty final String sServiceValue,
+                                                                     @NonNull @Nonempty final String sAction,
+                                                                     @NonNull final String sConversationID)
   {
     ValueEnforcer.notEmpty (sServiceValue, "ServiceValue");
     ValueEnforcer.notEmpty (sAction, "Action");
@@ -491,7 +490,7 @@ public final class MessageHelperMethods
    * @return A non-<code>null</code> but maybe empty list of Reference nodes.
    * @see #getAllDSigReferences(Node)
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsList <Node> getAllDSigReferenceNodes (@Nullable final Node aSoapDocument)
   {
@@ -531,7 +530,7 @@ public final class MessageHelperMethods
    *        The SOAP document to search in. May be <code>null</code>.
    * @return A non-<code>null</code> but maybe empty list of {@link ReferenceType} object.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static ICommonsList <ReferenceType> getAllDSigReferences (@Nullable final Node aSoapDocument)
   {

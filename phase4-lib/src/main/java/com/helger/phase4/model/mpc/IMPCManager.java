@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.mpc;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.state.EChange;
 import com.helger.base.string.StringHelper;
 import com.helger.phase4.CAS4;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Interface for an MPC (Message Partition Channel) manager
@@ -37,7 +37,7 @@ public interface IMPCManager
    * @param aMPC
    *        The MPC to be added. May not be <code>null</code>.
    */
-  void createMPC (@Nonnull MPC aMPC);
+  void createMPC (@NonNull MPC aMPC);
 
   /**
    * Update an existing MPC
@@ -46,8 +46,8 @@ public interface IMPCManager
    *        The MPC to be updated. May not be <code>null</code>.
    * @return {@link EChange#CHANGED} if something changed, {@link EChange#UNCHANGED} otherwise.
    */
-  @Nonnull
-  EChange updateMPC (@Nonnull IMPC aMPC);
+  @NonNull
+  EChange updateMPC (@NonNull IMPC aMPC);
 
   /**
    * Mark the MPC with the provided ID as deleted.
@@ -57,7 +57,7 @@ public interface IMPCManager
    * @return {@link EChange#CHANGED} if marking as deleted succeeded, {@link EChange#UNCHANGED}
    *         otherwise.
    */
-  @Nonnull
+  @NonNull
   EChange markMPCDeleted (@Nullable String sMPCID);
 
   /**
@@ -67,7 +67,7 @@ public interface IMPCManager
    *        The ID of the MPC to be deleted. May be <code>null</code>.
    * @return {@link EChange#CHANGED} if deleting succeeded, {@link EChange#UNCHANGED} otherwise.
    */
-  @Nonnull
+  @NonNull
   EChange deleteMPC (@Nullable String sMPCID);
 
   /**

@@ -17,13 +17,12 @@
 package com.helger.phase4.crypto;
 
 import org.apache.xml.security.signature.XMLSignature;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.lang.EnumHelper;
 import com.helger.base.string.StringHelper;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This enum contains all signing supported crypto algorithms.
@@ -52,20 +51,20 @@ public enum ECryptoAlgorithmSign implements ICryptoAlgorithmSign
   private final String m_sID;
   private final String m_sAlgorithmURI;
 
-  ECryptoAlgorithmSign (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sAlgorithmURI)
+  ECryptoAlgorithmSign (@NonNull @Nonempty final String sID, @NonNull @Nonempty final String sAlgorithmURI)
   {
     m_sID = sID;
     m_sAlgorithmURI = sAlgorithmURI;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
     return m_sID;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getAlgorithmURI ()
   {
@@ -78,7 +77,7 @@ public enum ECryptoAlgorithmSign implements ICryptoAlgorithmSign
     return EnumHelper.getFromIDOrNull (ECryptoAlgorithmSign.class, sID);
   }
 
-  @Nonnull
+  @NonNull
   public static ECryptoAlgorithmSign getFromIDOrThrow (@Nullable final String sID)
   {
     return EnumHelper.getFromIDOrThrow (ECryptoAlgorithmSign.class, sID);

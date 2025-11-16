@@ -16,13 +16,13 @@
  */
 package com.helger.phase4.model.error;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.lang.EnumHelper;
 import com.helger.base.string.StringHelper;
 import com.helger.diagnostics.error.IError;
 import com.helger.text.display.IHasDisplayText;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Enumeration with all predefined EBMS errors based on the specs. Use {@link IEbmsError} for a
@@ -134,11 +134,11 @@ public enum EEbmsError implements IEbmsError
   private final IHasDisplayText m_aDescription;
   private final EEbmsErrorCategory m_eCategory;
 
-  EEbmsError (@Nonnull final String sErrorCode,
-              @Nonnull final EEbmsErrorSeverity eSeverity,
-              @Nonnull final String sShortDescription,
-              @Nonnull final IHasDisplayText aDescription,
-              @Nonnull final EEbmsErrorCategory eCategory)
+  EEbmsError (@NonNull final String sErrorCode,
+              @NonNull final EEbmsErrorSeverity eSeverity,
+              @NonNull final String sShortDescription,
+              @NonNull final IHasDisplayText aDescription,
+              @NonNull final EEbmsErrorCategory eCategory)
   {
     m_sErrorCode = sErrorCode;
     m_eSeverity = eSeverity;
@@ -147,31 +147,31 @@ public enum EEbmsError implements IEbmsError
     m_eCategory = eCategory;
   }
 
-  @Nonnull
+  @NonNull
   public String getErrorCode ()
   {
     return m_sErrorCode;
   }
 
-  @Nonnull
+  @NonNull
   public EEbmsErrorSeverity getSeverity ()
   {
     return m_eSeverity;
   }
 
-  @Nonnull
+  @NonNull
   public String getShortDescription ()
   {
     return m_sShortDescription;
   }
 
-  @Nonnull
+  @NonNull
   public IHasDisplayText getDescription ()
   {
     return m_aDescription;
   }
 
-  @Nonnull
+  @NonNull
   public EEbmsErrorCategory getCategory ()
   {
     return m_eCategory;

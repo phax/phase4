@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -60,9 +62,6 @@ import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Example for sending something to the Qvalia [SE] test endpoint.
@@ -140,10 +139,10 @@ public final class MainPhase4PeppolSenderQvalia
     final AS4OutgoingDumperFileBased aODF = new AS4OutgoingDumperFileBased ()
     {
       @Override
-      protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
+      protected OutputStream openOutputStream (@NonNull final EAS4MessageMode eMsgMode,
                                                @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
                                                @Nullable final IAS4IncomingMessageState aState,
-                                               @Nonnull @Nonempty final String sMessageID,
+                                               @NonNull @Nonempty final String sMessageID,
                                                @Nullable final HttpHeaderMap aCustomHeaders,
                                                @Nonnegative final int nTry) throws IOException
       {

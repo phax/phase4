@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
 import com.helger.annotation.style.ReturnsMutableCopy;
@@ -40,8 +41,6 @@ import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
 
-import jakarta.annotation.Nonnull;
-
 /**
  * Create the demo application status information
  *
@@ -52,7 +51,7 @@ public class Phase4PeppolStatusXServletHandler implements IXServletSimpleHandler
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolStatusXServletHandler.class);
   private static final Charset CHARSET = StandardCharsets.UTF_8;
 
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   public static IJsonObject getDefaultStatusData ()
   {
@@ -85,8 +84,8 @@ public class Phase4PeppolStatusXServletHandler implements IXServletSimpleHandler
     return aStatusData;
   }
 
-  public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                             @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  public void handleRequest (@NonNull final IRequestWebScopeWithoutResponse aRequestScope,
+                             @NonNull final UnifiedResponse aUnifiedResponse) throws Exception
   {
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Status information requested");

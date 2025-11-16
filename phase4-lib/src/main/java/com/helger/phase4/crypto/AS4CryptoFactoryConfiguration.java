@@ -20,6 +20,8 @@ import java.security.KeyStore.PrivateKeyEntry;
 import java.util.Locale;
 
 import org.apache.wss4j.common.crypto.Merlin;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
@@ -33,9 +35,6 @@ import com.helger.security.keystore.IKeyStoreAndKeyDescriptor;
 import com.helger.security.keystore.ITrustStoreDescriptor;
 import com.helger.security.keystore.LoadedKey;
 import com.helger.security.keystore.LoadedKeyStore;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * phase4 crypto factory settings based on {@link IConfig}. The configuration elements are solely
@@ -57,7 +56,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    * @throws Phase4RuntimeException
    *         if one of the mandatory configuration parameters is not present.
    */
-  @Nonnull
+  @NonNull
   public static AS4CryptoFactoryConfiguration getDefaultInstance () throws Phase4RuntimeException
   {
     // Don't store this in a static variable, because it may fail if the
@@ -99,14 +98,14 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    * @throws Phase4RuntimeException
    *         If loading the key store configuration from configuration fails.
    */
-  public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig) throws Phase4RuntimeException
+  public AS4CryptoFactoryConfiguration (@NonNull final IConfigWithFallback aConfig) throws Phase4RuntimeException
   {
     this (aConfig, CAS4Crypto.DEFAULT_CONFIG_PREFIX);
   }
 
-  @Nonnull
-  private static IKeyStoreAndKeyDescriptor _loadKeyStore (@Nonnull final IConfigWithFallback aConfig,
-                                                          @Nonnull @Nonempty final String sConfigPrefix,
+  @NonNull
+  private static IKeyStoreAndKeyDescriptor _loadKeyStore (@NonNull final IConfigWithFallback aConfig,
+                                                          @NonNull @Nonempty final String sConfigPrefix,
                                                           final boolean bLogError) throws Phase4RuntimeException
   {
     // Load the keystore - may be null
@@ -149,8 +148,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
   }
 
   @Nullable
-  private static ITrustStoreDescriptor _loadTrustStore (@Nonnull final IConfigWithFallback aConfig,
-                                                        @Nonnull @Nonempty final String sConfigPrefix,
+  private static ITrustStoreDescriptor _loadTrustStore (@NonNull final IConfigWithFallback aConfig,
+                                                        @NonNull @Nonempty final String sConfigPrefix,
                                                         final boolean bLogError)
   {
     // Load the trust store - may be null
@@ -182,8 +181,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    * @throws Phase4RuntimeException
    *         If loading the key store configuration from configuration fails.
    */
-  public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig,
-                                        @Nonnull @Nonempty final String sConfigPrefix) throws Phase4RuntimeException
+  public AS4CryptoFactoryConfiguration (@NonNull final IConfigWithFallback aConfig,
+                                        @NonNull @Nonempty final String sConfigPrefix) throws Phase4RuntimeException
   {
     // Log warning for backward compatibility reasons
     this (aConfig, sConfigPrefix, true);
@@ -203,8 +202,8 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    * @throws Phase4RuntimeException
    *         If loading the key store configuration from configuration fails.
    */
-  public AS4CryptoFactoryConfiguration (@Nonnull final IConfigWithFallback aConfig,
-                                        @Nonnull @Nonempty final String sConfigPrefix,
+  public AS4CryptoFactoryConfiguration (@NonNull final IConfigWithFallback aConfig,
+                                        @NonNull @Nonempty final String sConfigPrefix,
                                         final boolean bLogError) throws Phase4RuntimeException
   {
     this (_loadKeyStore (aConfig, sConfigPrefix, bLogError), _loadTrustStore (aConfig, sConfigPrefix, bLogError));
@@ -219,7 +218,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
    *        The trust store descriptor. May be <code>null</code> in which case the global JRE CA
    *        certs list will be used.
    */
-  private AS4CryptoFactoryConfiguration (@Nonnull final IKeyStoreAndKeyDescriptor aKeyStoreDesc,
+  private AS4CryptoFactoryConfiguration (@NonNull final IKeyStoreAndKeyDescriptor aKeyStoreDesc,
                                          @Nullable final ITrustStoreDescriptor aTrustStoreDesc)
   {
     super (aKeyStoreDesc, aTrustStoreDesc);
@@ -230,7 +229,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
   /**
    * @return The descriptor used to load the key store. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public IKeyStoreAndKeyDescriptor getKeyStoreDescriptor ()
   {
     return m_aKeyStoreDesc;
@@ -239,7 +238,7 @@ public class AS4CryptoFactoryConfiguration extends AS4CryptoFactoryInMemoryKeySt
   /**
    * @return The descriptor used to load the trust store. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public ITrustStoreDescriptor getTrustStoreDescriptor ()
   {
     return m_aTrustStorDesc;

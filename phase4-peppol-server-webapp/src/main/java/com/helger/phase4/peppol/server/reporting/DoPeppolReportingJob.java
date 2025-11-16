@@ -18,6 +18,7 @@ package com.helger.phase4.peppol.server.reporting;
 
 import java.time.YearMonth;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.base.lang.clazz.ClassHelper;
@@ -32,8 +33,6 @@ import com.helger.quartz.TriggerKey;
 import com.helger.schedule.quartz.GlobalQuartzScheduler;
 import com.helger.schedule.quartz.trigger.JDK8TriggerBuilder;
 import com.helger.web.scope.util.AbstractScopeAwareJob;
-
-import jakarta.annotation.Nullable;
 
 /**
  * A periodic job to run once a month to create, validate, send and store Peppol Reports.

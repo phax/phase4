@@ -22,6 +22,8 @@ import java.nio.charset.Charset;
 import java.util.function.Function;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -64,8 +66,6 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.xmldsig.ReferenceType;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
 /**
@@ -113,7 +113,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                                            "-" +
                                                                            x.getToPartyID ();
 
-  public AS4ClientUserMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  public AS4ClientUserMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     super (EAS4MessageType.USER_MESSAGE, aResHelper);
   }
@@ -136,7 +136,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        the Payload to be added
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setPayload (@Nullable final Node aPayload)
   {
     m_aSoapBodyPayload = aPayload;
@@ -147,7 +147,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    * @return The list of attachments that are part of the message. If this list is not empty, a MIME
    *         message is created. Having attachments and no SOAP body is totally valid.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final ICommonsList <WSS4JAttachment> attachments ()
   {
@@ -173,7 +173,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    * @return this for chaining
    * @since 2.5.1
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setForceMimeMessage (final boolean bForceMimeMessage)
   {
     m_bForceMimeMessage = bForceMimeMessage;
@@ -194,9 +194,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    * @throws IOException
    *         if something goes wrong in the adding process or the compression
    */
-  @Nonnull
-  public final AS4ClientUserMessage addAttachment (@Nonnull final File aAttachment,
-                                                   @Nonnull final IMimeType aMimeType,
+  @NonNull
+  public final AS4ClientUserMessage addAttachment (@NonNull final File aAttachment,
+                                                   @NonNull final IMimeType aMimeType,
                                                    @Nullable final EAS4CompressionMode eAS4CompressionMode) throws IOException
   {
     ValueEnforcer.notNull (aAttachment, "Attachment");
@@ -218,8 +218,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        Attachment to be added. May not be <code>null</code>.
    * @return this for chaining
    */
-  @Nonnull
-  public final AS4ClientUserMessage addAttachment (@Nonnull final WSS4JAttachment aAttachment)
+  @NonNull
+  public final AS4ClientUserMessage addAttachment (@NonNull final WSS4JAttachment aAttachment)
   {
     ValueEnforcer.notNull (aAttachment, "Attachment");
     m_aAttachments.add (aAttachment);
@@ -234,7 +234,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    * @return The mutable list. Never <code>null</code>.
    * @since 0.8.2
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableObject
   public final ICommonsList <Ebms3Property> ebms3Properties ()
   {
@@ -258,7 +258,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        the action that should be there.
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setAction (@Nullable final String sAction)
   {
     m_sAction = sAction;
@@ -280,7 +280,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        serviceType that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setServiceType (@Nullable final String sServiceType)
   {
     m_sServiceType = sServiceType;
@@ -304,7 +304,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        the service value that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setServiceValue (@Nullable final String sServiceValue)
   {
     m_sServiceValue = sServiceValue;
@@ -328,7 +328,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        the conversationID that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setConversationID (@Nullable final String sConversationID)
   {
     m_sConversationID = sConversationID;
@@ -355,7 +355,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        agreement reference that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setAgreementRefValue (@Nullable final String sAgreementRefValue)
   {
     m_sAgreementRefValue = sAgreementRefValue;
@@ -381,7 +381,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    * @return this for chaining
    * @since 2.7.6
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setAgreementTypeValue (@Nullable final String sAgreementTypeValue)
   {
     m_sAgreementTypeValue = sAgreementTypeValue;
@@ -402,7 +402,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        the role that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setFromRole (@Nullable final String sFromRole)
   {
     m_sFromRole = sFromRole;
@@ -422,7 +422,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        the partyID type that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setFromPartyIDType (@Nullable final String sFromPartyIDType)
   {
     m_sFromPartyIDType = sFromPartyIDType;
@@ -445,7 +445,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        the partyID that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setFromPartyID (@Nullable final String sFromPartyID)
   {
     m_sFromPartyIDValue = sFromPartyID;
@@ -464,7 +464,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        the role that should be used
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setToRole (@Nullable final String sToRole)
   {
     m_sToRole = sToRole;
@@ -484,7 +484,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        the PartyID type that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setToPartyIDType (@Nullable final String sToPartyIDType)
   {
     m_sToPartyIDType = sToPartyIDType;
@@ -504,7 +504,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        the PartyID that should be set
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setToPartyID (@Nullable final String sToPartyID)
   {
     m_sToPartyIDValue = sToPartyID;
@@ -524,7 +524,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
    *        <code>true</code> if leg1 should be used, <code>false</code> if leg2 should be used
    * @return this for chaining
    */
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setUseLeg1 (final boolean bUseLeg1)
   {
     m_bUseLeg1 = bUseLeg1;
@@ -537,7 +537,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     return m_aPMode;
   }
 
-  public final void setUserMessageValuesFromPMode (@Nonnull final IPMode aPMode, @Nonnull final PModeLeg aEffectiveLeg)
+  public final void setUserMessageValuesFromPMode (@NonNull final IPMode aPMode, @NonNull final PModeLeg aEffectiveLeg)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     ValueEnforcer.notNull (aEffectiveLeg, "EffectiveLeg");
@@ -605,21 +605,21 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     }
   }
 
-  @Nonnull
+  @NonNull
   public final Function <AS4ClientUserMessage, String> getPModeIDFactory ()
   {
     return m_aPModeIDFactory;
   }
 
-  @Nonnull
+  @NonNull
   public final AS4ClientUserMessage setPModeID (@Nullable final String sPModeID)
   {
     // Just set a constant PMode factory
     return setPModeIDFactory (x -> sPModeID);
   }
 
-  @Nonnull
-  public final AS4ClientUserMessage setPModeIDFactory (@Nonnull final Function <AS4ClientUserMessage, String> aPModeIDFactory)
+  @NonNull
+  public final AS4ClientUserMessage setPModeIDFactory (@NonNull final Function <AS4ClientUserMessage, String> aPModeIDFactory)
   {
     ValueEnforcer.notNull (aPModeIDFactory, "PModeIDFactory");
     m_aPModeIDFactory = aPModeIDFactory;
@@ -659,8 +659,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   @Override
-  @Nonnull
-  public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
+  @NonNull
+  public AS4ClientBuiltMessage buildMessage (@NonNull @Nonempty final String sMessageID,
                                              @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException,
                                                                                                        MessagingException
   {

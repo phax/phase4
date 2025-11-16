@@ -21,6 +21,8 @@ package com.helger.phase4.entsog;
 
 import java.io.IOException;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
@@ -34,13 +36,10 @@ import com.helger.phase4.profile.entsog.AS4ENTSOGProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
- * This class contains all the specifics to send AS4 messages with the ENTSOG
- * profile. See <code>sendAS4Message</code> as the main method to trigger the
- * sending, with all potential customization.
+ * This class contains all the specifics to send AS4 messages with the ENTSOG profile. See
+ * <code>sendAS4Message</code> as the main method to trigger the sending, with all potential
+ * customization.
  *
  * @author Pavel Rotek
  * @since 0.14.0
@@ -54,10 +53,10 @@ public final class Phase4ENTSOGSender
   {}
 
   /**
-   * @return Create a new Builder for AS4 messages if the payload is present.
-   *         Never <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the payload is present. Never
+   *         <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public static ENTSOGUserMessageBuilder builder ()
   {
     return new ENTSOGUserMessageBuilder ();
@@ -101,11 +100,10 @@ public final class Phase4ENTSOGSender
      * Encryption Key Identifier Type.
      *
      * @param eEncryptionKeyIdentifierType
-     *        {@link ECryptoKeyIdentifierType}. Defaults to ISSUER_SERIAL. May
-     *        be <code>null</code>.
+     *        {@link ECryptoKeyIdentifierType}. Defaults to ISSUER_SERIAL. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE encryptionKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eEncryptionKeyIdentifierType)
     {
       if (eEncryptionKeyIdentifierType != null)
@@ -117,12 +115,11 @@ public final class Phase4ENTSOGSender
      * Signing Key Identifier Type.
      *
      * @param eSigningKeyIdentifierType
-     *        {@link ECryptoKeyIdentifierType}. Defaults to ISSUER_SERIAL. May
-     *        be <code>null</code>.
+     *        {@link ECryptoKeyIdentifierType}. Defaults to ISSUER_SERIAL. May be <code>null</code>.
      * @return this for chaining
      * @since 2.2.2
      */
-    @Nonnull
+    @NonNull
     public final IMPLTYPE signingKeyIdentifierType (@Nullable final ECryptoKeyIdentifierType eSigningKeyIdentifierType)
     {
       if (eSigningKeyIdentifierType != null)
@@ -134,14 +131,13 @@ public final class Phase4ENTSOGSender
      * Set the payload to be send out.
      *
      * @param aBuilder
-     *        The payload builder to be used. GZip compression is automatically.
-     *        enforced.
+     *        The payload builder to be used. GZip compression is automatically. enforced.
      * @param aPayloadParams
      *        The payload params to use. May be <code>null</code>.
      * @return this for chaining
      */
-    @Nonnull
-    public final IMPLTYPE payload (@Nullable final AS4OutgoingAttachment.Builder aBuilder,
+    @NonNull
+    public final IMPLTYPE payload (final AS4OutgoingAttachment.@Nullable Builder aBuilder,
                                    @Nullable final ENTSOGPayloadParams aPayloadParams)
     {
       payload (aBuilder != null ? aBuilder.compressionGZIP ().build () : null);
@@ -172,8 +168,8 @@ public final class Phase4ENTSOGSender
     }
 
     @Override
-    protected WSS4JAttachment createMainAttachment (@Nonnull final AS4OutgoingAttachment aPayload,
-                                                    @Nonnull final AS4ResourceHelper aResHelper) throws IOException
+    protected WSS4JAttachment createMainAttachment (@NonNull final AS4OutgoingAttachment aPayload,
+                                                    @NonNull final AS4ResourceHelper aResHelper) throws IOException
     {
       final WSS4JAttachment aPayloadAttachment = WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);
 
@@ -187,8 +183,8 @@ public final class Phase4ENTSOGSender
   }
 
   /**
-   * The builder class for sending AS4 messages using ENTSOG profile specifics.
-   * Use {@link #sendMessage()} to trigger the main transmission.
+   * The builder class for sending AS4 messages using ENTSOG profile specifics. Use
+   * {@link #sendMessage()} to trigger the main transmission.
    *
    * @author Philip Helger
    */
@@ -209,8 +205,8 @@ public final class Phase4ENTSOGSender
     private String m_sDocumentType;
 
     /**
-     * @return ENTSOG payload document type according to EDIG@S. Eg. "01G" for
-     *         EDIG@S Nomination document.
+     * @return ENTSOG payload document type according to EDIG@S. Eg. "01G" for EDIG@S Nomination
+     *         document.
      */
     @Nullable
     public String getDocumentType ()

@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.incoming.spi;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.style.IsSPIInterface;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Specific callback interface to inform interested entities about the end of processing of an
@@ -41,7 +41,7 @@ public interface IAS4IncomingMessageProcessingStatusSPI
    * @param aMessageMetadata
    *        The message metadata of the incoming message for aligning it.
    */
-  void onMessageProcessingStarted (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata);
+  void onMessageProcessingStarted (@NonNull IAS4IncomingMessageMetadata aMessageMetadata);
 
   /**
    * This method is called after the incoming message is completely processed. It is called after
@@ -53,6 +53,6 @@ public interface IAS4IncomingMessageProcessingStatusSPI
    *        In case message processing failed an exception was thrown, it is contained in here. You
    *        may use it to identify errors in processing.
    */
-  void onMessageProcessingEnded (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
+  void onMessageProcessingEnded (@NonNull IAS4IncomingMessageMetadata aMessageMetadata,
                                  @Nullable Exception aCaughtException);
 }

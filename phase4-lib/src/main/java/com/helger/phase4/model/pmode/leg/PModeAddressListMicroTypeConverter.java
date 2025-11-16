@@ -16,14 +16,14 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for {@link PModeAddressList} objects.
@@ -34,10 +34,10 @@ public class PModeAddressListMicroTypeConverter extends AbstractPModeMicroTypeCo
 {
   private static final String ELEMENT_ADDRESSES = "Addresses";
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final PModeAddressList aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final PModeAddressList aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     for (final String sEncrypt : aValue.getAllAddresses ())
@@ -47,8 +47,8 @@ public class PModeAddressListMicroTypeConverter extends AbstractPModeMicroTypeCo
     return ret;
   }
 
-  @Nonnull
-  public PModeAddressList convertToNative (@Nonnull final IMicroElement aElement)
+  @NonNull
+  public PModeAddressList convertToNative (@NonNull final IMicroElement aElement)
   {
     final ICommonsList <String> aAddresses = new CommonsArrayList <> ();
     for (final IMicroElement eItem : aElement.getAllChildElements (ELEMENT_ADDRESSES))

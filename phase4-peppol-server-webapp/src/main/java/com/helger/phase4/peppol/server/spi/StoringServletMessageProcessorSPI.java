@@ -20,6 +20,8 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -50,9 +52,6 @@ import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Example implementation of {@link IAS4IncomingMessageProcessorSPI}
  *
@@ -63,8 +62,8 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (StoringServletMessageProcessorSPI.class);
 
-  private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                 @Nonnull final IAS4IncomingMessageState aIncomingState)
+  private static void _dumpSoap (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                 @NonNull final IAS4IncomingMessageState aIncomingState)
   {
     // Write formatted SOAP
     {
@@ -112,8 +111,8 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
     }
   }
 
-  private static void _dumpIncomingAttachment (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                               @Nonnull final WSS4JAttachment aIncomingAttachment,
+  private static void _dumpIncomingAttachment (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                               @NonNull final WSS4JAttachment aIncomingAttachment,
                                                final int nIndex)
   {
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".attachment" + nIndex);
@@ -149,15 +148,15 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
     }
   }
 
-  @Nonnull
-  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                          @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                          @Nonnull final Ebms3UserMessage aUserMessage,
-                                                          @Nonnull final IPMode aPMode,
+  @NonNull
+  public AS4MessageProcessorResult processAS4UserMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                          @NonNull final HttpHeaderMap aHttpHeaders,
+                                                          @NonNull final Ebms3UserMessage aUserMessage,
+                                                          @NonNull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                                          @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                          @NonNull final IAS4IncomingMessageState aIncomingState,
+                                                          @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     LOGGER.info ("Received AS4 UserMessage");
 
@@ -179,13 +178,13 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
     return AS4MessageProcessorResult.createSuccess ();
   }
 
-  @Nonnull
-  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                                  @Nonnull final HttpHeaderMap aHttpHeaders,
-                                                                  @Nonnull final Ebms3SignalMessage aSignalMessage,
+  @NonNull
+  public AS4SignalMessageProcessorResult processAS4SignalMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                                  @NonNull final HttpHeaderMap aHttpHeaders,
+                                                                  @NonNull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
-                                                                  @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                                                  @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                                  @NonNull final IAS4IncomingMessageState aIncomingState,
+                                                                  @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     LOGGER.info ("Received AS4 SignalMessage");
 
@@ -221,9 +220,9 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
     return AS4SignalMessageProcessorResult.createSuccess ();
   }
 
-  public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                         @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                         @Nonnull @Nonempty final String sResponseMessageID,
+  public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                         @NonNull final IAS4IncomingMessageState aIncomingState,
+                                         @NonNull @Nonempty final String sResponseMessageID,
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {

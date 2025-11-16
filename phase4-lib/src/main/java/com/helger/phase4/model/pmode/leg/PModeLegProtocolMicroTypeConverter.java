@@ -16,15 +16,15 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PModeLegProtocol}.
@@ -37,10 +37,10 @@ public class PModeLegProtocolMicroTypeConverter extends AbstractPModeMicroTypeCo
   // Legacy name
   private static final IMicroQName ATTR_SOAP_VERSION = new MicroQName ("SOAPVersion");
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final PModeLegProtocol aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final PModeLegProtocol aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_ADDRESS, aValue.getAddress ());
@@ -48,8 +48,8 @@ public class PModeLegProtocolMicroTypeConverter extends AbstractPModeMicroTypeCo
     return ret;
   }
 
-  @Nonnull
-  public PModeLegProtocol convertToNative (@Nonnull final IMicroElement aElement)
+  @NonNull
+  public PModeLegProtocol convertToNative (@NonNull final IMicroElement aElement)
   {
     final String sAddress = aElement.getAttributeValue (ATTR_ADDRESS);
 

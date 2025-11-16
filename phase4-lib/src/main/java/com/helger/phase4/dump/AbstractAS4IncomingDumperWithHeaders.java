@@ -20,14 +20,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.trait.IGenericImplTrait;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.http.CHttp;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Abstract version of {@link IAS4IncomingDumper} that emits all headers on the output stream.
@@ -82,12 +82,12 @@ public abstract class AbstractAS4IncomingDumperWithHeaders <IMPLTYPE extends Abs
    *         On IO error
    */
   @Nullable
-  protected abstract OutputStream openOutputStream (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
-                                                    @Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
+  protected abstract OutputStream openOutputStream (@NonNull IAS4IncomingMessageMetadata aMessageMetadata,
+                                                    @NonNull HttpHeaderMap aHttpHeaderMap) throws IOException;
 
   @Nullable
-  public OutputStream onNewRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                    @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
+  public OutputStream onNewRequest (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                    @NonNull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     final OutputStream ret = openOutputStream (aMessageMetadata, aHttpHeaderMap);
     if (ret != null && aHttpHeaderMap.isNotEmpty () && m_bIncludeHeaders)
@@ -110,7 +110,7 @@ public abstract class AbstractAS4IncomingDumperWithHeaders <IMPLTYPE extends Abs
     return ret;
   }
 
-  public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+  public void onEndRequest (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                             @Nullable final Exception aCaughtException)
   {
     // empty

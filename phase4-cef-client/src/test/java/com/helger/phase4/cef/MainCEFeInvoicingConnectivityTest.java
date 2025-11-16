@@ -51,7 +51,7 @@ import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
-import jakarta.annotation.Nonnull;
+
 
 /**
  * This is an example file for sending to the CEF eInvoicing test endpoint
@@ -115,7 +115,7 @@ public class MainCEFeInvoicingConnectivityTest
                        "'");
         }
 
-        public void onSoapDocument (@Nonnull final Document aDoc)
+        public void onSoapDocument (@NonNull final Document aDoc)
         {
           if (false)
             LOGGER.info ("SOAP Document:\n" +

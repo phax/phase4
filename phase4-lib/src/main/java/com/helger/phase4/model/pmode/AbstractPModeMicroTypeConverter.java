@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.pmode;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringParser;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Abstract base class with utility methods.
@@ -35,7 +35,7 @@ public abstract class AbstractPModeMicroTypeConverter <T> implements IMicroTypeC
   protected AbstractPModeMicroTypeConverter ()
   {}
 
-  @Nonnull
+  @NonNull
   public static ETriState getTriState (@Nullable final String sAttrValue, final boolean bDefault)
   {
     return sAttrValue == null ? ETriState.UNDEFINED : ETriState.valueOf (StringParser.parseBool (sAttrValue, bDefault));

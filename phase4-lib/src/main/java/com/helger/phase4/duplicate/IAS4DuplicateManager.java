@@ -18,14 +18,14 @@ package com.helger.phase4.duplicate;
 
 import java.time.OffsetDateTime;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonnegative;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.state.EChange;
 import com.helger.base.state.EContinue;
 import com.helger.collection.commons.ICommonsList;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Base interface for an AS4 duplication manager
@@ -60,7 +60,7 @@ public interface IAS4DuplicateManager
   /**
    * @return All entries contained in the list.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
   ICommonsList <IAS4DuplicateItem> getAll ();
 
@@ -77,7 +77,7 @@ public interface IAS4DuplicateManager
    * @return {@link EContinue#CONTINUE} to continue processing a message, because it is no
    *         duplicate. {@link EContinue#BREAK} if it was determined as a duplicate.
    */
-  @Nonnull
+  @NonNull
   EContinue registerAndCheck (@Nullable String sMessageID, @Nullable String sProfileID, @Nullable String sPModeID);
 
   /**
@@ -85,7 +85,7 @@ public interface IAS4DuplicateManager
    *
    * @return {@link EChange}
    */
-  @Nonnull
+  @NonNull
   EChange clearCache ();
 
   /**
@@ -95,7 +95,7 @@ public interface IAS4DuplicateManager
    *        The reference date time to compare to. May not be <code>null</code>.
    * @return A non-<code>null</code> list of all evicted message IDs.
    */
-  @Nonnull
+  @NonNull
   @ReturnsMutableCopy
-  ICommonsList <String> evictAllItemsBefore (@Nonnull OffsetDateTime aRefDT);
+  ICommonsList <String> evictAllItemsBefore (@NonNull OffsetDateTime aRefDT);
 }

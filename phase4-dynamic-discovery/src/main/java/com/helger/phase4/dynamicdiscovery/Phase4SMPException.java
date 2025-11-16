@@ -16,11 +16,11 @@
  */
 package com.helger.phase4.dynamicdiscovery;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.exception.SMPClientException;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * SMP exception to be thrown from the endpoint detail providers.
@@ -34,7 +34,7 @@ public class Phase4SMPException extends Phase4Exception
    * @param sMessage
    *        Error message
    */
-  public Phase4SMPException (@Nonnull final String sMessage)
+  public Phase4SMPException (@NonNull final String sMessage)
   {
     super (sMessage);
   }
@@ -45,7 +45,7 @@ public class Phase4SMPException extends Phase4Exception
    * @param aCause
    *        Optional causing exception
    */
-  public Phase4SMPException (@Nonnull final String sMessage, @Nullable final SMPClientException aCause)
+  public Phase4SMPException (@NonNull final String sMessage, @Nullable final SMPClientException aCause)
   {
     super (sMessage, aCause);
   }

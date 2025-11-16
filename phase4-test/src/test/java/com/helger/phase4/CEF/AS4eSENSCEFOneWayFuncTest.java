@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.hc.core5.http.NoHttpResponseException;
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 import org.littleshoot.proxy.HttpFilters;
 import org.littleshoot.proxy.HttpFiltersAdapter;
@@ -72,7 +73,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
-import jakarta.annotation.Nonnull;
 import jakarta.mail.Multipart;
 
 public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
@@ -376,7 +376,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                       EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
-  @Nonnull
+  @NonNull
   private static HttpProxyServer _startProxyServerInterceptingFirstCall (@Nonnegative final int nProxyPort)
   {
     // Using LittleProxy

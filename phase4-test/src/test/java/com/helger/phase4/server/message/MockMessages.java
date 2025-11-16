@@ -19,6 +19,7 @@ package com.helger.phase4.server.message;
 import java.util.Locale;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.jspecify.annotations.NonNull;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -49,7 +50,6 @@ import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.server.spi.MockMessageProcessorCheckingStreamsSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
 
-import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 public final class MockMessages
@@ -61,11 +61,11 @@ public final class MockMessages
   private MockMessages ()
   {}
 
-  @Nonnull
-  public static Document createUserMessageSigned (@Nonnull final ESoapVersion eSOAPVersion,
+  @NonNull
+  public static Document createUserMessageSigned (@NonNull final ESoapVersion eSOAPVersion,
                                                   @Nullable final Node aPayload,
                                                   @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                  @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
+                                                  @NonNull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = createUserMessageNotSigned (eSOAPVersion, aPayload, aAttachments);
     return AS4Signer.createSignedMessage (AS4CryptoFactoryConfiguration.getDefaultInstance (),
@@ -78,10 +78,10 @@ public final class MockMessages
                                           AS4SigningParams.createDefault ());
   }
 
-  @Nonnull
-  public static Document createErrorMessageSigned (@Nonnull final ESoapVersion eSOAPVersion,
+  @NonNull
+  public static Document createErrorMessageSigned (@NonNull final ESoapVersion eSOAPVersion,
                                                    @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                   @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
+                                                   @NonNull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.errorBuilder (Locale.US)
                                                                                                              .build ());
@@ -96,8 +96,8 @@ public final class MockMessages
                                           AS4SigningParams.createDefault ());
   }
 
-  @Nonnull
-  public static AS4ReceiptMessage createReceiptMessage (@Nonnull final ESoapVersion eSOAPVersion,
+  @NonNull
+  public static AS4ReceiptMessage createReceiptMessage (@NonNull final ESoapVersion eSOAPVersion,
                                                         @Nullable final Ebms3UserMessage aEbms3UserMessage,
                                                         @Nullable final Document aUserMessage) throws DOMException
   {
@@ -109,8 +109,8 @@ public final class MockMessages
                                      null);
   }
 
-  @Nonnull
-  public static AS4UserMessage createUserMessageNotSigned (@Nonnull final ESoapVersion eSOAPVersion,
+  @NonNull
+  public static AS4UserMessage createUserMessageNotSigned (@NonNull final ESoapVersion eSOAPVersion,
                                                            @Nullable final Node aPayload,
                                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
@@ -168,8 +168,8 @@ public final class MockMessages
                                   eSOAPVersion);
   }
 
-  @Nonnull
-  public static Document testUserMessageNotSignedNotPModeConform (@Nonnull final ESoapVersion eSOAPVersion,
+  @NonNull
+  public static Document testUserMessageNotSignedNotPModeConform (@NonNull final ESoapVersion eSOAPVersion,
                                                                   @Nullable final Node aPayload,
                                                                   @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
@@ -205,8 +205,8 @@ public final class MockMessages
     return aDoc.getAsSoapDocument (aPayload);
   }
 
-  @Nonnull
-  public static Document createEmptyUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
+  @NonNull
+  public static Document createEmptyUserMessage (@NonNull final ESoapVersion eSOAPVersion,
                                                  @Nullable final Node aPayload,
                                                  @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {

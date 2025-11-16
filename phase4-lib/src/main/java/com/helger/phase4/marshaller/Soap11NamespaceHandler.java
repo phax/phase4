@@ -16,10 +16,10 @@
  */
 package com.helger.phase4.marshaller;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * A special XML namespace context that contains all default SOAP 1.1 mappings.
@@ -43,7 +43,7 @@ public class Soap11NamespaceHandler extends MapBasedNamespaceContext
    * @return The global instance of the namespace handler. Never <code>null</code>. Don't modify it!
    *         To modify it, please clone it and go from there.
    */
-  @Nonnull
+  @NonNull
   public static Soap11NamespaceHandler getInstance ()
   {
     return SingletonHolder.INSTANCE;

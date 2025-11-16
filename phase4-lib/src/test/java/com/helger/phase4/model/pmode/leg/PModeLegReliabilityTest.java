@@ -16,14 +16,13 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.json.IJsonObject;
 import com.helger.unittest.support.TestHelper;
 import com.helger.xml.mock.XMLTestHelper;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Test class for class {@link PModeLegReliability}.
@@ -32,7 +31,7 @@ import jakarta.annotation.Nonnull;
  */
 public final class PModeLegReliabilityTest
 {
-  private static void _testJson (@Nonnull final PModeLegReliability p)
+  private static void _testJson (@NonNull final PModeLegReliability p)
   {
     final IJsonObject o = PModeLegReliabilityJsonConverter.convertToJson (p);
     final PModeLegReliability p2 = PModeLegReliabilityJsonConverter.convertToNative (o);

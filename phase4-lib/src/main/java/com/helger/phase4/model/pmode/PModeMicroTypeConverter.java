@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.pmode;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -25,9 +28,6 @@ import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * XML converter for objects of class {@link PMode}.
@@ -46,10 +46,10 @@ public final class PModeMicroTypeConverter extends AbstractBusinessObjectMicroTy
   private static final String ELEMENT_PAYLOADSERVICE = "PayloadServices";
   private static final String ELEMENT_RECEPETIONAWARENESS = "RecepetionAwareness";
 
-  @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final PMode aValue,
+  @NonNull
+  public IMicroElement convertToMicroElement (@NonNull final PMode aValue,
                                               @Nullable final String sNamespaceURI,
-                                              @Nonnull final String sTagName)
+                                              @NonNull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     setObjectFields (aValue, ret);
@@ -69,8 +69,8 @@ public final class PModeMicroTypeConverter extends AbstractBusinessObjectMicroTy
     return ret;
   }
 
-  @Nonnull
-  public PMode convertToNative (@Nonnull final IMicroElement aElement)
+  @NonNull
+  public PMode convertToNative (@NonNull final IMicroElement aElement)
   {
     final PModeParty aInitiator = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_INITIATOR),
                                                                       PModeParty.class);

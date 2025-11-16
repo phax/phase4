@@ -22,15 +22,15 @@ import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.helger.annotation.Nonempty;
 import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
 import com.helger.base.string.StringHelper;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
-
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Defines the allowed AS4 compression modes.
@@ -43,15 +43,15 @@ public enum EAS4CompressionMode implements IHasID <String>
   GZIP ("gzip", CMimeType.APPLICATION_GZIP, ".gz")
   {
     @Override
-    @Nonnull
-    public InputStream getDecompressStream (@Nonnull final InputStream aIS) throws IOException
+    @NonNull
+    public InputStream getDecompressStream (@NonNull final InputStream aIS) throws IOException
     {
       return new GZIPInputStream (aIS);
     }
 
     @Override
-    @Nonnull
-    public OutputStream getCompressStream (@Nonnull final OutputStream aOS) throws IOException
+    @NonNull
+    public OutputStream getCompressStream (@NonNull final OutputStream aOS) throws IOException
     {
       return new GZIPOutputStream (aOS);
     }
@@ -61,16 +61,16 @@ public enum EAS4CompressionMode implements IHasID <String>
   private final IMimeType m_aMimeType;
   private final String m_sFileExtension;
 
-  EAS4CompressionMode (@Nonnull @Nonempty final String sID,
-                       @Nonnull final IMimeType aMimeType,
-                       @Nonnull @Nonempty final String sFileExtension)
+  EAS4CompressionMode (@NonNull @Nonempty final String sID,
+                       @NonNull final IMimeType aMimeType,
+                       @NonNull @Nonempty final String sFileExtension)
   {
     m_sID = sID;
     m_aMimeType = aMimeType;
     m_sFileExtension = sFileExtension;
   }
 
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getID ()
   {
@@ -80,7 +80,7 @@ public enum EAS4CompressionMode implements IHasID <String>
   /**
    * @return The MIME type of the compression mode. Never <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   public IMimeType getMimeType ()
   {
     return m_aMimeType;
@@ -90,7 +90,7 @@ public enum EAS4CompressionMode implements IHasID <String>
    * @return The string representation of the MIME type of the compression mode. Never
    *         <code>null</code>.
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getMimeTypeAsString ()
   {
@@ -100,7 +100,7 @@ public enum EAS4CompressionMode implements IHasID <String>
   /**
    * @return The file extension including the leading dot (e.g. ".gz")
    */
-  @Nonnull
+  @NonNull
   @Nonempty
   public String getFileExtension ()
   {
@@ -116,8 +116,8 @@ public enum EAS4CompressionMode implements IHasID <String>
    * @throws IOException
    *         In case of IO error
    */
-  @Nonnull
-  public abstract InputStream getDecompressStream (@Nonnull InputStream aIS) throws IOException;
+  @NonNull
+  public abstract InputStream getDecompressStream (@NonNull InputStream aIS) throws IOException;
 
   /**
    * Get an {@link OutputStream} to compress the provided {@link OutputStream}.
@@ -128,8 +128,8 @@ public enum EAS4CompressionMode implements IHasID <String>
    * @throws IOException
    *         In case of IO error
    */
-  @Nonnull
-  public abstract OutputStream getCompressStream (@Nonnull OutputStream aOS) throws IOException;
+  @NonNull
+  public abstract OutputStream getCompressStream (@NonNull OutputStream aOS) throws IOException;
 
   @Nullable
   public static EAS4CompressionMode getFromMimeTypeStringOrNull (@Nullable final String sMimeType)

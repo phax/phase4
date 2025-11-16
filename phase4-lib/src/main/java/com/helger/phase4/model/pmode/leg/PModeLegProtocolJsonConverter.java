@@ -16,12 +16,12 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import org.jspecify.annotations.NonNull;
+
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
 import com.helger.phase4.model.ESoapVersion;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * JSON converter for objects of class {@link PModeLegProtocol}.
@@ -38,8 +38,8 @@ public final class PModeLegProtocolJsonConverter
   private PModeLegProtocolJsonConverter ()
   {}
 
-  @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PModeLegProtocol aValue)
+  @NonNull
+  public static IJsonObject convertToJson (@NonNull final PModeLegProtocol aValue)
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.hasAddress ())
@@ -48,8 +48,8 @@ public final class PModeLegProtocolJsonConverter
     return ret;
   }
 
-  @Nonnull
-  public static PModeLegProtocol convertToNative (@Nonnull final IJsonObject aElement)
+  @NonNull
+  public static PModeLegProtocol convertToNative (@NonNull final IJsonObject aElement)
   {
     final String sAddress = aElement.getAsString (ADDRESS);
 

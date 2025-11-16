@@ -19,6 +19,8 @@ package com.helger.phase4.peppol.server.spi;
 import java.io.File;
 import java.util.Locale;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
@@ -50,9 +52,6 @@ import com.helger.phase4.peppol.servlet.Phase4PeppolServletMessageProcessorSPI;
 import com.helger.photon.io.PhotonWorkerPool;
 import com.helger.security.certificate.CertificateHelper;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
-
 /**
  * Logging implementation of {@link IPhase4PeppolIncomingSBDHandlerSPI}.
  *
@@ -63,14 +62,14 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (StoringPeppolIncomingSBDHandlerSPI.class);
 
-  public void handleIncomingSBD (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                 @Nonnull final HttpHeaderMap aHeaders,
-                                 @Nonnull final Ebms3UserMessage aUserMessage,
-                                 @Nonnull final byte [] aSBDBytes,
-                                 @Nonnull final StandardBusinessDocument aSBD,
-                                 @Nonnull final PeppolSBDHData aPeppolSBD,
-                                 @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                 @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception
+  public void handleIncomingSBD (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                 @NonNull final HttpHeaderMap aHeaders,
+                                 @NonNull final Ebms3UserMessage aUserMessage,
+                                 @NonNull final byte [] aSBDBytes,
+                                 @NonNull final StandardBusinessDocument aSBD,
+                                 @NonNull final PeppolSBDHData aPeppolSBD,
+                                 @NonNull final IAS4IncomingMessageState aIncomingState,
+                                 @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception
   {
     final String sMyPeppolSeatID = APConfig.getMyPeppolSeatID ();
 
@@ -168,9 +167,9 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
     });
   }
 
-  public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                         @Nonnull final IAS4IncomingMessageState aIncomingState,
-                                         @Nonnull @Nonempty final String sResponseMessageID,
+  public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                         @NonNull final IAS4IncomingMessageState aIncomingState,
+                                         @NonNull @Nonempty final String sResponseMessageID,
                                          @Nullable final byte [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {

@@ -18,8 +18,7 @@ package com.helger.phase4.crypto;
 
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
-
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Customize the {@link WSSecSignature} object additional to what is possible via the
@@ -37,8 +36,8 @@ public interface IWSSecSignatureCustomizer
    *        The security header to start with.
    * @return Never <code>null</code>.
    */
-  @Nonnull
-  default WSSecSignature createWSSecSignature (@Nonnull final WSSecHeader aSecHeader)
+  @NonNull
+  default WSSecSignature createWSSecSignature (@NonNull final WSSecHeader aSecHeader)
   {
     return new WSSecSignature (aSecHeader);
   }
@@ -50,6 +49,6 @@ public interface IWSSecSignatureCustomizer
    * @param aWSSecSignature
    *        The object to modify. May not be <code>null</code>.
    */
-  default void customize (@Nonnull final WSSecSignature aWSSecSignature)
+  default void customize (@NonNull final WSSecSignature aWSSecSignature)
   {}
 }
