@@ -153,7 +153,7 @@ public final class AS4IncomingHandler
                                       @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                       @NonNull @WillClose final InputStream aPayloadIS,
                                       @NonNull final HttpHeaderMap aHttpHeaders,
-                                      @NonNull final IAS4ParsedMessageCallback aCallback,
+                                      @NonNull final IAS4ParsedMessageCallback aParsedMessageCallback,
                                       @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception,
                                                                                           IOException,
                                                                                           MessagingException,
@@ -164,7 +164,7 @@ public final class AS4IncomingHandler
     ValueEnforcer.notNull (aIncomingMessageMetadata, "IncomingMessageMetadata");
     ValueEnforcer.notNull (aPayloadIS, "PayloadIS");
     ValueEnforcer.notNull (aHttpHeaders, "aHttpHeaders");
-    ValueEnforcer.notNull (aCallback, "Callback");
+    ValueEnforcer.notNull (aParsedMessageCallback, "ParsedMessageCallback");
 
     LOGGER.info ("phase4 --- parsemessage:start");
 
@@ -278,9 +278,21 @@ public final class AS4IncomingHandler
                 if (eSoapVersion == null && aSoapDocument != null)
                 {
                   // Determine SOAP version from the read document
-                  eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (XMLHelper.getNamespaceURI (aSoapDocument));
-                  if (eSoapVersion != null && LOGGER.isDebugEnabled ())
-                    LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from XML root element namespace URI");
+                  final String sNamespaceURI = XMLHelper.getNamespaceURI (aSoapDocument);
+                  eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (sNamespaceURI);
+                  if (eSoapVersion != null)
+                  {
+                    if (LOGGER.isDebugEnabled ())
+                      LOGGER.debug ("Determined SOAP version " +
+                                    eSoapVersion +
+                                    " from XML root element namespace URI '" +
+                                    sNamespaceURI +
+                                    "'");
+                  }
+                  else
+                    LOGGER.warn ("Failed to determine SOAP version from XML root element namespace URI '" +
+                                 sNamespaceURI +
+                                 "'");
                 }
               }
               else
@@ -387,8 +399,8 @@ public final class AS4IncomingHandler
         throw new Phase4Exception ("Failed to determine SOAP version of XML document!").setRetryFeasible (false);
       }
 
-      // Main processing
-      aCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
+      // Main processing of parsed message
+      aParsedMessageCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
     }
     catch (final Phase4Exception | IOException | MessagingException | WSSecurityException ex)
     {
@@ -490,16 +502,11 @@ public final class AS4IncomingHandler
       try
       {
         // Process element
-        if (aProcessor.processHeaderElement (aSoapDocument,
-                                             aHeader.getNode (),
-                                             aIncomingAttachments,
-                                             aIncomingState,
-                                             aProcessingErrorMessagesTarget).isSuccess ())
-        {
-          // Mark header as processed (for mustUnderstand check)
-          aHeader.setProcessed (true);
-        }
-        else
+        if (!aProcessor.processHeaderElement (aSoapDocument,
+                                              aHeader.getNode (),
+                                              aIncomingAttachments,
+                                              aIncomingState,
+                                              aProcessingErrorMessagesTarget).isSuccess ())
         {
           // upon failure, the element stays unprocessed and sends back a signal
           // message with the errors
@@ -516,6 +523,8 @@ public final class AS4IncomingHandler
           // Stop processing of other headers
           break;
         }
+        // Mark header as processed (for mustUnderstand check)
+        aHeader.setProcessed (true);
       }
       catch (final Exception ex)
       {
@@ -669,6 +678,7 @@ public final class AS4IncomingHandler
     // Remember if header processing was successful or not
     final boolean bSoapHeaderElementProcessingSuccess = aEbmsErrorMessagesTarget.isEmpty ();
     aIncomingState.setSoapHeaderElementProcessingSuccessful (bSoapHeaderElementProcessingSuccess);
+
     if (bSoapHeaderElementProcessingSuccess)
     {
       // Every message can only contain 1 User message or 1 pull message
@@ -919,16 +929,13 @@ public final class AS4IncomingHandler
                                                                           aErrorMessages,
                                                                           aIncomingMessageMetadata);
 
-      if (aIncomingState.isSoapHeaderElementProcessingSuccessful ())
-      {
-        // Remember the parsed signal message
-        aRetWrapper.set (aIncomingState);
-      }
-      else
+      if (!aIncomingState.isSoapHeaderElementProcessingSuccessful ())
       {
         throw new Phase4Exception ("Error processing AS4 message", aIncomingState.getSoapWSS4JException ())
                                                                                                            .setRetryFeasible (false);
       }
+      // Remember the parsed signal message
+      aRetWrapper.set (aIncomingState);
     };
 
     // Create header map from response headers

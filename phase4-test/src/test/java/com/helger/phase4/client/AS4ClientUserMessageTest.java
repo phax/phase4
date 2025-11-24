@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import com.helger.annotation.WillNotClose;
 import com.helger.annotation.style.VisibleForTesting;
 import com.helger.collection.commons.CommonsArrayList;
-import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
@@ -49,6 +48,7 @@ import com.helger.phase4.incoming.AS4IncomingHandler;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
+import com.helger.phase4.messaging.http.GenericAS4HttpResponseHandler;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.server.AbstractAS4TestSetUp;
@@ -117,7 +117,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
       final IAS4OutgoingDumper aOutgoingDumper = null;
       final IAS4RetryCallback aRetryCallback = null;
       final IMicroDocument ret = sendMessageWithRetries (sURL,
-                                                         new ResponseHandlerMicroDom (),
+                                                         GenericAS4HttpResponseHandler.getHandlerMicroDom (),
                                                          aCallback,
                                                          aOutgoingDumper,
                                                          aRetryCallback).getResponseContent ();

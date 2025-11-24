@@ -33,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.annotation.Nonempty;
+import com.helger.annotation.Nonnegative;
 import com.helger.annotation.WillClose;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.CGlobal;
@@ -142,12 +143,14 @@ public class AS4RequestHandler implements AutoCloseable
     private final String m_sResponseMessageID;
     private final Document m_aDoc;
     private final IMimeType m_aMimeType;
+    private final int m_nResponseStatusCode;
 
     public AS4ResponseFactoryXML (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                   @NonNull final IAS4IncomingMessageState aIncomingState,
                                   @NonNull @Nonempty final String sResponseMessageID,
                                   @NonNull final Document aDoc,
-                                  @NonNull final IMimeType aMimeType)
+                                  @NonNull final IMimeType aMimeType,
+                                  @Nonnegative int nResponseStatusCode)
     {
       ValueEnforcer.notNull (aIncomingMessageMetadata, "IncomingMessageMetadata");
       ValueEnforcer.notNull (aIncomingState, "IncomingState");
@@ -159,6 +162,7 @@ public class AS4RequestHandler implements AutoCloseable
       m_sResponseMessageID = sResponseMessageID;
       m_aDoc = aDoc;
       m_aMimeType = aMimeType;
+      m_nResponseStatusCode = nResponseStatusCode;
     }
 
     @NonNull
@@ -175,6 +179,7 @@ public class AS4RequestHandler implements AutoCloseable
       final byte [] aXMLBytes = sXML.getBytes (aCharset);
       aHttpResponse.setContent (aXMLBytes, aCharset);
       aHttpResponse.setMimeType (m_aMimeType);
+      aHttpResponse.setStatus (m_nResponseStatusCode);
 
       if (aOutgoingDumper != null)
       {
@@ -217,11 +222,13 @@ public class AS4RequestHandler implements AutoCloseable
     private final String m_sResponseMessageID;
     private final AS4MimeMessage m_aMimeMsg;
     private final HttpHeaderMap m_aHttpHeaders;
+    private final int m_nResponseStatusCode;
 
     public AS4ResponseFactoryMIME (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                    @NonNull final IAS4IncomingMessageState aIncomingState,
                                    @NonNull @Nonempty final String sResponseMessageID,
-                                   @NonNull final AS4MimeMessage aMimeMsg) throws MessagingException
+                                   @NonNull final AS4MimeMessage aMimeMsg,
+                                   @Nonnegative int nResponseStatusCode) throws MessagingException
     {
       ValueEnforcer.notNull (aIncomingMessageMetadata, "IncomingMessageMetadata");
       ValueEnforcer.notNull (aIncomingState, "IncomingState");
@@ -234,6 +241,7 @@ public class AS4RequestHandler implements AutoCloseable
       m_aHttpHeaders = AS4MimeMessageHelper.getAndRemoveAllHeaders (m_aMimeMsg);
       if (!aMimeMsg.isRepeatable ())
         LOGGER.warn ("The response MIME message is not repeatable");
+      m_nResponseStatusCode = nResponseStatusCode;
     }
 
     @NonNull
@@ -263,6 +271,8 @@ public class AS4RequestHandler implements AutoCloseable
       final String sContentType = m_aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
       final IMimeType aMimeType = MimeTypeParser.safeParseMimeType (sContentType);
       aHttpResponse.setMimeType (aMimeType != null ? aMimeType : MT_MULTIPART_RELATED);
+
+      aHttpResponse.setStatus (m_nResponseStatusCode);
 
       if (aOutgoingDumper != null)
       {
@@ -1371,6 +1381,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                        aResponseDoc,
                                                        eResponseSoapVersion,
                                                        aReceiptMessage.getMessagingID ());
+    // Receipts are always send with an HTTP 200
+    final int nResponseStatusCode = CHttp.HTTP_OK;
 
     if (false)
     {
@@ -1381,7 +1393,11 @@ public class AS4RequestHandler implements AutoCloseable
         final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion,
                                                                                   aSignedDoc,
                                                                                   aResponseAttachments);
-        return new AS4ResponseFactoryMIME (m_aMessageMetadata, aIncomingState, sResponseMessageID, aMimeMsg);
+        return new AS4ResponseFactoryMIME (m_aMessageMetadata,
+                                           aIncomingState,
+                                           sResponseMessageID,
+                                           aMimeMsg,
+                                           nResponseStatusCode);
       }
       catch (final MessagingException ex)
       {
@@ -1394,7 +1410,8 @@ public class AS4RequestHandler implements AutoCloseable
                                       aIncomingState,
                                       sResponseMessageID,
                                       aSignedDoc,
-                                      eResponseSoapVersion.getMimeType ());
+                                      eResponseSoapVersion.getMimeType (),
+                                      nResponseStatusCode);
   }
 
   @NonNull
@@ -1458,6 +1475,9 @@ public class AS4RequestHandler implements AutoCloseable
         LOGGER.debug ("Cannot sign AS4 Error response, because no PMode Leg was provided");
     }
 
+    // Errors are always send with an HTTP 200
+    final int nResponseStatusCode = CHttp.HTTP_OK;
+
     if (false)
     {
       // This is just demo code, to show how to squeeze an AS4 Error into a MIME
@@ -1468,7 +1488,11 @@ public class AS4RequestHandler implements AutoCloseable
         final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion,
                                                                                   aResponseDoc,
                                                                                   aResponseAttachments);
-        return new AS4ResponseFactoryMIME (m_aMessageMetadata, aIncomingState, sResponseMessageID, aMimeMsg);
+        return new AS4ResponseFactoryMIME (m_aMessageMetadata,
+                                           aIncomingState,
+                                           sResponseMessageID,
+                                           aMimeMsg,
+                                           nResponseStatusCode);
       }
       catch (final MessagingException ex)
       {
@@ -1480,7 +1504,8 @@ public class AS4RequestHandler implements AutoCloseable
                                       aIncomingState,
                                       sResponseMessageID,
                                       aResponseDoc,
-                                      eResponseSoapVersion.getMimeType ());
+                                      eResponseSoapVersion.getMimeType (),
+                                      nResponseStatusCode);
   }
 
   /**
@@ -1575,6 +1600,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                        aResponseUserMsg.getAsSoapDocument (),
                                                        eSoapVersion,
                                                        aResponseUserMsg.getMessagingID ());
+    final int nResponseStatusCode = CHttp.HTTP_OK;
 
     final IAS4ResponseFactory ret;
     if (aResponseAttachments.isEmpty ())
@@ -1584,7 +1610,8 @@ public class AS4RequestHandler implements AutoCloseable
                                        aIncomingState,
                                        sResponseMessageID,
                                        aSignedDoc,
-                                       eSoapVersion.getMimeType ());
+                                       eSoapVersion.getMimeType (),
+                                       nResponseStatusCode);
     }
     else
     {
@@ -1593,7 +1620,11 @@ public class AS4RequestHandler implements AutoCloseable
                                                                      aResponseAttachments,
                                                                      eSoapVersion,
                                                                      aCryptParams);
-      ret = new AS4ResponseFactoryMIME (m_aMessageMetadata, aIncomingState, sResponseMessageID, aMimeMsg);
+      ret = new AS4ResponseFactoryMIME (m_aMessageMetadata,
+                                        aIncomingState,
+                                        sResponseMessageID,
+                                        aMimeMsg,
+                                        nResponseStatusCode);
     }
     return ret;
   }
@@ -1836,11 +1867,14 @@ public class AS4RequestHandler implements AutoCloseable
             if (m_aErrorConsumer != null && aLocalErrorMessages.isNotEmpty ())
               m_aErrorConsumer.onAS4ErrorMessage (aIncomingState, aLocalErrorMessages, aResponseErrorMsg);
 
+            final int nResponseStatusCode = CHttp.HTTP_OK;
+
             aAsyncResponseFactory = new AS4ResponseFactoryXML (m_aMessageMetadata,
                                                                aIncomingState,
                                                                sResponseMessageID,
                                                                aResponseErrorMsg.getAsSoapDocument (),
-                                                               eSoapVersion.getMimeType ());
+                                                               eSoapVersion.getMimeType (),
+                                                               nResponseStatusCode);
           }
 
           // where to send it back (must be determined by SPI!)
@@ -1971,11 +2005,15 @@ public class AS4RequestHandler implements AutoCloseable
                                                                           aSPIResult.getPullReturnUserMsg ());
 
               sResponseMessageID = aResponseUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
+
+              final int nResponseStatusCode = CHttp.HTTP_OK;
+
               ret = new AS4ResponseFactoryXML (m_aMessageMetadata,
                                                aIncomingState,
                                                sResponseMessageID,
                                                aResponseUserMsg.getAsSoapDocument (),
-                                               eSoapVersion.getMimeType ());
+                                               eSoapVersion.getMimeType (),
+                                               nResponseStatusCode);
             }
             else
               if (aEbmsUserMessage != null)

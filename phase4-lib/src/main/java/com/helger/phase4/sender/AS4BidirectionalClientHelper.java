@@ -19,7 +19,6 @@ package com.helger.phase4.sender;
 import java.io.IOException;
 import java.util.Locale;
 
-import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -29,7 +28,6 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.base.wrapper.Wrapper;
-import com.helger.httpclient.response.ResponseHandlerHttpEntity;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
@@ -50,6 +48,8 @@ import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
 import com.helger.phase4.incoming.IAS4UserMessageConsumer;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.messaging.http.GenericAS4HttpResponseHandler;
+import com.helger.phase4.messaging.http.GenericAS4HttpResponseHandler.HttpResponseData;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.util.Phase4Exception;
@@ -123,16 +123,14 @@ public final class AS4BidirectionalClientHelper
 
     final Wrapper <HttpResponse> aWrappedHttpResponse = new Wrapper <> ();
     final HttpClientResponseHandler <byte []> aHttpResponseHdl = aHttpResponse -> {
-      // throws an ExtendedHttpResponseException on exception
-      final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
-      if (aEntity == null)
-        return null;
+      // Accepts all response codes
+      final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
 
       // Remember source response object
       aWrappedHttpResponse.set (aHttpResponse);
 
       // Read response payload
-      return EntityUtils.toByteArray (aEntity);
+      return EntityUtils.toByteArray (aResponseData.entity ());
     };
 
     // Main HTTP sending
@@ -216,14 +214,12 @@ public final class AS4BidirectionalClientHelper
 
     final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
     final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
-      // May throw an ExtendedHttpResponseException
-      final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
-      if (aEntity == null)
-        return null;
+      // Accepts all response codes
+      final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
 
       // Remember HTTP Response
       aWrappedResponse.set (aHttpResponse);
-      return EntityUtils.toByteArray (aEntity);
+      return EntityUtils.toByteArray (aResponseData.entity ());
     };
 
     // Generic AS4 PullRequest sending
@@ -304,14 +300,12 @@ public final class AS4BidirectionalClientHelper
 
     final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
     final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
-      // May throw an ExtendedHttpResponseException
-      final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
-      if (aEntity == null)
-        return null;
+      // Accepts all response codes
+      final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
 
       // Remember HTTP Response
       aWrappedResponse.set (aHttpResponse);
-      return EntityUtils.toByteArray (aEntity);
+      return EntityUtils.toByteArray (aResponseData.entity ());
     };
 
     // Generic AS4 PullRequest sending

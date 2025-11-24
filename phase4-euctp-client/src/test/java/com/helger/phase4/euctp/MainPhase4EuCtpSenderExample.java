@@ -52,6 +52,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.euctp.Phase4EuCtpSender.EuCtpPullRequestBuilder;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.messaging.http.GenericAS4HttpResponseHandler;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.mpc.IMPCManager;
@@ -245,7 +246,7 @@ public class MainPhase4EuCtpSenderExample
         aReceiptMessage.signingParams ().setUseSingleCertificate (false);
 
         aSentMessage = aReceiptMessage.sendMessageWithRetries (prBuilder.endpointURL (),
-                                                               new ResponseHandlerByteArray (),
+                                                               GenericAS4HttpResponseHandler.getHandlerByteArray (),
                                                                prBuilder.buildMessageCallback (),
                                                                prBuilder.outgoingDumper (),
                                                                prBuilder.retryCallback ());

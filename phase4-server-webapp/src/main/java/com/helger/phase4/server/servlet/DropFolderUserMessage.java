@@ -33,7 +33,6 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.timing.StopWatch;
 import com.helger.config.IConfig;
-import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.io.file.FilenameHelper;
 import com.helger.io.file.SimpleFileIO;
 import com.helger.io.watchdir.EWatchDirAction;
@@ -56,6 +55,7 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.messaging.http.GenericAS4HttpResponseHandler;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -150,7 +150,7 @@ public final class DropFolderUserMessage
           final IAS4OutgoingDumper aOutgoingDumper = null;
           final IAS4RetryCallback aRetryCallback = null;
           final AS4ClientSentMessage <byte []> aClientSentMessage = aClient.sendMessageWithRetries (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
-                                                                                                    new ResponseHandlerByteArray (),
+                                                                                                    GenericAS4HttpResponseHandler.getHandlerByteArray (),
                                                                                                     aCallback,
                                                                                                     aOutgoingDumper,
                                                                                                     aRetryCallback);
