@@ -316,4 +316,18 @@ public final class AS4Configuration
   {
     return getConfig ().getAsBoolean ("phase4.compatibility.domibus", false);
   }
+
+  /**
+   * Check if all HTTP response status codes should be handled by phase4. Up to and including phase4
+   * 4.1.0 only HTTP status codes &lt; 300 were accepted. By setting this configuration property to
+   * <code>false</code> this behaviour is recreated.
+   *
+   * @return <code>true</code> if all HTTP status codes should be accepted, <code>false</code> if
+   *         not.
+   * @since 4.1.1
+   */
+  public static boolean isHttpResponseAcceptAllStatusCodes ()
+  {
+    return getConfig ().getAsBoolean ("phase4.http.response.accept.allstatuscodes", true);
+  }
 }
