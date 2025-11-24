@@ -55,59 +55,46 @@ public final class AS4KeyStoreCallbackHandler implements CallbackHandler
   @Nonempty
   private static String _getUsage (final int nUsage)
   {
-    switch (nUsage)
+    return switch (nUsage)
     {
-      case WSPasswordCallback.UNKNOWN:
-        return "UNKNOWN";
-      case WSPasswordCallback.DECRYPT:
-        return "DECRYPT";
-      case WSPasswordCallback.USERNAME_TOKEN:
-        return "USERNAME_TOKEN";
-      case WSPasswordCallback.SIGNATURE:
-        return "SIGNATURE";
-      case WSPasswordCallback.SECURITY_CONTEXT_TOKEN:
-        return "SECURITY_CONTEXT_TOKEN";
-      case WSPasswordCallback.CUSTOM_TOKEN:
-        return "CUSTOM_TOKEN";
-      case WSPasswordCallback.SECRET_KEY:
-        return "SECRET_KEY";
-      case WSPasswordCallback.PASSWORD_ENCRYPTOR_PASSWORD:
-        return "PASSWORD_ENCRYPTOR_PASSWORD";
-    }
-    return "Unknown usage value " + nUsage;
+      case WSPasswordCallback.UNKNOWN -> "UNKNOWN";
+      case WSPasswordCallback.DECRYPT -> "DECRYPT";
+      case WSPasswordCallback.USERNAME_TOKEN -> "USERNAME_TOKEN";
+      case WSPasswordCallback.SIGNATURE -> "SIGNATURE";
+      case WSPasswordCallback.SECURITY_CONTEXT_TOKEN -> "SECURITY_CONTEXT_TOKEN";
+      case WSPasswordCallback.CUSTOM_TOKEN -> "CUSTOM_TOKEN";
+      case WSPasswordCallback.SECRET_KEY -> "SECRET_KEY";
+      case WSPasswordCallback.PASSWORD_ENCRYPTOR_PASSWORD -> "PASSWORD_ENCRYPTOR_PASSWORD";
+      default -> "Unknown usage value " + nUsage;
+    };
   }
 
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
   {
     for (final Callback aCallback : aCallbacks)
     {
-      if (aCallback instanceof WSPasswordCallback)
+      if (!(aCallback instanceof final WSPasswordCallback aPasswordCallback))
       {
-        final WSPasswordCallback aPasswordCallback = (WSPasswordCallback) aCallback;
+        throw new UnsupportedCallbackException (aCallback, "Unrecognized Callback");
+      }
+      final String sKeyStoreAlias = aPasswordCallback.getIdentifier ();
 
-        final String sKeyStoreAlias = aPasswordCallback.getIdentifier ();
-
-        // Obtain the password from the crypto factory
-        final String sKeyPassword = m_aCryptoFactoryCrypt.getKeyPasswordPerAlias (sKeyStoreAlias);
-        if (sKeyPassword != null)
-        {
-          aPasswordCallback.setPassword (sKeyPassword);
-          LOGGER.info ("Found keystore password for alias '" +
-                       sKeyStoreAlias +
-                       "' and usage " +
-                       _getUsage (aPasswordCallback.getUsage ()));
-        }
-        else
-        {
-          LOGGER.warn ("Found unsupported keystore alias '" +
-                       sKeyStoreAlias +
-                       "' and usage " +
-                       _getUsage (aPasswordCallback.getUsage ()));
-        }
+      // Obtain the password from the crypto factory
+      final String sKeyPassword = m_aCryptoFactoryCrypt.getKeyPasswordPerAlias (sKeyStoreAlias);
+      if (sKeyPassword != null)
+      {
+        aPasswordCallback.setPassword (sKeyPassword);
+        LOGGER.info ("Found keystore password for alias '" +
+                     sKeyStoreAlias +
+                     "' and usage " +
+                     _getUsage (aPasswordCallback.getUsage ()));
       }
       else
       {
-        throw new UnsupportedCallbackException (aCallback, "Unrecognized Callback");
+        LOGGER.warn ("Found unsupported keystore alias '" +
+                     sKeyStoreAlias +
+                     "' and usage " +
+                     _getUsage (aPasswordCallback.getUsage ()));
       }
     }
   }
