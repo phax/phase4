@@ -18,13 +18,15 @@ package com.helger.phase4.attachment;
 
 import org.jspecify.annotations.NonNull;
 
+import com.helger.phase4.util.Phase4RuntimeException;
+
 /**
  * Special exception type for decompression errors.
  *
  * @author Philip Helger
  * @since 0.9.0
  */
-public class AS4DecompressException extends RuntimeException
+public class AS4DecompressException extends Phase4RuntimeException
 {
   public AS4DecompressException (@NonNull final Exception ex)
   {
