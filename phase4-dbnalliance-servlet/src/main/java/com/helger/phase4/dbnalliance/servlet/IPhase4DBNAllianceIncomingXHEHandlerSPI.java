@@ -21,11 +21,10 @@ import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIInterface;
-import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
-import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.xhe.v10.XHE10XHEType;
@@ -72,7 +71,7 @@ public interface IPhase4DBNAllianceIncomingXHEHandlerSPI
                           @NonNull XHE10XHEType aXHE,
                           @NonNull DBNAllianceXHEData aDBNAllianceXHE,
                           @NonNull IAS4IncomingMessageState aState,
-                          @NonNull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
+                          @NonNull AS4ErrorList aProcessingErrorMessages) throws Exception;
 
   /**
    * Optional callback to process a response message

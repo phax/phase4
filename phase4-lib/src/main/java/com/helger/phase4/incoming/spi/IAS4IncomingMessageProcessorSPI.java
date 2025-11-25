@@ -25,9 +25,9 @@ import com.helger.annotation.style.IsSPIInterface;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.model.pmode.IPMode;
@@ -75,7 +75,7 @@ public interface IAS4IncomingMessageProcessorSPI
                                                    @Nullable Node aPayload,
                                                    @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                    @NonNull IAS4IncomingMessageState aIncomingState,
-                                                   @NonNull ICommonsList <Ebms3Error> aProcessingErrorMessages);
+                                                   @NonNull AS4ErrorList aProcessingErrorMessages);
 
   /**
    * Process incoming AS4 signal message - pull-request and receipt.<br>
@@ -104,7 +104,7 @@ public interface IAS4IncomingMessageProcessorSPI
                                                            @NonNull Ebms3SignalMessage aSignalMessage,
                                                            @Nullable IPMode aPMode,
                                                            @NonNull IAS4IncomingMessageState aIncomingState,
-                                                           @NonNull ICommonsList <Ebms3Error> aProcessingErrorMessages);
+                                                           @NonNull AS4ErrorList aProcessingErrorMessages);
 
   /**
    * Optional callback to process a response message

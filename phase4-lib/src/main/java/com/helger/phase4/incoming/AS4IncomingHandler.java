@@ -52,6 +52,7 @@ import com.helger.collection.commons.ICommonsList;
 import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.diagnostics.error.IError;
 import com.helger.diagnostics.error.list.ErrorList;
+import com.helger.http.CHttp;
 import com.helger.http.CHttpHeader;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.mime.IMimeType;
@@ -70,8 +71,10 @@ import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.soap.AS4SingleSoapHeader;
+import com.helger.phase4.incoming.soap.CAS4Soap;
 import com.helger.phase4.incoming.soap.ISoapHeaderElementProcessor;
 import com.helger.phase4.incoming.soap.SoapHeaderElementProcessorRegistry;
 import com.helger.phase4.incoming.spi.IAS4IncomingMessageProcessingStatusSPI;
@@ -90,6 +93,7 @@ import com.helger.phase4.profile.IAS4ProfileValidator.EAS4ProfileValidationMode;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.phase4.util.Phase4IncomingException;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
@@ -171,7 +175,8 @@ public final class AS4IncomingHandler
     // Determine content type
     final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
     if (StringHelper.isEmpty (sContentType))
-      throw new Phase4Exception ("Content-Type header is missing").setRetryFeasible (false);
+      throw new Phase4IncomingException ("Content-Type header is missing").setHttpStatusCode (CHttp.HTTP_BAD_REQUEST)
+                                                                          .setRetryFeasible (false);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Received Content-Type string: '" + sContentType + "'");
@@ -179,7 +184,9 @@ public final class AS4IncomingHandler
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Received Content-Type object: " + aContentType);
     if (aContentType == null)
-      throw new Phase4Exception ("Failed to parse Content-Type '" + sContentType + "'").setRetryFeasible (false);
+      throw new Phase4IncomingException ("Failed to parse Content-Type '" + sContentType + "'").setHttpStatusCode (
+                                                                                                                   CHttp.HTTP_BAD_REQUEST)
+                                                                                               .setRetryFeasible (false);
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
@@ -448,7 +455,7 @@ public final class AS4IncomingHandler
                                                   @NonNull final Document aSoapDocument,
                                                   @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                   @NonNull final AS4IncomingMessageState aIncomingState,
-                                                  @NonNull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws Phase4Exception
+                                                  @NonNull final AS4ErrorList aEbmsErrorMessagesTarget) throws Phase4Exception
   {
     final ESoapVersion eSoapVersion = aIncomingState.getSoapVersion ();
     final ICommonsList <AS4SingleSoapHeader> aHeadersInMessage = new CommonsArrayList <> ();
@@ -458,10 +465,11 @@ public final class AS4IncomingHandler
                                                                      eSoapVersion.getNamespaceURI (),
                                                                      eSoapVersion.getHeaderElementName ());
       if (aHeaderNode == null)
-        throw new Phase4Exception ("SOAP document is missing a Header element {" +
-                                   eSoapVersion.getNamespaceURI () +
-                                   "}" +
-                                   eSoapVersion.getHeaderElementName ()).setRetryFeasible (false);
+        throw new Phase4IncomingException ("SOAP document is missing a Header element {" +
+                                           eSoapVersion.getNamespaceURI () +
+                                           "}" +
+                                           eSoapVersion.getHeaderElementName ()).setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_MUST_UNDERSTAND)
+                                                                                .setRetryFeasible (false);
 
       // Extract all header elements including their "mustUnderstand" value
       for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
@@ -496,11 +504,11 @@ public final class AS4IncomingHandler
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
 
-      // Error list for this processor
-      final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget = new CommonsArrayList <> ();
-
       try
       {
+        // Error list for this processor
+        final AS4ErrorList aProcessingErrorMessagesTarget = new AS4ErrorList ();
+
         // Process element
         if (!aProcessor.processHeaderElement (aSoapDocument,
                                               aHeader.getNode (),
@@ -545,15 +553,16 @@ public final class AS4IncomingHandler
     }
 
     // If an error message is present, send it back gracefully
+
     if (aEbmsErrorMessagesTarget.isEmpty ())
     {
-      // Now check if all must understand headers were processed
-      // Are all must-understand headers processed?
+      // If no error occurred so far, check if all "must understand" headers were processed
       for (final AS4SingleSoapHeader aHeader : aHeadersInMessage)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
-          throw new Phase4Exception ("Required SOAP header element " +
-                                     aHeader.getQName ().toString () +
-                                     " could not be handled").setRetryFeasible (false);
+          throw new Phase4IncomingException ("Required SOAP header element " +
+                                             aHeader.getQName ().toString () +
+                                             " could not be handled").setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_MUST_UNDERSTAND)
+                                                                     .setRetryFeasible (false);
     }
   }
 
@@ -635,7 +644,7 @@ public final class AS4IncomingHandler
                                                              @NonNull final ESoapVersion eSoapVersion,
                                                              @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                              @NonNull final IAS4IncomingProfileSelector aAS4ProfileSelector,
-                                                             @NonNull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget,
+                                                             @NonNull final AS4ErrorList aEbmsErrorMessagesTarget,
                                                              @NonNull final IAS4IncomingMessageMetadata aMessageMetadata) throws Phase4Exception
   {
     ValueEnforcer.notNull (aResHelper, "ResHelper");
@@ -750,11 +759,11 @@ public final class AS4IncomingHandler
       {
         // User message requires PMode
         if (aPMode == null)
-          throw new Phase4Exception ("No AS4 P-Mode configuration found for UserMessage!");
+          throw new Phase4IncomingException ("No AS4 P-Mode configuration found for UserMessage!").setRetryFeasible (false);
 
         // Only check leg if the message is a usermessage
         if (aEffectiveLeg == null)
-          throw new Phase4Exception ("No AS4 P-Mode leg could be determined!");
+          throw new Phase4IncomingException ("No AS4 P-Mode leg could be determined!").setRetryFeasible (false);
 
         // Only do profile checks if a profile is set
         // Profile Checks gets set when started with Server
@@ -851,7 +860,7 @@ public final class AS4IncomingHandler
                   LOGGER.warn (sDetails);
               }
 
-              // Was previously a thrown exception - that's why we break heer
+              // Was previously a thrown exception - that's why we break here
               return aIncomingState;
             }
           }
@@ -906,7 +915,7 @@ public final class AS4IncomingHandler
 
     // Handler for the parsed message
     final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
-      final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+      final AS4ErrorList aErrorMessages = new AS4ErrorList ();
 
       // Use the sending PMode as fallback, because from the incoming
       // receipt/error it is impossible to detect a PMode
@@ -929,10 +938,13 @@ public final class AS4IncomingHandler
                                                                           aErrorMessages,
                                                                           aIncomingMessageMetadata);
 
+      // TODO the error messages are not processed
+
       if (!aIncomingState.isSoapHeaderElementProcessingSuccessful ())
       {
-        throw new Phase4Exception ("Error processing AS4 message", aIncomingState.getSoapWSS4JException ())
-                                                                                                           .setRetryFeasible (false);
+        throw new Phase4IncomingException ("Error processing AS4 message", aIncomingState.getSoapWSS4JException ())
+                                                                                                                   .setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_MUST_UNDERSTAND)
+                                                                                                                   .setRetryFeasible (false);
       }
       // Remember the parsed signal message
       aRetWrapper.set (aIncomingState);
@@ -960,7 +972,8 @@ public final class AS4IncomingHandler
     }
     catch (final Exception ex)
     {
-      throw new Phase4Exception ("Error parsing AS4 message", ex);
+      // Wrap in Phase4Exception
+      throw new Phase4IncomingException ("Error parsing AS4 message", ex).setHttpStatusCode (CHttp.HTTP_BAD_REQUEST);
     }
 
     // This one contains the result

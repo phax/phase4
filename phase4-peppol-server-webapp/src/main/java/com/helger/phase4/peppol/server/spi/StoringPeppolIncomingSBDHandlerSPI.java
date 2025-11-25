@@ -26,8 +26,9 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIImplementation;
+import com.helger.base.string.StringParser;
 import com.helger.collection.CollectionFind;
-import com.helger.collection.commons.ICommonsList;
+import com.helger.http.CHttp;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.io.file.SimpleFileIO;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
@@ -36,11 +37,12 @@ import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
+import com.helger.peppolid.peppol.pidscheme.EPredefinedParticipantIdentifierScheme;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -49,6 +51,7 @@ import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletMessageProcessorSPI;
+import com.helger.phase4.util.Phase4IncomingException;
 import com.helger.photon.io.PhotonWorkerPool;
 import com.helger.security.certificate.CertificateHelper;
 
@@ -69,7 +72,7 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
                                  @NonNull final StandardBusinessDocument aSBD,
                                  @NonNull final PeppolSBDHData aPeppolSBD,
                                  @NonNull final IAS4IncomingMessageState aIncomingState,
-                                 @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception
+                                 @NonNull final AS4ErrorList aProcessingErrorMessages) throws Exception
   {
     final String sMyPeppolSeatID = APConfig.getMyPeppolSeatID ();
 
@@ -92,8 +95,8 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
     }
     else
     {
-      // C1 country defines scheme
-      final String sScheme = "AE".equals (aPeppolSBD.getCountryC1 ()) ? "9960" : "0242";
+      // Always 0242
+      final String sScheme = EPredefinedParticipantIdentifierScheme.SPIS.getISO6523Code ();
       // Take from C2 SeatID
       final String sC2SeatID = CertificateHelper.getSubjectCN (aIncomingState.getSigningCertificate ());
       aMLSReceiver = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifierWithDefaultScheme (sScheme +
@@ -115,17 +118,35 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
                                        " bytes)");
     LOGGER.info ("Successfully wrote SBD to '" + aFile.getAbsolutePath () + "'");
 
-    // TODO This is only demo code to force an error
-    // Check if any "MessageProperty" with name "MockAction" is contained
-    final Ebms3Property aMockAction = CollectionFind.findFirst (aUserMessage.getMessageProperties ().getProperty (),
-                                                                x -> "MockAction".equals (x.getName ()));
-    if (aMockAction != null)
     {
-      // Explicitly return an Error - for testing errors
-      LOGGER.info ("Found MockAction to return error with value '" + aMockAction.getValue () + "'");
-      aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (Locale.US)
-                                                         .errorDetail ("Mock error: " + aMockAction.getValue ())
-                                                         .build ());
+      // TODO This is only demo code to force an error
+      // Check if any "MessageProperty" with name "MockAction" is contained
+      final Ebms3Property aMockAction = CollectionFind.findFirst (aUserMessage.getMessageProperties ().getProperty (),
+                                                                  x -> "MockAction".equals (x.getName ()));
+      if (aMockAction != null)
+      {
+        // Explicitly return an Error - for testing errors
+        LOGGER.info ("Found MockAction to return error with value '" + aMockAction.getValue () + "'");
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (Locale.US)
+                                                           .errorCode ("MockAction")
+                                                           .errorDetail ("Mock error: " + aMockAction.getValue ())
+                                                           .build ());
+      }
+    }
+
+    {
+      // TODO This is only demo code to force an error
+      // Check if any "MessageProperty" with name "MockErrorStatusCode" is contained
+      final Ebms3Property aMockError = CollectionFind.findFirst (aUserMessage.getMessageProperties ().getProperty (),
+                                                                 x -> "MockErrorStatusCode".equals (x.getName ()));
+      if (aMockError != null)
+      {
+        // Explicitly return an Error - for testing errors
+        LOGGER.info ("Found MockErrorStatusCode to return error with value '" + aMockError.getValue () + "'");
+        // Default to HTTP 400
+        final int nStatusCode = StringParser.parseInt (aMockError.getValue (), CHttp.HTTP_BAD_REQUEST);
+        throw new Phase4IncomingException ("Mock error " + aMockError.getValue ()).setHttpStatusCode (nStatusCode);
+      }
     }
 
     // Last action in this method

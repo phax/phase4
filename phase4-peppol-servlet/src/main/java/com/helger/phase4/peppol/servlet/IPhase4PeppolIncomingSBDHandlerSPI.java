@@ -22,11 +22,10 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIInterface;
-import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.peppol.sbdh.PeppolSBDHData;
-import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 
@@ -73,7 +72,7 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
                           @NonNull StandardBusinessDocument aSBD,
                           @NonNull PeppolSBDHData aPeppolSBD,
                           @NonNull IAS4IncomingMessageState aState,
-                          @NonNull ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception;
+                          @NonNull AS4ErrorList aProcessingErrorMessages) throws Exception;
 
   /**
    * Optional callback to process a response message

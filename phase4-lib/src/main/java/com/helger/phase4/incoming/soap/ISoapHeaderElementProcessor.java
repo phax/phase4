@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 import com.helger.base.state.ESuccess;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.ebms3header.Ebms3Error;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.AS4IncomingMessageState;
 
 /**
@@ -58,5 +58,5 @@ public interface ISoapHeaderElementProcessor
                                  @NonNull Element aHeaderElement,
                                  @NonNull ICommonsList <WSS4JAttachment> aAttachments,
                                  @NonNull AS4IncomingMessageState aIncomingState,
-                                 @NonNull ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget);
+                                 @NonNull AS4ErrorList aProcessingErrorMessagesTarget);
 }

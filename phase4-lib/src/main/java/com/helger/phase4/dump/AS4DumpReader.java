@@ -43,9 +43,9 @@ import com.helger.mime.IMimeType;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.AS4IncomingProfileSelectorConstant;
 import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
@@ -245,7 +245,7 @@ public final class AS4DumpReader
                                                                 @Nullable final Node aPayload,
                                                                 @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                                 @NonNull final IAS4IncomingMessageState aIncomingState,
-                                                                @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                                @NonNull final AS4ErrorList aProcessingErrorMessages)
         {
           try
           {
@@ -284,7 +284,7 @@ public final class AS4DumpReader
                                                                         final Ebms3SignalMessage aSignalMessage,
                                                                         final IPMode aPMode,
                                                                         final IAS4IncomingMessageState aIncomingState,
-                                                                        final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                                        final AS4ErrorList aProcessingErrorMessages)
         {
           LOGGER.error ("Unexpected signal msg. Can only handle user messages.");
           return AS4SignalMessageProcessorResult.createSuccess ();

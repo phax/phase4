@@ -62,8 +62,8 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
-import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.AS4IncomingMessageState;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.error.EEbmsError;
@@ -115,7 +115,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
   private ESuccess _verifyAndDecrypt (@NonNull final Document aSOAPDoc,
                                       @NonNull final ICommonsList <WSS4JAttachment> aAttachments,
                                       @NonNull final AS4IncomingMessageState aIncomingState,
-                                      @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget,
+                                      @NonNull final AS4ErrorList aProcessingErrorMessagesTarget,
                                       @NonNull final Supplier <? extends WSSConfig> aWSSConfigSupplier)
   {
     // Default is Leg 1, gets overwritten when a reference to a message id
@@ -400,7 +400,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
                                         @NonNull final Element aSecurityNode,
                                         @NonNull final ICommonsList <WSS4JAttachment> aAttachments,
                                         @NonNull final AS4IncomingMessageState aIncomingState,
-                                        @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
+                                        @NonNull final AS4ErrorList aProcessingErrorMessagesTarget)
   {
     // Remember the crypto factories used for this message
     aIncomingState.setCryptoFactorySign (m_aCryptoFactorySign);

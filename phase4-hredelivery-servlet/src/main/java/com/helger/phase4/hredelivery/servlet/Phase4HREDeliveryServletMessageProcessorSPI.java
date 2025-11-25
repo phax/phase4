@@ -63,10 +63,10 @@ import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4Attachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
@@ -390,7 +390,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                           @NonNull final IAS4IncomingMessageState aState,
-                                                          @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                          @NonNull final AS4ErrorList aProcessingErrorMessages)
   {
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Invoking processAS4UserMessage");
@@ -758,7 +758,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                                                                   @NonNull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
                                                                   @NonNull final IAS4IncomingMessageState aState,
-                                                                  @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                                  @NonNull final AS4ErrorList aProcessingErrorMessages)
   {
     LOGGER.error ("Invoking processAS4SignalMessage is not supported");
     throw new UnsupportedOperationException ();

@@ -19,7 +19,8 @@ package com.helger.phase4.hredelivery.servlet;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import com.helger.phase4.util.Phase4Exception;
+import com.helger.phase4.incoming.soap.CAS4Soap;
+import com.helger.phase4.util.Phase4IncomingException;
 
 /**
  * Generic exception to be thrown from the phase4 HR eDelivery servlet.
@@ -27,7 +28,7 @@ import com.helger.phase4.util.Phase4Exception;
  * @author Philip Helger
  * @since 4.0.2
  */
-public class Phase4HREDeliveryServletException extends Phase4Exception
+public class Phase4HREDeliveryServletException extends Phase4IncomingException
 {
   /**
    * @param sMessage
@@ -36,6 +37,7 @@ public class Phase4HREDeliveryServletException extends Phase4Exception
   public Phase4HREDeliveryServletException (@NonNull final String sMessage)
   {
     super (sMessage);
+    setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_RECEIVER);
   }
 
   /**
@@ -47,5 +49,6 @@ public class Phase4HREDeliveryServletException extends Phase4Exception
   public Phase4HREDeliveryServletException (@NonNull final String sMessage, @Nullable final Throwable aCause)
   {
     super (sMessage, aCause);
+    setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_RECEIVER);
   }
 }

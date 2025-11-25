@@ -54,6 +54,7 @@ import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.AS4IncomingMessageState;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.mgr.AS4IncomingPullRequestProcessorManager;
@@ -171,7 +172,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
   private static ESuccess _checkMPCOfPMode (@NonNull final PModeLeg aPModeLeg,
                                             @NonNull final IMPCManager aMPCMgr,
                                             @NonNull final Locale aLocale,
-                                            @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
+                                            @NonNull final AS4ErrorList aProcessingErrorMessagesTarget)
   {
     // Check if MPC is contained in PMode and if so, if it is valid
     if (aPModeLeg.getBusinessInfo () != null)
@@ -220,7 +221,7 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
                                         @NonNull final Element aElement,
                                         @NonNull final ICommonsList <WSS4JAttachment> aAttachments,
                                         @NonNull final AS4IncomingMessageState aIncomingState,
-                                        @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessagesTarget)
+                                        @NonNull final AS4ErrorList aProcessingErrorMessagesTarget)
   {
     final IMPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
     IPMode aPMode = null;
@@ -606,9 +607,8 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
                                                                                                 .build ());
                           return ESuccess.FAILURE;
                         }
-                        else
-                          if (aIncomingAttachment != null)
-                            aIncomingAttachment.setCharset (aCharset);
+                        if (aIncomingAttachment != null)
+                          aIncomingAttachment.setCharset (aCharset);
                       }
                     }
                 // else we don't care about the property

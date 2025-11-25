@@ -19,8 +19,7 @@ package com.helger.phase4.incoming;
 import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.Nonempty;
-import com.helger.collection.commons.ICommonsList;
-import com.helger.phase4.ebms3header.Ebms3Error;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.model.message.AS4ErrorMessage;
 
 /**
@@ -44,6 +43,6 @@ public interface IAS4RequestHandlerErrorConsumer
    *        The filled AS4 error message to be returned. Don't touch. Never <code>null</code>.
    */
   void onAS4ErrorMessage (@NonNull IAS4IncomingMessageState aIncomingState,
-                          @NonNull @Nonempty ICommonsList <Ebms3Error> aEbmsErrors,
+                          @NonNull @Nonempty AS4ErrorList aEbmsErrors,
                           @NonNull AS4ErrorMessage aAS4ErrorMsg);
 }

@@ -31,7 +31,6 @@ import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
-import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3MessageProperties;
 import com.helger.phase4.ebms3header.Ebms3PartyInfo;
@@ -40,6 +39,7 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
@@ -75,7 +75,7 @@ public class MockMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                           @NonNull final IAS4IncomingMessageState aState,
-                                                          @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
+                                                          @NonNull final AS4ErrorList aProcessingErrorMessages)
   {
     // Is a MessageProperty with name "Exception" present?
     if (CollectionFind.containsAny (aUserMessage.getMessageProperties ().getProperty (),
@@ -101,7 +101,7 @@ public class MockMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
                                                                   @NonNull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
                                                                   @NonNull final IAS4IncomingMessageState aState,
-                                                                  @NonNull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget)
+                                                                  @NonNull final AS4ErrorList aEbmsErrorMessagesTarget)
   {
     if (aSignalMessage.getReceipt () != null)
     {

@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.collection.CollectionFind;
-import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.io.file.SimpleFileIO;
 import com.helger.peppol.xhe.DBNAllianceXHEData;
@@ -35,9 +34,9 @@ import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.dbnalliance.server.APConfig;
 import com.helger.phase4.dbnalliance.server.storage.StorageHelper;
 import com.helger.phase4.dbnalliance.servlet.IPhase4DBNAllianceIncomingXHEHandlerSPI;
-import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -62,7 +61,7 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
                                  @NonNull final XHE10XHEType aXHE,
                                  @NonNull final DBNAllianceXHEData aDBNAllianceXHE,
                                  @NonNull final IAS4IncomingMessageState aIncomingState,
-                                 @NonNull final ICommonsList <Ebms3Error> aProcessingErrorMessages) throws Exception
+                                 @NonNull final AS4ErrorList aProcessingErrorMessages) throws Exception
   {
     final String sMyPeppolSeatID = APConfig.getMySeatID ();
     final IIdentifierFactory aIdentifierFactory = SimpleIdentifierFactory.INSTANCE;

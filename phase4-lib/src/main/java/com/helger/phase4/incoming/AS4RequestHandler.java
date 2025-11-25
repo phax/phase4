@@ -67,7 +67,6 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
-import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3MessageProperties;
 import com.helger.phase4.ebms3header.Ebms3PartyInfo;
@@ -75,6 +74,8 @@ import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4Error;
+import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.mgr.AS4IncomingMessageProcessorManager;
@@ -112,6 +113,8 @@ import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.phase4.util.Phase4IncomingException;
+import com.helger.phase4.util.Phase4RuntimeException;
 import com.helger.photon.io.PhotonWorkerPool;
 import com.helger.xml.serialize.write.XMLWriter;
 
@@ -839,7 +842,7 @@ public class AS4RequestHandler implements AutoCloseable
                                        @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                        @Nullable final IPMode aPMode,
                                        @NonNull final IAS4IncomingMessageState aIncomingState,
-                                       @NonNull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget,
+                                       @NonNull final AS4ErrorList aEbmsErrorMessagesTarget,
                                        @NonNull final ICommonsList <WSS4JAttachment> aResponseAttachmentsTarget,
                                        @NonNull final SPIInvocationResult aSPIResult)
   {
@@ -888,7 +891,7 @@ public class AS4RequestHandler implements AutoCloseable
 
           // Main processing
           final AS4MessageProcessorResult aResult;
-          final ICommonsList <Ebms3Error> aProcessingErrorMessages = new CommonsArrayList <> ();
+          final AS4ErrorList aProcessingErrorMessages = new AS4ErrorList ();
           if (bIsUserMessage)
           {
             aResult = aProcessor.processAS4UserMessage (m_aMessageMetadata,
@@ -1146,7 +1149,7 @@ public class AS4RequestHandler implements AutoCloseable
         }
         catch (final Exception ex)
         {
-          throw new IllegalStateException ("Error invoking AS4 message processor " + aProcessor + " for response", ex);
+          throw new Phase4RuntimeException ("Error invoking AS4 message processor " + aProcessor + " for response", ex);
         }
   }
 
@@ -1419,13 +1422,13 @@ public class AS4RequestHandler implements AutoCloseable
                                                            @NonNull final ESoapVersion eSoapVersion,
                                                            @NonNull @Nonempty final String sResponseMessageID,
                                                            @Nullable final PModeLeg aEffectiveLeg,
-                                                           @NonNull @Nonempty final ICommonsList <Ebms3Error> aEbmsErrorMessages)
+                                                           @NonNull @Nonempty final AS4ErrorList aEbmsErrorMessages)
   {
     // Start building response error message
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                               MessageHelperMethods.createEbms3MessageInfo (sResponseMessageID,
                                                                                                            aIncomingState.getMessageID ()),
-                                                              aEbmsErrorMessages);
+                                                              aEbmsErrorMessages.getAllMapped (AS4Error::getEbmsError));
 
     // Call optional consumer
     if (m_aErrorConsumer != null)
@@ -1476,7 +1479,16 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     // Errors are always send with an HTTP 200
-    final int nResponseStatusCode = CHttp.HTTP_OK;
+    // Default is 200 but can be overridden
+    int nResponseStatusCode = CHttp.HTTP_OK;
+    for (final AS4Error aAS4Error : aEbmsErrorMessages)
+      if (aAS4Error.hasHttpStatusCode ())
+      {
+        // The first error with a status code is used
+        nResponseStatusCode = aAS4Error.getHttpStatusCode ();
+        LOGGER.info ("HTTP Response Status code will be " + nResponseStatusCode);
+        break;
+      }
 
     if (false)
     {
@@ -1643,8 +1655,6 @@ public class AS4RequestHandler implements AutoCloseable
    *        A list of additional attachments submitted together with the SOAP message. This list
    *        MUST be empty when a SOAP message was received, and MAY contain something when a MIME
    *        message was received. Never <code>null</code>.
-   * @param aEbmsErrorMessagesTarget
-   *        The list of EBMS error messages to be filled from within. Never <code>null</code>.
    * @return The processing result producer - may be <code>null</code>.
    * @throws WSSecurityException
    *         On message encryption / signature issues.
@@ -1657,11 +1667,13 @@ public class AS4RequestHandler implements AutoCloseable
   private IAS4ResponseFactory _handleSoapMessage (@NonNull final HttpHeaderMap aHttpHeaders,
                                                   @NonNull final Document aSoapDocument,
                                                   @NonNull final ESoapVersion eSoapVersion,
-                                                  @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                  @NonNull final ICommonsList <Ebms3Error> aEbmsErrorMessagesTarget) throws WSSecurityException,
-                                                                                                                     MessagingException,
-                                                                                                                     Phase4Exception
+                                                  @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
+                                                                                                                      MessagingException,
+                                                                                                                      Phase4Exception
   {
+    // Collect all runtime errors
+    final AS4ErrorList aEbmsErrorMessages = new AS4ErrorList ();
+
     // Create the SOAP header element processor list
     final SoapHeaderElementProcessorRegistry aRegistry = SoapHeaderElementProcessorRegistry.createDefault (m_aPModeResolver,
                                                                                                            m_aCryptoFactorySign,
@@ -1679,7 +1691,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                            eSoapVersion,
                                                                                            aIncomingAttachments,
                                                                                            m_aIncomingProfileSelector,
-                                                                                           aEbmsErrorMessagesTarget,
+                                                                                           aEbmsErrorMessages,
                                                                                            m_aMessageMetadata);
 
     // Evaluate the results of processing
@@ -1715,15 +1727,15 @@ public class AS4RequestHandler implements AutoCloseable
                                 sMessageID +
                                 "' was already handled (this is a duplicate)";
         LOGGER.error (sDetails);
-        aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.errorBuilder (m_aLocale)
-                                                           .refToMessageInError (sMessageID)
-                                                           .errorDetail (sDetails)
-                                                           .build ());
+        aEbmsErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (m_aLocale)
+                                                     .refToMessageInError (sMessageID)
+                                                     .errorDetail (sDetails)
+                                                     .build ());
       }
       else
       {
         if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Message is not a duplicate");
+          LOGGER.debug ("Message with ID '" + sMessageID + "' is not a duplicate");
       }
     }
 
@@ -1739,7 +1751,7 @@ public class AS4RequestHandler implements AutoCloseable
     // * If ping/test message then only if profile should invoke SPI
     // * No Duplicate message ID
     boolean bCanInvokeSPIs = true;
-    if (aEbmsErrorMessagesTarget.isNotEmpty ())
+    if (aEbmsErrorMessages.isNotEmpty ())
     {
       // Previous processing errors
       bCanInvokeSPIs = false;
@@ -1783,7 +1795,7 @@ public class AS4RequestHandler implements AutoCloseable
                                 aDecryptedAttachments,
                                 aPMode,
                                 aIncomingState,
-                                aEbmsErrorMessagesTarget,
+                                aEbmsErrorMessages,
                                 aResponseAttachments,
                                 aSPIResult);
         if (aSPIResult.isFailure ())
@@ -1804,7 +1816,7 @@ public class AS4RequestHandler implements AutoCloseable
         // Only leg1 can be async!
         final IThrowingRunnable <Exception> r = () -> {
           // Start async processing
-          final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
+          final AS4ErrorList aLocalErrorMessages = new AS4ErrorList ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
 
           // Invoke SPI callbacks
@@ -1860,14 +1872,23 @@ public class AS4RequestHandler implements AutoCloseable
             // https://github.com/phax/phase4/issues/4
             final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                                               aIncomingState.getMessageID (),
-                                                                              aLocalErrorMessages);
+                                                                              aLocalErrorMessages.getAllMapped (AS4Error::getEbmsError));
             sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ().getMessageInfo ().getMessageId ();
 
             // Pass error messages to the outside
             if (m_aErrorConsumer != null && aLocalErrorMessages.isNotEmpty ())
               m_aErrorConsumer.onAS4ErrorMessage (aIncomingState, aLocalErrorMessages, aResponseErrorMsg);
 
-            final int nResponseStatusCode = CHttp.HTTP_OK;
+            // Default is 200 but can be overridden
+            int nResponseStatusCode = CHttp.HTTP_OK;
+            for (final AS4Error aAS4Error : aLocalErrorMessages)
+              if (aAS4Error.hasHttpStatusCode ())
+              {
+                // The first error with a status code is used
+                nResponseStatusCode = aAS4Error.getHttpStatusCode ();
+                LOGGER.info ("HTTP Response Status code will be " + nResponseStatusCode);
+                break;
+              }
 
             aAsyncResponseFactory = new AS4ResponseFactoryXML (m_aMessageMetadata,
                                                                aIncomingState,
@@ -1945,15 +1966,19 @@ public class AS4RequestHandler implements AutoCloseable
       // not an incoming Ebms Error Message (either UserMessage or a different
       // SignalMessage)
 
-      if (aEbmsErrorMessagesTarget.isNotEmpty ())
+      if (aEbmsErrorMessages.isNotEmpty ())
       {
         if (LOGGER.isDebugEnabled ())
+        {
           LOGGER.debug ("Creating AS4 error message with these " +
-                        aEbmsErrorMessagesTarget.size () +
+                        aEbmsErrorMessages.size () +
                         " errors: " +
-                        aEbmsErrorMessagesTarget.getAllMapped (x -> StringHelper.getConcatenatedOnDemand (x.getDescriptionValue (),
-                                                                                                          " / ",
-                                                                                                          x.getErrorDetail ())));
+                        aEbmsErrorMessages.getAllMapped (x -> StringHelper.getConcatenatedOnDemand (x.getEbmsError ()
+                                                                                                     .getDescriptionValue (),
+                                                                                                    " / ",
+                                                                                                    x.getEbmsError ()
+                                                                                                     .getErrorDetail ())));
+        }
 
         // Generate ErrorMessage if errors in the process are present and the
         // pmode wants an error response
@@ -1965,7 +1990,7 @@ public class AS4RequestHandler implements AutoCloseable
                                              eSoapVersion,
                                              sResponseMessageID,
                                              aEffectiveLeg,
-                                             aEbmsErrorMessagesTarget);
+                                             aEbmsErrorMessages);
         }
         else
         {
@@ -2050,7 +2075,7 @@ public class AS4RequestHandler implements AutoCloseable
             // synchronous TWO - WAY (= "SYNC")
             final PModeLeg aLeg2 = aPMode.getLeg2 ();
             if (aLeg2 == null)
-              throw new Phase4Exception ("PMode has no leg2!");
+              throw new Phase4IncomingException ("PMode has no leg2!").setRetryFeasible (false);
 
             if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (),
                                                    aPMode.getMEPBinding (),
@@ -2123,13 +2148,10 @@ public class AS4RequestHandler implements AutoCloseable
   {
     final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
       // SOAP document and SOAP version are determined
-      // Collect all runtime errors
-      final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
       final IAS4ResponseFactory aResponder = _handleSoapMessage (aHttpHeaders,
                                                                  aSoapDocument,
                                                                  eSoapVersion,
-                                                                 aIncomingAttachments,
-                                                                 aErrorMessages);
+                                                                 aIncomingAttachments);
       if (aResponder != null)
       {
         // Response present -> send back
