@@ -126,7 +126,7 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
       if (aMockAction != null)
       {
         // Explicitly return an Error - for testing errors
-        LOGGER.info ("Found MockAction to return error with value '" + aMockAction.getValue () + "'");
+        LOGGER.info ("Found MockAction to return AS4 Error with value '" + aMockAction.getValue () + "'");
         aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (Locale.US)
                                                            .errorCode ("MockAction")
                                                            .errorDetail ("Mock error: " + aMockAction.getValue ())
