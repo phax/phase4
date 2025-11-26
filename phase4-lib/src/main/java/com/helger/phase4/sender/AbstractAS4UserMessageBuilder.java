@@ -945,14 +945,15 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       if (aOriginalSignalMsgConsumer == null)
       {
         // Just store the message
-        m_aSignalMsgConsumer = (aSignalMsg, aMMD, aIncomingState) -> aSignalMsgKeeper.set (aSignalMsg);
+        m_aSignalMsgConsumer = (aSignalMsg, aIncomingMessageMetadata, aIncomingState) -> aSignalMsgKeeper.set (
+                                                                                                               aSignalMsg);
       }
       else
       {
         // Call the original handler and store the message
-        m_aSignalMsgConsumer = (aSignalMsg, aMMD, aIncomingState) -> {
+        m_aSignalMsgConsumer = (aSignalMsg, aIncomingMessageMetadata, aIncomingState) -> {
           aSignalMsgKeeper.set (aSignalMsg);
-          aOriginalSignalMsgConsumer.handleSignalMessage (aSignalMsg, aMMD, aIncomingState);
+          aOriginalSignalMsgConsumer.handleSignalMessage (aSignalMsg, aIncomingMessageMetadata, aIncomingState);
         };
       }
 
