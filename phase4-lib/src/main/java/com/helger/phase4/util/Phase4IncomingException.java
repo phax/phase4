@@ -20,6 +20,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.CheckForSigned;
+import com.helger.phase4.CAS4;
 
 /**
  * Special phase4 incoming exception for inbound errors. It adds an HTTP response code to the return
@@ -30,9 +31,7 @@ import com.helger.annotation.CheckForSigned;
  */
 public class Phase4IncomingException extends Phase4Exception
 {
-  public static final int DEFAULT_HTTP_STATUS_CODE = -1;
-
-  private int m_nHttpStatusCode = DEFAULT_HTTP_STATUS_CODE;
+  private int m_nHttpStatusCode = CAS4.HTTP_STATUS_UNDEFINED;
 
   /**
    * @param sMessage

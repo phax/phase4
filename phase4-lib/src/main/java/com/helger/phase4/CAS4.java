@@ -86,6 +86,8 @@ public final class CAS4
   public static final String DEFAULT_SERVICE_URL = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service";
   public static final String DEFAULT_MPC_ID = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC";
 
+  public static final int HTTP_STATUS_UNDEFINED = -1;
+
   private CAS4 ()
   {}
 }
