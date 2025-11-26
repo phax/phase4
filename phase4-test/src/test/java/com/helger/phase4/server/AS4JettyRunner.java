@@ -22,7 +22,7 @@ import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.jetty.JettyRunner;
 
 /**
- * Special JettyRunne for AS4
+ * Special JettyRunner for AS4
  *
  * @author Philip Helger
  */
