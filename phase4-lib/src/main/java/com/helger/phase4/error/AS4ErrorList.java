@@ -43,6 +43,14 @@ public class AS4ErrorList implements Iterable <AS4Error>
   public AS4ErrorList ()
   {}
 
+  /**
+   * Add an EBMS Error to the list. It is internally wrapped into an {@link AS4Error}. No special
+   * HTTP Status code can be provided with this method.
+   *
+   * @param aError
+   *        The error to be added. May not be <code>null</code>.
+   * @return this for chaining
+   */
   @NonNull
   public AS4ErrorList add (@NonNull final Ebms3Error aError)
   {
@@ -50,6 +58,13 @@ public class AS4ErrorList implements Iterable <AS4Error>
     return add (AS4Error.builder ().ebmsError (aError).build ());
   }
 
+  /**
+   * Add an error to the list.
+   *
+   * @param aError
+   *        The error to be added. May not be <code>null</code>.
+   * @return this for chaining
+   */
   @NonNull
   public AS4ErrorList add (@NonNull final AS4Error aError)
   {
@@ -58,6 +73,13 @@ public class AS4ErrorList implements Iterable <AS4Error>
     return this;
   }
 
+  /**
+   * Add another error list to this list
+   *
+   * @param aOther
+   *        the error list to be added. May not be <code>null</code>.
+   * @return this for chaining
+   */
   @NonNull
   public AS4ErrorList addAll (@NonNull final AS4ErrorList aOther)
   {
@@ -66,6 +88,15 @@ public class AS4ErrorList implements Iterable <AS4Error>
     return this;
   }
 
+  /**
+   * Get a mapped list of all contained errors.
+   *
+   * @param <T>
+   *        The destination type.
+   * @param aFunc
+   *        The function to be invoked for each error in the list. May not be <code>null</code>.
+   * @return A non-<code>null</code> but maybe empty list of mapped elements.
+   */
   @NonNull
   @ReturnsMutableCopy
   public <T> ICommonsList <T> getAllMapped (@NonNull final Function <? super AS4Error, T> aFunc)
@@ -74,28 +105,45 @@ public class AS4ErrorList implements Iterable <AS4Error>
     return m_aList.getAllMapped (aFunc);
   }
 
+  /**
+   * Iterate over each contained error with the provided consumer.
+   */
   public void forEach (@NonNull final Consumer <? super AS4Error> aConsumer)
   {
     ValueEnforcer.notNull (aConsumer, "Consumer");
     m_aList.forEach (aConsumer);
   }
 
+  /**
+   * @return <code>true</code> if the list is empty, <code>false</code> if not.
+   * @see #isNotEmpty()
+   */
   public boolean isEmpty ()
   {
     return m_aList.isEmpty ();
   }
 
+  /**
+   * @return <code>true</code> if the list is not empty, <code>false</code> if it is.
+   * @see #isEmpty()
+   */
   public boolean isNotEmpty ()
   {
     return m_aList.isNotEmpty ();
   }
 
+  /**
+   * @return The number of errors contained. Must be &ge; 0.
+   */
   @Nonnegative
   public int size ()
   {
     return m_aList.size ();
   }
 
+  /**
+   * Get an iterator over all contained errors.
+   */
   @NonNull
   public Iterator <AS4Error> iterator ()
   {
