@@ -19,6 +19,7 @@ package com.helger.phase4.hredelivery.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
@@ -80,11 +81,11 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
-import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
-import com.helger.smpclient.peppol.SMPClientReadOnly;
+import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
+import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
 import com.helger.xml.serialize.write.XMLWriter;
-import com.helger.xsds.peppol.smp1.EndpointType;
-import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
+import com.helger.xsds.bdxr.smp1.EndpointType;
+import com.helger.xsds.bdxr.smp1.SignedServiceMetadataType;
 
 /**
  * This is the SPI implementation to handle generic incoming AS4 requests. The main goal of this
@@ -264,7 +265,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
 
   @Nullable
   private EndpointType _getReceiverEndpoint (@NonNull final String sLogPrefix,
-                                             @NonNull final ISMPExtendedServiceMetadataProvider aSMPClient,
+                                             @NonNull final IBDXRExtendedServiceMetadataProvider aSMPClient,
                                              @Nullable final IParticipantIdentifier aRecipientID,
                                              @Nullable final IDocumentTypeIdentifier aDocTypeID,
                                              @Nullable final IProcessIdentifier aProcessID) throws Phase4HREDeliveryServletException
@@ -289,10 +290,8 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                       m_aTransportProfile.getID ());
       }
 
-      // PFUOI 4.3.0
-      final SignedServiceMetadataType aSSM = aSMPClient.getSchemeSpecificServiceMetadataOrNull (aRecipientID,
-                                                                                                aDocTypeID);
-      return aSSM == null ? null : SMPClientReadOnly.getEndpoint (aSSM, aProcessID, m_aTransportProfile);
+      final SignedServiceMetadataType aSSM = aSMPClient.getServiceMetadataOrNull (aRecipientID, aDocTypeID);
+      return aSSM == null ? null : BDXRClientReadOnly.getEndpoint (aSSM, aProcessID, m_aTransportProfile);
     }
     catch (final Exception ex)
     {
@@ -317,7 +316,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug (sLogPrefix + "Our AP URL is " + sOwnAPUrl);
 
-    final String sRecipientAPUrl = SMPClientReadOnly.getEndpointAddress (aRecipientEndpoint);
+    final String sRecipientAPUrl = BDXRClientReadOnly.getEndpointAddress (aRecipientEndpoint);
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug (sLogPrefix + "Recipient AP URL from SMP is " + sRecipientAPUrl);
 
@@ -339,17 +338,17 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                                                           @NonNull final X509Certificate aOurCert,
                                                           @NonNull final EndpointType aRecipientEndpoint) throws Phase4HREDeliveryServletException
   {
-    final String sRecipientCertString = aRecipientEndpoint.getCertificate ();
+    final byte [] aRecipientCertBytes = aRecipientEndpoint.getCertificate ();
     X509Certificate aRecipientCert = null;
     try
     {
-      aRecipientCert = CertificateHelper.convertStringToCertficate (sRecipientCertString);
+      aRecipientCert = CertificateHelper.convertByteArrayToCertficate (aRecipientCertBytes);
     }
     catch (final CertificateException t)
     {
       throw new Phase4HREDeliveryServletException (sLogPrefix +
                                                    "Internal error: Failed to convert looked up endpoint certificate string '" +
-                                                   sRecipientCertString +
+                                                   new String (aRecipientCertBytes, StandardCharsets.ISO_8859_1) +
                                                    "' to an X.509 certificate!",
                                                    t);
     }

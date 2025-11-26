@@ -30,7 +30,7 @@ import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
-import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
+import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
 
 /**
  * This class contains the "per-request" data of
@@ -43,7 +43,7 @@ import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 public final class Phase4HREDeliveryReceiverConfiguration
 {
   private final boolean m_bReceiverCheckEnabled;
-  private final ISMPExtendedServiceMetadataProvider m_aSMPClient;
+  private final IBDXRExtendedServiceMetadataProvider m_aSMPClient;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
   private final IIdentifierFactory m_aSBDHIdentifierFactory;
@@ -75,7 +75,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
    *        The HR eDelivery AP CA checker. May not be <code>null</code>.
    */
   public Phase4HREDeliveryReceiverConfiguration (final boolean bReceiverCheckEnabled,
-                                                 @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
+                                                 @Nullable final IBDXRExtendedServiceMetadataProvider aSMPClient,
                                                  @Nullable final String sAS4EndpointURL,
                                                  @Nullable final X509Certificate aAPCertificate,
                                                  @NonNull final IIdentifierFactory aSBDHIdentifierFactory,
@@ -112,7 +112,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
    * @see #isReceiverCheckEnabled()
    */
   @Nullable
-  public ISMPExtendedServiceMetadataProvider getSMPClient ()
+  public IBDXRExtendedServiceMetadataProvider getSMPClient ()
   {
     return m_aSMPClient;
   }
@@ -214,7 +214,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
                                                                     IBuilder <Phase4HREDeliveryReceiverConfiguration>
   {
     private boolean m_bReceiverCheckEnabled;
-    private ISMPExtendedServiceMetadataProvider m_aSMPClient;
+    private IBDXRExtendedServiceMetadataProvider m_aSMPClient;
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
     private IIdentifierFactory m_aSBDHIdentifierFactory;
@@ -245,7 +245,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
     }
 
     @NonNull
-    public Phase4HREDeliveryReceiverConfigurationBuilder serviceMetadataProvider (@Nullable final ISMPExtendedServiceMetadataProvider a)
+    public Phase4HREDeliveryReceiverConfigurationBuilder serviceMetadataProvider (@Nullable final IBDXRExtendedServiceMetadataProvider a)
     {
       m_aSMPClient = a;
       return this;

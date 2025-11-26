@@ -45,6 +45,7 @@ import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
 import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.smpclient.url.BDXLURLProvider;
@@ -235,7 +236,7 @@ public final class Phase4CEFSender
      * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
     @NonNull
-    public final IMPLTYPE smpClient (@NonNull final IBDXRServiceMetadataProvider a)
+    public final IMPLTYPE smpClient (@NonNull final IBDXRExtendedServiceMetadataProvider a)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (a));
     }

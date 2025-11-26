@@ -35,7 +35,7 @@ import com.helger.peppolid.IProcessIdentifier;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
-import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
+import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
 import com.helger.smpclient.exception.SMPClientBadRequestException;
 import com.helger.smpclient.exception.SMPClientBadResponseException;
 import com.helger.smpclient.exception.SMPClientException;
@@ -55,11 +55,11 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4EndpointDetailProviderBDXR.class);
 
-  private final IBDXRServiceMetadataProvider m_aSMPClient;
+  private final IBDXRExtendedServiceMetadataProvider m_aSMPClient;
   private ISMPTransportProfile m_aTP = DEFAULT_TRANSPORT_PROFILE;
   private EndpointType m_aEndpoint;
 
-  public AS4EndpointDetailProviderBDXR (@NonNull final IBDXRServiceMetadataProvider aSMPClient)
+  public AS4EndpointDetailProviderBDXR (@NonNull final IBDXRExtendedServiceMetadataProvider aSMPClient)
   {
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
     m_aSMPClient = aSMPClient;
@@ -69,7 +69,7 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
    * @return The service metadata provider passed in the constructor. Never <code>null</code>.
    */
   @NonNull
-  public final IBDXRServiceMetadataProvider getServiceMetadataProvider ()
+  public final IBDXRExtendedServiceMetadataProvider getServiceMetadataProvider ()
   {
     return m_aSMPClient;
   }
@@ -160,9 +160,9 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
       catch (final SMPClientException ex)
       {
         final boolean bRetryFeasible = ex instanceof SMPClientBadRequestException ||
-                                       ex instanceof SMPClientBadResponseException ||
-                                       ex instanceof SMPClientUnauthorizedException ||
-                                       ex.getClass ().equals (SMPClientException.class);
+          ex instanceof SMPClientBadResponseException ||
+          ex instanceof SMPClientUnauthorizedException ||
+          ex.getClass ().equals (SMPClientException.class);
         throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
                                       aReceiverID.getURIEncoded () +
                                       ", " +

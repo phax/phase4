@@ -33,6 +33,7 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.hredelivery.servlet.Phase4HREDeliveryReceiverConfiguration.Phase4HREDeliveryReceiverConfigurationBuilder;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.certificate.TrustedCAChecker;
+import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 
 /**
@@ -56,7 +57,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4HREDeliveryDefaultReceiverConfiguration.class);
 
   private static boolean s_bReceiverCheckEnabled = DEFAULT_RECEIVER_CHECK_ENABLED;
-  private static ISMPExtendedServiceMetadataProvider s_aSMPClient;
+  private static IBDXRExtendedServiceMetadataProvider s_aSMPClient;
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
   private static IIdentifierFactory s_aSBDHIdentifierFactory = DEFAULT_SBDH_IDENTIFIER_FACTORY;
@@ -98,7 +99,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
    *         <code>null</code> if not yet configured.
    */
   @Nullable
-  public static ISMPExtendedServiceMetadataProvider getSMPClient ()
+  public static IBDXRExtendedServiceMetadataProvider getSMPClient ()
   {
     return s_aSMPClient;
   }
@@ -109,7 +110,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
    * @param aSMPClient
    *        The SMP metadata provider to be used. May be <code>null</code>.
    */
-  public static void setSMPClient (@Nullable final ISMPExtendedServiceMetadataProvider aSMPClient)
+  public static void setSMPClient (@Nullable final IBDXRExtendedServiceMetadataProvider aSMPClient)
   {
     s_aSMPClient = aSMPClient;
   }
@@ -263,7 +264,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
   @NonNull
   public static Phase4HREDeliveryReceiverConfigurationBuilder getAsReceiverCheckDataBuilder ()
   {
-    final ISMPExtendedServiceMetadataProvider aSMPClient = getSMPClient ();
+    final IBDXRExtendedServiceMetadataProvider aSMPClient = getSMPClient ();
     final String sAS4EndpointURL = getAS4EndpointURL ();
     final X509Certificate aAPCertificate = getAPCertificate ();
 
