@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.sender;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jspecify.annotations.NonNull;
@@ -126,9 +126,9 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
       return false;
 
     // Transform algorithms
-    final List <TransformType> aTransforms1 = aRef1.getTransforms () == null ? new ArrayList <> ()
+    final List <TransformType> aTransforms1 = aRef1.getTransforms () == null ? Collections.emptyList ()
                                                                              : aRef1.getTransforms ().getTransform ();
-    final List <TransformType> aTransforms2 = aRef2.getTransforms () == null ? new ArrayList <> ()
+    final List <TransformType> aTransforms2 = aRef2.getTransforms () == null ? Collections.emptyList ()
                                                                              : aRef2.getTransforms ().getTransform ();
     if (aTransforms1.size () != aTransforms2.size ())
       return false;
@@ -163,9 +163,9 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
       NonRepudiationInformation aReceivedNRR = null;
       final List <Object> aAnyList = aEbmsSignalMsg.getReceipt ().getAny ();
       for (final var aAnyItem : aAnyList)
-        if (aAnyItem instanceof NonRepudiationInformation)
+        if (aAnyItem instanceof final NonRepudiationInformation nri)
         {
-          aReceivedNRR = (NonRepudiationInformation) aAnyItem;
+          aReceivedNRR = nri;
           break;
         }
 
