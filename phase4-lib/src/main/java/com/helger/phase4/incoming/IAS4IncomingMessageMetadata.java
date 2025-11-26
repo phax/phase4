@@ -202,4 +202,18 @@ public interface IAS4IncomingMessageMetadata
    */
   @Nullable
   String getRequestMessageID ();
+
+  /**
+   * @return The HTTP status code to be returned. All values &le; 0 means: undefined.
+   * @since 4.2.0
+   */
+  @CheckForSigned
+  int getHttpStatusCode ();
+
+  /**
+   * @return <code>true</code> if a defined HTTP status code is present, <code>false</code>
+   *         otherwise.
+   * @since 4.2.0
+   */
+  boolean hasHttpStatusCode ();
 }

@@ -33,6 +33,7 @@ import com.helger.base.tostring.ToStringGenerator;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
+import com.helger.phase4.CAS4;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
@@ -58,6 +59,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private final ICommonsList <Cookie> m_aCookies = new CommonsArrayList <> ();
   private final HttpHeaderMap m_aHttpHeaderMap = new HttpHeaderMap ();
   private String m_sRequestMessageID;
+  private int m_nHttpStatusCode = CAS4.HTTP_STATUS_UNDEFINED;
 
   /**
    * Default constructor using a UUID as the incoming unique ID and the current date time.
@@ -278,6 +280,32 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return this;
   }
 
+  @CheckForSigned
+  public int getHttpStatusCode ()
+  {
+    return m_nHttpStatusCode;
+  }
+
+  public boolean hasHttpStatusCode ()
+  {
+    return m_nHttpStatusCode > 0;
+  }
+
+  /**
+   * Set the HTTP Status code to be used.
+   *
+   * @param nHttpStatusCode
+   *        The HTTP status code to be used. Any value &le; 0 means to use the default.
+   * @return this for chaining
+   * @since 4.2.0
+   */
+  @NonNull
+  public AS4IncomingMessageMetadata setHttpStatusCode (final int nHttpStatusCode)
+  {
+    m_nHttpStatusCode = nHttpStatusCode;
+    return this;
+  }
+
   @Override
   public String toString ()
   {
@@ -290,6 +318,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
                                        .append ("RemoteUser", m_sRemoteUser)
                                        .append ("Cookies", m_aCookies)
                                        .append ("RequestMessageID", m_sRequestMessageID)
+                                       .append ("HttpStatusCode", m_nHttpStatusCode)
                                        .getToString ();
   }
 
