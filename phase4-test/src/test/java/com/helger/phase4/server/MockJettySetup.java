@@ -93,6 +93,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
     }
     else
     {
+      // No Jetty needed for this class
       s_aJetty = null;
       WebScopeManager.onGlobalBegin (MockServletContext.create ());
       final File aSCPath = new File ("target/junittest").getAbsoluteFile ();
@@ -128,6 +129,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
     }
     else
     {
+      // No Jetty needed for this class
       WebFileIO.resetPaths ();
       WebScopeManager.onGlobalEnd ();
     }
