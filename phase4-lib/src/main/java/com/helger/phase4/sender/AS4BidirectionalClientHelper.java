@@ -28,6 +28,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.base.wrapper.Wrapper;
+import com.helger.http.CHttp;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
@@ -41,7 +42,6 @@ import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.incoming.AS4IncomingHandler;
 import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
-import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
@@ -152,8 +152,16 @@ public final class AS4BidirectionalClientHelper
     // Try interpret result as SignalMessage
     if (aClientSentMessage.hasResponseContent () && aClientSentMessage.getResponseContent ().length > 0)
     {
-      final IAS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
-                                                                                             .setRemoteAddr (sURL);
+      final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+                                                                                            .setRemoteAddr (sURL);
+      if (aWrappedHttpResponse.isSet ())
+      {
+        // Remember HTTP response status code retrieved
+        final int nHttpStatusCode = aWrappedHttpResponse.get ().getCode ();
+        aResponseMessageMetadata.setHttpStatusCode (nHttpStatusCode);
+        if (nHttpStatusCode >= CHttp.HTTP_MULTIPLE_CHOICES)
+          LOGGER.warn ("HTTP response uses status code " + nHttpStatusCode);
+      }
 
       // Validate the DSSig references between sent and received msg
       final IAS4SignalMessageConsumer aRealSignalMsgConsumer = new ValidatingAS4SignalMsgConsumer (aClientSentMessage,
@@ -212,13 +220,13 @@ public final class AS4BidirectionalClientHelper
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("  MPC = '" + aClientPullRequest.getMPC () + "'");
 
-    final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
+    final Wrapper <HttpResponse> aWrappedHttpResponse = new Wrapper <> ();
     final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
       // Accepts all response codes
       final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
 
       // Remember HTTP Response
-      aWrappedResponse.set (aHttpResponse);
+      aWrappedHttpResponse.set (aHttpResponse);
       return EntityUtils.toByteArray (aResponseData.entity ());
     };
 
@@ -241,8 +249,16 @@ public final class AS4BidirectionalClientHelper
     // Try to interpret result as UserMessage or SignalMessage
     if (aClientSentMessage.hasResponseContent () && aClientSentMessage.getResponseContent ().length > 0)
     {
-      final IAS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
-                                                                                             .setRemoteAddr (sURL);
+      final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+                                                                                            .setRemoteAddr (sURL);
+      if (aWrappedHttpResponse.isSet ())
+      {
+        // Remember HTTP response status code retrieved
+        final int nHttpStatusCode = aWrappedHttpResponse.get ().getCode ();
+        aResponseMessageMetadata.setHttpStatusCode (nHttpStatusCode);
+        if (nHttpStatusCode >= CHttp.HTTP_MULTIPLE_CHOICES)
+          LOGGER.warn ("HTTP response uses status code " + nHttpStatusCode);
+      }
 
       // Read response as EBMS3 User Message or Signal Message
       // Read it in any case to ensure signature validation etc. happens
@@ -255,7 +271,7 @@ public final class AS4BidirectionalClientHelper
                                            aPMode,
                                            aLocale,
                                            aResponseMessageMetadata,
-                                           aWrappedResponse.get (),
+                                           aWrappedHttpResponse.get (),
                                            aClientSentMessage.getResponseContent (),
                                            aIncomingDumper,
                                            aIncomingSecurityConfiguration,
@@ -298,13 +314,13 @@ public final class AS4BidirectionalClientHelper
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("  MPC = '" + aClientPullRequest.getMPC () + "'");
 
-    final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
+    final Wrapper <HttpResponse> aWrappedHttpResponse = new Wrapper <> ();
     final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
       // Accepts all response codes
       final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
 
       // Remember HTTP Response
-      aWrappedResponse.set (aHttpResponse);
+      aWrappedHttpResponse.set (aHttpResponse);
       return EntityUtils.toByteArray (aResponseData.entity ());
     };
 
@@ -327,8 +343,16 @@ public final class AS4BidirectionalClientHelper
     // Try to interpret result as UserMessage or SignalMessage
     if (aClientSentMessage.hasResponseContent () && aClientSentMessage.getResponseContent ().length > 0)
     {
-      final IAS4IncomingMessageMetadata aResponseMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
-                                                                                      .setRemoteAddr (sURL);
+      final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+                                                                                            .setRemoteAddr (sURL);
+      if (aWrappedHttpResponse.isSet ())
+      {
+        // Remember HTTP response status code retrieved
+        final int nHttpStatusCode = aWrappedHttpResponse.get ().getCode ();
+        aResponseMessageMetadata.setHttpStatusCode (nHttpStatusCode);
+        if (nHttpStatusCode >= CHttp.HTTP_MULTIPLE_CHOICES)
+          LOGGER.warn ("HTTP response uses status code " + nHttpStatusCode);
+      }
 
       // Validate the DSSig references between sent and received msg
       final IAS4SignalMessageConsumer aRealSignalMsgConsumer = new ValidatingAS4SignalMsgConsumer (aClientSentMessage,
@@ -345,8 +369,8 @@ public final class AS4BidirectionalClientHelper
                                                    aClientPullRequest.getAS4ResourceHelper (),
                                                    aPMode,
                                                    aLocale,
-                                                   aResponseMetadata,
-                                                   aWrappedResponse.get (),
+                                                   aResponseMessageMetadata,
+                                                   aWrappedHttpResponse.get (),
                                                    aClientSentMessage.getResponseContent (),
                                                    aIncomingDumper,
                                                    aIncomingSecurityConfiguration,
