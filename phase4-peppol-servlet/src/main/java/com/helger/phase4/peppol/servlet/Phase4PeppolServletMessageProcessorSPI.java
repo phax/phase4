@@ -63,6 +63,7 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
+import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4Attachment;
@@ -70,6 +71,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.AS4Error;
 import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
@@ -81,6 +83,7 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.phase4.util.Phase4IncomingException;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
@@ -809,10 +812,16 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       {
         final String sMsg = "The addressing data contained in the SBDH could not be verified";
         LOGGER.error (sLogPrefix + sMsg, ex);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aState.getMessageID ())
-                                                           .errorDetail (sMsg, ex)
-                                                           .build ());
+
+        final int nHttpStatusCode = ex instanceof Phase4IncomingException pix ? pix.getHttpStatusCode ()
+                                                                              : CAS4.HTTP_STATUS_UNDEFINED;
+
+        aProcessingErrorMessages.add (AS4Error.builder ()
+                                              .ebmsError (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                                               .refToMessageInError (aState.getMessageID ())
+                                                                               .errorDetail (sMsg, ex))
+                                              .httpStatusCode (nHttpStatusCode)
+                                              .build ());
         return AS4MessageProcessorResult.createFailure ();
       }
     }
@@ -861,10 +870,16 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         {
           final String sDetails = "The incoming Peppol message could not be processed.";
           LOGGER.error (sLogPrefix + sDetails, ex);
-          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                             .refToMessageInError (aState.getMessageID ())
-                                                             .errorDetail (sDetails, ex)
-                                                             .build ());
+
+          final int nHttpStatusCode = ex instanceof Phase4IncomingException pix ? pix.getHttpStatusCode ()
+                                                                                : CAS4.HTTP_STATUS_UNDEFINED;
+
+          aProcessingErrorMessages.add (AS4Error.builder ()
+                                                .ebmsError (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                                                 .refToMessageInError (aState.getMessageID ())
+                                                                                 .errorDetail (sDetails, ex))
+                                                .httpStatusCode (nHttpStatusCode)
+                                                .build ());
           return AS4MessageProcessorResult.createFailure ();
         }
       }
