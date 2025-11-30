@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.GuardedBy;
 import com.helger.base.concurrent.SimpleReadWriteLock;
+import com.helger.base.debug.GlobalDebug;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.equals.EqualsHelper;
 import com.helger.base.string.StringParser;
@@ -175,7 +176,7 @@ public final class AS4Configuration
    */
   public static boolean isGlobalDebug ()
   {
-    return getConfig ().getAsBoolean ("global.debug", false);
+    return getConfig ().getAsBoolean ("global.debug", GlobalDebug.DEFAULT_DEBUG_MODE);
   }
 
   /**
@@ -183,7 +184,7 @@ public final class AS4Configuration
    */
   public static boolean isGlobalProduction ()
   {
-    return getConfig ().getAsBoolean ("global.production", false);
+    return getConfig ().getAsBoolean ("global.production", GlobalDebug.DEFAULT_PRODUCTION_MODE);
   }
 
   /**
