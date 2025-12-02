@@ -180,11 +180,8 @@ public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
                                                                               aSendingReport.setXHEHeaderID (xheDoc.getHeader ()
                                                                                                                    .getIDValue ());
                                                                             })
-                                                                            .endpointURLConsumer (endpointUrl -> {
-                                                                              // Determined by SMP
-                                                                              // lookup
-                                                                              aSendingReport.setC3EndpointURL (endpointUrl);
-                                                                            })
+                                                                            .endpointURLConsumer (aSendingReport::setC3EndpointURL)
+                                                                            .technicalContactConsumer (aSendingReport::setC3TechnicalContact)
                                                                             .certificateConsumer ( (aAPCertificate,
                                                                                                     aCheckDT,
                                                                                                     eCertCheckResult) -> {

@@ -225,6 +225,7 @@ public final class Phase4DBNAllianceSender
     protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private Consumer <String> m_aAPEndpointURLConsumer;
+    private Consumer <String> m_aAPTechnicalContactConsumer;
     private boolean m_bCheckReceiverAPCertificate;
     protected TrustedCAChecker m_aCAChecker;
 
@@ -438,6 +439,22 @@ public final class Phase4DBNAllianceSender
     }
 
     /**
+     * Set an optional Consumer for the technical contact retrieved from the endpoint details
+     * provider, independent of its usability.
+     *
+     * @param aAPTechnicalContactConsumer
+     *        The consumer to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since 4.2.0
+     */
+    @NonNull
+    public final IMPLTYPE technicalContactConsumer (@Nullable final Consumer <String> aAPTechnicalContactConsumer)
+    {
+      m_aAPTechnicalContactConsumer = aAPTechnicalContactConsumer;
+      return thisAsT ();
+    }
+
+    /**
      * Enable or disable the check of the receiver AP certificate. This checks the validity of the
      * certificate as well as the revocation status. It is strongly recommended to enable this
      * check.
@@ -552,6 +569,10 @@ public final class Phase4DBNAllianceSender
         m_aAPEndpointURLConsumer.accept (sDestURL);
       endpointURL (sDestURL);
 
+      // For informational (logging) purposes only
+      if (m_aAPTechnicalContactConsumer != null)
+        m_aAPTechnicalContactConsumer.accept (m_aEndpointDetailProvider.getReceiverTechnicalContact ());
+
       // From receiver certificate
       toPartyID (CertificateHelper.getSubjectCN (aReceiverCert));
 
@@ -594,6 +615,7 @@ public final class Phase4DBNAllianceSender
       }
       // m_aCertificateConsumer may be null
       // m_aAPEndpointURLConsumer may be null
+      // m_aAPTechnicalContactConsumer may be null
 
       // All valid
       return true;
