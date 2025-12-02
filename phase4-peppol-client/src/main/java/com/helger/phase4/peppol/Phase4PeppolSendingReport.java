@@ -27,6 +27,7 @@ import org.jspecify.annotations.Nullable;
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.Nonnegative;
 import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.rt.StackTraceHelper;
 import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.CommonsArrayList;
@@ -120,6 +121,39 @@ public class Phase4PeppolSendingReport
     m_sTransportProfileID = AS4EndpointDetailProviderPeppol.DEFAULT_TRANSPORT_PROFILE.getID ();
   }
 
+  /**
+   * @return The date and time for which the sending report is created. Never <code>null</code>.
+   * @since 4.2.0
+   */
+  @NonNull
+  public OffsetDateTime getCurrentDateTimeUTC ()
+  {
+    return m_aCurrentDateTimeUTC;
+  }
+
+  /**
+   * @return The SML DNS zone on which the message exchange takes place. Neither <code>null</code>
+   *         nor empty.
+   * @since 4.2.0
+   */
+  @NonNull
+  @Nonempty
+  public String getSMLDNSZone ()
+  {
+    return m_sSMLDNSZone;
+  }
+
+  /**
+   * @return The specific exception that occurred during parsing of a provided SBDH. May be
+   *         <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public Exception getSBDHParseException ()
+  {
+    return m_aSBDHParseException;
+  }
+
   public boolean hasSBDHParseException ()
   {
     return m_aSBDHParseException != null;
@@ -134,6 +168,16 @@ public class Phase4PeppolSendingReport
   public void setSBDHParseException (@Nullable final Exception e)
   {
     m_aSBDHParseException = e;
+  }
+
+  /**
+   * @return The sending participant identifier. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public IParticipantIdentifier getSenderID ()
+  {
+    return m_aSenderID;
   }
 
   public boolean hasSenderID ()
@@ -152,6 +196,16 @@ public class Phase4PeppolSendingReport
     m_aSenderID = a;
   }
 
+  /**
+   * @return The receiving participant identifier. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public IParticipantIdentifier getReceiverID ()
+  {
+    return m_aReceiverID;
+  }
+
   public boolean hasReceiverID ()
   {
     return m_aReceiverID != null;
@@ -166,6 +220,16 @@ public class Phase4PeppolSendingReport
   public void setReceiverID (@Nullable final IParticipantIdentifier a)
   {
     m_aReceiverID = a;
+  }
+
+  /**
+   * @return The exchanged document type identifier. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public IDocumentTypeIdentifier getDocTypeID ()
+  {
+    return m_aDocTypeID;
   }
 
   public boolean hasDocTypeID ()
@@ -184,6 +248,16 @@ public class Phase4PeppolSendingReport
     m_aDocTypeID = a;
   }
 
+  /**
+   * @return The exchanged process identifier. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public IProcessIdentifier getProcessID ()
+  {
+    return m_aProcessID;
+  }
+
   public boolean hasProcessID ()
   {
     return m_aProcessID != null;
@@ -198,6 +272,16 @@ public class Phase4PeppolSendingReport
   public void setProcessID (@Nullable final IProcessIdentifier a)
   {
     m_aProcessID = a;
+  }
+
+  /**
+   * @return The sender (C1) Country Code. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getCountryC1 ()
+  {
+    return m_sCountryC1;
   }
 
   public boolean hasCountryC1 ()
@@ -216,6 +300,16 @@ public class Phase4PeppolSendingReport
     m_sCountryC1 = s;
   }
 
+  /**
+   * @return The sender party (C3) ID. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getSenderPartyID ()
+  {
+    return m_sSenderPartyID;
+  }
+
   public boolean hasSenderPartyID ()
   {
     return StringHelper.isNotEmpty (m_sSenderPartyID);
@@ -232,6 +326,16 @@ public class Phase4PeppolSendingReport
     m_sSenderPartyID = s;
   }
 
+  /**
+   * @return The transport profile ID. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getTransportProfileID ()
+  {
+    return m_sTransportProfileID;
+  }
+
   public boolean hasTransportProfileID ()
   {
     return StringHelper.isNotEmpty (m_sTransportProfileID);
@@ -246,6 +350,16 @@ public class Phase4PeppolSendingReport
   public void setTransportProfileID (@Nullable final String s)
   {
     m_sTransportProfileID = s;
+  }
+
+  /**
+   * @return The SBDH Instance Identifier. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getSBDHInstanceIdentifier ()
+  {
+    return m_sSBDHInstanceIdentifier;
   }
 
   public boolean hasSBDHInstanceIdentifier ()
@@ -265,6 +379,16 @@ public class Phase4PeppolSendingReport
     m_sSBDHInstanceIdentifier = s;
   }
 
+  /**
+   * @return The AP endpoint URL of C3 determined by the SMP lookup. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getC3EndpointURL ()
+  {
+    return m_sC3EndpointURL;
+  }
+
   public boolean hasC3EndpointURL ()
   {
     return StringHelper.isNotEmpty (m_sC3EndpointURL);
@@ -279,6 +403,17 @@ public class Phase4PeppolSendingReport
   public void setC3EndpointURL (@Nullable final String s)
   {
     m_sC3EndpointURL = s;
+  }
+
+  /**
+   * @return The public Peppol AP certificate of C3 determined by the SMP lookup. May be
+   *         <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public X509Certificate getC3Cert ()
+  {
+    return m_aC3Cert;
   }
 
   public boolean hasC3Cert ()
@@ -309,6 +444,17 @@ public class Phase4PeppolSendingReport
     m_sC3CertSubjectO = CertificateHelper.getSubjectO (a);
   }
 
+  /**
+   * @return The date and time, when the Peppol AP certificate of C3, as retrieved from the SMP, was
+   *         checked for revocation. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public OffsetDateTime getC3CertCheckDT ()
+  {
+    return m_aC3CertCheckDT;
+  }
+
   public boolean hasC3CertCheckDT ()
   {
     return m_aC3CertCheckDT != null;
@@ -324,6 +470,17 @@ public class Phase4PeppolSendingReport
   public void setC3CertCheckDT (@Nullable final OffsetDateTime a)
   {
     m_aC3CertCheckDT = a;
+  }
+
+  /**
+   * @return The result of checking the Peppol AP certificate of C3, as retrieved from the SMP, for
+   *         validity. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public ECertificateCheckResult getC3CertCheckResult ()
+  {
+    return m_eC3CertCheckResult;
   }
 
   public boolean hasC3CertCheckResult ()
@@ -343,6 +500,17 @@ public class Phase4PeppolSendingReport
     m_eC3CertCheckResult = e;
   }
 
+  /**
+   * @return The technical contact information retrieved from the SMP endpoint. May be
+   *         <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getC3TechnicalContact ()
+  {
+    return m_sC3TechnicalContact;
+  }
+
   public boolean hasC3TechnicalContact ()
   {
     return StringHelper.isNotEmpty (m_sC3TechnicalContact);
@@ -350,7 +518,7 @@ public class Phase4PeppolSendingReport
 
   /**
    * Remember the technical contact information retrieved from the SMP endpoint. This might be
-   * helpful to find a quick spot.
+   * helpful to quickly find support.
    *
    * @param s
    *        The technical contact URL to use. May be <code>null</code>.
@@ -358,6 +526,16 @@ public class Phase4PeppolSendingReport
   public void setC3TechnicalContact (@Nullable final String s)
   {
     m_sC3TechnicalContact = s;
+  }
+
+  /**
+   * @return The AS4 Message ID used to send out the message. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getAS4MessageID ()
+  {
+    return m_sAS4MessageID;
   }
 
   public boolean hasAS4MessageID ()
@@ -376,6 +554,16 @@ public class Phase4PeppolSendingReport
     m_sAS4MessageID = s;
   }
 
+  /**
+   * @return The AS4 Conversation ID used to send out the message. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getAS4ConversationID ()
+  {
+    return m_sAS4ConversationID;
+  }
+
   public boolean hasAS4ConversationID ()
   {
     return StringHelper.isNotEmpty (m_sAS4ConversationID);
@@ -390,6 +578,16 @@ public class Phase4PeppolSendingReport
   public void setAS4ConversationID (@Nullable final String s)
   {
     m_sAS4ConversationID = s;
+  }
+
+  /**
+   * @return The AS4 sending date time. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public OffsetDateTime getAS4SendingDT ()
+  {
+    return m_aAS4SendingDT;
   }
 
   public boolean hasAS4SendingDT ()
@@ -408,6 +606,27 @@ public class Phase4PeppolSendingReport
   {
     // Make sure to use only millisecond precision for correct XSD rendering
     m_aAS4SendingDT = a == null ? null : PDTFactory.getWithMillisOnly (a);
+  }
+
+  /**
+   * @return The synchronously received AS4 Signal Message from C3. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public Ebms3SignalMessage getAS4ReceivedSignalMsg ()
+  {
+    return m_aAS4ReceivedSignalMsg;
+  }
+
+  /**
+   * @return The list of AS4 EBMS errors received from C3. May be <code>null</code> or empty.
+   * @since 4.2.0
+   */
+  @Nullable
+  @ReturnsMutableObject
+  public ICommonsList <Ebms3Error> getAS4ReceivedErrors ()
+  {
+    return m_aAS4ResponseErrors;
   }
 
   public boolean hasAS4ReceivedSignalMsg ()
@@ -446,6 +665,16 @@ public class Phase4PeppolSendingReport
     }
   }
 
+  /**
+   * @return The overall AS4 sending result. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public EAS4UserMessageSendResult getAS4SendingResult ()
+  {
+    return m_eAS4SendingResult;
+  }
+
   public boolean hasAS4SendingResult ()
   {
     return m_eAS4SendingResult != null;
@@ -460,6 +689,16 @@ public class Phase4PeppolSendingReport
   public void setAS4SendingResult (@Nullable final EAS4UserMessageSendResult e)
   {
     m_eAS4SendingResult = e;
+  }
+
+  /**
+   * @return The exception that eventually occurred on AS4 sending. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public Exception getAS4SendingException ()
+  {
+    return m_aAS4SendingException;
   }
 
   public boolean hasAS4SendingException ()
@@ -479,6 +718,15 @@ public class Phase4PeppolSendingReport
   }
 
   /**
+   * @return The overall duration it took to perform the lookup and sending process.
+   * @since 4.2.0
+   */
+  public long getOverallDurationMillis ()
+  {
+    return m_nOverallDurationMillis;
+  }
+
+  /**
    * Remember the overall duration it took to perform the lookup and sending process.
    *
    * @param n
@@ -490,6 +738,15 @@ public class Phase4PeppolSendingReport
   }
 
   /**
+   * @return <code>true</code> if sending was done successful.
+   * @since 4.2.0
+   */
+  public boolean isSendingSuccess ()
+  {
+    return m_bSendingSuccess;
+  }
+
+  /**
    * Remember the overall sending success.
    *
    * @param b
@@ -498,6 +755,15 @@ public class Phase4PeppolSendingReport
   public void setSendingSuccess (final boolean b)
   {
     m_bSendingSuccess = b;
+  }
+
+  /**
+   * @return <code>true</code> if sending and all follow up activities was done successful.
+   * @since 4.2.0
+   */
+  public boolean isOverallSuccess ()
+  {
+    return m_bOverallSuccess;
   }
 
   /**

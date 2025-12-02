@@ -27,6 +27,7 @@ import org.jspecify.annotations.Nullable;
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.Nonnegative;
 import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.rt.StackTraceHelper;
 import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.CommonsArrayList;
@@ -39,6 +40,7 @@ import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
 import com.helger.json.serialize.IJsonWriterSettings;
 import com.helger.json.serialize.JsonWriterSettings;
+import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -77,6 +79,7 @@ public class Phase4DBNAllianceSendingReport
   private IDocumentTypeIdentifier m_aDocTypeID;
   private IProcessIdentifier m_aProcessID;
   private String m_sSenderPartyID;
+  private String m_sTransportProfileID;
 
   // XHE details
   private String m_sXHEHeaderID;
@@ -87,6 +90,7 @@ public class Phase4DBNAllianceSendingReport
   private String m_sC3CertSubjectCN;
   private OffsetDateTime m_aC3CertCheckDT;
   private ECertificateCheckResult m_eC3CertCheckResult;
+  private String m_sC3TechnicalContact;
 
   // AS4 params
   private String m_sAS4MessageID;
@@ -107,6 +111,40 @@ public class Phase4DBNAllianceSendingReport
   {
     m_aCurrentDateTimeUTC = PDTFactory.getCurrentOffsetDateTimeUTC ();
     m_sSMLDNSZone = sDNSZone;
+    m_sTransportProfileID = ESMPTransportProfile.TRANSPORT_PROFILE_DBNA_AS4_V1.getID ();
+  }
+
+  /**
+   * @return The date and time for which the sending report is created. Never <code>null</code>.
+   * @since 4.2.0
+   */
+  @NonNull
+  public OffsetDateTime getCurrentDateTimeUTC ()
+  {
+    return m_aCurrentDateTimeUTC;
+  }
+
+  /**
+   * @return The SML DNS zone on which the message exchange takes place. Neither <code>null</code>
+   *         nor empty.
+   * @since 4.2.0
+   */
+  @NonNull
+  @Nonempty
+  public String getSMLDNSZone ()
+  {
+    return m_sSMLDNSZone;
+  }
+
+  /**
+   * @return The specific exception that occurred during parsing of a provided XHE. May be
+   *         <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public Exception getXHEParseException ()
+  {
+    return m_aXHEParseException;
   }
 
   public boolean hasXHEParseException ()
@@ -125,6 +163,16 @@ public class Phase4DBNAllianceSendingReport
     m_aXHEParseException = e;
   }
 
+  /**
+   * @return The sending participant identifier. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public IParticipantIdentifier getSenderID ()
+  {
+    return m_aSenderID;
+  }
+
   public boolean hasSenderID ()
   {
     return m_aSenderID != null;
@@ -139,6 +187,16 @@ public class Phase4DBNAllianceSendingReport
   public void setSenderID (@Nullable final IParticipantIdentifier a)
   {
     m_aSenderID = a;
+  }
+
+  /**
+   * @return The receiving participant identifier. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public IParticipantIdentifier getReceiverID ()
+  {
+    return m_aReceiverID;
   }
 
   public boolean hasReceiverID ()
@@ -157,6 +215,16 @@ public class Phase4DBNAllianceSendingReport
     m_aReceiverID = a;
   }
 
+  /**
+   * @return The exchanged document type identifier. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public IDocumentTypeIdentifier getDocTypeID ()
+  {
+    return m_aDocTypeID;
+  }
+
   public boolean hasDocTypeID ()
   {
     return m_aDocTypeID != null;
@@ -171,6 +239,16 @@ public class Phase4DBNAllianceSendingReport
   public void setDocTypeID (@Nullable final IDocumentTypeIdentifier a)
   {
     m_aDocTypeID = a;
+  }
+
+  /**
+   * @return The exchanged process identifier. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public IProcessIdentifier getProcessID ()
+  {
+    return m_aProcessID;
   }
 
   public boolean hasProcessID ()
@@ -189,6 +267,16 @@ public class Phase4DBNAllianceSendingReport
     m_aProcessID = a;
   }
 
+  /**
+   * @return The sender party (C3) ID. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getSenderPartyID ()
+  {
+    return m_sSenderPartyID;
+  }
+
   public boolean hasSenderPartyID ()
   {
     return StringHelper.isNotEmpty (m_sSenderPartyID);
@@ -203,6 +291,42 @@ public class Phase4DBNAllianceSendingReport
   public void setSenderPartyID (@Nullable final String s)
   {
     m_sSenderPartyID = s;
+  }
+
+  /**
+   * @return The transport profile ID. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getTransportProfileID ()
+  {
+    return m_sTransportProfileID;
+  }
+
+  public boolean hasTransportProfileID ()
+  {
+    return StringHelper.isNotEmpty (m_sTransportProfileID);
+  }
+
+  /**
+   * Remember the transport profile ID.
+   *
+   * @param s
+   *        Transport profile ID. May be <code>null</code>.
+   */
+  public void setTransportProfileID (@Nullable final String s)
+  {
+    m_sTransportProfileID = s;
+  }
+
+  /**
+   * @return The XHE Header ID. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getXHEHeaderID ()
+  {
+    return m_sXHEHeaderID;
   }
 
   public boolean hasXHEHeaderID ()
@@ -221,6 +345,16 @@ public class Phase4DBNAllianceSendingReport
     m_sXHEHeaderID = s;
   }
 
+  /**
+   * @return The AP endpoint URL of C3 determined by the SMP lookup. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getC3EndpointURL ()
+  {
+    return m_sC3EndpointURL;
+  }
+
   public boolean hasC3EndpointURL ()
   {
     return StringHelper.isNotEmpty (m_sC3EndpointURL);
@@ -235,6 +369,17 @@ public class Phase4DBNAllianceSendingReport
   public void setC3EndpointURL (@Nullable final String s)
   {
     m_sC3EndpointURL = s;
+  }
+
+  /**
+   * @return The public DBNAlliance AP certificate of C3 determined by the SMP lookup. May be
+   *         <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public X509Certificate getC3Cert ()
+  {
+    return m_aC3Cert;
   }
 
   public boolean hasC3Cert ()
@@ -259,6 +404,17 @@ public class Phase4DBNAllianceSendingReport
     m_sC3CertSubjectCN = CertificateHelper.getSubjectCN (a);
   }
 
+  /**
+   * @return The date and time, when the DBNAlliance AP certificate of C3, as retrieved from the
+   *         SMP, was checked for revocation. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public OffsetDateTime getC3CertCheckDT ()
+  {
+    return m_aC3CertCheckDT;
+  }
+
   public boolean hasC3CertCheckDT ()
   {
     return m_aC3CertCheckDT != null;
@@ -274,6 +430,17 @@ public class Phase4DBNAllianceSendingReport
   public void setC3CertCheckDT (@Nullable final OffsetDateTime a)
   {
     m_aC3CertCheckDT = a;
+  }
+
+  /**
+   * @return The result of checking the DBNAlliance AP certificate of C3, as retrieved from the SMP,
+   *         for validity. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public ECertificateCheckResult getC3CertCheckResult ()
+  {
+    return m_eC3CertCheckResult;
   }
 
   public boolean hasC3CertCheckResult ()
@@ -293,6 +460,45 @@ public class Phase4DBNAllianceSendingReport
     m_eC3CertCheckResult = e;
   }
 
+  /**
+   * @return The technical contact information retrieved from the SMP endpoint. May be
+   *         <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getC3TechnicalContact ()
+  {
+    return m_sC3TechnicalContact;
+  }
+
+  public boolean hasC3TechnicalContact ()
+  {
+    return StringHelper.isNotEmpty (m_sC3TechnicalContact);
+  }
+
+  /**
+   * Remember the technical contact information retrieved from the SMP endpoint. This might be
+   * helpful to quickly find support.
+   *
+   * @param s
+   *        The technical contact URL to use. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  public void setC3TechnicalContact (@Nullable final String s)
+  {
+    m_sC3TechnicalContact = s;
+  }
+
+  /**
+   * @return The AS4 Message ID used to send out the message. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getAS4MessageID ()
+  {
+    return m_sAS4MessageID;
+  }
+
   public boolean hasAS4MessageID ()
   {
     return StringHelper.isNotEmpty (m_sAS4MessageID);
@@ -309,6 +515,16 @@ public class Phase4DBNAllianceSendingReport
     m_sAS4MessageID = s;
   }
 
+  /**
+   * @return The AS4 Conversation ID used to send out the message. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public String getAS4ConversationID ()
+  {
+    return m_sAS4ConversationID;
+  }
+
   public boolean hasAS4ConversationID ()
   {
     return StringHelper.isNotEmpty (m_sAS4ConversationID);
@@ -323,6 +539,27 @@ public class Phase4DBNAllianceSendingReport
   public void setAS4ConversationID (@Nullable final String s)
   {
     m_sAS4ConversationID = s;
+  }
+
+  /**
+   * @return The synchronously received AS4 Signal Message from C3. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public Ebms3SignalMessage getAS4ReceivedSignalMsg ()
+  {
+    return m_aAS4ReceivedSignalMsg;
+  }
+
+  /**
+   * @return The list of AS4 EBMS errors received from C3. May be <code>null</code> or empty.
+   * @since 4.2.0
+   */
+  @Nullable
+  @ReturnsMutableObject
+  public ICommonsList <Ebms3Error> getAS4ReceivedErrors ()
+  {
+    return m_aAS4ResponseErrors;
   }
 
   public boolean hasAS4ReceivedSignalMsg ()
@@ -361,6 +598,16 @@ public class Phase4DBNAllianceSendingReport
     }
   }
 
+  /**
+   * @return The overall AS4 sending result. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public EAS4UserMessageSendResult getAS4SendingResult ()
+  {
+    return m_eAS4SendingResult;
+  }
+
   public boolean hasAS4SendingResult ()
   {
     return m_eAS4SendingResult != null;
@@ -375,6 +622,16 @@ public class Phase4DBNAllianceSendingReport
   public void setAS4SendingResult (@Nullable final EAS4UserMessageSendResult e)
   {
     m_eAS4SendingResult = e;
+  }
+
+  /**
+   * @return The exception that eventually occurred on AS4 sending. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public Exception getAS4SendingException ()
+  {
+    return m_aAS4SendingException;
   }
 
   public boolean hasAS4SendingException ()
@@ -394,6 +651,15 @@ public class Phase4DBNAllianceSendingReport
   }
 
   /**
+   * @return The overall duration it took to perform the lookup and sending process.
+   * @since 4.2.0
+   */
+  public long getOverallDurationMillis ()
+  {
+    return m_nOverallDurationMillis;
+  }
+
+  /**
    * Remember the overall duration it took to perform the lookup and sending process.
    *
    * @param n
@@ -405,6 +671,15 @@ public class Phase4DBNAllianceSendingReport
   }
 
   /**
+   * @return <code>true</code> if sending was done successful.
+   * @since 4.2.0
+   */
+  public boolean isSendingSuccess ()
+  {
+    return m_bSendingSuccess;
+  }
+
+  /**
    * Remember the overall sending success.
    *
    * @param b
@@ -413,6 +688,15 @@ public class Phase4DBNAllianceSendingReport
   public void setSendingSuccess (final boolean b)
   {
     m_bSendingSuccess = b;
+  }
+
+  /**
+   * @return <code>true</code> if sending and all follow up activities was done successful.
+   * @since 4.2.0
+   */
+  public boolean isOverallSuccess ()
+  {
+    return m_bOverallSuccess;
   }
 
   /**
@@ -459,6 +743,8 @@ public class Phase4DBNAllianceSendingReport
       aJson.add ("processId", m_aProcessID.getURIEncoded ());
     if (hasSenderPartyID ())
       aJson.add ("senderPartyId", m_sSenderPartyID);
+    if (hasTransportProfileID ())
+      aJson.add ("transportProfileId", m_sTransportProfileID);
 
     if (hasXHEHeaderID ())
       aJson.add ("XHEHeaderID", m_sXHEHeaderID);
@@ -473,6 +759,8 @@ public class Phase4DBNAllianceSendingReport
       aJson.add ("c3CertCheckDT", PDTWebDateHelper.getAsStringXSD (m_aC3CertCheckDT));
     if (hasC3CertCheckResult ())
       aJson.add ("c3CertCheckResult", m_eC3CertCheckResult.name ());
+    if (hasC3TechnicalContact ())
+      aJson.add ("c3TechnicalContact", m_sC3TechnicalContact);
 
     if (hasAS4MessageID ())
       aJson.add ("as4MessageId", m_sAS4MessageID);
@@ -580,6 +868,8 @@ public class Phase4DBNAllianceSendingReport
       ret.addElementNS (sNamespaceURI, "ProcessID").addText (m_aProcessID.getURIEncoded ());
     if (hasSenderPartyID ())
       ret.addElementNS (sNamespaceURI, "SenderPartyID").addText (m_sSenderPartyID);
+    if (hasTransportProfileID ())
+      ret.addElementNS (sNamespaceURI, "TransportProfileID").addText (m_sTransportProfileID);
 
     if (hasXHEHeaderID ())
       ret.addElementNS (sNamespaceURI, "XHEHeaderID").addText (m_sXHEHeaderID);
@@ -594,6 +884,8 @@ public class Phase4DBNAllianceSendingReport
       ret.addElementNS (sNamespaceURI, "C3CertCheckDT").addText (PDTWebDateHelper.getAsStringXSD (m_aC3CertCheckDT));
     if (hasC3CertCheckResult ())
       ret.addElementNS (sNamespaceURI, "C3CertCheckResult").addText (m_eC3CertCheckResult.name ());
+    if (hasC3TechnicalContact ())
+      ret.addElementNS (sNamespaceURI, "C3TechnicalContact").addText (m_sC3TechnicalContact);
 
     if (hasAS4MessageID ())
       ret.addElementNS (sNamespaceURI, "AS4MessageId").addText (m_sAS4MessageID);
