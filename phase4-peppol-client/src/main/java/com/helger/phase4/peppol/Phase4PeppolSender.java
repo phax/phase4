@@ -964,6 +964,7 @@ public final class Phase4PeppolSender
       }
       // m_aCertificateConsumer may be null
       // m_aAPEndpointURLConsumer may be null
+      // m_aAPTechnicalContactConsumer may be null
 
       // All valid
       return true;
