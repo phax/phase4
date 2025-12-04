@@ -163,7 +163,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         // Add a test that only the algorithm from the PMode is effectively
         // delivered
         final PModeLeg aPModeLeg = aIncomingState.getEffectivePModeLeg ();
-        if (aPModeLeg != null && aPModeLeg.getSecurity () != null)
+        if (aPModeLeg != null && aPModeLeg.hasSecurity ())
         {
           final AlgorithmSuite aAlgorithmSuite = new AlgorithmSuite ();
           boolean bUseAlgorithmSuite = false;
@@ -425,7 +425,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       aPModeLeg = aPMode.getLeg2 ();
 
     // Does security - leg part checks if not <code>null</code>
-    if (aPModeLeg.getSecurity () != null)
+    if (aPModeLeg.hasSecurity ())
     {
       // Get Signature Algorithm
       Element aSignedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.DS_NS, "Signature");

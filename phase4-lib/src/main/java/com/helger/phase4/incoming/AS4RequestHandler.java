@@ -1848,14 +1848,17 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                 aLocalResponseAttachments);
 
             // Send UserMessage
-            final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
-                                                                             .setFromPMode (aEffectiveLeg.getSecurity ());
+            final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ();
+            if (aEffectiveLeg != null)
+              aSigningParams.setFromPMode (aEffectiveLeg.getSecurity ());
+
             // Use the original receiver ID as the alias into the keystore for
             // encrypting the response message
             final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
             final AS4CryptParams aCryptParams = m_aIncomingSecurityConfig.getCryptParamsCloneOrNew ()
-                                                                         .setFromPMode (aEffectiveLeg.getSecurity ())
                                                                          .setAlias (sEncryptionAlias);
+            if (aEffectiveLeg != null)
+              aCryptParams.setFromPMode (aEffectiveLeg.getSecurity ());
 
             aAsyncResponseFactory = _createResponseUserMessage (aIncomingState,
                                                                 aEffectiveLeg.getProtocol ().getSoapVersion (),
