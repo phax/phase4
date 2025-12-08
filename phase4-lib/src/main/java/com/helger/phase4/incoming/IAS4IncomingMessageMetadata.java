@@ -208,12 +208,12 @@ public interface IAS4IncomingMessageMetadata
    * @since 4.2.0
    */
   @CheckForSigned
-  int getHttpStatusCode ();
+  int getResponseHttpStatusCode ();
 
   /**
    * @return <code>true</code> if a defined HTTP status code is present, <code>false</code>
    *         otherwise.
    * @since 4.2.0
    */
-  boolean hasHttpStatusCode ();
+  boolean hasResponseHttpStatusCode ();
 }

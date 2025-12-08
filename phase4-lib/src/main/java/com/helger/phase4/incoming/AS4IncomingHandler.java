@@ -38,6 +38,7 @@ import org.w3c.dom.Node;
 
 import com.helger.annotation.WillClose;
 import com.helger.annotation.WillNotClose;
+import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
@@ -227,8 +228,8 @@ public final class AS4IncomingHandler
 
         final String sBoundary = aContentType.getParameterValueWithName ("boundary");
         if (StringHelper.isEmpty (sBoundary))
-          throw new Phase4Exception ("Content-Type '" + sContentType + "' misses 'boundary' parameter")
-                                                                                                       .setRetryFeasible (false);
+          throw new Phase4IncomingException ("Content-Type '" + sContentType + "' misses 'boundary' parameter")
+                                                                                                               .setRetryFeasible (false);
 
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("MIME Boundary: '" + sBoundary + "'");
@@ -386,28 +387,35 @@ public final class AS4IncomingHandler
       if (aSoapDocument == null || aXSDErrorList.containsAtLeastOneError ())
       {
         // We don't have a SOAP document
-        StringBuilder aErrorMessage = new StringBuilder ();
-        aErrorMessage.append (eSoapVersion == null ? "Failed to parse incoming message!"
+        final StringBuilder aErrorMessage = new StringBuilder ();
+        aErrorMessage.append (eSoapVersion == null ? "Failed to parse incoming message as XML!"
                                                    : "Failed to parse incoming SOAP " +
                                                      eSoapVersion.getVersion () +
                                                      " document!");
         if (aXSDErrorList.isNotEmpty ())
         {
           aErrorMessage.append (" Technical details:");
-          for (IError aError : aXSDErrorList)
+          for (final IError aError : aXSDErrorList)
             aErrorMessage.append ('\n').append (aError.getAsStringLocaleIndepdent ());
         }
-        throw new Phase4Exception (aErrorMessage.toString ()).setRetryFeasible (false);
+        if (false)
+          throw new Phase4IncomingException (aErrorMessage.toString ()).setRetryFeasible (false);
+        LOGGER.error (aErrorMessage.toString ());
       }
-
-      if (eSoapVersion == null)
-      {
-        // We're missing a SOAP version
-        throw new Phase4Exception ("Failed to determine SOAP version of XML document!").setRetryFeasible (false);
-      }
-
-      // Main processing of parsed message
-      aParsedMessageCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
+      else
+        if (eSoapVersion == null)
+        {
+          // We're missing a SOAP version
+          final String sMsg = "Failed to determine SOAP version of XML document!";
+          if (false)
+            throw new Phase4IncomingException (sMsg).setRetryFeasible (false);
+          LOGGER.error (sMsg);
+        }
+        else
+        {
+          // Main processing of parsed message
+          aParsedMessageCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
+        }
     }
     catch (final Phase4Exception | IOException | MessagingException | WSSecurityException ex)
     {
@@ -636,6 +644,7 @@ public final class AS4IncomingHandler
   }
 
   @NonNull
+  @ChangeNextMajorRelease ("Rename to processIncomingEbmsMessage")
   public static IAS4IncomingMessageState processEbmsMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                                              @NonNull final Locale aLocale,
                                                              @NonNull final SoapHeaderElementProcessorRegistry aRegistry,
@@ -828,7 +837,7 @@ public final class AS4IncomingHandler
         // Pull-request also requires PMode
         if (aEbmsPullRequest != null)
           if (aPMode == null)
-            throw new Phase4Exception ("No AS4 P-Mode configuration found for PullRequest!");
+            throw new Phase4IncomingException ("No AS4 P-Mode configuration found for PullRequest!");
 
         if (aValidator != null)
         {
@@ -882,8 +891,8 @@ public final class AS4IncomingHandler
                                                                    eSoapVersion.getNamespaceURI (),
                                                                    eSoapVersion.getBodyElementName ());
       if (aBodyNode == null)
-        throw new Phase4Exception ((bUseDecryptedSoap ? "Decrypted" : "Original") +
-                                   " SOAP document is missing a Body element").setRetryFeasible (false);
+        throw new Phase4IncomingException ((bUseDecryptedSoap ? "Decrypted" : "Original") +
+                                           " SOAP document is missing a Body element").setRetryFeasible (false);
 
       aIncomingState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
 
@@ -895,20 +904,20 @@ public final class AS4IncomingHandler
   }
 
   @Nullable
-  private static IAS4IncomingMessageState _parseMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
-                                                         @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                         @NonNull final IAS4PModeResolver aPModeResolver,
-                                                         @NonNull final IAS4IncomingAttachmentFactory aIAF,
-                                                         @NonNull final IAS4IncomingProfileSelector aAS4ProfileSelector,
-                                                         @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                         @Nullable final IPMode aSendingPMode,
-                                                         @NonNull final Locale aLocale,
-                                                         @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
-                                                         @NonNull final HttpResponse aHttpResponse,
-                                                         @NonNull final byte [] aMessagePayload,
-                                                         @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                         @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                         @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration) throws Phase4Exception
+  private static IAS4IncomingMessageState _parseIncomingMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                 @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                                 @NonNull final IAS4PModeResolver aPModeResolver,
+                                                                 @NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                                                 @NonNull final IAS4IncomingProfileSelector aAS4ProfileSelector,
+                                                                 @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                                 @Nullable final IPMode aSendingPMode,
+                                                                 @NonNull final Locale aLocale,
+                                                                 @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                                                 @NonNull final HttpResponse aHttpResponse,
+                                                                 @NonNull final byte [] aMessagePayload,
+                                                                 @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                                 @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                 @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration) throws Phase4Exception
   {
     // This wrapper will take the result
     final Wrapper <IAS4IncomingMessageState> aRetWrapper = new Wrapper <> ();
@@ -946,6 +955,9 @@ public final class AS4IncomingHandler
                                                                                                                    .setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_MUST_UNDERSTAND)
                                                                                                                    .setRetryFeasible (false);
       }
+
+      // Compared to the other processing, no SPI callbacks are invoked
+
       // Remember the parsed signal message
       aRetWrapper.set (aIncomingState);
     };
@@ -982,6 +994,7 @@ public final class AS4IncomingHandler
 
   // Parse an AS4 SignalMessage
   @Nullable
+  @ChangeNextMajorRelease ("Rename to parseIncomingSignalMessage")
   public static Ebms3SignalMessage parseSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                        @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                        @NonNull final IAS4PModeResolver aPModeResolver,
@@ -998,20 +1011,20 @@ public final class AS4IncomingHandler
                                                        @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                        @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
-    final IAS4IncomingMessageState aIncomingState = _parseMessage (aCryptoFactorySign,
-                                                                   aCryptoFactoryCrypt,
-                                                                   aPModeResolver,
-                                                                   aIAF,
-                                                                   aAS4ProfileSelector,
-                                                                   aResHelper,
-                                                                   aSendingPMode,
-                                                                   aLocale,
-                                                                   aIncomingMessageMetadata,
-                                                                   aHttpResponse,
-                                                                   aMessagePayload,
-                                                                   aIncomingDumper,
-                                                                   aIncomingSecurityConfiguration,
-                                                                   aIncomingReceiverConfiguration);
+    final IAS4IncomingMessageState aIncomingState = _parseIncomingMessage (aCryptoFactorySign,
+                                                                           aCryptoFactoryCrypt,
+                                                                           aPModeResolver,
+                                                                           aIAF,
+                                                                           aAS4ProfileSelector,
+                                                                           aResHelper,
+                                                                           aSendingPMode,
+                                                                           aLocale,
+                                                                           aIncomingMessageMetadata,
+                                                                           aHttpResponse,
+                                                                           aMessagePayload,
+                                                                           aIncomingDumper,
+                                                                           aIncomingSecurityConfiguration,
+                                                                           aIncomingReceiverConfiguration);
     if (aIncomingState == null)
     {
       // Error message was already logged
@@ -1037,6 +1050,7 @@ public final class AS4IncomingHandler
 
   // Parse an AS4 UserMessage
   @Nullable
+  @ChangeNextMajorRelease ("Rename to parseIncomingUserMessage")
   public static Ebms3UserMessage parseUserMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                    @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                    @NonNull final IAS4PModeResolver aPModeResolver,
@@ -1053,20 +1067,20 @@ public final class AS4IncomingHandler
                                                    @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws Phase4Exception
   {
-    final IAS4IncomingMessageState aIncomingState = _parseMessage (aCryptoFactorySign,
-                                                                   aCryptoFactoryCrypt,
-                                                                   aPModeResolver,
-                                                                   aIAF,
-                                                                   aAS4ProfileSelector,
-                                                                   aResHelper,
-                                                                   aSendingPMode,
-                                                                   aLocale,
-                                                                   aIncomingMessageMetadata,
-                                                                   aHttpResponse,
-                                                                   aMessagePayload,
-                                                                   aIncomingDumper,
-                                                                   aIncomingSecurityConfiguration,
-                                                                   aIncomingReceiverConfiguration);
+    final IAS4IncomingMessageState aIncomingState = _parseIncomingMessage (aCryptoFactorySign,
+                                                                           aCryptoFactoryCrypt,
+                                                                           aPModeResolver,
+                                                                           aIAF,
+                                                                           aAS4ProfileSelector,
+                                                                           aResHelper,
+                                                                           aSendingPMode,
+                                                                           aLocale,
+                                                                           aIncomingMessageMetadata,
+                                                                           aHttpResponse,
+                                                                           aMessagePayload,
+                                                                           aIncomingDumper,
+                                                                           aIncomingSecurityConfiguration,
+                                                                           aIncomingReceiverConfiguration);
     if (aIncomingState == null)
     {
       // Error message was already logged
@@ -1092,6 +1106,7 @@ public final class AS4IncomingHandler
 
   // Parse as an AS4 UserMessage or an AS4 SignalMessage
   @NonNull
+  @ChangeNextMajorRelease ("Rename to parseIncomingUserOrSignalMessage")
   public static ESuccess parseUserOrSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                    @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                    @NonNull final IAS4PModeResolver aPModeResolver,
@@ -1109,20 +1124,20 @@ public final class AS4IncomingHandler
                                                    @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
-    final IAS4IncomingMessageState aIncomingState = _parseMessage (aCryptoFactorySign,
-                                                                   aCryptoFactoryCrypt,
-                                                                   aPModeResolver,
-                                                                   aIAF,
-                                                                   aAS4ProfileSelector,
-                                                                   aResHelper,
-                                                                   aSendingPMode,
-                                                                   aLocale,
-                                                                   aIncomingMessageMetadata,
-                                                                   aHttpResponse,
-                                                                   aMessagePayload,
-                                                                   aIncomingDumper,
-                                                                   aIncomingSecurityConfiguration,
-                                                                   aIncomingReceiverConfiguration);
+    final IAS4IncomingMessageState aIncomingState = _parseIncomingMessage (aCryptoFactorySign,
+                                                                           aCryptoFactoryCrypt,
+                                                                           aPModeResolver,
+                                                                           aIAF,
+                                                                           aAS4ProfileSelector,
+                                                                           aResHelper,
+                                                                           aSendingPMode,
+                                                                           aLocale,
+                                                                           aIncomingMessageMetadata,
+                                                                           aHttpResponse,
+                                                                           aMessagePayload,
+                                                                           aIncomingDumper,
+                                                                           aIncomingSecurityConfiguration,
+                                                                           aIncomingReceiverConfiguration);
     if (aIncomingState == null)
     {
       // Error message was already logged

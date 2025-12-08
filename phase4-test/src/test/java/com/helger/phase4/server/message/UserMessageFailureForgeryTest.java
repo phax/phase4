@@ -58,8 +58,7 @@ import com.helger.xml.serialize.read.DOMReader;
 import jakarta.mail.internet.MimeBodyPart;
 
 /**
- * Tests the basic functionality of sending UserMessages with SOAP Version 1.1. IMPORTANT: If these
- * tests are expected to work there needs to be a local holodeck server running.
+ * Tests the basic functionality of sending UserMessages with all SOAP Versions.
  *
  * @author bayerlma
  */
@@ -86,7 +85,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   {
     // the third parameter has to be empty String, since there is no EBMS
     // exception coming back
-    sendPlainMessage (new StringEntity (""), false, "");
+    sendPlainMessage (new StringEntity (""), true, "");
   }
 
   @Test (expected = IllegalStateException.class)
@@ -94,6 +93,14 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   {
     MockMessages.createEmptyUserMessage (m_eSoapVersion, null, null);
     fail ();
+  }
+
+  @Test
+  public void testNoXMLMessage () throws Exception
+  {
+    // the third parameter has to be empty String, since there is no EBMS
+    // exception coming back
+    sendPlainMessage (new StringEntity ("This is a crappy message"), true, "");
   }
 
   @Test

@@ -19,6 +19,7 @@ package com.helger.phase4.client;
 import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.Nonnegative;
+import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.state.EContinue;
 
 /**
@@ -27,6 +28,7 @@ import com.helger.base.state.EContinue;
  * @author Philip Helger
  * @since 0.9.14
  */
+@ChangeNextMajorRelease ("Renamed to IAS4OnRetryCallback")
 public interface IAS4RetryCallback
 {
   /**

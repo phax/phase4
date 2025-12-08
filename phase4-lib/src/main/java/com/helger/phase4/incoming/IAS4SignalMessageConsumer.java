@@ -18,6 +18,7 @@ package com.helger.phase4.incoming;
 
 import org.jspecify.annotations.NonNull;
 
+import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.util.Phase4Exception;
 
@@ -28,6 +29,7 @@ import com.helger.phase4.util.Phase4Exception;
  * @since 0.9.14
  */
 @FunctionalInterface
+@ChangeNextMajorRelease ("Rename to IAS4IncomingSignalMessageConsumer")
 public interface IAS4SignalMessageConsumer
 {
   /**

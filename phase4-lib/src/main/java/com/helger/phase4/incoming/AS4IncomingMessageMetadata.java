@@ -59,7 +59,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private final ICommonsList <Cookie> m_aCookies = new CommonsArrayList <> ();
   private final HttpHeaderMap m_aHttpHeaderMap = new HttpHeaderMap ();
   private String m_sRequestMessageID;
-  private int m_nHttpStatusCode = CAS4.HTTP_STATUS_UNDEFINED;
+  private int m_nResponseHttpStatusCode = CAS4.HTTP_STATUS_UNDEFINED;
 
   /**
    * Default constructor using a UUID as the incoming unique ID and the current date time.
@@ -281,18 +281,18 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   }
 
   @CheckForSigned
-  public int getHttpStatusCode ()
+  public int getResponseHttpStatusCode ()
   {
-    return m_nHttpStatusCode;
+    return m_nResponseHttpStatusCode;
   }
 
-  public boolean hasHttpStatusCode ()
+  public boolean hasResponseHttpStatusCode ()
   {
-    return m_nHttpStatusCode > 0;
+    return m_nResponseHttpStatusCode > 0;
   }
 
   /**
-   * Set the HTTP Status code to be used.
+   * Set the response HTTP Status code to be used. This is only called for RESPONSE mode messages.
    *
    * @param nHttpStatusCode
    *        The HTTP status code to be used. Any value &le; 0 means to use the default.
@@ -300,9 +300,9 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    * @since 4.2.0
    */
   @NonNull
-  public AS4IncomingMessageMetadata setHttpStatusCode (final int nHttpStatusCode)
+  public AS4IncomingMessageMetadata setResponseHttpStatusCode (final int nHttpStatusCode)
   {
-    m_nHttpStatusCode = nHttpStatusCode;
+    m_nResponseHttpStatusCode = nHttpStatusCode;
     return this;
   }
 
@@ -318,7 +318,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
                                        .append ("RemoteUser", m_sRemoteUser)
                                        .append ("Cookies", m_aCookies)
                                        .append ("RequestMessageID", m_sRequestMessageID)
-                                       .append ("HttpStatusCode", m_nHttpStatusCode)
+                                       .append ("ResponseHttpStatusCode", m_nResponseHttpStatusCode)
                                        .getToString ();
   }
 

@@ -1664,12 +1664,12 @@ public class AS4RequestHandler implements AutoCloseable
    *         On phase4 issues.
    */
   @Nullable
-  private IAS4ResponseFactory _handleSoapMessage (@NonNull final HttpHeaderMap aHttpHeaders,
-                                                  @NonNull final Document aSoapDocument,
-                                                  @NonNull final ESoapVersion eSoapVersion,
-                                                  @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
-                                                                                                                      MessagingException,
-                                                                                                                      Phase4Exception
+  private IAS4ResponseFactory _handleIncomingSoapMessageAndInvokeSPIs (@NonNull final HttpHeaderMap aHttpHeaders,
+                                                                       @NonNull final Document aSoapDocument,
+                                                                       @NonNull final ESoapVersion eSoapVersion,
+                                                                       @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
+                                                                                                                                           MessagingException,
+                                                                                                                                           Phase4Exception
   {
     // Collect all runtime errors
     final AS4ErrorList aEbmsErrorMessages = new AS4ErrorList ();
@@ -1820,7 +1820,7 @@ public class AS4RequestHandler implements AutoCloseable
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
 
           // Invoke SPI callbacks
-          final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
+          final SPIInvocationResult aSPIResultAsync = new SPIInvocationResult ();
           _invokeSPIsForIncoming (aHttpHeaders,
                                   aEbmsUserMessage,
                                   aEbmsSignalMessage,
@@ -1830,11 +1830,11 @@ public class AS4RequestHandler implements AutoCloseable
                                   aIncomingState,
                                   aLocalErrorMessages,
                                   aLocalResponseAttachments,
-                                  aAsyncSPIResult);
+                                  aSPIResultAsync);
 
           final IAS4ResponseFactory aAsyncResponseFactory;
           final String sResponseMessageID;
-          if (aAsyncSPIResult.isSuccess ())
+          if (aSPIResultAsync.isSuccess ())
           {
             // SPI processing succeeded
             assert aLocalErrorMessages.isEmpty ();
@@ -1902,7 +1902,7 @@ public class AS4RequestHandler implements AutoCloseable
           }
 
           // where to send it back (must be determined by SPI!)
-          final String sAsyncResponseURL = aAsyncSPIResult.getAsyncResponseURL ();
+          final String sAsyncResponseURL = aSPIResultAsync.getAsyncResponseURL ();
           if (StringHelper.isEmpty (sAsyncResponseURL))
             throw new IllegalStateException ("No asynchronous response URL present - please check your SPI implementation");
 
@@ -1959,14 +1959,14 @@ public class AS4RequestHandler implements AutoCloseable
     final IAS4ResponseFactory ret;
     if (aIncomingState.isSoapHeaderElementProcessingSuccessful () && aIncomingState.getEbmsError () != null)
     {
-      // Processing was successful, and it is an incoming Ebms Error Message
+      // Processing was successful, and it is an incoming ebMS Error Message
       sResponseMessageID = null;
       ret = null;
     }
     else
     {
       // Either error in header processing or
-      // not an incoming Ebms Error Message (either UserMessage or a different
+      // not an incoming ebMS Error Message (either UserMessage or a different
       // SignalMessage)
 
       if (aEbmsErrorMessages.isNotEmpty ())
@@ -2151,10 +2151,10 @@ public class AS4RequestHandler implements AutoCloseable
   {
     final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
       // SOAP document and SOAP version are determined
-      final IAS4ResponseFactory aResponder = _handleSoapMessage (aHttpHeaders,
-                                                                 aSoapDocument,
-                                                                 eSoapVersion,
-                                                                 aIncomingAttachments);
+      final IAS4ResponseFactory aResponder = _handleIncomingSoapMessageAndInvokeSPIs (aHttpHeaders,
+                                                                                      aSoapDocument,
+                                                                                      eSoapVersion,
+                                                                                      aIncomingAttachments);
       if (aResponder != null)
       {
         // Response present -> send back

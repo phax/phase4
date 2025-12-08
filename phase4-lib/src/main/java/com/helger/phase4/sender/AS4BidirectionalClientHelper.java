@@ -139,9 +139,9 @@ public final class AS4BidirectionalClientHelper
                                                                                                      aBuildMessageCallback,
                                                                                                      aOutgoingDumper,
                                                                                                      aRetryCallback);
-    final String sRequestMessageID = aClientSentMessage.getMessageID ();
+    final String sRequestAS4MessageID = aClientSentMessage.getMessageID ();
     LOGGER.info ("Successfully transmitted AS4 UserMessage with message ID '" +
-                 sRequestMessageID +
+                 sRequestAS4MessageID +
                  "' to '" +
                  sURL +
                  "'");
@@ -152,15 +152,15 @@ public final class AS4BidirectionalClientHelper
     // Try interpret result as SignalMessage
     if (aClientSentMessage.hasResponseContent () && aClientSentMessage.getResponseContent ().length > 0)
     {
-      final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
+      final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestAS4MessageID)
                                                                                             .setRemoteAddr (sURL);
       if (aWrappedHttpResponse.isSet ())
       {
         // Remember HTTP response status code retrieved
-        final int nHttpStatusCode = aWrappedHttpResponse.get ().getCode ();
-        aResponseMessageMetadata.setHttpStatusCode (nHttpStatusCode);
-        if (nHttpStatusCode >= CHttp.HTTP_MULTIPLE_CHOICES)
-          LOGGER.warn ("HTTP response uses status code " + nHttpStatusCode);
+        final int nResponseHttpStatusCode = aWrappedHttpResponse.get ().getCode ();
+        aResponseMessageMetadata.setResponseHttpStatusCode (nResponseHttpStatusCode);
+        if (nResponseHttpStatusCode >= CHttp.HTTP_MULTIPLE_CHOICES)
+          LOGGER.warn ("HTTP response uses non-success status code " + nResponseHttpStatusCode);
       }
 
       // Validate the DSSig references between sent and received msg
@@ -255,7 +255,7 @@ public final class AS4BidirectionalClientHelper
       {
         // Remember HTTP response status code retrieved
         final int nHttpStatusCode = aWrappedHttpResponse.get ().getCode ();
-        aResponseMessageMetadata.setHttpStatusCode (nHttpStatusCode);
+        aResponseMessageMetadata.setResponseHttpStatusCode (nHttpStatusCode);
         if (nHttpStatusCode >= CHttp.HTTP_MULTIPLE_CHOICES)
           LOGGER.warn ("HTTP response uses status code " + nHttpStatusCode);
       }
@@ -349,7 +349,7 @@ public final class AS4BidirectionalClientHelper
       {
         // Remember HTTP response status code retrieved
         final int nHttpStatusCode = aWrappedHttpResponse.get ().getCode ();
-        aResponseMessageMetadata.setHttpStatusCode (nHttpStatusCode);
+        aResponseMessageMetadata.setResponseHttpStatusCode (nHttpStatusCode);
         if (nHttpStatusCode >= CHttp.HTTP_MULTIPLE_CHOICES)
           LOGGER.warn ("HTTP response uses status code " + nHttpStatusCode);
       }

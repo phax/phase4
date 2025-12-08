@@ -36,6 +36,7 @@ import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.MessageProperty;
@@ -938,21 +939,31 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer)
   {
     final IAS4SignalMessageConsumer aOriginalSignalMsgConsumer = m_aSignalMsgConsumer;
+    // Store the received data
+    final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
+    final Wrapper <IAS4IncomingMessageMetadata> aIncomingMMKeeper = new Wrapper <> ();
+    final IAS4SignalMessageConsumer aInternalSignalMsgConsumer = (aSignalMsg,
+                                                                  aIncomingMessageMetadata,
+                                                                  aIncomingState) -> {
+      aSignalMsgKeeper.set (aSignalMsg);
+      aIncomingMMKeeper.set (aIncomingMessageMetadata);
+    };
+
     try
     {
-      // Store the received signal message
-      final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
+      // TODO this is not thread-safe because m_aSignalMsgConsumer is modified
       if (aOriginalSignalMsgConsumer == null)
       {
         // Just store the message
-        m_aSignalMsgConsumer = (aSignalMsg, aIncomingMessageMetadata, aIncomingState) -> aSignalMsgKeeper.set (
-                                                                                                               aSignalMsg);
+        m_aSignalMsgConsumer = aInternalSignalMsgConsumer;
       }
       else
       {
         // Call the original handler and store the message
         m_aSignalMsgConsumer = (aSignalMsg, aIncomingMessageMetadata, aIncomingState) -> {
-          aSignalMsgKeeper.set (aSignalMsg);
+          // Internal
+          aInternalSignalMsgConsumer.handleSignalMessage (aSignalMsg, aIncomingMessageMetadata, aIncomingState);
+          // and Original
           aOriginalSignalMsgConsumer.handleSignalMessage (aSignalMsg, aIncomingMessageMetadata, aIncomingState);
         };
       }
