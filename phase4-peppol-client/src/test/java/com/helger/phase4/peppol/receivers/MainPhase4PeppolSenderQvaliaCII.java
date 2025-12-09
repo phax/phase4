@@ -87,7 +87,7 @@ public final class MainPhase4PeppolSenderQvaliaCII
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
                                   .validationRegistry (aVESRegistry)
-                                  .validationConfiguration (EN16931Validation.VID_CII_1313,
+                                  .validationConfiguration (EN16931Validation.VID_CII_1315,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
