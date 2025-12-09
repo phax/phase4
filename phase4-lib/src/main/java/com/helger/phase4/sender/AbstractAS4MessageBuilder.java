@@ -788,14 +788,14 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * method is optional and must not be called prior to sending. This method is very similar to
    * using an {@link #incomingDumper(IAS4IncomingDumper)} so you usually only need one or the other.
    *
-   * @param aResponseConsumer
+   * @param aRaweResponseConsumer
    *        The optional response consumer. May be <code>null</code>.
    * @return this for chaining
    */
   @NonNull
-  public final IMPLTYPE rawResponseConsumer (@Nullable final IAS4RawResponseConsumer aResponseConsumer)
+  public final IMPLTYPE rawResponseConsumer (@Nullable final IAS4RawResponseConsumer aRaweResponseConsumer)
   {
-    m_aResponseConsumer = aResponseConsumer;
+    m_aResponseConsumer = aRaweResponseConsumer;
     return thisAsT ();
   }
 

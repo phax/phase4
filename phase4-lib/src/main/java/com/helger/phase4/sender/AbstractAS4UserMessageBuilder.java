@@ -36,7 +36,6 @@ import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
-import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.MessageProperty;
@@ -950,17 +949,15 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     final IAS4SignalMessageConsumer aOriginalSignalMsgConsumer = m_aSignalMsgConsumer;
     // Store the received data
     final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
-    final Wrapper <IAS4IncomingMessageMetadata> aIncomingMMKeeper = new Wrapper <> ();
     final IAS4SignalMessageConsumer aInternalSignalMsgConsumer = (aSignalMsg,
                                                                   aIncomingMessageMetadata,
                                                                   aIncomingState) -> {
       aSignalMsgKeeper.set (aSignalMsg);
-      aIncomingMMKeeper.set (aIncomingMessageMetadata);
     };
 
     try
     {
-      // TODO this is not thread-safe because m_aSignalMsgConsumer is modified
+      // this is not thread-safe because m_aSignalMsgConsumer is modified
       if (aOriginalSignalMsgConsumer == null)
       {
         // Just store the message
