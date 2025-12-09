@@ -153,13 +153,12 @@ public final class TestPMode
   @NonNull
   public static PMode createTestPMode (@NonNull @Nonempty final String sInitiatorID,
                                        @NonNull @Nonempty final String sResponderID,
-                                       @NonNull @Nonempty final String sResponderAddress,
+                                       @Nullable final String sResponderAddress,
                                        @NonNull final IPModeIDProvider aPModeIDProvider,
                                        final boolean bPersist)
   {
     ValueEnforcer.notEmpty (sInitiatorID, "InitiatorID");
     ValueEnforcer.notEmpty (sResponderID, "ResponderID");
-    ValueEnforcer.notEmpty (sResponderAddress, "ResponderAddress");
 
     final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
     final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
