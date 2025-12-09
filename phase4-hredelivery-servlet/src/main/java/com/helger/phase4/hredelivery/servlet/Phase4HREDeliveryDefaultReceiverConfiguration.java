@@ -34,7 +34,6 @@ import com.helger.phase4.hredelivery.servlet.Phase4HREDeliveryReceiverConfigurat
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
-import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 
 /**
  * This class contains the references values against which incoming values are compared. These are
@@ -84,7 +83,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
    *
    * @param bReceiverCheckEnabled
    *        <code>true</code> to enable the checks, <code>false</code> to disable them.
-   * @see #setSMPClient(ISMPExtendedServiceMetadataProvider)
+   * @see #setSMPClient(IBDXRExtendedServiceMetadataProvider)
    * @see #setAS4EndpointURL(String)
    * @see #setAPCertificate(X509Certificate)
    */

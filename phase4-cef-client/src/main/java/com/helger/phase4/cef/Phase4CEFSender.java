@@ -46,7 +46,6 @@ import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
-import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.IBDXLURLProvider;
@@ -216,7 +215,7 @@ public final class Phase4CEFSender
      * @param a
      *        The endpoint detail provider to be used. May be <code>null</code>.
      * @return this for chaining
-     * @see #smpClient(IBDXRServiceMetadataProvider)
+     * @see #smpClient(IBDXRExtendedServiceMetadataProvider)
      * @see #smpClient(IBDXR2ServiceMetadataProvider)
      */
     @NonNull
