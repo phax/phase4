@@ -453,6 +453,15 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   @NonNull
+  public final IMPLTYPE addEbmsProperties (@Nullable final Iterable <? extends Ebms3Property> a)
+  {
+    if (a != null)
+      for (final Ebms3Property aItem : a)
+        addMessageProperty (aItem);
+    return thisAsT ();
+  }
+
+  @NonNull
   public final IMPLTYPE addMessageProperty (@Nullable final Ebms3Property a)
   {
     return addMessageProperty (a == null ? null : MessageProperty.builder (a));
