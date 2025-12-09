@@ -2,6 +2,7 @@ package com.helger.phase4.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +21,14 @@ import com.helger.base.concurrent.ThreadHelper;
 import com.helger.base.url.URLHelper;
 import com.helger.http.CHttpHeader;
 import com.helger.mime.CMimeType;
+import com.helger.phase4.AS4TestConstants;
+import com.helger.phase4.CAS4;
+import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
+import com.helger.phase4.model.ESoapVersion;
+import com.helger.phase4.model.message.MessageHelperMethods;
+import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
+import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.server.AS4JettyRunner;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
@@ -78,41 +86,92 @@ public class AS4ClientUserMessageTestWithCrappyReceiver
   }
 
   @Test
-  public void testSendingAnythingAndReceiveCrap () throws WSSecurityException, IOException, MessagingException
+  public void testSendingAnythingAndReceiveCrapViaClient () throws WSSecurityException, IOException, MessagingException
   {
     final String sServerURL = MockJettySetup.getServerAddressFromSettings ();
 
-    final MockAS4ClientUserMessage aUserMessage = AS4ClientUserMessageTest.createMandatoryAttributesSuccessMessage (s_aResHelper);
-    aUserMessage.setPayload (DOMReader.readXMLDOM ("<root xmlns='urn:any'/>"));
+    final MockAS4ClientUserMessage aClient = new MockAS4ClientUserMessage (s_aResHelper);
+    aClient.setSoapVersion (ESoapVersion.SOAP_12);
 
-    final HttpClientResponseHandler <byte []> aResponseHandler = aHttpResponse -> {
+    // Use a pmode that you know is currently running on the server your trying
+    // to send the message too
+    aClient.setAction ("AnAction");
+    aClient.setServiceType ("MyServiceType");
+    aClient.setServiceValue ("OrderPaper");
+    aClient.setConversationID (MessageHelperMethods.createRandomConversationID ());
+    aClient.setAgreementRefValue ("bla");
+    aClient.setFromRole (CAS4.DEFAULT_ROLE);
+    aClient.setFromPartyID ("MyPartyIDforSending");
+    aClient.setToRole (CAS4.DEFAULT_ROLE);
+    aClient.setToPartyID ("MyPartyIDforReceving");
+    aClient.ebms3Properties ().setAll (AS4TestConstants.getEBMSProperties ());
+
+    aClient.setPayload (DOMReader.readXMLDOM ("<root xmlns='urn:any'/>"));
+
+    final HttpClientResponseHandler <byte []> aResponseHandlerPlain = aHttpResponse -> {
       final HttpEntity aEntity = aHttpResponse.getEntity ();
       return EntityUtils.toByteArray (aEntity);
     };
 
     // 1
-    AS4ClientSentMessage <byte []> ret = aUserMessage.sendMessageWithRetries (sServerURL,
-                                                                              aResponseHandler,
-                                                                              null,
-                                                                              null,
-                                                                              null);
+    AS4ClientSentMessage <byte []> ret = aClient.sendMessageWithRetries (sServerURL,
+                                                                         aResponseHandlerPlain,
+                                                                         null,
+                                                                         null,
+                                                                         null);
     assertNotNull (ret);
     assertEquals ("Plain Text", new String (ret.getResponseContent (), StandardCharsets.UTF_8));
     assertEquals (200, ret.getResponseStatusLine ().getStatusCode ());
     assertEquals ("text/plain;charset=utf-8", ret.getResponseHeaders ().getFirstHeaderValue (CHttpHeader.CONTENT_TYPE));
 
     // 2
-    ret = aUserMessage.sendMessageWithRetries (URLBuilder.of (sServerURL)
-                                                         .addParam ("content", "<crap/>")
-                                                         .addParam ("statuscode", 401)
-                                                         .addParam ("mimetype",
-                                                                    CMimeType.APPLICATION_XML.getAsString ())
-                                                         .build ()
-                                                         .getAsString (), aResponseHandler, null, null, null);
+    ret = aClient.sendMessageWithRetries (URLBuilder.of (sServerURL)
+                                                    .addParam ("content", "<crap/>")
+                                                    .addParam ("statuscode", 401)
+                                                    .addParam ("mimetype", CMimeType.APPLICATION_XML.getAsString ())
+                                                    .build ()
+                                                    .getAsString (), aResponseHandlerPlain, null, null, null);
     assertNotNull (ret);
     assertEquals ("<crap/>", new String (ret.getResponseContent (), StandardCharsets.UTF_8));
     assertEquals (401, ret.getResponseStatusLine ().getStatusCode ());
     assertEquals ("application/xml;charset=utf-8",
                   ret.getResponseHeaders ().getFirstHeaderValue (CHttpHeader.CONTENT_TYPE));
+  }
+
+  private static final class MockBuilder extends AbstractAS4UserMessageBuilderMIMEPayload <MockBuilder>
+  {}
+
+  @Test
+  public void testSendingAnythingAndReceiveCrapViaBuilder ()
+  {
+    final String sServerURL = MockJettySetup.getServerAddressFromSettings ();
+
+    final MockBuilder aUserMessage = new MockBuilder ().as4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT)
+                                                       .action ("AnAction")
+                                                       .service ("MyServiceType", "OrderPaper")
+                                                       .conversationID (MessageHelperMethods.createRandomConversationID ())
+                                                       .agreementRef ("bla")
+                                                       .fromRole (CAS4.DEFAULT_ROLE)
+                                                       .fromPartyID ("MyPartyIDforSending")
+                                                       .toRole (CAS4.DEFAULT_ROLE)
+                                                       .toPartyID ("MyPartyIDforReceving")
+                                                       .addEbmsProperties (AS4TestConstants.getEBMSProperties ())
+                                                       .payload (AS4OutgoingAttachment.builder ()
+                                                                                      .data ("<root xmlns='urn:any'/>".getBytes (StandardCharsets.UTF_8))
+                                                                                      .mimeTypeXML ()
+                                                                                      .build ());
+
+    // 1
+    EAS4UserMessageSendResult eResult = aUserMessage.endpointURL (sServerURL).sendMessageAndCheckForReceipt ();
+    assertSame (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED, eResult);
+
+    // 2
+    eResult = aUserMessage.endpointURL (URLBuilder.of (sServerURL)
+                                                  .addParam ("content", "<crap/>")
+                                                  .addParam ("statuscode", 401)
+                                                  .addParam ("mimetype", CMimeType.APPLICATION_XML.getAsString ())
+                                                  .build ()
+                                                  .getAsString ()).sendMessageAndCheckForReceipt ();
+    assertSame (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED, eResult);
   }
 }

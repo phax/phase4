@@ -94,9 +94,9 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
    * @return the AS4Client with the set attributes to continue
    */
   @NonNull
-  static MockAS4ClientUserMessage createMandatoryAttributesSuccessMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper)
+  private static MockAS4ClientUserMessage _createMandatoryAttributesSuccessMessage ()
   {
-    final MockAS4ClientUserMessage aClient = new MockAS4ClientUserMessage (aResHelper);
+    final MockAS4ClientUserMessage aClient = new MockAS4ClientUserMessage (s_aResHelper);
     aClient.setSoapVersion (ESoapVersion.SOAP_12);
 
     // Use a pmode that you know is currently running on the server your trying
@@ -112,19 +112,6 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
     aClient.setToPartyID ("MyPartyIDforReceving");
     aClient.ebms3Properties ().setAll (AS4TestConstants.getEBMSProperties ());
     return aClient;
-  }
-
-  /**
-   * To reduce the amount of code in each test, this method sets the basic attributes that are
-   * needed for a successful message to build. <br>
-   * Only needed for positive messages.
-   *
-   * @return the AS4Client with the set attributes to continue
-   */
-  @NonNull
-  static MockAS4ClientUserMessage createMandatoryAttributesSuccessMessage ()
-  {
-    return createMandatoryAttributesSuccessMessage (s_aResHelper);
   }
 
   /**
@@ -208,7 +195,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendBodyPayloadMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -217,7 +204,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendBodyPayloadSignedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
 
     // Keystore
@@ -235,7 +222,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendBodyPayloadEncryptedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
 
     // Keystore
@@ -251,7 +238,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendBodyPayloadSignedEncryptedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
 
     // Keystore
@@ -272,7 +259,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendOneAttachmentSignedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
@@ -292,7 +279,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendOneAttachmentEncryptedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
@@ -310,7 +297,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendOneAttachmentSignedEncryptedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
@@ -333,7 +320,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendManyAttachmentSignedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
@@ -359,7 +346,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendManyAttachmentEncryptedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
@@ -383,7 +370,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendManyAttachmentSignedEncryptedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            (EAS4CompressionMode) null);
@@ -412,7 +399,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendOneAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
@@ -441,7 +428,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendManyAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
@@ -470,7 +457,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testBuildMessageWithOwnPrefix () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose@";
     aClient.setMessageIDFactory ( () -> sMessageIDPrefix + MessageHelperMethods.createRandomMessageID ());
     final String sMessageID = aClient.createMessageID ();
@@ -482,7 +469,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   @Test
   public void testSendAndExpectServerSideException () throws Exception
   {
-    final MockAS4ClientUserMessage aClient = createMandatoryAttributesSuccessMessage ();
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
 
     // This property forces a crash
     aClient.ebms3Properties ().add (MessageHelperMethods.createEbms3Property ("Exception", "anything"));
