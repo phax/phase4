@@ -78,7 +78,7 @@
     <log4j.version>2.25.2</log4j.version>
     <xmlsec.version>4.0.4</xmlsec.version>
     <wss4j.version>4.0.1</wss4j.version>
-    <peppol-commons.version>12.3.0</peppol-commons.version>
+    <peppol-commons.version>12.3.1</peppol-commons.version>
     <peppol-reporting.version>4.1.0</peppol-reporting.version>
     <peppol-ap-support.version>2.1.0</peppol-ap-support.version>
     <ph-commons.version>12.1.0</ph-commons.version>
@@ -87,7 +87,7 @@
     <ph-web.version>11.2.0</ph-web.version>
     <ph-xsds.version>4.1.0</ph-xsds.version>
     <phive.version>11.1.0</phive.version>
-    <phive-rules.version>4.1.0</phive-rules.version>
+    <phive-rules.version>4.1.1</phive-rules.version>
   </properties>
 
   <dependencyManagement>
