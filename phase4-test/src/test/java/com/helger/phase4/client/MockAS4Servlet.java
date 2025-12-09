@@ -29,7 +29,7 @@ public class MockAS4Servlet extends AbstractXServlet
                                           final int nResponseCode = aRequestScope.params ()
                                                                                  .getAsInt ("statuscode", 200);
                                           final String sResponseContent = aRequestScope.params ()
-                                                                                       .getAsString ("response",
+                                                                                       .getAsString ("content",
                                                                                                      "Plain Text");
                                           final IMimeType aMimeType = MimeTypeParser.parseMimeType (aRequestScope.params ()
                                                                                                                  .getAsString ("mimetype",

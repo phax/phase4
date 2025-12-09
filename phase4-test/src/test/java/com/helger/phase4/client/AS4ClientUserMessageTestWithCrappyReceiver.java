@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -16,12 +19,13 @@ import org.slf4j.LoggerFactory;
 import com.helger.base.concurrent.ThreadHelper;
 import com.helger.base.url.URLHelper;
 import com.helger.http.CHttpHeader;
-import com.helger.httpclient.response.ResponseHandlerByteArray;
+import com.helger.mime.CMimeType;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.server.AS4JettyRunner;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.url.URLBuilder;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
@@ -80,13 +84,35 @@ public class AS4ClientUserMessageTestWithCrappyReceiver
 
     final MockAS4ClientUserMessage aUserMessage = AS4ClientUserMessageTest.createMandatoryAttributesSuccessMessage (s_aResHelper);
     aUserMessage.setPayload (DOMReader.readXMLDOM ("<root xmlns='urn:any'/>"));
-    final AS4ClientSentMessage <byte []> ret = aUserMessage.sendMessageWithRetries (sServerURL,
-                                                                                    new ResponseHandlerByteArray (),
-                                                                                    null,
-                                                                                    null,
-                                                                                    null);
+
+    final HttpClientResponseHandler <byte []> aResponseHandler = aHttpResponse -> {
+      final HttpEntity aEntity = aHttpResponse.getEntity ();
+      return EntityUtils.toByteArray (aEntity);
+    };
+
+    // 1
+    AS4ClientSentMessage <byte []> ret = aUserMessage.sendMessageWithRetries (sServerURL,
+                                                                              aResponseHandler,
+                                                                              null,
+                                                                              null,
+                                                                              null);
     assertNotNull (ret);
     assertEquals ("Plain Text", new String (ret.getResponseContent (), StandardCharsets.UTF_8));
+    assertEquals (200, ret.getResponseStatusLine ().getStatusCode ());
     assertEquals ("text/plain;charset=utf-8", ret.getResponseHeaders ().getFirstHeaderValue (CHttpHeader.CONTENT_TYPE));
+
+    // 2
+    ret = aUserMessage.sendMessageWithRetries (URLBuilder.of (sServerURL)
+                                                         .addParam ("content", "<crap/>")
+                                                         .addParam ("statuscode", 401)
+                                                         .addParam ("mimetype",
+                                                                    CMimeType.APPLICATION_XML.getAsString ())
+                                                         .build ()
+                                                         .getAsString (), aResponseHandler, null, null, null);
+    assertNotNull (ret);
+    assertEquals ("<crap/>", new String (ret.getResponseContent (), StandardCharsets.UTF_8));
+    assertEquals (401, ret.getResponseStatusLine ().getStatusCode ());
+    assertEquals ("application/xml;charset=utf-8",
+                  ret.getResponseHeaders ().getFirstHeaderValue (CHttpHeader.CONTENT_TYPE));
   }
 }
