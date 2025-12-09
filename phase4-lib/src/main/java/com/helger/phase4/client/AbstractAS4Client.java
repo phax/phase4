@@ -504,11 +504,15 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                                                                                       WSSecurityException,
                                                                                                                       MessagingException
   {
+    ValueEnforcer.notNull (sURL, "URL");
+    ValueEnforcer.notNull (aResponseHandler, "ResponseHandler");
+
     // Create a new message ID for each build!
     final String sMessageID = createMessageID ();
     final AS4ClientBuiltMessage aBuiltMsg = buildMessage (sMessageID, aCallback);
     HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
     HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getAllCustomHttpHeaders ();
+
     if (false)
     {
       // Test custom header only
