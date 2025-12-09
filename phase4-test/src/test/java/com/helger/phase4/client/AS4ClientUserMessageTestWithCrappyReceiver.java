@@ -29,6 +29,7 @@ import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
+import com.helger.phase4.sender.IAS4RawResponseConsumer;
 import com.helger.phase4.server.AS4JettyRunner;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
@@ -165,13 +166,22 @@ public class AS4ClientUserMessageTestWithCrappyReceiver
     EAS4UserMessageSendResult eResult = aUserMessage.endpointURL (sServerURL).sendMessageAndCheckForReceipt ();
     assertSame (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED, eResult);
 
-    // 2
+    // 2 - an example how to get the raw response data back
+    final IAS4RawResponseConsumer aResponseConsumer = aResponseMsg -> {
+      LOGGER.info ("Received response status code: " + aResponseMsg.getResponseStatusLine ().getStatusCode ());
+      LOGGER.info ("Received response Content-Type: " +
+                   aResponseMsg.getResponseHeaders ().getFirstHeaderValue (CHttpHeader.CONTENT_TYPE));
+      LOGGER.info ("Received response payload (String): " +
+                   new String (aResponseMsg.getResponseContent (), StandardCharsets.UTF_8));
+    };
     eResult = aUserMessage.endpointURL (URLBuilder.of (sServerURL)
                                                   .addParam ("contentid", "receipt12")
                                                   .addParam ("statuscode", 401)
                                                   .addParam ("mimetype", CMimeType.APPLICATION_XML.getAsString ())
                                                   .build ()
-                                                  .getAsString ()).sendMessageAndCheckForReceipt ();
+                                                  .getAsString ())
+                          .rawResponseConsumer (aResponseConsumer)
+                          .sendMessageAndCheckForReceipt ();
     assertSame (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY, eResult);
   }
 }
