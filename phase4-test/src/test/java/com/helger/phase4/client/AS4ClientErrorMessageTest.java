@@ -74,6 +74,7 @@ public final class AS4ClientErrorMessageTest extends AbstractAS4TestSetUp
     try
     {
       aClient.buildMessage ("bla", null);
+      // expected
     }
     catch (final IllegalStateException ex)
     {

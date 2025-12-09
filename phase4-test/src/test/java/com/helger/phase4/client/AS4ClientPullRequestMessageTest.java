@@ -72,6 +72,7 @@ public final class AS4ClientPullRequestMessageTest extends AbstractAS4TestSetUp
     try
     {
       aClient.buildMessage ("bla", null);
+      // expected
     }
     catch (final IllegalStateException ex)
     {
