@@ -167,11 +167,11 @@ public class AS4ClientUserMessageTestWithCrappyReceiver
 
     // 2
     eResult = aUserMessage.endpointURL (URLBuilder.of (sServerURL)
-                                                  .addParam ("content", "<crap/>")
+                                                  .addParam ("contentid", "receipt12")
                                                   .addParam ("statuscode", 401)
                                                   .addParam ("mimetype", CMimeType.APPLICATION_XML.getAsString ())
                                                   .build ()
                                                   .getAsString ()).sendMessageAndCheckForReceipt ();
-    assertSame (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED, eResult);
+    assertSame (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY, eResult);
   }
 }
