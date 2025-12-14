@@ -1651,7 +1651,8 @@ public final class Phase4PeppolSender
       payload (AS4OutgoingAttachment.builder ()
                                     .data (m_aPayloadBytes)
                                     .mimeType (m_aPayloadMimeType)
-                                    .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null));
+                                    .compression (m_bCompressPayload ? EAS4CompressionMode.GZIP : null)
+                                    .contentID (m_sPayloadContentID));
 
       return ESuccess.SUCCESS;
     }
