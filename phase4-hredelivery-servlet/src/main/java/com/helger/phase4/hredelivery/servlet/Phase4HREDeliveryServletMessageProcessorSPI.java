@@ -342,7 +342,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
     X509Certificate aRecipientCert = null;
     try
     {
-      aRecipientCert = CertificateHelper.convertByteArrayToCertficate (aRecipientCertBytes);
+      aRecipientCert = CertificateHelper.convertByteArrayToCertficateDirect (aRecipientCertBytes);
     }
     catch (final CertificateException t)
     {
