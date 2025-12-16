@@ -24,13 +24,10 @@ import org.w3c.dom.Element;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
-import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.logging.Phase4LoggerFactory;
-import com.helger.phase4.model.message.AS4UserMessage;
-import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
@@ -39,13 +36,13 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Example for sending something to the DubaiTrade [AE] test endpoint.
+ * Example for sending something to the ACT [EG] test endpoint.
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderDT
+public final class MainPhase4PeppolSenderACT
 {
-  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderDT.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderACT.class);
 
   public static void main (final String [] args)
   {
@@ -63,20 +60,8 @@ public final class MainPhase4PeppolSenderDT
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0235:POP000764");
-      final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
-      {
-        public void onAS4Message (final AbstractAS4Message <?> aMsg)
-        {
-          final AS4UserMessage aUserMsg = (AS4UserMessage) aMsg;
-          LOGGER.info ("Sending out AS4 message with message ID '" +
-                       aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId () +
-                       "'");
-          LOGGER.info ("Sending out AS4 message with conversation ID '" +
-                       aUserMsg.getEbms3UserMessage ().getCollaborationInfo ().getConversationId () +
-                       "'");
-        }
-      };
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0235:100485671011113");
+
       final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
                                                                   .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifier ("peppol-doctype-wildcard",
@@ -90,7 +75,6 @@ public final class MainPhase4PeppolSenderDT
                                                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                                                      aReceiverID,
                                                                                                      ESML.DIGIT_TEST))
-                                                                  .buildMessageCallback (aBuildMessageCallback)
                                                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
