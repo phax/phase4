@@ -218,7 +218,7 @@ public final class AS4IncomingHandler
 
     try
     {
-      ErrorList aXSDErrorList = new ErrorList ();
+      final ErrorList aXSDErrorList = new ErrorList ();
 
       if (aPlainContentType.equals (AS4RequestHandler.MT_MULTIPART_RELATED))
       {
@@ -696,6 +696,9 @@ public final class AS4IncomingHandler
     // Remember if header processing was successful or not
     final boolean bSoapHeaderElementProcessingSuccess = aEbmsErrorMessagesTarget.isEmpty ();
     aIncomingState.setSoapHeaderElementProcessingSuccessful (bSoapHeaderElementProcessingSuccess);
+
+    // TODO add a callback functionality to access the raw - this should work for broken and valid
+    // messages in parallel
 
     if (bSoapHeaderElementProcessingSuccess)
     {
