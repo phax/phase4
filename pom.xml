@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
   </parent>
   <groupId>com.helger.phase4</groupId>
   <artifactId>phase4-parent-pom</artifactId>
@@ -75,13 +75,13 @@
 
     <bctls.version>1.83</bctls.version>
     <dnsjava.version>3.6.3</dnsjava.version>
-    <log4j.version>2.25.2</log4j.version>
+    <log4j.version>2.25.3</log4j.version>
     <xmlsec.version>4.0.4</xmlsec.version>
     <wss4j.version>4.0.1</wss4j.version>
-    <peppol-commons.version>12.3.1</peppol-commons.version>
+    <peppol-commons.version>12.3.3</peppol-commons.version>
     <peppol-reporting.version>4.1.0</peppol-reporting.version>
     <peppol-ap-support.version>2.1.0</peppol-ap-support.version>
-    <ph-commons.version>12.1.0</ph-commons.version>
+    <ph-commons.version>12.1.1</ph-commons.version>
     <ph-schematron.version>9.1.1</ph-schematron.version>
     <ph-ubl.version>10.1.0</ph-ubl.version>
     <ph-web.version>11.2.0</ph-web.version>

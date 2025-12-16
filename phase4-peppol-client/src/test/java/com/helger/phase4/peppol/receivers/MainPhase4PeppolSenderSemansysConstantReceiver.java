@@ -27,9 +27,9 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.peppol.AbstractPhase4Sender;
 import com.helger.phase4.peppol.Phase4PeppolSender;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
@@ -39,7 +39,7 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderSemansysConstantReceiver
+public final class MainPhase4PeppolSenderSemansysConstantReceiver extends AbstractPhase4Sender
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderSemansysConstantReceiver.class);
 
@@ -70,9 +70,9 @@ public final class MainPhase4PeppolSenderSemansysConstantReceiver
                                   .senderPartyID ("POP000306")
                                   .countryC1 ("AT")
                                   .payload (aPayloadElement)
-                                  .receiverEndpointDetails (CertificateHelper.convertStringToCertficate ("-----BEGIN CERTIFICATE-----\n" +
-                                                                                                         "MIIF0DCCA7igAwIBAgIQJ22Gqs2sr75qnAwvjhocojANBgkqhkiG9w0BAQsFADBrMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQT3BlblBFUFBPTCBBSVNCTDEWMBQGA1UECxMNRk9SIFRFU1QgT05MWTEpMCcGA1UEAxMgUEVQUE9MIEFDQ0VTUyBQT0lOVCBURVNUIENBIC0gRzIwHhcNMjUwNTIzMDAwMDAwWhcNMjcwNTEzMjM1OTU5WjBdMQswCQYDVQQGEwJOTDEhMB8GA1UECgwYU2VtYW5zeXMgVGVjaG5vbG9naWVzIEJWMRcwFQYDVQQLDA5QRVBQT0wgVEVTVCBBUDESMBAGA1UEAwwJUE5MMDAwODE3MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxKwaSTPww+FY4HG2vePkokAKUYPdZyPpLDfHr+1Gcmeb7l8lg/fUqcthuw/+SgErqnifM4s+YtMLjQk9sCEwzx2dHZHq5ckLQM6gsKcRkjArXqO6ArcXsGgmvBS7ouXLC0jBJBdfjLmQPsi2b7+oogAP+vIAkwXXw/q/l5BLXMbCwq9hTyhTGbsuGLf6W52PEOd840zxGYmPOmRBhizd0KXlrmFZkb/CJOrIDMfTrRa08UAsMN1aiztAOozso0kZmsI983IEbvFig1bhxlMcTWMKJjolQO6gIfly17P64UPSZ9fG9Ry6C8ajNkEZ+cW+UpnoC+gVcAYveyIiJQIOzwIDAQABo4IBfDCCAXgwDAYDVR0TAQH/BAIwADAOBgNVHQ8BAf8EBAMCA6gwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwIwHQYDVR0OBBYEFEyApzJkHxxhIxQYNgKszOjWZb/zMF0GA1UdHwRWMFQwUqBQoE6GTGh0dHA6Ly9wa2ktY3JsLnN5bWF1dGguY29tL2NhXzZhOTM3NzM0YTM5M2EwODA1YmYzM2NkYThiMzMxMDkzL0xhdGVzdENSTC5jcmwwNwYIKwYBBQUHAQEEKzApMCcGCCsGAQUFBzABhhtodHRwOi8vcGtpLW9jc3Auc3ltYXV0aC5jb20wHwYDVR0jBBgwFoAUa29LtvE3uis8fxjNuiuyuXwqN+swLQYKYIZIAYb4RQEQAwQfMB0GE2CGSAGG+EUBEAECAwEBgamQ4QMWBjk1NzYwODA5BgpghkgBhvhFARAFBCswKQIBABYkYUhSMGNITTZMeTl3YTJrdGNtRXVjM2x0WVhWMGFDNWpiMjA9MA0GCSqGSIb3DQEBCwUAA4ICAQAp2mnQLzYwBYTDlRoN3OWHoZbato0JKXO0NC/S6FTrfRHMuhQOz7YXLW2pAe9l4I6B09lKVx4RIL0lJL3xETFUoifUF9s8e4zbuM/Y6EduorfpLcw+E0H28X33FgmviX2eT4NtU6GcMWZKtTpJPbdHYdq2bTrdFwRH46SingRgvRjFM1FVvPeZ5YFeo8oWVhdyjB9x2CX+qYYKXpaSnJSOBvJZ4Lxv6gSLcJXFhH95ws6FbQjg0/1hiHMJgaJvAYo4BEbAYrPr5QG9YPF5wJeycSLg47p2urGfnSksXCSV+Q+lhgghzgg08P7tT8MbOJVB9bXJ44h6LZiKlQD+wwDFteMJOYg/Fsucjzq1miSMXKVKSjs4ZNYQlQy7J1ae30TaoNfLT6xgreZP4nUMMXyJKRWVED9jrzkcBwaN/R7w3KR4gIq5MBK3hvTT9vDary7zAgopiWhoMs9AMGnfZ3M6RV4c8EhYNJcsW9aDq1GuDm6GG22/nFXabW27uU5vcbN2rPj3iVi/KAbR5t+hNOYLjSRKnADEFOGVMdSn1atg0s0qH5vUuv/qxeb4dM03IAjHZs2RZzOIZafg1pHq5EUsxpHkpPuO4MvH11Qym6K24/9oO/gLXj4rnk1pwMHWzk0B7zDp5wUvrBz00YakvKVIpcAAu+R44NGu+2+gQoo31g==\n" +
-                                                                                                         "-----END CERTIFICATE-----"),
+                                  .receiverEndpointDetails (pem2cert ("-----BEGIN CERTIFICATE-----\n" +
+                                                                      "MIIF0DCCA7igAwIBAgIQJ22Gqs2sr75qnAwvjhocojANBgkqhkiG9w0BAQsFADBrMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQT3BlblBFUFBPTCBBSVNCTDEWMBQGA1UECxMNRk9SIFRFU1QgT05MWTEpMCcGA1UEAxMgUEVQUE9MIEFDQ0VTUyBQT0lOVCBURVNUIENBIC0gRzIwHhcNMjUwNTIzMDAwMDAwWhcNMjcwNTEzMjM1OTU5WjBdMQswCQYDVQQGEwJOTDEhMB8GA1UECgwYU2VtYW5zeXMgVGVjaG5vbG9naWVzIEJWMRcwFQYDVQQLDA5QRVBQT0wgVEVTVCBBUDESMBAGA1UEAwwJUE5MMDAwODE3MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxKwaSTPww+FY4HG2vePkokAKUYPdZyPpLDfHr+1Gcmeb7l8lg/fUqcthuw/+SgErqnifM4s+YtMLjQk9sCEwzx2dHZHq5ckLQM6gsKcRkjArXqO6ArcXsGgmvBS7ouXLC0jBJBdfjLmQPsi2b7+oogAP+vIAkwXXw/q/l5BLXMbCwq9hTyhTGbsuGLf6W52PEOd840zxGYmPOmRBhizd0KXlrmFZkb/CJOrIDMfTrRa08UAsMN1aiztAOozso0kZmsI983IEbvFig1bhxlMcTWMKJjolQO6gIfly17P64UPSZ9fG9Ry6C8ajNkEZ+cW+UpnoC+gVcAYveyIiJQIOzwIDAQABo4IBfDCCAXgwDAYDVR0TAQH/BAIwADAOBgNVHQ8BAf8EBAMCA6gwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwIwHQYDVR0OBBYEFEyApzJkHxxhIxQYNgKszOjWZb/zMF0GA1UdHwRWMFQwUqBQoE6GTGh0dHA6Ly9wa2ktY3JsLnN5bWF1dGguY29tL2NhXzZhOTM3NzM0YTM5M2EwODA1YmYzM2NkYThiMzMxMDkzL0xhdGVzdENSTC5jcmwwNwYIKwYBBQUHAQEEKzApMCcGCCsGAQUFBzABhhtodHRwOi8vcGtpLW9jc3Auc3ltYXV0aC5jb20wHwYDVR0jBBgwFoAUa29LtvE3uis8fxjNuiuyuXwqN+swLQYKYIZIAYb4RQEQAwQfMB0GE2CGSAGG+EUBEAECAwEBgamQ4QMWBjk1NzYwODA5BgpghkgBhvhFARAFBCswKQIBABYkYUhSMGNITTZMeTl3YTJrdGNtRXVjM2x0WVhWMGFDNWpiMjA9MA0GCSqGSIb3DQEBCwUAA4ICAQAp2mnQLzYwBYTDlRoN3OWHoZbato0JKXO0NC/S6FTrfRHMuhQOz7YXLW2pAe9l4I6B09lKVx4RIL0lJL3xETFUoifUF9s8e4zbuM/Y6EduorfpLcw+E0H28X33FgmviX2eT4NtU6GcMWZKtTpJPbdHYdq2bTrdFwRH46SingRgvRjFM1FVvPeZ5YFeo8oWVhdyjB9x2CX+qYYKXpaSnJSOBvJZ4Lxv6gSLcJXFhH95ws6FbQjg0/1hiHMJgaJvAYo4BEbAYrPr5QG9YPF5wJeycSLg47p2urGfnSksXCSV+Q+lhgghzgg08P7tT8MbOJVB9bXJ44h6LZiKlQD+wwDFteMJOYg/Fsucjzq1miSMXKVKSjs4ZNYQlQy7J1ae30TaoNfLT6xgreZP4nUMMXyJKRWVED9jrzkcBwaN/R7w3KR4gIq5MBK3hvTT9vDary7zAgopiWhoMs9AMGnfZ3M6RV4c8EhYNJcsW9aDq1GuDm6GG22/nFXabW27uU5vcbN2rPj3iVi/KAbR5t+hNOYLjSRKnADEFOGVMdSn1atg0s0qH5vUuv/qxeb4dM03IAjHZs2RZzOIZafg1pHq5EUsxpHkpPuO4MvH11Qym6K24/9oO/gLXj4rnk1pwMHWzk0B7zDp5wUvrBz00YakvKVIpcAAu+R44NGu+2+gQoo31g==\n" +
+                                                                      "-----END CERTIFICATE-----"),
                                                             "http://edelivery-test1.semansys.com:8080/as4")
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);

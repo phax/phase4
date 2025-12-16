@@ -18,9 +18,11 @@ package com.helger.phase4.cef;
 
 import java.io.File;
 import java.security.KeyStore;
+import java.security.cert.X509Certificate;
 import java.util.Locale;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
@@ -35,13 +37,12 @@ import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.security.certificate.CertificateHelper;
+import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
 import com.helger.security.keystore.LoadedKeyStore;
@@ -51,8 +52,6 @@ import com.helger.web.scope.mgr.WebScoped;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
-
-
 
 /**
  * This is an example file for sending to the CEF eInvoicing test endpoint
@@ -86,6 +85,12 @@ public class MainCEFeInvoicingConnectivityTest
 
     TRUST_STORE = aLTS.getKeyStore ();
     CF = new AS4CryptoFactoryInMemoryKeyStore (aLKS.getKeyStore (), YOUR_ID, "test123".toCharArray (), TRUST_STORE);
+  }
+
+  @Nullable
+  protected static X509Certificate pem2cert (@NonNull final String sCert)
+  {
+    return new CertificateDecodeHelper ().source (sCert).pemEncoded (true).getDecodedOrNull ();
   }
 
   public static void main (final String [] args)
@@ -150,27 +155,27 @@ public class MainCEFeInvoicingConnectivityTest
                                                                                            .contentID ("message")
                                                                                            .build ())
                                                             .buildMessageCallback (x1)
-                                                            .endpointDetailProvider (new AS4EndpointDetailProviderConstant (CertificateHelper.convertStringToCertficateOrNull ("-----BEGIN CERTIFICATE-----\r\n" +
-                                                                                                                                                                               "MIIDOzCCAiOgAwIBAgIJAKbwaKpEwNTKMA0GCSqGSIb3DQEBCwUAMDQxDTALBgNV\r\n" +
-                                                                                                                                                                               "BAoMBEdJVEIxDTALBgNVBAsMBEdJVEIxFDASBgNVBAMMC2dpdGItZW5naW5lMB4X\r\n" +
-                                                                                                                                                                               "DTE0MTIyNDEzMjIzNFoXDTI0MTIyMTEzMjIzNFowNDENMAsGA1UECgwER0lUQjEN\r\n" +
-                                                                                                                                                                               "MAsGA1UECwwER0lUQjEUMBIGA1UEAwwLZ2l0Yi1lbmdpbmUwggEiMA0GCSqGSIb3\r\n" +
-                                                                                                                                                                               "DQEBAQUAA4IBDwAwggEKAoIBAQCpNuRRMhpd2SvNKsZe/WTxm4zuX2Zc5by3zGcm\r\n" +
-                                                                                                                                                                               "uzwePdMCnCXk2FAUH67qS9r5VBa4USfiB7l1piyLrNwYWGRDo5OeWIz6Q821/1v7\r\n" +
-                                                                                                                                                                               "UHq7FfB0LFPcJ+mOwrDqS+VL0MjcSW4pocJHrpFwObWHTY/R4WmW2xwGOKVh0OUL\r\n" +
-                                                                                                                                                                               "UhqQsHDnDhCzFaEWhS8n1lUw3GRipwKLyYvXK8XgLceEmh+j0+cdmIj4a1L4oza/\r\n" +
-                                                                                                                                                                               "UgBnCqSob+vowgClyZnGVihE9K8eLLwCSLlIiD+bXWf0VJPLXBNLdNIkRRC0QO0j\r\n" +
-                                                                                                                                                                               "T9TuE5TF3SknkA5D0NFp023Alz7jieI0D6JE78QyNQN6y6QRAgMBAAGjUDBOMB0G\r\n" +
-                                                                                                                                                                               "A1UdDgQWBBQpAkry20hAcvlw+4poxQC8TI+EgTAfBgNVHSMEGDAWgBQpAkry20hA\r\n" +
-                                                                                                                                                                               "cvlw+4poxQC8TI+EgTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBS\r\n" +
-                                                                                                                                                                               "dfmT3E9uvhiEgVefdwXkkxqlXLQQxfjaqVRVzPTHLqdVs/nBK+iQNhqg+6eLcaGQ\r\n" +
-                                                                                                                                                                               "yyDy88vwQ85rqwOFbZd05esIFXYl0pgl1pVsb7HmMNmKT3UPay3HDlHX45ZoexDU\r\n" +
-                                                                                                                                                                               "pza4OcrauEM8Yg/5i9dCIPC1GiHebJpYusMVfP78b+5DAyARrHtcb0EJ8rOLxHh6\r\n" +
-                                                                                                                                                                               "K2S4EHI6sqQkGHEt1z4m66LyK+vnkLGaq3y6MWEufh78eICDyyVz0DhdIhr18ZHX\r\n" +
-                                                                                                                                                                               "dpcsH2VOkE36KnWSo0spEXa6ZtP8MqQ60kJgBt4XcuArKfjIGC6vB6dE0NzXngBD\r\n" +
-                                                                                                                                                                               "PHgMfmHJW018/6eN/f0q\r\n" +
-                                                                                                                                                                               "-----END CERTIFICATE-----"),
-                                                                                                                            "https://www.itb.ec.europa.eu/cef/domibus/services/msh"))
+                                                            .receiverEndpointDetails (pem2cert ("-----BEGIN CERTIFICATE-----\r\n" +
+                                                                                                "MIIDOzCCAiOgAwIBAgIJAKbwaKpEwNTKMA0GCSqGSIb3DQEBCwUAMDQxDTALBgNV\r\n" +
+                                                                                                "BAoMBEdJVEIxDTALBgNVBAsMBEdJVEIxFDASBgNVBAMMC2dpdGItZW5naW5lMB4X\r\n" +
+                                                                                                "DTE0MTIyNDEzMjIzNFoXDTI0MTIyMTEzMjIzNFowNDENMAsGA1UECgwER0lUQjEN\r\n" +
+                                                                                                "MAsGA1UECwwER0lUQjEUMBIGA1UEAwwLZ2l0Yi1lbmdpbmUwggEiMA0GCSqGSIb3\r\n" +
+                                                                                                "DQEBAQUAA4IBDwAwggEKAoIBAQCpNuRRMhpd2SvNKsZe/WTxm4zuX2Zc5by3zGcm\r\n" +
+                                                                                                "uzwePdMCnCXk2FAUH67qS9r5VBa4USfiB7l1piyLrNwYWGRDo5OeWIz6Q821/1v7\r\n" +
+                                                                                                "UHq7FfB0LFPcJ+mOwrDqS+VL0MjcSW4pocJHrpFwObWHTY/R4WmW2xwGOKVh0OUL\r\n" +
+                                                                                                "UhqQsHDnDhCzFaEWhS8n1lUw3GRipwKLyYvXK8XgLceEmh+j0+cdmIj4a1L4oza/\r\n" +
+                                                                                                "UgBnCqSob+vowgClyZnGVihE9K8eLLwCSLlIiD+bXWf0VJPLXBNLdNIkRRC0QO0j\r\n" +
+                                                                                                "T9TuE5TF3SknkA5D0NFp023Alz7jieI0D6JE78QyNQN6y6QRAgMBAAGjUDBOMB0G\r\n" +
+                                                                                                "A1UdDgQWBBQpAkry20hAcvlw+4poxQC8TI+EgTAfBgNVHSMEGDAWgBQpAkry20hA\r\n" +
+                                                                                                "cvlw+4poxQC8TI+EgTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBS\r\n" +
+                                                                                                "dfmT3E9uvhiEgVefdwXkkxqlXLQQxfjaqVRVzPTHLqdVs/nBK+iQNhqg+6eLcaGQ\r\n" +
+                                                                                                "yyDy88vwQ85rqwOFbZd05esIFXYl0pgl1pVsb7HmMNmKT3UPay3HDlHX45ZoexDU\r\n" +
+                                                                                                "pza4OcrauEM8Yg/5i9dCIPC1GiHebJpYusMVfP78b+5DAyARrHtcb0EJ8rOLxHh6\r\n" +
+                                                                                                "K2S4EHI6sqQkGHEt1z4m66LyK+vnkLGaq3y6MWEufh78eICDyyVz0DhdIhr18ZHX\r\n" +
+                                                                                                "dpcsH2VOkE36KnWSo0spEXa6ZtP8MqQ60kJgBt4XcuArKfjIGC6vB6dE0NzXngBD\r\n" +
+                                                                                                "PHgMfmHJW018/6eN/f0q\r\n" +
+                                                                                                "-----END CERTIFICATE-----"),
+                                                                                      "https://www.itb.ec.europa.eu/cef/domibus/services/msh")
                                                             .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Sending AS4 message to CEF with result " + eRes);
     }

@@ -60,6 +60,7 @@ import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.sbdh.SBDMarshaller;
+import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
@@ -115,7 +116,9 @@ public final class DropFolderUserMessage
         else
         {
           final KeyStore.PrivateKeyEntry aOurCert = aCF.getPrivateKeyEntry ();
-          final X509Certificate aTheirCert = CertificateHelper.convertStringToCertficate (aEndpoint.getCertificate ());
+          final X509Certificate aTheirCert = new CertificateDecodeHelper ().source (aEndpoint.getCertificate ())
+                                                                           .pemEncoded (true)
+                                                                           .getDecodedOrNull ();
 
           final AS4ClientUserMessage aClient = new AS4ClientUserMessage (aResHelper);
           aClient.setSoapVersion (ESoapVersion.SOAP_12);

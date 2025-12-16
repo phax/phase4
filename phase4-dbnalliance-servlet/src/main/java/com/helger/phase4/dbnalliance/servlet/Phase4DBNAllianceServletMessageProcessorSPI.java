@@ -77,7 +77,7 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.security.certificate.CertificateHelper;
+import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
@@ -338,14 +338,14 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
                                                           @NonNull final X509Certificate aOurCert,
                                                           @NonNull final EndpointType aRecipientEndpoint) throws Phase4DBNAllianceServletException
   {
-    final CertificateType aCertificate = CollectionFind.findFirst (aRecipientEndpoint.getCertificate (),
-                                                                   x -> CERT_TYPE_CODE_SMP.equals (x.getTypeCodeValue ()));
-    if (aCertificate == null)
+    final CertificateType aRecipientCertificate = CollectionFind.findFirst (aRecipientEndpoint.getCertificate (),
+                                                                            x -> CERT_TYPE_CODE_SMP.equals (x.getTypeCodeValue ()));
+    if (aRecipientCertificate == null)
       throw new Phase4DBNAllianceServletException (sLogPrefix +
                                                    "Failed to find certificate with proper TypeCode '" +
                                                    CERT_TYPE_CODE_SMP +
                                                    "'");
-    if (aCertificate.getContentBinaryObject () == null)
+    if (aRecipientCertificate.getContentBinaryObject () == null)
       throw new Phase4DBNAllianceServletException (sLogPrefix +
                                                    "The certificate with TypeCode '" +
                                                    CERT_TYPE_CODE_SMP +
@@ -354,9 +354,11 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
     final X509Certificate aRecipientCert;
     try
     {
-      aRecipientCert = CertificateHelper.convertByteArrayToCertficate (aCertificate.getContentBinaryObjectValue ());
+      aRecipientCert = new CertificateDecodeHelper ().source (aRecipientCertificate.getContentBinaryObjectValue ())
+                                                     .pemEncoded (false)
+                                                     .getDecodedOrThrow ();
     }
-    catch (final CertificateException t)
+    catch (final IllegalArgumentException | CertificateException t)
     {
       throw new Phase4DBNAllianceServletException (sLogPrefix +
                                                    "Internal error: Failed to convert looked up endpoint certificate bytes to an X.509 certificate!",

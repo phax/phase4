@@ -85,6 +85,7 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.phase4.util.Phase4IncomingException;
 import com.helger.sbdh.SBDMarshaller;
+import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
@@ -348,12 +349,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                           @NonNull final EndpointType aRecipientEndpoint) throws Phase4PeppolServletException
   {
     final String sRecipientCertString = aRecipientEndpoint.getCertificate ();
-    X509Certificate aRecipientCert = null;
+    final X509Certificate aRecipientCert;
     try
     {
-      aRecipientCert = CertificateHelper.convertStringToCertficate (sRecipientCertString);
+      aRecipientCert = new CertificateDecodeHelper ().source (sRecipientCertString)
+                                                     .pemEncoded (true)
+                                                     .getDecodedOrThrow ();
     }
-    catch (final CertificateException t)
+    catch (final IllegalArgumentException | CertificateException t)
     {
       throw new Phase4PeppolServletException (sLogPrefix +
                                               "Internal error: Failed to convert looked up endpoint certificate string '" +
@@ -813,7 +816,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         final String sMsg = "The addressing data contained in the SBDH could not be verified";
         LOGGER.error (sLogPrefix + sMsg, ex);
 
-        final int nHttpStatusCode = ex instanceof Phase4IncomingException pix ? pix.getHttpStatusCode ()
+        final int nHttpStatusCode = ex instanceof final Phase4IncomingException pix ? pix.getHttpStatusCode ()
                                                                               : CAS4.HTTP_STATUS_UNDEFINED;
 
         aProcessingErrorMessages.add (AS4Error.builder ()
@@ -871,7 +874,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
           final String sDetails = "The incoming Peppol message could not be processed.";
           LOGGER.error (sLogPrefix + sDetails, ex);
 
-          final int nHttpStatusCode = ex instanceof Phase4IncomingException pix ? pix.getHttpStatusCode ()
+          final int nHttpStatusCode = ex instanceof final Phase4IncomingException pix ? pix.getHttpStatusCode ()
                                                                                 : CAS4.HTTP_STATUS_UNDEFINED;
 
           aProcessingErrorMessages.add (AS4Error.builder ()

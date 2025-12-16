@@ -19,7 +19,6 @@ package com.helger.phase4.hredelivery.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
@@ -79,7 +78,7 @@ import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.sbdh.SBDMarshaller;
-import com.helger.security.certificate.CertificateHelper;
+import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
 import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
@@ -339,17 +338,17 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                                                           @NonNull final EndpointType aRecipientEndpoint) throws Phase4HREDeliveryServletException
   {
     final byte [] aRecipientCertBytes = aRecipientEndpoint.getCertificate ();
-    X509Certificate aRecipientCert = null;
+    final X509Certificate aRecipientCert;
     try
     {
-      aRecipientCert = CertificateHelper.convertByteArrayToCertficateDirect (aRecipientCertBytes);
+      aRecipientCert = new CertificateDecodeHelper ().source (aRecipientCertBytes)
+                                                     .pemEncoded (false)
+                                                     .getDecodedOrThrow ();
     }
-    catch (final CertificateException t)
+    catch (final IllegalArgumentException | CertificateException t)
     {
       throw new Phase4HREDeliveryServletException (sLogPrefix +
-                                                   "Internal error: Failed to convert looked up endpoint certificate string '" +
-                                                   new String (aRecipientCertBytes, StandardCharsets.ISO_8859_1) +
-                                                   "' to an X.509 certificate!",
+                                                   "Internal error: Failed to convert looked up endpoint certificate bytes to an X.509 certificate!",
                                                    t);
     }
 
