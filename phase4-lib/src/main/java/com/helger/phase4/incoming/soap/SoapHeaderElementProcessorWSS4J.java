@@ -257,7 +257,11 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
           if (nAction == WSConstants.SIGN)
           {
             if (aSigningCert == null)
+            {
               aSigningCert = aCert;
+              LOGGER.info ("Message was signed with X509 certificate of subject " +
+                           aCert.getSubjectX500Principal ().toString ());
+            }
             else
               if (aSigningCert != aCert)
                 LOGGER.warn ("Found a second signing certificate");
@@ -266,7 +270,11 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
             if (nAction == WSConstants.ENCR)
             {
               if (aDecryptingCert == null)
+              {
                 aDecryptingCert = aCert;
+                LOGGER.info ("Message was decrypted with X509 certificate of subject " +
+                             aCert.getSubjectX500Principal ().toString ());
+              }
               else
                 if (aDecryptingCert != aCert)
                   LOGGER.warn ("Found a second decryption certificate");
