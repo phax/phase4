@@ -34,11 +34,14 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.ebms3header.Ebms3AgreementRef;
 import com.helger.phase4.ebms3header.Ebms3From;
+import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3MessageProperties;
 import com.helger.phase4.ebms3header.Ebms3Property;
+import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.ebms3header.NonRepudiationInformation;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
@@ -467,8 +470,32 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      if (StringHelper.isEmpty (aSignalMsg.getMessageInfo ().getMessageId ()))
+      final Ebms3MessageInfo aMessageInfo = aSignalMsg.getMessageInfo ();
+      if (StringHelper.isEmpty (aMessageInfo.getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
+      if (StringHelper.isEmpty (aMessageInfo.getRefToMessageId ()))
+        aErrorList.add (_createError ("MessageInfo/RefToMessageId is missing"));
+    }
+
+    if (aSignalMsg.getReceipt () != null)
+    {
+      final Ebms3Receipt aReceipt = aSignalMsg.getReceipt ();
+
+      NonRepudiationInformation aReceivedNRR = null;
+      for (final var aAnyItem : aReceipt.getAny ())
+        if (aAnyItem instanceof final NonRepudiationInformation nri)
+        {
+          aReceivedNRR = nri;
+          break;
+        }
+
+      if (aReceivedNRR == null)
+        aErrorList.add (_createError ("Receipt/NonRepudiationInformation is missing"));
+    }
+
+    if (aSignalMsg.getPullRequest () != null)
+    {
+      aErrorList.add (_createError ("PullRequest is not supported"));
     }
   }
 }
