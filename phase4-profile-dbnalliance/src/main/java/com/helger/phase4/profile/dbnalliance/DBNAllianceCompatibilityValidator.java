@@ -19,7 +19,6 @@ package com.helger.phase4.profile.dbnalliance;
 import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.Nonempty;
-import com.helger.base.debug.GlobalDebug;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.diagnostics.error.IError;
@@ -87,20 +86,15 @@ public class DBNAllianceCompatibilityValidator implements IAS4ProfileValidator
       final String sAddressProtocol = aLegProtocol.getAddressProtocol ();
       if (StringHelper.isNotEmpty (sAddressProtocol))
       {
-        if (sAddressProtocol.equalsIgnoreCase ("https"))
+        if (sAddressProtocol.equalsIgnoreCase ("https") || sAddressProtocol.equalsIgnoreCase ("http"))
         {
           // Always okay
         }
         else
-          if (sAddressProtocol.equalsIgnoreCase ("http") && GlobalDebug.isDebugMode ())
-          {
-            // Okay in debug mode only
-          }
-          else
-          {
-            // Other protocol
-            aErrorList.add (_createError (sFieldPrefix + "AddressProtocol '" + sAddressProtocol + "' is unsupported"));
-          }
+        {
+          // Other protocol
+          aErrorList.add (_createError (sFieldPrefix + "AddressProtocol '" + sAddressProtocol + "' is unsupported"));
+        }
       }
       else
       {
