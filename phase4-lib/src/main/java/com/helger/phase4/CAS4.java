@@ -19,6 +19,7 @@ package com.helger.phase4;
 import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.xsds.xmldsig.CXMLDSig;
 
@@ -69,11 +70,13 @@ public final class CAS4
    * The name of the "original sender" (C1) message property for four-corner topology message
    * exchanges.
    */
+  @ChangeNextMajorRelease ("Rename to prefix with MESSAGE_PROPERTY_")
   public static final String ORIGINAL_SENDER = "originalSender";
   /**
    * The name of the "final recipient" (C4) message property for four-corner topology message
    * exchanges.
    */
+  @ChangeNextMajorRelease ("Rename to prefix with MESSAGE_PROPERTY_")
   public static final String FINAL_RECIPIENT = "finalRecipient";
 
   // Default values
