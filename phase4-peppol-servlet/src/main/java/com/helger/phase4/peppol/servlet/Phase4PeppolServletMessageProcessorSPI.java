@@ -46,6 +46,7 @@ import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.spi.ServiceLoaderHelper;
 import com.helger.base.string.StringHelper;
+import com.helger.collection.CollectionFind;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.datetime.xml.XMLOffsetDateTime;
@@ -63,6 +64,8 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
+import com.helger.peppolid.factory.PeppolIdentifierFactory;
+import com.helger.peppolid.peppol.participant.PeppolParticipantIdentifier;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
@@ -767,6 +770,60 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       return AS4MessageProcessorResult.createFailure ();
     }
 
+    // Compare C1 ID from SBDH with the one of AS4
+    {
+      // Theoretically the MessageProperties must be present, but if someone disables the phase4
+      // PMode Validation it may be null
+      final Ebms3Property aOriginalSender = aUserMessage.getMessageProperties () == null ? null
+                                                                                         : CollectionFind.findFirst (aUserMessage.getMessageProperties ()
+                                                                                                                                 .getProperty (),
+                                                                                                                     x -> CAS4.ORIGINAL_SENDER.equals (x.getName ()));
+      final PeppolParticipantIdentifier aSBDHC1PID = aOriginalSender == null ? null
+                                                                             : PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aOriginalSender.getType (),
+                                                                                                                                             aOriginalSender.getValue ());
+      if (!aPeppolSBDH.getSenderAsIdentifier ().hasSameContent (aSBDHC1PID))
+      {
+        final String sMsg = "The AS4 originalSender (" +
+                            (aSBDHC1PID == null ? "not provided" : aSBDHC1PID.getURIEncoded ()) +
+                            " ) is different from the SBDH Sender Identifier (" +
+                            aPeppolSBDH.getSenderAsIdentifier ().getURIEncoded () +
+                            ")";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+    }
+
+    // Compare C4 ID from SBDH with the one of AS4
+    {
+      // Theoretically the MessageProperties must be present, but if someone disables the phase4
+      // PMode Validation it may be null
+      final Ebms3Property aFinalRecipient = aUserMessage.getMessageProperties () == null ? null
+                                                                                         : CollectionFind.findFirst (aUserMessage.getMessageProperties ()
+                                                                                                                                 .getProperty (),
+                                                                                                                     x -> CAS4.FINAL_RECIPIENT.equals (x.getName ()));
+      final PeppolParticipantIdentifier aSBDHC4PID = aFinalRecipient == null ? null
+                                                                             : PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aFinalRecipient.getType (),
+                                                                                                                                             aFinalRecipient.getValue ());
+      if (!aPeppolSBDH.getReceiverAsIdentifier ().hasSameContent (aSBDHC4PID))
+      {
+        final String sMsg = "The AS4 finalRecipient (" +
+                            (aSBDHC4PID == null ? "not provided" : aSBDHC4PID.getURIEncoded ()) +
+                            " ) is different from the SBDH Sender Identifier (" +
+                            aPeppolSBDH.getReceiverAsIdentifier ().getURIEncoded () +
+                            ")";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+    }
+
     // If the receiver checks are activated, run them now
     if (aReceiverCheckData.isReceiverCheckEnabled ())
     {
@@ -817,7 +874,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         LOGGER.error (sLogPrefix + sMsg, ex);
 
         final int nHttpStatusCode = ex instanceof final Phase4IncomingException pix ? pix.getHttpStatusCode ()
-                                                                              : CAS4.HTTP_STATUS_UNDEFINED;
+                                                                                    : CAS4.HTTP_STATUS_UNDEFINED;
 
         aProcessingErrorMessages.add (AS4Error.builder ()
                                               .ebmsError (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
@@ -875,7 +932,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
           LOGGER.error (sLogPrefix + sDetails, ex);
 
           final int nHttpStatusCode = ex instanceof final Phase4IncomingException pix ? pix.getHttpStatusCode ()
-                                                                                : CAS4.HTTP_STATUS_UNDEFINED;
+                                                                                      : CAS4.HTTP_STATUS_UNDEFINED;
 
           aProcessingErrorMessages.add (AS4Error.builder ()
                                                 .ebmsError (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
