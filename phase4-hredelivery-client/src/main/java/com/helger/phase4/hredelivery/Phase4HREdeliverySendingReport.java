@@ -989,6 +989,6 @@ public class Phase4HREdeliverySendingReport
   @NonNull
   public String getAsXMLString (@Nullable final String sNamespaceURI, @NonNull final IXMLWriterSettings aXWS)
   {
-    return MicroWriter.getNodeAsString (getAsMicroElement (sNamespaceURI, "PeppolSendingReport"), aXWS);
+    return MicroWriter.getNodeAsString (getAsMicroElement (sNamespaceURI, "HREDeliverySendingReport"), aXWS);
   }
 }
