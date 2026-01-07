@@ -83,7 +83,7 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
    */
   public AS4CryptoFactoryInMemoryKeyStore (@NonNull final KeyStore aKeyStore,
                                            @NonNull @Nonempty final String sKeyAlias,
-                                           @NonNull final char [] aKeyPassword,
+                                           final char @NonNull [] aKeyPassword,
                                            @Nullable final KeyStore aTrustStore)
   {
     ValueEnforcer.notNull (aKeyStore, "KeyStore");
@@ -127,8 +127,7 @@ public class AS4CryptoFactoryInMemoryKeyStore extends AbstractAS4CryptoFactory
     return m_sKeyAlias;
   }
 
-  @Nullable
-  public char [] getKeyPasswordPerAliasCharArray (@Nullable final String sSearchKeyAlias)
+  public char @Nullable [] getKeyPasswordPerAliasCharArray (@Nullable final String sSearchKeyAlias)
   {
     // Use case insensitive compare, depends on the keystore type
     if (m_sKeyAlias != null && sSearchKeyAlias != null && m_sKeyAlias.equalsIgnoreCase (sSearchKeyAlias))

@@ -42,7 +42,7 @@ public interface IAS4ResponseAbstraction
    *        The character set of the byte array. May not be <code>null</code>.
    * @since 0.9.7 this was merged from setContent and setCharset
    */
-  void setContent (@NonNull byte [] aBytes, @NonNull Charset aCharset);
+  void setContent (byte @NonNull [] aBytes, @NonNull Charset aCharset);
 
   /**
    * Set the content as an input stream provider. This is used if a MIME response is sent back.

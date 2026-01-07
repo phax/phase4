@@ -57,7 +57,7 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
   public void handleIncomingXHE (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                  @NonNull final HttpHeaderMap aHeaders,
                                  @NonNull final Ebms3UserMessage aUserMessage,
-                                 @NonNull final byte [] aXHEBytes,
+                                 final byte @NonNull [] aXHEBytes,
                                  @NonNull final XHE10XHEType aXHE,
                                  @NonNull final DBNAllianceXHEData aDBNAllianceXHE,
                                  @NonNull final IAS4IncomingMessageState aIncomingState,
@@ -113,7 +113,7 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
   public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                          @NonNull final IAS4IncomingMessageState aIncomingState,
                                          @NonNull @Nonempty final String sResponseMessageID,
-                                         @Nullable final byte [] aResponseBytes,
+                                         final byte @Nullable [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {
     // empty

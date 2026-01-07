@@ -154,7 +154,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   {
     return new IAS4ResponseAbstraction ()
     {
-      public void setContent (@NonNull final byte [] aBytes, @NonNull final Charset aCharset)
+      public void setContent (final byte @NonNull [] aBytes, @NonNull final Charset aCharset)
       {
         aHttpResponse.setContent (aBytes);
         aHttpResponse.setCharset (aCharset);

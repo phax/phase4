@@ -130,6 +130,6 @@ public interface IAS4IncomingMessageProcessorSPI
   void processAS4ResponseMessage (@NonNull IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                   @NonNull IAS4IncomingMessageState aIncomingState,
                                   @NonNull @Nonempty String sResponseMessageID,
-                                  @Nullable byte [] aResponseBytes,
+                                  byte @Nullable [] aResponseBytes,
                                   boolean bResponsePayloadIsAvailable);
 }

@@ -237,7 +237,7 @@ public class AS4OutgoingAttachment
     {}
 
     @NonNull
-    public Builder data (@Nullable final byte [] a)
+    public Builder data (final byte @Nullable [] a)
     {
       return data (a == null ? null : new ByteArrayWrapper (a, false));
     }

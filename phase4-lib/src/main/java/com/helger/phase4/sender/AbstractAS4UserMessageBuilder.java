@@ -685,7 +685,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *         otherwise.
    * @since 3.0.0
    */
-  @Nullable
   public final boolean forceMimeMessage ()
   {
     return m_bForceMimeMessage;

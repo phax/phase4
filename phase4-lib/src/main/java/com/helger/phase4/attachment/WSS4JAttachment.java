@@ -463,7 +463,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    */
   @SuppressWarnings ("resource")
   @NonNull
-  public static WSS4JAttachment createOutgoingFileAttachment (@NonNull final byte [] aSrcData,
+  public static WSS4JAttachment createOutgoingFileAttachment (final byte @NonNull [] aSrcData,
                                                               @Nullable final String sContentID,
                                                               @Nullable final String sFilename,
                                                               @NonNull final IMimeType aMimeType,

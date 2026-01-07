@@ -70,8 +70,7 @@ public interface IAS4CryptoFactory
    *         if the factory doesn't have a password for the key.
    * @since 3.0.0
    */
-  @Nullable
-  char [] getKeyPasswordPerAliasCharArray (@Nullable String sSearchKeyAlias);
+  char @Nullable [] getKeyPasswordPerAliasCharArray (@Nullable String sSearchKeyAlias);
 
   /**
    * Returns the password for the key represented by the provided alias.

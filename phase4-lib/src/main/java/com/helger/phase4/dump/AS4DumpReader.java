@@ -88,7 +88,7 @@ public final class AS4DumpReader
      * @param aPayload
      *        Decrypted payload. Never <code>null</code>.
      */
-    void accept (@Nonnegative int nAttachmentIndex, @NonNull byte [] aPayload);
+    void accept (@Nonnegative int nAttachmentIndex, byte @NonNull [] aPayload);
   }
 
   private AS4DumpReader ()
@@ -108,7 +108,7 @@ public final class AS4DumpReader
    *        of the payload can easily be determined. May be <code>null</code>.
    * @since 2.1.0
    */
-  public static void readAndSkipInitialHttpHeaders (@NonNull final byte [] aAS4InData,
+  public static void readAndSkipInitialHttpHeaders (final byte @NonNull [] aAS4InData,
                                                     @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
                                                     @Nullable final IntConsumer aHttpEndIndexConsumer)
   {
@@ -191,7 +191,7 @@ public final class AS4DumpReader
    *         In case of error
    */
   public static void decryptAS4In (@NonNull @Nonempty final String sAS4ProfileID,
-                                   @NonNull final byte [] aAS4InData,
+                                   final byte @NonNull [] aAS4InData,
                                    @NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                    @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                    @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
@@ -293,7 +293,7 @@ public final class AS4DumpReader
         public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                                @NonNull final IAS4IncomingMessageState aIncomingState,
                                                @NonNull @Nonempty final String sResponseMessageID,
-                                               @Nullable final byte [] aResponseBytes,
+                                               final byte @Nullable [] aResponseBytes,
                                                final boolean bResponsePayloadIsAvailable)
         {}
       };
