@@ -22,7 +22,6 @@ import org.w3c.dom.Document;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
-import com.helger.base.system.EJavaVersion;
 import com.helger.base.timing.StopWatch;
 import com.helger.base.wrapper.Wrapper;
 import com.helger.peppol.sbdh.PeppolSBDHData;
@@ -113,12 +112,22 @@ public final class PeppolSender
         throw new IllegalStateException ("Only XML payloads with a namespace are supported");
 
       // Start configuring here
-      final IParticipantIdentifier aSenderID = aIF.createParticipantIdentifierWithDefaultScheme (sSenderID);
+      IParticipantIdentifier aSenderID = aIF.parseParticipantIdentifier (sSenderID);
+      if (aSenderID == null)
+      {
+        // Fallback to default scheme
+        aSenderID = aIF.createParticipantIdentifierWithDefaultScheme (sSenderID);
+      }
       if (aSenderID == null)
         throw new IllegalStateException ("Failed to parse the sending participant ID '" + sSenderID + "'");
       aSendingReport.setSenderID (aSenderID);
 
-      final IParticipantIdentifier aReceiverID = aIF.createParticipantIdentifierWithDefaultScheme (sReceiverID);
+      IParticipantIdentifier aReceiverID = aIF.parseParticipantIdentifier (sReceiverID);
+      if (aReceiverID == null)
+      {
+        // Fallback to default scheme
+        aReceiverID = aIF.createParticipantIdentifierWithDefaultScheme (sReceiverID);
+      }
       if (aReceiverID == null)
         throw new IllegalStateException ("Failed to parse the receiving participant ID '" + sReceiverID + "'");
       aSendingReport.setReceiverID (aReceiverID);
@@ -151,12 +160,6 @@ public final class PeppolSender
         // TODO Add SMP HTTP outbound proxy settings here
         // If this block is not used, it may be removed
       });
-
-      if (EJavaVersion.getCurrentVersion ().isNewerOrEqualsThan (EJavaVersion.JDK_17))
-      {
-        // Work around the disabled SHA-1 in XMLDsig issue
-        aSMPClient.setSecureValidation (false);
-      }
 
       final Phase4PeppolHttpClientSettings aHCS = new Phase4PeppolHttpClientSettings ();
       // TODO Add AP HTTP outbound proxy settings here
@@ -204,6 +207,7 @@ public final class PeppolSender
                                                                                                                    .getConversationId ());
                                                                     }
                                                                   })
+                                                                  .rawResponseConsumer (aSendingReport::setRawHttpResponse)
                                                                   .signalMsgConsumer ( (aSignalMsg,
                                                                                         aMessageMetadata,
                                                                                         aState) -> {
@@ -218,7 +222,7 @@ public final class PeppolSender
       {
         // TODO determine the enduser ID of the outbound message
         // In many simple cases, this might be the sender's participant ID
-        final String sEndUserID = "TODO";
+        final String sEndUserID = aSenderID.getURIEncoded ();
 
         // TODO Enable Peppol Reporting when ready
         if (false)
@@ -293,12 +297,6 @@ public final class PeppolSender
         // If this block is not used, it may be removed
       });
 
-      if (EJavaVersion.getCurrentVersion ().isNewerOrEqualsThan (EJavaVersion.JDK_17))
-      {
-        // Work around the disabled SHA-1 in XMLDsig issue
-        aSMPClient.setSecureValidation (false);
-      }
-
       final Phase4PeppolHttpClientSettings aHCS = new Phase4PeppolHttpClientSettings ();
       // TODO Add AP HTTP outbound proxy settings here
 
@@ -333,6 +331,7 @@ public final class PeppolSender
                                                                                                                        .getConversationId ());
                                                                         }
                                                                       })
+                                                                      .rawResponseConsumer (aSendingReport::setRawHttpResponse)
                                                                       .signalMsgConsumer ( (aSignalMsg,
                                                                                             aMessageMetadata,
                                                                                             aState) -> {
@@ -346,7 +345,7 @@ public final class PeppolSender
       {
         // TODO determine the enduser ID of the outbound message
         // In many simple cases, this might be the sender's participant ID
-        final String sEndUserID = "TODO";
+        final String sEndUserID = aData.getSenderAsIdentifier ().getURIEncoded ();
 
         // TODO Enable Peppol Reporting when ready
         if (false)
