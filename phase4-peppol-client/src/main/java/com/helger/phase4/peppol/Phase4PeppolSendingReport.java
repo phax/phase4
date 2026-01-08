@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.peppol;
 
+import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.util.function.BiFunction;
@@ -47,6 +48,7 @@ import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.doctype.PredefinedDocumentTypeIdentifierManager;
 import com.helger.peppolid.peppol.process.PredefinedProcessIdentifierManager;
 import com.helger.phase4.CAS4Version;
+import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
@@ -104,11 +106,12 @@ public class Phase4PeppolSendingReport
   private OffsetDateTime m_aAS4SendingDT;
 
   // AS4 response details
+  private AS4ClientSentMessage <byte []> m_aRawHttpResponse;
   private EAS4UserMessageSendResult m_eAS4SendingResult;
   private Exception m_aAS4SendingException;
   private Ebms3SignalMessage m_aAS4ReceivedSignalMsg;
-  private boolean m_bAS4ResponseError = false;
   private ICommonsList <Ebms3Error> m_aAS4ResponseErrors;
+  private boolean m_bAS4ResponseError = false;
 
   private long m_nOverallDurationMillis = -1;
   private boolean m_bSendingSuccess = false;
@@ -609,6 +612,97 @@ public class Phase4PeppolSendingReport
   }
 
   /**
+   * @return The raw HTTP response message received from the other side. This is only emitted in
+   *         case of non-success. May be <code>null</code>.
+   * @since 4.2.3
+   */
+  @Nullable
+  public AS4ClientSentMessage <byte []> getRawHttpResponse ()
+  {
+    return m_aRawHttpResponse;
+  }
+
+  /**
+   * @return <code>true</code> if a raw response is present, <code>false</code> if not.
+   * @since 4.2.3
+   */
+  public boolean hasRawHttpResponse ()
+  {
+    return m_aRawHttpResponse != null;
+  }
+
+  /**
+   * Set the raw HTTP response message received from the other side. This is only emitted in case of
+   * non-success.
+   *
+   * @param aRawHttpResponse
+   *        The raw response to use. May be <code>null</code> to explicit state that it should not
+   *        be part of the sending report.
+   * @since 4.2.3
+   */
+  public void setRawHttpResponse (@Nullable final AS4ClientSentMessage <byte []> aRawHttpResponse)
+  {
+    m_aRawHttpResponse = aRawHttpResponse;
+  }
+
+  /**
+   * @return The overall AS4 sending result. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public EAS4UserMessageSendResult getAS4SendingResult ()
+  {
+    return m_eAS4SendingResult;
+  }
+
+  public boolean hasAS4SendingResult ()
+  {
+    return m_eAS4SendingResult != null;
+  }
+
+  public boolean hasUnsuccessfulAS4SendingResult ()
+  {
+    return m_eAS4SendingResult != null && m_eAS4SendingResult.isFailure ();
+  }
+
+  /**
+   * Remember the overall AS4 sending result.
+   *
+   * @param e
+   *        The AS4 sending result. May be <code>null</code>.
+   */
+  public void setAS4SendingResult (@Nullable final EAS4UserMessageSendResult e)
+  {
+    m_eAS4SendingResult = e;
+  }
+
+  /**
+   * @return The exception that eventually occurred on AS4 sending. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public Exception getAS4SendingException ()
+  {
+    return m_aAS4SendingException;
+  }
+
+  public boolean hasAS4SendingException ()
+  {
+    return m_aAS4SendingException != null;
+  }
+
+  /**
+   * Remember any exception that eventually occurred on AS4 sending.
+   *
+   * @param e
+   *        The exception from AS4 sending. May be <code>null</code>.
+   */
+  public void setAS4SendingException (@Nullable final Exception e)
+  {
+    m_aAS4SendingException = e;
+  }
+
+  /**
    * @return The synchronously received AS4 Signal Message from C3. May be <code>null</code>.
    * @since 4.2.0
    */
@@ -663,58 +757,6 @@ public class Phase4PeppolSendingReport
       m_aAS4ResponseErrors = null;
       m_bAS4ResponseError = false;
     }
-  }
-
-  /**
-   * @return The overall AS4 sending result. May be <code>null</code>.
-   * @since 4.2.0
-   */
-  @Nullable
-  public EAS4UserMessageSendResult getAS4SendingResult ()
-  {
-    return m_eAS4SendingResult;
-  }
-
-  public boolean hasAS4SendingResult ()
-  {
-    return m_eAS4SendingResult != null;
-  }
-
-  /**
-   * Remember the overall AS4 sending result.
-   *
-   * @param e
-   *        The AS4 sending result. May be <code>null</code>.
-   */
-  public void setAS4SendingResult (@Nullable final EAS4UserMessageSendResult e)
-  {
-    m_eAS4SendingResult = e;
-  }
-
-  /**
-   * @return The exception that eventually occurred on AS4 sending. May be <code>null</code>.
-   * @since 4.2.0
-   */
-  @Nullable
-  public Exception getAS4SendingException ()
-  {
-    return m_aAS4SendingException;
-  }
-
-  public boolean hasAS4SendingException ()
-  {
-    return m_aAS4SendingException != null;
-  }
-
-  /**
-   * Remember any exception that eventually occurred on AS4 sending.
-   *
-   * @param e
-   *        The exception from AS4 sending. May be <code>null</code>.
-   */
-  public void setAS4SendingException (@Nullable final Exception e)
-  {
-    m_aAS4SendingException = e;
   }
 
   /**
@@ -850,6 +892,47 @@ public class Phase4PeppolSendingReport
       aJson.add ("as4ConversationId", m_sAS4ConversationID);
     if (hasAS4SendingDT ())
       aJson.add ("as4SendingDateTime", PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
+
+    // Don't render Raw response in case of success, as the Signal Message is contained anyway
+    if (hasRawHttpResponse () && hasUnsuccessfulAS4SendingResult ())
+    {
+      final IJsonObject aJsonRawHttpResponse = new JsonObject ();
+      if (m_aRawHttpResponse.hasResponseStatusLine ())
+        aJsonRawHttpResponse.add ("statusLine", m_aRawHttpResponse.getResponseStatusLine ().toString ());
+
+      {
+        final IJsonArray aJsonHeaders = new JsonArray ();
+        for (final var aHeader : m_aRawHttpResponse.getResponseHeaders ())
+        {
+          final IJsonObject aJsonHeader = new JsonObject ().add ("name", aHeader.getKey ());
+          switch (aHeader.getValue ().size ())
+          {
+            case 0:
+              break;
+            case 1:
+              aJsonHeader.add ("value", aHeader.getValue ().getFirstOrNull ());
+              break;
+            default:
+              aJsonHeader.add ("value", new JsonArray ().addAll (aHeader.getValue ()));
+              break;
+          }
+          aJsonHeaders.add (aJsonHeader);
+        }
+        aJsonRawHttpResponse.add ("headers", aJsonHeaders);
+      }
+
+      if (m_aRawHttpResponse.hasResponseContent ())
+      {
+        // Does not clone
+        final byte [] aBytes = m_aRawHttpResponse.getResponseContent ();
+        aJsonRawHttpResponse.add ("contentLength", aBytes.length);
+        aJsonRawHttpResponse.add ("content", new String (aBytes, StandardCharsets.UTF_8));
+      }
+      else
+        aJsonRawHttpResponse.add ("contentLength", 0);
+
+      aJson.add ("rawHttpResponse", aJsonRawHttpResponse);
+    }
 
     if (hasAS4SendingResult ())
       aJson.add ("sendingResult", m_eAS4SendingResult.name ());
@@ -994,6 +1077,37 @@ public class Phase4PeppolSendingReport
     if (hasAS4SendingDT ())
       ret.addElementNS (sNamespaceURI, "AS4SendingDateTime")
          .addText (PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
+
+    // Don't render Raw response in case of success, as the Signal Message is contained anyway
+    if (hasRawHttpResponse () && hasUnsuccessfulAS4SendingResult ())
+    {
+      final IMicroElement aRawHttpResponse = ret.addElementNS (sNamespaceURI, "RawHttpResponse");
+      if (m_aRawHttpResponse.hasResponseStatusLine ())
+        aRawHttpResponse.addElementNS (sNamespaceURI, "StatusLine")
+                        .addText (m_aRawHttpResponse.getResponseStatusLine ().toString ());
+
+      {
+        final IMicroElement aHeaders = aRawHttpResponse.addElementNS (sNamespaceURI, "Headers");
+        for (final var aHeader : m_aRawHttpResponse.getResponseHeaders ())
+        {
+          final IMicroElement aHeaderEl = aHeaders.addElementNS (sNamespaceURI, "Header");
+          aHeaderEl.setAttribute ("name", aHeader.getKey ());
+
+          for (final String sValue : aHeader.getValue ())
+            aHeaderEl.addElementNS (sNamespaceURI, "Value").addText (sValue);
+        }
+      }
+
+      if (m_aRawHttpResponse.hasResponseContent ())
+      {
+        // Does not clone
+        final byte [] aBytes = m_aRawHttpResponse.getResponseContent ();
+        aRawHttpResponse.addElementNS (sNamespaceURI, "ContentLength").addText (aBytes.length);
+        aRawHttpResponse.addElementNS (sNamespaceURI, "Content").addText (new String (aBytes, StandardCharsets.UTF_8));
+      }
+      else
+        aRawHttpResponse.addElementNS (sNamespaceURI, "ContentLength").addText (0);
+    }
 
     if (hasAS4SendingResult ())
       ret.addElementNS (sNamespaceURI, "AS4SendingResult").addText (m_eAS4SendingResult.name ());
