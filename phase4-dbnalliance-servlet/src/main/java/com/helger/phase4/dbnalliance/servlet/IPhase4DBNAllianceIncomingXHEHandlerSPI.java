@@ -67,7 +67,7 @@ public interface IPhase4DBNAllianceIncomingXHEHandlerSPI
   void handleIncomingXHE (@NonNull IAS4IncomingMessageMetadata aMessageMetadata,
                           @NonNull HttpHeaderMap aHeaders,
                           @NonNull Ebms3UserMessage aUserMessage,
-                          @NonNull byte [] aSBDBytes,
+                          byte @NonNull [] aSBDBytes,
                           @NonNull XHE10XHEType aXHE,
                           @NonNull DBNAllianceXHEData aDBNAllianceXHE,
                           @NonNull IAS4IncomingMessageState aState,
@@ -97,6 +97,6 @@ public interface IPhase4DBNAllianceIncomingXHEHandlerSPI
   void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                   @NonNull final IAS4IncomingMessageState aIncomingState,
                                   @NonNull @Nonempty final String sResponseMessageID,
-                                  @Nullable final byte [] aResponseBytes,
+                                  final byte @Nullable [] aResponseBytes,
                                   final boolean bResponsePayloadIsAvailable);
 }

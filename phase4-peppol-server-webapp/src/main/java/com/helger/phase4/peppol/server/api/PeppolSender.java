@@ -85,7 +85,7 @@ public final class PeppolSender
   @NonNull
   public static Phase4PeppolSendingReport sendPeppolMessageCreatingSbdh (@NonNull final ISMLInfo aSmlInfo,
                                                                          @NonNull final TrustedCAChecker aAPCAChecker,
-                                                                         @NonNull final byte [] aPayloadBytes,
+                                                                         final byte @NonNull [] aPayloadBytes,
                                                                          @NonNull @Nonempty final String sSenderID,
                                                                          @NonNull @Nonempty final String sReceiverID,
                                                                          @NonNull @Nonempty final String sDocTypeID,

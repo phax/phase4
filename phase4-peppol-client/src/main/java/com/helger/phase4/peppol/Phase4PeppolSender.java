@@ -1243,7 +1243,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @NonNull
-    public PeppolUserMessageBuilder payload (@NonNull final byte [] aPayloadBytes)
+    public PeppolUserMessageBuilder payload (final byte @NonNull [] aPayloadBytes)
     {
       ValueEnforcer.notNull (aPayloadBytes, "PayloadBytes");
       m_aPayloadElement = null;
@@ -1287,7 +1287,7 @@ public final class Phase4PeppolSender
      * @since 0.12.1
      */
     @NonNull
-    public PeppolUserMessageBuilder payloadBinaryContent (@NonNull final byte [] aBinaryPayload,
+    public PeppolUserMessageBuilder payloadBinaryContent (final byte @NonNull [] aBinaryPayload,
                                                           @NonNull final IMimeType aMimeType,
                                                           @Nullable final Charset aCharset)
     {
@@ -1584,7 +1584,7 @@ public final class Phase4PeppolSender
      * @see #countryC1(String)
      */
     @NonNull
-    public PeppolUserMessageSBDHBuilder payload (@NonNull final byte [] aSBDHBytes)
+    public PeppolUserMessageSBDHBuilder payload (final byte @NonNull [] aSBDHBytes)
     {
       ValueEnforcer.notNull (aSBDHBytes, "SBDHBytes");
       m_aPayloadBytes = aSBDHBytes;

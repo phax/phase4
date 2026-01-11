@@ -806,7 +806,7 @@ public final class Phase4DBNAllianceSender
      * @see #receiverParticipantID(IParticipantIdentifier)
      */
     @NonNull
-    public DBNAllianceUserMessageXHEBuilder payload (@NonNull final byte [] aXHEBytes)
+    public DBNAllianceUserMessageXHEBuilder payload (final byte @NonNull [] aXHEBytes)
     {
       ValueEnforcer.notNull (aXHEBytes, "XHEBytes");
       m_aPayloadBytes = aXHEBytes;

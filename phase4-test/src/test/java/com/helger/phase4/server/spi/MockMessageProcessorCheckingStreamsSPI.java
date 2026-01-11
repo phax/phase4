@@ -190,7 +190,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
   public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                          @NonNull final IAS4IncomingMessageState aState,
                                          @NonNull @Nonempty final String sResponseMessageID,
-                                         @Nullable final byte [] aResponseBytes,
+                                         final byte @Nullable [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {}
 }

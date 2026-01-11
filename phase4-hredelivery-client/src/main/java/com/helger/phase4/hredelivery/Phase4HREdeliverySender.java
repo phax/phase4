@@ -1059,7 +1059,7 @@ public final class Phase4HREdeliverySender
      * @return this for chaining
      */
     @NonNull
-    public HREDeliveryUserMessageBuilder payload (@NonNull final byte [] aPayloadBytes)
+    public HREDeliveryUserMessageBuilder payload (final byte @NonNull [] aPayloadBytes)
     {
       ValueEnforcer.notNull (aPayloadBytes, "PayloadBytes");
       m_aPayloadElement = null;
@@ -1306,7 +1306,7 @@ public final class Phase4HREdeliverySender
      * @see #processID(IProcessIdentifier)
      */
     @NonNull
-    public HREDeliveryUserMessageSBDHBuilder payload (@NonNull final byte [] aSBDHBytes)
+    public HREDeliveryUserMessageSBDHBuilder payload (final byte @NonNull [] aSBDHBytes)
     {
       ValueEnforcer.notNull (aSBDHBytes, "SBDHBytes");
       m_aPayloadBytes = aSBDHBytes;

@@ -44,14 +44,13 @@ public class Phase4EuCtpHttpClientSettings extends HttpClientSettings
   public static final Timeout DEFAULT_EUCTP_CONNECT_TIMEOUT = Timeout.ofSeconds (5);
   public static final Timeout DEFAULT_EUCTP_RESPONSE_TIMEOUT = Timeout.ofSeconds (100);
 
-  public Phase4EuCtpHttpClientSettings (@Nullable final KeyStore aKeyStore, @Nullable final char [] aKeyPassword)
+  public Phase4EuCtpHttpClientSettings (@Nullable final KeyStore aKeyStore, final char @Nullable [] aKeyPassword)
                                                                                                                   throws GeneralSecurityException
   {
-    SSLContextBuilder aSSLContextBuilder = SSLContexts.custom ().setProtocol (ETLSVersion.TLS_12.getID ());
-
+    final SSLContextBuilder aSSLContextBuilder = SSLContexts.custom ().setProtocol (ETLSVersion.TLS_12.getID ());
     if (aKeyStore != null && aKeyPassword != null)
     {
-      aSSLContextBuilder = aSSLContextBuilder.loadKeyMaterial (aKeyStore, aKeyPassword);
+      aSSLContextBuilder.loadKeyMaterial (aKeyStore, aKeyPassword);
     }
 
     final SSLContext aSSLContext = aSSLContextBuilder.build ();

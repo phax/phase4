@@ -74,7 +74,7 @@ public interface IPhase4HREDeliveryIncomingSBDHandlerSPI
   void handleIncomingSBD (@NonNull IAS4IncomingMessageMetadata aMessageMetadata,
                           @NonNull HttpHeaderMap aHeaders,
                           @NonNull Ebms3UserMessage aUserMessage,
-                          @NonNull byte [] aSBDBytes,
+                          byte @NonNull [] aSBDBytes,
                           @NonNull StandardBusinessDocument aSBD,
                           @NonNull HREDeliverySBDHData aHREDeliverySBD,
                           @NonNull IDocumentTypeIdentifier aDocTypeID,
@@ -105,7 +105,7 @@ public interface IPhase4HREDeliveryIncomingSBDHandlerSPI
   default void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                           @NonNull final IAS4IncomingMessageState aIncomingState,
                                           @NonNull @Nonempty final String sResponseMessageID,
-                                          @Nullable final byte [] aResponseBytes,
+                                          final byte @Nullable [] aResponseBytes,
                                           final boolean bResponsePayloadIsAvailable)
   {}
 }

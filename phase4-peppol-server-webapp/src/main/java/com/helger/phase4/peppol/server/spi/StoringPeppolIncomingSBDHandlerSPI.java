@@ -68,7 +68,7 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
   public void handleIncomingSBD (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                  @NonNull final HttpHeaderMap aHeaders,
                                  @NonNull final Ebms3UserMessage aUserMessage,
-                                 @NonNull final byte [] aSBDBytes,
+                                 final byte @NonNull [] aSBDBytes,
                                  @NonNull final StandardBusinessDocument aSBD,
                                  @NonNull final PeppolSBDHData aPeppolSBD,
                                  @NonNull final IAS4IncomingMessageState aIncomingState,
@@ -191,7 +191,7 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
   public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                          @NonNull final IAS4IncomingMessageState aIncomingState,
                                          @NonNull @Nonempty final String sResponseMessageID,
-                                         @Nullable final byte [] aResponseBytes,
+                                         final byte @Nullable [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {
     // empty

@@ -68,7 +68,7 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
   void handleIncomingSBD (@NonNull IAS4IncomingMessageMetadata aMessageMetadata,
                           @NonNull HttpHeaderMap aHeaders,
                           @NonNull Ebms3UserMessage aUserMessage,
-                          @NonNull byte [] aSBDBytes,
+                          byte @NonNull [] aSBDBytes,
                           @NonNull StandardBusinessDocument aSBD,
                           @NonNull PeppolSBDHData aPeppolSBD,
                           @NonNull IAS4IncomingMessageState aState,
@@ -98,7 +98,7 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
   default void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                           @NonNull final IAS4IncomingMessageState aIncomingState,
                                           @NonNull @Nonempty final String sResponseMessageID,
-                                          @Nullable final byte [] aResponseBytes,
+                                          final byte @Nullable [] aResponseBytes,
                                           final boolean bResponsePayloadIsAvailable)
   {}
 }

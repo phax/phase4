@@ -147,9 +147,8 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
       return m_eCompressionMode;
     }
 
-    @NonNull
     @ReturnsMutableObject
-    public byte [] payloadBytes ()
+    public byte @NonNull [] payloadBytes ()
     {
       return m_aPayloadBytes;
     }
@@ -765,7 +764,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
   public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                          @NonNull final IAS4IncomingMessageState aState,
                                          @NonNull @Nonempty final String sResponseMessageID,
-                                         @Nullable final byte [] aResponseBytes,
+                                         final byte @Nullable [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {
     // Now start invoking SPI handlers

@@ -223,7 +223,7 @@ public class StoringServletMessageProcessorSPI implements IAS4IncomingMessagePro
   public void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                          @NonNull final IAS4IncomingMessageState aIncomingState,
                                          @NonNull @Nonempty final String sResponseMessageID,
-                                         @Nullable final byte [] aResponseBytes,
+                                         final byte @Nullable [] aResponseBytes,
                                          final boolean bResponsePayloadIsAvailable)
   {
     LOGGER.info ("Processing AS4 response message");
