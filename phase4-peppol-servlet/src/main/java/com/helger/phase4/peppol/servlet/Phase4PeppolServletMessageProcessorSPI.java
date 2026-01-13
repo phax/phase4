@@ -784,7 +784,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       {
         final String sMsg = "The AS4 originalSender (" +
                             (aSBDHC1PID == null ? "not provided" : aSBDHC1PID.getURIEncoded ()) +
-                            " ) is different from the SBDH Sender Identifier (" +
+                            ") is different from the SBDH Sender Identifier (" +
                             aPeppolSBDH.getSenderAsIdentifier ().getURIEncoded () +
                             ")";
         LOGGER.error (sLogPrefix + sMsg);
@@ -811,7 +811,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       {
         final String sMsg = "The AS4 finalRecipient (" +
                             (aSBDHC4PID == null ? "not provided" : aSBDHC4PID.getURIEncoded ()) +
-                            " ) is different from the SBDH Sender Identifier (" +
+                            ") is different from the SBDH Sender Identifier (" +
                             aPeppolSBDH.getReceiverAsIdentifier ().getURIEncoded () +
                             ")";
         LOGGER.error (sLogPrefix + sMsg);
