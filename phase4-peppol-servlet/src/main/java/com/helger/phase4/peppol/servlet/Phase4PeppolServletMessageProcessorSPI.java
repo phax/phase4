@@ -516,6 +516,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                   @NonNull final IAS4IncomingMessageState aState)
   {}
 
+  @SuppressWarnings ("removal")
   @NonNull
   public AS4MessageProcessorResult processAS4UserMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                           @NonNull final HttpHeaderMap aHttpHeaders,
@@ -780,7 +781,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       final PeppolParticipantIdentifier aSBDHC1PID = aOriginalSender == null ? null
                                                                              : PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aOriginalSender.getType (),
                                                                                                                                              aOriginalSender.getValue ());
-      if (!aPeppolSBDH.getSenderAsIdentifier ().hasSameContent (aSBDHC1PID))
+      // Make sure the Peppol ID is on the left hand side, as it depends on the IdentifierFactory of
+      // the SBDH which is flexible
+      if (aSBDHC1PID == null || !aSBDHC1PID.hasSameContent (aPeppolSBDH.getSenderAsIdentifier ()))
       {
         final String sMsg = "The AS4 originalSender (" +
                             (aSBDHC1PID == null ? "not provided" : aSBDHC1PID.getURIEncoded ()) +
@@ -807,7 +810,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       final PeppolParticipantIdentifier aSBDHC4PID = aFinalRecipient == null ? null
                                                                              : PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aFinalRecipient.getType (),
                                                                                                                                              aFinalRecipient.getValue ());
-      if (!aPeppolSBDH.getReceiverAsIdentifier ().hasSameContent (aSBDHC4PID))
+      // Make sure the Peppol ID is on the left hand side, as it depends on the IdentifierFactory of
+      // the SBDH which is flexible
+      if (aSBDHC4PID == null || !aSBDHC4PID.hasSameContent (aPeppolSBDH.getReceiverAsIdentifier ()))
       {
         final String sMsg = "The AS4 finalRecipient (" +
                             (aSBDHC4PID == null ? "not provided" : aSBDHC4PID.getURIEncoded ()) +
