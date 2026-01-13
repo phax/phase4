@@ -162,6 +162,7 @@ public final class Phase4PeppolReceiverConfiguration
     return m_bPerformSBDHValueChecks;
   }
 
+  @Deprecated (forRemoval = true, since = "4.2.4")
   public boolean isCheckSBDHForMandatoryCountryC1 ()
   {
     return m_bCheckSBDHForMandatoryCountryC1;
@@ -309,7 +310,15 @@ public final class Phase4PeppolReceiverConfiguration
       return this;
     }
 
+    /**
+     * @param b
+     *        <code>true</code> to check for mandatory country C1
+     * @return this for chaining
+     * @deprecated This is deprecated, because the feature is required for years, so there is no
+     *             need anymore to disable this feature
+     */
     @NonNull
+    @Deprecated (forRemoval = true, since = "4.2.4")
     public Phase4PeppolReceiverConfigurationBuilder checkSBDHForMandatoryCountryC1 (final boolean b)
     {
       m_bCheckSBDHForMandatoryCountryC1 = b;

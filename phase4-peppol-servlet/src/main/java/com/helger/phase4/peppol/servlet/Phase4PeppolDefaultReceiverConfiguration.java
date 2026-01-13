@@ -28,7 +28,7 @@ import com.helger.base.string.StringHelper;
 import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppolid.factory.IIdentifierFactory;
-import com.helger.peppolid.factory.SimpleIdentifierFactory;
+import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverConfiguration.Phase4PeppolReceiverConfigurationBuilder;
@@ -48,7 +48,7 @@ import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 @NotThreadSafe
 public final class Phase4PeppolDefaultReceiverConfiguration
 {
-  public static final IIdentifierFactory DEFAULT_SBDH_IDENTIFIER_FACTORY = SimpleIdentifierFactory.INSTANCE;
+  public static final IIdentifierFactory DEFAULT_SBDH_IDENTIFIER_FACTORY = PeppolIdentifierFactory.INSTANCE;
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
   public static final TrustedCAChecker DEFAULT_PEPPOL_AP_CA_CHECKER = PeppolTrustedCA.peppolAllAP ();
@@ -61,6 +61,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   private static X509Certificate s_aAPCertificate;
   private static IIdentifierFactory s_aSBDHIdentifierFactory = DEFAULT_SBDH_IDENTIFIER_FACTORY;
   private static boolean s_bPerformSBDHValueChecks = PeppolSBDHDataReader.DEFAULT_PERFORM_VALUE_CHECKS;
+  @SuppressWarnings ("removal")
   private static boolean s_bCheckSBDHForMandatoryCountryC1 = PeppolSBDHDataReader.DEFAULT_CHECK_FOR_COUNTRY_C1;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
   private static TrustedCAChecker s_aAPCAChecker = DEFAULT_PEPPOL_AP_CA_CHECKER;
@@ -212,7 +213,10 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *         mandatory, and if such messages should be rejected, if that field is missing. By
    *         default it is enabled.
    * @since 2.7.1
+   * @deprecated This is deprecated, because the feature is required for years, so there is no need
+   *             anymore to disable this feature
    */
+  @Deprecated (forRemoval = true, since = "4.2.4")
   public static boolean isCheckSBDHForMandatoryCountryC1 ()
   {
     return s_bCheckSBDHForMandatoryCountryC1;
@@ -225,7 +229,10 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @param b
    *        <code>true</code> to check, <code>false</code> to disable the check.
    * @since 2.7.1
+   * @deprecated This is deprecated, because the feature is required for years, so there is no need
+   *             anymore to disable this feature
    */
+  @Deprecated (forRemoval = true, since = "4.2.4")
   public static void setCheckSBDHForMandatoryCountryC1 (final boolean b)
   {
     final boolean bChange = b != s_bCheckSBDHForMandatoryCountryC1;
@@ -301,6 +308,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return Completely filled builder. Never <code>null</code>.
    * @since 3.0.0 Beta7
    */
+  @SuppressWarnings ("removal")
   @NonNull
   public static Phase4PeppolReceiverConfigurationBuilder getAsReceiverCheckDataBuilder ()
   {
