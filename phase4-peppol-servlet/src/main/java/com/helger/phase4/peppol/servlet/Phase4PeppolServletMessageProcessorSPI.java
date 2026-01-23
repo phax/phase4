@@ -778,15 +778,15 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                                                          : CollectionFind.findFirst (aUserMessage.getMessageProperties ()
                                                                                                                                  .getProperty (),
                                                                                                                      x -> CAS4.ORIGINAL_SENDER.equals (x.getName ()));
-      final PeppolParticipantIdentifier aSBDHC1PID = aOriginalSender == null ? null
-                                                                             : PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aOriginalSender.getType (),
-                                                                                                                                             aOriginalSender.getValue ());
+      final PeppolParticipantIdentifier aAS4C1PID = aOriginalSender == null ? null
+                                                                            : PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aOriginalSender.getType (),
+                                                                                                                                            aOriginalSender.getValue ());
       // Make sure the Peppol ID is on the left hand side, as it depends on the IdentifierFactory of
       // the SBDH which is flexible
-      if (aSBDHC1PID == null || !aSBDHC1PID.hasSameContent (aPeppolSBDH.getSenderAsIdentifier ()))
+      if (aAS4C1PID == null || !aAS4C1PID.hasSameContent (aPeppolSBDH.getSenderAsIdentifier ()))
       {
         final String sMsg = "The AS4 originalSender (" +
-                            (aSBDHC1PID == null ? "not provided" : aSBDHC1PID.getURIEncoded ()) +
+                            (aAS4C1PID == null ? "not provided" : aAS4C1PID.getURIEncoded ()) +
                             ") is different from the SBDH Sender Identifier (" +
                             aPeppolSBDH.getSenderAsIdentifier ().getURIEncoded () +
                             ")";
@@ -807,15 +807,15 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                                                          : CollectionFind.findFirst (aUserMessage.getMessageProperties ()
                                                                                                                                  .getProperty (),
                                                                                                                      x -> CAS4.FINAL_RECIPIENT.equals (x.getName ()));
-      final PeppolParticipantIdentifier aSBDHC4PID = aFinalRecipient == null ? null
-                                                                             : PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aFinalRecipient.getType (),
-                                                                                                                                             aFinalRecipient.getValue ());
+      final PeppolParticipantIdentifier aAS4C4PID = aFinalRecipient == null ? null
+                                                                            : PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aFinalRecipient.getType (),
+                                                                                                                                            aFinalRecipient.getValue ());
       // Make sure the Peppol ID is on the left hand side, as it depends on the IdentifierFactory of
       // the SBDH which is flexible
-      if (aSBDHC4PID == null || !aSBDHC4PID.hasSameContent (aPeppolSBDH.getReceiverAsIdentifier ()))
+      if (aAS4C4PID == null || !aAS4C4PID.hasSameContent (aPeppolSBDH.getReceiverAsIdentifier ()))
       {
         final String sMsg = "The AS4 finalRecipient (" +
-                            (aSBDHC4PID == null ? "not provided" : aSBDHC4PID.getURIEncoded ()) +
+                            (aAS4C4PID == null ? "not provided" : aAS4C4PID.getURIEncoded ()) +
                             ") is different from the SBDH Sender Identifier (" +
                             aPeppolSBDH.getReceiverAsIdentifier ().getURIEncoded () +
                             ")";
