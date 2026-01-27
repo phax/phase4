@@ -81,7 +81,7 @@
     <peppol-commons.version>12.3.7</peppol-commons.version>
     <peppol-reporting.version>4.1.0</peppol-reporting.version>
     <peppol-ap-support.version>2.1.0</peppol-ap-support.version>
-    <ph-commons.version>12.1.1</ph-commons.version>
+    <ph-commons.version>12.1.2</ph-commons.version>
     <ph-schematron.version>9.1.1</ph-schematron.version>
     <ph-ubl.version>10.1.0</ph-ubl.version>
     <ph-web.version>11.2.1</ph-web.version>
