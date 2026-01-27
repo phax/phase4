@@ -48,7 +48,7 @@ import jakarta.servlet.http.Cookie;
  */
 public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
 {
-  private final String m_sIncomingUniqueID;
+  private String m_sIncomingUniqueID;
   private final OffsetDateTime m_aIncomingDT;
   private final EAS4MessageMode m_eMode;
   private String m_sRemoteAddr;
@@ -62,14 +62,26 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private int m_nResponseHttpStatusCode = CAS4.HTTP_STATUS_UNDEFINED;
 
   /**
+   * @return A new unique incoming ID. Neither <code>null</code> nor empty.
+   * @since 4.2.5
+   */
+  @NonNull
+  @Nonempty
+  public static String createNewIncomingUniqueID ()
+  {
+    return UUID.randomUUID ().toString ();
+  }
+
+  /**
    * Default constructor using a UUID as the incoming unique ID and the current date time.
    *
    * @param eMode
    *        The messaging mode. May not be <code>null</code>.
+   * @see #createNewIncomingUniqueID()
    */
   protected AS4IncomingMessageMetadata (@NonNull final EAS4MessageMode eMode)
   {
-    this (UUID.randomUUID ().toString (), MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), eMode);
+    this (createNewIncomingUniqueID (), MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), eMode);
   }
 
   /**
@@ -100,6 +112,22 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   public final String getIncomingUniqueID ()
   {
     return m_sIncomingUniqueID;
+  }
+
+  /**
+   * Set the incoming unique ID to be used.
+   *
+   * @param sIncomingUniqueID
+   *        The incoming unique ID to use. May neither be <code>null</code> nor empty.
+   * @return this for chaining
+   * @since 4.2.5
+   */
+  @NonNull
+  public AS4IncomingMessageMetadata setIncomingUniqueID (@NonNull @Nonempty final String sIncomingUniqueID)
+  {
+    ValueEnforcer.notEmpty (sIncomingUniqueID, "IncomingUniqueID");
+    m_sIncomingUniqueID = sIncomingUniqueID;
+    return this;
   }
 
   @NonNull

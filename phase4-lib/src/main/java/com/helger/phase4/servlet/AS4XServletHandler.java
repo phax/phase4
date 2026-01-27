@@ -37,7 +37,6 @@ import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.AS4IncomingProfileSelectorConstant;
 import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.AS4RequestHandler;
-import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4ResponseAbstraction;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
@@ -199,7 +198,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                 @Nullable final IAS4ServletRequestHandlerCustomizer aHandlerCustomizer) throws Exception
   {
     // Start metadata
-    final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope);
+    final AS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope);
 
     try (final AS4RequestHandler aHandler = new AS4RequestHandler (aMessageMetadata))
     {

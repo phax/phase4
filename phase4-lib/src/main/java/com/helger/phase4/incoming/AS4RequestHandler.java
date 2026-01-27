@@ -153,7 +153,7 @@ public class AS4RequestHandler implements AutoCloseable
                                   @NonNull @Nonempty final String sResponseMessageID,
                                   @NonNull final Document aDoc,
                                   @NonNull final IMimeType aMimeType,
-                                  @Nonnegative int nResponseStatusCode)
+                                  @Nonnegative final int nResponseStatusCode)
     {
       ValueEnforcer.notNull (aIncomingMessageMetadata, "IncomingMessageMetadata");
       ValueEnforcer.notNull (aIncomingState, "IncomingState");
@@ -231,7 +231,7 @@ public class AS4RequestHandler implements AutoCloseable
                                    @NonNull final IAS4IncomingMessageState aIncomingState,
                                    @NonNull @Nonempty final String sResponseMessageID,
                                    @NonNull final AS4MimeMessage aMimeMsg,
-                                   @Nonnegative int nResponseStatusCode) throws MessagingException
+                                   @Nonnegative final int nResponseStatusCode) throws MessagingException
     {
       ValueEnforcer.notNull (aIncomingMessageMetadata, "IncomingMessageMetadata");
       ValueEnforcer.notNull (aIncomingState, "IncomingState");
@@ -401,9 +401,10 @@ public class AS4RequestHandler implements AutoCloseable
 
   /**
    * @return The incoming message metadata as provided in the constructor. Never <code>null</code>.
+   * @since 4.2.5 public - was protected previously
    */
   @NonNull
-  protected final IAS4IncomingMessageMetadata getMessageMetadata ()
+  public final IAS4IncomingMessageMetadata getMessageMetadata ()
   {
     return m_aMessageMetadata;
   }
