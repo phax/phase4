@@ -43,7 +43,7 @@
 
   <servlet>
     <servlet-name>Phase4PeppolServlet</servlet-name>
-    <servlet-class>com.helger.phase4.servlet.AS4Servlet</servlet-class>
+    <servlet-class>com.helger.phase4.peppol.server.servlet.CustomAS4Servlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>Phase4PeppolServlet</servlet-name>
