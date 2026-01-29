@@ -173,33 +173,6 @@ public final class AS4IncomingHandler
 
     LOGGER.info ("phase4 --- parsemessage:start");
 
-    // Determine content type
-    final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
-    if (StringHelper.isEmpty (sContentType))
-      throw new Phase4IncomingException ("Content-Type header is missing").setHttpStatusCode (CHttp.HTTP_BAD_REQUEST)
-                                                                          .setRetryFeasible (false);
-
-    if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Received Content-Type string: '" + sContentType + "'");
-    final IMimeType aContentType = MimeTypeParser.safeParseMimeType (sContentType);
-    if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Received Content-Type object: " + aContentType);
-    if (aContentType == null)
-      throw new Phase4IncomingException ("Failed to parse Content-Type '" + sContentType + "'").setHttpStatusCode (
-                                                                                                                   CHttp.HTTP_BAD_REQUEST)
-                                                                                               .setRetryFeasible (false);
-    final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
-
-    // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
-
-    Document aSoapDocument = null;
-    ESoapVersion eSoapVersion = null;
-    final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
-    final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
-    Exception aCaughtException = null;
-
     // Load all SPIs
     final List <IAS4IncomingMessageProcessingStatusSPI> aStatusSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4IncomingMessageProcessingStatusSPI.class);
     for (final IAS4IncomingMessageProcessingStatusSPI aStatusSPI : aStatusSPIs)
@@ -216,8 +189,34 @@ public final class AS4IncomingHandler
                       ex);
       }
 
+    // Fallback to global dumper if none is provided
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
+                                                                           : AS4DumpManager.getIncomingDumper ();
+    Document aSoapDocument = null;
+    ESoapVersion eSoapVersion = null;
+    final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+    final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
+    Exception aCaughtException = null;
+
     try
     {
+      // Determine content type
+      final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
+      if (StringHelper.isEmpty (sContentType))
+        throw new Phase4IncomingException ("Content-Type header is missing").setHttpStatusCode (CHttp.HTTP_BAD_REQUEST)
+                                                                            .setRetryFeasible (false);
+
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Received Content-Type string: '" + sContentType + "'");
+      final IMimeType aContentType = MimeTypeParser.safeParseMimeType (sContentType);
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Received Content-Type object: " + aContentType);
+      if (aContentType == null)
+        throw new Phase4IncomingException ("Failed to parse Content-Type '" + sContentType + "'").setHttpStatusCode (
+                                                                                                                     CHttp.HTTP_BAD_REQUEST)
+                                                                                                 .setRetryFeasible (false);
+      final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
+
       final ErrorList aXSDErrorList = new ErrorList ();
 
       if (aPlainContentType.equals (AS4RequestHandler.MT_MULTIPART_RELATED))
@@ -398,6 +397,8 @@ public final class AS4IncomingHandler
           for (final IError aError : aXSDErrorList)
             aErrorMessage.append ('\n').append (aError.getAsStringLocaleIndepdent ());
         }
+
+        // Don't throw an exception, so that a custom response status code can be returned
         if (false)
           throw new Phase4IncomingException (aErrorMessage.toString ()).setRetryFeasible (false);
         LOGGER.error (aErrorMessage.toString ());
@@ -407,6 +408,8 @@ public final class AS4IncomingHandler
         {
           // We're missing a SOAP version
           final String sMsg = "Failed to determine SOAP version of XML document!";
+
+          // Don't throw an exception, so that a custom response status code can be returned
           if (false)
             throw new Phase4IncomingException (sMsg).setRetryFeasible (false);
           LOGGER.error (sMsg);
