@@ -31,7 +31,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.base.concurrent.ThreadHelper;
 import com.helger.base.url.URLHelper;
@@ -41,6 +40,7 @@ import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
@@ -58,7 +58,7 @@ import jakarta.mail.MessagingException;
 
 public class AS4ClientUserMessageTestWithCrappyReceiver
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessageTestWithCrappyReceiver.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ClientUserMessageTestWithCrappyReceiver.class);
 
   private static AS4JettyRunner s_aJetty;
 
