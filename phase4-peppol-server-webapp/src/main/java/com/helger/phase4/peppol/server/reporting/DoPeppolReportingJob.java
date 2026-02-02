@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.base.lang.clazz.ClassHelper;
+import com.helger.base.string.StringHelper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.quartz.CronScheduleBuilder;
@@ -62,17 +63,34 @@ public final class DoPeppolReportingJob extends AbstractScopeAwareJob
   @Nullable
   public static TriggerKey scheduleMe ()
   {
-    final int nDay = APConfig.getPeppolReportingScheduleDay ();
+    final int nDayOfMonth = APConfig.getPeppolReportingScheduleDayOfMonth ();
+    if (nDayOfMonth < 1 || nDayOfMonth > 15)
+      throw new IllegalStateException ("The Peppol Reporting Schedule 'day of month' parameter (" +
+                                       nDayOfMonth +
+                                       ") is invalid. Must be between 1 and 15.");
     final int nHour = APConfig.getPeppolReportingScheduleHour ();
+    if (nHour < 0 || nHour > 23)
+      throw new IllegalStateException ("The Peppol Reporting Schedule 'hour' parameter (" +
+                                       nHour +
+                                       ") is invalid. Must be between 0 and 23.");
     final int nMinute = APConfig.getPeppolReportingScheduleMinute ();
+    if (nMinute < 0 || nMinute > 59)
+      throw new IllegalStateException ("The Peppol Reporting Schedule 'minute' parameter (" +
+                                       nMinute +
+                                       ") is invalid. Must be between 0 and 59.");
 
-    LOGGER.info ("Scheduling Peppol Reporting job to run on day " + nDay + " at " + nHour + ":" + String.format ("%02d", nMinute));
+    LOGGER.info ("Scheduling Peppol Reporting job to run monthly on day " +
+                 nDayOfMonth +
+                 " at " +
+                 StringHelper.getLeadingZero (nHour, 2) +
+                 ':' +
+                 StringHelper.getLeadingZero (nMinute, 2));
 
     return GlobalQuartzScheduler.getInstance ()
                                 .scheduleJob (ClassHelper.getClassLocalName (DoPeppolReportingJob.class),
                                               JDK8TriggerBuilder.newTrigger ()
                                                                 .startNow ()
-                                                                .withSchedule (CronScheduleBuilder.monthlyOnDayAndHourAndMinute (nDay,
+                                                                .withSchedule (CronScheduleBuilder.monthlyOnDayAndHourAndMinute (nDayOfMonth,
                                                                                                                                  nHour,
                                                                                                                                  nMinute)),
                                               DoPeppolReportingJob.class,

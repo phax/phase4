@@ -19,6 +19,7 @@ package com.helger.phase4.peppol.server;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
@@ -92,16 +93,19 @@ public final class APConfig
     return getConfig ().getAsBoolean ("peppol.reporting.scheduled", true);
   }
 
-  public static int getPeppolReportingScheduleDay ()
+  @CheckForSigned
+  public static int getPeppolReportingScheduleDayOfMonth ()
   {
-    return getConfig ().getAsInt ("peppol.reporting.schedule.day", 2);
+    return getConfig ().getAsInt ("peppol.reporting.schedule.day-of-month", 2);
   }
 
+  @CheckForSigned
   public static int getPeppolReportingScheduleHour ()
   {
     return getConfig ().getAsInt ("peppol.reporting.schedule.hour", 1);
   }
 
+  @CheckForSigned
   public static int getPeppolReportingScheduleMinute ()
   {
     return getConfig ().getAsInt ("peppol.reporting.schedule.minute", 0);
