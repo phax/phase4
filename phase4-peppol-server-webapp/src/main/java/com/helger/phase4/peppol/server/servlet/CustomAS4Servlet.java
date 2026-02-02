@@ -62,6 +62,7 @@ public class CustomAS4Servlet extends Phase4PeppolAS4Servlet
                                            @NonNull final AS4UnifiedResponse aUnifiedResponse,
                                            @NonNull final AS4RequestHandler aRequestHandler)
       {
+        // Parent always first
         super.customizeBeforeHandling (aRequestScope, aUnifiedResponse, aRequestHandler);
 
         // In case you want a custom Incoming Unique ID
@@ -86,6 +87,7 @@ public class CustomAS4Servlet extends Phase4PeppolAS4Servlet
       {
         Phase4LogCustomizer.clearThreadLocals ();
 
+        // Parent always last
         super.customizeAfterHandling (aRequestScope, aUnifiedResponse, aRequestHandler);
       }
     });

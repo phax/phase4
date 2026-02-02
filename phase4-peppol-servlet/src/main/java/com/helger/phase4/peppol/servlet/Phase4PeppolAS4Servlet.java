@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2026 Philip Helger (www.helger.com)
+ * Copyright (C) 2015-2026 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,27 +16,20 @@
  */
 package com.helger.phase4.peppol.servlet;
 
-import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSConfig;
-import org.apache.wss4j.dom.handler.RequestData;
-import org.apache.wss4j.dom.validate.Credential;
-import org.apache.wss4j.dom.validate.SignatureTrustValidator;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
-import com.helger.base.array.ArrayHelper;
+import com.helger.base.enforce.ValueEnforcer;
 import com.helger.http.EHttpMethod;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
-import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.servlet.AS4UnifiedResponse;
 import com.helger.phase4.servlet.AS4XServletHandler;
 import com.helger.phase4.servlet.IAS4ServletRequestHandlerCustomizer;
-import com.helger.phase4.util.Phase4Exception;
+import com.helger.phase4.wss.AS4BinarySecurityTokenOnlySignatureTrustValidator;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xservlet.AbstractXServlet;
 
@@ -64,10 +57,14 @@ import com.helger.xservlet.AbstractXServlet;
  */
 public class Phase4PeppolAS4Servlet extends AbstractXServlet
 {
+  /**
+   * Default {@link IAS4ServletRequestHandlerCustomizer} implementation
+   *
+   * @author Philip Helger
+   * @since 4.2.6
+   */
   public static class Phase4PeppolServletRequestHandlerCustomizer implements IAS4ServletRequestHandlerCustomizer
   {
-    private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolAS4Servlet.class);
-
     @OverridingMethodsMustInvokeSuper
     public void customizeBeforeHandling (@NonNull final IRequestWebScopeWithoutResponse aRequestScope,
                                          @NonNull final AS4UnifiedResponse aUnifiedResponse,
@@ -79,26 +76,7 @@ public class Phase4PeppolAS4Servlet extends AbstractXServlet
       {
         public void modifyWSSConfig (@NonNull final WSSConfig aWSSConfig)
         {
-          aWSSConfig.setValidator (WSConstants.SIGNATURE, new SignatureTrustValidator ()
-          {
-            @Override
-            public Credential validate (@NonNull final Credential aCredential, @NonNull final RequestData aReqData)
-                                                                                                                    throws WSSecurityException
-            {
-              // Check that we have the full certificate available
-              if (ArrayHelper.isEmpty (aCredential.getCertificates ()))
-              {
-                // No BST used -> reject
-                throw new WSSecurityException (WSSecurityException.ErrorCode.FAILURE,
-                                               new Phase4Exception ("Only BinarySecurityToken-based keys allowed for signature verification"));
-              }
-
-              if (LOGGER.isDebugEnabled ())
-                LOGGER.debug ("Verified that inbound message uses a BinarySecurityToken for signature verification");
-
-              return super.validate (aCredential, aReqData);
-            }
-          });
+          aWSSConfig.setValidator (WSConstants.SIGNATURE, new AS4BinarySecurityTokenOnlySignatureTrustValidator ());
         }
       });
       aRequestHandler.setIncomingSecurityConfiguration (aIncomingSecCfg);
@@ -113,14 +91,27 @@ public class Phase4PeppolAS4Servlet extends AbstractXServlet
     }
   }
 
+  /**
+   * Default constructor using {@link Phase4PeppolServletRequestHandlerCustomizer} as the
+   * customizer.
+   */
   public Phase4PeppolAS4Servlet ()
   {
     // Use the default customizer
     this (new Phase4PeppolServletRequestHandlerCustomizer ());
   }
 
-  public Phase4PeppolAS4Servlet (@Nullable final IAS4ServletRequestHandlerCustomizer aCustomizer)
+  /**
+   * Custom constructor providing a custom customizer. This is primarily intended to subclass this
+   * class.
+   *
+   * @param aCustomizer
+   *        Request handler customizer to be used. Must not be <code>null</code>
+   */
+  protected Phase4PeppolAS4Servlet (@NonNull final Phase4PeppolServletRequestHandlerCustomizer aCustomizer)
   {
+    ValueEnforcer.notNull (aCustomizer, "Customizer");
+
     // Multipart is handled specifically inside
     settings ().setMultipartEnabled (false);
 
