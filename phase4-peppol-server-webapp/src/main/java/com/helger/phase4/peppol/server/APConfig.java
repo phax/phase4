@@ -91,4 +91,19 @@ public final class APConfig
   {
     return getConfig ().getAsBoolean ("peppol.reporting.scheduled", true);
   }
+
+  public static int getPeppolReportingScheduleDay ()
+  {
+    return getConfig ().getAsInt ("peppol.reporting.schedule.day", 2);
+  }
+
+  public static int getPeppolReportingScheduleHour ()
+  {
+    return getConfig ().getAsInt ("peppol.reporting.schedule.hour", 1);
+  }
+
+  public static int getPeppolReportingScheduleMinute ()
+  {
+    return getConfig ().getAsInt ("peppol.reporting.schedule.minute", 0);
+  }
 }

@@ -62,13 +62,19 @@ public final class DoPeppolReportingJob extends AbstractScopeAwareJob
   @Nullable
   public static TriggerKey scheduleMe ()
   {
+    final int nDay = APConfig.getPeppolReportingScheduleDay ();
+    final int nHour = APConfig.getPeppolReportingScheduleHour ();
+    final int nMinute = APConfig.getPeppolReportingScheduleMinute ();
+
+    LOGGER.info ("Scheduling Peppol Reporting job to run on day " + nDay + " at " + nHour + ":" + String.format ("%02d", nMinute));
+
     return GlobalQuartzScheduler.getInstance ()
                                 .scheduleJob (ClassHelper.getClassLocalName (DoPeppolReportingJob.class),
                                               JDK8TriggerBuilder.newTrigger ()
                                                                 .startNow ()
-                                                                .withSchedule (CronScheduleBuilder.monthlyOnDayAndHourAndMinute (2,
-                                                                                                                                 1,
-                                                                                                                                 0)),
+                                                                .withSchedule (CronScheduleBuilder.monthlyOnDayAndHourAndMinute (nDay,
+                                                                                                                                 nHour,
+                                                                                                                                 nMinute)),
                                               DoPeppolReportingJob.class,
                                               null);
   }
