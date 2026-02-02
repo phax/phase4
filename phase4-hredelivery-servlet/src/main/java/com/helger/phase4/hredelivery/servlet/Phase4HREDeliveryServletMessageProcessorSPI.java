@@ -386,7 +386,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                                                           @NonNull final IPMode aSrcPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @NonNull final IAS4IncomingMessageState aState,
+                                                          @NonNull final IAS4IncomingMessageState aIncomingState,
                                                           @NonNull final AS4ErrorList aProcessingErrorMessages)
   {
     if (LOGGER.isDebugEnabled ())
@@ -397,7 +397,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
     final String sService = aUserMessage.getCollaborationInfo ().getServiceValue ();
     final String sAction = aUserMessage.getCollaborationInfo ().getAction ();
     final String sConversationID = aUserMessage.getCollaborationInfo ().getConversationId ();
-    final Locale aDisplayLocale = aState.getLocale ();
+    final Locale aDisplayLocale = aIncomingState.getLocale ();
     final String sLogPrefix = "[" + sMessageID + "] ";
 
     // Start consistency checks if the receiver is supported or not
@@ -434,7 +434,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
     }
 
     // Check preconditions
-    if (aState.isSoapDecrypted ())
+    if (aIncomingState.isSoapDecrypted ())
     {
       final String sDetails = "The received HR eDelivery message seems to be encrypted which is not in line with the specification.";
       LOGGER.error (sLogPrefix + sDetails);
@@ -445,7 +445,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
       return AS4MessageProcessorResult.createFailure ();
     }
 
-    if (!aState.isSoapSignatureChecked ())
+    if (!aIncomingState.isSoapSignatureChecked ())
     {
       final String sDetails = "The received HR eDelivery message seems not to be signed (properly).";
       LOGGER.error (sLogPrefix + sDetails);
@@ -459,7 +459,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
     if (aReceiverCheckData.isCheckSigningCertificateRevocation ())
     {
       final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-      final X509Certificate aSenderSigningCert = aState.getSigningCertificate ();
+      final X509Certificate aSenderSigningCert = aIncomingState.getSigningCertificate ();
       // Check if signing AP certificate is revoked
       // * Use global caching setting
       // * Use global certificate check mode
@@ -591,7 +591,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                               " attachments";
       LOGGER.error (sLogPrefix + sDetails);
       aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                         .refToMessageInError (aState.getMessageID ())
+                                                         .refToMessageInError (aIncomingState.getMessageID ())
                                                          .errorDetail (sDetails)
                                                          .build ());
       return AS4MessageProcessorResult.createFailure ();
@@ -624,7 +624,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
       final String sMsg = "Failed to extract the HR eDelivery data from SBDH.";
       LOGGER.error (sLogPrefix + sMsg, ex);
       aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                         .refToMessageInError (aState.getMessageID ())
+                                                         .refToMessageInError (aIncomingState.getMessageID ())
                                                          .errorDetail (sMsg, ex)
                                                          .build ());
       return AS4MessageProcessorResult.createFailure ();
@@ -665,7 +665,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
           LOGGER.error (sLogPrefix + sMsg);
           // the errorDetail MUST be set according to HR eDelivery AS4 profile chapter 5.4
           aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                             .refToMessageInError (aState.getMessageID ())
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
                                                              .description (sMsg, aDisplayLocale)
                                                              .errorDetail ("ERACUN:NOT_SERVICED")
                                                              .build ());
@@ -683,7 +683,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
         final String sMsg = "The addressing data contained in the SBDH could not be verified";
         LOGGER.error (sLogPrefix + sMsg, ex);
         aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
                                                            .errorDetail (sMsg, ex)
                                                            .build ());
         return AS4MessageProcessorResult.createFailure ();
@@ -705,7 +705,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
         // This error is only in production mode
         // It will trigger a rejection on AS4 level
         aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
                                                            .errorDetail ("The phase4 implementation is marked as in production, but has no capabilities to process an incoming HR eDelivery message." +
                                                                          " Unfortunately, the HR eDelivery message needs to be rejected for that reason.")
                                                            .build ());
@@ -729,7 +729,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                                       aHREDeliverySBDH,
                                       aDocTypeID,
                                       aProcessID,
-                                      aState,
+                                      aIncomingState,
                                       aProcessingErrorMessages);
         }
         catch (final Exception ex)
@@ -737,7 +737,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
           final String sDetails = "The incoming HR eDelivery message could not be processed.";
           LOGGER.error (sLogPrefix + sDetails, ex);
           aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                             .refToMessageInError (aState.getMessageID ())
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
                                                              .errorDetail (sDetails, ex)
                                                              .build ());
           return AS4MessageProcessorResult.createFailure ();

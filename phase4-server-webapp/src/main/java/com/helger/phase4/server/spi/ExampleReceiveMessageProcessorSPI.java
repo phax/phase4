@@ -61,12 +61,12 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4IncomingMessagePro
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (ExampleReceiveMessageProcessorSPI.class);
 
   private static void _dumpSoap (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                 @NonNull final IAS4IncomingMessageState aState)
+                                 @NonNull final IAS4IncomingMessageState aIncomingState)
   {
     // Write formatted SOAP
     {
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
-      final Document aSoapDoc = aState.getEffectiveDecryptedSoapDocument ();
+      final Document aSoapDoc = aIncomingState.getEffectiveDecryptedSoapDocument ();
       final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc,
                                                        new XMLWriterSettings ().setNamespaceContext (Ebms3NamespaceHandler.getInstance ())
                                                                                .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
@@ -76,12 +76,12 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4IncomingMessagePro
         LOGGER.info ("Wrote SOAP to '" + aFile.getAbsolutePath () + "'");
     }
 
-    if (aState.hasSigningCertificate ())
+    if (aIncomingState.hasSigningCertificate ())
     {
       // Dump the senders certificate as PEM file
       // That can usually extracted from the Binary Security Token of the SOAP
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".pem");
-      final X509Certificate aSigningCert = aState.getSigningCertificate ();
+      final X509Certificate aSigningCert = aIncomingState.getSigningCertificate ();
       final String sPEM = CertificateHelper.getPEMEncodedCertificate (aSigningCert);
       final byte [] aBytes = sPEM.getBytes (StandardCharsets.US_ASCII);
       if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())

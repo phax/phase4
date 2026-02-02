@@ -402,7 +402,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
    *        The current AS4 UserMessage. May not be <code>null</code>.
    * @param aPeppolSBD
    *        The parsed Peppol SBDH object. May not be <code>null</code>.
-   * @param aState
+   * @param aIncomingState
    *        The processing state of the incoming message. May not be <code>null</code>.
    * @param sC3ID
    *        The Peppol Service Provider Seat ID (in the format PXX000000). May neither be
@@ -420,14 +420,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
   @Nullable
   public static PeppolReportingItem createPeppolReportingItemForReceivedMessage (@NonNull final Ebms3UserMessage aUserMessage,
                                                                                  @NonNull final PeppolSBDHData aPeppolSBD,
-                                                                                 @NonNull final IAS4IncomingMessageState aState,
+                                                                                 @NonNull final IAS4IncomingMessageState aIncomingState,
                                                                                  @NonNull @Nonempty final String sC3ID,
                                                                                  @NonNull @Nonempty final String sC4CountryCode,
                                                                                  @NonNull @Nonempty final String sEndUserID)
   {
     ValueEnforcer.notNull (aUserMessage, "UserMessage");
     ValueEnforcer.notNull (aPeppolSBD, "PeppolSBD");
-    ValueEnforcer.notNull (aState, "State");
+    ValueEnforcer.notNull (aIncomingState, "State");
     ValueEnforcer.notEmpty (sC3ID, "C3ID");
     ValueEnforcer.notEmpty (sC4CountryCode, "C4CountryCode");
     ValueEnforcer.notEmpty (sEndUserID, "EndUserID");
@@ -464,7 +464,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     }
 
     // Incoming message signed by C2
-    final String sC2ID = CertificateHelper.getSubjectCN (aState.getSigningCertificate ());
+    final String sC2ID = CertificateHelper.getSubjectCN (aIncomingState.getSigningCertificate ());
 
     try
     {
@@ -524,7 +524,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                           @NonNull final IPMode aSrcPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @NonNull final IAS4IncomingMessageState aState,
+                                                          @NonNull final IAS4IncomingMessageState aIncomingState,
                                                           @NonNull final AS4ErrorList aProcessingErrorMessages)
   {
     if (LOGGER.isDebugEnabled ())
@@ -535,7 +535,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     final String sService = aUserMessage.getCollaborationInfo ().getServiceValue ();
     final String sAction = aUserMessage.getCollaborationInfo ().getAction ();
     final String sConversationID = aUserMessage.getCollaborationInfo ().getConversationId ();
-    final Locale aDisplayLocale = aState.getLocale ();
+    final Locale aDisplayLocale = aIncomingState.getLocale ();
     final String sLogPrefix = "[" + sMessageID + "] ";
 
     // Start consistency checks if the receiver is supported or not
@@ -572,7 +572,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     }
 
     // Check preconditions
-    if (!aState.isSoapDecrypted ())
+    if (!aIncomingState.isSoapDecrypted ())
     {
       final String sDetails = "The received Peppol message seems not to be encrypted (properly).";
       LOGGER.error (sLogPrefix + sDetails);
@@ -583,7 +583,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       return AS4MessageProcessorResult.createFailure ();
     }
 
-    if (!aState.isSoapSignatureChecked ())
+    if (!aIncomingState.isSoapSignatureChecked ())
     {
       final String sDetails = "The received Peppol message seems not to be signed (properly).";
       LOGGER.error (sLogPrefix + sDetails);
@@ -597,7 +597,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     if (aReceiverCheckData.isCheckSigningCertificateRevocation ())
     {
       final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-      final X509Certificate aSenderSigningCert = aState.getSigningCertificate ();
+      final X509Certificate aSenderSigningCert = aIncomingState.getSigningCertificate ();
       // Check if signing AP certificate is revoked
       // * Use global caching setting
       // * Use global certificate check mode
@@ -729,7 +729,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                               " attachments";
       LOGGER.error (sLogPrefix + sDetails);
       aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                         .refToMessageInError (aState.getMessageID ())
+                                                         .refToMessageInError (aIncomingState.getMessageID ())
                                                          .errorDetail (sDetails)
                                                          .build ());
       return AS4MessageProcessorResult.createFailure ();
@@ -764,7 +764,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       final String sMsg = "Failed to extract the Peppol data from SBDH.";
       LOGGER.error (sLogPrefix + sMsg, ex);
       aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                         .refToMessageInError (aState.getMessageID ())
+                                                         .refToMessageInError (aIncomingState.getMessageID ())
                                                          .errorDetail (sMsg, ex)
                                                          .build ());
       return AS4MessageProcessorResult.createFailure ();
@@ -792,7 +792,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             ")";
         LOGGER.error (sLogPrefix + sMsg);
         aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
                                                            .errorDetail (sMsg)
                                                            .build ());
         return AS4MessageProcessorResult.createFailure ();
@@ -821,7 +821,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             ")";
         LOGGER.error (sLogPrefix + sMsg);
         aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
                                                            .errorDetail (sMsg)
                                                            .build ());
         return AS4MessageProcessorResult.createFailure ();
@@ -859,7 +859,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
           LOGGER.error (sLogPrefix + sMsg);
           // the errorDetail MUST be set according to Peppol AS4 profile 2.2
           aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                             .refToMessageInError (aState.getMessageID ())
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
                                                              .description (sMsg, aDisplayLocale)
                                                              .errorDetail ("PEPPOL:NOT_SERVICED")
                                                              .build ());
@@ -882,7 +882,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
 
         aProcessingErrorMessages.add (AS4Error.builder ()
                                               .ebmsError (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                                               .refToMessageInError (aState.getMessageID ())
+                                                                               .refToMessageInError (aIncomingState.getMessageID ())
                                                                                .errorDetail (sMsg, ex))
                                               .httpStatusCode (nHttpStatusCode)
                                               .build ());
@@ -905,7 +905,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         // This error is only in production mode
         // It will trigger a rejection on AS4 level
         aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aState.getMessageID ())
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
                                                            .errorDetail ("The phase4 implementation is marked as in production, but has no capabilities to process an incoming Peppol message." +
                                                                          " Unfortunately, the Peppol message needs to be rejected for that reason.")
                                                            .build ());
@@ -927,7 +927,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                       aReadAttachment.payloadBytes (),
                                       aReadAttachment.standardBusinessDocument (),
                                       aPeppolSBDH,
-                                      aState,
+                                      aIncomingState,
                                       aProcessingErrorMessages);
         }
         catch (final Exception ex)
@@ -940,7 +940,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
 
           aProcessingErrorMessages.add (AS4Error.builder ()
                                                 .ebmsError (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                                                 .refToMessageInError (aState.getMessageID ())
+                                                                                 .refToMessageInError (aIncomingState.getMessageID ())
                                                                                  .errorDetail (sDetails, ex))
                                                 .httpStatusCode (nHttpStatusCode)
                                                 .build ());
@@ -949,7 +949,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       }
 
       // Trigger post-processing, e.g. for reporting
-      afterSuccessfulPeppolProcessing (aUserMessage, aPeppolSBDH, aState);
+      afterSuccessfulPeppolProcessing (aUserMessage, aPeppolSBDH, aIncomingState);
     }
 
     return AS4MessageProcessorResult.createSuccess ();

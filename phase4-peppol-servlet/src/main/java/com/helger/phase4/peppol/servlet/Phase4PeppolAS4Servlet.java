@@ -29,7 +29,7 @@ import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.servlet.AS4UnifiedResponse;
 import com.helger.phase4.servlet.AS4XServletHandler;
 import com.helger.phase4.servlet.IAS4ServletRequestHandlerCustomizer;
-import com.helger.phase4.wss.AS4BinarySecurityTokenOnlySignatureTrustValidator;
+import com.helger.phase4.wss.AS4CertificateOnlySignatureTrustValidator;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xservlet.AbstractXServlet;
 
@@ -76,7 +76,7 @@ public class Phase4PeppolAS4Servlet extends AbstractXServlet
       {
         public void modifyWSSConfig (@NonNull final WSSConfig aWSSConfig)
         {
-          aWSSConfig.setValidator (WSConstants.SIGNATURE, new AS4BinarySecurityTokenOnlySignatureTrustValidator ());
+          aWSSConfig.setValidator (WSConstants.SIGNATURE, new AS4CertificateOnlySignatureTrustValidator ());
         }
       });
       aRequestHandler.setIncomingSecurityConfiguration (aIncomingSecCfg);
