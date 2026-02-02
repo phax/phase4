@@ -16,8 +16,11 @@
  */
 package com.helger.phase4.server.supplementary.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+
+import java.util.List;
 
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
@@ -101,12 +104,13 @@ public final class SignatureTest
                                                                        null,
                                                                        aCryptoFactory.getCrypto (ECryptoMode.ENCRYPT_SIGN));
 
-    final WSSecurityEngineResult actionResult = aResults.getActionResults ()
-                                                        .get (Integer.valueOf (WSConstants.SIGN))
-                                                        .get (0);
-    assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
-    assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
-    final STRParser.REFERENCE_TYPE referenceType = (STRParser.REFERENCE_TYPE) actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);
-    assertSame (STRParser.REFERENCE_TYPE.DIRECT_REF, referenceType);
+    final List <WSSecurityEngineResult> aSignActionResults = aResults.getActionResults ()
+                                                               .get (Integer.valueOf (WSConstants.SIGN));
+    assertEquals (1, aSignActionResults.size ());
+    final WSSecurityEngineResult aActionResult = aSignActionResults.get (0);
+    assertNotNull (aActionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
+    assertNotNull (aActionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
+    final STRParser.REFERENCE_TYPE eReferenceType = (STRParser.REFERENCE_TYPE) aActionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);
+    assertSame (STRParser.REFERENCE_TYPE.DIRECT_REF, eReferenceType);
   }
 }
