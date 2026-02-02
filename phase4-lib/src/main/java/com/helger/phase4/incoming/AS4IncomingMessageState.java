@@ -21,6 +21,7 @@ import java.time.OffsetDateTime;
 import java.util.Locale;
 
 import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.dom.str.STRParser;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -75,7 +76,9 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   private static final String KEY_INITIATOR_ID = "phase4.initiator.id";
   private static final String KEY_RESPONDER_ID = "phase4.responder.id";
   private static final String KEY_SIGNING_CERTIFICATE = "phase4.signing.certificate";
+  private static final String KEY_SIGNING_CERTIFICATE_REFERENCE_TYPE = "phase4.signing.certificate.reftype";
   private static final String KEY_DECRYPTING_CERTIFICATE = "phase4.decryting.certificate";
+  private static final String KEY_DECRYPTING_CERTIFICATE_REFERENCE_TYPE = "phase4.decryting.certificate.reftype";
   private static final String KEY_EFFECTIVE_PMODE_LEG = "phase4.pmode.effective.leg";
   private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "phase4.pmode.effective.leg.number";
   private static final String KEY_WSS4J_SECURITY_ACTIONS = "phase4.soap.wss4j-security-actions";
@@ -266,6 +269,16 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
     putIn (KEY_SIGNING_CERTIFICATE, aCert);
   }
 
+  public STRParser.@Nullable REFERENCE_TYPE getSigningCertificateReferenceType ()
+  {
+    return getCastedValue (KEY_SIGNING_CERTIFICATE_REFERENCE_TYPE);
+  }
+
+  public void setSigningCertificateReferenceType (final STRParser.@Nullable REFERENCE_TYPE eReferenceType)
+  {
+    putIn (KEY_SIGNING_CERTIFICATE_REFERENCE_TYPE, eReferenceType);
+  }
+
   @Nullable
   public X509Certificate getDecryptingCertificate ()
   {
@@ -275,6 +288,16 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   public void setDecryptingCertificate (@Nullable final X509Certificate aCert)
   {
     putIn (KEY_DECRYPTING_CERTIFICATE, aCert);
+  }
+
+  public STRParser.@Nullable REFERENCE_TYPE getDecryptingCertificateReferenceType ()
+  {
+    return getCastedValue (KEY_DECRYPTING_CERTIFICATE_REFERENCE_TYPE);
+  }
+
+  public void setDecryptingCertificateReferenceType (final STRParser.@Nullable REFERENCE_TYPE eReferenceType)
+  {
+    putIn (KEY_DECRYPTING_CERTIFICATE_REFERENCE_TYPE, eReferenceType);
   }
 
   @Nullable

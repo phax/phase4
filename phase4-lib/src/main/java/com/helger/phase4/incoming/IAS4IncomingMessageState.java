@@ -20,6 +20,7 @@ import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.util.Locale;
 
+import org.apache.wss4j.dom.str.STRParser;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -353,6 +354,25 @@ public interface IAS4IncomingMessageState
   }
 
   /**
+   * @return The reference type that was used to resolve the signing certificate. May be
+   *         <code>null</code>.
+   * @see #getSigningCertificate()
+   * @since 4.2.6
+   */
+  STRParser.@Nullable REFERENCE_TYPE getSigningCertificateReferenceType ();
+
+  /**
+   * @return <code>true</code> if a signing certificate reference type is provided,
+   *         <code>false</code> if not.
+   * @see #getSigningCertificateReferenceType()
+   * @since 4.2.6
+   */
+  default boolean hasSigningCertificateReferenceType ()
+  {
+    return getSigningCertificateReferenceType () != null;
+  }
+
+  /**
    * @return The decrypting certificate in the incoming message. May be <code>null</code>.
    * @see #hasDecryptingCertificate()
    * @since 3.0.5
@@ -368,6 +388,25 @@ public interface IAS4IncomingMessageState
   default boolean hasDecryptingCertificate ()
   {
     return getDecryptingCertificate () != null;
+  }
+
+  /**
+   * @return The reference type that was used to resolve the decrypting certificate. May be
+   *         <code>null</code>.
+   * @see #getDecryptingCertificate()
+   * @since 4.2.6
+   */
+  STRParser.@Nullable REFERENCE_TYPE getDecryptingCertificateReferenceType ();
+
+  /**
+   * @return <code>true</code> if a decrypting certificate reference type is provided,
+   *         <code>false</code> if not.
+   * @see #getDecryptingCertificateReferenceType()
+   * @since 4.2.6
+   */
+  default boolean hasDecryptingCertificateReferenceType ()
+  {
+    return getDecryptingCertificateReferenceType () != null;
   }
 
   /**

@@ -38,6 +38,7 @@ import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
+import org.apache.wss4j.dom.str.STRParser;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -234,8 +235,12 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
       // The certificate used for signing
       X509Certificate aSigningCert = null;
+      STRParser.REFERENCE_TYPE eSigningReferenceType = null;
+
       // The certificate used for decrypting
       X509Certificate aDecryptingCert = null;
+      STRParser.REFERENCE_TYPE eDecryptingReferenceType = null;
+
       int nWSS4JSecurityActions = 0;
       for (final WSSecurityEngineResult aResult : aResults)
       {
@@ -246,6 +251,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         final int nAction = aAction != null ? aAction.intValue () : 0;
         nWSS4JSecurityActions |= nAction;
 
+        // Check the used certificate
         final X509Certificate aCert = (X509Certificate) aResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
         if (aCert != null)
         {
@@ -274,6 +280,44 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
                 if (aDecryptingCert != aCert)
                   LOGGER.warn ("Found a second decryption certificate");
             }
+
+          // Get the certificate reference type
+          // Only makes sense, if a certificate was found
+          final STRParser.REFERENCE_TYPE eReferenceType = (STRParser.REFERENCE_TYPE) aResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);
+          if (eReferenceType != null)
+          {
+            if (nAction == WSConstants.SIGN)
+            {
+              if (eSigningReferenceType == null)
+              {
+                eSigningReferenceType = eReferenceType;
+                LOGGER.info ("Message was signed using reference type " + eReferenceType);
+              }
+              else
+                if (eSigningReferenceType != eReferenceType)
+                  LOGGER.warn ("Found a second signing reference type (" +
+                               eReferenceType +
+                               " <> " +
+                               eSigningReferenceType +
+                               ")");
+            }
+            else
+              if (nAction == WSConstants.ENCR)
+              {
+                if (eDecryptingReferenceType == null)
+                {
+                  eDecryptingReferenceType = eReferenceType;
+                  LOGGER.info ("Message was decrypted using reference type " + eDecryptingReferenceType);
+                }
+                else
+                  if (eDecryptingReferenceType != eReferenceType)
+                    LOGGER.warn ("Found a second decrypted reference type (" +
+                                 eReferenceType +
+                                 " <> " +
+                                 eSigningReferenceType +
+                                 ")");
+              }
+          }
         }
       }
       // this determines if a signature check or a decryption happened
@@ -281,7 +325,9 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
       // Remember in State
       aIncomingState.setSigningCertificate (aSigningCert);
+      aIncomingState.setSigningCertificateReferenceType (eSigningReferenceType);
       aIncomingState.setDecryptingCertificate (aDecryptingCert);
+      aIncomingState.setDecryptingCertificateReferenceType (eSigningReferenceType);
       aIncomingState.setDecryptedSoapDocument (aSOAPDoc);
 
       LOGGER.info ("phase4 --- attachment.storetemp:start");
