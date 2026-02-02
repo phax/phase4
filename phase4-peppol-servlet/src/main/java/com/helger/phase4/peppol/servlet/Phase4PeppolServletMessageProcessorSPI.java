@@ -26,6 +26,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.wss4j.dom.str.STRParser;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -591,6 +592,30 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                                          .refToMessageInError (sMessageID)
                                                                          .errorDetail (sDetails)
                                                                          .build ());
+      return AS4MessageProcessorResult.createFailure ();
+    }
+
+    // Since 4.2.6
+    if (aIncomingState.getSigningCertificateReferenceType () != STRParser.REFERENCE_TYPE.DIRECT_REF)
+    {
+      final String sDetails = "The received Peppol message did not provide the signing certificate as a BinarySecurityToken.";
+      LOGGER.error (sLogPrefix + sDetails);
+      aProcessingErrorMessages.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.errorBuilder (aDisplayLocale)
+                                                                        .refToMessageInError (sMessageID)
+                                                                        .errorDetail (sDetails)
+                                                                        .build ());
+      return AS4MessageProcessorResult.createFailure ();
+    }
+
+    // Since 4.2.6
+    if (aIncomingState.getDecryptingCertificateReferenceType () != STRParser.REFERENCE_TYPE.DIRECT_REF)
+    {
+      final String sDetails = "The received Peppol message did not provide the decrypting certificate as a BinarySecurityToken.";
+      LOGGER.error (sLogPrefix + sDetails);
+      aProcessingErrorMessages.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.errorBuilder (aDisplayLocale)
+                                                                        .refToMessageInError (sMessageID)
+                                                                        .errorDetail (sDetails)
+                                                                        .build ());
       return AS4MessageProcessorResult.createFailure ();
     }
 
