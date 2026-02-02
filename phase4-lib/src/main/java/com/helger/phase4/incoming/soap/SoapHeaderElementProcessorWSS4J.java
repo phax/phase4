@@ -156,43 +156,38 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       aRequestData.setWssConfig (aWSSConfig);
       aRequestData.setSignatureProvider (m_aSecurityProviderSignVerify);
 
-      // Undocumented property "phase4.incoming.verify.algorithms" - set to
-      // "false" to disable this check
-      if (AS4Configuration.getConfig ().getAsBoolean ("phase4.incoming.verify.algorithms", true))
+      // Add a test that only the algorithm from the PMode is effectively
+      // delivered
+      final PModeLeg aPModeLeg = aIncomingState.getEffectivePModeLeg ();
+      if (aPModeLeg != null && aPModeLeg.hasSecurity ())
       {
-        // Add a test that only the algorithm from the PMode is effectively
-        // delivered
-        final PModeLeg aPModeLeg = aIncomingState.getEffectivePModeLeg ();
-        if (aPModeLeg != null && aPModeLeg.hasSecurity ())
+        final AlgorithmSuite aAlgorithmSuite = new AlgorithmSuite ();
+        boolean bUseAlgorithmSuite = false;
+
+        // Does the PMode leg define an encryption algorithm?
+        if (aPModeLeg.getSecurity ().getX509EncryptionAlgorithm () != null)
         {
-          final AlgorithmSuite aAlgorithmSuite = new AlgorithmSuite ();
-          boolean bUseAlgorithmSuite = false;
+          final String sAlgorithmURI = aPModeLeg.getSecurity ().getX509EncryptionAlgorithm ().getAlgorithmURI ();
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Testing that the received message was encrypted with algorithm '" + sAlgorithmURI + "'");
 
-          // Does the PMode leg define an encryption algorithm?
-          if (aPModeLeg.getSecurity ().getX509EncryptionAlgorithm () != null)
-          {
-            final String sAlgorithmURI = aPModeLeg.getSecurity ().getX509EncryptionAlgorithm ().getAlgorithmURI ();
-            if (LOGGER.isDebugEnabled ())
-              LOGGER.debug ("Testing that the received message was encrypted with algorithm '" + sAlgorithmURI + "'");
-
-            aAlgorithmSuite.addEncryptionMethod (sAlgorithmURI);
-            bUseAlgorithmSuite = true;
-          }
-
-          // Does the PMode leg define an signing algorithm?
-          if (aPModeLeg.getSecurity ().getX509SignatureAlgorithm () != null)
-          {
-            final String sAlgorithmURI = aPModeLeg.getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ();
-            if (LOGGER.isDebugEnabled ())
-              LOGGER.debug ("Testing that the received message was signed with algorithm '" + sAlgorithmURI + "'");
-
-            aAlgorithmSuite.addSignatureMethod (sAlgorithmURI);
-            bUseAlgorithmSuite = true;
-          }
-
-          if (bUseAlgorithmSuite)
-            aRequestData.setAlgorithmSuite (aAlgorithmSuite);
+          aAlgorithmSuite.addEncryptionMethod (sAlgorithmURI);
+          bUseAlgorithmSuite = true;
         }
+
+        // Does the PMode leg define an signing algorithm?
+        if (aPModeLeg.getSecurity ().getX509SignatureAlgorithm () != null)
+        {
+          final String sAlgorithmURI = aPModeLeg.getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ();
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Testing that the received message was signed with algorithm '" + sAlgorithmURI + "'");
+
+          aAlgorithmSuite.addSignatureMethod (sAlgorithmURI);
+          bUseAlgorithmSuite = true;
+        }
+
+        if (bUseAlgorithmSuite)
+          aRequestData.setAlgorithmSuite (aAlgorithmSuite);
       }
 
       // Enable CRL checking
