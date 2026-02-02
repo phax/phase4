@@ -26,34 +26,35 @@ import org.slf4j.Logger;
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.base.array.ArrayHelper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
-import com.helger.phase4.util.Phase4Exception;
 
 /**
- * Special {@link SignatureTrustValidator} implementation that allows only for BinarySecurityToken
- * for signature verification.
+ * Special {@link SignatureTrustValidator} implementation that allows only certificates for
+ * signature verification but not just public keys.
  *
  * @author Philip Helger
  * @since 4.2.6
  */
-public class AS4BinarySecurityTokenOnlySignatureTrustValidator extends SignatureTrustValidator
+public class AS4CertificateOnlySignatureTrustValidator extends SignatureTrustValidator
 {
-  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4BinarySecurityTokenOnlySignatureTrustValidator.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4CertificateOnlySignatureTrustValidator.class);
 
   @Override
   @OverridingMethodsMustInvokeSuper
   public Credential validate (@NonNull final Credential aCredential, @NonNull final RequestData aReqData)
                                                                                                           throws WSSecurityException
   {
+    if (aCredential == null)
+      throw new WSSecurityException (WSSecurityException.ErrorCode.FAILURE, "noCredential");
+
     // Check that we have the full certificate available
     if (ArrayHelper.isEmpty (aCredential.getCertificates ()))
     {
-      // No BST used -> reject
-      throw new WSSecurityException (WSSecurityException.ErrorCode.FAILURE,
-                                     new Phase4Exception ("Only BinarySecurityToken-based keys allowed for signature verification"));
+      // No certificate provided -> reject
+      throw new WSSecurityException (WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
     }
 
     if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Verified that inbound message uses a BinarySecurityToken for signature verification");
+      LOGGER.debug ("Verified that inbound message uses a Certificate for signature verification");
 
     return super.validate (aCredential, aReqData);
   }
