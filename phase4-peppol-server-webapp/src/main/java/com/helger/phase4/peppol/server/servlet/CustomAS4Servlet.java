@@ -19,16 +19,14 @@ package com.helger.phase4.peppol.server.servlet;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
-import com.helger.http.EHttpMethod;
 import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.logging.Phase4LogCustomizer;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.peppol.servlet.Phase4PeppolAS4Servlet;
 import com.helger.phase4.servlet.AS4UnifiedResponse;
 import com.helger.phase4.servlet.AS4XServletHandler;
-import com.helger.phase4.servlet.IAS4ServletRequestHandlerCustomizer;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
-import com.helger.xservlet.AbstractXServlet;
 
 /**
  * AS4 receiving servlet.<br>
@@ -51,22 +49,21 @@ import com.helger.xservlet.AbstractXServlet;
  *
  * @author Philip Helger
  */
-public class CustomAS4Servlet extends AbstractXServlet
+public class CustomAS4Servlet extends Phase4PeppolAS4Servlet
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (CustomAS4Servlet.class);
 
   public CustomAS4Servlet ()
   {
-    // Multipart is handled specifically inside
-    settings ().setMultipartEnabled (false);
-
-    // HTTP POST only
-    final IAS4ServletRequestHandlerCustomizer aCustomizer = new IAS4ServletRequestHandlerCustomizer ()
+    super (new Phase4PeppolServletRequestHandlerCustomizer ()
     {
+      @Override
       public void customizeBeforeHandling (@NonNull final IRequestWebScopeWithoutResponse aRequestScope,
                                            @NonNull final AS4UnifiedResponse aUnifiedResponse,
                                            @NonNull final AS4RequestHandler aRequestHandler)
       {
+        super.customizeBeforeHandling (aRequestScope, aUnifiedResponse, aRequestHandler);
+
         // In case you want a custom Incoming Unique ID
         if (false)
           ((AS4IncomingMessageMetadata) aRequestHandler.getMessageMetadata ()).setIncomingUniqueID ("bla bla bla");
@@ -82,14 +79,15 @@ public class CustomAS4Servlet extends AbstractXServlet
         });
       }
 
+      @Override
       public void customizeAfterHandling (@NonNull final IRequestWebScopeWithoutResponse aRequestScope,
                                           @NonNull final AS4UnifiedResponse aUnifiedResponse,
                                           @NonNull final AS4RequestHandler aRequestHandler)
       {
         Phase4LogCustomizer.clearThreadLocals ();
+
+        super.customizeAfterHandling (aRequestScope, aUnifiedResponse, aRequestHandler);
       }
-    };
-    handlerRegistry ().registerHandler (EHttpMethod.POST,
-                                        new AS4XServletHandler ().setRequestHandlerCustomizer (aCustomizer));
+    });
   }
 }
