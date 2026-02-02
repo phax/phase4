@@ -568,7 +568,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       }
       else
       {
-        // Use instance WSSConfig creation
+        // Use instance-based WSSConfig creation
         eSuccess = _verifyAndDecrypt (aSoapDoc,
                                       aAttachments,
                                       aIncomingState,
