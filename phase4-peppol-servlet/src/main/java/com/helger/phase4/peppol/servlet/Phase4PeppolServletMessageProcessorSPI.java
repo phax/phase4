@@ -803,15 +803,41 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                                                          : CollectionFind.findFirst (aUserMessage.getMessageProperties ()
                                                                                                                                  .getProperty (),
                                                                                                                      x -> CAS4.ORIGINAL_SENDER.equals (x.getName ()));
-      final PeppolParticipantIdentifier aAS4C1PID = aOriginalSender == null ? null
-                                                                            : PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aOriginalSender.getType (),
-                                                                                                                                            aOriginalSender.getValue ());
+      if (aOriginalSender == null)
+      {
+        final String sMsg = "The AS4 '" + CAS4.ORIGINAL_SENDER + "' Message Propery is missing";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+
+      if (aOriginalSender.getType () == null)
+      {
+        final String sMsg = "The AS4 '" + CAS4.ORIGINAL_SENDER + "' Message Propery is missing the 'type' attribute";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+
+      final PeppolParticipantIdentifier aAS4C1PID = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aOriginalSender.getType (),
+                                                                                                                  aOriginalSender.getValue ());
       // Make sure the Peppol ID is on the left hand side, as it depends on the IdentifierFactory of
       // the SBDH which is flexible
       if (aAS4C1PID == null || !aAS4C1PID.hasSameContent (aPeppolSBDH.getSenderAsIdentifier ()))
       {
-        final String sMsg = "The AS4 originalSender (" +
-                            (aAS4C1PID == null ? "not provided" : aAS4C1PID.getURIEncoded ()) +
+        final String sMsg = "The AS4 '" +
+                            CAS4.ORIGINAL_SENDER +
+                            "' (" +
+                            (aAS4C1PID == null ? "not compliant to the Peppol rules - " +
+                                                 aOriginalSender.getType () +
+                                                 "::" +
+                                                 aOriginalSender.getValue () : aAS4C1PID.getURIEncoded ()) +
                             ") is different from the SBDH Sender Identifier (" +
                             aPeppolSBDH.getSenderAsIdentifier ().getURIEncoded () +
                             ")";
@@ -832,15 +858,41 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                                                          : CollectionFind.findFirst (aUserMessage.getMessageProperties ()
                                                                                                                                  .getProperty (),
                                                                                                                      x -> CAS4.FINAL_RECIPIENT.equals (x.getName ()));
-      final PeppolParticipantIdentifier aAS4C4PID = aFinalRecipient == null ? null
-                                                                            : PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aFinalRecipient.getType (),
-                                                                                                                                            aFinalRecipient.getValue ());
+      if (aFinalRecipient == null)
+      {
+        final String sMsg = "The AS4 '" + CAS4.FINAL_RECIPIENT + "' Message Propery is missing";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+
+      if (aFinalRecipient.getType () == null)
+      {
+        final String sMsg = "The AS4 '" + CAS4.FINAL_RECIPIENT + "' Message Propery is missing the 'type' attribute";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+
+      final PeppolParticipantIdentifier aAS4C4PID = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aFinalRecipient.getType (),
+                                                                                                                  aFinalRecipient.getValue ());
       // Make sure the Peppol ID is on the left hand side, as it depends on the IdentifierFactory of
       // the SBDH which is flexible
       if (aAS4C4PID == null || !aAS4C4PID.hasSameContent (aPeppolSBDH.getReceiverAsIdentifier ()))
       {
-        final String sMsg = "The AS4 finalRecipient (" +
-                            (aAS4C4PID == null ? "not provided" : aAS4C4PID.getURIEncoded ()) +
+        final String sMsg = "The AS4 '" +
+                            CAS4.FINAL_RECIPIENT +
+                            "' (" +
+                            (aAS4C4PID == null ? "not compliant to the Peppol rules - " +
+                                                 aFinalRecipient.getType () +
+                                                 "::" +
+                                                 aFinalRecipient.getValue () : aAS4C4PID.getURIEncoded ()) +
                             ") is different from the SBDH Sender Identifier (" +
                             aPeppolSBDH.getReceiverAsIdentifier ().getURIEncoded () +
                             ")";
