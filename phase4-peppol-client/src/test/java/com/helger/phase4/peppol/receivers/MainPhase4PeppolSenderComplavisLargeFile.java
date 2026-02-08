@@ -19,8 +19,8 @@ package com.helger.phase4.peppol.receivers;
 import java.io.File;
 
 import org.slf4j.Logger;
-import org.w3c.dom.Element;
 
+import com.helger.io.resource.FileSystemResource;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -33,24 +33,22 @@ import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
-import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * Example for sending something to the acube.io [IT] Test endpoint.
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderComplavis
+public final class MainPhase4PeppolSenderComplavisLargeFile
 {
-  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderComplavis.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MainPhase4PeppolSenderComplavisLargeFile.class);
 
   public static void send ()
   {
     try
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/external/examples/base-example.xml"))
-                                               .getDocumentElement ();
-      if (aPayloadElement == null)
+      final FileSystemResource aRes = new FileSystemResource (new File ("src/test/resources/external/examples/large-files/base-example-large-100m.xml"));
+      if (!aRes.exists ())
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
@@ -64,7 +62,7 @@ public final class MainPhase4PeppolSenderComplavis
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
                                   .countryC1 ("AT")
-                                  .payload (aPayloadElement)
+                                  .payload (aRes)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.DIGIT_TEST))
