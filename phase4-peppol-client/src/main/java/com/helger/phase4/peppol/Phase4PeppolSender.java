@@ -42,6 +42,7 @@ import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.state.ESuccess;
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
+import com.helger.cache.regex.RegExHelper;
 import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
@@ -107,6 +108,7 @@ public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
   public static final IPeppolURLProvider URL_PROVIDER = PeppolNaptrURLProvider.INSTANCE;
+  public static final String REGEX_SEAT_ID = "P[A-Z]{2}[0-9]{6}";
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolSender.class);
 
@@ -965,6 +967,22 @@ public final class Phase4PeppolSender
       // m_aCertificateConsumer may be null
       // m_aAPEndpointURLConsumer may be null
       // m_aAPTechnicalContactConsumer may be null
+
+      // Additional checks
+      if (!RegExHelper.stringMatchesPattern (REGEX_SEAT_ID, m_sFromPartyID))
+      {
+        LOGGER.warn ("The field 'fromPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
+                     REGEX_SEAT_ID +
+                     "'");
+        return false;
+      }
+      if (!RegExHelper.stringMatchesPattern (REGEX_SEAT_ID, m_sToPartyID))
+      {
+        LOGGER.warn ("The field 'toPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
+                     REGEX_SEAT_ID +
+                     "'");
+        return false;
+      }
 
       // All valid
       return true;
