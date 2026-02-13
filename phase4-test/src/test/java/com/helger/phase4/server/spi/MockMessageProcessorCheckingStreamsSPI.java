@@ -191,6 +191,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
                                          @NonNull final IAS4IncomingMessageState aState,
                                          @NonNull @Nonempty final String sResponseMessageID,
                                          final byte @Nullable [] aResponseBytes,
-                                         final boolean bResponsePayloadIsAvailable)
+                                         final boolean bResponsePayloadIsAvailable,
+                                         @NonNull final AS4ErrorList aProcessingErrorMessages)
   {}
 }

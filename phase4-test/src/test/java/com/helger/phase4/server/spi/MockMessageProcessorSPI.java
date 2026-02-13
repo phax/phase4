@@ -177,6 +177,7 @@ public class MockMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
                                          @NonNull final IAS4IncomingMessageState aState,
                                          @NonNull @Nonempty final String sResponseMessageID,
                                          final byte @Nullable [] aResponseBytes,
-                                         final boolean bResponsePayloadIsAvailable)
+                                         final boolean bResponsePayloadIsAvailable,
+                                         @NonNull final AS4ErrorList aProcessingErrorMessages)
   {}
 }

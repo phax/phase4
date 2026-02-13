@@ -167,7 +167,8 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4IncomingMessagePro
                                          final IAS4IncomingMessageState aState,
                                          final String sResponseMessageID,
                                          final byte [] aResponseBytes,
-                                         final boolean bResponsePayloadIsAvailable)
+                                         final boolean bResponsePayloadIsAvailable,
+                                         @NonNull final AS4ErrorList aEbmsErrorMessages)
   {
     LOGGER.info ("Sending AS4 response with ID '" + sResponseMessageID + "'");
   }

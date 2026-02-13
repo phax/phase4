@@ -17,6 +17,7 @@
 package com.helger.phase4.peppol.server.spi;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 import org.jspecify.annotations.NonNull;
@@ -26,6 +27,7 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIImplementation;
+import com.helger.base.string.StringHelper;
 import com.helger.base.string.StringParser;
 import com.helger.collection.CollectionFind;
 import com.helger.http.CHttp;
@@ -46,6 +48,7 @@ import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
@@ -192,8 +195,28 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
                                          @NonNull final IAS4IncomingMessageState aIncomingState,
                                          @NonNull @Nonempty final String sResponseMessageID,
                                          final byte @Nullable [] aResponseBytes,
-                                         final boolean bResponsePayloadIsAvailable)
+                                         final boolean bResponsePayloadIsAvailable,
+                                         @NonNull final AS4ErrorList aEbmsErrorMessages)
   {
-    // empty
+    final boolean bIsErrorMessage = aEbmsErrorMessages.isNotEmpty ();
+    if (aIncomingMessageMetadata.getMode () == EAS4MessageMode.REQUEST)
+      LOGGER.info ("AS4 " + (bIsErrorMessage ? "error" : "success") + " response on an inbound message");
+    else
+      LOGGER.info ("AS4 " + (bIsErrorMessage ? "error" : "success") + " response on an outbound message");
+
+    if (bIsErrorMessage)
+    {
+      LOGGER.error ("  Response has " +
+                    aEbmsErrorMessages.size () +
+                    " errors: " +
+                    aEbmsErrorMessages.getAllMapped (x -> StringHelper.getConcatenatedOnDemand (x.getEbmsError ()
+                                                                                                 .getDescriptionValue (),
+                                                                                                " / ",
+                                                                                                x.getEbmsError ()
+                                                                                                 .getErrorDetail ())));
+    }
+
+    if (bResponsePayloadIsAvailable)
+      LOGGER.info ("  Response content: " + new String (aResponseBytes, StandardCharsets.UTF_8));
   }
 }

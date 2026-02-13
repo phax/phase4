@@ -1083,7 +1083,8 @@ public class AS4RequestHandler implements AutoCloseable
                                        @Nullable final IAS4ResponseFactory aResponseFactory,
                                        @Nullable final HttpEntity aHttpEntity,
                                        @NonNull final IMimeType aMimeType,
-                                       @Nullable final String sResponseMessageID)
+                                       @Nullable final String sResponseMessageID,
+                                       @NonNull final AS4ErrorList aEbmsErrorMessages)
   {
     // Get response payload as byte array for multiple processing by the SPIs
     final boolean bResponsePayloadIsAvailable = aResponseFactory != null;
@@ -1138,7 +1139,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                 aIncomingState,
                                                 sResponseMessageID,
                                                 aResponsePayload,
-                                                bResponsePayloadIsAvailable);
+                                                bResponsePayloadIsAvailable,
+                                                aEbmsErrorMessages);
 
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Finished invoking AS4 message processor " + aProcessor + " for response");
@@ -1919,7 +1921,8 @@ public class AS4RequestHandler implements AutoCloseable
                                   aAsyncResponseFactory,
                                   aHttpEntity,
                                   eSoapVersion.getMimeType (),
-                                  sResponseMessageID);
+                                  sResponseMessageID,
+                                  aLocalErrorMessages);
 
           // invoke client with new document
           final Document aAsyncResponse;
@@ -2119,7 +2122,12 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     // Create the HttpEntity on demand
-    _invokeSPIsForResponse (aIncomingState, ret, null, eSoapVersion.getMimeType (), sResponseMessageID);
+    _invokeSPIsForResponse (aIncomingState,
+                            ret,
+                            null,
+                            eSoapVersion.getMimeType (),
+                            sResponseMessageID,
+                            aEbmsErrorMessages);
 
     return ret;
   }

@@ -765,7 +765,8 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                                          @NonNull final IAS4IncomingMessageState aState,
                                          @NonNull @Nonempty final String sResponseMessageID,
                                          final byte @Nullable [] aResponseBytes,
-                                         final boolean bResponsePayloadIsAvailable)
+                                         final boolean bResponsePayloadIsAvailable,
+                                         @NonNull final AS4ErrorList aProcessingErrorMessages)
   {
     // Now start invoking SPI handlers
     for (final IPhase4HREDeliveryIncomingSBDHandlerSPI aHandler : m_aHandlers)

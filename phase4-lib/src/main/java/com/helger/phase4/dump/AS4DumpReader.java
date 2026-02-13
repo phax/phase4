@@ -294,7 +294,8 @@ public final class AS4DumpReader
                                                @NonNull final IAS4IncomingMessageState aIncomingState,
                                                @NonNull @Nonempty final String sResponseMessageID,
                                                final byte @Nullable [] aResponseBytes,
-                                               final boolean bResponsePayloadIsAvailable)
+                                               final boolean bResponsePayloadIsAvailable,
+                                               @NonNull final AS4ErrorList aProcessingErrorMessages)
         {}
       };
       aHandler.setProcessorSupplier ( () -> new CommonsArrayList <> (aSPI));

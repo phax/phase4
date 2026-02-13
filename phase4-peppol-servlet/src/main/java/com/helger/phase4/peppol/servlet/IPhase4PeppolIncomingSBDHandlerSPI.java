@@ -94,11 +94,53 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    *        <code>null</code> here in this callback, but non-<code>null</code> in the originally
    *        returned message.
    * @since v3.1.0
+   * @deprecated Use the version with the additional {@link AS4ErrorList} parameter
    */
+  @Deprecated (forRemoval = true, since = "4.2.8")
   default void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                           @NonNull final IAS4IncomingMessageState aIncomingState,
                                           @NonNull @Nonempty final String sResponseMessageID,
                                           final byte @Nullable [] aResponseBytes,
                                           final boolean bResponsePayloadIsAvailable)
   {}
+
+  /**
+   * Optional callback to process a response message
+   *
+   * @param aIncomingMessageMetadata
+   *        Incoming message metadata. Never <code>null</code>.
+   * @param aIncomingState
+   *        The current message state. Can be used to determine all other things potentially
+   *        necessary for processing the response message. Never <code>null</code>.
+   * @param sResponseMessageID
+   *        The AS4 message ID of the response. Neither <code>null</code> nor empty. Since v1.2.0.
+   * @param aResponseBytes
+   *        The response bytes to be written. May be <code>null</code> for several reasons.
+   * @param bResponsePayloadIsAvailable
+   *        This indicates if a response payload is available at all. If this is <code>false</code>
+   *        than the response bytes are <code>null</code>. Special case: if this is
+   *        <code>true</code> and response bytes is <code>null</code> than most likely the response
+   *        entity is not repeatable and cannot be handled more than once - that's why it is
+   *        <code>null</code> here in this callback, but non-<code>null</code> in the originally
+   *        returned message.
+   * @param aEbmsErrorMessages
+   *        The error messages collected while processing the message. Never <code>null</code> but
+   *        maybe empty for positive responses.
+   * @since v4.2.8
+   */
+  default void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
+                                          @NonNull final IAS4IncomingMessageState aIncomingState,
+                                          @NonNull @Nonempty final String sResponseMessageID,
+                                          final byte @Nullable [] aResponseBytes,
+                                          final boolean bResponsePayloadIsAvailable,
+                                          @NonNull final AS4ErrorList aEbmsErrorMessages)
+  {
+    // Call the version without the error list for backwards compatibility only. To be removed in
+    // next major release
+    processAS4ResponseMessage (aIncomingMessageMetadata,
+                               aIncomingState,
+                               sResponseMessageID,
+                               aResponseBytes,
+                               bResponsePayloadIsAvailable);
+  }
 }

@@ -1049,7 +1049,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                          @NonNull final IAS4IncomingMessageState aState,
                                          @NonNull @Nonempty final String sResponseMessageID,
                                          final byte @Nullable [] aResponseBytes,
-                                         final boolean bResponsePayloadIsAvailable)
+                                         final boolean bResponsePayloadIsAvailable,
+                                         @NonNull final AS4ErrorList aEbmsErrorMessages)
   {
     // Now start invoking SPI handlers
     for (final IPhase4PeppolIncomingSBDHandlerSPI aHandler : m_aHandlers)
@@ -1059,7 +1060,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                           aState,
                                           sResponseMessageID,
                                           aResponseBytes,
-                                          bResponsePayloadIsAvailable);
+                                          bResponsePayloadIsAvailable,
+                                          aEbmsErrorMessages);
     }
   }
 }
