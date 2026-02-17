@@ -63,6 +63,7 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
+import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.peppolid.peppol.doctype.IPeppolDocumentTypeIdentifierParts;
 import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifierParts;
 import com.helger.phase4.CAS4;
@@ -108,7 +109,8 @@ public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
   public static final IPeppolURLProvider URL_PROVIDER = PeppolNaptrURLProvider.INSTANCE;
-  public static final String REGEX_SEAT_ID = "P[A-Z]{2}[0-9]{6}";
+  @Deprecated (forRemoval = true, since = "4.3.0")
+  public static final String REGEX_SEAT_ID = PeppolIdentifierHelper.REGEX_SEAT_ID;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolSender.class);
 
@@ -969,17 +971,17 @@ public final class Phase4PeppolSender
       // m_aAPTechnicalContactConsumer may be null
 
       // Additional checks
-      if (!RegExHelper.stringMatchesPattern (REGEX_SEAT_ID, m_sFromPartyID))
+      if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, m_sFromPartyID))
       {
         LOGGER.warn ("The field 'fromPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
-                     REGEX_SEAT_ID +
+                     PeppolIdentifierHelper.REGEX_SEAT_ID +
                      "'");
         return false;
       }
-      if (!RegExHelper.stringMatchesPattern (REGEX_SEAT_ID, m_sToPartyID))
+      if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, m_sToPartyID))
       {
         LOGGER.warn ("The field 'toPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
-                     REGEX_SEAT_ID +
+                     PeppolIdentifierHelper.REGEX_SEAT_ID +
                      "'");
         return false;
       }
