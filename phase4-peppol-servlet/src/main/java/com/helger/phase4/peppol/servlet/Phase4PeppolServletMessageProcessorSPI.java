@@ -47,6 +47,7 @@ import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.spi.ServiceLoaderHelper;
 import com.helger.base.string.StringHelper;
+import com.helger.cache.regex.RegExHelper;
 import com.helger.collection.CollectionFind;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
@@ -66,14 +67,18 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
+import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.peppolid.peppol.participant.PeppolParticipantIdentifier;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4Attachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.ebms3header.Ebms3From;
+import com.helger.phase4.ebms3header.Ebms3PartyId;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.AS4Error;
 import com.helger.phase4.error.AS4ErrorList;
@@ -86,6 +91,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.profile.peppol.PeppolPMode;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.phase4.util.Phase4IncomingException;
 import com.helger.sbdh.SBDMarshaller;
@@ -896,6 +902,91 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             ") is different from the SBDH Sender Identifier (" +
                             aPeppolSBDH.getReceiverAsIdentifier ().getURIEncoded () +
                             ")";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+    }
+
+    // Check if C2/C3 identifier matches the requirements of the Peppol AS4 specification, section
+    // 4.5
+    // https://docs.peppol.eu/edelivery/as4/specification/#_party_identification
+    {
+      // From
+      final Ebms3From aFrom = aUserMessage.getPartyInfo ().getFrom ();
+      if (aFrom.getPartyIdCount () != 1)
+      {
+        final String sMsg = "The AS4 'PartyInfo/From' does not contain exactly 1 'PartyId' element but " +
+                            aFrom.getPartyIdCount () +
+                            " of it";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+      final Ebms3PartyId aFromParty = aFrom.getPartyIdAtIndex (0);
+      if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, aFromParty.getValue ()))
+      {
+        final String sMsg = "The AS4 'PartyInfo/From/PartyId' value does not not follow the required regular expression '" +
+                            PeppolIdentifierHelper.REGEX_SEAT_ID +
+                            "'";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+      if (!PeppolPMode.DEFAULT_PARTY_TYPE_ID.equals (aFromParty.getType ()))
+      {
+        final String sMsg = "The AS4 'PartyInfo/From/PartyId/@type' value must be '" +
+                            PeppolPMode.DEFAULT_PARTY_TYPE_ID +
+                            "'";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+
+      // To
+      final Ebms3To aTo = aUserMessage.getPartyInfo ().getTo ();
+      if (aTo.getPartyIdCount () != 1)
+      {
+        final String sMsg = "The AS4 'PartyInfo/To' does not contain exactly 1 'PartyId' element but " +
+                            aFrom.getPartyIdCount () +
+                            " of it";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+      final Ebms3PartyId aToParty = aTo.getPartyIdAtIndex (0);
+      if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, aToParty.getValue ()))
+      {
+        final String sMsg = "The AS4 'PartyInfo/To/PartyId' value does not not follow the required regular expression '" +
+                            PeppolIdentifierHelper.REGEX_SEAT_ID +
+                            "'";
+        LOGGER.error (sLogPrefix + sMsg);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+      if (!PeppolPMode.DEFAULT_PARTY_TYPE_ID.equals (aToParty.getType ()))
+      {
+        final String sMsg = "The AS4 'PartyInfo/To/PartyId/@type' value must be '" +
+                            PeppolPMode.DEFAULT_PARTY_TYPE_ID +
+                            "'";
         LOGGER.error (sLogPrefix + sMsg);
         aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
                                                            .refToMessageInError (aIncomingState.getMessageID ())
