@@ -367,7 +367,7 @@ public class AS4RequestHandler implements AutoCloseable
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4RequestHandler.class);
 
   private final AS4ResourceHelper m_aResHelper;
-  private final IAS4IncomingMessageMetadata m_aMessageMetadata;
+  private final IAS4IncomingMessageMetadata m_aIncomingMessageMetadata;
   private IAS4CryptoFactory m_aCryptoFactorySign;
   private IAS4CryptoFactory m_aCryptoFactoryCrypt;
   private IAS4PModeResolver m_aPModeResolver;
@@ -390,7 +390,7 @@ public class AS4RequestHandler implements AutoCloseable
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
     // Create dynamically here, to avoid leaving too many streams open
     m_aResHelper = new AS4ResourceHelper ();
-    m_aMessageMetadata = aMessageMetadata;
+    m_aIncomingMessageMetadata = aMessageMetadata;
   }
 
   public void close ()
@@ -406,7 +406,7 @@ public class AS4RequestHandler implements AutoCloseable
   @NonNull
   public final IAS4IncomingMessageMetadata getMessageMetadata ()
   {
-    return m_aMessageMetadata;
+    return m_aIncomingMessageMetadata;
   }
 
   /**
@@ -895,7 +895,7 @@ public class AS4RequestHandler implements AutoCloseable
           final AS4ErrorList aProcessingErrorMessages = new AS4ErrorList ();
           if (bIsUserMessage)
           {
-            aResult = aProcessor.processAS4UserMessage (m_aMessageMetadata,
+            aResult = aProcessor.processAS4UserMessage (m_aIncomingMessageMetadata,
                                                         aHttpHeaders,
                                                         aEbmsUserMessage,
                                                         aPMode,
@@ -906,7 +906,7 @@ public class AS4RequestHandler implements AutoCloseable
           }
           else
           {
-            aResult = aProcessor.processAS4SignalMessage (m_aMessageMetadata,
+            aResult = aProcessor.processAS4SignalMessage (m_aIncomingMessageMetadata,
                                                           aHttpHeaders,
                                                           aEbmsSignalMessage,
                                                           aPMode,
@@ -1135,7 +1135,7 @@ public class AS4RequestHandler implements AutoCloseable
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Invoking AS4 message processor " + aProcessor + " for response");
 
-          aProcessor.processAS4ResponseMessage (m_aMessageMetadata,
+          aProcessor.processAS4ResponseMessage (m_aIncomingMessageMetadata,
                                                 aIncomingState,
                                                 sResponseMessageID,
                                                 aResponsePayload,
@@ -1399,7 +1399,7 @@ public class AS4RequestHandler implements AutoCloseable
         final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion,
                                                                                   aSignedDoc,
                                                                                   aResponseAttachments);
-        return new AS4ResponseFactoryMIME (m_aMessageMetadata,
+        return new AS4ResponseFactoryMIME (m_aIncomingMessageMetadata,
                                            aIncomingState,
                                            sResponseMessageID,
                                            aMimeMsg,
@@ -1412,7 +1412,7 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     // Return the signed receipt
-    return new AS4ResponseFactoryXML (m_aMessageMetadata,
+    return new AS4ResponseFactoryXML (m_aIncomingMessageMetadata,
                                       aIncomingState,
                                       sResponseMessageID,
                                       aSignedDoc,
@@ -1435,7 +1435,7 @@ public class AS4RequestHandler implements AutoCloseable
 
     // Call optional consumer
     if (m_aErrorConsumer != null)
-      m_aErrorConsumer.onAS4ErrorMessage (aIncomingState, aEbmsErrorMessages, aErrorMsg);
+      m_aErrorConsumer.onAS4ErrorMessage (m_aIncomingMessageMetadata, aIncomingState, aEbmsErrorMessages, aErrorMsg);
 
     // Determine SOAP version
     final ESoapVersion eResponseSoapVersion;
@@ -1503,7 +1503,7 @@ public class AS4RequestHandler implements AutoCloseable
         final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (eSoapVersion,
                                                                                   aResponseDoc,
                                                                                   aResponseAttachments);
-        return new AS4ResponseFactoryMIME (m_aMessageMetadata,
+        return new AS4ResponseFactoryMIME (m_aIncomingMessageMetadata,
                                            aIncomingState,
                                            sResponseMessageID,
                                            aMimeMsg,
@@ -1515,7 +1515,7 @@ public class AS4RequestHandler implements AutoCloseable
       }
     }
 
-    return new AS4ResponseFactoryXML (m_aMessageMetadata,
+    return new AS4ResponseFactoryXML (m_aIncomingMessageMetadata,
                                       aIncomingState,
                                       sResponseMessageID,
                                       aResponseDoc,
@@ -1621,7 +1621,7 @@ public class AS4RequestHandler implements AutoCloseable
     if (aResponseAttachments.isEmpty ())
     {
       // FIXME encryption of SOAP body is missing here
-      ret = new AS4ResponseFactoryXML (m_aMessageMetadata,
+      ret = new AS4ResponseFactoryXML (m_aIncomingMessageMetadata,
                                        aIncomingState,
                                        sResponseMessageID,
                                        aSignedDoc,
@@ -1635,7 +1635,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                      aResponseAttachments,
                                                                      eSoapVersion,
                                                                      aCryptParams);
-      ret = new AS4ResponseFactoryMIME (m_aMessageMetadata,
+      ret = new AS4ResponseFactoryMIME (m_aIncomingMessageMetadata,
                                         aIncomingState,
                                         sResponseMessageID,
                                         aMimeMsg,
@@ -1695,7 +1695,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                            aIncomingAttachments,
                                                                                            m_aIncomingProfileSelector,
                                                                                            aEbmsErrorMessages,
-                                                                                           m_aMessageMetadata);
+                                                                                           m_aIncomingMessageMetadata);
 
     // Evaluate the results of processing
     final IPMode aPMode = aIncomingState.getPMode ();
@@ -1883,7 +1883,10 @@ public class AS4RequestHandler implements AutoCloseable
 
             // Pass error messages to the outside
             if (m_aErrorConsumer != null && aLocalErrorMessages.isNotEmpty ())
-              m_aErrorConsumer.onAS4ErrorMessage (aIncomingState, aLocalErrorMessages, aResponseErrorMsg);
+              m_aErrorConsumer.onAS4ErrorMessage (m_aIncomingMessageMetadata,
+                                                  aIncomingState,
+                                                  aLocalErrorMessages,
+                                                  aResponseErrorMsg);
 
             // Default is 200 but can be overridden
             int nResponseStatusCode = CHttp.HTTP_OK;
@@ -1896,7 +1899,7 @@ public class AS4RequestHandler implements AutoCloseable
                 break;
               }
 
-            aAsyncResponseFactory = new AS4ResponseFactoryXML (m_aMessageMetadata,
+            aAsyncResponseFactory = new AS4ResponseFactoryXML (m_aIncomingMessageMetadata,
                                                                aIncomingState,
                                                                sResponseMessageID,
                                                                aResponseErrorMsg.getAsSoapDocument (),
@@ -2040,7 +2043,7 @@ public class AS4RequestHandler implements AutoCloseable
 
               final int nResponseStatusCode = CHttp.HTTP_OK;
 
-              ret = new AS4ResponseFactoryXML (m_aMessageMetadata,
+              ret = new AS4ResponseFactoryXML (m_aIncomingMessageMetadata,
                                                aIncomingState,
                                                sResponseMessageID,
                                                aResponseUserMsg.getAsSoapDocument (),
@@ -2180,7 +2183,7 @@ public class AS4RequestHandler implements AutoCloseable
     };
     AS4IncomingHandler.parseAS4Message (m_aIncomingAttachmentFactory,
                                         m_aResHelper,
-                                        m_aMessageMetadata,
+                                        m_aIncomingMessageMetadata,
                                         aRequestInputStream,
                                         aRequestHttpHeaders,
                                         aCallback,

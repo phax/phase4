@@ -128,7 +128,7 @@ public interface IAS4IncomingMessageProcessorSPI
    * @since v0.9.8
    * @deprecated Use the version with the additional {@link AS4ErrorList} parameter
    */
-  @Deprecated (forRemoval = true, since = "4.2.8")
+  @Deprecated (forRemoval = true, since = "4.3.0")
   default void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                           @NonNull final IAS4IncomingMessageState aIncomingState,
                                           @NonNull @Nonempty final String sResponseMessageID,
@@ -158,7 +158,7 @@ public interface IAS4IncomingMessageProcessorSPI
    * @param aEbmsErrorMessages
    *        The error messages collected while processing the message. Never <code>null</code> but
    *        maybe empty for positive responses.
-   * @since v4.2.8
+   * @since v4.3.0
    */
   default void processAS4ResponseMessage (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
                                           @NonNull final IAS4IncomingMessageState aIncomingState,

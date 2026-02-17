@@ -75,8 +75,10 @@ public class CustomAS4Servlet extends Phase4PeppolAS4Servlet
                                                      " - ");
 
         // And this shows how to access AS4 Error Messages returned
-        aRequestHandler.setErrorConsumer ( (aIncomingState, aEbmsErrors, aAS4ErrorMsg) -> {
-          LOGGER.error ("!!! An AS4 error occured: " + aAS4ErrorMsg);
+        aRequestHandler.setErrorConsumer ( (aMessageMetdata, aIncomingState, aEbmsErrors, aAS4ErrorMsg) -> {
+          LOGGER.error ("!!! An AS4 error was created for incoming request " + aMessageMetdata.getIncomingUniqueID ());
+          LOGGER.error ("   Found " + aEbmsErrors.size () + " errors");
+          LOGGER.error ("   The created AS4 error message has the AS4 Message ID " + aAS4ErrorMsg.getMessagingID ());
         });
       }
 
