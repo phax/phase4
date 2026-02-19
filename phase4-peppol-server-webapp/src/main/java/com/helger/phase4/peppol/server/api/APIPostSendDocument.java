@@ -29,7 +29,6 @@ import com.helger.base.string.StringHelper;
 import com.helger.mime.CMimeType;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
-import com.helger.peppol.sml.ESML;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSendingReport;
 import com.helger.photon.api.IAPIDescriptor;
@@ -93,8 +92,7 @@ public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
                  "' for '" +
                  sCountryCodeC1 +
                  "'");
-    final Phase4PeppolSendingReport aSendingReport = PeppolSender.sendPeppolMessageCreatingSbdh (m_eStage.isTest () ? ESML.DIGIT_TEST
-                                                                                                                    : ESML.DIGIT_PRODUCTION,
+    final Phase4PeppolSendingReport aSendingReport = PeppolSender.sendPeppolMessageCreatingSbdh (m_eStage.getSMLInfo (),
                                                                                                  m_eStage.isTest () ? PeppolTrustedCA.peppolTestAP ()
                                                                                                                     : PeppolTrustedCA.peppolProductionAP (),
                                                                                                  aPayloadBytes,

@@ -49,7 +49,7 @@ import com.helger.peppol.reportingsupport.file.IPeppolReportStorageFilenameProvi
 import com.helger.peppol.reportingsupport.file.PeppolReportStorageFileXML;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
-import com.helger.peppol.sml.ESML;
+import com.helger.peppol.sml.ISMLInfo;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSendingReport;
@@ -147,7 +147,7 @@ public final class AppReportingHelper
     final IPeppolReportSenderCallback aPeppolSender = (aDocTypeID, aProcessID, sMessagePayload) -> {
       // Make Network decisions
       final EPeppolNetwork eStage = APConfig.getPeppolStage ();
-      final ESML eSML = eStage.isProduction () ? ESML.DIGIT_PRODUCTION : ESML.DIGIT_TEST;
+      final ISMLInfo aSMLInfo = eStage.getSMLInfo ();
       final TrustedCAChecker aAPCA = eStage.isProduction () ? PeppolTrustedCA.peppolProductionAP ()
                                                             : PeppolTrustedCA.peppolTestAP ();
       // Sender: your company participant ID
@@ -164,7 +164,7 @@ public final class AppReportingHelper
         throw new IllegalStateException ("Invalid country code of Peppol owner is defined: '" + sCountryC1 + "'");
 
       // Returns the sending report
-      final Phase4PeppolSendingReport aSendingReport = PeppolSender.sendPeppolMessageCreatingSbdh (eSML,
+      final Phase4PeppolSendingReport aSendingReport = PeppolSender.sendPeppolMessageCreatingSbdh (aSMLInfo,
                                                                                                    aAPCA,
                                                                                                    sMessagePayload.getBytes (StandardCharsets.UTF_8),
                                                                                                    sSenderID,

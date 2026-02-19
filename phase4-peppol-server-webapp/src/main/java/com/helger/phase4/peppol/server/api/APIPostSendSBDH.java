@@ -32,7 +32,6 @@ import com.helger.peppol.sbdh.PeppolSBDHDataReadException;
 import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
-import com.helger.peppol.sml.ESML;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -71,9 +70,9 @@ public final class APIPostSendSBDH extends AbstractVerifyingAPIExecutor
     if (ArrayHelper.isEmpty (aPayloadBytes))
       throw new APIParamException ("API call retrieved an empty payload");
 
-    final ISMLInfo eSML = m_eStage.isTest () ? ESML.DIGIT_TEST : ESML.DIGIT_PRODUCTION;
-    final TrustedCAChecker aAPCA = m_eStage.isProduction () ? PeppolTrustedCA.peppolProductionAP () : PeppolTrustedCA
-                                                                                                                     .peppolTestAP ();
+    final ISMLInfo eSML = m_eStage.getSMLInfo ();
+    final TrustedCAChecker aAPCA = m_eStage.isProduction () ? PeppolTrustedCA.peppolProductionAP ()
+                                                            : PeppolTrustedCA.peppolTestAP ();
     final Phase4PeppolSendingReport aSendingReport = new Phase4PeppolSendingReport (eSML);
 
     final PeppolSBDHData aData;
