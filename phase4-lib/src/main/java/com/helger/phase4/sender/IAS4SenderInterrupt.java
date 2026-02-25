@@ -22,7 +22,7 @@ import com.helger.base.state.EContinue;
 
 /**
  * A specific helper interface with the sole purpose to be able to interrupt the sending of a
- * document after all checks are performed.
+ * document after all checks are performed. This may e.g. be used to implement a circuit breaker.
  *
  * @author Philip Helger
  * @since 0.13.0
