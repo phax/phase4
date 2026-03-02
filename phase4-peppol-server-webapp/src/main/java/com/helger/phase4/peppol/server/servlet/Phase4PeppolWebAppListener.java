@@ -25,7 +25,6 @@ import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.hc.core5.http.HttpHost;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -73,6 +72,7 @@ import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.IUserManager;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.security.certificate.TrustedCAChecker;
+import com.helger.smpclient.peppol.CachingSMPClientReadOnly;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
@@ -216,14 +216,9 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     Phase4PeppolDefaultReceiverConfiguration.setCheckSigningCertificateRevocation (true);
 
     // Make sure the download of CRL is using Apache HttpClient and that the
-    // provided settings are used. If e.g. a proxy is needed to access outbound
-    // resources, it can be configured here
+    // provided settings are used.
     final Phase4PeppolHttpClientSettings aHCS = new Phase4PeppolHttpClientSettings ();
-    if (false)
-    {
-      // TODO enable when you use an HTTP proxy
-      aHCS.getGeneralProxy ().setProxyHost (new HttpHost (APConfig.getHttpProxyHost (), APConfig.getHttpProxyPort ()));
-    }
+    APConfig.applyHttpProxySettings (aHCS);
     PeppolCRLDownloader.setAsDefaultCRLCache (aHCS);
 
     // Throws an exception if configuration parameters are missing
@@ -335,7 +330,9 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     if (StringHelper.isNotEmpty (sSMPURL) && StringHelper.isNotEmpty (sAPURL))
     {
       Phase4PeppolDefaultReceiverConfiguration.setReceiverCheckEnabled (true);
-      Phase4PeppolDefaultReceiverConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
+      final SMPClientReadOnly aSMPClient = new CachingSMPClientReadOnly (URLHelper.getAsURI (sSMPURL));
+      APConfig.applyHttpProxySettings (aSMPClient.httpClientSettings ());
+      Phase4PeppolDefaultReceiverConfiguration.setSMPClient (aSMPClient);
       Phase4PeppolDefaultReceiverConfiguration.setAS4EndpointURL (sAPURL);
       Phase4PeppolDefaultReceiverConfiguration.setAPCertificate (aAPCert);
       LOGGER.info (CAS4.LIB_NAME +
