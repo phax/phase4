@@ -84,7 +84,7 @@
     <ph-commons.version>12.1.3</ph-commons.version>
     <ph-schematron.version>9.1.1</ph-schematron.version>
     <ph-ubl.version>10.1.0</ph-ubl.version>
-    <ph-web.version>11.2.1</ph-web.version>
+    <ph-web.version>11.2.2</ph-web.version>
     <ph-xsds.version>4.1.0</ph-xsds.version>
     <phive.version>12.0.0</phive.version>
     <phive-rules.version>4.2.0</phive-rules.version>
