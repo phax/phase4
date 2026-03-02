@@ -100,10 +100,10 @@ public final class APIPostSendSBDH extends AbstractVerifyingAPIExecutor
     aSendingReport.setCountryC1 (aData.getCountryC1 ());
     aSendingReport.setSBDHInstanceIdentifier (aData.getInstanceIdentifier ());
 
-    final String sSenderID = aData.getSenderAsIdentifier ().getURIEncoded ();
-    final String sReceiverID = aData.getReceiverAsIdentifier ().getURIEncoded ();
-    final String sDocTypeID = aData.getDocumentTypeAsIdentifier ().getURIEncoded ();
-    final String sProcessID = aData.getProcessAsIdentifier ().getURIEncoded ();
+    final String sSenderID = aData.getSenderURIEncoded ();
+    final String sReceiverID = aData.getReceiverURIEncoded ();
+    final String sDocTypeID = aData.getDocumentTypeURIEncoded ();
+    final String sProcessID = aData.getProcessURIEncoded ();
     final String sCountryCodeC1 = aData.getCountryC1 ();
 
     LOGGER.info ("Trying to send Peppol Test SBDH message from '" +

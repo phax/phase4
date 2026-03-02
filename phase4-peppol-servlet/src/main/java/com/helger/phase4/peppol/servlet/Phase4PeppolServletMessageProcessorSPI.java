@@ -857,7 +857,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                  "::" +
                                                  aOriginalSender.getValue () : aAS4C1PID.getURIEncoded ()) +
                             ") is different from the SBDH Sender Identifier (" +
-                            aPeppolSBDH.getSenderAsIdentifier ().getURIEncoded () +
+                            aPeppolSBDH.getSenderURIEncoded () +
                             ")";
         LOGGER.error (sLogPrefix + sMsg);
         if (bRejectOnNonCompliance)
@@ -921,7 +921,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                  "::" +
                                                  aFinalRecipient.getValue () : aAS4C4PID.getURIEncoded ()) +
                             ") is different from the SBDH Sender Identifier (" +
-                            aPeppolSBDH.getReceiverAsIdentifier ().getURIEncoded () +
+                            aPeppolSBDH.getReceiverURIEncoded () +
                             ")";
         LOGGER.error (sLogPrefix + sMsg);
         if (bRejectOnNonCompliance)

@@ -107,11 +107,11 @@ public final class DropFolderUserMessage
         if (aEndpoint == null)
         {
           LOGGER.error ("Found no endpoint for:\n  Receiver ID: " +
-                        aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
+                        aSBDH.getReceiverURIEncoded () +
                         "\n  Document type ID: " +
-                        aSBDH.getDocumentTypeAsIdentifier ().getURIEncoded () +
+                        aSBDH.getDocumentTypeURIEncoded () +
                         "\n  Process ID: " +
-                        aSBDH.getProcessAsIdentifier ().getURIEncoded ());
+                        aSBDH.getProcessURIEncoded ());
         }
         else
         {
@@ -160,7 +160,7 @@ public final class DropFolderUserMessage
           LOGGER.info ("Successfully transmitted document with message ID '" +
                        aClientSentMessage.getMessageID () +
                        "' for '" +
-                       aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
+                       aSBDH.getReceiverURIEncoded () +
                        "' to '" +
                        W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()) +
                        "' in " +
