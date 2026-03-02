@@ -74,6 +74,7 @@ import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4Attachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3From;
 import com.helger.phase4.ebms3header.Ebms3PartyId;
 import com.helger.phase4.ebms3header.Ebms3Property;
@@ -801,6 +802,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       return AS4MessageProcessorResult.createFailure ();
     }
 
+    // Undocumented, temporary property to disable rejecting on non-compliance
+    final boolean bRejectOnNonCompliance = AS4Configuration.getConfig ()
+                                                           .getAsBoolean ("phase4.peppol.inbound.reject-on-non-compliance",
+                                                                          true);
+
     // Compare C1 ID from SBDH with the one of AS4
     {
       // Theoretically the MessageProperties must be present, but if someone disables the phase4
@@ -813,22 +819,28 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       {
         final String sMsg = "The AS4 '" + CAS4.ORIGINAL_SENDER + "' Message Propery is missing";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
 
       if (aOriginalSender.getType () == null)
       {
         final String sMsg = "The AS4 '" + CAS4.ORIGINAL_SENDER + "' Message Propery is missing the 'type' attribute";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
 
       final PeppolParticipantIdentifier aAS4C1PID = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aOriginalSender.getType (),
@@ -848,11 +860,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             aPeppolSBDH.getSenderAsIdentifier ().getURIEncoded () +
                             ")";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
     }
 
@@ -868,22 +883,28 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       {
         final String sMsg = "The AS4 '" + CAS4.FINAL_RECIPIENT + "' Message Propery is missing";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
 
       if (aFinalRecipient.getType () == null)
       {
         final String sMsg = "The AS4 '" + CAS4.FINAL_RECIPIENT + "' Message Propery is missing the 'type' attribute";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
 
       final PeppolParticipantIdentifier aAS4C4PID = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aFinalRecipient.getType (),
@@ -903,11 +924,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             aPeppolSBDH.getReceiverAsIdentifier ().getURIEncoded () +
                             ")";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
     }
 
@@ -923,12 +947,16 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             aFrom.getPartyIdCount () +
                             " of it";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
+
       final Ebms3PartyId aFromParty = aFrom.getPartyIdAtIndex (0);
       if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, aFromParty.getValue ()))
       {
@@ -936,23 +964,30 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             PeppolIdentifierHelper.REGEX_SEAT_ID +
                             "'";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
+
       if (!PeppolPMode.DEFAULT_PARTY_TYPE_ID.equals (aFromParty.getType ()))
       {
         final String sMsg = "The AS4 'PartyInfo/From/PartyId/@type' value must be '" +
                             PeppolPMode.DEFAULT_PARTY_TYPE_ID +
                             "'";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
 
       // To
@@ -963,12 +998,16 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             aFrom.getPartyIdCount () +
                             " of it";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
+
       final Ebms3PartyId aToParty = aTo.getPartyIdAtIndex (0);
       if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, aToParty.getValue ()))
       {
@@ -976,11 +1015,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             PeppolIdentifierHelper.REGEX_SEAT_ID +
                             "'";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
       if (!PeppolPMode.DEFAULT_PARTY_TYPE_ID.equals (aToParty.getType ()))
       {
@@ -988,11 +1030,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             PeppolPMode.DEFAULT_PARTY_TYPE_ID +
                             "'";
         LOGGER.error (sLogPrefix + sMsg);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                           .refToMessageInError (aIncomingState.getMessageID ())
-                                                           .errorDetail (sMsg)
-                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
     }
 
