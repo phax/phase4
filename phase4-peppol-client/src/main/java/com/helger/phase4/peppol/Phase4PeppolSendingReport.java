@@ -22,6 +22,8 @@ import java.time.OffsetDateTime;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import javax.security.auth.x500.X500Principal;
+
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -91,14 +93,20 @@ public class Phase4PeppolSendingReport
   // SBDH details
   private String m_sSBDHInstanceIdentifier;
 
+  // SMP lookup parameters
+  private String m_sC3SMPURL;
+
   // SMP lookup results
   private String m_sC3EndpointURL;
   private X509Certificate m_aC3Cert;
   private String m_sC3CertSubjectCN;
   private String m_sC3CertSubjectO;
+  private String m_sC3CertSubjectC;
   private OffsetDateTime m_aC3CertCheckDT;
   private ECertificateCheckResult m_eC3CertCheckResult;
   private String m_sC3TechnicalContact;
+  private String m_sLookupError;
+  private Exception m_aLookupException;
 
   // AS4 params
   private String m_sAS4MessageID;
@@ -383,6 +391,37 @@ public class Phase4PeppolSendingReport
   }
 
   /**
+   * @return The SMP URL of C3 determined by the DNS lookup. May be <code>null</code>.
+   * @since 4.3.2
+   */
+  @Nullable
+  public String getC3SMPURL ()
+  {
+    return m_sC3SMPURL;
+  }
+
+  /**
+   * @return <code>true</code> if a C3 SMP URL is present, <code>false</code> if not.
+   * @since 4.3.2
+   */
+  public boolean hasC3SMPURL ()
+  {
+    return StringHelper.isNotEmpty (m_sC3SMPURL);
+  }
+
+  /**
+   * Remember the SMP URL of C3 determined by the SMP lookup.
+   *
+   * @param s
+   *        C3 SMP URL. May be <code>null</code>.
+   * @since 4.3.2
+   */
+  public void setC3SMPURL (@Nullable final String s)
+  {
+    m_sC3SMPURL = s;
+  }
+
+  /**
    * @return The AP endpoint URL of C3 determined by the SMP lookup. May be <code>null</code>.
    * @since 4.2.0
    */
@@ -434,6 +473,11 @@ public class Phase4PeppolSendingReport
     return StringHelper.isNotEmpty (m_sC3CertSubjectO);
   }
 
+  public boolean hasC3CertSubjectC ()
+  {
+    return StringHelper.isNotEmpty (m_sC3CertSubjectC);
+  }
+
   /**
    * Remember the public Peppol AP certificate of C3 determined by the SMP lookup.
    *
@@ -443,8 +487,10 @@ public class Phase4PeppolSendingReport
   public void setC3Cert (@Nullable final X509Certificate a)
   {
     m_aC3Cert = a;
-    m_sC3CertSubjectCN = CertificateHelper.getSubjectCN (a);
-    m_sC3CertSubjectO = CertificateHelper.getSubjectO (a);
+    final X500Principal aSubject = a == null ? null : a.getSubjectX500Principal ();
+    m_sC3CertSubjectCN = CertificateHelper.getCNOrNull (aSubject);
+    m_sC3CertSubjectO = CertificateHelper.getOOrNull (aSubject);
+    m_sC3CertSubjectC = CertificateHelper.getPrincipalTypeValueOrNull (aSubject, CertificateHelper.PRINCIPAL_TYPE_C);
   }
 
   /**
@@ -514,6 +560,10 @@ public class Phase4PeppolSendingReport
     return m_sC3TechnicalContact;
   }
 
+  /**
+   * @return <code>true</code> if a C3 technical contact is present, <code>false</code> if not.
+   * @since 4.2.0
+   */
   public boolean hasC3TechnicalContact ()
   {
     return StringHelper.isNotEmpty (m_sC3TechnicalContact);
@@ -525,10 +575,43 @@ public class Phase4PeppolSendingReport
    *
    * @param s
    *        The technical contact URL to use. May be <code>null</code>.
+   * @since 4.2.0
    */
   public void setC3TechnicalContact (@Nullable final String s)
   {
     m_sC3TechnicalContact = s;
+  }
+
+  @Nullable
+  public String getLookupError ()
+  {
+    return m_sLookupError;
+  }
+
+  public boolean hasLookupError ()
+  {
+    return StringHelper.isNotEmpty (m_sLookupError);
+  }
+
+  public void setLookupError (@Nullable final String s)
+  {
+    m_sLookupError = s;
+  }
+
+  @Nullable
+  public Exception getLookupException ()
+  {
+    return m_aLookupException;
+  }
+
+  public boolean hasLookupException ()
+  {
+    return m_aLookupException != null;
+  }
+
+  public void setLookupException (@Nullable final Exception a)
+  {
+    m_aLookupException = a;
   }
 
   /**
@@ -871,6 +954,8 @@ public class Phase4PeppolSendingReport
     if (hasSBDHInstanceIdentifier ())
       aJson.add ("sbdhInstanceIdentifier", m_sSBDHInstanceIdentifier);
 
+    if (hasC3SMPURL ())
+      aJson.add ("c3SmpUrl", m_sC3SMPURL);
     if (hasC3EndpointURL ())
       aJson.add ("c3EndpointUrl", m_sC3EndpointURL);
     if (hasC3Cert ())
@@ -879,12 +964,18 @@ public class Phase4PeppolSendingReport
       aJson.add ("c3CertSubjectCN", m_sC3CertSubjectCN);
     if (hasC3CertSubjectO ())
       aJson.add ("c3CertSubjectO", m_sC3CertSubjectO);
+    if (hasC3CertSubjectC ())
+      aJson.add ("c3CertSubjectC", m_sC3CertSubjectC);
     if (hasC3CertCheckDT ())
       aJson.add ("c3CertCheckDT", PDTWebDateHelper.getAsStringXSD (m_aC3CertCheckDT));
     if (hasC3CertCheckResult ())
       aJson.add ("c3CertCheckResult", m_eC3CertCheckResult.name ());
     if (hasC3TechnicalContact ())
       aJson.add ("c3TechnicalContact", m_sC3TechnicalContact);
+    if (hasLookupError ())
+      aJson.add ("lookupError", m_sLookupError);
+    if (hasLookupException ())
+      aJson.add ("lookupException", fEx.apply (m_aLookupException));
 
     if (hasAS4MessageID ())
       aJson.add ("as4MessageId", m_sAS4MessageID);
@@ -1055,6 +1146,8 @@ public class Phase4PeppolSendingReport
     if (hasSBDHInstanceIdentifier ())
       ret.addElementNS (sNamespaceURI, "SBDHInstanceIdentifier").addText (m_sSBDHInstanceIdentifier);
 
+    if (hasC3SMPURL ())
+      ret.addElementNS (sNamespaceURI, "C3SmpUrl").addText (m_sC3SMPURL);
     if (hasC3EndpointURL ())
       ret.addElementNS (sNamespaceURI, "C3EndpointUrl").addText (m_sC3EndpointURL);
     if (hasC3Cert ())
@@ -1063,12 +1156,18 @@ public class Phase4PeppolSendingReport
       ret.addElementNS (sNamespaceURI, "C3CertSubjectCN").addText (m_sC3CertSubjectCN);
     if (hasC3CertSubjectO ())
       ret.addElementNS (sNamespaceURI, "C3CertSubjectO").addText (m_sC3CertSubjectO);
+    if (hasC3CertSubjectC ())
+      ret.addElementNS (sNamespaceURI, "C3CertSubjectC").addText (m_sC3CertSubjectC);
     if (hasC3CertCheckDT ())
       ret.addElementNS (sNamespaceURI, "C3CertCheckDT").addText (PDTWebDateHelper.getAsStringXSD (m_aC3CertCheckDT));
     if (hasC3CertCheckResult ())
       ret.addElementNS (sNamespaceURI, "C3CertCheckResult").addText (m_eC3CertCheckResult.name ());
     if (hasC3TechnicalContact ())
       ret.addElementNS (sNamespaceURI, "C3TechnicalContact").addText (m_sC3TechnicalContact);
+    if (hasLookupError ())
+      ret.addElementNS (sNamespaceURI, "LookupError").addText (m_sLookupError);
+    if (hasLookupException ())
+      ret.addChild (fEx.apply (m_aLookupException, "LookupException"));
 
     if (hasAS4MessageID ())
       ret.addElementNS (sNamespaceURI, "AS4MessageId").addText (m_sAS4MessageID);
