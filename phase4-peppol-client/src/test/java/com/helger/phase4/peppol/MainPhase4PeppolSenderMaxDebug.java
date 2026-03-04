@@ -21,13 +21,16 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
+import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.AS4IncomingDumperFileBased;
+import com.helger.phase4.dump.AS4IncomingDumperSingleUse;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.dump.AS4OutgoingDumperSingleUse;
 import com.helger.phase4.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
@@ -68,7 +71,9 @@ public final class MainPhase4PeppolSenderMaxDebug
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:test");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
+      final NonBlockingByteArrayOutputStream aBAOSUser = new NonBlockingByteArrayOutputStream ();
+      final NonBlockingByteArrayOutputStream aBAOSSignal = new NonBlockingByteArrayOutputStream ();
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
@@ -78,6 +83,8 @@ public final class MainPhase4PeppolSenderMaxDebug
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
                                   .countryC1 ("AT")
+                                  .outgoingDumper (new AS4OutgoingDumperSingleUse (aBAOSUser).setIncludeHeaders (false))
+                                  .incomingDumper (new AS4IncomingDumperSingleUse (aBAOSSignal).setIncludeHeaders (false))
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
@@ -87,6 +94,8 @@ public final class MainPhase4PeppolSenderMaxDebug
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
+      LOGGER.info ("  Sent User Message has " + aBAOSUser.size () + " bytes");
+      LOGGER.info ("  Received Signal Message has " + aBAOSSignal.size () + " bytes");
     }
     catch (final Exception ex)
     {
