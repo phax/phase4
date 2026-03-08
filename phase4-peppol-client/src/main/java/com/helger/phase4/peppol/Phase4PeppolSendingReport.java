@@ -107,8 +107,9 @@ public class Phase4PeppolSendingReport
   private String m_sC3TechnicalContact;
   private String m_sLookupError;
   private Exception m_aLookupException;
+  private long m_nLookupDurationMillis = -1;
 
-  // AS4 params
+  // AS4 sending
   private String m_sAS4MessageID;
   private String m_sAS4ConversationID;
   private OffsetDateTime m_aAS4SendingDT;
@@ -121,6 +122,12 @@ public class Phase4PeppolSendingReport
   private ICommonsList <Ebms3Error> m_aAS4ResponseErrors;
   private boolean m_bAS4ResponseError = false;
 
+  // AS4 in general
+  private String m_sSendingError;
+  private Exception m_aSendingException;
+  private long m_nSendingDurationMillis = -1;
+
+  // Summary
   private long m_nOverallDurationMillis = -1;
   private boolean m_bSendingSuccess = false;
   private boolean m_bOverallSuccess = false;
@@ -614,6 +621,21 @@ public class Phase4PeppolSendingReport
     m_aLookupException = a;
   }
 
+  public long getLookupDurationMillis ()
+  {
+    return m_nLookupDurationMillis;
+  }
+
+  public boolean hasLookupDurationMillis ()
+  {
+    return m_nLookupDurationMillis >= 0;
+  }
+
+  public void setLookupDurationMillis (final long n)
+  {
+    m_nLookupDurationMillis = n;
+  }
+
   /**
    * @return The AS4 Message ID used to send out the message. May be <code>null</code>.
    * @since 4.2.0
@@ -842,6 +864,53 @@ public class Phase4PeppolSendingReport
     }
   }
 
+  @Nullable
+  public String getSendingError ()
+  {
+    return m_sSendingError;
+  }
+
+  public boolean hasSendingError ()
+  {
+    return StringHelper.isNotEmpty (m_sSendingError);
+  }
+
+  public void setSendingError (@Nullable final String s)
+  {
+    m_sSendingError = s;
+  }
+
+  @Nullable
+  public Exception getSendingException ()
+  {
+    return m_aSendingException;
+  }
+
+  public boolean hasSendingException ()
+  {
+    return m_aSendingException != null;
+  }
+
+  public void setSendingException (@Nullable final Exception a)
+  {
+    m_aSendingException = a;
+  }
+
+  public long getSendingDurationMillis ()
+  {
+    return m_nSendingDurationMillis;
+  }
+
+  public boolean hasSendingDurationMillis ()
+  {
+    return m_nSendingDurationMillis >= 0;
+  }
+
+  public void setSendingDurationMillis (final long n)
+  {
+    m_nSendingDurationMillis = n;
+  }
+
   /**
    * @return The overall duration it took to perform the lookup and sending process.
    * @since 4.2.0
@@ -976,6 +1045,8 @@ public class Phase4PeppolSendingReport
       aJson.add ("lookupError", m_sLookupError);
     if (hasLookupException ())
       aJson.add ("lookupException", fEx.apply (m_aLookupException));
+    if (hasLookupDurationMillis ())
+      aJson.add ("lookupDurationMillis", m_nLookupDurationMillis);
 
     if (hasAS4MessageID ())
       aJson.add ("as4MessageId", m_sAS4MessageID);
@@ -1058,6 +1129,12 @@ public class Phase4PeppolSendingReport
       }
       aJson.add ("as4ResponseErrors", aErrors);
     }
+    if (hasSendingError ())
+      aJson.add ("sendingError", m_sSendingError);
+    if (hasSendingException ())
+      aJson.add ("sendingException", fEx.apply (m_aSendingException));
+    if (hasSendingDurationMillis ())
+      aJson.add ("sendingDurationMillis", m_nSendingDurationMillis);
 
     aJson.add ("overallDurationMillis", m_nOverallDurationMillis);
     aJson.add ("sendingSuccess", m_bSendingSuccess);
@@ -1168,6 +1245,8 @@ public class Phase4PeppolSendingReport
       ret.addElementNS (sNamespaceURI, "LookupError").addText (m_sLookupError);
     if (hasLookupException ())
       ret.addChild (fEx.apply (m_aLookupException, "LookupException"));
+    if (hasLookupDurationMillis ())
+      ret.addElementNS (sNamespaceURI, "LookupDurationMillis").addText (m_nLookupDurationMillis);
 
     if (hasAS4MessageID ())
       ret.addElementNS (sNamespaceURI, "AS4MessageId").addText (m_sAS4MessageID);
@@ -1241,6 +1320,12 @@ public class Phase4PeppolSendingReport
           aItem.addElementNS (sNamespaceURI, "ShortDescription").addText (aError.getShortDescription ());
       }
     }
+    if (hasSendingError ())
+      ret.addElementNS (sNamespaceURI, "SendingError").addText (m_sSendingError);
+    if (hasSendingException ())
+      ret.addChild (fEx.apply (m_aSendingException, "SendingException"));
+    if (hasSendingDurationMillis ())
+      ret.addElementNS (sNamespaceURI, "SendingDurationMillis").addText (m_nSendingDurationMillis);
 
     ret.addElementNS (sNamespaceURI, "OverallDurationMillis").addText (m_nOverallDurationMillis);
     ret.addElementNS (sNamespaceURI, "SendingSuccess").addText (m_bSendingSuccess);
