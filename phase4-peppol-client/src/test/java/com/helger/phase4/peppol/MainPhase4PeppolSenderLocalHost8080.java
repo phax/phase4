@@ -66,7 +66,6 @@ public final class MainPhase4PeppolSenderLocalHost8080 extends AbstractPhase4Sen
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final boolean bUseG3 = true;
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:helger");
       final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
                                                                   .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
