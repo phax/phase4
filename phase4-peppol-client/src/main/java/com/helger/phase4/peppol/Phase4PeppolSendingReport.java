@@ -109,22 +109,21 @@ public class Phase4PeppolSendingReport
   private Exception m_aLookupException;
   private long m_nLookupDurationMillis = -1;
 
-  // AS4 sending
+  // AS4 request details
   private String m_sAS4MessageID;
   private String m_sAS4ConversationID;
   private OffsetDateTime m_aAS4SendingDT;
 
   // AS4 response details
   private AS4ClientSentMessage <byte []> m_aRawHttpResponse;
-  private EAS4UserMessageSendResult m_eAS4SendingResult;
-  private Exception m_aAS4SendingException;
   private Ebms3SignalMessage m_aAS4ReceivedSignalMsg;
   private ICommonsList <Ebms3Error> m_aAS4ResponseErrors;
   private boolean m_bAS4ResponseError = false;
 
-  // AS4 in general
-  private String m_sSendingError;
-  private Exception m_aSendingException;
+  // AS4 summary
+  private EAS4UserMessageSendResult m_eAS4SendingResult;
+  private String m_sAS4SendingError;
+  private Exception m_aAS4SendingException;
   private long m_nSendingDurationMillis = -1;
 
   // Summary
@@ -751,63 +750,6 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * @return The overall AS4 sending result. May be <code>null</code>.
-   * @since 4.2.0
-   */
-  @Nullable
-  public EAS4UserMessageSendResult getAS4SendingResult ()
-  {
-    return m_eAS4SendingResult;
-  }
-
-  public boolean hasAS4SendingResult ()
-  {
-    return m_eAS4SendingResult != null;
-  }
-
-  public boolean hasUnsuccessfulAS4SendingResult ()
-  {
-    return m_eAS4SendingResult != null && m_eAS4SendingResult.isFailure ();
-  }
-
-  /**
-   * Remember the overall AS4 sending result.
-   *
-   * @param e
-   *        The AS4 sending result. May be <code>null</code>.
-   */
-  public void setAS4SendingResult (@Nullable final EAS4UserMessageSendResult e)
-  {
-    m_eAS4SendingResult = e;
-  }
-
-  /**
-   * @return The exception that eventually occurred on AS4 sending. May be <code>null</code>.
-   * @since 4.2.0
-   */
-  @Nullable
-  public Exception getAS4SendingException ()
-  {
-    return m_aAS4SendingException;
-  }
-
-  public boolean hasAS4SendingException ()
-  {
-    return m_aAS4SendingException != null;
-  }
-
-  /**
-   * Remember any exception that eventually occurred on AS4 sending.
-   *
-   * @param e
-   *        The exception from AS4 sending. May be <code>null</code>.
-   */
-  public void setAS4SendingException (@Nullable final Exception e)
-  {
-    m_aAS4SendingException = e;
-  }
-
-  /**
    * @return The synchronously received AS4 Signal Message from C3. May be <code>null</code>.
    * @since 4.2.0
    */
@@ -864,49 +806,90 @@ public class Phase4PeppolSendingReport
     }
   }
 
+  /**
+   * @return The overall AS4 sending result. May be <code>null</code>.
+   * @since 4.2.0
+   */
   @Nullable
-  public String getSendingError ()
+  public EAS4UserMessageSendResult getAS4SendingResult ()
   {
-    return m_sSendingError;
+    return m_eAS4SendingResult;
   }
 
-  public boolean hasSendingError ()
+  public boolean hasAS4SendingResult ()
   {
-    return StringHelper.isNotEmpty (m_sSendingError);
+    return m_eAS4SendingResult != null;
   }
 
-  public void setSendingError (@Nullable final String s)
+  public boolean hasUnsuccessfulAS4SendingResult ()
   {
-    m_sSendingError = s;
+    return m_eAS4SendingResult != null && m_eAS4SendingResult.isFailure ();
+  }
+
+  /**
+   * Remember the overall AS4 sending result.
+   *
+   * @param e
+   *        The AS4 sending result. May be <code>null</code>.
+   */
+  public void setAS4SendingResult (@Nullable final EAS4UserMessageSendResult e)
+  {
+    m_eAS4SendingResult = e;
   }
 
   @Nullable
-  public Exception getSendingException ()
+  public String getAS4SendingError ()
   {
-    return m_aSendingException;
+    return m_sAS4SendingError;
   }
 
-  public boolean hasSendingException ()
+  public boolean hasAS4SendingError ()
   {
-    return m_aSendingException != null;
+    return StringHelper.isNotEmpty (m_sAS4SendingError);
   }
 
-  public void setSendingException (@Nullable final Exception a)
+  public void setAS4SendingError (@Nullable final String s)
   {
-    m_aSendingException = a;
+    m_sAS4SendingError = s;
   }
 
-  public long getSendingDurationMillis ()
+  /**
+   * @return The exception that eventually occurred on AS4 sending. May be <code>null</code>.
+   * @since 4.2.0
+   */
+  @Nullable
+  public Exception getAS4SendingException ()
+  {
+    return m_aAS4SendingException;
+  }
+
+  public boolean hasAS4SendingException ()
+  {
+    return m_aAS4SendingException != null;
+  }
+
+  /**
+   * Remember any exception that eventually occurred on AS4 sending.
+   *
+   * @param e
+   *        The exception from AS4 sending. May be <code>null</code>.
+   */
+  public void setAS4SendingException (@Nullable final Exception e)
+  {
+    m_aAS4SendingException = e;
+  }
+
+  public long getAS4SendingDurationMillis ()
   {
     return m_nSendingDurationMillis;
   }
 
-  public boolean hasSendingDurationMillis ()
+  public boolean hasAS4SendingDurationMillis ()
   {
     return m_nSendingDurationMillis >= 0;
   }
 
-  public void setSendingDurationMillis (final long n)
+  public void setAS4SendingDurationMillis (final long n)
   {
     m_nSendingDurationMillis = n;
   }
@@ -1023,6 +1006,7 @@ public class Phase4PeppolSendingReport
     if (hasSBDHInstanceIdentifier ())
       aJson.add ("sbdhInstanceIdentifier", m_sSBDHInstanceIdentifier);
 
+    // SMP lookup
     if (hasC3SMPURL ())
       aJson.add ("c3SmpUrl", m_sC3SMPURL);
     if (hasC3EndpointURL ())
@@ -1048,6 +1032,7 @@ public class Phase4PeppolSendingReport
     if (hasLookupDurationMillis ())
       aJson.add ("lookupDurationMillis", m_nLookupDurationMillis);
 
+    // AS4 request
     if (hasAS4MessageID ())
       aJson.add ("as4MessageId", m_sAS4MessageID);
     if (hasAS4ConversationID ())
@@ -1055,6 +1040,7 @@ public class Phase4PeppolSendingReport
     if (hasAS4SendingDT ())
       aJson.add ("as4SendingDateTime", PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
 
+    // AS4 response
     // Don't render Raw response in case of success, as the Signal Message is contained anyway
     if (hasRawHttpResponse () && hasUnsuccessfulAS4SendingResult ())
     {
@@ -1096,10 +1082,6 @@ public class Phase4PeppolSendingReport
       aJson.add ("rawHttpResponse", aJsonRawHttpResponse);
     }
 
-    if (hasAS4SendingResult ())
-      aJson.add ("sendingResult", m_eAS4SendingResult.name ());
-    if (hasAS4SendingException ())
-      aJson.add ("sendingException", fEx.apply (m_aAS4SendingException));
     if (hasAS4ReceivedSignalMsg ())
       aJson.add ("as4ReceivedSignalMsg", new Ebms3SignalMessageMarshaller ().getAsString (m_aAS4ReceivedSignalMsg));
     aJson.add ("as4ResponseError", m_bAS4ResponseError);
@@ -1129,13 +1111,18 @@ public class Phase4PeppolSendingReport
       }
       aJson.add ("as4ResponseErrors", aErrors);
     }
-    if (hasSendingError ())
-      aJson.add ("sendingError", m_sSendingError);
-    if (hasSendingException ())
-      aJson.add ("sendingException", fEx.apply (m_aSendingException));
-    if (hasSendingDurationMillis ())
+
+    // AS4 summary
+    if (hasAS4SendingResult ())
+      aJson.add ("sendingResult", m_eAS4SendingResult.name ());
+    if (hasAS4SendingError ())
+      aJson.add ("sendingError", m_sAS4SendingError);
+    if (hasAS4SendingException ())
+      aJson.add ("sendingException", fEx.apply (m_aAS4SendingException));
+    if (hasAS4SendingDurationMillis ())
       aJson.add ("sendingDurationMillis", m_nSendingDurationMillis);
 
+    // Overall summary
     aJson.add ("overallDurationMillis", m_nOverallDurationMillis);
     aJson.add ("sendingSuccess", m_bSendingSuccess);
     aJson.add ("overallSuccess", m_bOverallSuccess);
@@ -1194,6 +1181,7 @@ public class Phase4PeppolSendingReport
     if (hasSBDHParseException ())
       ret.addChild (fEx.apply (m_aSBDHParseException, "SBDHParsingException"));
 
+    // Identifiers
     if (hasSenderID ())
       ret.addElementNS (sNamespaceURI, "SenderID").addText (m_aSenderID.getURIEncoded ());
     if (hasReceiverID ())
@@ -1223,6 +1211,7 @@ public class Phase4PeppolSendingReport
     if (hasSBDHInstanceIdentifier ())
       ret.addElementNS (sNamespaceURI, "SBDHInstanceIdentifier").addText (m_sSBDHInstanceIdentifier);
 
+    // SMP lookup
     if (hasC3SMPURL ())
       ret.addElementNS (sNamespaceURI, "C3SmpUrl").addText (m_sC3SMPURL);
     if (hasC3EndpointURL ())
@@ -1248,6 +1237,7 @@ public class Phase4PeppolSendingReport
     if (hasLookupDurationMillis ())
       ret.addElementNS (sNamespaceURI, "LookupDurationMillis").addText (m_nLookupDurationMillis);
 
+    // AS4 request
     if (hasAS4MessageID ())
       ret.addElementNS (sNamespaceURI, "AS4MessageId").addText (m_sAS4MessageID);
     if (hasAS4ConversationID ())
@@ -1256,6 +1246,7 @@ public class Phase4PeppolSendingReport
       ret.addElementNS (sNamespaceURI, "AS4SendingDateTime")
          .addText (PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
 
+    // AS4 response
     // Don't render Raw response in case of success, as the Signal Message is contained anyway
     if (hasRawHttpResponse () && hasUnsuccessfulAS4SendingResult ())
     {
@@ -1287,10 +1278,6 @@ public class Phase4PeppolSendingReport
         aRawHttpResponse.addElementNS (sNamespaceURI, "ContentLength").addText (0);
     }
 
-    if (hasAS4SendingResult ())
-      ret.addElementNS (sNamespaceURI, "AS4SendingResult").addText (m_eAS4SendingResult.name ());
-    if (hasAS4SendingException ())
-      ret.addChild (fEx.apply (m_aAS4SendingException, "AS4SendingException"));
     if (hasAS4ReceivedSignalMsg ())
       ret.addElementNS (sNamespaceURI, "AS4ReceivedSignalMsg")
          .addChild (new Ebms3SignalMessageMarshaller ().getAsMicroElement (m_aAS4ReceivedSignalMsg));
@@ -1320,13 +1307,18 @@ public class Phase4PeppolSendingReport
           aItem.addElementNS (sNamespaceURI, "ShortDescription").addText (aError.getShortDescription ());
       }
     }
-    if (hasSendingError ())
-      ret.addElementNS (sNamespaceURI, "SendingError").addText (m_sSendingError);
-    if (hasSendingException ())
-      ret.addChild (fEx.apply (m_aSendingException, "SendingException"));
-    if (hasSendingDurationMillis ())
-      ret.addElementNS (sNamespaceURI, "SendingDurationMillis").addText (m_nSendingDurationMillis);
 
+    // AS4 summary
+    if (hasAS4SendingResult ())
+      ret.addElementNS (sNamespaceURI, "AS4SendingResult").addText (m_eAS4SendingResult.name ());
+    if (hasAS4SendingError ())
+      ret.addElementNS (sNamespaceURI, "AS4SendingError").addText (m_sAS4SendingError);
+    if (hasAS4SendingException ())
+      ret.addChild (fEx.apply (m_aAS4SendingException, "AS4SendingException"));
+    if (hasAS4SendingDurationMillis ())
+      ret.addElementNS (sNamespaceURI, "AS4SendingDurationMillis").addText (m_nSendingDurationMillis);
+
+    // Overall summary
     ret.addElementNS (sNamespaceURI, "OverallDurationMillis").addText (m_nOverallDurationMillis);
     ret.addElementNS (sNamespaceURI, "SendingSuccess").addText (m_bSendingSuccess);
     ret.addElementNS (sNamespaceURI, "OverallSuccess").addText (m_bOverallSuccess);
