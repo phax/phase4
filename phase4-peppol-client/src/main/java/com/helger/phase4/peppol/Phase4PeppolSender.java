@@ -1466,20 +1466,31 @@ public final class Phase4PeppolSender
           if (m_aPayloadHasIS != null)
           {
             // Parse it
-            final InputStream aIS = m_aPayloadHasIS.getBufferedInputStream ();
-            if (aIS == null)
-              throw new Phase4PeppolException ("Failed to create payload InputStream from provider").setRetryFeasible (false);
-            final Document aDoc = DOMReader.readXMLDOM (aIS);
-            if (aDoc == null)
-              throw new Phase4PeppolException ("Failed to parse payload InputStream to a DOM node").setRetryFeasible (false);
-            aPayloadElement = aDoc.getDocumentElement ();
+            try (final InputStream aIS = m_aPayloadHasIS.getBufferedInputStream ())
+            {
+              if (aIS == null)
+                throw new Phase4PeppolException ("Failed to create payload InputStream from provider").setRetryFeasible (false);
+              final Document aDoc = DOMReader.readXMLDOM (aIS);
+              if (aDoc == null)
+                throw new Phase4PeppolException ("Failed to parse payload InputStream to a DOM node").setRetryFeasible (false);
+              aPayloadElement = aDoc.getDocumentElement ();
+            }
+            catch (final IOException ex)
+            {
+              throw new IllegalStateException ("Failed to close InputStrea", ex);
+            }
           }
           else
-            throw new IllegalStateException ("Unexpected - neither element nor bytes nor InputStream provider are present");
+          {
+            throw new IllegalStateException ("Unexpected - neither element nor bytes nor InputStream Provider are present");
+          }
+
+        // Check read content
         if (aPayloadElement == null)
           throw new Phase4PeppolException ("The parsed XML document must have a root element").setRetryFeasible (false);
         if (aPayloadElement.getNamespaceURI () == null)
           throw new Phase4PeppolException ("The root element of the parsed XML document does not have a namespace URI").setRetryFeasible (false);
+
         bClonePayloadElement = false;
       }
 
