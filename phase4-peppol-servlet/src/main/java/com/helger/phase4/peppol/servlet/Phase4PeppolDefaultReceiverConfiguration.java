@@ -23,6 +23,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.peppol.sbdh.PeppolSBDHDataReader;
@@ -163,6 +164,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @since 3.0.1
    */
   @NonNull
+  @ChangeNextMajorRelease ("Remove the 'SBDH' from the name - it's used outside as well")
   public static IIdentifierFactory getSBDHIdentifierFactory ()
   {
     return s_aSBDHIdentifierFactory;
@@ -175,6 +177,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *        The identifier factory to use. May not be <code>null</code>.
    * @since 3.0.1
    */
+  @ChangeNextMajorRelease ("Remove the 'SBDH' from the name - it's used outside as well")
   public static void setSBDHIdentifierFactory (@NonNull final IIdentifierFactory a)
   {
     ValueEnforcer.notNull (a, "SBDHIdentifierFactory");
