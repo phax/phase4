@@ -66,9 +66,7 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
-import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
-import com.helger.peppolid.peppol.participant.PeppolParticipantIdentifier;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
@@ -545,6 +543,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     final String sConversationID = aUserMessage.getCollaborationInfo ().getConversationId ();
     final Locale aDisplayLocale = aIncomingState.getLocale ();
     final String sLogPrefix = "[" + sMessageID + "] ";
+    final IIdentifierFactory aIdentifierFactory = Phase4PeppolDefaultReceiverConfiguration.getSBDHIdentifierFactory ();
 
     // Start consistency checks if the receiver is supported or not
     final Phase4PeppolReceiverConfiguration aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
@@ -778,7 +777,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         LOGGER.debug (sLogPrefix + "Now evaluating the SBDH against Peppol rules");
 
       // Interpret as Peppol SBDH and eventually perform consistency checks
-      final IIdentifierFactory aIdentifierFactory = aReceiverCheckData.getSBDHIdentifierFactory ();
       final boolean bPerformValueChecks = aReceiverCheckData.isPerformSBDHValueChecks ();
       final boolean bCheckForCountryC1 = aReceiverCheckData.isCheckSBDHForMandatoryCountryC1 ();
       final PeppolSBDHDataReader aReader = new PeppolSBDHDataReader (aIdentifierFactory).setPerformValueChecks (bPerformValueChecks)
@@ -843,8 +841,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         }
       }
 
-      final PeppolParticipantIdentifier aAS4C1PID = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aOriginalSender.getType (),
-                                                                                                                  aOriginalSender.getValue ());
+      final IParticipantIdentifier aAS4C1PID = aIdentifierFactory.createParticipantIdentifier (aOriginalSender.getType (),
+                                                                                               aOriginalSender.getValue ());
       // Make sure the Peppol ID is on the left hand side, as it depends on the IdentifierFactory of
       // the SBDH which is flexible
       if (aAS4C1PID == null || !aAS4C1PID.hasSameContent (aPeppolSBDH.getSenderAsIdentifier ()))
@@ -907,8 +905,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         }
       }
 
-      final PeppolParticipantIdentifier aAS4C4PID = PeppolIdentifierFactory.INSTANCE.createParticipantIdentifier (aFinalRecipient.getType (),
-                                                                                                                  aFinalRecipient.getValue ());
+      final IParticipantIdentifier aAS4C4PID = aIdentifierFactory.createParticipantIdentifier (aFinalRecipient.getType (),
+                                                                                               aFinalRecipient.getValue ());
       // Make sure the Peppol ID is on the left hand side, as it depends on the IdentifierFactory of
       // the SBDH which is flexible
       if (aAS4C4PID == null || !aAS4C4PID.hasSameContent (aPeppolSBDH.getReceiverAsIdentifier ()))
