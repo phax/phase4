@@ -1,5 +1,10 @@
 # phase4 - lightweight AS4 client and server
 
+<!-- ph-badge-start -->
+[![Sonatype Central](https://maven-badges.sml.io/sonatype-central/com.helger.phase4/phase4-parent-pom/badge.svg)](https://maven-badges.sml.io/sonatype-central/com.helger.phase4/phase4-parent-pom/)
+[![javadoc](https://javadoc.io/badge2/com.helger.phase4/phase4-lib/javadoc.svg)](https://javadoc.io/doc/com.helger.phase4/phase4-lib)
+<!-- ph-badge-end -->
+
 ![Logo](https://github.com/phax/phase4/blob/master/docs/logo/phase4-logo-653-180.png)
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.helger.phase4/phase4-parent-pom)](https://img.shields.io/maven-central/v/com.helger.phase4/phase4-parent-pom)
