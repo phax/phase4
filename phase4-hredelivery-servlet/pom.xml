@@ -96,7 +96,7 @@
           <instructions>
             <Automatic-Module-Name>com.helger.phase4.hredelivery.servlet</Automatic-Module-Name>
             <Export-Package>com.helger.phase4.hredelivery.servlet.*</Export-Package>
-            <Import-Package>!jakarta.annotation.*,*</Import-Package>
+            <Import-Package>!org.jspecify.annotations.*,*</Import-Package>
             <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",
 osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
 osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.hredelivery.servlet.IPhase4HREDeliveryIncomingSBDHandlerSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>

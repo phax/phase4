@@ -190,7 +190,7 @@
           <instructions>
             <Automatic-Module-Name>com.helger.phase4</Automatic-Module-Name>
             <Export-Package>com.helger.phase4.*</Export-Package>
-            <Import-Package>!jakarta.annotation.*,*</Import-Package>
+            <Import-Package>!org.jspecify.annotations.*,*</Import-Package>
             <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",
 osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
 osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI)"; cardinality:=multiple; resolution:=optional,
