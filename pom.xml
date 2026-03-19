@@ -245,6 +245,18 @@
         <artifactId>phase4-cef-client</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+      <!-- eDelivery 2.0 -->
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-profile-edelivery2</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-edelivery2-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       
       <!-- DBNAlliance -->
       <dependency>
@@ -335,6 +347,7 @@
     <!-- all profiles -->
     <module>phase4-profile-bdew</module>
     <module>phase4-profile-cef</module>
+    <module>phase4-profile-edelivery2</module>
     <module>phase4-profile-dbnalliance</module>
     <module>phase4-profile-entsog</module>
     <module>phase4-profile-euctp</module>
@@ -350,7 +363,9 @@
     <module>phase4-bdew-client</module>
     
     <module>phase4-cef-client</module>
-    
+
+    <module>phase4-edelivery2-client</module>
+
     <module>phase4-dbnalliance-client</module>
     <module>phase4-dbnalliance-servlet</module>
     <module>phase4-dbnalliance-server-webapp</module>

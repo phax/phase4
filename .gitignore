@@ -18,10 +18,12 @@ base-example-large-*.xml
 private-*.properties*
 Main*ReceiverProd.java
 
+.claude/
 .idea/
 .settings/ 
 target/
 generated/
 phase4-data/
+phase4-dumps/
 .apt_generated/
 .apt_generated_tests/

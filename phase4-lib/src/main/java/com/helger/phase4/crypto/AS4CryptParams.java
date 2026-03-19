@@ -56,6 +56,13 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   public static final ICryptoSessionKeyProvider DEFAULT_SESSION_KEY_PROVIDER = ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_128;
   public static final boolean DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY = true;
 
+  /**
+   * HKDF PRF algorithm URI for HMAC-SHA256, as required by eDelivery AS4 2.0
+   *
+   * @since 4.4.0
+   */
+  public static final String HKDF_PRF_HMAC_SHA256 = WSS4JConstants.HMAC_SHA256;
+
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4CryptParams.class);
 
   // The key identifier type to use
@@ -68,6 +75,14 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   private String m_sMGFAlgorithm = DEFAULT_MGF_ALGORITHM;
   // The digest algorithm to use with the RSA-OAEP key transport algorithm
   private String m_sDigestAlgorithm = DEFAULT_DIGEST_ALGORITHM;
+  // Key agreement method (e.g. X25519, X448, ECDH-ES) - null means no key
+  // agreement (use key transport instead)
+  private ECryptoKeyAgreementMethod m_eKeyAgreementMethod;
+  // Key derivation function (e.g. HKDF, ConcatKDF) - only used with key
+  // agreement
+  private ECryptoKeyDerivationMethod m_eKeyDerivationMethod;
+  // Key wrap algorithm (e.g. AES-128 KeyWrap) - only used with key agreement
+  private ECryptoKeyWrapAlgorithm m_eKeyWrapAlgorithm;
   // The explicit certificate to use - has precedence over the alias
   private X509Certificate m_aCert;
   // The alias into the WSS4J crypto config
@@ -218,6 +233,121 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
     ValueEnforcer.notEmpty (sDigestAlgorithm, "DigestAlgorithm");
     m_sDigestAlgorithm = sDigestAlgorithm;
     return this;
+  }
+
+  /**
+   * @return The key agreement method to use. May be <code>null</code>, in which case key transport
+   *         (e.g. RSA-OAEP) is used instead of key agreement.
+   * @since 4.4.0
+   */
+  @Nullable
+  public final ECryptoKeyAgreementMethod getKeyAgreementMethod ()
+  {
+    return m_eKeyAgreementMethod;
+  }
+
+  /**
+   * @return <code>true</code> if a key agreement method is set, <code>false</code> if not.
+   * @since 4.4.0
+   */
+  public final boolean hasKeyAgreementMethod ()
+  {
+    return m_eKeyAgreementMethod != null;
+  }
+
+  /**
+   * Set the key agreement method to use. When set, the encryption will use key agreement (e.g.
+   * ECDH-ES, X25519) instead of key transport (e.g. RSA-OAEP). If set to <code>null</code>, key
+   * transport is used.
+   *
+   * @param eKeyAgreementMethod
+   *        The key agreement method. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.4.0
+   */
+  @NonNull
+  public final AS4CryptParams setKeyAgreementMethod (@Nullable final ECryptoKeyAgreementMethod eKeyAgreementMethod)
+  {
+    m_eKeyAgreementMethod = eKeyAgreementMethod;
+    return this;
+  }
+
+  /**
+   * @return The key derivation function to use with key agreement. May be <code>null</code>.
+   * @since 4.4.0
+   */
+  @Nullable
+  public final ECryptoKeyDerivationMethod getKeyDerivationMethod ()
+  {
+    return m_eKeyDerivationMethod;
+  }
+
+  /**
+   * Set the key derivation function to use with key agreement (e.g. HKDF, ConcatKDF).
+   *
+   * @param eKeyDerivationMethod
+   *        The key derivation method. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.4.0
+   */
+  @NonNull
+  public final AS4CryptParams setKeyDerivationMethod (@Nullable final ECryptoKeyDerivationMethod eKeyDerivationMethod)
+  {
+    m_eKeyDerivationMethod = eKeyDerivationMethod;
+    return this;
+  }
+
+  /**
+   * @return The key wrap algorithm to use with key agreement. May be <code>null</code>.
+   * @since 4.4.0
+   */
+  @Nullable
+  public final ECryptoKeyWrapAlgorithm getKeyWrapAlgorithm ()
+  {
+    return m_eKeyWrapAlgorithm;
+  }
+
+  /**
+   * Set the key wrap algorithm to use with key agreement (e.g. AES-128 KeyWrap).
+   *
+   * @param eKeyWrapAlgorithm
+   *        The key wrap algorithm. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.4.0
+   */
+  @NonNull
+  public final AS4CryptParams setKeyWrapAlgorithm (@Nullable final ECryptoKeyWrapAlgorithm eKeyWrapAlgorithm)
+  {
+    m_eKeyWrapAlgorithm = eKeyWrapAlgorithm;
+    return this;
+  }
+
+  /**
+   * Convenience method to set all parameters required for eDelivery AS4 2.0 EdDSA/X25519 key
+   * agreement: X25519 key agreement, HKDF key derivation, AES-128 key wrap.
+   *
+   * @return this for chaining
+   * @since 4.4.0
+   */
+  @NonNull
+  public final AS4CryptParams setEDelivery2KeyAgreementX25519 ()
+  {
+    return setKeyAgreementMethod (ECryptoKeyAgreementMethod.X25519).setKeyDerivationMethod (ECryptoKeyDerivationMethod.HKDF)
+                                                                   .setKeyWrapAlgorithm (ECryptoKeyWrapAlgorithm.AES_128);
+  }
+
+  /**
+   * Convenience method to set all parameters required for eDelivery AS4 2.0 ECDSA/ECDH-ES key
+   * agreement: ECDH-ES key agreement, HKDF key derivation, AES-128 key wrap.
+   *
+   * @return this for chaining
+   * @since 4.4.0
+   */
+  @NonNull
+  public final AS4CryptParams setEDelivery2KeyAgreementECDHES ()
+  {
+    return setKeyAgreementMethod (ECryptoKeyAgreementMethod.ECDH_ES).setKeyDerivationMethod (ECryptoKeyDerivationMethod.HKDF)
+                                                                    .setKeyWrapAlgorithm (ECryptoKeyWrapAlgorithm.AES_128);
   }
 
   /**
@@ -462,6 +592,9 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
            .setKeyEncAlgorithm (m_eKeyEncAlgorithm)
            .setMGFAlgorithm (m_sMGFAlgorithm)
            .setDigestAlgorithm (m_sDigestAlgorithm)
+           .setKeyAgreementMethod (m_eKeyAgreementMethod)
+           .setKeyDerivationMethod (m_eKeyDerivationMethod)
+           .setKeyWrapAlgorithm (m_eKeyWrapAlgorithm)
            .setCertificate (m_aCert)
            .setAlias (m_sAlias)
            .setSessionKeyProvider (m_aSessionKeyProvider)
@@ -488,6 +621,9 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
                                        .append ("KeyEncAlgorithm", m_eKeyEncAlgorithm)
                                        .append ("MGFAlgorithm", m_sMGFAlgorithm)
                                        .append ("DigestAlgorithm", m_sDigestAlgorithm)
+                                       .appendIfNotNull ("KeyAgreementMethod", m_eKeyAgreementMethod)
+                                       .appendIfNotNull ("KeyDerivationMethod", m_eKeyDerivationMethod)
+                                       .appendIfNotNull ("KeyWrapAlgorithm", m_eKeyWrapAlgorithm)
                                        .append ("Certificate", m_aCert)
                                        .append ("Alias", m_sAlias)
                                        .append ("SessionKeyProvider", m_aSessionKeyProvider)

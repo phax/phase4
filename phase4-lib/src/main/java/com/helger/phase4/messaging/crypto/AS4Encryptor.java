@@ -80,10 +80,27 @@ public final class AS4Encryptor
     // signing certificate.
     aBuilder.setKeyIdentifierType (aCryptParams.getKeyIdentifierType ().getTypeID ());
     aBuilder.setSymmetricEncAlgorithm (aCryptParams.getAlgorithmCrypt ().getAlgorithmURI ());
-    aBuilder.setKeyEncAlgo (aCryptParams.getKeyEncAlgorithm ().getID ());
-    aBuilder.setMGFAlgorithm (aCryptParams.getMGFAlgorithm ());
-    aBuilder.setDigestAlgorithm (aCryptParams.getDigestAlgorithm ());
     aBuilder.setEncryptSymmKey (aCryptParams.isEncryptSymmetricSessionKey ());
+
+    if (aCryptParams.hasKeyAgreementMethod ())
+    {
+      // eDelivery AS4 2.0 style: key agreement (X25519/ECDH-ES) + key
+      // derivation (HKDF) + key wrap (AES-128)
+      aBuilder.setKeyAgreementMethod (aCryptParams.getKeyAgreementMethod ().getID ());
+
+      if (aCryptParams.getKeyDerivationMethod () != null)
+        aBuilder.setKeyDerivationMethod (aCryptParams.getKeyDerivationMethod ().getID ());
+
+      if (aCryptParams.getKeyWrapAlgorithm () != null)
+        aBuilder.setKeyEncAlgo (aCryptParams.getKeyWrapAlgorithm ().getID ());
+    }
+    else
+    {
+      // Classic RSA key transport mode
+      aBuilder.setKeyEncAlgo (aCryptParams.getKeyEncAlgorithm ().getID ());
+      aBuilder.setMGFAlgorithm (aCryptParams.getMGFAlgorithm ());
+      aBuilder.setDigestAlgorithm (aCryptParams.getDigestAlgorithm ());
+    }
 
     if (aCryptParams.hasCertificate ())
     {
@@ -121,12 +138,18 @@ public final class AS4Encryptor
                  aCryptParams.getKeyIdentifierType ().name () +
                  "; EncAlgo=" +
                  aCryptParams.getAlgorithmCrypt ().getAlgorithmURI () +
-                 "; KeyEncAlgo=" +
-                 aCryptParams.getKeyEncAlgorithm () +
-                 "; MgfAlgo=" +
-                 aCryptParams.getMGFAlgorithm () +
-                 "; DigestAlgo=" +
-                 aCryptParams.getDigestAlgorithm () +
+                 (aCryptParams.hasKeyAgreementMethod () ? "; KeyAgreement=" +
+                                                          aCryptParams.getKeyAgreementMethod () +
+                                                          "; KeyDerivation=" +
+                                                          aCryptParams.getKeyDerivationMethod () +
+                                                          "; KeyWrap=" +
+                                                          aCryptParams.getKeyWrapAlgorithm ()
+                                                        : "; KeyEncAlgo=" +
+                                                          aCryptParams.getKeyEncAlgorithm () +
+                                                          "; MgfAlgo=" +
+                                                          aCryptParams.getMGFAlgorithm () +
+                                                          "; DigestAlgo=" +
+                                                          aCryptParams.getDigestAlgorithm ()) +
                  (aCryptParams.hasAlias () ? "; KeyAlias=" + aCryptParams.getAlias () : "") +
                  (aCryptParams.hasCertificate () ? "; CertificateSubjectCN=" +
                                                    aCryptParams.getCertificate ().getSubjectX500Principal ().getName ()
@@ -221,12 +244,18 @@ public final class AS4Encryptor
                  aCryptParams.getKeyIdentifierType ().name () +
                  "; EncAlgo=" +
                  aCryptParams.getAlgorithmCrypt ().getAlgorithmURI () +
-                 "; KeyEncAlgo=" +
-                 aCryptParams.getKeyEncAlgorithm () +
-                 "; MgfAlgo=" +
-                 aCryptParams.getMGFAlgorithm () +
-                 "; DigestAlgo=" +
-                 aCryptParams.getDigestAlgorithm () +
+                 (aCryptParams.hasKeyAgreementMethod () ? "; KeyAgreement=" +
+                                                          aCryptParams.getKeyAgreementMethod () +
+                                                          "; KeyDerivation=" +
+                                                          aCryptParams.getKeyDerivationMethod () +
+                                                          "; KeyWrap=" +
+                                                          aCryptParams.getKeyWrapAlgorithm ()
+                                                        : "; KeyEncAlgo=" +
+                                                          aCryptParams.getKeyEncAlgorithm () +
+                                                          "; MgfAlgo=" +
+                                                          aCryptParams.getMGFAlgorithm () +
+                                                          "; DigestAlgo=" +
+                                                          aCryptParams.getDigestAlgorithm ()) +
                  (aCryptParams.hasAlias () ? "; KeyAlias=" + aCryptParams.getAlias () : "") +
                  (aCryptParams.hasCertificate () ? "; CertificateSubjectCN=" +
                                                    aCryptParams.getCertificate ().getSubjectX500Principal ().getName ()
