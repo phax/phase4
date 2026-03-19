@@ -7,9 +7,6 @@
 
 ![Logo](https://github.com/phax/phase4/blob/master/docs/logo/phase4-logo-653-180.png)
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.helger.phase4/phase4-parent-pom)](https://img.shields.io/maven-central/v/com.helger.phase4/phase4-parent-pom)
-[![javadoc](https://javadoc.io/badge2/com.helger.phase4/phase4-lib/javadoc.svg)](https://javadoc.io/doc/com.helger.phase4/phase4-lib)
-
 phase4 is an embeddable, lightweight Java library to send and receive AS4 messages for different profiles. 
 
 phase4 is part of my Peppol solution stack. See https://github.com/phax/peppol for other components and libraries in that area.
