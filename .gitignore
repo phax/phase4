@@ -18,6 +18,7 @@ base-example-large-*.xml
 private-*.properties*
 Main*ReceiverProd.java
 
+.claude/
 .idea/
 .settings/ 
 target/
