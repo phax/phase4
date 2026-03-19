@@ -16,9 +16,12 @@
  */
 package com.helger.phase4.crypto;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.wss4j.common.WSS4JConstants;
 import org.junit.Test;
 
 import com.helger.base.string.StringHelper;
@@ -39,5 +42,28 @@ public final class ECryptoKeyDerivationMethodTest
       assertSame (e, ECryptoKeyDerivationMethod.getFromIDOrNull (e.getID ()));
       assertSame (e, ECryptoKeyDerivationMethod.getFromIDOrDefault (e.getID (), null));
     }
+  }
+
+  @Test
+  public void testUnknownID ()
+  {
+    assertNull (ECryptoKeyDerivationMethod.getFromIDOrNull ("does-not-exist"));
+    assertNull (ECryptoKeyDerivationMethod.getFromIDOrNull (null));
+    assertNull (ECryptoKeyDerivationMethod.getFromIDOrNull (""));
+    assertSame (ECryptoKeyDerivationMethod.HKDF,
+                ECryptoKeyDerivationMethod.getFromIDOrDefault ("does-not-exist", ECryptoKeyDerivationMethod.HKDF));
+  }
+
+  @Test
+  public void testWSS4JConstantsMatch ()
+  {
+    assertEquals (WSS4JConstants.KEYDERIVATION_CONCATKDF, ECryptoKeyDerivationMethod.CONCAT_KDF.getID ());
+    assertEquals (WSS4JConstants.KEYDERIVATION_HKDF, ECryptoKeyDerivationMethod.HKDF.getID ());
+  }
+
+  @Test
+  public void testExpectedCount ()
+  {
+    assertEquals (2, ECryptoKeyDerivationMethod.values ().length);
   }
 }

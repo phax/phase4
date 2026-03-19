@@ -16,9 +16,12 @@
  */
 package com.helger.phase4.crypto;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.wss4j.common.WSS4JConstants;
 import org.junit.Test;
 
 import com.helger.base.string.StringHelper;
@@ -39,5 +42,29 @@ public final class ECryptoKeyAgreementMethodTest
       assertSame (e, ECryptoKeyAgreementMethod.getFromIDOrNull (e.getID ()));
       assertSame (e, ECryptoKeyAgreementMethod.getFromIDOrDefault (e.getID (), null));
     }
+  }
+
+  @Test
+  public void testUnknownID ()
+  {
+    assertNull (ECryptoKeyAgreementMethod.getFromIDOrNull ("does-not-exist"));
+    assertNull (ECryptoKeyAgreementMethod.getFromIDOrNull (null));
+    assertNull (ECryptoKeyAgreementMethod.getFromIDOrNull (""));
+    assertSame (ECryptoKeyAgreementMethod.X25519,
+                ECryptoKeyAgreementMethod.getFromIDOrDefault ("does-not-exist", ECryptoKeyAgreementMethod.X25519));
+  }
+
+  @Test
+  public void testWSS4JConstantsMatch ()
+  {
+    assertEquals (WSS4JConstants.AGREEMENT_METHOD_ECDH_ES, ECryptoKeyAgreementMethod.ECDH_ES.getID ());
+    assertEquals (WSS4JConstants.AGREEMENT_METHOD_X25519, ECryptoKeyAgreementMethod.X25519.getID ());
+    assertEquals (WSS4JConstants.AGREEMENT_METHOD_X448, ECryptoKeyAgreementMethod.X448.getID ());
+  }
+
+  @Test
+  public void testExpectedCount ()
+  {
+    assertEquals (3, ECryptoKeyAgreementMethod.values ().length);
   }
 }

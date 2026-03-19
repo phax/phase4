@@ -16,9 +16,12 @@
  */
 package com.helger.phase4.crypto;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.wss4j.common.WSS4JConstants;
 import org.junit.Test;
 
 import com.helger.base.string.StringHelper;
@@ -39,5 +42,30 @@ public final class ECryptoKeyWrapAlgorithmTest
       assertSame (e, ECryptoKeyWrapAlgorithm.getFromIDOrNull (e.getID ()));
       assertSame (e, ECryptoKeyWrapAlgorithm.getFromIDOrDefault (e.getID (), null));
     }
+  }
+
+  @Test
+  public void testUnknownID ()
+  {
+    assertNull (ECryptoKeyWrapAlgorithm.getFromIDOrNull ("does-not-exist"));
+    assertNull (ECryptoKeyWrapAlgorithm.getFromIDOrNull (null));
+    assertNull (ECryptoKeyWrapAlgorithm.getFromIDOrNull (""));
+    assertSame (ECryptoKeyWrapAlgorithm.AES_128,
+                ECryptoKeyWrapAlgorithm.getFromIDOrDefault ("does-not-exist", ECryptoKeyWrapAlgorithm.AES_128));
+  }
+
+  @Test
+  public void testWSS4JConstantsMatch ()
+  {
+    assertEquals (WSS4JConstants.KEYWRAP_AES128, ECryptoKeyWrapAlgorithm.AES_128.getID ());
+    assertEquals (WSS4JConstants.KEYWRAP_AES192, ECryptoKeyWrapAlgorithm.AES_192.getID ());
+    assertEquals (WSS4JConstants.KEYWRAP_AES256, ECryptoKeyWrapAlgorithm.AES_256.getID ());
+    assertEquals (WSS4JConstants.KEYWRAP_TRIPLEDES, ECryptoKeyWrapAlgorithm.TRIPLE_DES.getID ());
+  }
+
+  @Test
+  public void testExpectedCount ()
+  {
+    assertEquals (4, ECryptoKeyWrapAlgorithm.values ().length);
   }
 }
