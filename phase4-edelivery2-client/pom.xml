@@ -25,7 +25,7 @@
     <version>4.3.3-SNAPSHOT</version>
   </parent>
   <artifactId>phase4-edelivery2-client</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>phase4-edelivery2-client</name>
   <description>eDelivery AS4 2.0 client for outgoing transmissions</description>
   <url>https://github.com/phax/phase4/phase4-edelivery2-client</url>
@@ -100,15 +100,14 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <instructions>
-            <Automatic-Module-Name>com.helger.phase4.edelivery2</Automatic-Module-Name>
-            <Export-Package>com.helger.phase4.edelivery2.*</Export-Package>
-            <Import-Package>!org.jspecify.annotations.*,*</Import-Package>
-          </instructions>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>com.helger.phase4.edelivery2</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
