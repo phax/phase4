@@ -13,7 +13,9 @@ phase4 is part of my Peppol solution stack. See https://github.com/phax/peppol f
 
 Please see the **[Wiki](https://github.com/phax/phase4/wiki)** for the full documentation.
 
-Please see [phase4-pepol-standalone](https://github.com/phax/phase4-peppol-standalone) for a standalone example application with the Peppol profile.
+Please see [phoss-ap](https://github.com/phax/phoss-ap) for a standalone Peppol Access Point.
+
+Previously I also pointed to [phase4-pepol-standalone](https://github.com/phax/phase4-peppol-standalone) but this is "only" a standalone example application with the Peppol profile - requires coding.
 
 If you like the project, a star on GitHub is always appreciated.
 
