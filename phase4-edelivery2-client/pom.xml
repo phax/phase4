@@ -47,7 +47,6 @@
     <dependency>
       <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-profile-edelivery2</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.helger.phase4</groupId>
