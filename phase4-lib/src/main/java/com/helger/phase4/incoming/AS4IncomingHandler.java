@@ -837,56 +837,57 @@ public final class AS4IncomingHandler
         _decompressAttachments (aDecryptedAttachments, aEbmsUserMessage, aIncomingState);
       }
       else
-      {
-        // Signal message
-
-        // Pull-request also requires PMode
-        if (aEbmsPullRequest != null)
-          if (aPMode == null)
-            throw new Phase4IncomingException ("No AS4 P-Mode configuration found for PullRequest!");
-
-        if (aValidator != null)
+        if (aEbmsSignalMessage != null)
         {
-          if (aAS4ProfileSelector.validateAgainstProfile ())
+          // Signal message
+
+          // Pull-request also requires PMode
+          if (aEbmsPullRequest != null)
+            if (aPMode == null)
+              throw new Phase4IncomingException ("No AS4 P-Mode configuration found for PullRequest!");
+
+          if (aValidator != null)
           {
-            final ErrorList aErrorList = new ErrorList ();
-            if (aPMode != null)
-              aValidator.validatePMode (aPMode, aErrorList, EAS4ProfileValidationMode.SIGNAL_MESSAGE);
-            aValidator.validateSignalMessage (aEbmsSignalMessage, aErrorList);
-
-            if (aErrorList.containsAtLeastOneError ())
+            if (aAS4ProfileSelector.validateAgainstProfile ())
             {
-              LOGGER.error ("Error validating incoming AS4 SignalMessage with the profile '" +
-                            aProfile.getDisplayName () +
-                            "'");
+              final ErrorList aErrorList = new ErrorList ();
+              if (aPMode != null)
+                aValidator.validatePMode (aPMode, aErrorList, EAS4ProfileValidationMode.SIGNAL_MESSAGE);
+              aValidator.validateSignalMessage (aEbmsSignalMessage, aErrorList);
 
-              for (final IError aError : aErrorList)
+              if (aErrorList.containsAtLeastOneError ())
               {
-                final String sDetails = aError.getAsString (aLocale);
-                if (aError.isError ())
-                {
-                  LOGGER.error (sDetails);
-                  aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.errorBuilder (aLocale)
-                                                                                        .refToMessageInError (aIncomingState.getMessageID ())
-                                                                                        .errorDetail (sDetails)
-                                                                                        .build ());
-                }
-                else
-                  LOGGER.warn (sDetails);
-              }
+                LOGGER.error ("Error validating incoming AS4 SignalMessage with the profile '" +
+                              aProfile.getDisplayName () +
+                              "'");
 
-              // Was previously a thrown exception - that's why we break here
-              return aIncomingState;
+                for (final IError aError : aErrorList)
+                {
+                  final String sDetails = aError.getAsString (aLocale);
+                  if (aError.isError ())
+                  {
+                    LOGGER.error (sDetails);
+                    aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.errorBuilder (aLocale)
+                                                                                          .refToMessageInError (aIncomingState.getMessageID ())
+                                                                                          .errorDetail (sDetails)
+                                                                                          .build ());
+                  }
+                  else
+                    LOGGER.warn (sDetails);
+                }
+
+                // Was previously a thrown exception - that's why we break here
+                return aIncomingState;
+              }
+            }
+            else
+            {
+              LOGGER.warn ("The AS4 profile '" +
+                           sProfileID +
+                           "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
             }
           }
-          else
-          {
-            LOGGER.warn ("The AS4 profile '" +
-                         sProfileID +
-                         "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
-          }
         }
-      }
 
       final boolean bUseDecryptedSoap = aIncomingState.hasDecryptedSoapDocument ();
       final Document aRealSoapDoc = bUseDecryptedSoap ? aIncomingState.getDecryptedSoapDocument () : aSoapDocument;

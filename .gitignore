@@ -24,5 +24,6 @@ Main*ReceiverProd.java
 target/
 generated/
 phase4-data/
+phase4-dumps/
 .apt_generated/
 .apt_generated_tests/
