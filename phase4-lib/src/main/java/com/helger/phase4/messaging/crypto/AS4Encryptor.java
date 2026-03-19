@@ -226,7 +226,7 @@ public final class AS4Encryptor
       ret = _encryptSoapBodyPayload (aCryptoFactoryCrypt, eSoapVersion, aDoc, bMustUnderstand, aCryptParams);
     }
 
-    LOGGER.info ("phase4 --- encrypt.soap:start");
+    LOGGER.info ("phase4 --- encrypt.soap:end");
 
     return ret;
   }

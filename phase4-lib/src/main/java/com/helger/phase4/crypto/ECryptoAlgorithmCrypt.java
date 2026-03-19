@@ -41,7 +41,11 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   AES_256_GCM ("aes256-gcm", CMSAlgorithm.AES256_GCM, WSS4JConstants.AES_256_GCM);
 
   /** Default encrypt algorithm */
-  public static final ECryptoAlgorithmCrypt ENCRPYTION_ALGORITHM_DEFAULT = AES_128_GCM;
+  public static final ECryptoAlgorithmCrypt ENCRYPTION_ALGORITHM_DEFAULT = AES_128_GCM;
+
+  /** @deprecated Use {@link #ENCRYPTION_ALGORITHM_DEFAULT} instead - typo in name */
+  @Deprecated (since = "4.4.0", forRemoval = true)
+  public static final ECryptoAlgorithmCrypt ENCRPYTION_ALGORITHM_DEFAULT = ENCRYPTION_ALGORITHM_DEFAULT;
 
   private final String m_sID;
   private final ASN1ObjectIdentifier m_aOID;

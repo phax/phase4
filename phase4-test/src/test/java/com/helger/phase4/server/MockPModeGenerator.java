@@ -121,7 +121,7 @@ public final class MockPModeGenerator
     aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
     aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT);
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
-    aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.ENCRYPTION_ALGORITHM_DEFAULT);
     aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
     aPModeLegSecurity.setSendReceipt (true);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);

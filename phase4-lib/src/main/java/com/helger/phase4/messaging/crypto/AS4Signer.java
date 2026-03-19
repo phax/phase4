@@ -46,7 +46,7 @@ import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.phase4.wss.WSSSynchronizer;
 
 /**
- * Message singing helper.
+ * Message signing helper.
  *
  * @author Philip Helger
  */

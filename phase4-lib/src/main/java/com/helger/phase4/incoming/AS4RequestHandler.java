@@ -169,7 +169,7 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     @NonNull
-    public HttpEntity getHttpEntityForSending (@NonNull final IMimeType aMimType)
+    public HttpEntity getHttpEntityForSending (@NonNull final IMimeType aMimeType)
     {
       return new HttpXMLEntity (m_aDoc, m_aMimeType);
     }
@@ -248,7 +248,7 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     @NonNull
-    public HttpMimeMessageEntity getHttpEntityForSending (@NonNull final IMimeType aMimType)
+    public HttpMimeMessageEntity getHttpEntityForSending (@NonNull final IMimeType aMimeType)
     {
       // Repeatable if the underlying Mime message is repeatable
       return HttpMimeMessageEntity.create (m_aMimeMsg);

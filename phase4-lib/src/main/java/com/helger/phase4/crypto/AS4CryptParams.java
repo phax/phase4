@@ -56,13 +56,6 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   public static final ICryptoSessionKeyProvider DEFAULT_SESSION_KEY_PROVIDER = ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_128;
   public static final boolean DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY = true;
 
-  /**
-   * HKDF PRF algorithm URI for HMAC-SHA256, as required by eDelivery AS4 2.0
-   *
-   * @since 4.4.0
-   */
-  public static final String HKDF_PRF_HMAC_SHA256 = WSS4JConstants.HMAC_SHA256;
-
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4CryptParams.class);
 
   // The key identifier type to use
@@ -642,6 +635,6 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   @ReturnsMutableObject
   public static AS4CryptParams createDefault ()
   {
-    return new AS4CryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    return new AS4CryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.ENCRYPTION_ALGORITHM_DEFAULT);
   }
 }
