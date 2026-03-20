@@ -67,7 +67,7 @@ public final class MainPhase4PeppolSenderComplavis
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
-                                                                     ESML.DIGIT_TEST))
+                                                                     ESML.PEPPOL_TEST))
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

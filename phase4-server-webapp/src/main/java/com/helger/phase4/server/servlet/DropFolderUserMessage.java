@@ -99,7 +99,7 @@ public final class DropFolderUserMessage
         final PeppolSBDHData aSBDH = new PeppolSBDHDataReader (IF).extractData (aSBD);
         final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (UP,
                                                                     aSBDH.getReceiverAsIdentifier (),
-                                                                    ESML.DIGIT_TEST);
+                                                                    ESML.PEPPOL_TEST);
         final EndpointType aEndpoint = aSMPClient.getEndpoint (aSBDH.getReceiverAsIdentifier (),
                                                                aSBDH.getDocumentTypeAsIdentifier (),
                                                                aSBDH.getProcessAsIdentifier (),

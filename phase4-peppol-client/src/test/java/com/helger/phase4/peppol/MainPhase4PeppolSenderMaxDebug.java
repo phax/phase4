@@ -88,7 +88,7 @@ public final class MainPhase4PeppolSenderMaxDebug
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
-                                                                     ESML.DIGIT_TEST))
+                                                                     ESML.PEPPOL_TEST))
                                   .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                                   .validationConfiguration (PeppolValidationBisAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_1_0_11,
                                                             new Phase4PeppolValidatonResultHandler ())

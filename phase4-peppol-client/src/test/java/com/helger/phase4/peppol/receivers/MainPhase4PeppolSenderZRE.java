@@ -93,7 +93,7 @@ public final class MainPhase4PeppolSenderZRE
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
-                                                                     ESML.DIGIT_TEST))
+                                                                     ESML.PEPPOL_TEST))
                                   .validationConfiguration (bVerify ? null
                                                                     : PeppolValidation2025_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
                                                             new Phase4PeppolValidatonResultHandler ())

@@ -84,7 +84,7 @@ public final class MainPhase4PeppolSenderCisboxXRechnung
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
-                                                                     ESML.DIGIT_TEST))
+                                                                     ESML.PEPPOL_TEST))
                                   .validationRegistry (aVESRegistry)
                                   .validationConfiguration (XRechnungValidation.VID_XRECHNUNG_UBL_INVOICE_302,
                                                             new Phase4PeppolValidatonResultHandler ())

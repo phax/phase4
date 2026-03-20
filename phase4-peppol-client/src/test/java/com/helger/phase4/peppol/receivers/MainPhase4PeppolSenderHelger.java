@@ -94,7 +94,7 @@ public final class MainPhase4PeppolSenderHelger
                                                                     .payload (aPayloadElement)
                                                                     .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                                                        aReceiverID,
-                                                                                                       ESML.DIGIT_TEST))
+                                                                                                       ESML.PEPPOL_TEST))
                                                                     .checkReceiverAPCertificate (true)
                                                                     .buildMessageCallback (aBuildMessageCallback)
                                                                     .signalMsgValidationResultHdl (aSignalMsgValidationResultHdl)

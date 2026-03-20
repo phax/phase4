@@ -105,7 +105,7 @@ public final class MainPhase4PeppolSenderQvaliaUBL
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
-                                                                     ESML.DIGIT_TEST))
+                                                                     ESML.PEPPOL_TEST))
                                   .validationRegistry (aVESRegistry)
                                   .validationConfiguration (EN16931Validation.VID_UBL_INVOICE_1314_2,
                                                             new Phase4PeppolValidatonResultHandler ())

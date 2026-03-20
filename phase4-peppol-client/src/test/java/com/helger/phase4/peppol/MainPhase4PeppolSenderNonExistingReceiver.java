@@ -75,7 +75,7 @@ public final class MainPhase4PeppolSenderNonExistingReceiver
                                                                   .payload (aPayloadElement)
                                                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                                                      aReceiverID,
-                                                                                                     ESML.DIGIT_TEST))
+                                                                                                     ESML.PEPPOL_TEST))
                                                                   .disableValidation ()
                                                                   .sendMessageAndCheckForReceipt (aSendingException::set);
       if (aSendingException.isSet ())

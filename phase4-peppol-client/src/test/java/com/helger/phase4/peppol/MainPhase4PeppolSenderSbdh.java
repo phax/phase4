@@ -71,7 +71,7 @@ public final class MainPhase4PeppolSenderSbdh
                                   .senderPartyID ("POP000306")
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aSbdh.getReceiverAsIdentifier (),
-                                                                     ESML.DIGIT_TEST))
+                                                                     ESML.PEPPOL_TEST))
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

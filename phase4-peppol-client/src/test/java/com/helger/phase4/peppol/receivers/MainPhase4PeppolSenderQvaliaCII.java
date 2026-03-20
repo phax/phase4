@@ -85,7 +85,7 @@ public final class MainPhase4PeppolSenderQvaliaCII
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
-                                                                     ESML.DIGIT_TEST))
+                                                                     ESML.PEPPOL_TEST))
                                   .validationRegistry (aVESRegistry)
                                   .validationConfiguration (EN16931Validation.VID_CII_1315,
                                                             new Phase4PeppolValidatonResultHandler ())

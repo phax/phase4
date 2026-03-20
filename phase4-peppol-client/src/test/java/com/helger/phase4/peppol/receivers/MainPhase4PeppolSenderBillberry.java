@@ -97,7 +97,7 @@ public final class MainPhase4PeppolSenderBillberry
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
-                                                                     ESML.DIGIT_TEST))
+                                                                     ESML.PEPPOL_TEST))
                                   .disableValidation ()
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .sendMessageAndCheckForReceipt ();

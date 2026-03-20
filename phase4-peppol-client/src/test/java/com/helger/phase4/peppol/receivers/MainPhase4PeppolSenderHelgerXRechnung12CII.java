@@ -98,7 +98,7 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
-                                                                     ESML.DIGIT_TEST))
+                                                                     ESML.PEPPOL_TEST))
                                   .validationRegistry (aVESRegistry)
                                   .validationConfiguration (XRechnungValidation.VID_XRECHNUNG_CII_302,
                                                             new Phase4PeppolValidatonResultHandler ())

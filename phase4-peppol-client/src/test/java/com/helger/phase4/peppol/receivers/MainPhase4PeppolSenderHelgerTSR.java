@@ -86,7 +86,7 @@ public final class MainPhase4PeppolSenderHelgerTSR
                                                                   .payload (aPayloadElement)
                                                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                                                      aReceiverID,
-                                                                                                     ESML.DIGIT_TEST))
+                                                                                                     ESML.PEPPOL_TEST))
                                                                   .sbdDocumentConsumer (x -> LOGGER.info (new SBDMarshaller ().setFormattedOutput (true)
                                                                                                                               .getAsString (x)))
                                                                   .buildMessageCallback (aBuildMessageCallback);

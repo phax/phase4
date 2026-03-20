@@ -72,7 +72,7 @@ public final class MainPhase4PeppolSenderACube
                                   .payload (aPayloadElement)
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
-                                                                     ESML.DIGIT_TEST))
+                                                                     ESML.PEPPOL_TEST))
                                   .sbdDocumentConsumer (x -> new SBDMarshaller ().write (x,
                                                                                          new File (AS4Configuration.getDumpBasePathFile (),
                                                                                                    com.helger.phase4.dump.AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH +
