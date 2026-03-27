@@ -37,7 +37,6 @@ public final class PModeTest
   public final TestRule m_aTestRule = new AS4TestRule ();
 
   @Test
-  @SuppressWarnings ("unused")
   public void testInvalidCtor ()
   {
     try
