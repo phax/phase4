@@ -84,10 +84,10 @@
     <ph-commons.version>12.1.5</ph-commons.version>
     <ph-schematron.version>9.1.1</ph-schematron.version>
     <ph-ubl.version>10.1.0</ph-ubl.version>
-    <ph-web.version>11.2.4</ph-web.version>
+    <ph-web.version>11.2.5</ph-web.version>
     <ph-xsds.version>4.1.0</ph-xsds.version>
     <phive.version>12.0.1</phive.version>
-    <phive-rules.version>4.2.4</phive-rules.version>
+    <phive-rules.version>4.2.5</phive-rules.version>
   </properties>
 
   <dependencyManagement>
@@ -116,7 +116,7 @@
       <dependency>
         <groupId>com.helger.masterdata</groupId>
         <artifactId>ph-masterdata-parent-pom</artifactId>
-        <version>8.1.0</version>
+        <version>8.1.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
