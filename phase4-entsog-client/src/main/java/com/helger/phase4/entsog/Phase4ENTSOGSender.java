@@ -30,6 +30,8 @@ import com.helger.annotation.concurrent.Immutable;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
+import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.profile.entsog.AS4ENTSOGProfileRegistarSPI;
@@ -53,13 +55,35 @@ public final class Phase4ENTSOGSender
   {}
 
   /**
-   * @return Create a new Builder for AS4 messages if the payload is present. Never
+   * @return Create a new Builder for AS4 messages using the ENTSOG v3.6 profile (RSA-based). Never
    *         <code>null</code>.
    */
   @NonNull
   public static ENTSOGUserMessageBuilder builder ()
   {
     return new ENTSOGUserMessageBuilder ();
+  }
+
+  /**
+   * @return Create a new Builder for AS4 messages using the ENTSOG v4.0 EdDSA/X25519 profile
+   *         (primary). Never <code>null</code>.
+   * @since 4.4.2
+   */
+  @NonNull
+  public static ENTSOG4EdDSAUserMessageBuilder builderEdDSA ()
+  {
+    return new ENTSOG4EdDSAUserMessageBuilder ();
+  }
+
+  /**
+   * @return Create a new Builder for AS4 messages using the ENTSOG v4.0 ECDSA/ECDH-ES profile
+   *         (alternative). Never <code>null</code>.
+   * @since 4.4.2
+   */
+  @NonNull
+  public static ENTSOG4ECDSAUserMessageBuilder builderECDSA ()
+  {
+    return new ENTSOG4ECDSAUserMessageBuilder ();
   }
 
   /**
@@ -192,6 +216,77 @@ public final class Phase4ENTSOGSender
   {
     public ENTSOGUserMessageBuilder ()
     {}
+  }
+
+  /**
+   * Abstract ENTSOG 4.0 UserMessage builder class with EdDSA/ECDSA support.
+   *
+   * @author Philip Helger
+   * @param <IMPLTYPE>
+   *        The implementation type
+   * @since 4.4.2
+   */
+  public abstract static class AbstractENTSOG4UserMessageBuilder <IMPLTYPE extends AbstractENTSOG4UserMessageBuilder <IMPLTYPE>>
+                                                                  extends
+                                                                  AbstractENTSOGUserMessageBuilder <IMPLTYPE>
+  {
+    protected AbstractENTSOG4UserMessageBuilder (@NonNull final String sProfileID)
+    {
+      try
+      {
+        as4ProfileID (sProfileID);
+        httpClientFactory (new Phase4ENTSOGHttpClientSettings ());
+
+        signingParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+        cryptParams ().setKeyIdentifierType (DEFAULT_KEY_IDENTIFIER_TYPE);
+
+        conversationID ("");
+      }
+      catch (final Exception ex)
+      {
+        throw new IllegalStateException ("Failed to init AS4 Client builder", ex);
+      }
+    }
+  }
+
+  /**
+   * Builder for sending AS4 messages using ENTSOG 4.0 EdDSA/X25519 profile (primary). Use
+   * {@link Phase4ENTSOGSender#builderEdDSA()} to create instances.
+   *
+   * @author Philip Helger
+   * @since 4.4.2
+   */
+  public static class ENTSOG4EdDSAUserMessageBuilder extends AbstractENTSOG4UserMessageBuilder <ENTSOG4EdDSAUserMessageBuilder>
+  {
+    public ENTSOG4EdDSAUserMessageBuilder ()
+    {
+      super (AS4ENTSOGProfileRegistarSPI.AS4_PROFILE_ID_V4_EDDSA);
+
+      // Set default crypto params for EdDSA/X25519
+      signingParams ().setAlgorithmSign (ECryptoAlgorithmSign.EDDSA_ED25519);
+      cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM)
+                    .setEDelivery2KeyAgreementX25519 ();
+    }
+  }
+
+  /**
+   * Builder for sending AS4 messages using ENTSOG 4.0 ECDSA/ECDH-ES profile (alternative). Use
+   * {@link Phase4ENTSOGSender#builderECDSA()} to create instances.
+   *
+   * @author Philip Helger
+   * @since 4.4.2
+   */
+  public static class ENTSOG4ECDSAUserMessageBuilder extends AbstractENTSOG4UserMessageBuilder <ENTSOG4ECDSAUserMessageBuilder>
+  {
+    public ENTSOG4ECDSAUserMessageBuilder ()
+    {
+      super (AS4ENTSOGProfileRegistarSPI.AS4_PROFILE_ID_V4_ECDSA);
+
+      // Set default crypto params for ECDSA/ECDH-ES
+      signingParams ().setAlgorithmSign (ECryptoAlgorithmSign.ECDSA_SHA_256);
+      cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM)
+                    .setEDelivery2KeyAgreementECDHES ();
+    }
   }
 
   /**

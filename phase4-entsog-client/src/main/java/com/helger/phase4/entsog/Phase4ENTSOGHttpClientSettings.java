@@ -46,8 +46,17 @@ public class Phase4ENTSOGHttpClientSettings extends HttpClientSettings
 
   public Phase4ENTSOGHttpClientSettings () throws GeneralSecurityException
   {
-    // CEF requires TLS v1.2
-    final SSLContext aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_12.getID ());
+    // ENTSOG 4.0 recommends TLS 1.3, minimum TLS 1.2
+    SSLContext aSSLContext;
+    try
+    {
+      aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_13.getID ());
+    }
+    catch (final GeneralSecurityException ex)
+    {
+      // Fallback to TLS 1.2 if TLS 1.3 is not available
+      aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_12.getID ());
+    }
     // But we're basically trusting all hosts - the exact list is hard to
     // determine
     aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);

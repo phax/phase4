@@ -38,14 +38,25 @@ import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
 @IsSPIImplementation
 public final class AS4ENTSOGProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
+  /** Profile ID for ENTSOG v3.6 (RSA-based) */
   public static final String AS4_PROFILE_ID = "entsog";
   public static final String AS4_PROFILE_NAME = "ENTSOG";
+
+  /** Profile ID for ENTSOG v4.0 EdDSA/X25519 (primary profile) */
+  public static final String AS4_PROFILE_ID_V4_EDDSA = "entsog4-eddsa";
+  public static final String AS4_PROFILE_NAME_V4_EDDSA = "ENTSOG 4.0 EdDSA";
+
+  /** Profile ID for ENTSOG v4.0 ECDSA/ECDH-ES (alternative profile) */
+  public static final String AS4_PROFILE_ID_V4_ECDSA = "entsog4-ecdsa";
+  public static final String AS4_PROFILE_NAME_V4_ECDSA = "ENTSOG 4.0 ECDSA";
+
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ENTSOGProfileRegistarSPI.class);
 
   public void registerAS4Profile (@NonNull final IAS4ProfileRegistrar aRegistrar)
   {
+    // ENTSOG v3.6 (legacy, RSA-based)
     final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> ENTSOGPMode.createENTSOGPMode (i,
                                                                                                        r,
                                                                                                        a,
@@ -54,13 +65,48 @@ public final class AS4ENTSOGProfileRegistarSPI implements IAS4ProfileRegistrarSP
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");
-    final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
+    aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID,
                                                 AS4_PROFILE_NAME,
                                                 ENTSOGCompatibilityValidator::new,
                                                 aDefaultPModeProvider,
                                                 PMODE_ID_PROVIDER,
                                                 false,
-                                                false);
-    aRegistrar.registerProfile (aProfile);
+                                                false));
+
+    // ENTSOG v4.0 EdDSA/X25519 (primary profile)
+    final IAS4ProfilePModeProvider aEdDSAPModeProvider = (i, r, a) -> ENTSOG4PMode.createENTSOG4PMode (i,
+                                                                                                       r,
+                                                                                                       a,
+                                                                                                       PMODE_ID_PROVIDER,
+                                                                                                       true,
+                                                                                                       ENTSOG4PMode.generatePModeLegSecurityEdDSA ());
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_V4_EDDSA + "'");
+    aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID_V4_EDDSA,
+                                                AS4_PROFILE_NAME_V4_EDDSA,
+                                                () -> new ENTSOG4CompatibilityValidator ().setAllowECDSA (false),
+                                                aEdDSAPModeProvider,
+                                                PMODE_ID_PROVIDER,
+                                                false,
+                                                false));
+
+    // ENTSOG v4.0 ECDSA/ECDH-ES (alternative profile)
+    final IAS4ProfilePModeProvider aECDSAPModeProvider = (i, r, a) -> ENTSOG4PMode.createENTSOG4PMode (i,
+                                                                                                       r,
+                                                                                                       a,
+                                                                                                       PMODE_ID_PROVIDER,
+                                                                                                       true,
+                                                                                                       ENTSOG4PMode.generatePModeLegSecurityECDSA ());
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_V4_ECDSA + "'");
+    aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID_V4_ECDSA,
+                                                AS4_PROFILE_NAME_V4_ECDSA,
+                                                () -> new ENTSOG4CompatibilityValidator ().setAllowECDSA (true),
+                                                aECDSAPModeProvider,
+                                                PMODE_ID_PROVIDER,
+                                                false,
+                                                false));
   }
 }
