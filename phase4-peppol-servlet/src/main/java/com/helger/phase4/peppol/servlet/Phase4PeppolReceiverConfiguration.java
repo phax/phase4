@@ -26,11 +26,17 @@ import com.helger.base.builder.IBuilder;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.base.tostring.ToStringGenerator;
+import com.helger.peppol.sml.ISMLInfo;
+import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
+import com.helger.smpclient.peppol.SMPClientReadOnly;
+import com.helger.smpclient.url.ISMPURLProvider;
+import com.helger.smpclient.url.PeppolNaptrURLProvider;
+import com.helger.smpclient.url.SMPDNSResolutionException;
 
 /**
  * This class contains the "per-request" data of
@@ -45,6 +51,8 @@ public final class Phase4PeppolReceiverConfiguration
 {
   private final boolean m_bReceiverCheckEnabled;
   private final ISMPExtendedServiceMetadataProvider m_aSMPClient;
+  private final ISMLInfo m_aSMLInfo;
+  private final ISMPURLProvider m_aSMPURLProvider;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
   private final IIdentifierFactory m_aSBDHIdentifierFactory;
@@ -59,8 +67,14 @@ public final class Phase4PeppolReceiverConfiguration
    * @param bReceiverCheckEnabled
    *        <code>true</code> if the receiver checks are enabled, <code>false</code> otherwise
    * @param aSMPClient
-   *        The SMP metadata provider to be used. May not be <code>null</code> if receiver checks
-   *        are enabled.
+   *        The SMP metadata provider to be used. May be <code>null</code> if {@code aSMLInfo} is
+   *        provided instead.
+   * @param aSMLInfo
+   *        The SML information for dynamic SMP client resolution per participant ID. May be
+   *        <code>null</code> if {@code aSMPClient} is provided instead.
+   * @param aSMPURLProvider
+   *        The SMP URL provider to be used for dynamic SMP client resolution. May be
+   *        <code>null</code> to use the default ({@link PeppolNaptrURLProvider#INSTANCE}).
    * @param sAS4EndpointURL
    *        The endpoint URL to check against. May neither be <code>null</code> nor empty if
    *        receiver checks are enabled.
@@ -82,6 +96,8 @@ public final class Phase4PeppolReceiverConfiguration
    */
   public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
                                             @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
+                                            @Nullable final ISMLInfo aSMLInfo,
+                                            @Nullable final ISMPURLProvider aSMPURLProvider,
                                             @Nullable final String sAS4EndpointURL,
                                             @Nullable final X509Certificate aAPCertificate,
                                             @NonNull final IIdentifierFactory aSBDHIdentifierFactory,
@@ -91,14 +107,17 @@ public final class Phase4PeppolReceiverConfiguration
                                             @NonNull final TrustedCAChecker aAPCAChecker)
   {
     if (bReceiverCheckEnabled)
-      ValueEnforcer.notNull (aSMPClient, "SMPClient");
-    if (bReceiverCheckEnabled)
+    {
+      if (aSMPClient == null && aSMLInfo == null)
+        throw new IllegalArgumentException ("Either an SMP Client or SML Info must be provided when receiver checks are enabled");
       ValueEnforcer.notEmpty (sAS4EndpointURL, "AS4EndpointURL");
-    if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aAPCertificate, "APCertificate");
+    }
     ValueEnforcer.notNull (aSBDHIdentifierFactory, "SBDHIdentifierFactory");
     m_bReceiverCheckEnabled = bReceiverCheckEnabled;
     m_aSMPClient = aSMPClient;
+    m_aSMLInfo = aSMLInfo;
+    m_aSMPURLProvider = aSMPURLProvider != null ? aSMPURLProvider : PeppolNaptrURLProvider.INSTANCE;
     m_sAS4EndpointURL = sAS4EndpointURL;
     m_aAPCertificate = aAPCertificate;
     m_aSBDHIdentifierFactory = aSBDHIdentifierFactory;
@@ -115,14 +134,61 @@ public final class Phase4PeppolReceiverConfiguration
 
   /**
    * @return The SMP client object that should be used for the SMP lookup. It is customizable
-   *         because it depends either on the SML or a direct URL to the SMP may be provided. Never
-   *         <code>null</code> if receiver checks are enabled.
+   *         because it depends either on the SML or a direct URL to the SMP may be provided. May be
+   *         <code>null</code> if SML info is configured for dynamic resolution instead.
    * @see #isReceiverCheckEnabled()
+   * @see #getSMLInfo()
+   * @see #getOrCreateSMPClientForRecipient(IParticipantIdentifier)
    */
   @Nullable
   public ISMPExtendedServiceMetadataProvider getSMPClient ()
   {
     return m_aSMPClient;
+  }
+
+  /**
+   * @return The SML information for dynamic SMP client resolution. May be <code>null</code> if a
+   *         fixed SMP client is configured instead.
+   * @see #getSMPClient()
+   * @since v4.4.2
+   */
+  @Nullable
+  public ISMLInfo getSMLInfo ()
+  {
+    return m_aSMLInfo;
+  }
+
+  /**
+   * @return The SMP URL provider to be used for dynamic SMP client resolution. Never
+   *         <code>null</code>. Defaults to {@link PeppolNaptrURLProvider#INSTANCE}.
+   * @since v4.4.2
+   */
+  @NonNull
+  public ISMPURLProvider getSMPURLProvider ()
+  {
+    return m_aSMPURLProvider;
+  }
+
+  /**
+   * Get the existing SMP client or create a new one dynamically for the provided recipient
+   * participant ID using the configured SML info and URL provider.
+   *
+   * @param aRecipientID
+   *        The recipient participant identifier. May not be <code>null</code>.
+   * @return The SMP client. May be <code>null</code> if neither a fixed SMP client nor SML info is
+   *         configured.
+   * @throws SMPDNSResolutionException
+   *         If DNS resolution of the SMP address fails.
+   * @since v4.4.2
+   */
+  @Nullable
+  public ISMPExtendedServiceMetadataProvider getOrCreateSMPClientForRecipient (@NonNull final IParticipantIdentifier aRecipientID) throws SMPDNSResolutionException
+  {
+    if (m_aSMPClient != null)
+      return m_aSMPClient;
+    if (m_aSMLInfo != null)
+      return new SMPClientReadOnly (m_aSMPURLProvider, aRecipientID, m_aSMLInfo);
+    return null;
   }
 
   /**
@@ -188,6 +254,8 @@ public final class Phase4PeppolReceiverConfiguration
   {
     return new ToStringGenerator (null).append ("ReceiverCheckEnabled", m_bReceiverCheckEnabled)
                                        .append ("SMPClient", m_aSMPClient)
+                                       .append ("SMLInfo", m_aSMLInfo)
+                                       .append ("SMPURLProvider", m_aSMPURLProvider)
                                        .append ("AS4EndpointURL", m_sAS4EndpointURL)
                                        .append ("APCertificate", m_aAPCertificate)
                                        .append ("SBDHIdentifierFactory", m_aSBDHIdentifierFactory)
@@ -232,6 +300,8 @@ public final class Phase4PeppolReceiverConfiguration
   {
     private boolean m_bReceiverCheckEnabled;
     private ISMPExtendedServiceMetadataProvider m_aSMPClient;
+    private ISMLInfo m_aSMLInfo;
+    private ISMPURLProvider m_aSMPURLProvider;
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
     private IIdentifierFactory m_aSBDHIdentifierFactory;
@@ -247,6 +317,8 @@ public final class Phase4PeppolReceiverConfiguration
     {
       ValueEnforcer.notNull (aSrc, "Src");
       receiverCheckEnabled (aSrc.isReceiverCheckEnabled ()).serviceMetadataProvider (aSrc.getSMPClient ())
+                                                           .smlInfo (aSrc.getSMLInfo ())
+                                                           .smpURLProvider (aSrc.getSMPURLProvider ())
                                                            .as4EndpointUrl (aSrc.getAS4EndpointURL ())
                                                            .apCertificate (aSrc.getAPCertificate ())
                                                            .sbdhIdentifierFactory (aSrc.getSBDHIdentifierFactory ())
@@ -267,6 +339,39 @@ public final class Phase4PeppolReceiverConfiguration
     public Phase4PeppolReceiverConfigurationBuilder serviceMetadataProvider (@Nullable final ISMPExtendedServiceMetadataProvider a)
     {
       m_aSMPClient = a;
+      return this;
+    }
+
+    /**
+     * Set the SML information for dynamic per-participant SMP client resolution. This is an
+     * alternative to setting a fixed SMP client via
+     * {@link #serviceMetadataProvider(ISMPExtendedServiceMetadataProvider)}.
+     *
+     * @param a
+     *        The SML info to use. May be <code>null</code>.
+     * @return this for chaining
+     * @since v4.4.2
+     */
+    @NonNull
+    public Phase4PeppolReceiverConfigurationBuilder smlInfo (@Nullable final ISMLInfo a)
+    {
+      m_aSMLInfo = a;
+      return this;
+    }
+
+    /**
+     * Set the SMP URL provider to be used for dynamic SMP client resolution. Only relevant if
+     * {@link #smlInfo(ISMLInfo)} is set. Defaults to {@link PeppolNaptrURLProvider#INSTANCE}.
+     *
+     * @param a
+     *        The SMP URL provider to use. May be <code>null</code> to use the default.
+     * @return this for chaining
+     * @since v4.4.2
+     */
+    @NonNull
+    public Phase4PeppolReceiverConfigurationBuilder smpURLProvider (@Nullable final ISMPURLProvider a)
+    {
+      m_aSMPURLProvider = a;
       return this;
     }
 
@@ -344,8 +449,8 @@ public final class Phase4PeppolReceiverConfiguration
     {
       if (m_bReceiverCheckEnabled)
       {
-        if (m_aSMPClient == null)
-          throw new IllegalStateException ("The SMP Client must be provided");
+        if (m_aSMPClient == null && m_aSMLInfo == null)
+          throw new IllegalStateException ("Either an SMP Client or SML Info must be provided");
         if (StringHelper.isEmpty (m_sAS4EndpointURL))
           throw new IllegalStateException ("Our AS4 Endpoint URL must be provided");
         if (m_aAPCertificate == null)
@@ -358,6 +463,8 @@ public final class Phase4PeppolReceiverConfiguration
 
       return new Phase4PeppolReceiverConfiguration (m_bReceiverCheckEnabled,
                                                     m_aSMPClient,
+                                                    m_aSMLInfo,
+                                                    m_aSMPURLProvider,
                                                     m_sAS4EndpointURL,
                                                     m_aAPCertificate,
                                                     m_aSBDHIdentifierFactory,

@@ -99,6 +99,7 @@ import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
+import com.helger.smpclient.url.SMPDNSResolutionException;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.peppol.smp1.EndpointType;
 import com.helger.xsds.peppol.smp1.SignedServiceMetadataType;
@@ -1051,8 +1052,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         final IParticipantIdentifier aReceiverID = aPeppolSBDH.getReceiverAsIdentifier ();
         final IDocumentTypeIdentifier aDocTypeID = aPeppolSBDH.getDocumentTypeAsIdentifier ();
         final IProcessIdentifier aProcessID = aPeppolSBDH.getProcessAsIdentifier ();
+        // Resolve SMP client - either pre-configured or dynamically via SML
+        final ISMPExtendedServiceMetadataProvider aSMPClient = aReceiverID != null ? aReceiverCheckData.getOrCreateSMPClientForRecipient (aReceiverID)
+                                                                                   : aReceiverCheckData.getSMPClient ();
         final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
-                                                                     aReceiverCheckData.getSMPClient (),
+                                                                     aSMPClient,
                                                                      aReceiverID,
                                                                      aDocTypeID,
                                                                      aProcessID);
@@ -1097,6 +1101,18 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                                                .errorDetail (sMsg, ex))
                                               .httpStatusCode (nHttpStatusCode)
                                               .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+      catch (final SMPDNSResolutionException ex)
+      {
+        final String sMsg = "Failed to resolve SMP address via DNS for the provided receiver";
+        LOGGER.error (sLogPrefix + sMsg, ex);
+
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .description (sMsg, aDisplayLocale)
+                                                           .errorDetail ("PEPPOL:NOT_SERVICED")
+                                                           .build ());
         return AS4MessageProcessorResult.createFailure ();
       }
     }
