@@ -325,14 +325,23 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // not
     Phase4PeppolDefaultReceiverConfiguration.setAPCAChecker (aAPCAChecker);
 
-    final String sSMPURL = APConfig.getMySmpUrl ();
     final String sAPURL = AS4Configuration.getThisEndpointAddress ();
-    if (StringHelper.isNotEmpty (sSMPURL) && StringHelper.isNotEmpty (sAPURL))
+    if (StringHelper.isNotEmpty (sAPURL))
     {
       Phase4PeppolDefaultReceiverConfiguration.setReceiverCheckEnabled (true);
-      final SMPClientReadOnly aSMPClient = new CachingSMPClientReadOnly (URLHelper.getAsURI (sSMPURL));
-      APConfig.applyHttpProxySettings (aSMPClient.httpClientSettings ());
-      Phase4PeppolDefaultReceiverConfiguration.setSMPClient (aSMPClient);
+      final String sSMPURL = APConfig.getMySmpUrl ();
+      if (StringHelper.isNotEmpty (sSMPURL))
+      {
+        // Set specific SMP for checking
+        final SMPClientReadOnly aSMPClient = new CachingSMPClientReadOnly (URLHelper.getAsURI (sSMPURL));
+        APConfig.applyHttpProxySettings (aSMPClient.httpClientSettings ());
+        Phase4PeppolDefaultReceiverConfiguration.setSMPClient (aSMPClient);
+      }
+      else
+      {
+        // Use any SMP for checking
+        Phase4PeppolDefaultReceiverConfiguration.setSMLInfo (eStage.getSMLInfo ());
+      }
       Phase4PeppolDefaultReceiverConfiguration.setAS4EndpointURL (sAPURL);
       Phase4PeppolDefaultReceiverConfiguration.setAPCertificate (aAPCert);
       LOGGER.info (CAS4.LIB_NAME +
