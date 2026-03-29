@@ -161,7 +161,8 @@ public interface IAS4IncomingMessageMetadata
    */
   default boolean hasRemoteTlsCerts ()
   {
-    return remoteTlsCerts () != null && remoteTlsCerts ().isNotEmpty ();
+    final var aCerts = remoteTlsCerts ();
+    return aCerts != null && aCerts.isNotEmpty ();
   }
 
   /**
