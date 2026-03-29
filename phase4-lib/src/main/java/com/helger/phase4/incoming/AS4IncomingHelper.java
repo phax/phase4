@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.incoming;
 
+import java.security.cert.X509Certificate;
+
 import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.Nonempty;
@@ -27,6 +29,7 @@ import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
+import com.helger.security.certificate.CertificateHelper;
 
 import jakarta.servlet.http.Cookie;
 
@@ -66,6 +69,13 @@ public final class AS4IncomingHelper
       aMap.add ("RemotePort", aMessageMetadata.getRemotePort ());
     if (aMessageMetadata.hasRemoteUser ())
       aMap.add ("RemoteUser", aMessageMetadata.getRemoteUser ());
+    if (aMessageMetadata.hasRemoteTlsCerts ())
+    {
+      final IJsonArray aArray = new JsonArray ();
+      for (final X509Certificate aCert : aMessageMetadata.remoteTlsCerts ())
+        aArray.add (CertificateHelper.getPEMEncodedCertificate (aCert));
+      aMap.add ("RemoteTlsCerts", aArray);
+    }
     {
       final IJsonArray aArray = new JsonArray ();
       for (final Cookie aCookie : aMessageMetadata.cookies ())
@@ -101,6 +111,10 @@ public final class AS4IncomingHelper
       if (aArray.isNotEmpty ())
         aMap.add ("HttpHeaders", aArray);
     }
+    if (aMessageMetadata.getRequestMessageID () != null)
+      aMap.add ("RequestMessageID", aMessageMetadata.getRequestMessageID ());
+    if (aMessageMetadata.hasResponseHttpStatusCode ())
+      aMap.add ("ResponseHttpStatusCode", aMessageMetadata.getResponseHttpStatusCode ());
     return aMap;
   }
 }
