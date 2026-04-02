@@ -75,19 +75,19 @@
 
     <bctls.version>1.83</bctls.version>
     <dnsjava.version>3.6.4</dnsjava.version>
-    <log4j.version>2.25.3</log4j.version>
+    <log4j.version>2.25.4</log4j.version>
     <xmlsec.version>4.0.4</xmlsec.version>
     <wss4j.version>4.0.1</wss4j.version>
     <peppol-commons.version>12.4.0</peppol-commons.version>
-    <peppol-reporting.version>4.1.1</peppol-reporting.version>
+    <peppol-reporting.version>4.1.2</peppol-reporting.version>
     <peppol-ap-support.version>2.1.2</peppol-ap-support.version>
     <ph-commons.version>12.1.5</ph-commons.version>
     <ph-schematron.version>9.1.1</ph-schematron.version>
     <ph-ubl.version>10.1.0</ph-ubl.version>
     <ph-web.version>11.2.5</ph-web.version>
     <ph-xsds.version>4.1.0</ph-xsds.version>
-    <phive.version>12.0.1</phive.version>
-    <phive-rules.version>4.2.5</phive-rules.version>
+    <phive.version>12.0.2</phive.version>
+    <phive-rules.version>4.3.0</phive-rules.version>
   </properties>
 
   <dependencyManagement>
