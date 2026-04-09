@@ -26,6 +26,7 @@ import com.helger.phive.api.result.ValidationResultList;
  *
  * @author Philip Helger
  */
+@Deprecated (forRemoval = true, since = "4.4.3")
 public interface IPhase4PeppolValidationResultHandler
 {
   /**
@@ -37,6 +38,7 @@ public interface IPhase4PeppolValidationResultHandler
    * @throws Phase4Exception
    *         Implementation dependent
    */
+  @Deprecated (forRemoval = true, since = "4.4.3")
   void onValidationSuccess (@NonNull final ValidationResultList aValidationResult) throws Phase4Exception;
 
   /**
@@ -47,5 +49,6 @@ public interface IPhase4PeppolValidationResultHandler
    * @throws Phase4Exception
    *         Implementation dependent
    */
+  @Deprecated (forRemoval = true, since = "4.4.3")
   void onValidationErrors (@NonNull final ValidationResultList aValidationResult) throws Phase4Exception;
 }

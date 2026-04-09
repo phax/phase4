@@ -42,6 +42,8 @@ import com.helger.phive.xml.source.ValidationSourceXML;
  *
  * @author Philip Helger
  */
+@SuppressWarnings ("removal")
+@Deprecated (forRemoval = true, since = "4.4.3")
 public final class Phase4PeppolValidation
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolValidation.class);
@@ -56,6 +58,7 @@ public final class Phase4PeppolValidation
    * @return Get the existing default VES registry. Handle with care.
    * @since 1.3.1
    */
+  @Deprecated (forRemoval = true, since = "4.4.3")
   @NonNull
   @ReturnsMutableObject
   public static IValidationExecutorSetRegistry <IValidationSourceXML> getDefaultRegistry ()
@@ -68,6 +71,7 @@ public final class Phase4PeppolValidation
    * @since 0.10.1
    * @see PeppolValidation
    */
+  @Deprecated (forRemoval = true, since = "4.4.3")
   @NonNull
   @ReturnsMutableCopy
   public static ValidationExecutorSetRegistry <IValidationSourceXML> createDefaultRegistry ()
@@ -94,6 +98,7 @@ public final class Phase4PeppolValidation
    * @see #validateOutgoingBusinessDocument(Element, IValidationExecutorSetRegistry, DVRCoordinate,
    *      IPhase4PeppolValidationResultHandler)
    */
+  @Deprecated (forRemoval = true, since = "4.4.3")
   public static void validateOutgoingBusinessDocument (@NonNull final Element aXML,
                                                        @NonNull final DVRCoordinate aVESID,
                                                        @NonNull final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4Exception
@@ -118,6 +123,7 @@ public final class Phase4PeppolValidation
    *         send out.
    * @since 0.10.1
    */
+  @Deprecated (forRemoval = true, since = "4.4.3")
   public static void validateOutgoingBusinessDocument (@NonNull final Element aXML,
                                                        @NonNull final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
                                                        @NonNull final DVRCoordinate aVESID,

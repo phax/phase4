@@ -26,13 +26,17 @@ import com.helger.phive.api.result.ValidationResultList;
  * @author Philip Helger
  * @since 0.9.7
  */
+@SuppressWarnings ("removal")
+@Deprecated (forRemoval = true, since = "4.4.3")
 public class Phase4PeppolValidatonResultHandler implements IPhase4PeppolValidationResultHandler
 {
+  @Deprecated (forRemoval = true, since = "4.4.3")
   public void onValidationSuccess (@NonNull final ValidationResultList aValidationResult)
   {
     // empty
   }
 
+  @Deprecated (forRemoval = true, since = "4.4.3")
   public void onValidationErrors (@NonNull final ValidationResultList aValidationResult) throws Phase4PeppolValidationException
   {
     throw new Phase4PeppolValidationException (aValidationResult);
