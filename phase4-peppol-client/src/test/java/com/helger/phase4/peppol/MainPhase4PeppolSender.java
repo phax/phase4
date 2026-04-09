@@ -30,8 +30,6 @@ import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phive.api.result.ValidationResultList;
-import com.helger.phive.peppol.PeppolValidation2025_11;
 import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -82,15 +80,6 @@ public final class MainPhase4PeppolSender
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.PEPPOL_TEST))
-                                  .validationConfiguration (PeppolValidation2025_11.VID_OPENPEPPOL_INVOICE_UBL_V3,
-                                                            new Phase4PeppolValidatonResultHandler ()
-                                                            {
-                                                              @Override
-                                                              public void onValidationSuccess (final ValidationResultList aValidationResult)
-                                                              {
-                                                                LOGGER.info ("Successfully validated XML payload");
-                                                              }
-                                                            })
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

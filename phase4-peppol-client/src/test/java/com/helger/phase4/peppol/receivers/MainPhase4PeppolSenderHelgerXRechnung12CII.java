@@ -34,13 +34,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.peppol.Phase4PeppolValidation;
-import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
-import com.helger.phive.en16931.EN16931Validation;
-import com.helger.phive.xml.source.IValidationSourceXML;
-import com.helger.phive.xrechnung.XRechnungValidation;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -81,11 +75,6 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
       };
       final Wrapper <Ebms3SignalMessage> aSignalMsgWrapper = new Wrapper <> ();
 
-      // Add XRechnung rulesets
-      final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry = Phase4PeppolValidation.createDefaultRegistry ();
-      EN16931Validation.initEN16931 (aVESRegistry);
-      XRechnungValidation.initXRechnung (aVESRegistry);
-
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
@@ -99,9 +88,6 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.PEPPOL_TEST))
-                                  .validationRegistry (aVESRegistry)
-                                  .validationConfiguration (XRechnungValidation.VID_XRECHNUNG_CII_302,
-                                                            new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> aSignalMsgWrapper.set (aSignalMsg))
                                   .sendMessageAndCheckForReceipt ();

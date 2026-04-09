@@ -66,7 +66,6 @@ public final class MainPhase4PeppolSenderTestbed
                                                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                                                      aReceiverID,
                                                                                                      ESML.PEPPOL_TEST))
-                                                                  .disableValidation ()
                                                                   .signalMsgConsumer ( (aSignalMsg,
                                                                                         aMessageMetadata,
                                                                                         aState) -> {

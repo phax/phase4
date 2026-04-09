@@ -76,7 +76,6 @@ public final class MainPhase4PeppolSenderATGov
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.PEPPOL_TEST))
-                                  .validationConfiguration (null)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

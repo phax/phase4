@@ -100,12 +100,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.helger.phive.rules</groupId>
-      <artifactId>phive-rules-xrechnung</artifactId>
-      <version>${phive-rules.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
       <scope>test</scope>

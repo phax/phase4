@@ -94,7 +94,6 @@ public final class MainPhase4PeppolSenderNonPeppolKeystore
                                                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                                                      aReceiverID,
                                                                                                      ESML.PEPPOL_TEST))
-                                                                  .disableValidation ()
                                                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

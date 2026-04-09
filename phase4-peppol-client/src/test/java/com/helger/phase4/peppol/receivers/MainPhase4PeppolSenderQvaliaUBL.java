@@ -35,12 +35,7 @@ import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.peppol.Phase4PeppolValidation;
-import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
-import com.helger.phive.en16931.EN16931Validation;
-import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -86,10 +81,6 @@ public final class MainPhase4PeppolSenderQvaliaUBL
         }
       };
 
-      // Add EN16931 rulesets
-      final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry = Phase4PeppolValidation.createDefaultRegistry ();
-      EN16931Validation.initEN16931 (aVESRegistry);
-
       final IAS4CryptoFactory cf = AS4CryptoFactoryConfiguration.getDefaultInstance ();
       final EAS4UserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
@@ -106,9 +97,6 @@ public final class MainPhase4PeppolSenderQvaliaUBL
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.PEPPOL_TEST))
-                                  .validationRegistry (aVESRegistry)
-                                  .validationConfiguration (EN16931Validation.VID_UBL_INVOICE_1314_2,
-                                                            new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);

@@ -29,9 +29,7 @@ import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.AbstractPhase4Sender;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.peppol.Phase4PeppolValidatonResultHandler;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
-import com.helger.phive.peppol.PeppolValidationBisSG;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
@@ -106,8 +104,6 @@ public final class MainPhase4PeppolSenderConstantReceiverSG2 extends AbstractPha
                                                                                                       "47A9zzduKT3CycRoqxaB\n" +
                                                                                                       "-----END CERTIFICATE-----"),
                                                                                             "https://dev.einvoicing.i-portal.biz/msh")
-                                                                  .validationConfiguration (PeppolValidationBisSG.VID_OPENPEPPOL_BIS3_SG_UBL_INVOICE_2024_12,
-                                                                                            new Phase4PeppolValidatonResultHandler ())
                                                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

@@ -60,8 +60,8 @@ public final class MainPhase4PeppolSenderBillberry
 
     try
     {
-      IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0191:16122596");
-      String [] aParts = aReceiverID.getValue ().split (":", 2);
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0191:16122596");
+      final String [] aParts = aReceiverID.getValue ().split (":", 2);
 
       String sContent = SimpleFileIO.getFileAsString (new File ("src/test/resources/external/examples/base-example.xml"),
                                                       StandardCharsets.UTF_8);
@@ -98,7 +98,6 @@ public final class MainPhase4PeppolSenderBillberry
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                      aReceiverID,
                                                                      ESML.PEPPOL_TEST))
-                                  .disableValidation ()
                                   .buildMessageCallback (aBuildMessageCallback)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
