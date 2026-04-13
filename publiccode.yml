@@ -1,0 +1,70 @@
+publiccodeYmlVersion: "0"
+
+name: phase4
+url: https://github.com/phax/phase4
+landingURL: https://github.com/phax/phase4/wiki
+
+softwareVersion: "4.4.2"
+releaseDate: "2026-03-28"
+
+platforms:
+  - web
+
+logo: docs/logo/phase4-logo-simplecolor.svg
+
+developmentStatus: stable
+softwareType: library
+
+categories:
+  - data-exchange
+  - it-security
+
+description:
+  en:
+    shortDescription: >-
+      Lightweight, embeddable Java library to send and receive AS4 messages.
+    longDescription: >-
+      phase4 is an open-source, embeddable Java library implementing the
+      EBMS 3.0 / AS4 messaging standard. It supports sending and receiving
+      AS4 messages across multiple network profiles including Peppol, BDEW,
+      CEF, DBNAlliance, ENTSOG, EU CTP, and eDelivery AS4 2.0. The library
+      provides a modular architecture with profile-specific modules for
+      validation, PMode configuration, client sending utilities, and
+      incoming message handling via servlet integration. It features
+      WSS4J-based signing and encryption, SMP-based dynamic discovery,
+      duplicate detection, and retry mechanisms. phase4 is part of the
+      Peppol solution stack and is used as the AS4 transport layer in
+      phoss-ap, a standalone Peppol Access Point.
+    features:
+      - Send and receive AS4 messages compliant with EBMS 3.0
+      - Support for Peppol AS4 profile including SBDH handling
+      - Support for BDEW, CEF, DBNAlliance, ENTSOG and EU CTP profiles
+      - WSS4J-based message signing and encryption
+      - SMP-based dynamic endpoint discovery
+      - Configurable PMode management (in-memory and file-based persistence)
+      - Duplicate message detection
+      - Built-in retry mechanism for outgoing messages
+      - Servlet-based incoming message handling
+      - Java ServiceLoader based profile auto-discovery
+    documentation: https://github.com/phax/phase4/wiki
+
+legal:
+  license: Apache-2.0
+  mainCopyrightOwner: Philip Helger
+
+maintenance:
+  type: community
+  contacts:
+    - name: Philip Helger
+      email: philip@helger.com
+      affiliation: helger.com
+
+localisation:
+  localisationReady: false
+  availableLanguages:
+    - en
+
+dependsOn:
+  open:
+    - name: Java
+      versionMin: "17"
