@@ -42,6 +42,11 @@ jobs:
         server-id: central
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
+          
+    - uses: italia/publiccode-parser-action@v1
+      with:
+        publiccode: 'publiccode.yml'
+        no-external-checks: true
 
     - name: Cache local Maven repository
       uses: actions/cache@v5
@@ -61,8 +66,3 @@ jobs:
     - name: Maven Build
       run: mvn --batch-mode --update-snapshots install
       if: matrix.java != 17
-      
-    - uses: italia/publiccode-parser-action@v1
-      with:
-        publiccode: 'publiccode.yml'
-        no-external-checks: true

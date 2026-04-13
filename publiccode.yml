@@ -16,7 +16,9 @@ developmentStatus: stable
 softwareType: library
 
 categories:
-  - data-exchange
+  - billing-and-invoicing
+  - communications
+  - erp
   - it-security
 
 description:
