@@ -305,6 +305,12 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
         aIncomingState.setMessageID (aMsgInfo.getMessageId ());
         aIncomingState.setRefToMessageID (aMsgInfo.getRefToMessageId ());
         aIncomingState.setMessageTimestamp (aMsgInfo.getTimestamp ());
+        LOGGER.info ("Incoming AS4 message has AS4 Message ID '" +
+                     aMsgInfo.getMessageId () +
+                     ", refers to message with AS4 Message ID '" +
+                     aMsgInfo.getRefToMessageId () +
+                     "' and uses timestamp " +
+                     aMsgInfo.getTimestamp ());
       }
 
       // PartyInfo is mandatory in UserMessage
