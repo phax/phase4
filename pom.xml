@@ -93,6 +93,14 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- overwrite ph-commons 12.2.0 to use 4.0.6 instead of 4.0.7 -->
+      <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-bom</artifactId>
+        <version>4.0.6</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
       <dependency>
         <groupId>com.helger.commons</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
