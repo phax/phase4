@@ -22,6 +22,7 @@ import java.time.Duration;
 import java.util.function.Consumer;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
@@ -194,7 +195,14 @@ public class BasicHttpPoster implements IHttpPoster
       });
 
       // Execute main HTTP request
-      return aClientMgr.execute (aPost, aResponseHandler);
+      final HttpClientContext aHttpClientContext = HttpClientContext.create ();
+      final T ret = aClientMgr.execute (aPost, aHttpClientContext, aResponseHandler);
+
+      // Extract the TLS peer (server) certificates
+      // final ICommonsList <X509Certificate> aRemoteTLSCerts =
+      // CapturingTlsSocketStrategy.getRemoteTLSCertificates (aHttpClientContext);
+
+      return ret;
     }
     catch (final IOException ex)
     {
