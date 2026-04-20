@@ -391,5 +391,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       aPRBS.shutdownBackend ();
 
     AS4ServerInitializer.shutdownAS4Server ();
+
+    // Avoid nasty error on shutdown when used in WAR
+    org.xbill.DNS.NioClient.close ();
   }
 }
