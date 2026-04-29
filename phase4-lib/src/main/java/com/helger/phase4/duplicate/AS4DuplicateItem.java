@@ -49,10 +49,10 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
     this (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), sMessageID, sProfileID, sPModeID);
   }
 
-  protected AS4DuplicateItem (@NonNull final OffsetDateTime aDT,
-                              @NonNull @Nonempty final String sMessageID,
-                              @Nullable final String sProfileID,
-                              @Nullable final String sPModeID)
+  public AS4DuplicateItem (@NonNull final OffsetDateTime aDT,
+                           @NonNull @Nonempty final String sMessageID,
+                           @Nullable final String sProfileID,
+                           @Nullable final String sPModeID)
   {
     m_aDT = ValueEnforcer.notNull (aDT, "DT");
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
