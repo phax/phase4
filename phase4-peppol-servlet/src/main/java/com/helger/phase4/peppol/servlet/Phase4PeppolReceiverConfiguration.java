@@ -22,6 +22,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.concurrent.Immutable;
+import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.builder.IBuilder;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
@@ -32,6 +33,8 @@ import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
+import com.helger.security.revocation.ERevocationCheckMode;
+import com.helger.smpclient.httpclient.SMPHttpResponseHandlerSigned;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.ISMPURLProvider;
@@ -53,11 +56,14 @@ public final class Phase4PeppolReceiverConfiguration
   private final ISMPExtendedServiceMetadataProvider m_aSMPClient;
   private final ISMLInfo m_aSMLInfo;
   private final ISMPURLProvider m_aSMPURLProvider;
+  private final ERevocationCheckMode m_eSMPRevocationCheckMode;
+  private final boolean m_bSMPUnknownRevocationStatusReject;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
   private final IIdentifierFactory m_aSBDHIdentifierFactory;
   private final boolean m_bPerformSBDHValueChecks;
   private final boolean m_bCheckSBDHForMandatoryCountryC1;
+  @ChangeNextMajorRelease ("Changed from implicit boolean to m_eAPRevocationCheckMode")
   private final boolean m_bCheckSigningCertificateRevocation;
   private final TrustedCAChecker m_aAPCAChecker;
 
@@ -75,6 +81,16 @@ public final class Phase4PeppolReceiverConfiguration
    * @param aSMPURLProvider
    *        The SMP URL provider to be used for dynamic SMP client resolution. May be
    *        <code>null</code> to use the default ({@link PeppolNaptrURLProvider#INSTANCE}).
+   * @param eSMPRevocationCheckMode
+   *        The revocation check mode to apply when verifying SMP response certificates.
+   *        <code>null</code> means "use the JVM-wide default from
+   *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}". Only
+   *        applied to SMP clients created internally via {@link #getOrCreateSMPClientForRecipient}.
+   *        Pre-built SMP clients passed via {@code aSMPClient} must be configured by the caller.
+   * @param bSMPUnknownRevocationStatusReject
+   *        <code>true</code> if an indeterminable revocation status of an SMP response certificate
+   *        leads to rejection, <code>false</code> to accept. Only applied to SMP clients created
+   *        internally via {@link #getOrCreateSMPClientForRecipient}.
    * @param sAS4EndpointURL
    *        The endpoint URL to check against. May neither be <code>null</code> nor empty if
    *        receiver checks are enabled.
@@ -98,6 +114,8 @@ public final class Phase4PeppolReceiverConfiguration
                                             @Nullable final ISMPExtendedServiceMetadataProvider aSMPClient,
                                             @Nullable final ISMLInfo aSMLInfo,
                                             @Nullable final ISMPURLProvider aSMPURLProvider,
+                                            @Nullable final ERevocationCheckMode eSMPRevocationCheckMode,
+                                            final boolean bSMPUnknownRevocationStatusReject,
                                             @Nullable final String sAS4EndpointURL,
                                             @Nullable final X509Certificate aAPCertificate,
                                             @NonNull final IIdentifierFactory aSBDHIdentifierFactory,
@@ -118,6 +136,8 @@ public final class Phase4PeppolReceiverConfiguration
     m_aSMPClient = aSMPClient;
     m_aSMLInfo = aSMLInfo;
     m_aSMPURLProvider = aSMPURLProvider != null ? aSMPURLProvider : PeppolNaptrURLProvider.INSTANCE;
+    m_eSMPRevocationCheckMode = eSMPRevocationCheckMode;
+    m_bSMPUnknownRevocationStatusReject = bSMPUnknownRevocationStatusReject;
     m_sAS4EndpointURL = sAS4EndpointURL;
     m_aAPCertificate = aAPCertificate;
     m_aSBDHIdentifierFactory = aSBDHIdentifierFactory;
@@ -170,6 +190,33 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
+   * @return The revocation check mode to apply when verifying SMP response certificates.
+   *         <code>null</code> means "use the JVM-wide default from
+   *         {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}". Only
+   *         applied to SMP clients created internally via
+   *         {@link #getOrCreateSMPClientForRecipient(IParticipantIdentifier)}.
+   * @since 4.4.4
+   */
+  @Nullable
+  public ERevocationCheckMode getSMPRevocationCheckMode ()
+  {
+    return m_eSMPRevocationCheckMode;
+  }
+
+  /**
+   * @return <code>true</code> if an indeterminable revocation status of an SMP response certificate
+   *         leads to rejection, <code>false</code> to accept. Defaults to
+   *         {@link SMPHttpResponseHandlerSigned#DEFAULT_UNKNOWN_REVOCATION_STATUS_REJECT}. Only
+   *         applied to SMP clients created internally via
+   *         {@link #getOrCreateSMPClientForRecipient(IParticipantIdentifier)}.
+   * @since 4.4.4
+   */
+  public boolean isSMPUnknownRevocationStatusReject ()
+  {
+    return m_bSMPUnknownRevocationStatusReject;
+  }
+
+  /**
    * Get the existing SMP client or create a new one dynamically for the provided recipient
    * participant ID using the configured SML info and URL provider.
    *
@@ -185,9 +232,19 @@ public final class Phase4PeppolReceiverConfiguration
   public ISMPExtendedServiceMetadataProvider getOrCreateSMPClientForRecipient (@NonNull final IParticipantIdentifier aRecipientID) throws SMPDNSResolutionException
   {
     if (m_aSMPClient != null)
+    {
+      // Constant SMP
       return m_aSMPClient;
+    }
+
     if (m_aSMLInfo != null)
-      return new SMPClientReadOnly (m_aSMPURLProvider, aRecipientID, m_aSMLInfo);
+    {
+      // SMP with dynamic discovery
+      final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (m_aSMPURLProvider, aRecipientID, m_aSMLInfo);
+      aSMPClient.setRevocationCheckMode (m_eSMPRevocationCheckMode);
+      aSMPClient.setUnknownRevocationStatusReject (m_bSMPUnknownRevocationStatusReject);
+      return aSMPClient;
+    }
     return null;
   }
 
@@ -256,6 +313,8 @@ public final class Phase4PeppolReceiverConfiguration
                                        .append ("SMPClient", m_aSMPClient)
                                        .append ("SMLInfo", m_aSMLInfo)
                                        .append ("SMPURLProvider", m_aSMPURLProvider)
+                                       .append ("SMPRevocationCheckMode", m_eSMPRevocationCheckMode)
+                                       .append ("SMPUnknownRevocationStatusReject", m_bSMPUnknownRevocationStatusReject)
                                        .append ("AS4EndpointURL", m_sAS4EndpointURL)
                                        .append ("APCertificate", m_aAPCertificate)
                                        .append ("SBDHIdentifierFactory", m_aSBDHIdentifierFactory)
@@ -302,6 +361,8 @@ public final class Phase4PeppolReceiverConfiguration
     private ISMPExtendedServiceMetadataProvider m_aSMPClient;
     private ISMLInfo m_aSMLInfo;
     private ISMPURLProvider m_aSMPURLProvider;
+    private ERevocationCheckMode m_eSMPRevocationCheckMode;
+    private boolean m_bSMPUnknownRevocationStatusReject = SMPHttpResponseHandlerSigned.DEFAULT_UNKNOWN_REVOCATION_STATUS_REJECT;
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
     private IIdentifierFactory m_aSBDHIdentifierFactory;
@@ -319,6 +380,8 @@ public final class Phase4PeppolReceiverConfiguration
       receiverCheckEnabled (aSrc.isReceiverCheckEnabled ()).serviceMetadataProvider (aSrc.getSMPClient ())
                                                            .smlInfo (aSrc.getSMLInfo ())
                                                            .smpURLProvider (aSrc.getSMPURLProvider ())
+                                                           .smpRevocationCheckMode (aSrc.getSMPRevocationCheckMode ())
+                                                           .smpUnknownRevocationStatusReject (aSrc.isSMPUnknownRevocationStatusReject ())
                                                            .as4EndpointUrl (aSrc.getAS4EndpointURL ())
                                                            .apCertificate (aSrc.getAPCertificate ())
                                                            .sbdhIdentifierFactory (aSrc.getSBDHIdentifierFactory ())
@@ -372,6 +435,43 @@ public final class Phase4PeppolReceiverConfiguration
     public Phase4PeppolReceiverConfigurationBuilder smpURLProvider (@Nullable final ISMPURLProvider a)
     {
       m_aSMPURLProvider = a;
+      return this;
+    }
+
+    /**
+     * Set the revocation check mode to apply when verifying SMP response certificates. Only applied
+     * to SMP clients created internally via
+     * {@link Phase4PeppolReceiverConfiguration#getOrCreateSMPClientForRecipient(IParticipantIdentifier)}.
+     *
+     * @param e
+     *        The revocation check mode to use. <code>null</code> means "use the JVM-wide default
+     *        from {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public Phase4PeppolReceiverConfigurationBuilder smpRevocationCheckMode (@Nullable final ERevocationCheckMode e)
+    {
+      m_eSMPRevocationCheckMode = e;
+      return this;
+    }
+
+    /**
+     * Set whether an indeterminable revocation status of an SMP response certificate should lead to
+     * a rejection of the certificate. Only applied to SMP clients created internally via
+     * {@link Phase4PeppolReceiverConfiguration#getOrCreateSMPClientForRecipient(IParticipantIdentifier)}.
+     *
+     * @param b
+     *        <code>true</code> to reject on unknown revocation status, <code>false</code> to
+     *        accept. Defaults to
+     *        {@link SMPHttpResponseHandlerSigned#DEFAULT_UNKNOWN_REVOCATION_STATUS_REJECT}.
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public Phase4PeppolReceiverConfigurationBuilder smpUnknownRevocationStatusReject (final boolean b)
+    {
+      m_bSMPUnknownRevocationStatusReject = b;
       return this;
     }
 
@@ -465,6 +565,8 @@ public final class Phase4PeppolReceiverConfiguration
                                                     m_aSMPClient,
                                                     m_aSMLInfo,
                                                     m_aSMPURLProvider,
+                                                    m_eSMPRevocationCheckMode,
+                                                    m_bSMPUnknownRevocationStatusReject,
                                                     m_sAS4EndpointURL,
                                                     m_aAPCertificate,
                                                     m_aSBDHIdentifierFactory,

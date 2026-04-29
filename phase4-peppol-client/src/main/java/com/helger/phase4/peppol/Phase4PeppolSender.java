@@ -454,11 +454,13 @@ public final class Phase4PeppolSender
 
     // This value is set for backwards compatibility reasons
     protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
-    private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
+    private IPhase4PeppolCertificateCheckResultHandler m_aAPCertificateConsumer;
     private Consumer <String> m_aAPEndpointURLConsumer;
     private Consumer <String> m_aAPTechnicalContactConsumer;
     private boolean m_bCheckReceiverAPCertificate;
     protected TrustedCAChecker m_aCAChecker;
+    private ETriState m_eAPCacheRevocationCheckResult = ETriState.UNDEFINED;
+    private ERevocationCheckMode m_eAPRevocationCheckMode;
 
     // Status var
     private OffsetDateTime m_aEffectiveSendingDT;
@@ -748,15 +750,14 @@ public final class Phase4PeppolSender
      * Set an optional Consumer for the retrieved certificate from the endpoint details provider,
      * independent of its usability.
      *
-     * @param aCertificateConsumer
-     *        The consumer to be used. The first parameter is the certificate itself and the second
-     *        parameter is the internal check result. May be <code>null</code>.
+     * @param aAPCertificateConsumer
+     *        The consumer to be used. May be <code>null</code>.
      * @return this for chaining
      */
     @NonNull
-    public final IMPLTYPE certificateConsumer (@Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer)
+    public final IMPLTYPE certificateConsumer (@Nullable final IPhase4PeppolCertificateCheckResultHandler aAPCertificateConsumer)
     {
-      m_aCertificateConsumer = aCertificateConsumer;
+      m_aAPCertificateConsumer = aAPCertificateConsumer;
       return thisAsT ();
     }
 
@@ -829,6 +830,45 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Override the revocation result caching flag for the receiver AP certificate check on a
+     * per-send basis. This is only applied if {@link #checkReceiverAPCertificate(boolean)} is
+     * <code>true</code>.
+     *
+     * @param eCacheRevocationCheckResult
+     *        {@link ETriState#TRUE} to use the global revocation cache, {@link ETriState#FALSE} to
+     *        bypass it, {@link ETriState#UNDEFINED} (the default) to use the JVM-wide default from
+     *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}. May not
+     *        be <code>null</code>.
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public final IMPLTYPE apCacheRevocationCheckResult (@NonNull final ETriState eCacheRevocationCheckResult)
+    {
+      ValueEnforcer.notNull (eCacheRevocationCheckResult, "CacheRevocationCheckResult");
+      m_eAPCacheRevocationCheckResult = eCacheRevocationCheckResult;
+      return thisAsT ();
+    }
+
+    /**
+     * Override the revocation check mode for the receiver AP certificate check on a per-send basis.
+     * This is only applied if {@link #checkReceiverAPCertificate(boolean)} is <code>true</code>.
+     *
+     * @param eRevocationCheckMode
+     *        The revocation check mode to use. <code>null</code> (the default) means "use the
+     *        JVM-wide default from
+     *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public final IMPLTYPE apRevocationCheckMode (@Nullable final ERevocationCheckMode eRevocationCheckMode)
+    {
+      m_eAPRevocationCheckMode = eRevocationCheckMode;
+      return thisAsT ();
+    }
+
+    /**
      * The effective sending date time of the message. That is set only if message sending takes
      * place.
      *
@@ -887,17 +927,21 @@ public final class Phase4PeppolSender
       {
         // Check if the received certificate is a valid Peppol AP certificate
         // Throws Phase4PeppolException in case of error
-        _checkReceiverAPCert (m_aCAChecker, aReceiverCert, m_aCertificateConsumer, ETriState.UNDEFINED, null);
+        _checkReceiverAPCert (m_aCAChecker,
+                              aReceiverCert,
+                              m_aAPCertificateConsumer,
+                              m_eAPCacheRevocationCheckResult,
+                              m_eAPRevocationCheckMode);
       }
       else
       {
         LOGGER.warn ("The check of the receiver's Peppol AP certificate was explicitly disabled.");
 
         // Interested in the certificate?
-        if (m_aCertificateConsumer != null)
+        if (m_aAPCertificateConsumer != null)
         {
           final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-          m_aCertificateConsumer.onCertificateCheckResult (aReceiverCert, aNow, ECertificateCheckResult.NOT_CHECKED);
+          m_aAPCertificateConsumer.onCertificateCheckResult (aReceiverCert, aNow, ECertificateCheckResult.NOT_CHECKED);
         }
       }
       receiverCertificate (aReceiverCert);

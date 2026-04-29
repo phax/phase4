@@ -35,6 +35,8 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.servlet.Phase4PeppolReceiverConfiguration.Phase4PeppolReceiverConfigurationBuilder;
 import com.helger.security.certificate.TrustedCAChecker;
+import com.helger.security.revocation.ERevocationCheckMode;
+import com.helger.smpclient.httpclient.SMPHttpResponseHandlerSigned;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.url.ISMPURLProvider;
 import com.helger.smpclient.url.PeppolNaptrURLProvider;
@@ -52,8 +54,9 @@ import com.helger.smpclient.url.PeppolNaptrURLProvider;
 @NotThreadSafe
 public final class Phase4PeppolDefaultReceiverConfiguration
 {
-  public static final IIdentifierFactory DEFAULT_SBDH_IDENTIFIER_FACTORY = PeppolIdentifierFactory.INSTANCE;
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
+  public static final boolean DEFAULT_SMP_UNKNOWN_REVOCATION_STATUS_REJECT = SMPHttpResponseHandlerSigned.DEFAULT_UNKNOWN_REVOCATION_STATUS_REJECT;
+  public static final IIdentifierFactory DEFAULT_SBDH_IDENTIFIER_FACTORY = PeppolIdentifierFactory.INSTANCE;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
   public static final TrustedCAChecker DEFAULT_PEPPOL_AP_CA_CHECKER = PeppolTrustedCA.peppolAllAP ();
 
@@ -63,6 +66,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   private static ISMPExtendedServiceMetadataProvider s_aSMPClient;
   private static ISMLInfo s_aSMLInfo;
   private static ISMPURLProvider s_aSMPURLProvider = PeppolNaptrURLProvider.INSTANCE;
+  private static ERevocationCheckMode s_eSMPRevocationCheckMode;
+  private static boolean s_bSMPUnknownRevocationStatusReject = DEFAULT_SMP_UNKNOWN_REVOCATION_STATUS_REJECT;
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
   private static IIdentifierFactory s_aSBDHIdentifierFactory = DEFAULT_SBDH_IDENTIFIER_FACTORY;
@@ -100,6 +105,12 @@ public final class Phase4PeppolDefaultReceiverConfiguration
     s_bReceiverCheckEnabled = bReceiverCheckEnabled;
   }
 
+  private static void _checkDoubleBooking ()
+  {
+    if (s_aSMPClient != null && s_aSMLInfo != null)
+      LOGGER.warn ("Both an SMPClient for a constant SMP as well as SMLInfo for dynamic discovery is set - this is a programming error; a maximum of one should be set");
+  }
+
   /**
    * @return The SMP client object that should be used for the SMP lookup. It is customizable
    *         because it depends either on the SML or a direct URL to the SMP may be provided. May be
@@ -123,6 +134,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   public static void setSMPClient (@Nullable final ISMPExtendedServiceMetadataProvider aSMPClient)
   {
     s_aSMPClient = aSMPClient;
+    _checkDoubleBooking ();
   }
 
   /**
@@ -150,6 +162,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   public static void setSMLInfo (@Nullable final ISMLInfo aSMLInfo)
   {
     s_aSMLInfo = aSMLInfo;
+    _checkDoubleBooking ();
   }
 
   /**
@@ -175,6 +188,67 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   {
     ValueEnforcer.notNull (aSMPURLProvider, "SMPURLProvider");
     s_aSMPURLProvider = aSMPURLProvider;
+  }
+
+  /**
+   * @return The revocation check mode to apply when verifying SMP response certificates.
+   *         <code>null</code> means "use the JVM-wide default from
+   *         {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
+   * @since 4.4.4
+   */
+  @Nullable
+  public static ERevocationCheckMode getSMPRevocationCheckMode ()
+  {
+    return s_eSMPRevocationCheckMode;
+  }
+
+  /**
+   * Set the revocation check mode to apply when verifying SMP response certificates.
+   *
+   * @param e
+   *        The revocation check mode to use. <code>null</code> means "use the JVM-wide default from
+   *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
+   * @since 4.4.4
+   */
+  public static void setSMPRevocationCheckMode (@Nullable final ERevocationCheckMode e)
+  {
+    final boolean bChange = e != s_eSMPRevocationCheckMode;
+    s_eSMPRevocationCheckMode = e;
+    if (bChange)
+    {
+      LOGGER.info (CAS4.LIB_NAME + " Peppol SMP revocation check mode is set to " + e);
+    }
+  }
+
+  /**
+   * @return <code>true</code> if an indeterminable revocation status of an SMP response certificate
+   *         leads to rejection, <code>false</code> to accept. Defaults to
+   *         {@link #DEFAULT_SMP_UNKNOWN_REVOCATION_STATUS_REJECT}.
+   * @since 4.4.4
+   */
+  public static boolean isSMPUnknownRevocationStatusReject ()
+  {
+    return s_bSMPUnknownRevocationStatusReject;
+  }
+
+  /**
+   * Set whether an indeterminable revocation status of an SMP response certificate leads to
+   * rejection of the certificate.
+   *
+   * @param b
+   *        <code>true</code> to reject on unknown revocation status, <code>false</code> to accept.
+   * @since 4.4.4
+   */
+  public static void setSMPUnknownRevocationStatusReject (final boolean b)
+  {
+    final boolean bChange = b != s_bSMPUnknownRevocationStatusReject;
+    s_bSMPUnknownRevocationStatusReject = b;
+    if (bChange)
+    {
+      LOGGER.info (CAS4.LIB_NAME +
+                   " Peppol SMP unknown revocation status reject is now " +
+                   (b ? "enabled" : "disabled"));
+    }
   }
 
   /**
@@ -391,6 +465,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
                                             .serviceMetadataProvider (aSMPClient)
                                             .smlInfo (aSMLInfo)
                                             .smpURLProvider (getSMPURLProvider ())
+                                            .smpRevocationCheckMode (getSMPRevocationCheckMode ())
+                                            .smpUnknownRevocationStatusReject (isSMPUnknownRevocationStatusReject ())
                                             .as4EndpointUrl (sAS4EndpointURL)
                                             .apCertificate (aAPCertificate)
                                             .sbdhIdentifierFactory (getSBDHIdentifierFactory ())
