@@ -90,6 +90,7 @@ import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.security.certificate.TrustedCAChecker;
+import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.IPeppolURLProvider;
@@ -365,6 +366,10 @@ public final class Phase4PeppolSender
    *        Possibility to override the OSCP checking flag on a per query basis. May be
    *        <code>null</code> to use the global flag from
    *        {@link CertificateRevocationChecker#getRevocationCheckMode()}.
+   * @param bRevocationSoftFail
+   *        If <code>true</code>, an undeterminable revocation status
+   *        ({@link ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}) is logged at WARN level and
+   *        treated as acceptable. All other invalid states still hard-fail.
    * @throws Phase4Exception
    *         in case of error
    */
@@ -372,7 +377,8 @@ public final class Phase4PeppolSender
                                             @Nullable final X509Certificate aReceiverCert,
                                             @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
                                             @NonNull final ETriState eCacheRevocationCheckResult,
-                                            @Nullable final ERevocationCheckMode eCheckMode) throws Phase4Exception
+                                            @Nullable final ERevocationCheckMode eCheckMode,
+                                            final boolean bRevocationSoftFail) throws Phase4Exception
   {
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Using the following receiver AP certificate from the SMP: " + aReceiverCert);
@@ -389,6 +395,13 @@ public final class Phase4PeppolSender
 
     if (eCertCheckResult.isInvalid ())
     {
+      if (bRevocationSoftFail && eCertCheckResult == ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN)
+      {
+        LOGGER.warn ("The revocation status of the receiver AP certificate could not be determined (at " +
+                     aNow +
+                     "); proceeding because revocation soft-fail is enabled.");
+        return;
+      }
       final String sMsg = "The configured receiver AP certificate is not valid (at " +
                           aNow +
                           ") and cannot be used for sending towards. Aborting. Reason: " +
@@ -461,6 +474,7 @@ public final class Phase4PeppolSender
     protected TrustedCAChecker m_aCAChecker;
     private ETriState m_eAPCacheRevocationCheckResult = ETriState.UNDEFINED;
     private ERevocationCheckMode m_eAPRevocationCheckMode;
+    private boolean m_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
 
     // Status var
     private OffsetDateTime m_aEffectiveSendingDT;
@@ -869,6 +883,29 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Enable or disable revocation soft-fail for the receiver AP certificate check. When enabled,
+     * an indeterminable revocation status (e.g. unreachable CRL distribution point with no working
+     * OCSP fallback) is logged at WARN level and treated as acceptable. All other invalid states
+     * (revoked, expired, untrusted issuer, ...) still cause a hard reject.
+     * <p>
+     * <strong>Security note:</strong> Peppol mandates revocation checks. Enabling soft-fail allows
+     * a message to be sent with a potentially-revoked AP certificate during a CRL/OCSP outage. Use
+     * only as a deliberate operational-continuity measure. Defaults to <code>false</code>.
+     *
+     * @param bRevocationSoftFail
+     *        <code>true</code> to accept {@link ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+     *        as valid, <code>false</code> (default) to treat it as invalid.
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public final IMPLTYPE apRevocationSoftFail (final boolean bRevocationSoftFail)
+    {
+      m_bAPRevocationSoftFail = bRevocationSoftFail;
+      return thisAsT ();
+    }
+
+    /**
      * The effective sending date time of the message. That is set only if message sending takes
      * place.
      *
@@ -931,7 +968,8 @@ public final class Phase4PeppolSender
                               aReceiverCert,
                               m_aAPCertificateConsumer,
                               m_eAPCacheRevocationCheckResult,
-                              m_eAPRevocationCheckMode);
+                              m_eAPRevocationCheckMode,
+                              m_bAPRevocationSoftFail);
       }
       else
       {

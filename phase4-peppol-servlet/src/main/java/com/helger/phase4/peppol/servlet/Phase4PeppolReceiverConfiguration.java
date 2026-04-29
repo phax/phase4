@@ -33,8 +33,8 @@ import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
+import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 import com.helger.security.revocation.ERevocationCheckMode;
-import com.helger.smpclient.httpclient.SMPHttpResponseHandlerSigned;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.ISMPURLProvider;
@@ -57,7 +57,7 @@ public final class Phase4PeppolReceiverConfiguration
   private final ISMLInfo m_aSMLInfo;
   private final ISMPURLProvider m_aSMPURLProvider;
   private final ERevocationCheckMode m_eSMPRevocationCheckMode;
-  private final boolean m_bSMPUnknownRevocationStatusReject;
+  private final boolean m_bSMPRevocationSoftFail;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
   private final IIdentifierFactory m_aSBDHIdentifierFactory;
@@ -66,6 +66,7 @@ public final class Phase4PeppolReceiverConfiguration
   @ChangeNextMajorRelease ("Changed from implicit boolean to m_eAPRevocationCheckMode")
   private final boolean m_bCheckSigningCertificateRevocation;
   private final TrustedCAChecker m_aAPCAChecker;
+  private final boolean m_bAPRevocationSoftFail;
 
   /**
    * Constructor
@@ -87,10 +88,12 @@ public final class Phase4PeppolReceiverConfiguration
    *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}". Only
    *        applied to SMP clients created internally via {@link #getOrCreateSMPClientForRecipient}.
    *        Pre-built SMP clients passed via {@code aSMPClient} must be configured by the caller.
-   * @param bSMPUnknownRevocationStatusReject
-   *        <code>true</code> if an indeterminable revocation status of an SMP response certificate
-   *        leads to rejection, <code>false</code> to accept. Only applied to SMP clients created
-   *        internally via {@link #getOrCreateSMPClientForRecipient}.
+   * @param bSMPRevocationSoftFail
+   *        <code>true</code> to accept an indeterminable revocation status of an SMP response
+   *        certificate (soft-fail), <code>false</code> to reject. Defaults to
+   *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults#isAllowSoftFail()}.
+   *        Only applied to SMP clients created internally via
+   *        {@link #getOrCreateSMPClientForRecipient}.
    * @param sAS4EndpointURL
    *        The endpoint URL to check against. May neither be <code>null</code> nor empty if
    *        receiver checks are enabled.
@@ -108,6 +111,12 @@ public final class Phase4PeppolReceiverConfiguration
    *        <code>true</code> if signing certificate revocation checks should be performed.
    * @param aAPCAChecker
    *        The Peppol AP CA checker. May not be <code>null</code>.
+   * @param bAPRevocationSoftFail
+   *        <code>true</code> to accept
+   *        {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+   *        from the AP CA checker as valid, <code>false</code> to treat it as invalid. Defaults to
+   *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults#isAllowSoftFail()}.
+   *        Applies to the inbound signing certificate check.
    * @since 3.0.3
    */
   public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
@@ -115,14 +124,15 @@ public final class Phase4PeppolReceiverConfiguration
                                             @Nullable final ISMLInfo aSMLInfo,
                                             @Nullable final ISMPURLProvider aSMPURLProvider,
                                             @Nullable final ERevocationCheckMode eSMPRevocationCheckMode,
-                                            final boolean bSMPUnknownRevocationStatusReject,
+                                            final boolean bSMPRevocationSoftFail,
                                             @Nullable final String sAS4EndpointURL,
                                             @Nullable final X509Certificate aAPCertificate,
                                             @NonNull final IIdentifierFactory aSBDHIdentifierFactory,
                                             final boolean bPerformSBDHValueChecks,
                                             final boolean bCheckSBDHForMandatoryCountryC1,
                                             final boolean bCheckSigningCertificateRevocation,
-                                            @NonNull final TrustedCAChecker aAPCAChecker)
+                                            @NonNull final TrustedCAChecker aAPCAChecker,
+                                            final boolean bAPRevocationSoftFail)
   {
     if (bReceiverCheckEnabled)
     {
@@ -137,7 +147,7 @@ public final class Phase4PeppolReceiverConfiguration
     m_aSMLInfo = aSMLInfo;
     m_aSMPURLProvider = aSMPURLProvider != null ? aSMPURLProvider : PeppolNaptrURLProvider.INSTANCE;
     m_eSMPRevocationCheckMode = eSMPRevocationCheckMode;
-    m_bSMPUnknownRevocationStatusReject = bSMPUnknownRevocationStatusReject;
+    m_bSMPRevocationSoftFail = bSMPRevocationSoftFail;
     m_sAS4EndpointURL = sAS4EndpointURL;
     m_aAPCertificate = aAPCertificate;
     m_aSBDHIdentifierFactory = aSBDHIdentifierFactory;
@@ -145,6 +155,7 @@ public final class Phase4PeppolReceiverConfiguration
     m_bCheckSBDHForMandatoryCountryC1 = bCheckSBDHForMandatoryCountryC1;
     m_bCheckSigningCertificateRevocation = bCheckSigningCertificateRevocation;
     m_aAPCAChecker = aAPCAChecker;
+    m_bAPRevocationSoftFail = bAPRevocationSoftFail;
   }
 
   public boolean isReceiverCheckEnabled ()
@@ -204,16 +215,16 @@ public final class Phase4PeppolReceiverConfiguration
   }
 
   /**
-   * @return <code>true</code> if an indeterminable revocation status of an SMP response certificate
-   *         leads to rejection, <code>false</code> to accept. Defaults to
-   *         {@link SMPHttpResponseHandlerSigned#DEFAULT_UNKNOWN_REVOCATION_STATUS_REJECT}. Only
-   *         applied to SMP clients created internally via
+   * @return <code>true</code> to accept an indeterminable revocation status of an SMP response
+   *         certificate (soft-fail), <code>false</code> to reject. Defaults to
+   *         {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults#isAllowSoftFail()}.
+   *         Only applied to SMP clients created internally via
    *         {@link #getOrCreateSMPClientForRecipient(IParticipantIdentifier)}.
    * @since 4.4.4
    */
-  public boolean isSMPUnknownRevocationStatusReject ()
+  public boolean isSMPRevocationSoftFail ()
   {
-    return m_bSMPUnknownRevocationStatusReject;
+    return m_bSMPRevocationSoftFail;
   }
 
   /**
@@ -242,7 +253,7 @@ public final class Phase4PeppolReceiverConfiguration
       // SMP with dynamic discovery
       final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (m_aSMPURLProvider, aRecipientID, m_aSMLInfo);
       aSMPClient.setRevocationCheckMode (m_eSMPRevocationCheckMode);
-      aSMPClient.setUnknownRevocationStatusReject (m_bSMPUnknownRevocationStatusReject);
+      aSMPClient.setAllowRevocationSoftFail (m_bSMPRevocationSoftFail);
       return aSMPClient;
     }
     return null;
@@ -306,6 +317,18 @@ public final class Phase4PeppolReceiverConfiguration
     return m_aAPCAChecker;
   }
 
+  /**
+   * @return <code>true</code> to accept
+   *         {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+   *         from the AP CA checker as valid (soft-fail), <code>false</code> to treat it as invalid.
+   *         Applies to the inbound signing certificate check.
+   * @since 4.4.4
+   */
+  public boolean isAPRevocationSoftFail ()
+  {
+    return m_bAPRevocationSoftFail;
+  }
+
   @Override
   public String toString ()
   {
@@ -314,7 +337,7 @@ public final class Phase4PeppolReceiverConfiguration
                                        .append ("SMLInfo", m_aSMLInfo)
                                        .append ("SMPURLProvider", m_aSMPURLProvider)
                                        .append ("SMPRevocationCheckMode", m_eSMPRevocationCheckMode)
-                                       .append ("SMPUnknownRevocationStatusReject", m_bSMPUnknownRevocationStatusReject)
+                                       .append ("SMPRevocationSoftFail", m_bSMPRevocationSoftFail)
                                        .append ("AS4EndpointURL", m_sAS4EndpointURL)
                                        .append ("APCertificate", m_aAPCertificate)
                                        .append ("SBDHIdentifierFactory", m_aSBDHIdentifierFactory)
@@ -323,6 +346,7 @@ public final class Phase4PeppolReceiverConfiguration
                                        .append ("CheckSigningCertificateRevocation",
                                                 m_bCheckSigningCertificateRevocation)
                                        .append ("APCAChecker", m_aAPCAChecker)
+                                       .append ("APRevocationSoftFail", m_bAPRevocationSoftFail)
                                        .getToString ();
   }
 
@@ -362,7 +386,7 @@ public final class Phase4PeppolReceiverConfiguration
     private ISMLInfo m_aSMLInfo;
     private ISMPURLProvider m_aSMPURLProvider;
     private ERevocationCheckMode m_eSMPRevocationCheckMode;
-    private boolean m_bSMPUnknownRevocationStatusReject = SMPHttpResponseHandlerSigned.DEFAULT_UNKNOWN_REVOCATION_STATUS_REJECT;
+    private boolean m_bSMPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
     private IIdentifierFactory m_aSBDHIdentifierFactory;
@@ -370,6 +394,7 @@ public final class Phase4PeppolReceiverConfiguration
     private boolean m_bCheckSBDHForMandatoryCountryC1;
     private boolean m_bCheckSigningCertificateRevocation;
     private TrustedCAChecker m_aAPCAChecker;
+    private boolean m_bAPRevocationSoftFail;
 
     public Phase4PeppolReceiverConfigurationBuilder ()
     {}
@@ -381,14 +406,15 @@ public final class Phase4PeppolReceiverConfiguration
                                                            .smlInfo (aSrc.getSMLInfo ())
                                                            .smpURLProvider (aSrc.getSMPURLProvider ())
                                                            .smpRevocationCheckMode (aSrc.getSMPRevocationCheckMode ())
-                                                           .smpUnknownRevocationStatusReject (aSrc.isSMPUnknownRevocationStatusReject ())
+                                                           .smpRevocationSoftFail (aSrc.isSMPRevocationSoftFail ())
                                                            .as4EndpointUrl (aSrc.getAS4EndpointURL ())
                                                            .apCertificate (aSrc.getAPCertificate ())
                                                            .sbdhIdentifierFactory (aSrc.getSBDHIdentifierFactory ())
                                                            .performSBDHValueChecks (aSrc.isPerformSBDHValueChecks ())
                                                            .checkSBDHForMandatoryCountryC1 (aSrc.isCheckSBDHForMandatoryCountryC1 ())
                                                            .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ())
-                                                           .apCAChecker (aSrc.getAPCAChecker ());
+                                                           .apCAChecker (aSrc.getAPCAChecker ())
+                                                           .apRevocationSoftFail (aSrc.isAPRevocationSoftFail ());
     }
 
     @NonNull
@@ -457,21 +483,22 @@ public final class Phase4PeppolReceiverConfiguration
     }
 
     /**
-     * Set whether an indeterminable revocation status of an SMP response certificate should lead to
-     * a rejection of the certificate. Only applied to SMP clients created internally via
+     * Set whether an indeterminable revocation status of an SMP response certificate is accepted
+     * (soft-fail) or causes the certificate to be rejected. Only applied to SMP clients created
+     * internally via
      * {@link Phase4PeppolReceiverConfiguration#getOrCreateSMPClientForRecipient(IParticipantIdentifier)}.
      *
      * @param b
-     *        <code>true</code> to reject on unknown revocation status, <code>false</code> to
-     *        accept. Defaults to
-     *        {@link SMPHttpResponseHandlerSigned#DEFAULT_UNKNOWN_REVOCATION_STATUS_REJECT}.
+     *        <code>true</code> to accept on unknown revocation status (soft-fail),
+     *        <code>false</code> to reject. Defaults to
+     *        {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}.
      * @return this for chaining
      * @since 4.4.4
      */
     @NonNull
-    public Phase4PeppolReceiverConfigurationBuilder smpUnknownRevocationStatusReject (final boolean b)
+    public Phase4PeppolReceiverConfigurationBuilder smpRevocationSoftFail (final boolean b)
     {
-      m_bSMPUnknownRevocationStatusReject = b;
+      m_bSMPRevocationSoftFail = b;
       return this;
     }
 
@@ -544,6 +571,31 @@ public final class Phase4PeppolReceiverConfiguration
       return this;
     }
 
+    /**
+     * Enable or disable revocation soft-fail for the inbound signing certificate check. When
+     * enabled, an undeterminable revocation status (e.g. unreachable CRL distribution point with no
+     * working OCSP fallback) is logged at WARN level and the message is accepted. All other invalid
+     * states (revoked, expired, untrusted issuer, ...) still cause the message to be rejected.
+     * <p>
+     * <strong>Security note:</strong> Peppol mandates revocation checks. Enabling soft-fail allows
+     * an inbound message with a potentially-revoked AP signing certificate to be accepted during a
+     * CRL/OCSP outage. Use only as a deliberate operational-continuity measure. Defaults to
+     * <code>false</code>.
+     *
+     * @param b
+     *        <code>true</code> to accept
+     *        {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+     *        as valid, <code>false</code> (default) to treat it as invalid.
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public Phase4PeppolReceiverConfigurationBuilder apRevocationSoftFail (final boolean b)
+    {
+      m_bAPRevocationSoftFail = b;
+      return this;
+    }
+
     @NonNull
     public Phase4PeppolReceiverConfiguration build ()
     {
@@ -566,14 +618,15 @@ public final class Phase4PeppolReceiverConfiguration
                                                     m_aSMLInfo,
                                                     m_aSMPURLProvider,
                                                     m_eSMPRevocationCheckMode,
-                                                    m_bSMPUnknownRevocationStatusReject,
+                                                    m_bSMPRevocationSoftFail,
                                                     m_sAS4EndpointURL,
                                                     m_aAPCertificate,
                                                     m_aSBDHIdentifierFactory,
                                                     m_bPerformSBDHValueChecks,
                                                     m_bCheckSBDHForMandatoryCountryC1,
                                                     m_bCheckSigningCertificateRevocation,
-                                                    m_aAPCAChecker);
+                                                    m_aAPCAChecker,
+                                                    m_bAPRevocationSoftFail);
     }
   }
 }
