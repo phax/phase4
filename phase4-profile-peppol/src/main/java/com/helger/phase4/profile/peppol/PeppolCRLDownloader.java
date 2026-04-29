@@ -45,11 +45,11 @@ public class PeppolCRLDownloader extends CRLDownloader
   }
 
   /**
-   * Default constructor using {@link Phase4PeppolHttpClientSettings}.
+   * Default constructor using {@link Phase4PeppolCRLHttpClientSettings}.
    */
   public PeppolCRLDownloader ()
   {
-    this (new Phase4PeppolHttpClientSettings ());
+    this (new Phase4PeppolCRLHttpClientSettings ());
   }
 
   /**

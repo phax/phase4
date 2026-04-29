@@ -64,7 +64,7 @@ import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.Phase4PeppolDefaultReceiverConfiguration;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolCRLDownloader;
-import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
+import com.helger.phase4.profile.peppol.Phase4PeppolCRLHttpClientSettings;
 import com.helger.photon.api.IAPIRegistry;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
@@ -217,7 +217,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
     // Make sure the download of CRL is using Apache HttpClient and that the
     // provided settings are used.
-    final Phase4PeppolHttpClientSettings aHCS = new Phase4PeppolHttpClientSettings ();
+    final Phase4PeppolCRLHttpClientSettings aHCS = new Phase4PeppolCRLHttpClientSettings ();
     APConfig.applyHttpProxySettings (aHCS);
     PeppolCRLDownloader.setAsDefaultCRLCache (aHCS);
 
