@@ -1730,10 +1730,10 @@ public class AS4RequestHandler implements AutoCloseable
                                 sMessageID +
                                 "' was already handled (this is a duplicate)";
         LOGGER.error (sDetails);
-        aEbmsErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (m_aLocale)
-                                                     .refToMessageInError (sMessageID)
-                                                     .errorDetail (sDetails)
-                                                     .build ());
+        aEbmsErrorMessages.add (EEbmsError.EBMS_PHASE4_DUPLICATE.errorBuilder (m_aLocale)
+                                                                .refToMessageInError (sMessageID)
+                                                                .errorDetail (sDetails)
+                                                                .build ());
       }
       else
       {

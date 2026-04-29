@@ -49,7 +49,8 @@ public enum EEbmsErrorText implements IHasDisplayText
   DELIVERY_FAILURE ("Although the message was send under Guaranteed delivery reuqirement, the Reliability module could not get assurance that the message was properly delivered, in spite of resending efforts."),
   MISSING_RECEIPT ("A Receipt has not been received for a message that was previously sent by the MSH generating this error."),
   INVALID_RECEIPT ("A Receipt has been received  for a message that was previously sent by the MSH generating this error, but the content does not match the message content (e.g. some part has not been acknowledged, or the digest associated does not match the signature digest, for NRR)."),
-  DECOMPRESSION_FAILURE ("An error occurred during the decompression.");
+  DECOMPRESSION_FAILURE ("An error occurred during the decompression."),
+  PHASE4_DUPLICATE ("The incoming message has been determined to be a duplicate, based on the MessageId of the incoming message.");
 
   private final String m_sErrorText;
 

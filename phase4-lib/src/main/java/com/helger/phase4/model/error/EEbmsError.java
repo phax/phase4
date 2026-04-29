@@ -19,6 +19,7 @@ package com.helger.phase4.model.error;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import com.helger.annotation.misc.Since;
 import com.helger.base.lang.EnumHelper;
 import com.helger.base.string.StringHelper;
 import com.helger.diagnostics.error.IError;
@@ -126,7 +127,14 @@ public enum EEbmsError implements IEbmsError
                               EEbmsErrorSeverity.FAILURE,
                               "DecompressionFailure",
                               EEbmsErrorText.DECOMPRESSION_FAILURE,
-                              EEbmsErrorCategory.COMMUNICATION);
+                              EEbmsErrorCategory.COMMUNICATION),
+  // Additional Feature errors for phase4 according to ebMS Core Spec 6.4.1. Adding new ebMS Errors
+  @Since ("4.4.4")
+  EBMS_PHASE4_DUPLICATE("EBMS:4001",
+                        EEbmsErrorSeverity.FAILURE,
+                        "DuplicateDetected",
+                        EEbmsErrorText.PHASE4_DUPLICATE,
+                        EEbmsErrorCategory.CONTENT);
 
   private final String m_sErrorCode;
   private final EEbmsErrorSeverity m_eSeverity;
