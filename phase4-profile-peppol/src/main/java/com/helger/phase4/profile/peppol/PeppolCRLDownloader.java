@@ -38,6 +38,12 @@ public class PeppolCRLDownloader extends CRLDownloader
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (PeppolCRLDownloader.class);
 
+  private void _initAllowList ()
+  {
+    // All Peppol CRLs are taken from this URL
+    allowList ().addAllowedPrefix ("http://crl.one.nl.digicert.com/");
+  }
+
   /**
    * Default constructor using {@link Phase4PeppolHttpClientSettings}.
    */
@@ -55,6 +61,7 @@ public class PeppolCRLDownloader extends CRLDownloader
   public PeppolCRLDownloader (@NonNull final HttpClientSettings aHCS)
   {
     super (new HttpClientUrlDownloader (aHCS));
+    _initAllowList ();
   }
 
   /**
@@ -66,6 +73,7 @@ public class PeppolCRLDownloader extends CRLDownloader
   public PeppolCRLDownloader (@NonNull final HttpClientFactory aHCF)
   {
     super (new HttpClientUrlDownloader (aHCF));
+    _initAllowList ();
   }
 
   /**
