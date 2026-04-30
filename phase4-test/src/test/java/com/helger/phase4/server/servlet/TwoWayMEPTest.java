@@ -94,7 +94,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                              null,
                                              null,
                                              null);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
@@ -123,7 +123,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                              null,
                                              null);
     final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
@@ -154,7 +154,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                              null,
                                              null);
     final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
@@ -204,9 +204,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 
     final Document aSignedDoc = AS4UserMessage.create (m_eSoapVersion, aEbms3UserMessage).getAsSoapDocument (aPayload);
 
-    sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessageExpectError (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
+                                 EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -223,9 +222,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                              null,
                                              null,
                                              null);
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -241,8 +239,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                              null,
                                              null,
                                              null);
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 }

@@ -117,9 +117,8 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
     final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage).getAsSoapDocument (m_aPayload);
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      "'originalSender' property is empty or not existant but mandatory");
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 "'originalSender' property is empty or not existant but mandatory");
   }
 
   @Test
@@ -137,9 +136,8 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
     final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage).getAsSoapDocument (m_aPayload);
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      "'finalRecipient' property is empty or not existant but mandatory");
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 "'finalRecipient' property is empty or not existant but mandatory");
   }
 
   @NonNull

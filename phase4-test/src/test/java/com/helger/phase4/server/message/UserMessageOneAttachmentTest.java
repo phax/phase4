@@ -77,7 +77,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
                                                                               aMsg.getAsSoapDocument (),
                                                                               aAttachments);
 
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
@@ -103,7 +103,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
                                                                                                              AS4SigningParams.createDefault ()),
                                                                               aAttachments);
 
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
@@ -127,7 +127,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
                                                                        false,
                                                                        s_aResMgr,
                                                                        m_aCryptParams);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
@@ -158,7 +158,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
                                                                        false,
                                                                        s_aResMgr,
                                                                        m_aCryptParams);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));

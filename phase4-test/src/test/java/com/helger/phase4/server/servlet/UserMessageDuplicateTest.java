@@ -54,10 +54,10 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
 
     // Send once
-    sendPlainMessage (aEntity, true, null);
+    sendPlainMessageExpectSuccess (aEntity);
 
     // Send again
-    sendPlainMessage (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
+    sendPlainMessageExpectError (aEntity, EEbmsError.EBMS_PHASE4_DUPLICATE.getErrorCode ());
   }
 
   @Test
@@ -70,7 +70,7 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
 
-    sendPlainMessage (aEntity, true, null);
+    sendPlainMessageExpectSuccess (aEntity);
 
     // Making sure the message gets disposed off
     // 60 000 = 1 minute, *2 and + 10000 are a buffer
@@ -79,7 +79,7 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
     ThreadHelper.sleep (AS4Configuration.getIncomingDuplicateDisposalMinutes () * CGlobal.MILLISECONDS_PER_MINUTE * 2 +
                         10 * CGlobal.MILLISECONDS_PER_SECOND);
 
-    sendPlainMessage (aEntity, true, null);
+    sendPlainMessageExpectSuccess (aEntity);
   }
 
   @Test
@@ -92,11 +92,11 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, eSOAPVersion.getMimeType ());
 
     // Send first
-    final String sResponse = sendPlainMessage (aEntity, true, null);
+    final String sResponse = sendPlainMessageExpectSuccess (aEntity);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
 
     // Send second
-    sendPlainMessage (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
+    sendPlainMessageExpectError (aEntity, EEbmsError.EBMS_PHASE4_DUPLICATE.getErrorCode ());
   }
 }

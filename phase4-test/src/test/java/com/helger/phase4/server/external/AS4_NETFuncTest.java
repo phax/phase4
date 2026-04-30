@@ -132,6 +132,6 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
                                                                AS4SigningParams.createDefault ());
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aSignedDoc, aAttachments);
-    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
   }
 }

@@ -18,6 +18,7 @@ package com.helger.phase4.CEF;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.hc.core5.http.NoHttpResponseException;
 import org.jspecify.annotations.NonNull;
@@ -81,7 +82,10 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4eSENSCEFOneWayFuncTest.class);
 
   public AS4eSENSCEFOneWayFuncTest ()
-  {}
+  {
+    // No retries
+    setRetries (0);
+  }
 
   /**
    * Prerequisite:<br>
@@ -105,7 +109,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                        null,
                                                                                                        s_aResMgr),
                                                                           null);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -159,9 +163,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
     final Document aDoc = new AS4UserMessage (ESoapVersion.AS4_DEFAULT, aUserMessage).getAsSoapDocument (m_aPayload);
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -195,7 +198,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                        s_aResMgr),
                                                                           aAttachments);
 
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -235,7 +238,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                        s_aResMgr),
                                                                           aAttachments);
 
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -328,7 +331,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                        s_aResMgr),
                                                                           aAttachments);
 
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -371,16 +374,16 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     // attached.
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("attachment/HyperlinkPayload.xml"));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
   @NonNull
   private static HttpProxyServer _startProxyServerInterceptingFirstCall (@Nonnegative final int nProxyPort)
   {
     // Using LittleProxy
-    // https://github.com/adamfisk/LittleProxy
+    // New: https://github.com/LittleProxy/LittleProxy
+    // Old: https://github.com/adamfisk/LittleProxy
     final int nResponsesToIntercept = 1;
     final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
                                                                .withPort (nProxyPort)
@@ -412,7 +415,10 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                        }
 
                                                                        LOGGER.info ("Proxy purposely passes on call " +
-                                                                                    nIndex);
+                                                                                    nIndex +
+                                                                                    " to '" +
+                                                                                    httpObject +
+                                                                                    "'");
                                                                        return httpObject;
                                                                      }
                                                                    };
@@ -454,7 +460,14 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                            null,
                                                                                                            s_aResMgr),
                                                                               null);
-        sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
+        sendMimeMessageExpectError (HttpMimeMessageEntity.create (aMsg), EEbmsError.EBMS_OTHER.getErrorCode ());
+
+        // We're expecting the exception
+        fail ();
+      }
+      catch (final NoHttpResponseException ex)
+      {
+        // expected
       }
       finally
       {
@@ -526,7 +539,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                            null,
                                                                                                            s_aResMgr),
                                                                               null);
-        sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+        sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
       }
       finally
       {
@@ -699,7 +712,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                            null,
                                                                                                            s_aResMgr),
                                                                               null);
-        sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
+        sendMimeMessageExpectError (HttpMimeMessageEntity.create (aMsg), EEbmsError.EBMS_OTHER.getErrorCode ());
       }
       finally
       {
@@ -802,9 +815,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     assertEquals (aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
                   sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
-                                               true,
-                                               null);
+    final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aSignedDoc,
+                                                                               m_eSoapVersion.getMimeType ()));
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }

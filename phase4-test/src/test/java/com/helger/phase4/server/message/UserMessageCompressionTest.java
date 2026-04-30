@@ -78,7 +78,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                                           .getAsSoapDocument (),
                                                                               aAttachments);
 
-    sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
   }
 
   @Test
@@ -102,7 +102,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                          AS4SigningParams.createDefault ());
     final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
 
-    sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
   }
 
   @Test
@@ -125,7 +125,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                    false,
                                                                    s_aResMgr,
                                                                    m_aCryptParams);
-    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
   }
 
   @Test
@@ -155,7 +155,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                        false,
                                                                        s_aResMgr,
                                                                        m_aCryptParams);
-    sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
   }
 
   @Test
@@ -166,7 +166,8 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
       // Read an existing MimeMessage
       final AS4MimeMessage aMsg = new AS4MimeMessage (null, aIS);
 
-      sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+      sendMimeMessageExpectError (HttpMimeMessageEntity.create (aMsg),
+                                  EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
     }
   }
 }

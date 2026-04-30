@@ -34,7 +34,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 
-import com.helger.annotation.Nonnegative;
 import com.helger.base.array.ArrayHelper;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.numeric.mutable.MutableInt;
@@ -74,14 +73,12 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 
   protected final IAS4CryptoFactory m_aCryptoFactory = AS4CryptoFactoryConfiguration.getDefaultInstance ();
   protected final AS4CryptParams m_aCryptParams = AS4CryptParams.createDefault ().setAlias ("ph-as4");
-  private final int m_nRetries;
+  protected int m_nRetries = 2;
 
   protected AbstractUserMessageTestSetUp ()
-  {
-    this (2);
-  }
+  {}
 
-  protected AbstractUserMessageTestSetUp (@Nonnegative final int nRetries)
+  protected final void setRetries (final int nRetries)
   {
     m_nRetries = ValueEnforcer.isGE0 (nRetries, "Retries");
   }
@@ -113,10 +110,10 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   }
 
   @NonNull
-  private String _sendPlainMessage (@NonNull final HttpPost aPost,
-                                    @NonNull final HttpEntity aHttpEntity,
-                                    final boolean bExpectSuccess,
-                                    @Nullable final String sExecptedResponseContent) throws IOException
+  private String _sendHttpMessage (@NonNull final HttpPost aPost,
+                                   @NonNull final HttpEntity aHttpEntity,
+                                   final boolean bExpectSuccess,
+                                   @Nullable final String sExecptedResponseContent) throws IOException
   {
     // Debug code
     AS4HttpDebug.debug ( () -> {
@@ -229,10 +226,10 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
    *         in case there is some error with the MIME message
    */
   @NonNull
-  protected final String sendMimeMessage (@NonNull final HttpMimeMessageEntity aHttpEntity,
-                                          final boolean bExpectSuccess,
-                                          @Nullable final String sExecptedResponseContent) throws IOException,
-                                                                                           MessagingException
+  private final String _sendMimeMessage (@NonNull final HttpMimeMessageEntity aHttpEntity,
+                                         final boolean bExpectSuccess,
+                                         @Nullable final String sExecptedResponseContent) throws IOException,
+                                                                                          MessagingException
   {
     final HttpPost aPost = _createMockPostToLocalJetty ();
 
@@ -240,7 +237,47 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
     AS4MimeMessageHelper.forEachHeaderAndRemoveAfterwards (aHttpEntity.getMimeMessage (), aPost::addHeader, true);
 
     // Ready to send
-    return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExecptedResponseContent);
+    return _sendHttpMessage (aPost, aHttpEntity, bExpectSuccess, sExecptedResponseContent);
+  }
+
+  /**
+   * Send a MIME message to the locally spawned Jetty and expect success
+   *
+   * @param aHttpEntity
+   *        the entity to send to the server
+   * @return Response as String
+   * @throws IOException
+   *         In case HTTP sending fails
+   * @throws MessagingException
+   *         in case there is some error with the MIME message
+   */
+  @NonNull
+  protected final String sendMimeMessageExpectSuccess (@NonNull final HttpMimeMessageEntity aHttpEntity) throws IOException,
+                                                                                                         MessagingException
+  {
+    return _sendMimeMessage (aHttpEntity, true, null);
+  }
+
+  /**
+   * Send a MIME message to the locally spawned Jetty
+   *
+   * @param aHttpEntity
+   *        the entity to send to the server
+   * @param sExecptedResponseContent
+   *        if you expect a negative response, you must give the expected error code as it will get
+   *        searched for in the response.
+   * @return Response as String
+   * @throws IOException
+   *         In case HTTP sending fails
+   * @throws MessagingException
+   *         in case there is some error with the MIME message
+   */
+  @NonNull
+  protected final String sendMimeMessageExpectError (@NonNull final HttpMimeMessageEntity aHttpEntity,
+                                                     @NonNull final String sExecptedResponseContent) throws IOException,
+                                                                                                     MessagingException
+  {
+    return _sendMimeMessage (aHttpEntity, false, sExecptedResponseContent);
   }
 
   /**
@@ -258,13 +295,47 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
    *         In case HTTP sending fails
    */
   @NonNull
-  protected final String sendPlainMessage (@NonNull final HttpEntity aHttpEntity,
-                                           final boolean bExpectSuccess,
-                                           @Nullable final String sExecptedResponseContent) throws IOException
+  private final String _sendPlainMessage (@NonNull final HttpEntity aHttpEntity,
+                                          final boolean bExpectSuccess,
+                                          @Nullable final String sExecptedResponseContent) throws IOException
   {
     final HttpPost aPost = _createMockPostToLocalJetty ();
 
     // Ready to send
-    return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExecptedResponseContent);
+    return _sendHttpMessage (aPost, aHttpEntity, bExpectSuccess, sExecptedResponseContent);
+  }
+
+  /**
+   * Send a non-MIME message to the locally spawned Jetty
+   *
+   * @param aHttpEntity
+   *        the entity to send to the server
+   * @return Response as String
+   * @throws IOException
+   *         In case HTTP sending fails
+   */
+  @NonNull
+  protected final String sendPlainMessageExpectSuccess (@NonNull final HttpEntity aHttpEntity) throws IOException
+  {
+    return _sendPlainMessage (aHttpEntity, true, null);
+  }
+
+  /**
+   * Send a non-MIME message to the locally spawned Jetty
+   *
+   * @param aHttpEntity
+   *        the entity to send to the server
+   * @param sExecptedResponseContent
+   *        if you expect a negative response, you must give the expected error code as it will get
+   *        searched for in the response.
+   * @return Response as String
+   * @throws IOException
+   *         In case HTTP sending fails
+   */
+  @NonNull
+  protected final String sendPlainMessageExpectError (@NonNull final HttpEntity aHttpEntity,
+                                                      @NonNull final String sExecptedResponseContent) throws IOException
+  {
+    return _sendPlainMessage (aHttpEntity, false, sExecptedResponseContent);
   }
 }

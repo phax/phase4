@@ -113,7 +113,7 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
     aIncomingDuplicateMgr.clearCache ();
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
     Document aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), null, null, null);
-    String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
 
     // Avoid stopping server to receive async response
     LOGGER.info ("Waiting for 1 second");
@@ -134,21 +134,21 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
     // @MockPullRequestProcessorSPI
     // To Test the pull request part of the EMEPBinding
     final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/PushPull.xml"));
-    final ICommonsList <Object> aAny = new CommonsArrayList <> ();
-    aAny.add (aPayload.getDocumentElement ());
+    final ICommonsList <Object> aAnyList = new CommonsArrayList <> ();
+    aAnyList.add (aPayload.getDocumentElement ());
 
     // add the ID from the usermessage since its still one async message
     // transfer
     aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                          MessageHelperMethods.createEbms3MessageInfo (sID),
                                          AS4TestConstants.DEFAULT_MPC,
-                                         aAny).getAsSoapDocument ();
+                                         aAnyList).getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
-    sResponse = sendPlainMessage (aEntity, true, null);
+    sResponse = sendPlainMessageExpectSuccess (aEntity);
 
-    final NodeList nUserList = aDoc.getElementsByTagName ("eb:MessageId");
+    final NodeList aUserList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
-    final String aUserMsgID = nUserList.item (0).getTextContent ();
+    final String aUserMsgID = aUserList.item (0).getTextContent ();
 
     assertTrue (sResponse.contains (aUserMsgID));
   }

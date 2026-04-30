@@ -20,6 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
+import com.helger.config.ConfigFactory;
 import com.helger.config.IConfig;
 import com.helger.config.fallback.ConfigWithFallback;
 import com.helger.config.fallback.IConfigWithFallback;
@@ -39,7 +40,6 @@ import com.helger.typeconvert.collection.IStringMap;
  * @author Philip Helger
  */
 @ThreadSafe
-@SuppressWarnings ("removal")
 public final class ScopedAS4Configuration implements AutoCloseable
 {
   private static final String TEST_CONFIG_FILE = "src/test/resources/test-phase4.properties";
@@ -60,7 +60,7 @@ public final class ScopedAS4Configuration implements AutoCloseable
   @NonNull
   public static ScopedAS4Configuration create (@NonNull final IStringMap aMap)
   {
-    final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
+    final MultiConfigurationValueProvider aVP = ConfigFactory.createDefaultValueProvider ();
     aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString),
                                 EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
     return new ScopedAS4Configuration (new ConfigWithFallback (aVP));
@@ -72,7 +72,7 @@ public final class ScopedAS4Configuration implements AutoCloseable
     ValueEnforcer.notNull (aRes, "Res");
     ValueEnforcer.isTrue (aRes.exists (), () -> "Resource does not exist: " + aRes);
 
-    final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
+    final MultiConfigurationValueProvider aVP = ConfigFactory.createDefaultValueProvider ();
     // By default priority must be higher than the default
     aVP.addConfigurationSource (new ConfigurationSourceProperties (aRes),
                                 EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
@@ -88,7 +88,7 @@ public final class ScopedAS4Configuration implements AutoCloseable
   @NonNull
   public static ScopedAS4Configuration createTestConfig (@NonNull final IStringMap aMap)
   {
-    final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
+    final MultiConfigurationValueProvider aVP = ConfigFactory.createDefaultValueProvider ();
     aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString),
                                 EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
     aVP.addConfigurationSource (new ConfigurationSourceProperties (new FileSystemResource (TEST_CONFIG_FILE)),

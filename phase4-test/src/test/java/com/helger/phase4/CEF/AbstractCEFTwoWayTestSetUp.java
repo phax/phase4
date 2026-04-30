@@ -25,7 +25,6 @@ import org.junit.BeforeClass;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.annotation.Nonnegative;
 import com.helger.annotation.WillNotClose;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.io.resource.ClassPathResource;
@@ -63,11 +62,6 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
 
   protected AbstractCEFTwoWayTestSetUp ()
   {}
-
-  protected AbstractCEFTwoWayTestSetUp (@Nonnegative final int nRetries)
-  {
-    super (nRetries);
-  }
 
   @BeforeClass
   public static void startServerNinety () throws Exception

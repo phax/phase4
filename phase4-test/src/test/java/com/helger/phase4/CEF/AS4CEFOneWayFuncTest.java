@@ -135,9 +135,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     assertEquals (aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
                   sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
-                                               true,
-                                               null);
+    final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aSignedDoc,
+                                                                               m_eSoapVersion.getMimeType ()));
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
@@ -158,7 +157,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -205,7 +204,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                        aAttachments,
                                                                                                        s_aResMgr),
                                                                           aAttachments);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
@@ -304,7 +303,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     aNL.item (0).removeChild (aNL.item (0).getFirstChild ());
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMimeMessageExpectError (HttpMimeMessageEntity.create (aMsg),
+                                EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -445,9 +445,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                               aMsg.getAsSoapDocument (m_aPayload),
                                                                               aAttachments);
-    sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg),
-                     false,
-                     EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
+    sendMimeMessageExpectError (HttpMimeMessageEntity.create (aMimeMsg),
+                                EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
   }
 
   /**
@@ -491,7 +490,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
     // How to check message if it is decompressed hmm?
   }
 
@@ -530,7 +529,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
   }
 
   /**
@@ -558,7 +557,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, s_aResMgr);
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
 
@@ -596,7 +595,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                          .build (), s_aResMgr));
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
-    sendMimeMessage (HttpMimeMessageEntity.create (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMimeMessageExpectError (HttpMimeMessageEntity.create (aMsg),
+                                EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -627,8 +627,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                        false,
                                                                        s_aResMgr,
                                                                        m_aCryptParams);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
-
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
@@ -672,9 +671,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     }
     aNL.item (0).setTextContent (AS4XMLHelper.serializeXML (aDoc));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 
   /**
@@ -716,8 +714,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                        false,
                                                                        s_aResMgr,
                                                                        m_aCryptParams);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
-
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
@@ -790,7 +787,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                                                                    aAttachments)
                                                                                       .getAsSoapDocument (),
                                                                           aAttachments);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }

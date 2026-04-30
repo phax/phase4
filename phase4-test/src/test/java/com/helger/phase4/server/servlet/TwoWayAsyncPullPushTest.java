@@ -127,7 +127,7 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
                                                   AS4TestConstants.DEFAULT_MPC,
                                                   aAny).getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
-    String sResponse = sendPlainMessage (aEntity, true, null);
+    String sResponse = sendPlainMessageExpectSuccess (aEntity);
 
     // Avoid stopping server to receive async response
     LOGGER.info ("Waiting for 1 second");
@@ -138,7 +138,7 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
     final String aPullID = nPullList.item (0).getTextContent ();
 
     aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), null, aPullID, null);
-    sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once

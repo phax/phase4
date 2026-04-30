@@ -103,7 +103,7 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 
     final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging),
                                                   SOAP_VERSION.getMimeType ());
-    sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessageExpectError (aEntity, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -113,7 +113,7 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 
     final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging),
                                                   SOAP_VERSION.getMimeType ());
-    sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessageExpectError (aEntity, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -166,7 +166,7 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 
     final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging),
                                                   SOAP_VERSION.getMimeType ());
-    sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessageExpectError (aEntity, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -214,7 +214,7 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 
     final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsSoapDocument (aEbms3Messaging),
                                                   SOAP_VERSION.getMimeType ());
-    sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessageExpectError (aEntity, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -253,6 +253,6 @@ public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
                                       .getAsSoapDocument ();
 
     // We've got our response
-    sendPlainMessage (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()), true, null);
+    sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()));
   }
 }

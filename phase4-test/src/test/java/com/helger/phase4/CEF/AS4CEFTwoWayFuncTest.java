@@ -39,7 +39,7 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
   public AS4CEFTwoWayFuncTest ()
   {
     // No retries
-    super (0);
+    setRetries (0);
   }
 
   /**
@@ -66,7 +66,7 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
 
     // Avoid stopping server to receive async response
     LOGGER.info ("Waiting for 1 second");
@@ -108,7 +108,7 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
 
     // Avoid stopping server to receive async response
     LOGGER.info ("Waiting for 1 second");

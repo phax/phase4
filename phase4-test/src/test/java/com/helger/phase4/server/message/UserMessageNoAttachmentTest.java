@@ -68,10 +68,10 @@ public final class UserMessageNoAttachmentTest extends AbstractUserMessageTestSe
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSOAPVersion,
-                                                                            aMsg.getAsSoapDocument (),
-                                                                            aAttachments);
+                                                                              aMsg.getAsSoapDocument (),
+                                                                              aAttachments);
 
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
@@ -83,17 +83,17 @@ public final class UserMessageNoAttachmentTest extends AbstractUserMessageTestSe
 
     final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSOAPVersion,
-                                                                            AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                                                           aMsg.getAsSoapDocument (),
-                                                                                                           m_eSOAPVersion,
-                                                                                                           aMsg.getMessagingID (),
-                                                                                                           aAttachments,
-                                                                                                           s_aResMgr,
-                                                                                                           false,
-                                                                                                           AS4SigningParams.createDefault ()),
-                                                                            aAttachments);
+                                                                              AS4Signer.createSignedMessage (m_aCryptoFactory,
+                                                                                                             aMsg.getAsSoapDocument (),
+                                                                                                             m_eSOAPVersion,
+                                                                                                             aMsg.getMessagingID (),
+                                                                                                             aAttachments,
+                                                                                                             s_aResMgr,
+                                                                                                             false,
+                                                                                                             AS4SigningParams.createDefault ()),
+                                                                              aAttachments);
 
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
@@ -114,7 +114,7 @@ public final class UserMessageNoAttachmentTest extends AbstractUserMessageTestSe
                                                                        false,
                                                                        s_aResMgr,
                                                                        m_aCryptParams);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
@@ -142,7 +142,7 @@ public final class UserMessageNoAttachmentTest extends AbstractUserMessageTestSe
                                                                        false,
                                                                        s_aResMgr,
                                                                        m_aCryptParams);
-    final String sResponse = sendMimeMessage (HttpMimeMessageEntity.create (aMimeMsg), true, null);
+    final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMimeMsg));
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));

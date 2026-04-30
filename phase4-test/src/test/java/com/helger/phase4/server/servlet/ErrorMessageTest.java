@@ -37,7 +37,7 @@ public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
     assertNotNull (aDoc);
 
     // This is handled by MockMessageProcessorSPI
-    sendPlainMessage (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()), true, null);
+    sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()));
   }
 
   @Test
@@ -48,7 +48,7 @@ public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
     assertNotNull (aDoc);
 
     // This is handled by MockMessageProcessorSPI
-    sendPlainMessage (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()), true, null);
+    sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()));
   }
 
   @Test
@@ -58,8 +58,7 @@ public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageNoRefToMessageID.xml"));
     assertNotNull (aDoc);
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()),
+                                 EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 }
