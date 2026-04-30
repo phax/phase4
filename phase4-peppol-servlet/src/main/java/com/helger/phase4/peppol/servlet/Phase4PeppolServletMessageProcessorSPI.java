@@ -630,11 +630,13 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     {
       final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
       final X509Certificate aSenderSigningCert = aIncomingState.getSigningCertificate ();
-      // Check if signing AP certificate is revoked
-      // * Use global caching setting
-      // * Use global certificate check mode
+      // Check if signing AP certificate is revoked, honoring per-receive overrides for caching
+      // and revocation check mode (falling back to the JVM-wide defaults if not configured).
       final ECertificateCheckResult eCertCheckResult = aReceiverCheckData.getAPCAChecker ()
-                                                                         .checkCertificate (aSenderSigningCert, aNow);
+                                                                         .checkCertificate (aSenderSigningCert,
+                                                                                            aNow,
+                                                                                            aReceiverCheckData.getAPCacheRevocationCheckResult (),
+                                                                                            aReceiverCheckData.getAPRevocationCheckMode ());
       if (eCertCheckResult.isInvalid ())
       {
         if (aReceiverCheckData.isAPRevocationSoftFail () &&

@@ -25,6 +25,7 @@ import com.helger.annotation.concurrent.Immutable;
 import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.builder.IBuilder;
 import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.peppol.sml.ISMLInfo;
@@ -67,6 +68,8 @@ public final class Phase4PeppolReceiverConfiguration
   private final boolean m_bCheckAPSigningCertificateRevocation;
   private final TrustedCAChecker m_aAPCAChecker;
   private final boolean m_bAPRevocationSoftFail;
+  private final ETriState m_eAPCacheRevocationCheckResult;
+  private final ERevocationCheckMode m_eAPRevocationCheckMode;
 
   /**
    * Constructor
@@ -117,6 +120,15 @@ public final class Phase4PeppolReceiverConfiguration
    *        from the AP CA checker as valid, <code>false</code> to treat it as invalid. Defaults to
    *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults#isAllowSoftFail()}.
    *        Applies to the inbound signing certificate check.
+   * @param eAPCacheRevocationCheckResult
+   *        Override for the revocation result caching flag of the inbound signing certificate
+   *        check. {@link ETriState#UNDEFINED} (the default) means "use the JVM-wide default from
+   *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}". Must not
+   *        be <code>null</code>.
+   * @param eAPRevocationCheckMode
+   *        Override for the revocation check mode of the inbound signing certificate check.
+   *        <code>null</code> (the default) means "use the JVM-wide default from
+   *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
    * @since 3.0.3
    */
   public Phase4PeppolReceiverConfiguration (final boolean bReceiverCheckEnabled,
@@ -132,7 +144,9 @@ public final class Phase4PeppolReceiverConfiguration
                                             final boolean bCheckSBDHForMandatoryCountryC1,
                                             final boolean bCheckAPSigningCertificateRevocation,
                                             @NonNull final TrustedCAChecker aAPCAChecker,
-                                            final boolean bAPRevocationSoftFail)
+                                            final boolean bAPRevocationSoftFail,
+                                            @NonNull final ETriState eAPCacheRevocationCheckResult,
+                                            @Nullable final ERevocationCheckMode eAPRevocationCheckMode)
   {
     if (bReceiverCheckEnabled)
     {
@@ -142,6 +156,7 @@ public final class Phase4PeppolReceiverConfiguration
       ValueEnforcer.notNull (aAPCertificate, "APCertificate");
     }
     ValueEnforcer.notNull (aSBDHIdentifierFactory, "SBDHIdentifierFactory");
+    ValueEnforcer.notNull (eAPCacheRevocationCheckResult, "APCacheRevocationCheckResult");
     m_bReceiverCheckEnabled = bReceiverCheckEnabled;
     m_aSMPClient = aSMPClient;
     m_aSMLInfo = aSMLInfo;
@@ -156,6 +171,8 @@ public final class Phase4PeppolReceiverConfiguration
     m_bCheckAPSigningCertificateRevocation = bCheckAPSigningCertificateRevocation;
     m_aAPCAChecker = aAPCAChecker;
     m_bAPRevocationSoftFail = bAPRevocationSoftFail;
+    m_eAPCacheRevocationCheckResult = eAPCacheRevocationCheckResult;
+    m_eAPRevocationCheckMode = eAPRevocationCheckMode;
   }
 
   public boolean isReceiverCheckEnabled ()
@@ -342,6 +359,31 @@ public final class Phase4PeppolReceiverConfiguration
     return m_bAPRevocationSoftFail;
   }
 
+  /**
+   * @return The revocation result caching override applied during the inbound signing certificate
+   *         check. {@link ETriState#UNDEFINED} means "use the JVM-wide default from
+   *         {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}". Never
+   *         <code>null</code>.
+   * @since 4.4.4
+   */
+  @NonNull
+  public ETriState getAPCacheRevocationCheckResult ()
+  {
+    return m_eAPCacheRevocationCheckResult;
+  }
+
+  /**
+   * @return The revocation check mode override applied during the inbound signing certificate
+   *         check. <code>null</code> means "use the JVM-wide default from
+   *         {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
+   * @since 4.4.4
+   */
+  @Nullable
+  public ERevocationCheckMode getAPRevocationCheckMode ()
+  {
+    return m_eAPRevocationCheckMode;
+  }
+
   @Override
   public String toString ()
   {
@@ -360,6 +402,8 @@ public final class Phase4PeppolReceiverConfiguration
                                                 m_bCheckAPSigningCertificateRevocation)
                                        .append ("APCAChecker", m_aAPCAChecker)
                                        .append ("APRevocationSoftFail", m_bAPRevocationSoftFail)
+                                       .append ("APCacheRevocationCheckResult", m_eAPCacheRevocationCheckResult)
+                                       .append ("APRevocationCheckMode", m_eAPRevocationCheckMode)
                                        .getToString ();
   }
 
@@ -408,6 +452,8 @@ public final class Phase4PeppolReceiverConfiguration
     private boolean m_bCheckSigningCertificateRevocation;
     private TrustedCAChecker m_aAPCAChecker;
     private boolean m_bAPRevocationSoftFail;
+    private ETriState m_eAPCacheRevocationCheckResult = ETriState.UNDEFINED;
+    private ERevocationCheckMode m_eAPRevocationCheckMode;
 
     public Phase4PeppolReceiverConfigurationBuilder ()
     {}
@@ -427,7 +473,9 @@ public final class Phase4PeppolReceiverConfiguration
                                                            .checkSBDHForMandatoryCountryC1 (aSrc.isCheckSBDHForMandatoryCountryC1 ())
                                                            .checkAPSigningCertificateRevocation (aSrc.isCheckAPSigningCertificateRevocation ())
                                                            .apCAChecker (aSrc.getAPCAChecker ())
-                                                           .apRevocationSoftFail (aSrc.isAPRevocationSoftFail ());
+                                                           .apRevocationSoftFail (aSrc.isAPRevocationSoftFail ())
+                                                           .apCacheRevocationCheckResult (aSrc.getAPCacheRevocationCheckResult ())
+                                                           .apRevocationCheckMode (aSrc.getAPRevocationCheckMode ());
     }
 
     @NonNull
@@ -630,6 +678,44 @@ public final class Phase4PeppolReceiverConfiguration
       return this;
     }
 
+    /**
+     * Override the revocation result caching flag for the inbound signing certificate check on a
+     * per-receive basis.
+     *
+     * @param e
+     *        {@link ETriState#TRUE} to use the global revocation cache, {@link ETriState#FALSE} to
+     *        bypass it, {@link ETriState#UNDEFINED} (the default) to use the JVM-wide default from
+     *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}. May not
+     *        be <code>null</code>.
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public Phase4PeppolReceiverConfigurationBuilder apCacheRevocationCheckResult (@NonNull final ETriState e)
+    {
+      ValueEnforcer.notNull (e, "APCacheRevocationCheckResult");
+      m_eAPCacheRevocationCheckResult = e;
+      return this;
+    }
+
+    /**
+     * Override the revocation check mode for the inbound signing certificate check on a
+     * per-receive basis.
+     *
+     * @param e
+     *        The revocation check mode to use. <code>null</code> (the default) means "use the
+     *        JVM-wide default from
+     *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public Phase4PeppolReceiverConfigurationBuilder apRevocationCheckMode (@Nullable final ERevocationCheckMode e)
+    {
+      m_eAPRevocationCheckMode = e;
+      return this;
+    }
+
     @NonNull
     public Phase4PeppolReceiverConfiguration build ()
     {
@@ -660,7 +746,9 @@ public final class Phase4PeppolReceiverConfiguration
                                                     m_bCheckSBDHForMandatoryCountryC1,
                                                     m_bCheckSigningCertificateRevocation,
                                                     m_aAPCAChecker,
-                                                    m_bAPRevocationSoftFail);
+                                                    m_bAPRevocationSoftFail,
+                                                    m_eAPCacheRevocationCheckResult,
+                                                    m_eAPRevocationCheckMode);
     }
   }
 }

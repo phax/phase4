@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
 import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.security.PeppolTrustedCA;
@@ -76,6 +77,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
   private static TrustedCAChecker s_aAPCAChecker = DEFAULT_PEPPOL_AP_CA_CHECKER;
   private static boolean s_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
+  private static ETriState s_eAPCacheRevocationCheckResult = ETriState.UNDEFINED;
+  private static ERevocationCheckMode s_eAPRevocationCheckMode;
 
   private Phase4PeppolDefaultReceiverConfiguration ()
   {}
@@ -473,6 +476,68 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
+   * @return The revocation result caching override applied during the inbound signing certificate
+   *         check. {@link ETriState#UNDEFINED} (the default) means "use the JVM-wide default from
+   *         {@link CertificateRevocationCheckerDefaults}".
+   * @since 4.4.4
+   */
+  @NonNull
+  public static ETriState getAPCacheRevocationCheckResult ()
+  {
+    return s_eAPCacheRevocationCheckResult;
+  }
+
+  /**
+   * Override the revocation result caching flag for the inbound signing certificate check.
+   *
+   * @param e
+   *        {@link ETriState#TRUE} to use the global revocation cache, {@link ETriState#FALSE} to
+   *        bypass it, {@link ETriState#UNDEFINED} (the default) to use the JVM-wide default from
+   *        {@link CertificateRevocationCheckerDefaults}. May not be <code>null</code>.
+   * @since 4.4.4
+   */
+  public static void setAPCacheRevocationCheckResult (@NonNull final ETriState e)
+  {
+    ValueEnforcer.notNull (e, "APCacheRevocationCheckResult");
+    final boolean bChange = e != s_eAPCacheRevocationCheckResult;
+    s_eAPCacheRevocationCheckResult = e;
+    if (bChange)
+    {
+      LOGGER.info (CAS4.LIB_NAME + " Peppol AP cache revocation check result is set to " + e);
+    }
+  }
+
+  /**
+   * @return The revocation check mode override applied during the inbound signing certificate
+   *         check. <code>null</code> (the default) means "use the JVM-wide default from
+   *         {@link CertificateRevocationCheckerDefaults}".
+   * @since 4.4.4
+   */
+  @Nullable
+  public static ERevocationCheckMode getAPRevocationCheckMode ()
+  {
+    return s_eAPRevocationCheckMode;
+  }
+
+  /**
+   * Override the revocation check mode for the inbound signing certificate check.
+   *
+   * @param e
+   *        The revocation check mode to use. <code>null</code> (the default) means "use the
+   *        JVM-wide default from {@link CertificateRevocationCheckerDefaults}".
+   * @since 4.4.4
+   */
+  public static void setAPRevocationCheckMode (@Nullable final ERevocationCheckMode e)
+  {
+    final boolean bChange = e != s_eAPRevocationCheckMode;
+    s_eAPRevocationCheckMode = e;
+    if (bChange)
+    {
+      LOGGER.info (CAS4.LIB_NAME + " Peppol AP revocation check mode is set to " + e);
+    }
+  }
+
+  /**
    * Get the statically configured data as a {@link Phase4PeppolReceiverConfigurationBuilder}
    * instance. This allows for modification before building the final object.
    *
@@ -508,7 +573,9 @@ public final class Phase4PeppolDefaultReceiverConfiguration
                                             .checkSBDHForMandatoryCountryC1 (isCheckSBDHForMandatoryCountryC1 ())
                                             .checkAPSigningCertificateRevocation (isCheckSigningCertificateRevocation ())
                                             .apCAChecker (getAPCAChecker ())
-                                            .apRevocationSoftFail (isAPRevocationSoftFail ());
+                                            .apRevocationSoftFail (isAPRevocationSoftFail ())
+                                            .apCacheRevocationCheckResult (getAPCacheRevocationCheckResult ())
+                                            .apRevocationCheckMode (getAPRevocationCheckMode ());
   }
 
   /**
