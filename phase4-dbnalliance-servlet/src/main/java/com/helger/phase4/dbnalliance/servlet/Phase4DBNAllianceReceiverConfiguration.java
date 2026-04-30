@@ -29,6 +29,7 @@ import com.helger.base.tostring.ToStringGenerator;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
+import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 
 /**
@@ -48,6 +49,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
   private final boolean m_bPerformXHEValueChecks;
   private final boolean m_bCheckSigningCertificateRevocation;
   private final TrustedCAChecker m_aAPCAChecker;
+  private final boolean m_bAPRevocationSoftFail;
 
   /**
    * Constructor
@@ -71,6 +73,13 @@ public final class Phase4DBNAllianceReceiverConfiguration
    *        <code>true</code> if signing certificate revocation checks should be performed.
    * @param aAPCAChecker
    *        The DBNAlliance AP CA checker. May not be <code>null</code>.
+   * @param bAPRevocationSoftFail
+   *        <code>true</code> to accept
+   *        {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+   *        from the AP CA checker as valid, <code>false</code> to treat it as invalid. Defaults to
+   *        {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}. Applies to the inbound
+   *        signing certificate check.
+   * @since 4.4.4
    */
   public Phase4DBNAllianceReceiverConfiguration (final boolean bReceiverCheckEnabled,
                                                  @Nullable final IBDXR2ServiceMetadataProvider aSMPClient,
@@ -79,7 +88,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                                  @NonNull final IIdentifierFactory aXHEIdentifierFactory,
                                                  final boolean bPerformXHEValueChecks,
                                                  final boolean bCheckSigningCertificateRevocation,
-                                                 @NonNull final TrustedCAChecker aAPCAChecker)
+                                                 @NonNull final TrustedCAChecker aAPCAChecker,
+                                                 final boolean bAPRevocationSoftFail)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -96,6 +106,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
     m_bPerformXHEValueChecks = bPerformXHEValueChecks;
     m_bCheckSigningCertificateRevocation = bCheckSigningCertificateRevocation;
     m_aAPCAChecker = aAPCAChecker;
+    m_bAPRevocationSoftFail = bAPRevocationSoftFail;
   }
 
   public boolean isReceiverCheckEnabled ()
@@ -165,6 +176,18 @@ public final class Phase4DBNAllianceReceiverConfiguration
     return m_aAPCAChecker;
   }
 
+  /**
+   * @return <code>true</code> to accept
+   *         {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+   *         from the AP CA checker as valid (soft-fail), <code>false</code> to treat it as invalid.
+   *         Applies to the inbound signing certificate check.
+   * @since 4.4.4
+   */
+  public boolean isAPRevocationSoftFail ()
+  {
+    return m_bAPRevocationSoftFail;
+  }
+
   @Override
   public String toString ()
   {
@@ -177,6 +200,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                        .append ("CheckSigningCertificateRevocation",
                                                 m_bCheckSigningCertificateRevocation)
                                        .append ("APCAChecker", m_aAPCAChecker)
+                                       .append ("APRevocationSoftFail", m_bAPRevocationSoftFail)
                                        .getToString ();
   }
 
@@ -219,6 +243,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
     private boolean m_bPerformXHEValueChecks;
     private boolean m_bCheckSigningCertificateRevocation;
     private TrustedCAChecker m_aAPCAChecker;
+    private boolean m_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
 
     public Phase4DBNAllianceReceiverConfigurationBuilder ()
     {}
@@ -232,7 +257,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                                            .xheIdentifierFactory (aSrc.getXHEIdentifierFactory ())
                                                            .performXHEValueChecks (aSrc.isPerformXHEValueChecks ())
                                                            .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ())
-                                                           .apCAChecker (aSrc.getAPCAChecker ());
+                                                           .apCAChecker (aSrc.getAPCAChecker ())
+                                                           .apRevocationSoftFail (aSrc.isAPRevocationSoftFail ());
     }
 
     @NonNull
@@ -297,6 +323,26 @@ public final class Phase4DBNAllianceReceiverConfiguration
       return this;
     }
 
+    /**
+     * Enable or disable revocation soft-fail for the inbound signing certificate check. When
+     * enabled, an undeterminable revocation status (e.g. unreachable CRL distribution point with no
+     * working OCSP fallback) is logged at WARN level and the message is accepted. All other invalid
+     * states (revoked, expired, untrusted issuer, ...) still cause the message to be rejected.
+     *
+     * @param b
+     *        <code>true</code> to accept
+     *        {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+     *        as valid, <code>false</code> to treat it as invalid.
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public Phase4DBNAllianceReceiverConfigurationBuilder apRevocationSoftFail (final boolean b)
+    {
+      m_bAPRevocationSoftFail = b;
+      return this;
+    }
+
     @NonNull
     public Phase4DBNAllianceReceiverConfiguration build ()
     {
@@ -321,7 +367,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                                          m_aXHEIdentifierFactory,
                                                          m_bPerformXHEValueChecks,
                                                          m_bCheckSigningCertificateRevocation,
-                                                         m_aAPCAChecker);
+                                                         m_aAPCAChecker,
+                                                         m_bAPRevocationSoftFail);
     }
   }
 }

@@ -65,6 +65,7 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
 import com.helger.security.certificate.TrustedCAChecker;
+import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.smpclient.url.DBNAURLProviderSMP;
@@ -142,21 +143,26 @@ public final class Phase4DBNAllianceSender
    *        An optional consumer that is invoked with the received AP certificate to be used for the
    *        transmission. The certification check result must be considered when used. May be
    *        <code>null</code>.
-   * @param eCacheOSCResult
-   *        Possibility to override the usage of OSCP caching flag on a per query basis. Use
-   *        {@link ETriState#UNDEFINED} to solely use the global flag.
+   * @param eCacheRevocationCheckResult
+   *        Possibility to override the usage of revocation result caching flag on a per query
+   *        basis. Use {@link ETriState#UNDEFINED} to solely use the global flag.
    * @param eCheckMode
    *        Possibility to override the OSCP checking flag on a per query basis. May be
    *        <code>null</code> to use the global flag from
    *        {@link CertificateRevocationChecker#getRevocationCheckMode()}.
+   * @param bRevocationSoftFail
+   *        If <code>true</code>, an undeterminable revocation status
+   *        ({@link ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}) is logged at WARN level and
+   *        treated as acceptable. All other invalid states still hard-fail.
    * @throws Phase4DBNAllianceException
    *         in case of error
    */
   private static void _checkReceiverAPCert (@NonNull final TrustedCAChecker aCAChecker,
                                             @Nullable final X509Certificate aReceiverCert,
                                             @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
-                                            @NonNull final ETriState eCacheOSCResult,
-                                            @Nullable final ERevocationCheckMode eCheckMode) throws Phase4DBNAllianceException
+                                            @NonNull final ETriState eCacheRevocationCheckResult,
+                                            @Nullable final ERevocationCheckMode eCheckMode,
+                                            final boolean bRevocationSoftFail) throws Phase4DBNAllianceException
   {
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Using the following receiver AP certificate from the SMP: " + aReceiverCert);
@@ -164,7 +170,7 @@ public final class Phase4DBNAllianceSender
     final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
     final ECertificateCheckResult eCertCheckResult = aCAChecker.checkCertificate (aReceiverCert,
                                                                                   aNow,
-                                                                                  eCacheOSCResult,
+                                                                                  eCacheRevocationCheckResult,
                                                                                   eCheckMode);
 
     // Interested in the certificate?
@@ -173,6 +179,13 @@ public final class Phase4DBNAllianceSender
 
     if (eCertCheckResult.isInvalid ())
     {
+      if (bRevocationSoftFail && eCertCheckResult == ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN)
+      {
+        LOGGER.warn ("The revocation status of the receiver AP certificate could not be determined (at " +
+                     aNow +
+                     "); proceeding because revocation soft-fail is enabled.");
+        return;
+      }
       final String sMsg = "The configured receiver AP certificate is not valid (at " +
                           aNow +
                           ") and cannot be used for sending towards. Aborting. Reason: " +
@@ -228,6 +241,9 @@ public final class Phase4DBNAllianceSender
     private Consumer <String> m_aAPTechnicalContactConsumer;
     private boolean m_bCheckReceiverAPCertificate;
     protected TrustedCAChecker m_aCAChecker;
+    private ETriState m_eAPCacheRevocationCheckResult = ETriState.UNDEFINED;
+    private ERevocationCheckMode m_eAPRevocationCheckMode;
+    private boolean m_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
 
     // Status var
     private OffsetDateTime m_aEffectiveSendingDT;
@@ -491,6 +507,62 @@ public final class Phase4DBNAllianceSender
     }
 
     /**
+     * Override the revocation result caching flag for the receiver AP certificate check on a
+     * per-send basis. This is only applied if {@link #checkReceiverAPCertificate(boolean)} is
+     * <code>true</code>.
+     *
+     * @param eCacheRevocationCheckResult
+     *        {@link ETriState#TRUE} to use the global revocation cache, {@link ETriState#FALSE} to
+     *        bypass it, {@link ETriState#UNDEFINED} (the default) to use the JVM-wide default from
+     *        {@link CertificateRevocationCheckerDefaults}. May not be <code>null</code>.
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public final IMPLTYPE apCacheRevocationCheckResult (@NonNull final ETriState eCacheRevocationCheckResult)
+    {
+      ValueEnforcer.notNull (eCacheRevocationCheckResult, "CacheRevocationCheckResult");
+      m_eAPCacheRevocationCheckResult = eCacheRevocationCheckResult;
+      return thisAsT ();
+    }
+
+    /**
+     * Override the revocation check mode for the receiver AP certificate check on a per-send basis.
+     * This is only applied if {@link #checkReceiverAPCertificate(boolean)} is <code>true</code>.
+     *
+     * @param eRevocationCheckMode
+     *        The revocation check mode to use. <code>null</code> (the default) means "use the
+     *        JVM-wide default from {@link CertificateRevocationCheckerDefaults}".
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public final IMPLTYPE apRevocationCheckMode (@Nullable final ERevocationCheckMode eRevocationCheckMode)
+    {
+      m_eAPRevocationCheckMode = eRevocationCheckMode;
+      return thisAsT ();
+    }
+
+    /**
+     * Enable or disable revocation soft-fail for the receiver AP certificate check. When enabled,
+     * an indeterminable revocation status (e.g. unreachable CRL distribution point with no working
+     * OCSP fallback) is logged at WARN level and treated as acceptable. All other invalid states
+     * still cause a hard reject.
+     *
+     * @param bRevocationSoftFail
+     *        <code>true</code> to accept {@link ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+     *        as valid, <code>false</code> to treat it as invalid.
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public final IMPLTYPE apRevocationSoftFail (final boolean bRevocationSoftFail)
+    {
+      m_bAPRevocationSoftFail = bRevocationSoftFail;
+      return thisAsT ();
+    }
+
+    /**
      * The effective sending date time of the message. That is set only if message sending takes
      * place.
      *
@@ -548,7 +620,12 @@ public final class Phase4DBNAllianceSender
       {
         // Check if the received certificate is a valid Peppol AP certificate
         // Throws Phase4PeppolException in case of error
-        _checkReceiverAPCert (m_aCAChecker, aReceiverCert, m_aCertificateConsumer, ETriState.UNDEFINED, null);
+        _checkReceiverAPCert (m_aCAChecker,
+                              aReceiverCert,
+                              m_aCertificateConsumer,
+                              m_eAPCacheRevocationCheckResult,
+                              m_eAPRevocationCheckMode,
+                              m_bAPRevocationSoftFail);
       }
       else
       {

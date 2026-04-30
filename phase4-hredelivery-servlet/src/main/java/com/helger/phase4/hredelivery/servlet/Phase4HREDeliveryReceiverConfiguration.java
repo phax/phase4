@@ -30,6 +30,7 @@ import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
+import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
 
 /**
@@ -50,6 +51,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
   private final boolean m_bPerformSBDHValueChecks;
   private final boolean m_bCheckSigningCertificateRevocation;
   private final TrustedCAChecker m_aAPCAChecker;
+  private final boolean m_bAPRevocationSoftFail;
 
   /**
    * Constructor
@@ -73,6 +75,13 @@ public final class Phase4HREDeliveryReceiverConfiguration
    *        <code>true</code> if signing certificate revocation checks should be performed.
    * @param aAPCAChecker
    *        The HR eDelivery AP CA checker. May not be <code>null</code>.
+   * @param bAPRevocationSoftFail
+   *        <code>true</code> to accept
+   *        {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+   *        from the AP CA checker as valid, <code>false</code> to treat it as invalid. Defaults to
+   *        {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}. Applies to the inbound
+   *        signing certificate check.
+   * @since 4.4.4
    */
   public Phase4HREDeliveryReceiverConfiguration (final boolean bReceiverCheckEnabled,
                                                  @Nullable final IBDXRExtendedServiceMetadataProvider aSMPClient,
@@ -81,7 +90,8 @@ public final class Phase4HREDeliveryReceiverConfiguration
                                                  @NonNull final IIdentifierFactory aSBDHIdentifierFactory,
                                                  final boolean bPerformSBDHValueChecks,
                                                  final boolean bCheckSigningCertificateRevocation,
-                                                 @NonNull final TrustedCAChecker aAPCAChecker)
+                                                 @NonNull final TrustedCAChecker aAPCAChecker,
+                                                 final boolean bAPRevocationSoftFail)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -98,6 +108,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
     m_bPerformSBDHValueChecks = bPerformSBDHValueChecks;
     m_bCheckSigningCertificateRevocation = bCheckSigningCertificateRevocation;
     m_aAPCAChecker = aAPCAChecker;
+    m_bAPRevocationSoftFail = bAPRevocationSoftFail;
   }
 
   public boolean isReceiverCheckEnabled ()
@@ -167,6 +178,18 @@ public final class Phase4HREDeliveryReceiverConfiguration
     return m_aAPCAChecker;
   }
 
+  /**
+   * @return <code>true</code> to accept
+   *         {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+   *         from the AP CA checker as valid (soft-fail), <code>false</code> to treat it as invalid.
+   *         Applies to the inbound signing certificate check.
+   * @since 4.4.4
+   */
+  public boolean isAPRevocationSoftFail ()
+  {
+    return m_bAPRevocationSoftFail;
+  }
+
   @Override
   public String toString ()
   {
@@ -179,6 +202,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
                                        .append ("CheckSigningCertificateRevocation",
                                                 m_bCheckSigningCertificateRevocation)
                                        .append ("APCAChecker", m_aAPCAChecker)
+                                       .append ("APRevocationSoftFail", m_bAPRevocationSoftFail)
                                        .getToString ();
   }
 
@@ -221,6 +245,7 @@ public final class Phase4HREDeliveryReceiverConfiguration
     private boolean m_bPerformSBDHValueChecks;
     private boolean m_bCheckSigningCertificateRevocation;
     private TrustedCAChecker m_aAPCAChecker;
+    private boolean m_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
 
     public Phase4HREDeliveryReceiverConfigurationBuilder ()
     {}
@@ -234,7 +259,8 @@ public final class Phase4HREDeliveryReceiverConfiguration
                                                            .sbdhIdentifierFactory (aSrc.getSBDHIdentifierFactory ())
                                                            .performSBDHValueChecks (aSrc.isPerformSBDHValueChecks ())
                                                            .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ())
-                                                           .apCAChecker (aSrc.getAPCAChecker ());
+                                                           .apCAChecker (aSrc.getAPCAChecker ())
+                                                           .apRevocationSoftFail (aSrc.isAPRevocationSoftFail ());
     }
 
     @NonNull
@@ -305,6 +331,26 @@ public final class Phase4HREDeliveryReceiverConfiguration
       return this;
     }
 
+    /**
+     * Enable or disable revocation soft-fail for the inbound signing certificate check. When
+     * enabled, an undeterminable revocation status (e.g. unreachable CRL distribution point with no
+     * working OCSP fallback) is logged at WARN level and the message is accepted. All other invalid
+     * states (revoked, expired, untrusted issuer, ...) still cause the message to be rejected.
+     *
+     * @param b
+     *        <code>true</code> to accept
+     *        {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+     *        as valid, <code>false</code> to treat it as invalid.
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public Phase4HREDeliveryReceiverConfigurationBuilder apRevocationSoftFail (final boolean b)
+    {
+      m_bAPRevocationSoftFail = b;
+      return this;
+    }
+
     @NonNull
     public Phase4HREDeliveryReceiverConfiguration build ()
     {
@@ -329,7 +375,8 @@ public final class Phase4HREDeliveryReceiverConfiguration
                                                          m_aSBDHIdentifierFactory,
                                                          m_bPerformSBDHValueChecks,
                                                          m_bCheckSigningCertificateRevocation,
-                                                         m_aAPCAChecker);
+                                                         m_aAPCAChecker,
+                                                         m_bAPRevocationSoftFail);
     }
   }
 }

@@ -496,16 +496,27 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
                                                                          .checkCertificate (aSenderSigningCert, aNow);
       if (eCertCheckResult.isInvalid ())
       {
-        final String sDetails = "The received DBNAlliance message is signed with a DBNAlliance AP certificate invalid at " +
-                                aNow +
-                                ". Rejecting incoming message. Reason: " +
-                                eCertCheckResult.getReason ();
-        LOGGER.error (sLogPrefix + sDetails);
-        aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aDisplayLocale)
-                                                                           .refToMessageInError (sMessageID)
-                                                                           .errorDetail (sDetails)
-                                                                           .build ());
-        return AS4MessageProcessorResult.createFailure ();
+        if (aReceiverCheckData.isAPRevocationSoftFail () &&
+            eCertCheckResult == ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN)
+        {
+          LOGGER.warn (sLogPrefix +
+                       "The revocation status of the inbound DBNAlliance AP signing certificate could not be determined (at " +
+                       aNow +
+                       "); accepting the message because revocation soft-fail is enabled.");
+        }
+        else
+        {
+          final String sDetails = "The received DBNAlliance message is signed with a DBNAlliance AP certificate invalid at " +
+                                  aNow +
+                                  ". Rejecting incoming message. Reason: " +
+                                  eCertCheckResult.getReason ();
+          LOGGER.error (sLogPrefix + sDetails);
+          aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aDisplayLocale)
+                                                                             .refToMessageInError (sMessageID)
+                                                                             .errorDetail (sDetails)
+                                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
     }
     else

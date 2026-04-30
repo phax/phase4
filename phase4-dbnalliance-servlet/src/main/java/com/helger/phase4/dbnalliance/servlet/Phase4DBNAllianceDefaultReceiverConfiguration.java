@@ -33,6 +33,7 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.dbnalliance.servlet.Phase4DBNAllianceReceiverConfiguration.Phase4DBNAllianceReceiverConfigurationBuilder;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.security.certificate.TrustedCAChecker;
+import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 
 /**
@@ -62,6 +63,7 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   private static boolean s_bPerformXHEValueChecks = DBNAllianceXHEDataReader.DEFAULT_PERFORM_VALUE_CHECKS;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
   private static TrustedCAChecker s_aAPCAChecker = DEFAULT_CA_CHECKER;
+  private static boolean s_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
 
   private Phase4DBNAllianceDefaultReceiverConfiguration ()
   {}
@@ -255,6 +257,37 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
   }
 
   /**
+   * @return <code>true</code> to accept
+   *         {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
+   *         from the AP CA checker as valid (soft-fail), <code>false</code> to treat it as invalid.
+   *         Defaults to {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}. Applies to
+   *         the inbound signing certificate check.
+   * @since 4.4.4
+   */
+  public static boolean isAPRevocationSoftFail ()
+  {
+    return s_bAPRevocationSoftFail;
+  }
+
+  /**
+   * Set whether an undeterminable revocation status of the inbound AP signing certificate is
+   * accepted as valid (soft-fail) instead of being rejected.
+   *
+   * @param b
+   *        <code>true</code> to accept unknown revocation status, <code>false</code> to reject.
+   * @since 4.4.4
+   */
+  public static void setAPRevocationSoftFail (final boolean b)
+  {
+    final boolean bChange = b != s_bAPRevocationSoftFail;
+    s_bAPRevocationSoftFail = b;
+    if (bChange)
+    {
+      LOGGER.info (CAS4.LIB_NAME + " DBNAlliance AP revocation soft-fail is now " + (b ? "enabled" : "disabled"));
+    }
+  }
+
+  /**
    * Get the statically configured data as a {@link Phase4DBNAllianceReceiverConfigurationBuilder}
    * instance. This allows for modification before building the final object.
    *
@@ -281,7 +314,8 @@ public final class Phase4DBNAllianceDefaultReceiverConfiguration
                                                  .xheIdentifierFactory (getXHEIdentifierFactory ())
                                                  .performXHEValueChecks (isPerformXHEValueChecks ())
                                                  .checkSigningCertificateRevocation (isCheckSigningCertificateRevocation ())
-                                                 .apCAChecker (getAPCAChecker ());
+                                                 .apCAChecker (getAPCAChecker ())
+                                                 .apRevocationSoftFail (isAPRevocationSoftFail ());
   }
 
   /**
