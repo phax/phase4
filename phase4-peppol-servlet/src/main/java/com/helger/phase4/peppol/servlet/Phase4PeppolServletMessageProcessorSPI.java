@@ -626,7 +626,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       return AS4MessageProcessorResult.createFailure ();
     }
 
-    if (aReceiverCheckData.isCheckSigningCertificateRevocation ())
+    if (aReceiverCheckData.isCheckAPSigningCertificateRevocation ())
     {
       final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
       final X509Certificate aSenderSigningCert = aIncomingState.getSigningCertificate ();

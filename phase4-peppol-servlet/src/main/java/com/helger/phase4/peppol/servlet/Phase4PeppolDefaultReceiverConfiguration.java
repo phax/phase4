@@ -506,7 +506,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
                                             .sbdhIdentifierFactory (getSBDHIdentifierFactory ())
                                             .performSBDHValueChecks (isPerformSBDHValueChecks ())
                                             .checkSBDHForMandatoryCountryC1 (isCheckSBDHForMandatoryCountryC1 ())
-                                            .checkSigningCertificateRevocation (isCheckSigningCertificateRevocation ())
+                                            .checkAPSigningCertificateRevocation (isCheckSigningCertificateRevocation ())
                                             .apCAChecker (getAPCAChecker ())
                                             .apRevocationSoftFail (isAPRevocationSoftFail ());
   }

@@ -64,7 +64,7 @@ public final class Phase4PeppolReceiverConfiguration
   private final boolean m_bPerformSBDHValueChecks;
   private final boolean m_bCheckSBDHForMandatoryCountryC1;
   @ChangeNextMajorRelease ("Changed from implicit boolean to m_eAPRevocationCheckMode")
-  private final boolean m_bCheckSigningCertificateRevocation;
+  private final boolean m_bCheckAPSigningCertificateRevocation;
   private final TrustedCAChecker m_aAPCAChecker;
   private final boolean m_bAPRevocationSoftFail;
 
@@ -107,7 +107,7 @@ public final class Phase4PeppolReceiverConfiguration
    * @param bCheckSBDHForMandatoryCountryC1
    *        <code>true</code> if SBDH value checks should be performed for mandatory C1 country
    *        code.
-   * @param bCheckSigningCertificateRevocation
+   * @param bCheckAPSigningCertificateRevocation
    *        <code>true</code> if signing certificate revocation checks should be performed.
    * @param aAPCAChecker
    *        The Peppol AP CA checker. May not be <code>null</code>.
@@ -130,7 +130,7 @@ public final class Phase4PeppolReceiverConfiguration
                                             @NonNull final IIdentifierFactory aSBDHIdentifierFactory,
                                             final boolean bPerformSBDHValueChecks,
                                             final boolean bCheckSBDHForMandatoryCountryC1,
-                                            final boolean bCheckSigningCertificateRevocation,
+                                            final boolean bCheckAPSigningCertificateRevocation,
                                             @NonNull final TrustedCAChecker aAPCAChecker,
                                             final boolean bAPRevocationSoftFail)
   {
@@ -153,7 +153,7 @@ public final class Phase4PeppolReceiverConfiguration
     m_aSBDHIdentifierFactory = aSBDHIdentifierFactory;
     m_bPerformSBDHValueChecks = bPerformSBDHValueChecks;
     m_bCheckSBDHForMandatoryCountryC1 = bCheckSBDHForMandatoryCountryC1;
-    m_bCheckSigningCertificateRevocation = bCheckSigningCertificateRevocation;
+    m_bCheckAPSigningCertificateRevocation = bCheckAPSigningCertificateRevocation;
     m_aAPCAChecker = aAPCAChecker;
     m_bAPRevocationSoftFail = bAPRevocationSoftFail;
   }
@@ -302,9 +302,22 @@ public final class Phase4PeppolReceiverConfiguration
     return m_bCheckSBDHForMandatoryCountryC1;
   }
 
+  /**
+   * @return <code>true</code> if the AP signing certificate should be used.
+   * @deprecated Use {@link #isCheckAPSigningCertificateRevocation()} instead
+   */
+  @Deprecated (forRemoval = true, since = "4.4.4")
   public boolean isCheckSigningCertificateRevocation ()
   {
-    return m_bCheckSigningCertificateRevocation;
+    return isCheckAPSigningCertificateRevocation ();
+  }
+
+  /**
+   * @return <code>true</code> if the AP signing certificate should be used.
+   */
+  public boolean isCheckAPSigningCertificateRevocation ()
+  {
+    return m_bCheckAPSigningCertificateRevocation;
   }
 
   /**
@@ -344,7 +357,7 @@ public final class Phase4PeppolReceiverConfiguration
                                        .append ("PerformSBDHValueChecks", m_bPerformSBDHValueChecks)
                                        .append ("CheckSBDHForMandatoryCountryC1", m_bCheckSBDHForMandatoryCountryC1)
                                        .append ("CheckSigningCertificateRevocation",
-                                                m_bCheckSigningCertificateRevocation)
+                                                m_bCheckAPSigningCertificateRevocation)
                                        .append ("APCAChecker", m_aAPCAChecker)
                                        .append ("APRevocationSoftFail", m_bAPRevocationSoftFail)
                                        .getToString ();
@@ -412,7 +425,7 @@ public final class Phase4PeppolReceiverConfiguration
                                                            .sbdhIdentifierFactory (aSrc.getSBDHIdentifierFactory ())
                                                            .performSBDHValueChecks (aSrc.isPerformSBDHValueChecks ())
                                                            .checkSBDHForMandatoryCountryC1 (aSrc.isCheckSBDHForMandatoryCountryC1 ())
-                                                           .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ())
+                                                           .checkAPSigningCertificateRevocation (aSrc.isCheckAPSigningCertificateRevocation ())
                                                            .apCAChecker (aSrc.getAPCAChecker ())
                                                            .apRevocationSoftFail (aSrc.isAPRevocationSoftFail ());
     }
@@ -557,8 +570,29 @@ public final class Phase4PeppolReceiverConfiguration
       return this;
     }
 
+    /**
+     * @param b
+     *        <code>true</code> if signing certificate revocation checks should be enabled,
+     *        <code>false</code> if not.
+     * @return this for chaining
+     * @deprecated Use {@link #checkAPSigningCertificateRevocation(boolean)} instead
+     */
+    @Deprecated
     @NonNull
     public Phase4PeppolReceiverConfigurationBuilder checkSigningCertificateRevocation (final boolean b)
+    {
+      return checkAPSigningCertificateRevocation (b);
+    }
+
+    /**
+     * @param b
+     *        <code>true</code> if signing certificate revocation checks should be enabled,
+     *        <code>false</code> if not.
+     * @return this for chaining
+     * @since 4.4.4
+     */
+    @NonNull
+    public Phase4PeppolReceiverConfigurationBuilder checkAPSigningCertificateRevocation (final boolean b)
     {
       m_bCheckSigningCertificateRevocation = b;
       return this;
