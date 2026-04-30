@@ -19,7 +19,7 @@ package com.helger.phase4.profile.peppol;
 import org.junit.Test;
 
 /**
- * Test class for class {@link Phase4PeppoCRLHttpClientSettings}
+ * Test class for class {@link Phase4PeppolCRLHttpClientSettings}
  *
  * @author Philip Helger
  */

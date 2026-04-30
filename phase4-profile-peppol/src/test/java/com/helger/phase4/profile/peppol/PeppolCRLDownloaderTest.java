@@ -33,7 +33,7 @@ public final class PeppolCRLDownloaderTest
   public void testDownloadCRL ()
   {
     final PeppolCRLDownloader aDL = new PeppolCRLDownloader ();
-    final CRL aCRL = aDL.downloadCRL ("http://pki-crl.symauth.com/ca_b6d0dc1dc3147723fe36b7575997afc4/LatestCRL.crl");
+    final CRL aCRL = aDL.downloadCRL ("http://crl.one.nl.digicert.com/PEPPOLACCESSPOINTTESTCA-G3.crl");
     assertNotNull (aCRL);
   }
 }
