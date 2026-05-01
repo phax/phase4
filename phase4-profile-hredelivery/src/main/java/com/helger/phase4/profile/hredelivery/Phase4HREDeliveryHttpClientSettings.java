@@ -16,15 +16,11 @@
  */
 package com.helger.phase4.profile.hredelivery;
 
-import java.security.GeneralSecurityException;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-
 import org.apache.hc.core5.util.Timeout;
 
-import com.helger.http.security.TrustManagerTrustAll;
+import com.helger.base.CGlobal;
 import com.helger.http.tls.ETLSVersion;
+import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.CAS4Version;
@@ -43,19 +39,8 @@ public class Phase4HREDeliveryHttpClientSettings extends HttpClientSettings
 
   public Phase4HREDeliveryHttpClientSettings ()
   {
-    try
-    {
-      // HR eDelivery requires TLS v1.2
-      final SSLContext aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_12.getID ());
-      // But we're basically trusting all hosts - the exact list is hard to
-      // determine
-      aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
-      setSSLContext (aSSLContext);
-    }
-    catch (final GeneralSecurityException ex)
-    {
-      throw new IllegalStateException ("Failed to initialize SSLContext for Phase4HREDeliveryHttpClientSettings", ex);
-    }
+    setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13, ETLSVersion.TLS_12 },
+                                                       CGlobal.EMPTY_STRING_ARRAY));
 
     setConnectionRequestTimeout (DEFAULT_HR_EDELIVERY_CONNECTION_REQUEST_TIMEOUT);
     setConnectTimeout (DEFAULT_HR_EDELIVERY_CONNECT_TIMEOUT);

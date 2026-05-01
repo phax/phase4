@@ -19,8 +19,6 @@
  */
 package com.helger.phase4.entsog;
 
-import java.security.GeneralSecurityException;
-
 import org.junit.Test;
 
 /**
@@ -31,7 +29,7 @@ import org.junit.Test;
 public final class Phase4ENTSOGHttpClientSettingsTest
 {
   @Test
-  public void testBasic () throws GeneralSecurityException
+  public void testBasic ()
   {
     new Phase4ENTSOGHttpClientSettings ();
   }

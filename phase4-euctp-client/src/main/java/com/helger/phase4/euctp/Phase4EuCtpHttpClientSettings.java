@@ -61,12 +61,10 @@ public class Phase4EuCtpHttpClientSettings extends HttpClientSettings
     final TLSConfigurationMode aTLSConfigMode = new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_12,
                                                                                                ETLSVersion.TLS_13 },
                                                                           new String [] {
-                                                                                          // TLS
-                                                                                          // 1.3
+                                                                                          // TLS 1.3
                                                                                           "TLS_AES_128_GCM_SHA256",
                                                                                           "TLS_AES_256_GCM_SHA384",
-                                                                                          // TLS
-                                                                                          // 1.2
+                                                                                          // TLS 1.2
                                                                                           "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
                                                                                           "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
                                                                                           "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",

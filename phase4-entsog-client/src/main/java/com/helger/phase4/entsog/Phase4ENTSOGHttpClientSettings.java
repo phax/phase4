@@ -19,15 +19,11 @@
  */
 package com.helger.phase4.entsog;
 
-import java.security.GeneralSecurityException;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-
 import org.apache.hc.core5.util.Timeout;
 
-import com.helger.http.security.TrustManagerTrustAll;
+import com.helger.base.CGlobal;
 import com.helger.http.tls.ETLSVersion;
+import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.CAS4Version;
@@ -44,23 +40,11 @@ public class Phase4ENTSOGHttpClientSettings extends HttpClientSettings
   public static final Timeout DEFAULT_ENTSOG_CONNECT_TIMEOUT = Timeout.ofSeconds (5);
   public static final Timeout DEFAULT_ENTSOG_RESPONSE_TIMEOUT = Timeout.ofSeconds (100);
 
-  public Phase4ENTSOGHttpClientSettings () throws GeneralSecurityException
+  public Phase4ENTSOGHttpClientSettings ()
   {
     // ENTSOG 4.0 recommends TLS 1.3, minimum TLS 1.2
-    SSLContext aSSLContext;
-    try
-    {
-      aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_13.getID ());
-    }
-    catch (final GeneralSecurityException ex)
-    {
-      // Fallback to TLS 1.2 if TLS 1.3 is not available
-      aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_12.getID ());
-    }
-    // But we're basically trusting all hosts - the exact list is hard to
-    // determine
-    aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
-    setSSLContext (aSSLContext);
+    setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13, ETLSVersion.TLS_12 },
+                                                       CGlobal.EMPTY_STRING_ARRAY));
 
     setConnectionRequestTimeout (DEFAULT_ENTSOG_CONNECTION_REQUEST_TIMEOUT);
     setConnectTimeout (DEFAULT_ENTSOG_CONNECT_TIMEOUT);

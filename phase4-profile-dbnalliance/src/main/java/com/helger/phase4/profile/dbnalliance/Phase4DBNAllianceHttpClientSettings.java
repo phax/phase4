@@ -16,16 +16,11 @@
  */
 package com.helger.phase4.profile.dbnalliance;
 
-import java.security.GeneralSecurityException;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-
 import org.apache.hc.core5.util.Timeout;
 
-import com.helger.http.security.TrustManagerTrustAll;
+import com.helger.base.CGlobal;
 import com.helger.http.tls.ETLSVersion;
+import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.CAS4Version;
@@ -43,17 +38,8 @@ public class Phase4DBNAllianceHttpClientSettings extends HttpClientSettings
 
   public Phase4DBNAllianceHttpClientSettings ()
   {
-    try
-    {
-      // Use at least TLS v1.2
-      final SSLContext aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_12.getID ());
-      aSSLContext.init ((KeyManager []) null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
-      setSSLContext (aSSLContext);
-    }
-    catch (final GeneralSecurityException ex)
-    {
-      throw new IllegalStateException ("Failed to initialize SSLContext for Phase4DBNAllianceHttpClientSettings", ex);
-    }
+    setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13, ETLSVersion.TLS_12 },
+                                                       CGlobal.EMPTY_STRING_ARRAY));
 
     setConnectionRequestTimeout (DEFAULT_DBNA_CONNECTION_REQUEST_TIMEOUT);
     setConnectTimeout (DEFAULT_DBNA_CONNECT_TIMEOUT);

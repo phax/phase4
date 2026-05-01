@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.eudamed;
 
-import java.security.GeneralSecurityException;
-
 import org.junit.Test;
 
 /**
@@ -28,7 +26,7 @@ import org.junit.Test;
 public final class Phase4EudamedHttpClientSettingsTest
 {
   @Test
-  public void testBasic () throws GeneralSecurityException
+  public void testBasic ()
   {
     new Phase4EudamedHttpClientSettings ();
   }

@@ -16,15 +16,11 @@
  */
 package com.helger.phase4.edelivery2;
 
-import java.security.GeneralSecurityException;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-
 import org.apache.hc.core5.util.Timeout;
 
-import com.helger.http.security.TrustManagerTrustAll;
+import com.helger.base.CGlobal;
 import com.helger.http.tls.ETLSVersion;
+import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.CAS4Version;
@@ -45,22 +41,11 @@ public class Phase4EDelivery2HttpClientSettings extends HttpClientSettings
   @SuppressWarnings ("hiding")
   public static final Timeout DEFAULT_RESPONSE_TIMEOUT = Timeout.ofSeconds (100);
 
-  public Phase4EDelivery2HttpClientSettings () throws GeneralSecurityException
+  public Phase4EDelivery2HttpClientSettings ()
   {
     // eDelivery AS4 2.0 requires TLS v1.2 minimum, SHOULD support TLS v1.3
-    // Try TLS 1.3 first, fall back to TLS 1.2
-    SSLContext aSSLContext;
-    try
-    {
-      aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_13.getID ());
-    }
-    catch (final GeneralSecurityException ex)
-    {
-      // TLS 1.3 not available, fall back to TLS 1.2
-      aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_12.getID ());
-    }
-    aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
-    setSSLContext (aSSLContext);
+    setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13, ETLSVersion.TLS_12 },
+                                                       CGlobal.EMPTY_STRING_ARRAY));
 
     setConnectionRequestTimeout (DEFAULT_CONNECTION_REQUEST_TIMEOUT);
     setConnectTimeout (DEFAULT_CONNECT_TIMEOUT);
