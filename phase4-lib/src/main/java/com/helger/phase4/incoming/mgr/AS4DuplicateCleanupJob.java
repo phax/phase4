@@ -60,6 +60,9 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
     final Duration aDisposalDuration = aJobDataMap.getCastedValue (KEY_DURATION);
     final OffsetDateTime aOldDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().minus (aDisposalDuration);
 
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Trying to evit all incoming messages arrived before " + aOldDT.toString ());
+
     final ICommonsList <String> aEvicted = MetaAS4Manager.getIncomingDuplicateMgr ().evictAllItemsBefore (aOldDT);
     if (aEvicted.isNotEmpty ())
       if (LOGGER.isDebugEnabled ())
@@ -87,13 +90,27 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
       {
         final JobDataMap aJobDataMap = new JobDataMap ();
         aJobDataMap.putIn (KEY_DURATION, aDisposalDuration);
+
+        // For some tests the disposal is less then 1 minute - in this case the job needs to run
+        // more often
+        final SimpleScheduleBuilder aSchedule;
+        if (aDisposalDuration.compareTo (Duration.ofMinutes (1)) < 0)
+        {
+          // Be as precise as possible
+          aSchedule = SimpleScheduleBuilder.simpleSchedule ()
+                                           .withIntervalInMilliseconds (aDisposalDuration.toMillis ())
+                                           .repeatForever ();
+        }
+        else
+          aSchedule = SimpleScheduleBuilder.repeatMinutelyForever (1);
+
         aTriggerKey = GlobalQuartzScheduler.getInstance ()
                                            .scheduleJob (ClassHelper.getClassLocalName (AS4DuplicateCleanupJob.class) +
                                                          "-" +
                                                          aDisposalDuration.toString (),
                                                          JDK8TriggerBuilder.newTrigger ()
                                                                            .startNow ()
-                                                                           .withSchedule (SimpleScheduleBuilder.repeatMinutelyForever ()),
+                                                                           .withSchedule (aSchedule),
                                                          AS4DuplicateCleanupJob.class,
                                                          aJobDataMap);
 

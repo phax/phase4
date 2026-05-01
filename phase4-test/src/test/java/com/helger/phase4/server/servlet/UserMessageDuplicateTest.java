@@ -19,12 +19,12 @@ package com.helger.phase4.server.servlet;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.hc.core5.http.HttpEntity;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.base.CGlobal;
 import com.helger.base.concurrent.ThreadHelper;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
@@ -42,6 +42,8 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUpExt
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (UserMessageDuplicateTest.class);
+
   private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
   @Test
@@ -61,7 +63,6 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  @Ignore ("Only use if you need to test the feature, takes a long time")
   public void testSendDuplicateMessageTestDisposalFeature () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
@@ -72,12 +73,14 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
 
     sendPlainMessageExpectSuccess (aEntity);
 
-    // Making sure the message gets disposed off
-    // 60 000 = 1 minute, *2 and + 10000 are a buffer
-    // test file is configured for 1 minute can take LONGER if configured
-    // differently
-    ThreadHelper.sleep (AS4Configuration.getIncomingDuplicateDisposalMinutes () * CGlobal.MILLISECONDS_PER_MINUTE * 2 +
-                        10 * CGlobal.MILLISECONDS_PER_SECOND);
+    LOGGER.info ("Waiting until incoming message is evicted from duplicate cache; scheduled for " +
+                 AS4Configuration.getIncomingDuplicateDisposal ());
+
+    // Making sure the duplicate stuff gets eliminated
+    // Test configuration is for a few seconds only
+    // As the server is started per class and not per test, we need to wait at least twice the
+    // amount of time (and add 0,5 seconds to be sure)
+    ThreadHelper.sleep (AS4Configuration.getIncomingDuplicateDisposal ().multipliedBy (2).plusMillis (500).toMillis ());
 
     sendPlainMessageExpectSuccess (aEntity);
   }
