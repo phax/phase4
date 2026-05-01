@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.incoming;
 
+import java.time.Duration;
+
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.GuardedBy;
@@ -58,20 +60,19 @@ public final class AS4ServerInitializer
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
 
-    final long nDisposalMinutes = AS4Configuration.getIncomingDuplicateDisposalMinutes ();
+    final Duration aDisposalDuration = AS4Configuration.getIncomingDuplicateDisposal ();
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Scheduling AS4DuplicateCleanupJob to dispose incoming metadata that is older than " +
-                    nDisposalMinutes +
-                    " minutes");
+                    aDisposalDuration);
 
     // Schedule jobs
     RW_LOCK.writeLocked ( () -> {
       // Consecutive calls return null
-      final TriggerKey aTriggerKey = AS4DuplicateCleanupJob.scheduleMe (nDisposalMinutes);
+      final TriggerKey aTriggerKey = AS4DuplicateCleanupJob.scheduleMe (aDisposalDuration);
       if (aTriggerKey != null)
       {
         if (s_aTriggerKey != null)
-          throw new IllegalStateException ("Failed to schedule AS4DuplicateCleanupJob - seems like some cleanup is missing");
+          throw new IllegalStateException ("Failed to schedule AS4DuplicateCleanupJob  - seems like some cleanup is missing");
         s_aTriggerKey = aTriggerKey;
       }
     });

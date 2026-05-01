@@ -18,6 +18,7 @@ package com.helger.phase4.config;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -62,7 +63,19 @@ public final class AS4Configuration
   public static final String PROPERTY_PHASE4_WSS4J_SYNCSECURITY = "phase4.wss4j.syncsecurity";
   public static final boolean DEFAULT_PHASE4_WSS4J_SYNCSECURITY = false;
 
+  /**
+   * The duration property for the incoming message duplicate disposal time. Supports the unit-less
+   * form (e.g. <code>10m</code>, <code>1h 30m</code>) since v4.5.0.
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL = "phase4.incoming.duplicatedisposal";
+  /**
+   * The legacy property for the incoming message duplicate disposal time, expressed in minutes. Use
+   * {@link #PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL} with the unit-less form instead.
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = "phase4.incoming.duplicatedisposal.minutes";
+  @Deprecated (forRemoval = true, since = "4.5.0")
   public static final long DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = 10;
+  public static final Duration DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_DURATION = Duration.ofMinutes (DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Configuration.class);
 
@@ -249,15 +262,50 @@ public final class AS4Configuration
   }
 
   /**
-   * @return the number of minutes, the message IDs of incoming messages are stored for duplication
-   *         check. Taken from the configuration item
-   *         <code>phase4.incoming.duplicatedisposal.minutes</code>. By default this is
-   *         {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES} minutes.
+   * @return the duration the message IDs of incoming messages are stored for duplication check.
+   *         Taken from the configuration item {@value #PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL}
+   *         (using the unit-less form like <code>10m</code> or <code>1h 30m</code>) with fallback
+   *         to the legacy item {@value #PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES} (a
+   *         plain number of minutes). By default this is
+   *         {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES} minutes. Never
+   *         <code>null</code>.
+   * @since 4.5.0
    */
+  @NonNull
+  public static Duration getIncomingDuplicateDisposal ()
+  {
+    final Duration aDur = getConfig ().getAsConfigDuration (PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL,
+                                                            sErr -> LOGGER.warn ("Invalid duration value for configuration key '" +
+                                                                                 PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL +
+                                                                                 "': " +
+                                                                                 sErr));
+    if (aDur != null)
+      return aDur;
+
+    final long nLegacyMinutes = getConfig ().getAsLong (PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES, -1);
+    if (nLegacyMinutes >= 0)
+    {
+      LOGGER.warn ("Configuration key '" +
+                   PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES +
+                   "' uses the deprecated per-unit-suffix format. Please migrate to the unit-less form '" +
+                   PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL +
+                   "' with values like '10m' or '1h 30m'. Per-unit-suffix keys will be removed in a future major version.");
+      return Duration.ofMinutes (nLegacyMinutes);
+    }
+
+    return DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_DURATION;
+  }
+
+  /**
+   * @return the number of minutes, the message IDs of incoming messages are stored for duplication
+   *         check. By default this is {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES}
+   *         minutes.
+   * @deprecated Use {@link #getIncomingDuplicateDisposal()} instead.
+   */
+  @Deprecated (forRemoval = true, since = "4.5.0")
   public static long getIncomingDuplicateDisposalMinutes ()
   {
-    return getConfig ().getAsLong ("phase4.incoming.duplicatedisposal.minutes",
-                                   DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
+    return getIncomingDuplicateDisposal ().toMinutes ();
   }
 
   /**

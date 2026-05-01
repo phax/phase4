@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.incoming.mgr;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -46,7 +47,7 @@ import com.helger.web.scope.util.AbstractScopeAwareJob;
 public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);
-  private static final String KEY_MINUTES = "mins";
+  private static final String KEY_DURATION = "duration";
   private static final AtomicBoolean WAS_SCHEDULED = new AtomicBoolean (false);
 
   public AS4DuplicateCleanupJob ()
@@ -56,8 +57,8 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
   protected void onExecute (@NonNull final JobDataMap aJobDataMap, @NonNull final IJobExecutionContext aContext)
                                                                                                                  throws JobExecutionException
   {
-    final long nMins = aJobDataMap.getAsLong (KEY_MINUTES);
-    final OffsetDateTime aOldDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().minusMinutes (nMins);
+    final Duration aDisposalDuration = aJobDataMap.getCastedValue (KEY_DURATION);
+    final OffsetDateTime aOldDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().minus (aDisposalDuration);
 
     final ICommonsList <String> aEvicted = MetaAS4Manager.getIncomingDuplicateMgr ().evictAllItemsBefore (aOldDT);
     if (aEvicted.isNotEmpty ())
@@ -69,26 +70,27 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
    * Start a job that runs every minute, that removes all messages older than a certain time from
    * duplication check. If the job is already scheduled, it cannot be scheduled again.
    *
-   * @param nDisposalMinutes
-   *        Messages older than this number of minutes will not be checked for duplicates. Must be
-   *        &gt; 0.
+   * @param aDisposalDuration
+   *        Messages older than this duration will not be checked for duplicates. Must not be
+   *        <code>null</code>.
    * @return <code>null</code> if no job was scheduled, the trigger key of the respective job
    *         otherwise.
    */
   @Nullable
-  public static TriggerKey scheduleMe (final long nDisposalMinutes)
+  public static TriggerKey scheduleMe (@NonNull final Duration aDisposalDuration)
   {
     TriggerKey aTriggerKey = null;
-    if (nDisposalMinutes > 0)
+    // Only for positive durations
+    if (aDisposalDuration.compareTo (Duration.ZERO) > 0)
     {
       if (!WAS_SCHEDULED.getAndSet (true))
       {
         final JobDataMap aJobDataMap = new JobDataMap ();
-        aJobDataMap.putIn (KEY_MINUTES, nDisposalMinutes);
+        aJobDataMap.putIn (KEY_DURATION, aDisposalDuration);
         aTriggerKey = GlobalQuartzScheduler.getInstance ()
                                            .scheduleJob (ClassHelper.getClassLocalName (AS4DuplicateCleanupJob.class) +
                                                          "-" +
-                                                         nDisposalMinutes,
+                                                         aDisposalDuration.toString (),
                                                          JDK8TriggerBuilder.newTrigger ()
                                                                            .startNow ()
                                                                            .withSchedule (SimpleScheduleBuilder.repeatMinutelyForever ()),
