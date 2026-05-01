@@ -129,7 +129,7 @@ public enum EEbmsError implements IEbmsError
                               EEbmsErrorText.DECOMPRESSION_FAILURE,
                               EEbmsErrorCategory.COMMUNICATION),
   // Additional Feature errors for phase4 according to ebMS Core Spec 6.4.1. Adding new ebMS Errors
-  @Since ("4.4.4")
+  @Since ("4.5.0")
   EBMS_PHASE4_DUPLICATE("EBMS:4001",
                         EEbmsErrorSeverity.FAILURE,
                         "DuplicateDetected",

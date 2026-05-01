@@ -262,7 +262,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
    *         from the AP CA checker as valid (soft-fail), <code>false</code> to treat it as invalid.
    *         Defaults to {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}. Applies to
    *         the inbound signing certificate check.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public static boolean isAPRevocationSoftFail ()
   {
@@ -275,7 +275,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
    *
    * @param b
    *        <code>true</code> to accept unknown revocation status, <code>false</code> to reject.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public static void setAPRevocationSoftFail (final boolean b)
   {

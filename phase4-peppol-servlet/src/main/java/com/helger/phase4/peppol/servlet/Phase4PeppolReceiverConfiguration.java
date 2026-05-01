@@ -223,7 +223,7 @@ public final class Phase4PeppolReceiverConfiguration
    *         {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}". Only
    *         applied to SMP clients created internally via
    *         {@link #getOrCreateSMPClientForRecipient(IParticipantIdentifier)}.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   @Nullable
   public ERevocationCheckMode getSMPRevocationCheckMode ()
@@ -237,7 +237,7 @@ public final class Phase4PeppolReceiverConfiguration
    *         {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults#isAllowSoftFail()}.
    *         Only applied to SMP clients created internally via
    *         {@link #getOrCreateSMPClientForRecipient(IParticipantIdentifier)}.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public boolean isSMPRevocationSoftFail ()
   {
@@ -323,7 +323,7 @@ public final class Phase4PeppolReceiverConfiguration
    * @return <code>true</code> if the AP signing certificate should be used.
    * @deprecated Use {@link #isCheckAPSigningCertificateRevocation()} instead
    */
-  @Deprecated (forRemoval = true, since = "4.4.4")
+  @Deprecated (forRemoval = true, since = "4.5.0")
   public boolean isCheckSigningCertificateRevocation ()
   {
     return isCheckAPSigningCertificateRevocation ();
@@ -352,7 +352,7 @@ public final class Phase4PeppolReceiverConfiguration
    *         {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
    *         from the AP CA checker as valid (soft-fail), <code>false</code> to treat it as invalid.
    *         Applies to the inbound signing certificate check.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public boolean isAPRevocationSoftFail ()
   {
@@ -364,7 +364,7 @@ public final class Phase4PeppolReceiverConfiguration
    *         check. {@link ETriState#UNDEFINED} means "use the JVM-wide default from
    *         {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}". Never
    *         <code>null</code>.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   @NonNull
   public ETriState getAPCacheRevocationCheckResult ()
@@ -376,7 +376,7 @@ public final class Phase4PeppolReceiverConfiguration
    * @return The revocation check mode override applied during the inbound signing certificate
    *         check. <code>null</code> means "use the JVM-wide default from
    *         {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
-   * @since 4.4.4
+   * @since 4.5.0
    */
   @Nullable
   public ERevocationCheckMode getAPRevocationCheckMode ()
@@ -534,7 +534,7 @@ public final class Phase4PeppolReceiverConfiguration
      *        The revocation check mode to use. <code>null</code> means "use the JVM-wide default
      *        from {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
      * @return this for chaining
-     * @since 4.4.4
+     * @since 4.5.0
      */
     @NonNull
     public Phase4PeppolReceiverConfigurationBuilder smpRevocationCheckMode (@Nullable final ERevocationCheckMode e)
@@ -554,7 +554,7 @@ public final class Phase4PeppolReceiverConfiguration
      *        <code>false</code> to reject. Defaults to
      *        {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}.
      * @return this for chaining
-     * @since 4.4.4
+     * @since 4.5.0
      */
     @NonNull
     public Phase4PeppolReceiverConfigurationBuilder smpRevocationSoftFail (final boolean b)
@@ -637,7 +637,7 @@ public final class Phase4PeppolReceiverConfiguration
      *        <code>true</code> if signing certificate revocation checks should be enabled,
      *        <code>false</code> if not.
      * @return this for chaining
-     * @since 4.4.4
+     * @since 4.5.0
      */
     @NonNull
     public Phase4PeppolReceiverConfigurationBuilder checkAPSigningCertificateRevocation (final boolean b)
@@ -669,7 +669,7 @@ public final class Phase4PeppolReceiverConfiguration
      *        {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
      *        as valid, <code>false</code> (default) to treat it as invalid.
      * @return this for chaining
-     * @since 4.4.4
+     * @since 4.5.0
      */
     @NonNull
     public Phase4PeppolReceiverConfigurationBuilder apRevocationSoftFail (final boolean b)
@@ -688,7 +688,7 @@ public final class Phase4PeppolReceiverConfiguration
      *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}. May not
      *        be <code>null</code>.
      * @return this for chaining
-     * @since 4.4.4
+     * @since 4.5.0
      */
     @NonNull
     public Phase4PeppolReceiverConfigurationBuilder apCacheRevocationCheckResult (@NonNull final ETriState e)
@@ -699,15 +699,15 @@ public final class Phase4PeppolReceiverConfiguration
     }
 
     /**
-     * Override the revocation check mode for the inbound signing certificate check on a
-     * per-receive basis.
+     * Override the revocation check mode for the inbound signing certificate check on a per-receive
+     * basis.
      *
      * @param e
      *        The revocation check mode to use. <code>null</code> (the default) means "use the
      *        JVM-wide default from
      *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
      * @return this for chaining
-     * @since 4.4.4
+     * @since 4.5.0
      */
     @NonNull
     public Phase4PeppolReceiverConfigurationBuilder apRevocationCheckMode (@Nullable final ERevocationCheckMode e)

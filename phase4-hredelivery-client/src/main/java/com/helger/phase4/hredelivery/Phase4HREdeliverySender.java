@@ -785,7 +785,7 @@ public final class Phase4HREdeliverySender
      *        bypass it, {@link ETriState#UNDEFINED} (the default) to use the JVM-wide default from
      *        {@link CertificateRevocationCheckerDefaults}. May not be <code>null</code>.
      * @return this for chaining
-     * @since 4.4.4
+     * @since 4.5.0
      */
     @NonNull
     public final IMPLTYPE apCacheRevocationCheckResult (@NonNull final ETriState eCacheRevocationCheckResult)
@@ -803,7 +803,7 @@ public final class Phase4HREdeliverySender
      *        The revocation check mode to use. <code>null</code> (the default) means "use the
      *        JVM-wide default from {@link CertificateRevocationCheckerDefaults}".
      * @return this for chaining
-     * @since 4.4.4
+     * @since 4.5.0
      */
     @NonNull
     public final IMPLTYPE apRevocationCheckMode (@Nullable final ERevocationCheckMode eRevocationCheckMode)
@@ -822,7 +822,7 @@ public final class Phase4HREdeliverySender
      *        <code>true</code> to accept {@link ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
      *        as valid, <code>false</code> to treat it as invalid.
      * @return this for chaining
-     * @since 4.4.4
+     * @since 4.5.0
      */
     @NonNull
     public final IMPLTYPE apRevocationSoftFail (final boolean bRevocationSoftFail)

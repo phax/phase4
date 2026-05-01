@@ -79,7 +79,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
    *        from the AP CA checker as valid, <code>false</code> to treat it as invalid. Defaults to
    *        {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}. Applies to the inbound
    *        signing certificate check.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public Phase4DBNAllianceReceiverConfiguration (final boolean bReceiverCheckEnabled,
                                                  @Nullable final IBDXR2ServiceMetadataProvider aSMPClient,
@@ -181,7 +181,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
    *         {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
    *         from the AP CA checker as valid (soft-fail), <code>false</code> to treat it as invalid.
    *         Applies to the inbound signing certificate check.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public boolean isAPRevocationSoftFail ()
   {
@@ -334,7 +334,7 @@ public final class Phase4DBNAllianceReceiverConfiguration
      *        {@link com.helger.security.certificate.ECertificateCheckResult#REVOCATION_STATUS_UNKNOWN}
      *        as valid, <code>false</code> to treat it as invalid.
      * @return this for chaining
-     * @since 4.4.4
+     * @since 4.5.0
      */
     @NonNull
     public Phase4DBNAllianceReceiverConfigurationBuilder apRevocationSoftFail (final boolean b)

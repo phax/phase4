@@ -22,7 +22,7 @@ import org.apache.hc.core5.util.Timeout;
  * Special {@link Phase4PeppolHttpClientSettings} optimized for CRL downloads.
  *
  * @author Philip Helger
- * @since 4.4.4
+ * @since 4.5.0
  */
 public class Phase4PeppolCRLHttpClientSettings extends Phase4PeppolHttpClientSettings
 {

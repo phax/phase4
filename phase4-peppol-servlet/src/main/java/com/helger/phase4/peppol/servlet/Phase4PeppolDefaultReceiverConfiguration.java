@@ -197,7 +197,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return The revocation check mode to apply when verifying SMP response certificates.
    *         <code>null</code> means "use the JVM-wide default from
    *         {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
-   * @since 4.4.4
+   * @since 4.5.0
    */
   @Nullable
   public static ERevocationCheckMode getSMPRevocationCheckMode ()
@@ -211,7 +211,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @param e
    *        The revocation check mode to use. <code>null</code> means "use the JVM-wide default from
    *        {@link com.helger.security.revocation.CertificateRevocationCheckerDefaults}".
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public static void setSMPRevocationCheckMode (@Nullable final ERevocationCheckMode e)
   {
@@ -227,7 +227,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return <code>true</code> to accept an indeterminable revocation status of an SMP response
    *         certificate (soft-fail), <code>false</code> to reject. Defaults to
    *         {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public static boolean isSMPRevocationSoftFail ()
   {
@@ -241,7 +241,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @param b
    *        <code>true</code> to accept on unknown revocation status (soft-fail), <code>false</code>
    *        to reject.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public static void setSMPRevocationSoftFail (final boolean b)
   {
@@ -446,7 +446,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *         from the AP CA checker as valid (soft-fail), <code>false</code> to treat it as invalid.
    *         Defaults to {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}. Applies to
    *         the inbound signing certificate check.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public static boolean isAPRevocationSoftFail ()
   {
@@ -463,7 +463,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *
    * @param b
    *        <code>true</code> to accept unknown revocation status, <code>false</code> to reject.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public static void setAPRevocationSoftFail (final boolean b)
   {
@@ -479,7 +479,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return The revocation result caching override applied during the inbound signing certificate
    *         check. {@link ETriState#UNDEFINED} (the default) means "use the JVM-wide default from
    *         {@link CertificateRevocationCheckerDefaults}".
-   * @since 4.4.4
+   * @since 4.5.0
    */
   @NonNull
   public static ETriState getAPCacheRevocationCheckResult ()
@@ -494,7 +494,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *        {@link ETriState#TRUE} to use the global revocation cache, {@link ETriState#FALSE} to
    *        bypass it, {@link ETriState#UNDEFINED} (the default) to use the JVM-wide default from
    *        {@link CertificateRevocationCheckerDefaults}. May not be <code>null</code>.
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public static void setAPCacheRevocationCheckResult (@NonNull final ETriState e)
   {
@@ -511,7 +511,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return The revocation check mode override applied during the inbound signing certificate
    *         check. <code>null</code> (the default) means "use the JVM-wide default from
    *         {@link CertificateRevocationCheckerDefaults}".
-   * @since 4.4.4
+   * @since 4.5.0
    */
   @Nullable
   public static ERevocationCheckMode getAPRevocationCheckMode ()
@@ -525,7 +525,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @param e
    *        The revocation check mode to use. <code>null</code> (the default) means "use the
    *        JVM-wide default from {@link CertificateRevocationCheckerDefaults}".
-   * @since 4.4.4
+   * @since 4.5.0
    */
   public static void setAPRevocationCheckMode (@Nullable final ERevocationCheckMode e)
   {
