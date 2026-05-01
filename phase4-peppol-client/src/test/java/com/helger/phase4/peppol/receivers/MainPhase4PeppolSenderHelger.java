@@ -21,6 +21,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
+import com.helger.commons.debug.GlobalDebugExt;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -83,6 +84,7 @@ public final class MainPhase4PeppolSenderHelger
           x.getResponseHeaders ().forEachSingleHeader ( (k, v) -> LOGGER.info ("  " + k + "=" + v), false);
         };
         final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHdl = new LoggingAS4SignalMsgValidationResultHandler ();
+
         final PeppolUserMessageBuilder aBuilder = Phase4PeppolSender.builder ()
                                                                     .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
                                                                     .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
@@ -118,9 +120,11 @@ public final class MainPhase4PeppolSenderHelger
 
   public static void main (final String [] args)
   {
-    // Enable in-memory managers
-    // SystemProperties.setPropertyValue
-    // (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, true);
+    // Must be provided on the commandline to work
+    // -Djava.security.debug=certpath+x509+ocsp
+    // GlobalDebugExt.setJavaSecurityDebugMode ("certpath+x509+ocsp");
+    if (false)
+      GlobalDebugExt.setJavaNetDebugMode ("ssl");
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
