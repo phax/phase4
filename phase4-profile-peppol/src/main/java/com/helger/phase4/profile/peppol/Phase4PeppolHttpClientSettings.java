@@ -16,23 +16,19 @@
  */
 package com.helger.phase4.profile.peppol;
 
-import java.security.GeneralSecurityException;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-
 import org.apache.hc.core5.util.Timeout;
 
-import com.helger.http.security.TrustManagerTrustAll;
+import com.helger.base.CGlobal;
 import com.helger.http.tls.ETLSVersion;
+import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.CAS4Version;
+import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 
 /**
  * Special {@link HttpClientSettings} with better defaults for Peppol.<br>
- * Was originally in phase4-peppol-client but was moved to phase4-profile-peppol
- * in v2.7.4
+ * Was originally in phase4-peppol-client but was moved to phase4-profile-peppol in v2.7.4
  *
  * @author Philip Helger
  * @since 0.9.10, 2.7.4
@@ -46,19 +42,9 @@ public class Phase4PeppolHttpClientSettings extends HttpClientSettings
 
   public Phase4PeppolHttpClientSettings ()
   {
-    try
-    {
-      // Peppol requires TLS v1.2
-      final SSLContext aSSLContext = SSLContext.getInstance (ETLSVersion.TLS_12.getID ());
-      // But we're basically trusting all hosts - the exact list is hard to
-      // determine
-      aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
-      setSSLContext (aSSLContext);
-    }
-    catch (final GeneralSecurityException ex)
-    {
-      throw new IllegalStateException ("Failed to initialize SSLContext for Phase4PeppolHttpClientSettings", ex);
-    }
+    setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13, ETLSVersion.TLS_12 },
+                                                       CGlobal.EMPTY_STRING_ARRAY));
+    setRevocationCheckMode (CertificateRevocationCheckerDefaults.getRevocationCheckMode ());
 
     setConnectionRequestTimeout (DEFAULT_PEPPOL_CONNECTION_REQUEST_TIMEOUT);
     setConnectTimeout (DEFAULT_PEPPOL_CONNECT_TIMEOUT);
