@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.concurrent.Immutable;
@@ -30,11 +29,12 @@ import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.HttpClientSettingsConfig;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 
 @Immutable
 public final class APConfig
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (APConfig.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (APConfig.class);
 
   private APConfig ()
   {}

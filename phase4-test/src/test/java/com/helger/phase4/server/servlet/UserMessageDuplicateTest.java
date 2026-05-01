@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import org.apache.hc.core5.http.HttpEntity;
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -29,6 +28,7 @@ import com.helger.base.concurrent.ThreadHelper;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.error.EEbmsError;
@@ -42,7 +42,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUpExt
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (UserMessageDuplicateTest.class);
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (UserMessageDuplicateTest.class);
 
   private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
