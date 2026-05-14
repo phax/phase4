@@ -388,6 +388,8 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
                                        .append ("RemoteHost", m_sRemoteHost)
                                        .append ("RemotePort", m_nRemotePort)
                                        .append ("RemoteUser", m_sRemoteUser)
+                                       .append ("RemoteTlsClientCerts", m_aRemoteTlsClientCerts)
+                                       .append ("RemoteTlsPeerCerts", m_aRemoteTlsPeerCerts)
                                        .append ("Cookies", m_aCookies)
                                        .append ("RequestMessageID", m_sRequestMessageID)
                                        .append ("ResponseHttpStatusCode", m_nResponseHttpStatusCode)
