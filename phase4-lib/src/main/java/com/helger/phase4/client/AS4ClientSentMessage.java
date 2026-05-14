@@ -44,11 +44,11 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 public class AS4ClientSentMessage <T>
 {
   private final AS4ClientBuiltMessage m_aBuiltMsg;
+  private final ICommonsList <X509Certificate> m_aRemoteTlsPeerCerts;
   private final StatusLine m_aResponseStatusLine;
   private final HttpHeaderMap m_aResponseHeaders;
   private final T m_aResponseContent;
   private final OffsetDateTime m_aSentDateTime;
-  private ICommonsList <X509Certificate> m_aRemoteTlsPeerCerts;
 
   /**
    * @param aBuiltMsg
@@ -60,12 +60,36 @@ public class AS4ClientSentMessage <T>
    * @param aResponseContent
    *        The response payload. May be <code>null</code>.
    */
+  @Deprecated (forRemoval = true, since = "4.5.1")
   public AS4ClientSentMessage (@NonNull final AS4ClientBuiltMessage aBuiltMsg,
                                @Nullable final StatusLine aResponseStatusLine,
                                @NonNull final HttpHeaderMap aResponseHeaders,
                                @Nullable final T aResponseContent)
   {
+    this (aBuiltMsg, null, aResponseStatusLine, aResponseHeaders, aResponseContent);
+  }
+
+  /**
+   * @param aBuiltMsg
+   *        The built message with headers, payload and message ID. May not be <code>null</code>.
+   * @param aResponseStatusLine
+   *        The HTTP response status line. May be <code>null</code>.
+   * @param aResponseHeaders
+   *        The HTTP response header. May not be <code>null</code>.
+   * @param aResponseContent
+   *        The response payload. May be <code>null</code>.
+   * @param aRemoteTlsPeerCerts
+   *        The remote TLS server certificates captured during the HTTPS handshake. May be
+   *        <code>null</code>.
+   */
+  public AS4ClientSentMessage (@NonNull final AS4ClientBuiltMessage aBuiltMsg,
+                               @Nullable final ICommonsList <X509Certificate> aRemoteTlsPeerCerts,
+                               @Nullable final StatusLine aResponseStatusLine,
+                               @NonNull final HttpHeaderMap aResponseHeaders,
+                               @Nullable final T aResponseContent)
+  {
     this (aBuiltMsg,
+          aRemoteTlsPeerCerts,
           aResponseStatusLine,
           aResponseHeaders,
           aResponseContent,
@@ -81,10 +105,14 @@ public class AS4ClientSentMessage <T>
    *        The HTTP response header. May not be <code>null</code>.
    * @param aResponseContent
    *        The response payload. May be <code>null</code>.
+   * @param aRemoteTlsPeerCerts
+   *        The remote TLS server certificates captured during the HTTPS handshake. May be
+   *        <code>null</code>.
    * @param aSentDateTime
    *        The sending date time. May not be <code>null</code>.
    */
   protected AS4ClientSentMessage (@NonNull final AS4ClientBuiltMessage aBuiltMsg,
+                                  @Nullable final ICommonsList <X509Certificate> aRemoteTlsPeerCerts,
                                   @Nullable final StatusLine aResponseStatusLine,
                                   @NonNull final HttpHeaderMap aResponseHeaders,
                                   @Nullable final T aResponseContent,
@@ -94,6 +122,7 @@ public class AS4ClientSentMessage <T>
     ValueEnforcer.notNull (aResponseHeaders, "ResponseHeaders");
     ValueEnforcer.notNull (aSentDateTime, "SentDateTime");
     m_aBuiltMsg = aBuiltMsg;
+    m_aRemoteTlsPeerCerts = aRemoteTlsPeerCerts;
     m_aResponseStatusLine = aResponseStatusLine;
     m_aResponseHeaders = aResponseHeaders;
     m_aResponseContent = aResponseContent;
@@ -118,6 +147,19 @@ public class AS4ClientSentMessage <T>
   public final String getMessageID ()
   {
     return m_aBuiltMsg.getMessageID ();
+  }
+
+  /**
+   * @return The remote TLS server certificate chain captured during the HTTPS handshake (index 0 =
+   *         leaf/server certificate). May be <code>null</code> if no certificates were captured
+   *         (e.g. plain HTTP, connection reuse without new handshake).
+   * @since 4.5.1
+   */
+  @Nullable
+  @ReturnsMutableObject
+  public final ICommonsList <X509Certificate> getRemoteTlsPeerCerts ()
+  {
+    return m_aRemoteTlsPeerCerts;
   }
 
   /**
@@ -182,43 +224,15 @@ public class AS4ClientSentMessage <T>
     return m_aSentDateTime;
   }
 
-  /**
-   * @return The remote TLS server certificate chain captured during the HTTPS handshake (index 0 =
-   *         leaf/server certificate). May be <code>null</code> if no certificates were captured
-   *         (e.g. plain HTTP, connection reuse without new handshake).
-   * @since 4.5.1
-   */
-  @Nullable
-  @ReturnsMutableObject
-  public final ICommonsList <X509Certificate> getRemoteTlsPeerCerts ()
-  {
-    return m_aRemoteTlsPeerCerts;
-  }
-
-  /**
-   * Set the remote TLS server certificates captured during the HTTPS handshake.
-   *
-   * @param aRemoteTlsCerts
-   *        The certificate chain. May be <code>null</code>.
-   * @return this for chaining
-   * @since 4.5.1
-   */
-  @NonNull
-  public final AS4ClientSentMessage <T> setRemoteTlsPeerCerts (@Nullable final ICommonsList <X509Certificate> aRemoteTlsCerts)
-  {
-    m_aRemoteTlsPeerCerts = aRemoteTlsCerts;
-    return this;
-  }
-
   @Override
   public String toString ()
   {
     return new ToStringGenerator (this).append ("BuiltMsg", m_aBuiltMsg)
+                                       .append ("RemoteTlsPeerCerts", m_aRemoteTlsPeerCerts)
                                        .append ("ResponseStatusLine", m_aResponseStatusLine)
                                        .append ("ResponseHeaders", m_aResponseHeaders)
                                        .append ("ResponseContent", m_aResponseContent)
                                        .append ("SentDateTime", m_aSentDateTime)
-                                       .append ("RemoteTlsCerts", m_aRemoteTlsPeerCerts)
                                        .getToString ();
   }
 }

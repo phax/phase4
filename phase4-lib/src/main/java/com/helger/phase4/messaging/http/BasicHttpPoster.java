@@ -171,7 +171,7 @@ public class BasicHttpPoster implements IHttpPoster
    * @param aResponseHandler
    *        The Http response handler that should be used to convert the HTTP response to a domain
    *        object.
-   * @param aRemoteTlsCertConsumer
+   * @param aRemoteTlsPeerCertConsumer
    *        An optional consumer that is invoked with the remote TLS server certificates after a
    *        successful HTTPS request. May be <code>null</code>. The list passed in may be
    *        <code>null</code> if no certificates were captured (e.g. plain HTTP).
@@ -185,7 +185,7 @@ public class BasicHttpPoster implements IHttpPoster
                                    @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                    @NonNull final HttpEntity aHttpEntity,
                                    @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
-                                   @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsCertConsumer) throws IOException
+                                   @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsPeerCertConsumer) throws IOException
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -239,10 +239,10 @@ public class BasicHttpPoster implements IHttpPoster
 
       // Surface the TLS peer (server) certificates if requested. The
       // CapturingTlsSocketStrategy is wired in by HttpClientFactory by default.
-      if (aRemoteTlsCertConsumer != null)
+      if (aRemoteTlsPeerCertConsumer != null)
       {
         final ICommonsList <X509Certificate> aRemoteTlsCerts = CapturingTlsSocketStrategy.getRemoteTLSCertificates (aHttpClientContext);
-        aRemoteTlsCertConsumer.accept (aRemoteTlsCerts);
+        aRemoteTlsPeerCertConsumer.accept (aRemoteTlsCerts);
       }
 
       return ret;
@@ -374,7 +374,7 @@ public class BasicHttpPoster implements IHttpPoster
    * @param aRetryCallback
    *        An optional retry callback that is invoked, before a retry happens. May be
    *        <code>null</code>.
-   * @param aRemoteTlsCertConsumer
+   * @param aRemoteTlsPeerCertConsumer
    *        An optional consumer that is invoked with the remote TLS server certificates after each
    *        successful HTTPS attempt. May be <code>null</code>. The list passed in may be
    *        <code>null</code> if no certificates were captured (e.g. plain HTTP).
@@ -393,7 +393,7 @@ public class BasicHttpPoster implements IHttpPoster
                                               @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                               @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                               @Nullable final IAS4RetryCallback aRetryCallback,
-                                              @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsCertConsumer) throws IOException
+                                              @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsPeerCertConsumer) throws IOException
   {
     // Parameter or global one - may still be null
     final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper
@@ -434,7 +434,7 @@ public class BasicHttpPoster implements IHttpPoster
                                        aCustomHttpHeaders,
                                        aDumpingEntity,
                                        aResponseHandler,
-                                       aRemoteTlsCertConsumer);
+                                       aRemoteTlsPeerCertConsumer);
           }
           catch (final IOException ex)
           {
@@ -503,7 +503,7 @@ public class BasicHttpPoster implements IHttpPoster
                                      aCustomHttpHeaders,
                                      aDumpingEntity,
                                      aResponseHandler,
-                                     aRemoteTlsCertConsumer);
+                                     aRemoteTlsPeerCertConsumer);
         }
         finally
         {

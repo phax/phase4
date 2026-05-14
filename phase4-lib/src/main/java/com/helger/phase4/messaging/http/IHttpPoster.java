@@ -233,7 +233,7 @@ public interface IHttpPoster
    * @param aRetryCallback
    *        An optional retry callback that is invoked, before a retry happens. May be
    *        <code>null</code>.
-   * @param aRemoteTlsCertConsumer
+   * @param aRemoteTlsPeerCertConsumer
    *        An optional consumer that is invoked with the remote TLS server certificates after each
    *        successful HTTPS attempt. May be <code>null</code>. The list passed in may be
    *        <code>null</code> if no certificates were captured (e.g. plain HTTP).
@@ -252,7 +252,7 @@ public interface IHttpPoster
                                                @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                                @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                @Nullable final IAS4RetryCallback aRetryCallback,
-                                               @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsCertConsumer) throws IOException
+                                               @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsPeerCertConsumer) throws IOException
   {
     return sendGenericMessageWithRetries (sURL,
                                           aCustomHttpHeaders,

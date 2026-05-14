@@ -555,7 +555,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
     // Capture the remote TLS server certificates of the (last) successful
     // HTTPS exchange so they can be surfaced via AS4ClientSentMessage
-    final Wrapper <ICommonsList <X509Certificate>> aRemoteTlsCertsHolder = new Wrapper <> ();
+    final Wrapper <ICommonsList <X509Certificate>> aRemoteTlsPeerCertsHolder = new Wrapper <> ();
     final T aResponseContent = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
                                                                             aBuiltHttpHeaders,
                                                                             aBuiltEntity,
@@ -564,12 +564,12 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                                             aRealResponseHandler,
                                                                             aOutgoingDumper,
                                                                             aRetryCallback,
-                                                                            aRemoteTlsCertsHolder::set);
+                                                                            aRemoteTlsPeerCertsHolder::set);
     final AS4ClientSentMessage <T> ret = new AS4ClientSentMessage <> (aBuiltMsg,
+                                                                      aRemoteTlsPeerCertsHolder.get (),
                                                                       aStatusLineKeeper.get (),
                                                                       aResponseHeaders,
                                                                       aResponseContent);
-    ret.setRemoteTlsPeerCerts (aRemoteTlsCertsHolder.get ());
 
     LOGGER.info ("phase4 --- sending.withretries:end");
 
