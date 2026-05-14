@@ -138,7 +138,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                      .setRemoteUser (aRequestScope.getRemoteUser ())
                                      .setCookies (aRequestScope.getCookies ())
                                      .setHttpHeaders (aRequestScope.headers ())
-                                     .setRemoteTlsCerts (aClientTlsCerts);
+                                     .setRemoteTlsClientCerts (aClientTlsCerts);
   }
 
   /**

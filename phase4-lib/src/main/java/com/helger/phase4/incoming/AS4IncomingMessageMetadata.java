@@ -55,7 +55,8 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private String m_sRemoteHost;
   private int m_nRemotePort = -1;
   private String m_sRemoteUser;
-  private ICommonsList <X509Certificate> m_aRemoteTlsCerts;
+  private ICommonsList <X509Certificate> m_aRemoteTlsClientCerts;
+  private ICommonsList <X509Certificate> m_aRemoteTlsPeerCerts;
   private final ICommonsList <Cookie> m_aCookies = new CommonsArrayList <> ();
   private final HttpHeaderMap m_aHttpHeaderMap = new HttpHeaderMap ();
   private String m_sRequestMessageID;
@@ -224,9 +225,26 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
 
   @Nullable
   @ReturnsMutableObject
-  public ICommonsList <X509Certificate> remoteTlsCerts ()
+  public ICommonsList <X509Certificate> remoteTlsClientCerts ()
   {
-    return m_aRemoteTlsCerts;
+    return m_aRemoteTlsClientCerts;
+  }
+
+  /**
+   * Set the remote TLS certificates to be used.
+   *
+   * @param aRemoteTlsCerts
+   *        The TLS certificates the remote client presented during the handshake. May be
+   *        <code>null</code>.
+   * @return this for chaining
+   * @since 2.5.0
+   * @deprecated Use {@link #setRemoteTlsClientCerts(X509Certificate[])} instead
+   */
+  @Deprecated (forRemoval = true, since = "4.5.1")
+  @NonNull
+  public AS4IncomingMessageMetadata setRemoteTlsCerts (@Nullable final X509Certificate [] aRemoteTlsCerts)
+  {
+    return setRemoteTlsClientCerts (aRemoteTlsCerts);
   }
 
   /**
@@ -239,12 +257,38 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    * @since 2.5.0
    */
   @NonNull
-  public AS4IncomingMessageMetadata setRemoteTlsCerts (@Nullable final X509Certificate [] aRemoteTlsCerts)
+  public AS4IncomingMessageMetadata setRemoteTlsClientCerts (@Nullable final X509Certificate [] aRemoteTlsCerts)
   {
     if (ArrayHelper.isEmpty (aRemoteTlsCerts))
-      m_aRemoteTlsCerts = null;
+      m_aRemoteTlsClientCerts = null;
     else
-      m_aRemoteTlsCerts = new CommonsArrayList <> (aRemoteTlsCerts);
+      m_aRemoteTlsClientCerts = new CommonsArrayList <> (aRemoteTlsCerts);
+    return this;
+  }
+
+  @Nullable
+  @ReturnsMutableObject
+  public ICommonsList <X509Certificate> remoteTlsPeerCerts ()
+  {
+    return m_aRemoteTlsPeerCerts;
+  }
+
+  /**
+   * Set the remote TLS certificates to be used.
+   *
+   * @param aRemoteTlsPeerCerts
+   *        The TLS certificates the remote peer presented during the handshake. May be
+   *        <code>null</code>.
+   * @return this for chaining
+   * @since 4.5.1
+   */
+  @NonNull
+  public AS4IncomingMessageMetadata setRemoteTlsPeerCerts (@Nullable final ICommonsList <X509Certificate> aRemoteTlsPeerCerts)
+  {
+    if (aRemoteTlsPeerCerts == null || aRemoteTlsPeerCerts.isEmpty ())
+      m_aRemoteTlsPeerCerts = null;
+    else
+      m_aRemoteTlsPeerCerts = new CommonsArrayList <> (aRemoteTlsPeerCerts);
     return this;
   }
 

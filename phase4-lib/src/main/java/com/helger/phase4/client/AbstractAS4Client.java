@@ -17,6 +17,7 @@
 package com.helger.phase4.client;
 
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.function.Supplier;
@@ -37,6 +38,7 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.base.trait.IGenericImplTrait;
 import com.helger.base.wrapper.Wrapper;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -550,6 +552,10 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       // Call the original handler
       return aResponseHandler.handleResponse (resp);
     };
+
+    // Capture the remote TLS server certificates of the (last) successful
+    // HTTPS exchange so they can be surfaced via AS4ClientSentMessage
+    final Wrapper <ICommonsList <X509Certificate>> aRemoteTlsCertsHolder = new Wrapper <> ();
     final T aResponseContent = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
                                                                             aBuiltHttpHeaders,
                                                                             aBuiltEntity,
@@ -557,11 +563,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                                             m_aHttpRetrySettings,
                                                                             aRealResponseHandler,
                                                                             aOutgoingDumper,
-                                                                            aRetryCallback);
+                                                                            aRetryCallback,
+                                                                            aRemoteTlsCertsHolder::set);
     final AS4ClientSentMessage <T> ret = new AS4ClientSentMessage <> (aBuiltMsg,
                                                                       aStatusLineKeeper.get (),
                                                                       aResponseHeaders,
                                                                       aResponseContent);
+    ret.setRemoteTlsPeerCerts (aRemoteTlsCertsHolder.get ());
 
     LOGGER.info ("phase4 --- sending.withretries:end");
 

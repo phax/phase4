@@ -18,6 +18,7 @@ package com.helger.phase4.messaging.http;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.function.Consumer;
 
@@ -42,11 +43,13 @@ import com.helger.base.rt.StackTraceHelper;
 import com.helger.base.timing.StopWatch;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.base.wrapper.Wrapper;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.http.CHttp;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.IHttpClientProvider;
+import com.helger.httpclient.security.CapturingTlsSocketStrategy;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
@@ -143,10 +146,46 @@ public class BasicHttpPoster implements IHttpPoster
    *         In case of IO error
    */
   @Nullable
+  @Deprecated (forRemoval = true, since = "4.5.1")
   public <T> T sendGenericMessage (@NonNull @Nonempty final String sURL,
                                    @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                    @NonNull final HttpEntity aHttpEntity,
                                    @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler) throws IOException
+  {
+    return sendGenericMessage (sURL, aCustomHttpHeaders, aHttpEntity, aResponseHandler, null);
+  }
+
+  /**
+   * Send an arbitrary HTTP POST message to the provided URL, using the contained HttpClientFactory
+   * as well as the customizer. Additionally the AS4 HTTP debugging is invoked in here.<br>
+   * This method does NOT retry
+   *
+   * @param <T>
+   *        Response data type
+   * @param sURL
+   *        The URL to send to. May neither be <code>null</code> nor empty.
+   * @param aCustomHttpHeaders
+   *        An optional http header map that should be applied. May be <code>null</code>.
+   * @param aHttpEntity
+   *        The HTTP entity to be send. May not be <code>null</code>.
+   * @param aResponseHandler
+   *        The Http response handler that should be used to convert the HTTP response to a domain
+   *        object.
+   * @param aRemoteTlsCertConsumer
+   *        An optional consumer that is invoked with the remote TLS server certificates after a
+   *        successful HTTPS request. May be <code>null</code>. The list passed in may be
+   *        <code>null</code> if no certificates were captured (e.g. plain HTTP).
+   * @return The HTTP response. May be <code>null</code>.
+   * @throws IOException
+   *         In case of IO error
+   * @since 4.5.1
+   */
+  @Nullable
+  public <T> T sendGenericMessage (@NonNull @Nonempty final String sURL,
+                                   @Nullable final HttpHeaderMap aCustomHttpHeaders,
+                                   @NonNull final HttpEntity aHttpEntity,
+                                   @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
+                                   @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsCertConsumer) throws IOException
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -198,9 +237,13 @@ public class BasicHttpPoster implements IHttpPoster
       final HttpClientContext aHttpClientContext = HttpClientContext.create ();
       final T ret = aClientMgr.execute (aPost, aHttpClientContext, aResponseHandler);
 
-      // Extract the TLS peer (server) certificates
-      // final ICommonsList <X509Certificate> aRemoteTLSCerts =
-      // CapturingTlsSocketStrategy.getRemoteTLSCertificates (aHttpClientContext);
+      // Surface the TLS peer (server) certificates if requested. The
+      // CapturingTlsSocketStrategy is wired in by HttpClientFactory by default.
+      if (aRemoteTlsCertConsumer != null)
+      {
+        final ICommonsList <X509Certificate> aRemoteTlsCerts = CapturingTlsSocketStrategy.getRemoteTLSCertificates (aHttpClientContext);
+        aRemoteTlsCertConsumer.accept (aRemoteTlsCerts);
+      }
 
       return ret;
     }
@@ -283,6 +326,7 @@ public class BasicHttpPoster implements IHttpPoster
   }
 
   @Nullable
+  @Deprecated (forRemoval = true, since = "4.5.1")
   public <T> T sendGenericMessageWithRetries (@NonNull final String sURL,
                                               @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                               @NonNull final HttpEntity aHttpEntity,
@@ -291,6 +335,65 @@ public class BasicHttpPoster implements IHttpPoster
                                               @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                               @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                               @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
+  {
+    return sendGenericMessageWithRetries (sURL,
+                                          aCustomHttpHeaders,
+                                          aHttpEntity,
+                                          sMessageID,
+                                          aRetrySettings,
+                                          aResponseHandler,
+                                          aOutgoingDumper,
+                                          aRetryCallback,
+                                          null);
+  }
+
+  /**
+   * Same as
+   * {@link #sendGenericMessageWithRetries(String, HttpHeaderMap, HttpEntity, String, HttpRetrySettings, HttpClientResponseHandler, IAS4OutgoingDumper, IAS4RetryCallback)}
+   * but additionally surfaces the remote TLS server certificates of the (last) successful HTTPS
+   * exchange to the provided consumer.
+   *
+   * @param <T>
+   *        Response data type
+   * @param sURL
+   *        The URL to send to. May neither be <code>null</code> nor empty.
+   * @param aCustomHttpHeaders
+   *        An optional http header map that should be applied. May be <code>null</code>.
+   * @param aHttpEntity
+   *        The HTTP entity to be send. May not be <code>null</code>.
+   * @param sMessageID
+   *        the AS4 message ID. May not be <code>null</code>.
+   * @param aRetrySettings
+   *        The retry settings to use. May not be <code>null</code>.
+   * @param aResponseHandler
+   *        The HTTP response handler that should be used to convert the HTTP response to a domain
+   *        object.
+   * @param aOutgoingDumper
+   *        An optional outgoing dumper for this message. May be <code>null</code> to use the global
+   *        one.
+   * @param aRetryCallback
+   *        An optional retry callback that is invoked, before a retry happens. May be
+   *        <code>null</code>.
+   * @param aRemoteTlsCertConsumer
+   *        An optional consumer that is invoked with the remote TLS server certificates after each
+   *        successful HTTPS attempt. May be <code>null</code>. The list passed in may be
+   *        <code>null</code> if no certificates were captured (e.g. plain HTTP).
+   * @return The HTTP response data as indicated by the ResponseHandler. Should not be
+   *         <code>null</code> but basically depends on the response handler.
+   * @throws IOException
+   *         In case of IO error
+   * @since 4.5.1
+   */
+  @Nullable
+  public <T> T sendGenericMessageWithRetries (@NonNull final String sURL,
+                                              @Nullable final HttpHeaderMap aCustomHttpHeaders,
+                                              @NonNull final HttpEntity aHttpEntity,
+                                              @NonNull final String sMessageID,
+                                              @NonNull final HttpRetrySettings aRetrySettings,
+                                              @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
+                                              @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                              @Nullable final IAS4RetryCallback aRetryCallback,
+                                              @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsCertConsumer) throws IOException
   {
     // Parameter or global one - may still be null
     final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper
@@ -327,7 +430,11 @@ public class BasicHttpPoster implements IHttpPoster
                                                                        aDumpOSHolder);
 
             // Dump only for the first try - the remaining tries
-            return sendGenericMessage (sURL, aCustomHttpHeaders, aDumpingEntity, aResponseHandler);
+            return sendGenericMessage (sURL,
+                                       aCustomHttpHeaders,
+                                       aDumpingEntity,
+                                       aResponseHandler,
+                                       aRemoteTlsCertConsumer);
           }
           catch (final IOException ex)
           {
@@ -392,7 +499,11 @@ public class BasicHttpPoster implements IHttpPoster
         try
         {
           // Send without retry
-          return sendGenericMessage (sURL, aCustomHttpHeaders, aDumpingEntity, aResponseHandler);
+          return sendGenericMessage (sURL,
+                                     aCustomHttpHeaders,
+                                     aDumpingEntity,
+                                     aResponseHandler,
+                                     aRemoteTlsCertConsumer);
         }
         finally
         {

@@ -896,7 +896,7 @@ public final class BDEWCompatibilityValidatorTest
     @SuppressWarnings ("unchecked")
     final Collection <X509Certificate> aCertificates = (Collection <X509Certificate>) aCertificateFactory.generateCertificates (BDEWCompatibilityValidator.class.getResourceAsStream ("nonemtmako.cert"));
     assertNotNull (aCertificates);
-    aIncomingMessageMetadata.setRemoteTlsCerts (aCertificates.toArray (new X509Certificate [0]));
+    aIncomingMessageMetadata.setRemoteTlsClientCerts (aCertificates.toArray (new X509Certificate [0]));
 
     // Check compliance
     VALIDATOR.validateInitiatorIdentity (aUserMessage, null, aIncomingMessageMetadata, m_aErrorList);

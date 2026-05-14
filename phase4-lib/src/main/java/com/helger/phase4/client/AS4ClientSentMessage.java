@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.client;
 
+import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 
 import org.apache.hc.core5.http.message.StatusLine;
@@ -27,6 +28,7 @@ import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.tostring.ToStringGenerator;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
@@ -46,6 +48,7 @@ public class AS4ClientSentMessage <T>
   private final HttpHeaderMap m_aResponseHeaders;
   private final T m_aResponseContent;
   private final OffsetDateTime m_aSentDateTime;
+  private ICommonsList <X509Certificate> m_aRemoteTlsPeerCerts;
 
   /**
    * @param aBuiltMsg
@@ -179,6 +182,34 @@ public class AS4ClientSentMessage <T>
     return m_aSentDateTime;
   }
 
+  /**
+   * @return The remote TLS server certificate chain captured during the HTTPS handshake (index 0 =
+   *         leaf/server certificate). May be <code>null</code> if no certificates were captured
+   *         (e.g. plain HTTP, connection reuse without new handshake).
+   * @since 4.5.1
+   */
+  @Nullable
+  @ReturnsMutableObject
+  public final ICommonsList <X509Certificate> getRemoteTlsPeerCerts ()
+  {
+    return m_aRemoteTlsPeerCerts;
+  }
+
+  /**
+   * Set the remote TLS server certificates captured during the HTTPS handshake.
+   *
+   * @param aRemoteTlsCerts
+   *        The certificate chain. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.5.1
+   */
+  @NonNull
+  public final AS4ClientSentMessage <T> setRemoteTlsPeerCerts (@Nullable final ICommonsList <X509Certificate> aRemoteTlsCerts)
+  {
+    m_aRemoteTlsPeerCerts = aRemoteTlsCerts;
+    return this;
+  }
+
   @Override
   public String toString ()
   {
@@ -187,6 +218,7 @@ public class AS4ClientSentMessage <T>
                                        .append ("ResponseHeaders", m_aResponseHeaders)
                                        .append ("ResponseContent", m_aResponseContent)
                                        .append ("SentDateTime", m_aSentDateTime)
+                                       .append ("RemoteTlsCerts", m_aRemoteTlsPeerCerts)
                                        .getToString ();
   }
 }

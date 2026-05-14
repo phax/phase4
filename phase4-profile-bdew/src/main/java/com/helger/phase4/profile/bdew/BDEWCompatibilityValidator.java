@@ -438,9 +438,9 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
                                          @NonNull final ErrorList aErrorList)
   {
     X509Certificate aTlsClientEndCert = null;
-    if (aMessageMetadata.hasRemoteTlsCerts ())
+    if (aMessageMetadata.hasRemoteTlsClientCerts ())
     {
-      aTlsClientEndCert = aMessageMetadata.remoteTlsCerts ().getFirstOrNull ();
+      aTlsClientEndCert = aMessageMetadata.remoteTlsClientCerts ().getFirstOrNull ();
 
       final X500Name aTlsName = new X500Name (aTlsClientEndCert.getSubjectX500Principal ().getName ());
       final RDN aTlsCnRDN = aTlsName.getRDNs (BCStyle.CN)[0];

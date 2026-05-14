@@ -148,20 +148,70 @@ public interface IAS4IncomingMessageMetadata
    *
    * @return A list containing a chain of X509Certificate objects. Maybe <code>null</code>.
    * @since 2.5.0
+   * @deprecated Use {@link #remoteTlsClientCerts()} instead
    */
   @Nullable
   @ReturnsMutableObject
-  ICommonsList <X509Certificate> remoteTlsCerts ();
+  @Deprecated (forRemoval = true, since = "4.5.1")
+  default ICommonsList <X509Certificate> remoteTlsCerts ()
+  {
+    return remoteTlsClientCerts ();
+  }
+
+  /**
+   * Returns the TLS certificates presented by the remote client to authenticate itself.
+   *
+   * @return A list containing a chain of X509Certificate objects. Maybe <code>null</code>.
+   * @since 2.5.0
+   */
+  @Nullable
+  @ReturnsMutableObject
+  ICommonsList <X509Certificate> remoteTlsClientCerts ();
 
   /**
    * @return <code>true</code> if the remote TLS certificate chain with at least a single
    *         certificate is present, <code>false</code> if not.
-   * @see #remoteTlsCerts()
+   * @see #remoteTlsClientCerts()
    * @since 2.5.0
+   * @deprecated Use {@link #hasRemoteTlsClientCerts()} instead
    */
+  @Deprecated (forRemoval = true, since = "4.5.1")
   default boolean hasRemoteTlsCerts ()
   {
-    final var aCerts = remoteTlsCerts ();
+    return hasRemoteTlsClientCerts ();
+  }
+
+  /**
+   * @return <code>true</code> if the remote TLS certificate chain with at least a single
+   *         certificate is present, <code>false</code> if not.
+   * @see #remoteTlsClientCerts()
+   * @since 2.5.0
+   */
+  default boolean hasRemoteTlsClientCerts ()
+  {
+    final var aCerts = remoteTlsClientCerts ();
+    return aCerts != null && aCerts.isNotEmpty ();
+  }
+
+  /**
+   * Returns the TLS certificates presented by the remote peer to authenticate itself.
+   *
+   * @return A list containing a chain of X509Certificate objects. Maybe <code>null</code>.
+   * @since 4.5.1
+   */
+  @Nullable
+  @ReturnsMutableObject
+  ICommonsList <X509Certificate> remoteTlsPeerCerts ();
+
+  /**
+   * @return <code>true</code> if the remote peer TLS certificate chain with at least a single
+   *         certificate is present, <code>false</code> if not.
+   * @see #remoteTlsPeerCerts()
+   * @since 4.5.1
+   */
+  default boolean hasRemoteTlsPeerCerts ()
+  {
+    final var aCerts = remoteTlsPeerCerts ();
     return aCerts != null && aCerts.isNotEmpty ();
   }
 

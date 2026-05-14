@@ -69,10 +69,10 @@ public final class AS4IncomingHelper
       aMap.add ("RemotePort", aMessageMetadata.getRemotePort ());
     if (aMessageMetadata.hasRemoteUser ())
       aMap.add ("RemoteUser", aMessageMetadata.getRemoteUser ());
-    if (aMessageMetadata.hasRemoteTlsCerts ())
+    if (aMessageMetadata.hasRemoteTlsClientCerts ())
     {
       final IJsonArray aArray = new JsonArray ();
-      for (final X509Certificate aCert : aMessageMetadata.remoteTlsCerts ())
+      for (final X509Certificate aCert : aMessageMetadata.remoteTlsClientCerts ())
         aArray.add (CertificateHelper.getPEMEncodedCertificate (aCert));
       aMap.add ("RemoteTlsCerts", aArray);
     }

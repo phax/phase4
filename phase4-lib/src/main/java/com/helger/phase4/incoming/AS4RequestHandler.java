@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.hc.core5.http.HttpEntity;
@@ -1934,6 +1936,7 @@ public class AS4RequestHandler implements AutoCloseable
             final HttpHeaderMap aResponseHttpHeaders = null;
             // TODO make async send parameters customizable
             final HttpRetrySettings aRetrySettings = new HttpRetrySettings ();
+            final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsCertConsumer = null;
             aAsyncResponse = aSender.sendGenericMessageWithRetries (sAsyncResponseURL,
                                                                     aResponseHttpHeaders,
                                                                     aHttpEntity,
@@ -1941,7 +1944,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                                     aRetrySettings,
                                                                     new ResponseHandlerXml (),
                                                                     m_aOutgoingDumper,
-                                                                    m_aRetryCallback);
+                                                                    m_aRetryCallback,
+                                                                    aRemoteTlsCertConsumer);
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
                                      (aAsyncResponse == null ? "null"
