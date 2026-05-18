@@ -16,6 +16,10 @@
  */
 package com.helger.phase4.profile.peppol;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
 import org.junit.Test;
 
 /**
@@ -28,6 +32,24 @@ public final class Phase4PeppolHttpClientSettingsTest
   @Test
   public void testBasic ()
   {
-    new Phase4PeppolHttpClientSettings ();
+    final Phase4PeppolHttpClientSettings aSettings = new Phase4PeppolHttpClientSettings ();
+    // 4.5.0 onwards: no implicit SSLContext is installed
+    assertNull (aSettings.getSSLContext ());
+  }
+
+  @Test
+  public void testSSLContextTrustAll () throws Exception
+  {
+    final Phase4PeppolHttpClientSettings aSettings = new Phase4PeppolHttpClientSettings ();
+    assertSame (aSettings, aSettings.setSSLContextTrustAll ());
+    assertNotNull (aSettings.getSSLContext ());
+  }
+
+  @Test
+  public void testSSLContextPeppolMozillaNSS () throws Exception
+  {
+    final Phase4PeppolHttpClientSettings aSettings = new Phase4PeppolHttpClientSettings ();
+    assertSame (aSettings, aSettings.setSSLContextPeppolMozillaNSS ());
+    assertNotNull (aSettings.getSSLContext ());
   }
 }

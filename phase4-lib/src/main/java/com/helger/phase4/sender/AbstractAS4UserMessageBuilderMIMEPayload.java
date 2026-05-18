@@ -17,6 +17,10 @@
 package com.helger.phase4.sender;
 
 import java.io.IOException;
+import java.security.cert.CertPathBuilderException;
+
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -155,6 +159,41 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
     return WSS4JAttachment.createOutgoingFileAttachment (aPayload, aResHelper);
   }
 
+  @Nullable
+  private static String _detectPeppolTlsHint (@NonNull final Throwable aRoot)
+  {
+    Throwable t = aRoot;
+    while (t != null)
+    {
+      if (t instanceof SSLHandshakeException || t instanceof CertPathBuilderException)
+      {
+        return "TLS handshake failed (" +
+               t.getClass ().getSimpleName () +
+               ": " +
+               t.getMessage () +
+               "). The remote server certificate is not trusted by the configured truststore." +
+               " See https://github.com/phax/phase4/wiki/Migrations for the 4.5.0 default change" +
+               " and how to restore the previous behaviour (e.g." +
+               " Phase4PeppolHttpClientSettings.setSSLContextTrustAll() for tests or" +
+               " setSSLContextPeppolMozillaNSS() for production).";
+      }
+      if (t instanceof SSLException)
+      {
+        return "TLS error (" +
+               t.getClass ().getSimpleName () +
+               ": " +
+               t.getMessage () +
+               "). Check the SSLContext / truststore configured on the HttpClientSettings." +
+               " See https://github.com/phax/phase4/wiki/Migrations for the 4.5.0 default change.";
+      }
+      final Throwable aCause = t.getCause ();
+      if (aCause == t)
+        break;
+      t = aCause;
+    }
+    return null;
+  }
+
   @Override
   protected final void mainSendMessage () throws Phase4Exception
   {
@@ -238,6 +277,18 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
     {
       // TODO If this is an ExtendedHttpResponseException then the incoming
       // dumper is never invoked
+
+      // Specific version to say "Only for Peppol PMode" - as there is no consistent PMode ID, this
+      // seems to be okay
+      if (m_aPMode != null && "urn:fdc:peppol.eu:2017:agreements:tia:ap_provider".equals (m_aPMode.getAgreement ()))
+      {
+        // Detect TLS / PKIX failures so users hitting the 4.5.0 truststore
+        // default change get a pointer at the migration wiki page
+        final String sTlsHint = _detectPeppolTlsHint (ex);
+        if (sTlsHint != null)
+          throw new Phase4Exception (sTlsHint, ex);
+      }
+
       // Wrap in phase4 Exception
       throw new Phase4Exception ("Wrapped Phase4Exception", ex);
     }
