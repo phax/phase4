@@ -79,7 +79,7 @@
     <xmlsec.version>4.0.4</xmlsec.version>
     <wss4j.version>4.0.1</wss4j.version>
 
-    <ph-commons.version>12.2.5</ph-commons.version>
+    <ph-commons.version>12.2.6</ph-commons.version>
     <ph-xsds.version>4.1.0</ph-xsds.version>
     <ph-ubl.version>10.1.0</ph-ubl.version>
     <ph-web.version>11.4.0</ph-web.version>
@@ -93,14 +93,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- overwrite ph-commons 12.2.0 to use 4.0.6 instead of 4.0.7 -->
-      <dependency>
-        <groupId>org.glassfish.jaxb</groupId>
-        <artifactId>jaxb-bom</artifactId>
-        <version>4.0.8</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
       <dependency>
         <groupId>com.helger.commons</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
@@ -118,7 +110,7 @@
       <dependency>
         <groupId>com.helger.schedule</groupId>
         <artifactId>ph-schedule-parent-pom</artifactId>
-        <version>6.1.0</version>
+        <version>6.1.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
