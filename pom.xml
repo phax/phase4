@@ -82,10 +82,10 @@
     <ph-commons.version>12.2.6</ph-commons.version>
     <ph-xsds.version>4.1.0</ph-xsds.version>
     <ph-ubl.version>10.1.0</ph-ubl.version>
-    <ph-web.version>11.4.0</ph-web.version>
+    <ph-web.version>11.4.1</ph-web.version>
     <ph-schematron.version>9.1.1</ph-schematron.version>
     <phive.version>12.0.3</phive.version>
-    <phive-rules.version>4.3.2</phive-rules.version>
+    <phive-rules.version>4.3.3</phive-rules.version>
     <peppol-commons.version>12.5.0</peppol-commons.version>
     <peppol-reporting.version>4.1.3</peppol-reporting.version>
     <peppol-ap-support.version>2.1.3</peppol-ap-support.version>
