@@ -3,6 +3,8 @@
 <!-- ph-badge-start -->
 [![Sonatype Central](https://maven-badges.sml.io/sonatype-central/com.helger.phase4/phase4-parent-pom/badge.svg)](https://maven-badges.sml.io/sonatype-central/com.helger.phase4/phase4-parent-pom/)
 [![javadoc](https://javadoc.io/badge2/com.helger.phase4/phase4-lib/javadoc.svg)](https://javadoc.io/doc/com.helger.phase4/phase4-lib)
+
+> If this project saved you some time or made your day a little easier, a star would mean a lot — it helps others find it too.
 <!-- ph-badge-end -->
 
 ![Logo](https://github.com/phax/phase4/blob/master/docs/logo/phase4-logo-653-180.png)
