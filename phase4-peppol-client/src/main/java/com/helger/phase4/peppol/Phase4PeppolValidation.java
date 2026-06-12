@@ -98,6 +98,7 @@ public final class Phase4PeppolValidation
    * @see #validateOutgoingBusinessDocument(Element, IValidationExecutorSetRegistry, DVRCoordinate,
    *      IPhase4PeppolValidationResultHandler)
    */
+  @SuppressWarnings ("javadoc")
   @Deprecated (forRemoval = true, since = "4.4.3")
   public static void validateOutgoingBusinessDocument (@NonNull final Element aXML,
                                                        @NonNull final DVRCoordinate aVESID,

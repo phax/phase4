@@ -26,7 +26,7 @@ import com.helger.phive.api.result.ValidationResultList;
  * @author Philip Helger
  * @since 0.9.7
  */
-@SuppressWarnings ("removal")
+@SuppressWarnings ({ "removal", "javadoc" })
 @Deprecated (forRemoval = true, since = "4.4.3")
 public class Phase4PeppolValidatonResultHandler implements IPhase4PeppolValidationResultHandler
 {
