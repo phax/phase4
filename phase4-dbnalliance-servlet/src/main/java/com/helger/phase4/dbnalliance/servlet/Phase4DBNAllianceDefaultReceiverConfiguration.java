@@ -25,10 +25,10 @@ import org.slf4j.Logger;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
+import com.helger.dbnalliance.commons.DBNAllianceIdentifierFactory;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
 import com.helger.peppol.xhe.read.DBNAllianceXHEDataReader;
 import com.helger.peppolid.factory.IIdentifierFactory;
-import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.dbnalliance.servlet.Phase4DBNAllianceReceiverConfiguration.Phase4DBNAllianceReceiverConfigurationBuilder;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -48,7 +48,7 @@ import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 @NotThreadSafe
 public final class Phase4DBNAllianceDefaultReceiverConfiguration
 {
-  public static final IIdentifierFactory DEFAULT_XHE_IDENTIFIER_FACTORY = SimpleIdentifierFactory.INSTANCE;
+  public static final IIdentifierFactory DEFAULT_XHE_IDENTIFIER_FACTORY = DBNAllianceIdentifierFactory.INSTANCE;
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
   public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
   public static final TrustedCAChecker DEFAULT_CA_CHECKER = DBNAllianceTrustStores.Config2023.PILOT_CA;

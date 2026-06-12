@@ -34,6 +34,7 @@ import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.state.ESuccess;
 import com.helger.base.state.ETriState;
+import com.helger.dbnalliance.commons.DBNAllianceIdentifierFactory;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
@@ -44,7 +45,6 @@ import com.helger.peppol.xhe.write.DBNAllianceXHEDataWriter;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
-import com.helger.peppolid.factory.BDXR2IdentifierFactory;
 import com.helger.peppolid.simple.doctype.SimpleDocumentTypeIdentifier;
 import com.helger.peppolid.simple.process.SimpleProcessIdentifier;
 import com.helger.phase4.CAS4;
@@ -86,7 +86,7 @@ import com.helger.xhe.v10.cac.XHE10PayloadType;
 @Immutable
 public final class Phase4DBNAllianceSender
 {
-  public static final BDXR2IdentifierFactory IF = BDXR2IdentifierFactory.INSTANCE;
+  public static final DBNAllianceIdentifierFactory IF = DBNAllianceIdentifierFactory.INSTANCE;
   public static final ISMPURLProvider URL_PROVIDER = DBNAURLProviderSMP.INSTANCE;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4DBNAllianceSender.class);
