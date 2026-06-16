@@ -452,6 +452,7 @@ public final class Phase4PeppolSender
   {
     public static final boolean DEFAULT_COMPRESS_PAYLOAD = true;
     public static final boolean DEFAULT_CHECK_RECEIVER_AP_CERTIFICATE = true;
+    public static final boolean DEFAULT_PERFORM_SEATID_CHECK = true;
 
     // C1
     protected IParticipantIdentifier m_aSenderID;
@@ -475,6 +476,7 @@ public final class Phase4PeppolSender
     private ETriState m_eAPCacheRevocationCheckResult = ETriState.UNDEFINED;
     private ERevocationCheckMode m_eAPRevocationCheckMode;
     private boolean m_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
+    private boolean m_bPerformSeatIDCheck = DEFAULT_PERFORM_SEATID_CHECK;
 
     // Status var
     private OffsetDateTime m_aEffectiveSendingDT;
@@ -505,8 +507,7 @@ public final class Phase4PeppolSender
         peppolAP_CAChecker (PeppolTrustedCA.peppolAllAP ());
 
         // Peppol uses its own root certificate, so no checks needed - this is
-        // only to quiet the
-        // warning
+        // only to quiet the warning
         signingParams ().setSubjectCertConstraints (PeppolPMode.CERTIFICATE_SUBJECT_CONSTRAINT_PATTERN);
       }
       catch (final Exception ex)
@@ -906,6 +907,22 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Disable the SeatID check for outbound messages - this is only needed when handling Nemhandel
+     * messages. Based on issue #376.
+     *
+     * @param b
+     *        <code>true</code> to enable the check (default), <code>false</code> to disable it.
+     * @return this for chaining
+     * @since 4.5.2
+     */
+    @NonNull
+    public final IMPLTYPE performSeatIDCheck (final boolean b)
+    {
+      m_bPerformSeatIDCheck = b;
+      return thisAsT ();
+    }
+
+    /**
      * The effective sending date time of the message. That is set only if message sending takes
      * place.
      *
@@ -1054,20 +1071,23 @@ public final class Phase4PeppolSender
       // m_aAPEndpointURLConsumer may be null
       // m_aAPTechnicalContactConsumer may be null
 
-      // Additional checks
-      if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, m_sFromPartyID))
+      if (m_bPerformSeatIDCheck)
       {
-        LOGGER.warn ("The field 'fromPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
-                     PeppolIdentifierHelper.REGEX_SEAT_ID +
-                     "'");
-        return false;
-      }
-      if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, m_sToPartyID))
-      {
-        LOGGER.warn ("The field 'toPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
-                     PeppolIdentifierHelper.REGEX_SEAT_ID +
-                     "'");
-        return false;
+        // Peppol specific checks
+        if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, m_sFromPartyID))
+        {
+          LOGGER.warn ("The field 'fromPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
+                       PeppolIdentifierHelper.REGEX_SEAT_ID +
+                       "'");
+          return false;
+        }
+        if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, m_sToPartyID))
+        {
+          LOGGER.warn ("The field 'toPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
+                       PeppolIdentifierHelper.REGEX_SEAT_ID +
+                       "'");
+          return false;
+        }
       }
 
       // All valid
