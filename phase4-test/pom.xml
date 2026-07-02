@@ -40,10 +40,7 @@
   </licenses>
 
   <properties>
-    <m2e.jaxrs.activation>false</m2e.jaxrs.activation>
-    <m2e.jpa.activation>false</m2e.jpa.activation>
-    <m2e.jsf.activation>false</m2e.jsf.activation>
-    <littleproxy.version>2.7.0</littleproxy.version>
+    <littleproxy.version>2.8.0</littleproxy.version>
   </properties>
 
   <dependencies>
