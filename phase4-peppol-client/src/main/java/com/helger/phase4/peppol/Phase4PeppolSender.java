@@ -128,6 +128,8 @@ public final class Phase4PeppolSender
                                                        @Nullable final String sStandard,
                                                        @Nullable final String sTypeVersion,
                                                        @Nullable final String sType,
+                                                       @Nullable final IParticipantIdentifier aMLSTo,
+                                                       @Nullable final EPeppolMLSType eMLSType,
                                                        @NonNull final Element aPayloadElement,
                                                        final boolean bClonePayloadElement)
   {
@@ -137,6 +139,9 @@ public final class Phase4PeppolSender
     aData.setDocumentType (aDocTypeID);
     aData.setProcess (aProcID);
     aData.setCountryC1 (sCountryC1);
+    if (aMLSTo != null)
+      aData.setMLSToScheme (aMLSTo.getScheme ()).setMLSToValue (aMLSTo.getValue ());
+    aData.setMLSType (eMLSType);
 
     String sRealStandard = sStandard;
     if (StringHelper.isEmpty (sRealStandard))
@@ -223,6 +228,8 @@ public final class Phase4PeppolSender
                                                       @Nullable final String sStandard,
                                                       @Nullable final String sTypeVersion,
                                                       @Nullable final String sType,
+                                                      @Nullable final IParticipantIdentifier aMLSTo,
+                                                      @Nullable final EPeppolMLSType eMLSType,
                                                       @NonNull final Element aPayloadElement,
                                                       final boolean bClonePayloadElement)
   {
@@ -235,6 +242,8 @@ public final class Phase4PeppolSender
                                                         sStandard,
                                                         sTypeVersion,
                                                         sType,
+                                                        aMLSTo,
+                                                        eMLSType,
                                                         aPayloadElement,
                                                         bClonePayloadElement);
     if (aData == null)
@@ -272,8 +281,10 @@ public final class Phase4PeppolSender
    * @return The domain object representation of the created SBDH or <code>null</code> if not all
    *         parameters are present.
    * @since 3.1.0
+   * @deprecated Use the version with MLS_TYPE and MLS_TO parameters instead
    */
   @Nullable
+  @Deprecated (forRemoval = true, since = "4.5.2")
   public static StandardBusinessDocument createSBDH (@NonNull final IParticipantIdentifier aSenderID,
                                                      @NonNull final IParticipantIdentifier aReceiverID,
                                                      @NonNull final IDocumentTypeIdentifier aDocTypeID,
@@ -294,6 +305,71 @@ public final class Phase4PeppolSender
                        sStandard,
                        sTypeVersion,
                        sType,
+                       null,
+                       null,
+                       aPayloadElement,
+                       true);
+  }
+
+  /**
+   * @param aSenderID
+   *        Sender participant ID. May not be <code>null</code>.
+   * @param aReceiverID
+   *        Receiver participant ID. May not be <code>null</code>.
+   * @param aDocTypeID
+   *        Document type ID. May not be <code>null</code>.
+   * @param aProcID
+   *        Process ID. May not be <code>null</code>.
+   * @param sCountryC1
+   *        Country code of C1. May be <code>null</code>.
+   * @param sInstanceIdentifier
+   *        SBDH instance identifier. May be <code>null</code> to create a random ID.
+   * @param sStandard
+   *        SBDH standard (e.g. the XML payload root element namespace URI). May be
+   *        <code>null</code> to use the default.
+   * @param sTypeVersion
+   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be <code>null</code> to use
+   *        the default.
+   * @param sType
+   *        SBDH type (e.g. the XML payload root element local name). May be <code>null</code> to
+   *        use the default.
+   * @param aMLSTo
+   *        The optional <code>MLS_TO</code> value of the Peppol SBDH providing the MLS receiver.
+   *        May be <code>null</code>.
+   * @param eMLSType
+   *        The optional <code>MLS_TYPE</code> value of the Peppol SBDH providing the MLS reporting
+   *        mode. May be <code>null</code>.
+   * @param aPayloadElement
+   *        Payload element to be wrapped. May not be <code>null</code>.
+   * @return The domain object representation of the created SBDH or <code>null</code> if not all
+   *         parameters are present.
+   * @since 4.5.2
+   */
+  @Nullable
+  public static StandardBusinessDocument createSBDH (@NonNull final IParticipantIdentifier aSenderID,
+                                                     @NonNull final IParticipantIdentifier aReceiverID,
+                                                     @NonNull final IDocumentTypeIdentifier aDocTypeID,
+                                                     @NonNull final IProcessIdentifier aProcID,
+                                                     @Nullable final String sCountryC1,
+                                                     @Nullable final String sInstanceIdentifier,
+                                                     @Nullable final String sStandard,
+                                                     @Nullable final String sTypeVersion,
+                                                     @Nullable final String sType,
+                                                     @Nullable final IParticipantIdentifier aMLSTo,
+                                                     @Nullable final EPeppolMLSType eMLSType,
+                                                     @NonNull final Element aPayloadElement)
+  {
+    return _createSBD (aSenderID,
+                       aReceiverID,
+                       aDocTypeID,
+                       aProcID,
+                       sCountryC1,
+                       sInstanceIdentifier,
+                       sStandard,
+                       sTypeVersion,
+                       sType,
+                       aMLSTo,
+                       eMLSType,
                        aPayloadElement,
                        true);
   }
@@ -402,6 +478,7 @@ public final class Phase4PeppolSender
                      "); proceeding because revocation soft-fail is enabled.");
         return;
       }
+
       final String sMsg = "The configured receiver AP certificate is not valid (at " +
                           aNow +
                           ") and cannot be used for sending towards. Aborting. Reason: " +
@@ -1629,6 +1706,8 @@ public final class Phase4PeppolSender
                                                                 m_sSBDHStandard,
                                                                 m_sSBDHTypeVersion,
                                                                 m_sSBDHType,
+                                                                m_aMLSTo,
+                                                                m_eMLSType,
                                                                 aPayloadElement,
                                                                 bClonePayloadElement);
 
@@ -1637,11 +1716,6 @@ public final class Phase4PeppolSender
         // A log message was already provided
         return ESuccess.FAILURE;
       }
-
-      // Set MLS stuff here before bloating the public API
-      if (m_aMLSTo != null)
-        aPeppolSBDH.setMLSToScheme (m_aMLSTo.getScheme ()).setMLSToValue (m_aMLSTo.getValue ());
-      aPeppolSBDH.setMLSType (m_eMLSType);
 
       // We never need to clone the payload element here because it was evtl.
       // cloned before
