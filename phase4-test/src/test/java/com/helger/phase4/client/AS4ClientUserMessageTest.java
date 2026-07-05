@@ -16,9 +16,17 @@
  */
 package com.helger.phase4.client;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jspecify.annotations.NonNull;
@@ -28,12 +36,17 @@ import org.junit.Test;
 import org.slf4j.Logger;
 
 import com.helger.annotation.WillNotClose;
+import com.helger.base.io.iface.IHasInputStream;
+import com.helger.base.io.stream.StreamHelper;
 import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.file.SimpleFileIO;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
+import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
@@ -274,6 +287,53 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+  }
+
+  @Test
+  public void testSendOneCompressedAttachmentSignedMessageWithAttachmentCallback () throws Exception
+  {
+    final File aSrcFile = ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML);
+
+    final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
+    aClient.addAttachment (aSrcFile, CMimeType.APPLICATION_XML, EAS4CompressionMode.GZIP);
+
+    // Keystore
+    _setKeyStoreTestData (aClient);
+
+    // Sign specific
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    final AtomicBoolean aCallbackInvoked = new AtomicBoolean (false);
+    final IAS4ClientBuildMessageCallback aCallback = new IAS4ClientBuildMessageCallback ()
+    {
+      @Override
+      public void onBuiltAttachments (@NonNull final ICommonsList <WSS4JAttachment> aAttachments)
+      {
+        assertEquals (1, aAttachments.size ());
+
+        // The compressed data must be preserved (issue #361)
+        final IHasInputStream aCompressedISP = aAttachments.getFirstOrNull ().getCompressedSourceStreamProvider ();
+        assertNotNull (aCompressedISP);
+        try
+        {
+          // Decompressing the preserved compressed data must yield the
+          // original payload
+          final byte [] aDecompressed = StreamHelper.getAllBytes (EAS4CompressionMode.GZIP.getDecompressStream (aCompressedISP.getInputStream ()));
+          assertArrayEquals (SimpleFileIO.getAllFileBytes (aSrcFile), aDecompressed);
+        }
+        catch (final IOException ex)
+        {
+          throw new UncheckedIOException (ex);
+        }
+        aCallbackInvoked.set (true);
+      }
+    };
+
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL, aCallback);
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    assertTrue (aCallbackInvoked.get ());
   }
 
   @Test

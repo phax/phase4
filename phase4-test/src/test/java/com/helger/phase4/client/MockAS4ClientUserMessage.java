@@ -49,10 +49,20 @@ final class MockAS4ClientUserMessage extends AS4ClientUserMessage
                                                                                     IOException,
                                                                                     MessagingException
   {
+    final IAS4ClientBuildMessageCallback aCallback = null;
+    return sendMessageAndGetMicroDocument (sURL, aCallback);
+  }
+
+  @Nullable
+  @VisibleForTesting
+  public IMicroDocument sendMessageAndGetMicroDocument (@NonNull final String sURL,
+                                                        @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException,
+                                                                                                                  IOException,
+                                                                                                                  MessagingException
+  {
     final int nOldStarted = MockAS4IncomingMessageProcessingStatusSPI.getStarted ();
     final int nOldEnded = MockAS4IncomingMessageProcessingStatusSPI.getEnded ();
 
-    final IAS4ClientBuildMessageCallback aCallback = null;
     final IAS4OutgoingDumper aOutgoingDumper = null;
     final IAS4RetryCallback aRetryCallback = null;
     final IMicroDocument ret = sendMessageWithRetries (sURL,

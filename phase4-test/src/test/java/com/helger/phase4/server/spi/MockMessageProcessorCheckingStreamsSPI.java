@@ -18,6 +18,7 @@ package com.helger.phase4.server.spi;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -26,12 +27,14 @@ import org.w3c.dom.Node;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIImplementation;
+import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
@@ -104,6 +107,32 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
             catch (final IllegalStateException | IOException ex)
             {
               LOGGER.warn ("    Attachment Content: CANNOT BE READ", ex);
+            }
+          }
+
+          if (x.hasCompressionMode ())
+          {
+            // Verify the compressed attachment data is preserved and matches
+            // the decompressed data (issue #361)
+            final IHasInputStream aCompressedISP = x.getCompressedSourceStreamProvider ();
+            if (aCompressedISP == null)
+              throw new IllegalStateException ("The compressed attachment '" +
+                                               x.getId () +
+                                               "' does not contain the compressed source data");
+            try
+            {
+              final byte [] aDecompressedBytes = StreamHelper.getAllBytes (x.getCompressionMode ()
+                                                                            .getDecompressStream (aCompressedISP.getInputStream ()));
+              final byte [] aSourceBytes = StreamHelper.getAllBytes (x.getSourceStream ());
+              if (!Arrays.equals (aDecompressedBytes, aSourceBytes))
+                throw new IllegalStateException ("The preserved compressed data of attachment '" +
+                                                 x.getId () +
+                                                 "' does not match the decompressed attachment data");
+              LOGGER.info ("    Attachment compressed data verified: " + aDecompressedBytes.length + " bytes");
+            }
+            catch (final IOException ex)
+            {
+              throw new AS4DecompressException (ex);
             }
           }
         }

@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.attachment;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -31,6 +32,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.io.file.SimpleFileIO;
 import com.helger.mime.CMimeType;
@@ -83,7 +85,7 @@ public final class WSS4JAttachmentTest
   @Test
   public void testOutgoingBytes () throws IOException
   {
-    final byte [] aBytes = "<?xml version='1.0'?>".getBytes (StandardCharsets.ISO_8859_1);
+    final byte [] aBytes = "<?xml version='1.0'?>".getBytes (StandardCharsets.UTF_8);
 
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
@@ -96,9 +98,12 @@ public final class WSS4JAttachmentTest
       assertEquals (CMimeType.APPLICATION_XML.getAsString (), a.getMimeType ());
       assertEquals (CMimeType.APPLICATION_XML.getAsString (), a.getUncompressedMimeType ());
 
+      // Not compressed - no compressed data present
+      assertNull (a.getCompressedSourceStreamProvider ());
+
       // Read content
       final byte [] aRead = StreamHelper.getAllBytes (a.getSourceStream ());
-      assertEquals (new String (aBytes, StandardCharsets.ISO_8859_1), new String (aRead, StandardCharsets.ISO_8859_1));
+      assertEquals (new String (aBytes, StandardCharsets.UTF_8), new String (aRead, StandardCharsets.UTF_8));
     }
   }
 
@@ -107,7 +112,7 @@ public final class WSS4JAttachmentTest
   {
     final File f = m_aRule.newFile ("test.xml");
     final String sXMLContent = "<?xml version='1.0'?>";
-    SimpleFileIO.writeFile (f, sXMLContent.getBytes (StandardCharsets.ISO_8859_1));
+    SimpleFileIO.writeFile (f, sXMLContent.getBytes (StandardCharsets.UTF_8));
 
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
@@ -122,16 +127,19 @@ public final class WSS4JAttachmentTest
       assertEquals (CMimeType.APPLICATION_XML.getAsString (), a.getMimeType ());
       assertEquals (CMimeType.APPLICATION_XML.getAsString (), a.getUncompressedMimeType ());
 
+      // Not compressed - no compressed data present
+      assertNull (a.getCompressedSourceStreamProvider ());
+
       // Read content
       final byte [] aRead = StreamHelper.getAllBytes (a.getSourceStream ());
-      assertEquals (sXMLContent, new String (aRead, StandardCharsets.ISO_8859_1));
+      assertEquals (sXMLContent, new String (aRead, StandardCharsets.UTF_8));
     }
   }
 
   @Test
   public void testOutgoingCompression () throws IOException
   {
-    final byte [] aXmlBytes = "<?xml version='1.0'?>".getBytes (StandardCharsets.ISO_8859_1);
+    final byte [] aXmlBytes = "<?xml version='1.0'?>".getBytes (StandardCharsets.UTF_8);
 
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
@@ -153,8 +161,19 @@ public final class WSS4JAttachmentTest
       assertTrue (aRead.length > 0);
 
       // It is definitely not the XML
-      assertNotEquals (new String (aRead, StandardCharsets.ISO_8859_1),
-                       new String (aXmlBytes, StandardCharsets.ISO_8859_1));
+      assertNotEquals (new String (aRead, StandardCharsets.UTF_8), new String (aXmlBytes, StandardCharsets.UTF_8));
+
+      // The compressed data must be preserved (issue #361)
+      final IHasInputStream aCompressedISP = a.getCompressedSourceStreamProvider ();
+      assertNotNull (aCompressedISP);
+
+      // It must be identical to the source stream content
+      assertArrayEquals (aRead, StreamHelper.getAllBytes (aCompressedISP.getInputStream ()));
+
+      // Decompressing the preserved compressed data must yield the original
+      // payload
+      final byte [] aDecompressed = StreamHelper.getAllBytes (EAS4CompressionMode.GZIP.getDecompressStream (aCompressedISP.getInputStream ()));
+      assertArrayEquals (aXmlBytes, aDecompressed);
     }
   }
 }

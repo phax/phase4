@@ -19,6 +19,9 @@ package com.helger.phase4.client;
 import org.jspecify.annotations.NonNull;
 import org.w3c.dom.Document;
 
+import com.helger.annotation.Nonempty;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.model.message.AbstractAS4Message;
 
@@ -37,6 +40,24 @@ public interface IAS4ClientBuildMessageCallback
    *        The created message
    */
   default void onAS4Message (@NonNull final AbstractAS4Message <?> aMsg)
+  {}
+
+  /**
+   * Called for all attachments of a User Message, after eventual compression was applied, but
+   * before signing and encryption took place. This is the way to access the compressed attachment
+   * data over which the digital signature digests are calculated - e.g. to preserve it for
+   * non-repudiation purposes, because GZIP compression is not deterministic, and the compressed
+   * data cannot be re-created from the uncompressed data. Use
+   * {@link com.helger.phase4.attachment.IAS4Attachment#getCompressedSourceStreamProvider()} to
+   * access the compressed data of compressed attachments. The attachment data is backed by
+   * temporary files that are deleted when the sending process is finished, so the data must be
+   * consumed inside this method. Only called for User Messages with at least one attachment.
+   *
+   * @param aAttachments
+   *        The outgoing attachments. Never <code>null</code> nor empty. Must not be modified.
+   * @since 4.5.4
+   */
+  default void onBuiltAttachments (@NonNull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments)
   {}
 
   /**

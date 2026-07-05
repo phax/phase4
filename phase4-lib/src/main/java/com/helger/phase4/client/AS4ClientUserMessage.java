@@ -716,6 +716,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
     // 1. compress
     // Is done when the attachments are added
+    if (aCallback != null && bAttachmentsPresent)
+      aCallback.onBuiltAttachments (m_aAttachments);
 
     // 2. sign and/or encrypt
     Document aResultSoapDoc = aPureSoapDoc;

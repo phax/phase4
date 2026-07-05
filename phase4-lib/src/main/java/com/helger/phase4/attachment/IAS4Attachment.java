@@ -89,6 +89,27 @@ public interface IAS4Attachment
   IHasInputStream getInputStreamProvider ();
 
   /**
+   * Get the input stream provider for the attachment data in compressed form - that is the form
+   * over which the digital signature digests are calculated. For incoming messages this is the data
+   * as it was received (after eventual decryption), before the decompression took place. For
+   * outgoing messages this is the data as it is transmitted (before eventual encryption). This is
+   * primarily meant to preserve the compressed payload data for non-repudiation purposes, because
+   * e.g. GZIP compression is not deterministic, and the compressed data cannot be re-created from
+   * the decompressed data. The returned provider is backed by resources (usually temporary files)
+   * that are deleted when the message processing is finished - so the data must be consumed while
+   * the message is processed.
+   *
+   * @return The input stream provider for the compressed attachment data. May be <code>null</code>
+   *         if the attachment is not compressed.
+   * @since 4.5.4
+   */
+  @Nullable
+  default IHasInputStream getCompressedSourceStreamProvider ()
+  {
+    return null;
+  }
+
+  /**
    * @return <code>true</code> if the input stream backing this attachment can be read multiple
    *         times, <code>false</code> if not.
    */

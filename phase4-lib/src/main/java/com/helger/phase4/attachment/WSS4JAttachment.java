@@ -80,6 +80,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
   private final AS4ResourceHelper m_aResHelper;
   private IHasInputStream m_aISP;
+  private IHasInputStream m_aCompressedISP;
   private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
   private EAS4CompressionMode m_eCompressionMode;
   private Charset m_aCharset;
@@ -184,6 +185,26 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   {
     ValueEnforcer.notNull (aISP, "InputStreamProvider");
     m_aISP = aISP;
+  }
+
+  @Override
+  @Nullable
+  public IHasInputStream getCompressedSourceStreamProvider ()
+  {
+    return m_aCompressedISP;
+  }
+
+  /**
+   * Set the input stream provider for the attachment data in compressed form. See
+   * {@link #getCompressedSourceStreamProvider()} for the semantics.
+   *
+   * @param aISP
+   *        The input stream provider to use. May be <code>null</code>.
+   * @since 4.5.4
+   */
+  public void setCompressedSourceStreamProvider (@Nullable final IHasInputStream aISP)
+  {
+    m_aCompressedISP = aISP;
   }
 
   @NonNull
@@ -305,6 +326,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                        .append ("Headers", getHeaders ())
                                        .append ("ResourceManager", m_aResHelper)
                                        .append ("ISP", m_aISP)
+                                       .append ("CompressedISP", m_aCompressedISP)
                                        .append ("CTE", m_eCTE)
                                        .append ("CM", m_eCompressionMode)
                                        .append ("Charset", m_aCharset)
@@ -433,7 +455,14 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
     // Set a stream provider that can be read multiple times (opens a new
     // FileInputStream internally)
-    ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
+    final IHasInputStream aISP = HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile));
+    ret.setSourceStreamProvider (aISP);
+    if (eCompressionMode != null)
+    {
+      // Preserve the compressed data for non-repudiation purposes - the
+      // signature digests are calculated over the compressed data
+      ret.setCompressedSourceStreamProvider (aISP);
+    }
     return ret;
   }
 
@@ -494,7 +523,11 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
             aOS.write (aSrcData);
           }
       }
-      ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
+      final IHasInputStream aISP = HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile));
+      ret.setSourceStreamProvider (aISP);
+      // Preserve the compressed data for non-repudiation purposes - the
+      // signature digests are calculated over the compressed data
+      ret.setCompressedSourceStreamProvider (aISP);
     }
     else
     {

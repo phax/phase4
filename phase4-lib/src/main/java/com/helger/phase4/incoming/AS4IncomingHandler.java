@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.incoming;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,6 +44,7 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
 import com.helger.base.io.stream.HasInputStream;
+import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.spi.ServiceLoaderHelper;
 import com.helger.base.state.ESuccess;
 import com.helger.base.string.StringHelper;
@@ -56,6 +58,7 @@ import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.http.CHttp;
 import com.helger.http.CHttpHeader;
 import com.helger.http.header.HttpHeaderMap;
+import com.helger.io.file.FileHelper;
 import com.helger.mime.IMimeType;
 import com.helger.mime.parse.MimeTypeParser;
 import com.helger.phase4.attachment.AS4DecompressException;
@@ -577,6 +580,47 @@ public final class AS4IncomingHandler
     }
   }
 
+  /**
+   * Create an input stream provider that can be read multiple times, by lazily copying the data of
+   * the provided single-read input stream provider to a temporary file on first access.
+   *
+   * @param aResHelper
+   *        The resource helper to create the temporary file with. May not be <code>null</code>.
+   * @param aSrcISP
+   *        The single-read source input stream provider. May not be <code>null</code>.
+   * @return A non-<code>null</code> input stream provider that can be read multiple times.
+   */
+  @NonNull
+  private static IHasInputStream _createReadMultipleISP (@NonNull final AS4ResourceHelper aResHelper,
+                                                         @NonNull final IHasInputStream aSrcISP)
+  {
+    final Wrapper <File> aTempFileWrapper = new Wrapper <> ();
+    return new HasInputStream ( () -> {
+      try
+      {
+        File aTempFile = aTempFileWrapper.get ();
+        if (aTempFile == null)
+        {
+          final InputStream aSrcIS = aSrcISP.getInputStream ();
+          if (aSrcIS == null)
+            throw new IllegalStateException ("Failed to create InputStream from " + aSrcISP);
+
+          aTempFile = aResHelper.createTempFile ();
+          try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
+          {
+            StreamHelper.copyInputStreamToOutputStream (aSrcIS, aOS);
+          }
+          aTempFileWrapper.set (aTempFile);
+        }
+        return FileHelper.getBufferedInputStream (aTempFile);
+      }
+      catch (final IOException ex)
+      {
+        throw new AS4DecompressException (ex);
+      }
+    }, true);
+  }
+
   private static void _decompressAttachments (@NonNull final ICommonsList <WSS4JAttachment> aIncomingDecryptedAttachments,
                                               @NonNull final Ebms3UserMessage aUserMessage,
                                               @NonNull final IAS4IncomingMessageState aIncomingState)
@@ -587,7 +631,21 @@ public final class AS4IncomingHandler
       final EAS4CompressionMode eCompressionMode = aIncomingState.getAttachmentCompressionMode (aIncomingAttachment.getId ());
       if (eCompressionMode != null)
       {
-        final IHasInputStream aOldISP = aIncomingAttachment.getInputStreamProvider ();
+        IHasInputStream aCompressedISP = aIncomingAttachment.getInputStreamProvider ();
+        if (!aCompressedISP.isReadMultiple ())
+        {
+          // E.g. decrypted attachments can be read only once - make sure the
+          // compressed data can be read multiple times: once for the
+          // decompression and e.g. once for non-repudiation evidence storage
+          aCompressedISP = _createReadMultipleISP (aIncomingAttachment.getResHelper (), aCompressedISP);
+        }
+
+        // Preserve the compressed data - the signature digests are calculated
+        // over the compressed data, and e.g. GZIP compression is not
+        // reproducible (#361)
+        aIncomingAttachment.setCompressedSourceStreamProvider (aCompressedISP);
+
+        final IHasInputStream aOldISP = aCompressedISP;
         aIncomingAttachment.setSourceStreamProvider (new HasInputStream ( () -> {
           try
           {
