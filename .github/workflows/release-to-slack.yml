@@ -3,6 +3,9 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -10,9 +13,11 @@ jobs:
       - name: Post to Slack
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
         run: |
           curl -sf -X POST -H 'Content-type: application/json' \
-            --data '{
-              "text": "*New release: ${{ github.event.repository.name }} ${{ github.event.release.tag_name }}*\n${{ github.event.release.html_url }}"
-            }' \
+            --data "$(jq -n --arg repo "$REPO_NAME" --arg tag "$TAG_NAME" --arg url "$RELEASE_URL" \
+              '{text: ("*New release: " + $repo + " " + $tag + "*\n" + $url)}')" \
             "$SLACK_WEBHOOK_URL"
