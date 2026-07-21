@@ -56,12 +56,11 @@ import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
 import jakarta.mail.MessagingException;
 
-public class AS4ClientUserMessageTestWithCrappyReceiver
+public final class AS4ClientUserMessageTestWithCrappyReceiver
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ClientUserMessageTestWithCrappyReceiver.class);
 
   private static AS4JettyRunner s_aJetty;
-
   private static AS4ResourceHelper s_aResHelper;
 
   @BeforeClass
@@ -131,6 +130,7 @@ public class AS4ClientUserMessageTestWithCrappyReceiver
     };
 
     // 1
+    LOGGER.info ("Test 1a - Plain Text / 200");
     AS4ClientSentMessage <byte []> ret = aClient.sendMessageWithRetries (sServerURL,
                                                                          aResponseHandlerPlain,
                                                                          null,
@@ -142,10 +142,12 @@ public class AS4ClientUserMessageTestWithCrappyReceiver
     assertEquals ("text/plain;charset=utf-8", ret.getResponseHeaders ().getFirstHeaderValue (CHttpHeader.CONTENT_TYPE));
 
     // 2
+    LOGGER.info ("Test 2a - XML / 401");
     ret = aClient.sendMessageWithRetries (URLBuilder.of (sServerURL)
-                                                    .addParam ("content", "<crap/>")
-                                                    .addParam ("statuscode", 401)
-                                                    .addParam ("mimetype", CMimeType.APPLICATION_XML.getAsString ())
+                                                    .addParam (MockAS4Servlet.CONTENT, "<crap/>")
+                                                    .addParam (MockAS4Servlet.STATUSCODE, 401)
+                                                    .addParam (MockAS4Servlet.MIMETYPE,
+                                                               CMimeType.APPLICATION_XML.getAsString ())
                                                     .build ()
                                                     .getAsString (), aResponseHandlerPlain, null, null, null);
     assertNotNull (ret);
@@ -153,9 +155,39 @@ public class AS4ClientUserMessageTestWithCrappyReceiver
     assertEquals (401, ret.getResponseStatusLine ().getStatusCode ());
     assertEquals ("application/xml;charset=utf-8",
                   ret.getResponseHeaders ().getFirstHeaderValue (CHttpHeader.CONTENT_TYPE));
+
+    // 3
+    LOGGER.info ("Test 3a - SOAP 1.2 / 500");
+    ret = aClient.sendMessageWithRetries (URLBuilder.of (sServerURL)
+                                                    .addParam (MockAS4Servlet.CONTENT,
+                                                               "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                                                                                       "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
+                                                                                       " <env:Body>\n" +
+                                                                                       "  <env:Fault>\n" +
+                                                                                       "   <env:Code>\n" +
+                                                                                       "    <env:Value>env:Sender</env:Value>\n" +
+                                                                                       "   </env:Code>\n" +
+                                                                                       "   <env:Reason>\n" +
+                                                                                       "    <env:Text xml:lang=\"en\">Signing certificate has been revoked</env:Text>\n" +
+                                                                                       "   </env:Reason>\n" +
+                                                                                       "  </env:Fault>\n" +
+                                                                                       " </env:Body>\n" +
+                                                                                       "</env:Envelope>")
+                                                    .addParam (MockAS4Servlet.STATUSCODE, 500)
+                                                    .addParam (MockAS4Servlet.MIMETYPE,
+                                                               ESoapVersion.SOAP_12.getMimeType ().getAsString ())
+                                                    .build ()
+                                                    .getAsString (), aResponseHandlerPlain, null, null, null);
+    assertNotNull (ret);
+    assertNotNull (new String (ret.getResponseContent (), StandardCharsets.UTF_8));
+    assertEquals (500, ret.getResponseStatusLine ().getStatusCode ());
+    assertEquals ("application/soap+xml;charset=utf-8",
+                  ret.getResponseHeaders ().getFirstHeaderValue (CHttpHeader.CONTENT_TYPE));
+
+    LOGGER.info ("Done with MockServlet tests");
   }
 
-  private static final class MockBuilder extends AbstractAS4UserMessageBuilderMIMEPayload <MockBuilder>
+  private static final class MockAS4Builder extends AbstractAS4UserMessageBuilderMIMEPayload <MockAS4Builder>
   {}
 
   @Test
@@ -163,26 +195,28 @@ public class AS4ClientUserMessageTestWithCrappyReceiver
   {
     final String sServerURL = MockJettySetup.getServerAddressFromSettings ();
 
-    final MockBuilder aUserMessage = new MockBuilder ().as4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT)
-                                                       .action ("AnAction")
-                                                       .service ("MyServiceType", "OrderPaper")
-                                                       .conversationID (MessageHelperMethods.createRandomConversationID ())
-                                                       .agreementRef ("bla")
-                                                       .fromRole (CAS4.DEFAULT_ROLE)
-                                                       .fromPartyID ("MyPartyIDforSending")
-                                                       .toRole (CAS4.DEFAULT_ROLE)
-                                                       .toPartyID ("MyPartyIDforReceving")
-                                                       .addEbmsProperties (AS4TestConstants.getEBMSProperties ())
-                                                       .payload (AS4OutgoingAttachment.builder ()
-                                                                                      .data ("<root xmlns='urn:any'/>".getBytes (StandardCharsets.UTF_8))
-                                                                                      .mimeTypeXML ()
-                                                                                      .build ());
+    final MockAS4Builder aUserMessage = new MockAS4Builder ().as4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT)
+                                                             .action ("AnAction")
+                                                             .service ("MyServiceType", "OrderPaper")
+                                                             .conversationID (MessageHelperMethods.createRandomConversationID ())
+                                                             .agreementRef ("bla")
+                                                             .fromRole (CAS4.DEFAULT_ROLE)
+                                                             .fromPartyID ("MyPartyIDforSending")
+                                                             .toRole (CAS4.DEFAULT_ROLE)
+                                                             .toPartyID ("MyPartyIDforReceving")
+                                                             .addEbmsProperties (AS4TestConstants.getEBMSProperties ())
+                                                             .payload (AS4OutgoingAttachment.builder ()
+                                                                                            .data ("<root xmlns='urn:any'/>".getBytes (StandardCharsets.UTF_8))
+                                                                                            .mimeTypeXML ()
+                                                                                            .build ());
 
     // 1
+    LOGGER.info ("Test 1b - Plain Text / 200");
     EAS4UserMessageSendResult eResult = aUserMessage.endpointURL (sServerURL).sendMessageAndCheckForReceipt ();
     assertSame (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED, eResult);
 
     // 2 - an example how to get the raw response data back
+    LOGGER.info ("Test 2b - XML / 401");
     final IAS4RawResponseConsumer aResponseConsumer = aResponseMsg -> {
       LOGGER.info ("Received response status code: " + aResponseMsg.getResponseStatusLine ().getStatusCode ());
       LOGGER.info ("Received response Content-Type: " +
@@ -191,9 +225,36 @@ public class AS4ClientUserMessageTestWithCrappyReceiver
                    new String (aResponseMsg.getResponseContent (), StandardCharsets.UTF_8));
     };
     eResult = aUserMessage.endpointURL (URLBuilder.of (sServerURL)
-                                                  .addParam ("contentid", "receipt12")
-                                                  .addParam ("statuscode", 401)
-                                                  .addParam ("mimetype", CMimeType.APPLICATION_XML.getAsString ())
+                                                  .addParam (MockAS4Servlet.CONTENTID, "receipt12")
+                                                  .addParam (MockAS4Servlet.STATUSCODE, 401)
+                                                  .addParam (MockAS4Servlet.MIMETYPE,
+                                                             CMimeType.APPLICATION_XML.getAsString ())
+                                                  .build ()
+                                                  .getAsString ())
+                          .rawResponseConsumer (aResponseConsumer)
+                          .sendMessageAndCheckForReceipt ();
+    assertSame (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY, eResult);
+
+    // 3 - HTTP 500 + SOAP 1.2 Fault
+    LOGGER.info ("Test 3b - SOAP 1.2 / 500");
+    eResult = aUserMessage.endpointURL (URLBuilder.of (sServerURL)
+                                                  .addParam (MockAS4Servlet.CONTENT,
+                                                             "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                                                                                     "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
+                                                                                     " <env:Body>\n" +
+                                                                                     "  <env:Fault>\n" +
+                                                                                     "   <env:Code>\n" +
+                                                                                     "    <env:Value>env:Sender</env:Value>\n" +
+                                                                                     "   </env:Code>\n" +
+                                                                                     "   <env:Reason>\n" +
+                                                                                     "    <env:Text xml:lang=\"en\">Signing certificate has been revoked</env:Text>\n" +
+                                                                                     "   </env:Reason>\n" +
+                                                                                     "  </env:Fault>\n" +
+                                                                                     " </env:Body>\n" +
+                                                                                     "</env:Envelope>")
+                                                  .addParam (MockAS4Servlet.STATUSCODE, 500)
+                                                  .addParam (MockAS4Servlet.MIMETYPE,
+                                                             ESoapVersion.SOAP_12.getMimeType ().getAsString ())
                                                   .build ()
                                                   .getAsString ())
                           .rawResponseConsumer (aResponseConsumer)

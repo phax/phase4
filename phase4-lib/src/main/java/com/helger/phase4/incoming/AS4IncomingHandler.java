@@ -193,8 +193,8 @@ public final class AS4IncomingHandler
       }
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
+                                                                                                             .getIncomingDumper ();
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
     final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
@@ -479,11 +479,13 @@ public final class AS4IncomingHandler
                                                                      eSoapVersion.getNamespaceURI (),
                                                                      eSoapVersion.getHeaderElementName ());
       if (aHeaderNode == null)
+      {
         throw new Phase4IncomingException ("SOAP document is missing a Header element {" +
                                            eSoapVersion.getNamespaceURI () +
                                            "}" +
                                            eSoapVersion.getHeaderElementName ()).setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_MUST_UNDERSTAND)
                                                                                 .setRetryFeasible (false);
+      }
 
       // Extract all header elements including their "mustUnderstand" value
       for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
@@ -595,7 +597,7 @@ public final class AS4IncomingHandler
                                                          @NonNull final IHasInputStream aSrcISP)
   {
     final Wrapper <File> aTempFileWrapper = new Wrapper <> ();
-    return new HasInputStream ( () -> {
+    return new HasInputStream (() -> {
       try
       {
         File aTempFile = aTempFileWrapper.get ();
@@ -646,7 +648,7 @@ public final class AS4IncomingHandler
         aIncomingAttachment.setCompressedSourceStreamProvider (aCompressedISP);
 
         final IHasInputStream aOldISP = aCompressedISP;
-        aIncomingAttachment.setSourceStreamProvider (new HasInputStream ( () -> {
+        aIncomingAttachment.setSourceStreamProvider (new HasInputStream (() -> {
           try
           {
             final InputStream aSrcIS = aOldISP.getInputStream ();
@@ -678,10 +680,10 @@ public final class AS4IncomingHandler
         // href
         final Ebms3PartInfo aPartInfo = CollectionFind.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
                                                                   x -> x.getHref () != null &&
-                                                                    (x.getHref ().equals (sAttachmentContentID) ||
-                                                                      x.getHref ()
-                                                                       .equals (MessageHelperMethods.PREFIX_CID +
-                                                                                sAttachmentContentID)));
+                                                                       (x.getHref ().equals (sAttachmentContentID) ||
+                                                                        x.getHref ()
+                                                                         .equals (MessageHelperMethods.PREFIX_CID +
+                                                                                  sAttachmentContentID)));
         if (aPartInfo != null && aPartInfo.getPartProperties () != null)
         {
           // Find "MimeType" property

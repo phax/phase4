@@ -34,8 +34,13 @@ import com.helger.xservlet.AbstractXServlet;
  *
  * @author Philip Helger
  */
-public class MockAS4Servlet extends AbstractXServlet
+public final class MockAS4Servlet extends AbstractXServlet
 {
+  static final String STATUSCODE = "statuscode";
+  static final String CONTENT = "content";
+  static final String CONTENTID = "contentid";
+  static final String MIMETYPE = "mimetype";
+
   public MockAS4Servlet ()
   {
     // Multipart is handled specifically inside
@@ -44,13 +49,12 @@ public class MockAS4Servlet extends AbstractXServlet
     handlerRegistry ().registerHandler (EHttpMethod.POST,
                                         (@NonNull final IRequestWebScopeWithoutResponse aRequestScope,
                                          @NonNull final UnifiedResponse aUnifiedResponse) -> {
-                                          final int nResponseCode = aRequestScope.params ()
-                                                                                 .getAsInt ("statuscode", 200);
+                                          final int nResponseCode = aRequestScope.params ().getAsInt (STATUSCODE, 200);
                                           String sResponseContent = aRequestScope.params ()
-                                                                                 .getAsString ("content", "Plain Text");
-                                          final String sContentID = aRequestScope.params ().getAsString ("contentid");
+                                                                                 .getAsString (CONTENT, "Plain Text");
+                                          final String sContentID = aRequestScope.params ().getAsString (CONTENTID);
                                           final IMimeType aMimeType = MimeTypeParser.parseMimeType (aRequestScope.params ()
-                                                                                                                 .getAsString ("mimetype",
+                                                                                                                 .getAsString (MIMETYPE,
                                                                                                                                "text/plain"));
 
                                           // Hack to get long data
