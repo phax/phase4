@@ -156,6 +156,16 @@ public final class AS4IncomingHandler
   private AS4IncomingHandler ()
   {}
 
+  private static boolean _isNonSuccessHttpResponse (@NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata)
+  {
+    // Only response-mode messages carry a response HTTP status code. A
+    // non-success status code (>= 300) on an unparseable body typically
+    // indicates an infrastructure error page rather than an AS4 protocol
+    // violation (see issue #378)
+    return aIncomingMessageMetadata.hasResponseHttpStatusCode () &&
+           aIncomingMessageMetadata.getResponseHttpStatusCode () >= CHttp.HTTP_MULTIPLE_CHOICES;
+  }
+
   public static void parseAS4Message (@NonNull final IAS4IncomingAttachmentFactory aIAF,
                                       @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                       @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
@@ -404,7 +414,16 @@ public final class AS4IncomingHandler
         // Don't throw an exception, so that a custom response status code can be returned
         if (false)
           throw new Phase4IncomingException (aErrorMessage.toString ()).setRetryFeasible (false);
-        LOGGER.error (aErrorMessage.toString ());
+
+        // If this is the response to an outgoing message and the peer used a
+        // non-success HTTP status code, an unparseable body is most likely an
+        // infrastructure error page (e.g. from a load balancer or reverse proxy)
+        // rather than an AS4 protocol violation - log it as a warning only (see
+        // issue #378)
+        if (_isNonSuccessHttpResponse (aIncomingMessageMetadata))
+          LOGGER.warn (aErrorMessage.toString ());
+        else
+          LOGGER.error (aErrorMessage.toString ());
       }
       else
         if (eSoapVersion == null)
@@ -415,7 +434,13 @@ public final class AS4IncomingHandler
           // Don't throw an exception, so that a custom response status code can be returned
           if (false)
             throw new Phase4IncomingException (sMsg).setRetryFeasible (false);
-          LOGGER.error (sMsg);
+
+          // See issue #378 - a non-success HTTP response body is most likely an
+          // infrastructure error page rather than a protocol violation
+          if (_isNonSuccessHttpResponse (aIncomingMessageMetadata))
+            LOGGER.warn (sMsg);
+          else
+            LOGGER.error (sMsg);
         }
         else
         {
