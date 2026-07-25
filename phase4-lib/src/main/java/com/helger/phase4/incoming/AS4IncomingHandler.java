@@ -166,6 +166,20 @@ public final class AS4IncomingHandler
            aIncomingMessageMetadata.getResponseHttpStatusCode () >= CHttp.HTTP_MULTIPLE_CHOICES;
   }
 
+  private static boolean _isSoapFault (@NonNull final Document aSoapDocument, @NonNull final ESoapVersion eSoapVersion)
+  {
+    final Node aBody = XMLHelper.getFirstChildElementOfName (aSoapDocument.getDocumentElement (),
+                                                             eSoapVersion.getNamespaceURI (),
+                                                             eSoapVersion.getBodyElementName ());
+    if (aBody == null)
+      return false;
+
+    final Element aBodyFirst = XMLHelper.getFirstChildElement (aBody);
+    return aBodyFirst != null &&
+           "Fault".equals (aBodyFirst.getLocalName ()) &&
+           eSoapVersion.getNamespaceURI ().equals (aBodyFirst.getNamespaceURI ());
+  }
+
   public static void parseAS4Message (@NonNull final IAS4IncomingAttachmentFactory aIAF,
                                       @NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                       @NonNull final IAS4IncomingMessageMetadata aIncomingMessageMetadata,
