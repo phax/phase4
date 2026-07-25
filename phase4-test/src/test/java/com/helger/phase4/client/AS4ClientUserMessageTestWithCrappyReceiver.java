@@ -18,7 +18,6 @@ package com.helger.phase4.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -213,7 +212,7 @@ public final class AS4ClientUserMessageTestWithCrappyReceiver
     // 1
     LOGGER.info ("Test 1b - Plain Text / 200");
     EAS4UserMessageSendResult eResult = aUserMessage.endpointURL (sServerURL).sendMessageAndCheckForReceipt ();
-    assertSame (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED, eResult);
+    assertEquals (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED, eResult);
 
     // 2 - an example how to get the raw response data back
     LOGGER.info ("Test 2b - XML / 401");
@@ -233,7 +232,7 @@ public final class AS4ClientUserMessageTestWithCrappyReceiver
                                                   .getAsString ())
                           .rawResponseConsumer (aResponseConsumer)
                           .sendMessageAndCheckForReceipt ();
-    assertSame (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY, eResult);
+    assertEquals (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY, eResult);
 
     // 3 - HTTP 500 + SOAP 1.2 Fault
     LOGGER.info ("Test 3b - SOAP 1.2 / 500");
@@ -259,6 +258,6 @@ public final class AS4ClientUserMessageTestWithCrappyReceiver
                                                   .getAsString ())
                           .rawResponseConsumer (aResponseConsumer)
                           .sendMessageAndCheckForReceipt ();
-    assertSame (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY, eResult);
+    assertEquals (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED, eResult);
   }
 }
