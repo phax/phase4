@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.junit.Test;
 
 import com.helger.httpclient.HttpClientFactory;
@@ -43,6 +45,16 @@ import com.sun.net.httpserver.HttpServer;
  */
 public final class BasicHttpPosterTest
 {
+  @Nullable
+  private static String _send (@NonNull final BasicHttpPoster aPoster, @NonNull final String sURL) throws IOException
+  {
+    return aPoster.sendGenericMessage (sURL,
+                                       null,
+                                       new StringEntity ("request", ContentType.TEXT_PLAIN),
+                                       aResponse -> EntityUtils.toString (aResponse.getEntity ()),
+                                       null);
+  }
+
   @Test
   public void testSharedHttpClientManagerReusesConnection () throws IOException
   {
@@ -58,8 +70,7 @@ public final class BasicHttpPosterTest
     });
     aServer.start ();
 
-    final HttpClientManager aHttpClientManager = new HttpClientManager (new HttpClientFactory ());
-    try
+    try (final HttpClientManager aHttpClientManager = new HttpClientManager (new HttpClientFactory ()))
     {
       final BasicHttpPoster aPoster = new BasicHttpPoster ();
       assertNull (aPoster.getSharedHttpClientManager ());
@@ -75,17 +86,7 @@ public final class BasicHttpPosterTest
     }
     finally
     {
-      aHttpClientManager.close ();
       aServer.stop (0);
     }
-  }
-
-  private static String _send (final BasicHttpPoster aPoster, final String sURL) throws IOException
-  {
-    return aPoster.sendGenericMessage (sURL,
-                                       null,
-                                       new StringEntity ("request", ContentType.TEXT_PLAIN),
-                                       aResponse -> EntityUtils.toString (aResponse.getEntity ()),
-                                       null);
   }
 }

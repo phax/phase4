@@ -116,7 +116,11 @@ public class BasicHttpPoster implements IHttpPoster
    * Set a shared HTTP client manager to reuse connections across requests. The caller owns the
    * manager and must close it after this poster is no longer used. A shared manager must not be
    * closed while requests are running. Pass <code>null</code> to restore the default behavior of
-   * creating and closing a manager per request.
+   * creating and closing a manager per request.<br>
+   * Note: when a shared manager is set, it is used as-is and the {@link HttpClientFactory} set via
+   * {@link #setHttpClientFactory(HttpClientFactory)} is ignored. The shared manager carries its own
+   * configuration (SSL context, TLS certificate capturing, proxy, timeouts etc.), so all such
+   * settings must be applied to the {@link HttpClientFactory} used to create the shared manager.
    *
    * @param aSharedHttpClientManager
    *        The shared HTTP client manager to use. May be <code>null</code>.
