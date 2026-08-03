@@ -80,6 +80,7 @@ public class BasicHttpPoster implements IHttpPoster
 
   // By default no special SSL context present
   private HttpClientFactory m_aHttpClientFactory = createDefaultHttpClientFactory ();
+  private HttpClientManager m_aSharedHttpClientManager;
   private Consumer <? super HttpPost> m_aHttpCustomizer;
   private boolean m_bQuoteHttpHeaders = DEFAULT_QUOTE_HTTP_HEADERS;
 
@@ -97,6 +98,35 @@ public class BasicHttpPoster implements IHttpPoster
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     m_aHttpClientFactory = aHttpClientFactory;
+    return this;
+  }
+
+  /**
+   * @return The shared HTTP client manager used for all requests, or <code>null</code> if every
+   *         request should use a new manager. The returned manager is never closed by this class.
+   * @since 4.5.5
+   */
+  @Nullable
+  public final HttpClientManager getSharedHttpClientManager ()
+  {
+    return m_aSharedHttpClientManager;
+  }
+
+  /**
+   * Set a shared HTTP client manager to reuse connections across requests. The caller owns the
+   * manager and must close it after this poster is no longer used. A shared manager must not be
+   * closed while requests are running. Pass <code>null</code> to restore the default behavior of
+   * creating and closing a manager per request.
+   *
+   * @param aSharedHttpClientManager
+   *        The shared HTTP client manager to use. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.5.5
+   */
+  @NonNull
+  public final BasicHttpPoster setSharedHttpClientManager (@Nullable @WillNotClose final HttpClientManager aSharedHttpClientManager)
+  {
+    m_aSharedHttpClientManager = aSharedHttpClientManager;
     return this;
   }
 
@@ -194,58 +224,25 @@ public class BasicHttpPoster implements IHttpPoster
     LOGGER.info ("Starting to transmit AS4 Message to '" + sURL + "'");
 
     IOException aCaughtException = null;
-    try (final HttpClientManager aClientMgr = new HttpClientManager (m_aHttpClientFactory))
+    try
     {
-      final HttpPost aPost = new HttpPost (sURL);
+      if (m_aSharedHttpClientManager != null)
+        return _sendGenericMessageWithClientManager (sURL,
+                                                     aCustomHttpHeaders,
+                                                     aHttpEntity,
+                                                     aResponseHandler,
+                                                     aRemoteTlsPeerCertConsumer,
+                                                     m_aSharedHttpClientManager);
 
-      if (aCustomHttpHeaders != null)
+      try (final HttpClientManager aClientMgr = new HttpClientManager (m_aHttpClientFactory))
       {
-        // Always unify line endings
-        // By default quoting is disabled
-        aCustomHttpHeaders.forEachSingleHeader (aPost::addHeader, true, m_bQuoteHttpHeaders);
+        return _sendGenericMessageWithClientManager (sURL,
+                                                     aCustomHttpHeaders,
+                                                     aHttpEntity,
+                                                     aResponseHandler,
+                                                     aRemoteTlsPeerCertConsumer,
+                                                     aClientMgr);
       }
-
-      aPost.setEntity (aHttpEntity);
-
-      // Invoke optional customizer
-      if (m_aHttpCustomizer != null)
-        m_aHttpCustomizer.accept (aPost);
-
-      // Debug sending
-      AS4HttpDebug.debug ( () -> {
-        final StringBuilder ret = new StringBuilder ("SEND-START to ").append (sURL).append ("\n");
-        try
-        {
-          for (final Header aHeader : aPost.getHeaders ())
-            ret.append (aHeader.getName ()).append (": ").append (aHeader.getValue ()).append (CHttp.EOL);
-          ret.append (CHttp.EOL);
-          if (aHttpEntity.isRepeatable ())
-            ret.append (EntityUtils.toString (aHttpEntity));
-          else
-            ret.append ("## The payload is marked as 'not repeatable' and is the therefore not printed in debugging");
-        }
-        catch (final Exception ex)
-        {
-          ret.append ("## Exception listing payload: " + ex.getClass ().getName () + " -- " + ex.getMessage ())
-             .append (CHttp.EOL);
-          ret.append ("## ").append (StackTraceHelper.getStackAsString (ex));
-        }
-        return ret.toString ();
-      });
-
-      // Execute main HTTP request
-      final HttpClientContext aHttpClientContext = HttpClientContext.create ();
-      final T ret = aClientMgr.execute (aPost, aHttpClientContext, aResponseHandler);
-
-      // Surface the TLS peer (server) certificates if requested. The
-      // CapturingTlsSocketStrategy is wired in by HttpClientFactory by default.
-      if (aRemoteTlsPeerCertConsumer != null)
-      {
-        final ICommonsList <X509Certificate> aRemoteTlsCerts = CapturingTlsSocketStrategy.getRemoteTLSCertificates (aHttpClientContext);
-        aRemoteTlsPeerCertConsumer.accept (aRemoteTlsCerts);
-      }
-
-      return ret;
     }
     catch (final IOException ex)
     {
@@ -270,6 +267,66 @@ public class BasicHttpPoster implements IHttpPoster
       else
         LOGGER.info ("Finished transmitting AS4 Message to '" + sURL + "' after " + aSW.getMillis () + " ms");
     }
+  }
+
+  @Nullable
+  private <T> T _sendGenericMessageWithClientManager (@NonNull @Nonempty final String sURL,
+                                                      @Nullable final HttpHeaderMap aCustomHttpHeaders,
+                                                      @NonNull final HttpEntity aHttpEntity,
+                                                      @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
+                                                      @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsPeerCertConsumer,
+                                                      @NonNull final HttpClientManager aClientMgr) throws IOException
+  {
+    final HttpPost aPost = new HttpPost (sURL);
+
+    if (aCustomHttpHeaders != null)
+    {
+      // Always unify line endings
+      // By default quoting is disabled
+      aCustomHttpHeaders.forEachSingleHeader (aPost::addHeader, true, m_bQuoteHttpHeaders);
+    }
+
+    aPost.setEntity (aHttpEntity);
+
+    // Invoke optional customizer
+    if (m_aHttpCustomizer != null)
+      m_aHttpCustomizer.accept (aPost);
+
+    // Debug sending
+    AS4HttpDebug.debug ( () -> {
+      final StringBuilder ret = new StringBuilder ("SEND-START to ").append (sURL).append ("\n");
+      try
+      {
+        for (final Header aHeader : aPost.getHeaders ())
+          ret.append (aHeader.getName ()).append (": ").append (aHeader.getValue ()).append (CHttp.EOL);
+        ret.append (CHttp.EOL);
+        if (aHttpEntity.isRepeatable ())
+          ret.append (EntityUtils.toString (aHttpEntity));
+        else
+          ret.append ("## The payload is marked as 'not repeatable' and is the therefore not printed in debugging");
+      }
+      catch (final Exception ex)
+      {
+        ret.append ("## Exception listing payload: " + ex.getClass ().getName () + " -- " + ex.getMessage ())
+           .append (CHttp.EOL);
+        ret.append ("## ").append (StackTraceHelper.getStackAsString (ex));
+      }
+      return ret.toString ();
+    });
+
+    // Execute main HTTP request
+    final HttpClientContext aHttpClientContext = HttpClientContext.create ();
+    final T ret = aClientMgr.execute (aPost, aHttpClientContext, aResponseHandler);
+
+    // Surface the TLS peer (server) certificates if requested. The
+    // CapturingTlsSocketStrategy is wired in by HttpClientFactory by default.
+    if (aRemoteTlsPeerCertConsumer != null)
+    {
+      final ICommonsList <X509Certificate> aRemoteTlsCerts = CapturingTlsSocketStrategy.getRemoteTLSCertificates (aHttpClientContext);
+      aRemoteTlsPeerCertConsumer.accept (aRemoteTlsCerts);
+    }
+
+    return ret;
   }
 
   @NonNull
