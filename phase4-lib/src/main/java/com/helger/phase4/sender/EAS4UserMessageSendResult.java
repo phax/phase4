@@ -56,6 +56,14 @@ public enum EAS4UserMessageSendResult implements IHasID <String>, ISuccessIndica
    */
   AS4_ERROR_MESSAGE_RECEIVED ("as4-error-msg-received"),
   /**
+   * A plain SOAP Fault was received instead of an AS4 Signal Message. Whether a retry is feasible
+   * depends on the disposition of the received fault - use a
+   * {@link AbstractAS4UserMessageBuilder#soapFaultConsumer(IAS4SoapFaultConsumer)} to access it.
+   *
+   * @since 4.6.0
+   */
+  SOAP_FAULT_RECEIVED ("soap-fault-received"),
+  /**
    * An AS4 Signal Message was received, but it was neither a Receipt nor an Error Message but
    * something else.
    */
