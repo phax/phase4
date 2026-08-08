@@ -25,6 +25,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.GuardedBy;
+import com.helger.base.CGlobal;
 import com.helger.base.concurrent.SimpleReadWriteLock;
 import com.helger.base.debug.GlobalDebug;
 import com.helger.base.enforce.ValueEnforcer;
@@ -76,6 +77,23 @@ public final class AS4Configuration
   @Deprecated (forRemoval = true, since = "4.5.0")
   public static final long DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = 10;
   public static final Duration DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_DURATION = Duration.ofMinutes (DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
+
+  /**
+   * The int property for the maximum size of the header section of a single MIME part of an
+   * incoming multipart message, in bytes.
+   *
+   * @since 4.6.0
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES = "phase4.incoming.mime.maxpartheadersize.bytes";
+  public static final int DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES = 64 * CGlobal.BYTES_PER_KILOBYTE;
+  /**
+   * The minimum value accepted for {@link #PROPERTY_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES}.
+   * Smaller configured values are rejected, as they would not even fit the mandatory MIME part
+   * headers.
+   *
+   * @since 4.6.0
+   */
+  public static final int MIN_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES = CGlobal.BYTES_PER_KILOBYTE;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Configuration.class);
 
@@ -378,5 +396,33 @@ public final class AS4Configuration
   public static boolean isHttpResponseAcceptAllStatusCodes ()
   {
     return getConfig ().getAsBoolean ("phase4.http.response.accept.allstatuscodes", true);
+  }
+
+  /**
+   * @return The maximum size of the header section of a single MIME part of an incoming multipart
+   *         message, in bytes. Defaults to
+   *         {@link #DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES}. Configured values
+   *         below {@link #MIN_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES} are rejected and
+   *         replaced with the default value.
+   * @since 4.6.0
+   */
+  public static int getIncomingMimeMaxPartHeaderSizeBytes ()
+  {
+    final int nConfiguredValue = getConfig ().getAsInt (PROPERTY_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES,
+                                                        DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES);
+    if (nConfiguredValue < MIN_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES)
+    {
+      LOGGER.warn ("The configured value " +
+                   nConfiguredValue +
+                   " of configuration key '" +
+                   PROPERTY_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES +
+                   "' is smaller than the allowed minimum of " +
+                   MIN_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES +
+                   " bytes and is therefore ignored - using the default value of " +
+                   DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES +
+                   " bytes instead");
+      return DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES;
+    }
+    return nConfiguredValue;
   }
 }

@@ -23,7 +23,6 @@ import org.jspecify.annotations.NonNull;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeBodyPart;
 
 /**
  * Factory interface for {@link WSS4JAttachment} objects for handling incoming attachments.
@@ -34,10 +33,12 @@ import jakarta.mail.internet.MimeBodyPart;
 public interface IAS4IncomingAttachmentFactory
 {
   /**
-   * Create an attachment if the source message is a MIME message
+   * Create an attachment if the source message is a MIME message. Note: up to and including v4.5.x
+   * this method took a <code>jakarta.mail.internet.MimeBodyPart</code> parameter, which always kept
+   * the whole attachment in memory (see issue #382).
    *
-   * @param aBodyPart
-   *        The attachment body part
+   * @param aMimePart
+   *        The streamed attachment MIME part. The content stream must still be open and unconsumed.
    * @param aResHelper
    *        The resource manager to use. May not be <code>null</code>.
    * @return The internal attachment representation. Never <code>null</code>.
@@ -47,13 +48,13 @@ public interface IAS4IncomingAttachmentFactory
    *         In case MIME part reading fails.
    */
   @NonNull
-  WSS4JAttachment createAttachment (@NonNull MimeBodyPart aBodyPart, @NonNull AS4ResourceHelper aResHelper)
-                                                                                                            throws IOException,
-                                                                                                            MessagingException;
+  WSS4JAttachment createAttachment (@NonNull AS4IncomingMimePart aMimePart, @NonNull AS4ResourceHelper aResHelper)
+                                                                                                                   throws IOException,
+                                                                                                                   MessagingException;
 
   /**
    * The default instance of {@link IAS4IncomingAttachmentFactory} that uses
-   * {@link WSS4JAttachment#createIncomingFileAttachment(MimeBodyPart, AS4ResourceHelper)}
+   * {@link WSS4JAttachment#createIncomingFileAttachment(AS4IncomingMimePart, AS4ResourceHelper)}
    */
   @NonNull
   IAS4IncomingAttachmentFactory DEFAULT_INSTANCE = WSS4JAttachment::createIncomingFileAttachment;

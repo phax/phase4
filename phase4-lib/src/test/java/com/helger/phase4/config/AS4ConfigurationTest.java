@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.helger.base.system.SystemProperties;
 import com.helger.config.source.IConfigurationSource;
 import com.helger.config.source.resource.IConfigurationSourceResource;
 import com.helger.config.value.ConfiguredValue;
@@ -47,5 +48,43 @@ public final class AS4ConfigurationTest
     assertTrue (aCS instanceof IConfigurationSourceResource);
     final IConfigurationSourceResource aCSR = (IConfigurationSourceResource) aCS;
     assertEquals ("phase4.properties", aCSR.getResource ().getPath ());
+  }
+
+  @Test
+  public void testIncomingMimeMaxPartHeaderSizeBytes ()
+  {
+    // Default value
+    assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES,
+                  AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ());
+
+    final String sKey = AS4Configuration.PROPERTY_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES;
+    try
+    {
+      // Valid custom value
+      SystemProperties.setPropertyValue (sKey, 2048);
+      assertEquals (2048, AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ());
+
+      // The minimum value itself is valid
+      SystemProperties.setPropertyValue (sKey, AS4Configuration.MIN_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES);
+      assertEquals (AS4Configuration.MIN_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES,
+                    AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ());
+
+      // Values below the minimum are rejected - the default value is used
+      SystemProperties.setPropertyValue (sKey, AS4Configuration.MIN_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES - 1);
+      assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES,
+                    AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ());
+
+      SystemProperties.setPropertyValue (sKey, 0);
+      assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES,
+                    AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ());
+
+      SystemProperties.setPropertyValue (sKey, -1);
+      assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES,
+                    AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ());
+    }
+    finally
+    {
+      SystemProperties.removePropertyValue (sKey);
+    }
   }
 }

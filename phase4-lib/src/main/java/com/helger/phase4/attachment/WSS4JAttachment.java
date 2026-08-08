@@ -72,6 +72,13 @@ import jakarta.mail.internet.MimeMultipart;
 @NotThreadSafe
 public class WSS4JAttachment extends Attachment implements IAS4Attachment
 {
+  /**
+   * The maximum number of bytes an incoming attachment may have to be kept in memory. Larger
+   * attachments are stored in a temporary file.
+   *
+   * @since 4.6.0
+   */
+  public static final int MAX_IN_MEMORY_BYTES = 64 * CGlobal.BYTES_PER_KILOBYTE;
   public static final String CONTENT_DESCRIPTION_ATTACHMENT = "Attachment";
   public static final String CONTENT_ID_PREFIX = "<attachment=";
   public static final String CONTENT_ID_SUFFIX = ">";
@@ -455,7 +462,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
     // Set a stream provider that can be read multiple times (opens a new
     // FileInputStream internally)
-    final IHasInputStream aISP = HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile));
+    final IHasInputStream aISP = HasInputStream.multiple (() -> FileHelper.getBufferedInputStream (aRealFile));
     ret.setSourceStreamProvider (aISP);
     if (eCompressionMode != null)
     {
@@ -523,7 +530,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
             aOS.write (aSrcData);
           }
       }
-      final IHasInputStream aISP = HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile));
+      final IHasInputStream aISP = HasInputStream.multiple (() -> FileHelper.getBufferedInputStream (aRealFile));
       ret.setSourceStreamProvider (aISP);
       // Preserve the compressed data for non-repudiation purposes - the
       // signature digests are calculated over the compressed data
@@ -532,7 +539,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     else
     {
       // No compression - use data as-is
-      ret.setSourceStreamProvider (HasInputStream.multiple ( () -> new NonBlockingByteArrayInputStream (aSrcData)));
+      ret.setSourceStreamProvider (HasInputStream.multiple (() -> new NonBlockingByteArrayInputStream (aSrcData)));
     }
     return ret;
   }
@@ -546,9 +553,117 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    */
   public static boolean canBeKeptInMemory (final long nBytes)
   {
-    return nBytes <= 64 * CGlobal.BYTES_PER_KILOBYTE;
+    return nBytes <= MAX_IN_MEMORY_BYTES;
   }
 
+  /**
+   * Create an incoming attachment from a streamed MIME part. The part content is consumed exactly
+   * once: it is either kept in memory (if it has at most {@link #MAX_IN_MEMORY_BYTES} bytes) or
+   * written to a temporary file - the content is never fully loaded onto the heap. See issue #382.
+   *
+   * @param aMimePart
+   *        The MIME part to read. May not be <code>null</code>. The content stream must still be
+   *        open and unconsumed.
+   * @param aResHelper
+   *        The resource manager to use. May not be <code>null</code>.
+   * @return The newly created attachment instance. Never <code>null</code>.
+   * @throws IOException
+   *         In case of IO error
+   * @throws MessagingException
+   *         In case MIME part reading fails.
+   * @since 4.6.0
+   */
+  @NonNull
+  public static WSS4JAttachment createIncomingFileAttachment (@NonNull final AS4IncomingMimePart aMimePart,
+                                                              @NonNull final AS4ResourceHelper aResHelper) throws MessagingException,
+                                                                                                           IOException
+  {
+    ValueEnforcer.notNull (aMimePart, "MimePart");
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
+
+    final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aMimePart.getContentType ());
+
+    {
+      // Reference in Content-ID header is: "<ID>"
+      // See
+      // http://docs.oasis-open.org/wss-m/wss/v1.1.1/os/wss-SwAProfile-v1.1.1-os.html
+      // chapter 5.2
+      final String sRealContentID = StringHelper.trimStartAndEnd (aMimePart.getContentID (), '<', '>');
+      ret.setId (sRealContentID);
+    }
+
+    // Read the decoded content up to the in-memory threshold
+    final InputStream aDecodedIS = aMimePart.getDecodedContentStream ();
+    final byte [] aInMemoryData = new byte [MAX_IN_MEMORY_BYTES];
+    int nInMemoryLen = 0;
+    int nBytesRead;
+    while (nInMemoryLen < aInMemoryData.length &&
+      (nBytesRead = aDecodedIS.read (aInMemoryData, nInMemoryLen, aInMemoryData.length - nInMemoryLen)) >= 0)
+      nInMemoryLen += nBytesRead;
+
+    // Probe one more byte to determine, if the content fits into the threshold
+    final int nProbedByte = nInMemoryLen == aInMemoryData.length ? aDecodedIS.read () : -1;
+    if (nProbedByte < 0)
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Keeping incoming WSS4J attachment with " + nInMemoryLen + " bytes in-memory");
+
+      final int nFinalLen = nInMemoryLen;
+      ret.setSourceStreamProvider (HasInputStream.multiple (() -> new NonBlockingByteArrayInputStream (aInMemoryData,
+                                                                                                       0,
+                                                                                                       nFinalLen)));
+    }
+    else
+    {
+      // Write to temp file
+      final File aTempFile = aResHelper.createTempFile ();
+
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Storing incoming WSS4J attachment to temporary file '" + aTempFile.getAbsolutePath () + "'");
+
+      try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
+      {
+        aOS.write (aInMemoryData, 0, nInMemoryLen);
+        aOS.write (nProbedByte);
+        StreamHelper.copyInputStreamToOutputStream (aDecodedIS, aOS);
+      }
+      ret.setSourceStreamProvider (HasInputStream.multiple (() -> FileHelper.getBufferedInputStream (aTempFile)));
+    }
+
+    // Read all MIME part headers
+    final Enumeration <Header> aEnum = aMimePart.getAllHeaders ();
+    while (aEnum.hasMoreElements ())
+    {
+      final Header aHeader = aEnum.nextElement ();
+      ret.addHeader (aHeader.getName (), aHeader.getValue ());
+    }
+
+    // These headers are mandatory and overwrite headers from the MIME body part
+    ret.addHeader (CHttpHeader.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION_ATTACHMENT);
+    ret.addHeader (CHttpHeader.CONTENT_ID, CONTENT_ID_PREFIX + ret.getId () + CONTENT_ID_SUFFIX);
+    ret.addHeader (CHttpHeader.CONTENT_TYPE, ret.getMimeType ());
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Finished handling of incoming WSS4J attachment");
+
+    return ret;
+  }
+
+  /**
+   * @param aBodyPart
+   *        The attachment body part
+   * @param aResHelper
+   *        The resource manager to use. May not be <code>null</code>.
+   * @return The internal attachment representation. Never <code>null</code>.
+   * @throws IOException
+   *         In case of IO error
+   * @throws MessagingException
+   *         In case MIME part reading fails.
+   * @deprecated Use {@link #createIncomingFileAttachment(AS4IncomingMimePart, AS4ResourceHelper)}
+   *             instead, as a {@link MimeBodyPart} always keeps the whole attachment in memory. See
+   *             issue #382.
+   */
+  @Deprecated (forRemoval = true, since = "4.6.0")
   @NonNull
   public static WSS4JAttachment createIncomingFileAttachment (@NonNull final MimeBodyPart aBodyPart,
                                                               @NonNull final AS4ResourceHelper aResHelper) throws MessagingException,
@@ -582,7 +697,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
       if (aDS != null)
       {
         // DataSource InputStreams can be retrieved over and over again
-        ret.setSourceStreamProvider (HasInputStream.multiple ( () -> {
+        ret.setSourceStreamProvider (HasInputStream.multiple (() -> {
           try
           {
             return aDS.getInputStream ();
@@ -598,7 +713,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
         // Can only be read once
         LOGGER.warn ("Having a DataHandler that can be read only once: " + aDH);
 
-        ret.setSourceStreamProvider (HasInputStream.once ( () -> {
+        ret.setSourceStreamProvider (HasInputStream.once (() -> {
           try
           {
             return aDH.getInputStream ();
@@ -622,7 +737,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
       }
-      ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
+      ret.setSourceStreamProvider (HasInputStream.multiple (() -> FileHelper.getBufferedInputStream (aTempFile)));
     }
 
     // Read all MIME part headers

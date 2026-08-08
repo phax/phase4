@@ -62,9 +62,11 @@ import com.helger.io.file.FileHelper;
 import com.helger.mime.IMimeType;
 import com.helger.mime.parse.MimeTypeParser;
 import com.helger.phase4.attachment.AS4DecompressException;
+import com.helger.phase4.attachment.AS4IncomingMimePart;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
@@ -108,7 +110,6 @@ import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.read.DOMReaderSettings;
 
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeBodyPart;
 
 /**
  * Utility methods for incoming AS4 messages.
@@ -163,7 +164,7 @@ public final class AS4IncomingHandler
     // indicates an infrastructure error page rather than an AS4 protocol
     // violation (see issue #378)
     return aIncomingMessageMetadata.hasResponseHttpStatusCode () &&
-           aIncomingMessageMetadata.getResponseHttpStatusCode () >= CHttp.HTTP_MULTIPLE_CHOICES;
+      aIncomingMessageMetadata.getResponseHttpStatusCode () >= CHttp.HTTP_MULTIPLE_CHOICES;
   }
 
   private static boolean _isSoapFault (@NonNull final Document aSoapDocument, @NonNull final ESoapVersion eSoapVersion)
@@ -176,8 +177,8 @@ public final class AS4IncomingHandler
 
     final Element aBodyFirst = XMLHelper.getFirstChildElement (aBody);
     return aBodyFirst != null &&
-           "Fault".equals (aBodyFirst.getLocalName ()) &&
-           eSoapVersion.getNamespaceURI ().equals (aBodyFirst.getNamespaceURI ());
+      "Fault".equals (aBodyFirst.getLocalName ()) &&
+      eSoapVersion.getNamespaceURI ().equals (aBodyFirst.getNamespaceURI ());
   }
 
   public static void parseAS4Message (@NonNull final IAS4IncomingAttachmentFactory aIAF,
@@ -217,8 +218,8 @@ public final class AS4IncomingHandler
       }
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
-                                                                                                             .getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
+                                                                           : AS4DumpManager.getIncomingDumper ();
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
     final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
@@ -274,6 +275,7 @@ public final class AS4IncomingHandler
           final MultipartStream aMulti = new MultipartStream (aRequestIS,
                                                               sBoundary.getBytes (StandardCharsets.ISO_8859_1),
                                                               (MultipartProgressNotifier) null);
+          final int nMaxPartHeaderSizeBytes = AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ();
 
           int nIndex = 0;
           while (true)
@@ -287,8 +289,9 @@ public final class AS4IncomingHandler
 
             try (final MultipartItemInputStream aBodyPartIS = aMulti.createInputStream ())
             {
-              // Read headers AND content
-              final MimeBodyPart aBodyPart = new MimeBodyPart (aBodyPartIS);
+              // Read the headers only - the content stays on the stream and is
+              // consumed in a streaming way (see issue #382)
+              final AS4IncomingMimePart aMimePart = AS4IncomingMimePart.parse (aBodyPartIS, nMaxPartHeaderSizeBytes);
 
               if (nIndex == 0)
               {
@@ -297,10 +300,10 @@ public final class AS4IncomingHandler
                   LOGGER.debug ("Parsing first MIME part as SOAP document");
 
                 // Read SOAP document
-                aSoapDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream (),
+                aSoapDocument = DOMReader.readXMLDOM (aMimePart.getDecodedContentStream (),
                                                       new DOMReaderSettings ().setErrorHandler (new WrappedCollectingSAXErrorHandler (aXSDErrorList)));
 
-                IMimeType aPlainPartMT = MimeTypeParser.safeParseMimeType (aBodyPart.getContentType ());
+                IMimeType aPlainPartMT = MimeTypeParser.safeParseMimeType (aMimePart.getContentType ());
                 if (aPlainPartMT != null)
                   aPlainPartMT = aPlainPartMT.getCopyWithoutParameters ();
 
@@ -335,7 +338,7 @@ public final class AS4IncomingHandler
                 if (LOGGER.isDebugEnabled ())
                   LOGGER.debug ("Parsing MIME part #" + nIndex + " as attachment");
 
-                final WSS4JAttachment aAttachment = aIAF.createAttachment (aBodyPart, aResHelper);
+                final WSS4JAttachment aAttachment = aIAF.createAttachment (aMimePart, aResHelper);
                 aIncomingAttachments.add (aAttachment);
               }
             }
@@ -719,10 +722,10 @@ public final class AS4IncomingHandler
         // href
         final Ebms3PartInfo aPartInfo = CollectionFind.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
                                                                   x -> x.getHref () != null &&
-                                                                       (x.getHref ().equals (sAttachmentContentID) ||
-                                                                        x.getHref ()
-                                                                         .equals (MessageHelperMethods.PREFIX_CID +
-                                                                                  sAttachmentContentID)));
+                                                                    (x.getHref ().equals (sAttachmentContentID) ||
+                                                                      x.getHref ()
+                                                                       .equals (MessageHelperMethods.PREFIX_CID +
+                                                                                sAttachmentContentID)));
         if (aPartInfo != null && aPartInfo.getPartProperties () != null)
         {
           // Find "MimeType" property

@@ -27,16 +27,21 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ThreadLocalRandom;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.helger.base.io.iface.IHasInputStream;
+import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.io.file.SimpleFileIO;
 import com.helger.mime.CMimeType;
 import com.helger.phase4.util.AS4ResourceHelper;
+
+import jakarta.mail.MessagingException;
 
 /**
  * Test class for class {@link WSS4JAttachment}.
@@ -174,6 +179,82 @@ public final class WSS4JAttachmentTest
       // payload
       final byte [] aDecompressed = StreamHelper.getAllBytes (EAS4CompressionMode.GZIP.getDecompressStream (aCompressedISP.getInputStream ()));
       assertArrayEquals (aXmlBytes, aDecompressed);
+    }
+  }
+
+  @NonNull
+  private static AS4IncomingMimePart _createIncomingMimePart (final byte [] aContent) throws MessagingException
+  {
+    try (final NonBlockingByteArrayOutputStream aBAOS = new NonBlockingByteArrayOutputStream ())
+    {
+      aBAOS.write (("Content-Type: application/octet-stream\r\n" +
+                    "Content-ID: <mycid@phase4>\r\n" +
+                    "Content-Transfer-Encoding: binary\r\n" +
+                    "\r\n").getBytes (StandardCharsets.ISO_8859_1));
+      aBAOS.write (aContent);
+      return AS4IncomingMimePart.parse (aBAOS.getAsInputStream (), 64 * 1024);
+    }
+  }
+
+  @Test
+  public void testIncomingInMemory () throws IOException, MessagingException
+  {
+    // Content is below the threshold - must be kept in memory
+    final byte [] aContent = new byte [1024];
+    ThreadLocalRandom.current ().nextBytes (aContent);
+
+    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+    {
+      final WSS4JAttachment a = WSS4JAttachment.createIncomingFileAttachment (_createIncomingMimePart (aContent),
+                                                                              aResHelper);
+      assertNotNull (a);
+      // Content-ID is stripped of the angle brackets
+      assertEquals ("mycid@phase4", a.getId ());
+      assertEquals ("application/octet-stream", a.getMimeType ());
+
+      // The content must be readable multiple times
+      assertTrue (a.getInputStreamProvider ().isReadMultiple ());
+      assertArrayEquals (aContent, StreamHelper.getAllBytes (a.getSourceStream ()));
+      assertArrayEquals (aContent, StreamHelper.getAllBytes (a.getSourceStream ()));
+    }
+  }
+
+  @Test
+  public void testIncomingSpillToTempFile () throws IOException, MessagingException
+  {
+    // Content exceeds the in-memory threshold - must be spilled to a temporary
+    // file
+    final byte [] aContent = new byte [WSS4JAttachment.MAX_IN_MEMORY_BYTES + 1024];
+    ThreadLocalRandom.current ().nextBytes (aContent);
+
+    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+    {
+      final WSS4JAttachment a = WSS4JAttachment.createIncomingFileAttachment (_createIncomingMimePart (aContent),
+                                                                              aResHelper);
+      assertNotNull (a);
+      assertEquals ("mycid@phase4", a.getId ());
+
+      // The content must be readable multiple times
+      assertTrue (a.getInputStreamProvider ().isReadMultiple ());
+      assertArrayEquals (aContent, StreamHelper.getAllBytes (a.getSourceStream ()));
+      assertArrayEquals (aContent, StreamHelper.getAllBytes (a.getSourceStream ()));
+    }
+  }
+
+  @Test
+  public void testIncomingExactlyThresholdSize () throws IOException, MessagingException
+  {
+    // Content with exactly the threshold size - must be kept in memory
+    final byte [] aContent = new byte [WSS4JAttachment.MAX_IN_MEMORY_BYTES];
+    ThreadLocalRandom.current ().nextBytes (aContent);
+
+    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+    {
+      final WSS4JAttachment a = WSS4JAttachment.createIncomingFileAttachment (_createIncomingMimePart (aContent),
+                                                                              aResHelper);
+      assertNotNull (a);
+      assertArrayEquals (aContent, StreamHelper.getAllBytes (a.getSourceStream ()));
+      assertArrayEquals (aContent, StreamHelper.getAllBytes (a.getSourceStream ()));
     }
   }
 }
