@@ -56,6 +56,7 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PModeReceptionAwareness;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.model.soapfault.AS4SoapFaultException;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import jakarta.mail.MessagingException;
@@ -556,15 +557,24 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     // Capture the remote TLS server certificates of the (last) successful
     // HTTPS exchange so they can be surfaced via AS4ClientSentMessage
     final Wrapper <ICommonsList <X509Certificate>> aRemoteTlsPeerCertsHolder = new Wrapper <> ();
-    final T aResponseContent = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
-                                                                            aBuiltHttpHeaders,
-                                                                            aBuiltEntity,
-                                                                            sMessageID,
-                                                                            m_aHttpRetrySettings,
-                                                                            aRealResponseHandler,
-                                                                            aOutgoingDumper,
-                                                                            aRetryCallback,
-                                                                            aRemoteTlsPeerCertsHolder::set);
+    final T aResponseContent;
+    try
+    {
+      aResponseContent = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
+                                                                      aBuiltHttpHeaders,
+                                                                      aBuiltEntity,
+                                                                      sMessageID,
+                                                                      m_aHttpRetrySettings,
+                                                                      aRealResponseHandler,
+                                                                      aOutgoingDumper,
+                                                                      aRetryCallback,
+                                                                      aRemoteTlsPeerCertsHolder::set);
+    }
+    catch (final AS4SoapFaultException ex)
+    {
+      // Attach the AS4 Message ID of the sent message for downstream evaluation
+      throw ex.setSentMessageID (sMessageID);
+    }
     final AS4ClientSentMessage <T> ret = new AS4ClientSentMessage <> (aBuiltMsg,
                                                                       aRemoteTlsPeerCertsHolder.get (),
                                                                       aStatusLineKeeper.get (),

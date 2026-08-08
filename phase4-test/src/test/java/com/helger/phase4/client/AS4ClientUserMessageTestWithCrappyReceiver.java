@@ -57,6 +57,9 @@ import jakarta.mail.MessagingException;
 
 public final class AS4ClientUserMessageTestWithCrappyReceiver
 {
+  private static final class MockAS4Builder extends AbstractAS4UserMessageBuilderMIMEPayload <MockAS4Builder>
+  {}
+
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ClientUserMessageTestWithCrappyReceiver.class);
 
   private static AS4JettyRunner s_aJetty;
@@ -186,9 +189,6 @@ public final class AS4ClientUserMessageTestWithCrappyReceiver
     LOGGER.info ("Done with MockServlet tests");
   }
 
-  private static final class MockAS4Builder extends AbstractAS4UserMessageBuilderMIMEPayload <MockAS4Builder>
-  {}
-
   @Test
   public void testSendingAnythingAndReceiveCrapViaBuilder ()
   {
@@ -258,6 +258,6 @@ public final class AS4ClientUserMessageTestWithCrappyReceiver
                                                   .getAsString ())
                           .rawResponseConsumer (aResponseConsumer)
                           .sendMessageAndCheckForReceipt ();
-    assertEquals (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED, eResult);
+    assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED, eResult);
   }
 }
