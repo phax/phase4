@@ -104,7 +104,7 @@ public class BasicHttpPoster implements IHttpPoster
   /**
    * @return The shared HTTP client manager used for all requests, or <code>null</code> if every
    *         request should use a new manager. The returned manager is never closed by this class.
-   * @since 4.5.5
+   * @since 4.6.0
    */
   @Nullable
   public final HttpClientManager getSharedHttpClientManager ()
@@ -125,7 +125,7 @@ public class BasicHttpPoster implements IHttpPoster
    * @param aSharedHttpClientManager
    *        The shared HTTP client manager to use. May be <code>null</code>.
    * @return this for chaining
-   * @since 4.5.5
+   * @since 4.6.0
    */
   @NonNull
   public final BasicHttpPoster setSharedHttpClientManager (@Nullable @WillNotClose final HttpClientManager aSharedHttpClientManager)
@@ -297,7 +297,7 @@ public class BasicHttpPoster implements IHttpPoster
       m_aHttpCustomizer.accept (aPost);
 
     // Debug sending
-    AS4HttpDebug.debug ( () -> {
+    AS4HttpDebug.debug (() -> {
       final StringBuilder ret = new StringBuilder ("SEND-START to ").append (sURL).append ("\n");
       try
       {
