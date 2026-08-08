@@ -365,7 +365,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
       return ESuccess.SUCCESS;
     }
-    catch (final IndexOutOfBoundsException | IllegalStateException | WSSecurityException ex)
+    catch (final RuntimeException | WSSecurityException ex)
     {
       /**
        * Error processing the WSSecurity Header
@@ -379,6 +379,19 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       at com.helger.commons.io.stream.StreamHelper.copyInputStreamToOutputStream(StreamHelper.java:312) ~[ph-commons-9.4.7.jar:9.4.7]
       at com.helger.commons.io.stream.StreamHelper.copyInputStreamToOutputStreamAndCloseOS(StreamHelper.java:429) ~[ph-commons-9.4.7.jar:9.4.7]
       at com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorWSS4J._verifyAndDecrypt(SOAPHeaderElementProcessorWSS4J.java:187) ~[classes/:?]
+       * </pre>
+       *
+       * The IllegalArgumentException happens in the same constellation, if the attachment stream is
+       * a ph-commons NonBlockingByteArrayInputStream instead of a JDK ByteArrayInputStream:
+       *
+       * <pre>
+       * java.lang.IllegalArgumentException: The value of 'Offset' must be &gt;= 0! The current value is: -1
+      at com.helger.base.enforce.ValueEnforcer.isGE0(ValueEnforcer.java:1677)
+      at com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream.read(NonBlockingByteArrayInputStream.java:201)
+      at org.apache.wss4j.common.util.AttachmentUtils$1.initCipher(AttachmentUtils.java:500) ~[wss4j-ws-security-common-4.0.1.jar]
+      at org.apache.wss4j.common.util.AttachmentUtils$1.read(AttachmentUtils.java:534) ~[wss4j-ws-security-common-4.0.1.jar]
+      at com.helger.base.io.stream.StreamHelper$CopyByteStreamBuilder._copyInputStreamToOutputStream(StreamHelper.java:630)
+      at com.helger.phase4.incoming.soap.SoapHeaderElementProcessorWSS4J._verifyAndDecrypt(SoapHeaderElementProcessorWSS4J.java:354)
        * </pre>
        *
        * Failed to close object org.apache.wss4j.common.util.AttachmentUtils$1
