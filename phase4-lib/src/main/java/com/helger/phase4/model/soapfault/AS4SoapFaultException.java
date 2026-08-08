@@ -22,6 +22,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.string.StringHelper;
 
 /**
  * Exception that indicates that a SOAP Fault with a {@link EAS4FaultDisposition#PERMANENT}
@@ -64,6 +65,15 @@ public class AS4SoapFaultException extends IOException
   public String getSentMessageID ()
   {
     return m_sSentMessageID;
+  }
+
+  /**
+   * @return <code>true</code> if the AS4 Message ID of the sent message the fault was received for
+   *         is present, <code>false</code> otherwise.
+   */
+  public boolean hasSentMessageID ()
+  {
+    return StringHelper.isNotEmpty (m_sSentMessageID);
   }
 
   /**

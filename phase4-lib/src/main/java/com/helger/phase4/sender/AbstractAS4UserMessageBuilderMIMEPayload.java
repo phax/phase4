@@ -38,6 +38,7 @@ import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.model.soapfault.AS4SoapFaultException;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 
@@ -266,12 +267,18 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
                                                                                  m_aRetryCallback,
                                                                                  m_aResponseConsumer,
                                                                                  m_aSignalMsgConsumer,
-                                                                                 m_aSignalMsgValidationResultHdl);
+                                                                                 m_aSignalMsgValidationResultHdl,
+                                                                                 m_aSoapFaultConsumer);
     }
     catch (final Phase4Exception ex)
     {
       // Re-throw
       throw ex;
+    }
+    catch (final AS4SoapFaultException ex)
+    {
+      // A SOAP Fault with a permanent disposition was received - a retry is not feasible
+      throw new Phase4Exception ("A permanent SOAP Fault was received", ex).setRetryFeasible (false);
     }
     catch (final Exception ex)
     {

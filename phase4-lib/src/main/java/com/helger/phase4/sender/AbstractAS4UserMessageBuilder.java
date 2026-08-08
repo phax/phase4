@@ -41,6 +41,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.model.soapfault.AS4SoapFault;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 
@@ -86,6 +87,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
   protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
   protected IAS4SignalMessageValidationResultHandler m_aSignalMsgValidationResultHdl;
+  protected IAS4SoapFaultConsumer m_aSoapFaultConsumer;
 
   /**
    * Create a new builder
@@ -758,6 +760,33 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     return thisAsT ();
   }
 
+  /**
+   * @return The optional SOAP Fault consumer. May be <code>null</code>.
+   * @since 4.6.0
+   */
+  @Nullable
+  public final IAS4SoapFaultConsumer soapFaultConsumer ()
+  {
+    return m_aSoapFaultConsumer;
+  }
+
+  /**
+   * Set an optional SOAP Fault consumer that is invoked, if the synchronous response is a plain
+   * SOAP Fault instead of an ebMS Signal Message. If no consumer is set, a received SOAP Fault is
+   * logged on error level. This method is optional and must not be called prior to sending.
+   *
+   * @param aSoapFaultConsumer
+   *        The optional SOAP Fault consumer. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.6.0
+   */
+  @NonNull
+  public final IMPLTYPE soapFaultConsumer (@Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer)
+  {
+    m_aSoapFaultConsumer = aSoapFaultConsumer;
+    return thisAsT ();
+  }
+
   @Override
   @NonNull
   @OverridingMethodsMustInvokeSuper
@@ -946,6 +975,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer)
   {
     final IAS4SignalMessageConsumer aOriginalSignalMsgConsumer = m_aSignalMsgConsumer;
+    final IAS4SoapFaultConsumer aOriginalSoapFaultConsumer = m_aSoapFaultConsumer;
     // Store the received data
     final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
     final IAS4SignalMessageConsumer aInternalSignalMsgConsumer = (aSignalMsg,
@@ -953,6 +983,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
                                                                   aIncomingState) -> {
       aSignalMsgKeeper.set (aSignalMsg);
     };
+    final Wrapper <AS4SoapFault> aSoapFaultKeeper = new Wrapper <> ();
 
     try
     {
@@ -973,11 +1004,36 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
         };
       }
 
+      // this is not thread-safe because m_aSoapFaultConsumer is modified
+      if (aOriginalSoapFaultConsumer == null)
+      {
+        // Store the fault and keep the default error logging
+        final IAS4SoapFaultConsumer aLoggingSoapFaultConsumer = new LoggingAS4SoapFaultConsumer ();
+        m_aSoapFaultConsumer = (sSentMessageID, aSoapFault, aClientSentMessage) -> {
+          aSoapFaultKeeper.set (aSoapFault);
+          aLoggingSoapFaultConsumer.handleSoapFault (sSentMessageID, aSoapFault, aClientSentMessage);
+        };
+      }
+      else
+      {
+        // Store the fault and call the original handler
+        m_aSoapFaultConsumer = (sSentMessageID, aSoapFault, aClientSentMessage) -> {
+          aSoapFaultKeeper.set (aSoapFault);
+          aOriginalSoapFaultConsumer.handleSoapFault (sSentMessageID, aSoapFault, aClientSentMessage);
+        };
+      }
+
       // Main sending
       if (sendMessage ().isFailure ())
       {
         // Parameters are missing/incorrect
         return EAS4UserMessageSendResult.INVALID_PARAMETERS;
+      }
+
+      if (aSoapFaultKeeper.isSet ())
+      {
+        // A SOAP Fault was returned instead of an AS4 Signal Message
+        return EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED;
       }
 
       final Ebms3SignalMessage aSignalMsg = aSignalMsgKeeper.get ();
@@ -1020,14 +1076,21 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       if (aExceptionConsumer != null)
         aExceptionConsumer.accept (ex);
 
+      if (aSoapFaultKeeper.isSet ())
+      {
+        // A SOAP Fault with a permanent disposition was received and stopped the sending
+        return EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED;
+      }
+
       // Something went wrong - see the logs
       return ex.isRetryFeasible () ? EAS4UserMessageSendResult.TRANSPORT_ERROR
                                    : EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY;
     }
     finally
     {
-      // Restore the original value
+      // Restore the original values
       m_aSignalMsgConsumer = aOriginalSignalMsgConsumer;
+      m_aSoapFaultConsumer = aOriginalSoapFaultConsumer;
     }
   }
 }

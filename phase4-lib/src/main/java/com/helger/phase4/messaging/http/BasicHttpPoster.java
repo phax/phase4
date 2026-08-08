@@ -55,6 +55,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.EAS4MessageMode;
+import com.helger.phase4.model.soapfault.AS4SoapFaultException;
 import com.helger.phase4.util.MultiOutputStream;
 
 /**
@@ -496,6 +497,14 @@ public class BasicHttpPoster implements IHttpPoster
                                        aDumpingEntity,
                                        aResponseHandler,
                                        aRemoteTlsPeerCertConsumer);
+          }
+          catch (final AS4SoapFaultException ex)
+          {
+            // A SOAP Fault with a permanent disposition must never be retried
+            LOGGER.warn ("Received a permanent SOAP Fault for message with ID '" +
+                         sMessageID +
+                         "' - stopping all retries");
+            throw ex;
           }
           catch (final IOException ex)
           {
