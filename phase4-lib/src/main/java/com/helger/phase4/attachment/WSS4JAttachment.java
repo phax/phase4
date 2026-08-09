@@ -54,6 +54,7 @@ import com.helger.mime.IMimeType;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.phase4.util.MarkableFileInputStream;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
@@ -462,8 +463,8 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     }
 
     // Set a stream provider that can be read multiple times (opens a new
-    // FileInputStream internally)
-    final IHasInputStream aISP = HasInputStream.multiple (() -> FileHelper.getBufferedInputStream (aRealFile));
+    // stream internally)
+    final IHasInputStream aISP = HasInputStream.multiple (() -> MarkableFileInputStream.create (aRealFile));
     ret.setSourceStreamProvider (aISP);
     if (eCompressionMode != null)
     {
@@ -531,7 +532,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
             aOS.write (aSrcData);
           }
       }
-      final IHasInputStream aISP = HasInputStream.multiple (() -> FileHelper.getBufferedInputStream (aRealFile));
+      final IHasInputStream aISP = HasInputStream.multiple (() -> MarkableFileInputStream.create (aRealFile));
       ret.setSourceStreamProvider (aISP);
       // Preserve the compressed data for non-repudiation purposes - the
       // signature digests are calculated over the compressed data
@@ -629,7 +630,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
         aOS.write (nProbedByte);
         StreamHelper.copyInputStreamToOutputStream (aDecodedIS, aOS);
       }
-      ret.setSourceStreamProvider (HasInputStream.multiple (() -> FileHelper.getBufferedInputStream (aTempFile)));
+      ret.setSourceStreamProvider (HasInputStream.multiple (() -> MarkableFileInputStream.create (aTempFile)));
     }
 
     // Read all MIME part headers
@@ -739,7 +740,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
       }
-      ret.setSourceStreamProvider (HasInputStream.multiple (() -> FileHelper.getBufferedInputStream (aTempFile)));
+      ret.setSourceStreamProvider (HasInputStream.multiple (() -> MarkableFileInputStream.create (aTempFile)));
     }
 
     // Read all MIME part headers

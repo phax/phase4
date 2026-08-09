@@ -98,6 +98,7 @@ import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.profile.IAS4ProfileValidator.EAS4ProfileValidationMode;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
+import com.helger.phase4.util.MarkableFileInputStream;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.phase4.util.Phase4IncomingException;
 import com.helger.web.multipart.MultipartProgressNotifier;
@@ -651,7 +652,7 @@ public final class AS4IncomingHandler
           }
           aTempFileWrapper.set (aTempFile);
         }
-        return FileHelper.getBufferedInputStream (aTempFile);
+        return MarkableFileInputStream.create (aTempFile);
       }
       catch (final IOException ex)
       {

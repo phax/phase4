@@ -70,6 +70,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.util.MarkableFileInputStream;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.phase4.wss.WSSSynchronizer;
 import com.helger.xml.XMLHelper;
@@ -356,7 +357,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         {
           LOGGER.error ("Failed to write response attachment to temporary file '" + aTempFile.getAbsolutePath () + "'");
         }
-        aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple (() -> FileHelper.getBufferedInputStream (aTempFile)));
+        aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple (() -> MarkableFileInputStream.create (aTempFile)));
       }
 
       // Remember in State

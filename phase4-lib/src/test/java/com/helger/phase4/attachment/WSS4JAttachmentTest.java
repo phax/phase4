@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -40,6 +41,7 @@ import com.helger.base.io.stream.StreamHelper;
 import com.helger.io.file.SimpleFileIO;
 import com.helger.mime.CMimeType;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.phase4.util.MarkableFileInputStream;
 
 import jakarta.mail.MessagingException;
 
@@ -254,6 +256,60 @@ public final class WSS4JAttachmentTest
       assertNotNull (a);
       assertArrayEquals (aContent, StreamHelper.getAllBytes (a.getSourceStream ()));
       assertArrayEquals (aContent, StreamHelper.getAllBytes (a.getSourceStream ()));
+    }
+  }
+
+  private static void _assertMarkableAndReReadable (@NonNull final WSS4JAttachment a) throws IOException
+  {
+    final InputStream aIS = a.getSourceStream ();
+    // Anything else buffers the whole attachment on the heap on mark/reset
+    assertTrue ("Not a " + MarkableFileInputStream.class.getSimpleName () + ": " + aIS,
+                aIS instanceof MarkableFileInputStream);
+
+    // Consume the stream the way WSS4J digests a signed attachment
+    aIS.mark (Integer.MAX_VALUE);
+    final byte [] aDigested = aIS.readAllBytes ();
+    aIS.reset ();
+
+    // Afterwards WSS4J re-uses the same stream object for the attachment
+    // content
+    assertArrayEquals (aDigested, aIS.readAllBytes ());
+  }
+
+  /**
+   * All file backed attachment source streams must support mark/reset with constant heap usage,
+   * because WSS4J digests each signed attachment via mark/read-to-end/reset. See issue #380.
+   */
+  @Test
+  public void testFileBackedSourceStreamsAreMarkable () throws IOException, MessagingException
+  {
+    // Larger than the in-memory threshold, so that a temporary file is used
+    final byte [] aContent = new byte [WSS4JAttachment.MAX_IN_MEMORY_BYTES + 1024];
+    ThreadLocalRandom.current ().nextBytes (aContent);
+
+    final File fSrc = m_aRule.newFile ("payload.bin");
+    SimpleFileIO.writeFile (fSrc, aContent);
+
+    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+    {
+      // Outgoing, uncompressed - the source file is used as-is
+      final AS4OutgoingAttachment aOA1 = AS4OutgoingAttachment.builder ()
+                                                              .data (fSrc)
+                                                              .mimeType (CMimeType.APPLICATION_OCTET_STREAM)
+                                                              .build ();
+      _assertMarkableAndReReadable (WSS4JAttachment.createOutgoingFileAttachment (aOA1, aResHelper));
+
+      // Outgoing, compressed - a temporary file with the compressed content
+      final AS4OutgoingAttachment aOA2 = AS4OutgoingAttachment.builder ()
+                                                              .data (aContent)
+                                                              .mimeType (CMimeType.APPLICATION_OCTET_STREAM)
+                                                              .compressionGZIP ()
+                                                              .build ();
+      _assertMarkableAndReReadable (WSS4JAttachment.createOutgoingFileAttachment (aOA2, aResHelper));
+
+      // Incoming, above the in-memory threshold - a temporary file
+      final AS4IncomingMimePart aMimePart = _createIncomingMimePart (aContent);
+      _assertMarkableAndReReadable (WSS4JAttachment.createIncomingFileAttachment (aMimePart, aResHelper));
     }
   }
 
