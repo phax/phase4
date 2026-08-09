@@ -612,9 +612,9 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
       // Retain only an array of the exact content size, so that the attachment
       // does not hold on to the full read buffer (see issue #382)
-      final byte [] aInMemoryData = nInMemoryLen == aReadBuffer.length ? aReadBuffer : Arrays.copyOf (aReadBuffer,
-                                                                                                      nInMemoryLen);
-      ret.setSourceStreamProvider (HasInputStream.multiple (() -> new NonBlockingByteArrayInputStream (aInMemoryData)));
+      final byte [] aInMemoryData = nInMemoryLen == aReadBuffer.length ? aReadBuffer
+                                                                       : Arrays.copyOf (aReadBuffer, nInMemoryLen);
+      ret.setSourceStreamProvider (HasInputStream.create (aInMemoryData));
     }
     else
     {
