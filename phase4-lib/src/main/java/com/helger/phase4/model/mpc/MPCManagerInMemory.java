@@ -52,7 +52,7 @@ public class MPCManagerInMemory implements IMPCManager
   {
     ValueEnforcer.notNull (aMPC, "MPC");
 
-    m_aRWLock.writeLocked ( () -> {
+    m_aRWLock.writeLocked (() -> {
       final String sID = aMPC.getID ();
       if (m_aMap.containsKey (sID))
         throw new IllegalArgumentException ("An object with ID '" + sID + "' is already contained!");
@@ -127,7 +127,7 @@ public class MPCManagerInMemory implements IMPCManager
   {
     if (StringHelper.isEmpty (sID))
       return null;
-    return m_aRWLock.readLockedGet ( () -> m_aMap.get (sID));
+    return m_aRWLock.readLockedGet (() -> m_aMap.get (sID));
   }
 
   @Nullable
@@ -140,6 +140,6 @@ public class MPCManagerInMemory implements IMPCManager
   {
     if (StringHelper.isEmpty (sID))
       return false;
-    return m_aRWLock.readLockedBoolean ( () -> m_aMap.containsKey (sID));
+    return m_aRWLock.readLockedBoolean (() -> m_aMap.containsKey (sID));
   }
 }

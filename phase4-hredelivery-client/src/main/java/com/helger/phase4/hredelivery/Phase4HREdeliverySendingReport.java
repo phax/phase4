@@ -51,6 +51,7 @@ import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
+import com.helger.phase4.model.soapfault.AS4SoapFault;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
@@ -109,6 +110,7 @@ public class Phase4HREdeliverySendingReport
   private Ebms3SignalMessage m_aAS4ReceivedSignalMsg;
   private boolean m_bAS4ResponseError = false;
   private ICommonsList <Ebms3Error> m_aAS4ResponseErrors;
+  private AS4SoapFault m_aAS4SoapFault;
 
   private long m_nOverallDurationMillis = -1;
   private boolean m_bSendingSuccess = false;
@@ -730,6 +732,34 @@ public class Phase4HREdeliverySendingReport
   }
 
   /**
+   * @return The plain SOAP Fault that was synchronously received instead of an AS4 Signal Message.
+   *         May be <code>null</code>.
+   * @since 4.6.0
+   */
+  @Nullable
+  public AS4SoapFault getAS4SoapFault ()
+  {
+    return m_aAS4SoapFault;
+  }
+
+  public boolean hasAS4SoapFault ()
+  {
+    return m_aAS4SoapFault != null;
+  }
+
+  /**
+   * Remember the plain SOAP Fault that was synchronously received instead of an AS4 Signal Message.
+   *
+   * @param a
+   *        The received SOAP Fault. May be <code>null</code>.
+   * @since 4.6.0
+   */
+  public void setAS4SoapFault (@Nullable final AS4SoapFault a)
+  {
+    m_aAS4SoapFault = a;
+  }
+
+  /**
    * @return The overall duration it took to perform the lookup and sending process.
    * @since 4.2.0
    */
@@ -925,6 +955,8 @@ public class Phase4HREdeliverySendingReport
       }
       aJson.add ("as4ResponseErrors", aErrors);
     }
+    if (hasAS4SoapFault ())
+      aJson.add ("as4SoapFault", m_aAS4SoapFault.getAsJsonObject ());
 
     aJson.add ("overallDurationMillis", m_nOverallDurationMillis);
     aJson.add ("sendingSuccess", m_bSendingSuccess);
@@ -1087,6 +1119,8 @@ public class Phase4HREdeliverySendingReport
           aItem.addElementNS (sNamespaceURI, "ShortDescription").addText (aError.getShortDescription ());
       }
     }
+    if (hasAS4SoapFault ())
+      ret.addChild (m_aAS4SoapFault.getAsMicroElement (sNamespaceURI, "AS4SoapFault"));
 
     ret.addElementNS (sNamespaceURI, "OverallDurationMillis").addText (m_nOverallDurationMillis);
     ret.addElementNS (sNamespaceURI, "SendingSuccess").addText (m_bSendingSuccess);

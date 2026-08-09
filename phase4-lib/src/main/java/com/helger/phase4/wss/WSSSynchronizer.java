@@ -56,7 +56,7 @@ public final class WSSSynchronizer
     ValueEnforcer.notNull (aRunnable, "Runnable");
 
     // Wrap Runnable in Supplier
-    call ( () -> {
+    call (() -> {
       aRunnable.run ();
       return null;
     });

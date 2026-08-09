@@ -91,7 +91,7 @@ public final class AS4KeyStoreDescriptor
   {
     ValueEnforcer.notNull (aConfig, "Config");
     ValueEnforcer.notEmpty (sConfigPrefix, "ConfigPrefix");
-    ValueEnforcer.isTrue ( () -> StringHelper.endsWith (sConfigPrefix, '.'), "ConfigPrefix must end with a dot");
+    ValueEnforcer.isTrue (() -> StringHelper.endsWith (sConfigPrefix, '.'), "ConfigPrefix must end with a dot");
 
     // Key Store
     final String sType = aConfig.getAsString (sConfigPrefix + "keystore.type");

@@ -55,9 +55,9 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    */
   public AS4IncomingDumperFileBased ()
   {
-    this ( (aMessageMetadata, aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
-                                                           DEFAULT_BASE_PATH +
-                                                                                                    IAS4IncomingDumperFileProvider.getDefaultDirectoryAndFilename (aMessageMetadata)));
+    this ((aMessageMetadata, aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
+                                                          DEFAULT_BASE_PATH +
+                                                                                                   IAS4IncomingDumperFileProvider.getDefaultDirectoryAndFilename (aMessageMetadata)));
   }
 
   /**
@@ -97,7 +97,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   public static AS4IncomingDumperFileBased createForDirectory (@NonNull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4IncomingDumperFileBased ( (aMessageMetadata, aHttpHeaderMap) -> new File (aBaseDirectory,
-                                                                                            IAS4IncomingDumperFileProvider.getDefaultDirectoryAndFilename (aMessageMetadata)));
+    return new AS4IncomingDumperFileBased ((aMessageMetadata, aHttpHeaderMap) -> new File (aBaseDirectory,
+                                                                                           IAS4IncomingDumperFileProvider.getDefaultDirectoryAndFilename (aMessageMetadata)));
   }
 }

@@ -298,7 +298,7 @@ public final class AS4DumpReader
                                                @NonNull final AS4ErrorList aProcessingErrorMessages)
         {}
       };
-      aHandler.setProcessorSupplier ( () -> new CommonsArrayList <> (aSPI));
+      aHandler.setProcessorSupplier (() -> new CommonsArrayList <> (aSPI));
       aHandler.handleRequest (new NonBlockingByteArrayInputStream (aAS4InData, nHttpEnd, aAS4InData.length - nHttpEnd),
                               hm,
                               new IAS4ResponseAbstraction ()

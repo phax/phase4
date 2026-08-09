@@ -29,19 +29,18 @@ import com.helger.base.string.StringHelper;
  * disposition was received as the synchronous response. It is derived from {@link IOException} so
  * that it passes through the HTTP retry handling, where it explicitly stops all further retries.
  * <br>
- * Note: this exception deliberately does NOT extend
- * {@link com.helger.phase4.util.Phase4Exception}, even though that would be the more natural base
- * class. It is thrown from within an Apache HttpClient
- * {@link org.apache.hc.core5.http.io.HttpClientResponseHandler}, whose <code>handleResponse</code>
- * method is declared to only throw <code>HttpException</code> and {@link IOException} - a checked
- * <code>Phase4Exception</code> could not be thrown from there at all. Additionally it must pass
- * through <code>BasicHttpPoster.sendGenericMessageWithRetries</code> and
- * <code>AbstractAS4Client.sendMessageWithRetries</code>, which are both declared to only throw
+ * Note: this exception deliberately does NOT extend {@link com.helger.phase4.util.Phase4Exception},
+ * even though that would be the more natural base class. It is thrown from within an Apache
+ * HttpClient {@link org.apache.hc.core5.http.io.HttpClientResponseHandler}, whose
+ * <code>handleResponse</code> method is declared to only throw <code>HttpException</code> and
+ * {@link IOException} - a checked <code>Phase4Exception</code> could not be thrown from there at
+ * all. Additionally it must pass through <code>BasicHttpPoster.sendGenericMessageWithRetries</code>
+ * and <code>AbstractAS4Client.sendMessageWithRetries</code>, which are both declared to only throw
  * {@link IOException} - extending their <code>throws</code> clauses would be a source-incompatible
  * change for all direct callers. Making this exception a <code>Phase4Exception</code> would
- * therefore require an additional internal {@link IOException} based carrier exception for the
- * HTTP layer, at the price of direct callers of the low-level sending methods no longer seeing
- * this exception type.
+ * therefore require an additional internal {@link IOException} based carrier exception for the HTTP
+ * layer, at the price of direct callers of the low-level sending methods no longer seeing this
+ * exception type.
  *
  * @author Philip Helger
  * @since 4.6.0

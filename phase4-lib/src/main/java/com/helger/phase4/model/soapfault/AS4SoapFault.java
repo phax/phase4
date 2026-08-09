@@ -23,12 +23,17 @@ import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.base.tostring.ToStringGenerator;
+import com.helger.json.IJsonObject;
+import com.helger.json.JsonObject;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.xml.XMLHelper;
+import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.serialize.write.XMLWriter;
 
 /**
@@ -168,6 +173,65 @@ public class AS4SoapFault
 
     // "Server"/"Receiver" as well as unknown or absent fault codes
     return EAS4FaultDisposition.TRANSIENT;
+  }
+
+  /**
+   * Get the SOAP Fault as one JSON object for standardized serialization. Only the elements that
+   * are present are contained. QNames are serialized in Clark notation
+   * (<code>{namespaceURI}localPart</code>). The raw XML is not contained - use {@link #getRawXML()}
+   * to access it.
+   *
+   * @return The SOAP Fault as a JSON object. Never <code>null</code>.
+   */
+  @NonNull
+  public IJsonObject getAsJsonObject ()
+  {
+    final IJsonObject ret = new JsonObject ();
+    ret.add ("soapVersion", m_eSoapVersion.getVersion ());
+    if (m_aFaultCode != null)
+      ret.add ("faultCode", m_aFaultCode.toString ());
+    if (m_aFaultSubcode != null)
+      ret.add ("faultSubcode", m_aFaultSubcode.toString ());
+    if (m_sFaultReason != null)
+      ret.add ("faultReason", m_sFaultReason);
+    if (m_sFaultActorRole != null)
+      ret.add ("faultActorRole", m_sFaultActorRole);
+    if (m_aDetailElement != null)
+      ret.add ("faultDetail", XMLWriter.getNodeAsString (m_aDetailElement));
+    ret.add ("disposition", getDisposition ().getID ());
+    return ret;
+  }
+
+  /**
+   * Get the SOAP Fault as a MicroDOM element for standardized serialization. Only the elements that
+   * are present are contained. QNames are serialized in Clark notation
+   * (<code>{namespaceURI}localPart</code>). The raw XML is not contained - use {@link #getRawXML()}
+   * to access it.
+   *
+   * @param sNamespaceURI
+   *        The namespace URI to be used. May be <code>null</code>.
+   * @param sTagName
+   *        The tag name to use for the root element. May neither be <code>null</code> nor empty.
+   * @return The SOAP Fault as a micro element. Never <code>null</code>.
+   */
+  @NonNull
+  public IMicroElement getAsMicroElement (@Nullable final String sNamespaceURI,
+                                          @NonNull @Nonempty final String sTagName)
+  {
+    final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
+    ret.addElementNS (sNamespaceURI, "SoapVersion").addText (m_eSoapVersion.getVersion ());
+    if (m_aFaultCode != null)
+      ret.addElementNS (sNamespaceURI, "FaultCode").addText (m_aFaultCode.toString ());
+    if (m_aFaultSubcode != null)
+      ret.addElementNS (sNamespaceURI, "FaultSubcode").addText (m_aFaultSubcode.toString ());
+    if (m_sFaultReason != null)
+      ret.addElementNS (sNamespaceURI, "FaultReason").addText (m_sFaultReason);
+    if (m_sFaultActorRole != null)
+      ret.addElementNS (sNamespaceURI, "FaultActorRole").addText (m_sFaultActorRole);
+    if (m_aDetailElement != null)
+      ret.addElementNS (sNamespaceURI, "FaultDetail").addText (XMLWriter.getNodeAsString (m_aDetailElement));
+    ret.addElementNS (sNamespaceURI, "Disposition").addText (getDisposition ().getID ());
+    return ret;
   }
 
   @Override

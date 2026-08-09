@@ -60,7 +60,7 @@ public final class AS4IncomingMessageProcessorManager
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Found " + aProcessorSPIs.size () + " AS4 message processors");
 
-    RW_LOCK.writeLocked ( () -> PROCESSORS.setAll (aProcessorSPIs));
+    RW_LOCK.writeLocked (() -> PROCESSORS.setAll (aProcessorSPIs));
   }
 
   static

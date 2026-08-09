@@ -94,8 +94,8 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   {
     // Get all message IDs to be removed
     final ICommonsList <String> aEvictItems = new CommonsArrayList <> ();
-    m_aRWLock.readLocked ( () -> m_aMap.forEachValue (x -> x.getDateTime ().isBefore (aRefDT),
-                                                      x -> aEvictItems.add (x.getMessageID ())));
+    m_aRWLock.readLocked (() -> m_aMap.forEachValue (x -> x.getDateTime ().isBefore (aRefDT),
+                                                     x -> aEvictItems.add (x.getMessageID ())));
     if (aEvictItems.isNotEmpty ())
     {
       // Bulk erase all
@@ -126,7 +126,7 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   @Nullable
   public IAS4DuplicateItem findFirst (@NonNull final Predicate <? super IAS4DuplicateItem> aFilter)
   {
-    return m_aRWLock.readLockedGet ( () -> CollectionFind.findFirst (m_aMap.values (), aFilter));
+    return m_aRWLock.readLockedGet (() -> CollectionFind.findFirst (m_aMap.values (), aFilter));
   }
 
   @Nullable
@@ -142,7 +142,7 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   @ReturnsMutableCopy
   public ICommonsList <IAS4DuplicateItem> getAll ()
   {
-    return m_aRWLock.readLockedGet ( () -> new CommonsArrayList <> (m_aMap.values ()));
+    return m_aRWLock.readLockedGet (() -> new CommonsArrayList <> (m_aMap.values ()));
   }
 
   @Override

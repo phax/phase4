@@ -212,11 +212,11 @@ public final class AS4Encryptor
     if (AS4Configuration.isWSS4JSynchronizedSecurity ())
     {
       // Synchronize
-      ret = WSSSynchronizer.call ( () -> _encryptSoapBodyPayload (aCryptoFactoryCrypt,
-                                                                  eSoapVersion,
-                                                                  aDoc,
-                                                                  bMustUnderstand,
-                                                                  aCryptParams));
+      ret = WSSSynchronizer.call (() -> _encryptSoapBodyPayload (aCryptoFactoryCrypt,
+                                                                 eSoapVersion,
+                                                                 aDoc,
+                                                                 bMustUnderstand,
+                                                                 aCryptParams));
     }
     else
     {
@@ -334,13 +334,13 @@ public final class AS4Encryptor
     if (AS4Configuration.isWSS4JSynchronizedSecurity ())
     {
       // Synchronize
-      ret = WSSSynchronizer.call ( () -> _encryptToMimeMessage (eSoapVersion,
-                                                                aDoc,
-                                                                aAttachments,
-                                                                aCryptoFactoryCrypt,
-                                                                bMustUnderstand,
-                                                                aResHelper,
-                                                                aCryptParams));
+      ret = WSSSynchronizer.call (() -> _encryptToMimeMessage (eSoapVersion,
+                                                               aDoc,
+                                                               aAttachments,
+                                                               aCryptoFactoryCrypt,
+                                                               bMustUnderstand,
+                                                               aResHelper,
+                                                               aCryptParams));
     }
     else
     {

@@ -66,7 +66,7 @@ public final class AS4ServerInitializer
                     aDisposalDuration);
 
     // Schedule jobs
-    RW_LOCK.writeLocked ( () -> {
+    RW_LOCK.writeLocked (() -> {
       // Consecutive calls return null
       final TriggerKey aTriggerKey = AS4DuplicateCleanupJob.scheduleMe (aDisposalDuration);
       if (aTriggerKey != null)
@@ -85,7 +85,7 @@ public final class AS4ServerInitializer
    */
   public static void shutdownAS4Server ()
   {
-    RW_LOCK.writeLocked ( () -> {
+    RW_LOCK.writeLocked (() -> {
       AS4DuplicateCleanupJob.unschedule (s_aTriggerKey);
       s_aTriggerKey = null;
     });

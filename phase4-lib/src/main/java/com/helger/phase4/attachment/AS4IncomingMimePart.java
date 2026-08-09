@@ -155,10 +155,10 @@ public final class AS4IncomingMimePart
 
     // Quick check for the well-known values, to avoid the tokenizer
     if (sCTE.equalsIgnoreCase ("7bit") ||
-        sCTE.equalsIgnoreCase ("8bit") ||
-        sCTE.equalsIgnoreCase ("binary") ||
-        sCTE.equalsIgnoreCase ("base64") ||
-        sCTE.equalsIgnoreCase ("quoted-printable"))
+      sCTE.equalsIgnoreCase ("8bit") ||
+      sCTE.equalsIgnoreCase ("binary") ||
+      sCTE.equalsIgnoreCase ("base64") ||
+      sCTE.equalsIgnoreCase ("quoted-printable"))
       return sCTE;
 
     // Tokenize the header to obtain the encoding (skipping comments)

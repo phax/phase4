@@ -55,6 +55,7 @@ import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
+import com.helger.phase4.model.soapfault.AS4SoapFault;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
@@ -119,6 +120,7 @@ public class Phase4PeppolSendingReport
   private Ebms3SignalMessage m_aAS4ReceivedSignalMsg;
   private ICommonsList <Ebms3Error> m_aAS4ResponseErrors;
   private boolean m_bAS4ResponseError = false;
+  private AS4SoapFault m_aAS4SoapFault;
 
   // AS4 summary
   private EAS4UserMessageSendResult m_eAS4SendingResult;
@@ -807,6 +809,34 @@ public class Phase4PeppolSendingReport
   }
 
   /**
+   * @return The plain SOAP Fault that was synchronously received instead of an AS4 Signal Message.
+   *         May be <code>null</code>.
+   * @since 4.6.0
+   */
+  @Nullable
+  public AS4SoapFault getAS4SoapFault ()
+  {
+    return m_aAS4SoapFault;
+  }
+
+  public boolean hasAS4SoapFault ()
+  {
+    return m_aAS4SoapFault != null;
+  }
+
+  /**
+   * Remember the plain SOAP Fault that was synchronously received instead of an AS4 Signal Message.
+   *
+   * @param a
+   *        The received SOAP Fault. May be <code>null</code>.
+   * @since 4.6.0
+   */
+  public void setAS4SoapFault (@Nullable final AS4SoapFault a)
+  {
+    m_aAS4SoapFault = a;
+  }
+
+  /**
    * @return The overall AS4 sending result. May be <code>null</code>.
    * @since 4.2.0
    */
@@ -1111,6 +1141,8 @@ public class Phase4PeppolSendingReport
       }
       aJson.add ("as4ResponseErrors", aErrors);
     }
+    if (hasAS4SoapFault ())
+      aJson.add ("as4SoapFault", m_aAS4SoapFault.getAsJsonObject ());
 
     // AS4 summary
     if (hasAS4SendingResult ())
@@ -1307,6 +1339,8 @@ public class Phase4PeppolSendingReport
           aItem.addElementNS (sNamespaceURI, "ShortDescription").addText (aError.getShortDescription ());
       }
     }
+    if (hasAS4SoapFault ())
+      ret.addChild (m_aAS4SoapFault.getAsMicroElement (sNamespaceURI, "AS4SoapFault"));
 
     // AS4 summary
     if (hasAS4SendingResult ())

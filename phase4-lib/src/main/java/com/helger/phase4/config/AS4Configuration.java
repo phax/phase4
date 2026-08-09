@@ -87,9 +87,9 @@ public final class AS4Configuration
   public static final String PROPERTY_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES = "phase4.incoming.mime.maxpartheadersize.bytes";
   public static final int DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES = 64 * CGlobal.BYTES_PER_KILOBYTE;
   /**
-   * The minimum value accepted for {@link #PROPERTY_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES}.
-   * Smaller configured values are rejected, as they would not even fit the mandatory MIME part
-   * headers.
+   * The minimum value accepted for
+   * {@link #PROPERTY_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES}. Smaller configured values
+   * are rejected, as they would not even fit the mandatory MIME part headers.
    *
    * @since 4.6.0
    */

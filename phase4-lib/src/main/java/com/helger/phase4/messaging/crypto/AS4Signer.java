@@ -199,14 +199,14 @@ public final class AS4Signer
     if (AS4Configuration.isWSS4JSynchronizedSecurity ())
     {
       // Synchronize
-      ret = WSSSynchronizer.call ( () -> _createSignedMessage (aCryptoFactorySign,
-                                                               aPreSigningMessage,
-                                                               eSoapVersion,
-                                                               sMessagingID,
-                                                               aAttachments,
-                                                               aResHelper,
-                                                               bMustUnderstand,
-                                                               aSigningParams));
+      ret = WSSSynchronizer.call (() -> _createSignedMessage (aCryptoFactorySign,
+                                                              aPreSigningMessage,
+                                                              eSoapVersion,
+                                                              sMessagingID,
+                                                              aAttachments,
+                                                              aResHelper,
+                                                              bMustUnderstand,
+                                                              aSigningParams));
     }
     else
     {

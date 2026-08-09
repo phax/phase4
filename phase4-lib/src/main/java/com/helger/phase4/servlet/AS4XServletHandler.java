@@ -226,7 +226,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
       }
 
       // Main handling
-      AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
+      AS4HttpDebug.debug (() -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
 
       final ServletInputStream aServletRequestIS = aRequestScope.getRequest ().getInputStream ();
       final HttpHeaderMap aHttpHeaders = aRequestScope.headers ().getClone ();

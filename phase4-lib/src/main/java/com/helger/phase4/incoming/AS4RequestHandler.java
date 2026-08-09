@@ -259,7 +259,7 @@ public class AS4RequestHandler implements AutoCloseable
     public void applyToResponse (@NonNull final IAS4ResponseAbstraction aHttpResponse,
                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper)
     {
-      final IHasInputStream aContent = HasInputStream.multiple ( () -> {
+      final IHasInputStream aContent = HasInputStream.multiple (() -> {
         try
         {
           return m_aMimeMsg.getInputStream ();
@@ -1947,10 +1947,10 @@ public class AS4RequestHandler implements AutoCloseable
                                                                     m_aRetryCallback,
                                                                     aRemoteTlsCertConsumer);
           }
-          AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     (aAsyncResponse == null ? "null"
-                                                             : XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                                          AS4HttpDebug.getDebugXMLWriterSettings ())));
+          AS4HttpDebug.debug (() -> "SEND-RESPONSE [async sent] received: " +
+                                    (aAsyncResponse == null ? "null"
+                                                            : XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                                         AS4HttpDebug.getDebugXMLWriterSettings ())));
         };
 
         final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
@@ -1960,7 +1960,7 @@ public class AS4RequestHandler implements AutoCloseable
         {
           // Give the outside world the possibility to get notified when the
           // processing is done
-          aFuture.thenRun ( () -> m_aSoapProcessingFinalizedCB.onProcessingFinalized (false));
+          aFuture.thenRun (() -> m_aSoapProcessingFinalizedCB.onProcessingFinalized (false));
         }
       }
     }
@@ -2183,7 +2183,7 @@ public class AS4RequestHandler implements AutoCloseable
         // Success, HTTP No Content
         aHttpResponse.setStatus (CHttp.HTTP_NO_CONTENT);
       }
-      AS4HttpDebug.debug ( () -> "RECEIVE-END with " + (aResponder != null ? "EBMS message" : "no content"));
+      AS4HttpDebug.debug (() -> "RECEIVE-END with " + (aResponder != null ? "EBMS message" : "no content"));
     };
     AS4IncomingHandler.parseAS4Message (m_aIncomingAttachmentFactory,
                                         m_aResHelper,

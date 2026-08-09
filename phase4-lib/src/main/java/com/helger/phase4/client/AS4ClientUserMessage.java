@@ -725,8 +725,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     ICommonsList <ReferenceType> aCreatedDSReferences = null;
     if (bSign || bEncrypt)
     {
-      AS4HttpDebug.debug ( () -> "Unsigned/unencrypted UserMessage:\n" +
-                                 XMLWriter.getNodeAsString (aPureSoapDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
+      AS4HttpDebug.debug (() -> "Unsigned/unencrypted UserMessage:\n" +
+                                XMLWriter.getNodeAsString (aPureSoapDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
 
       // 2a. sign
       if (bSign)
@@ -750,9 +750,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         if (aCallback != null)
           aCallback.onSignedSoapDocument (aSignedSoapDoc);
 
-        AS4HttpDebug.debug ( () -> "Signed UserMessage:\n" +
-                                   XMLWriter.getNodeAsString (aSignedSoapDoc,
-                                                              AS4HttpDebug.getDebugXMLWriterSettings ()));
+        AS4HttpDebug.debug (() -> "Signed UserMessage:\n" +
+                                  XMLWriter.getNodeAsString (aSignedSoapDoc,
+                                                             AS4HttpDebug.getDebugXMLWriterSettings ()));
       }
 
       // 2b. encrypt

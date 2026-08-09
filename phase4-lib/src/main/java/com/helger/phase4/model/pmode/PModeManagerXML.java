@@ -75,7 +75,7 @@ public class PModeManagerXML extends AbstractPhotonMapBasedWALDAO <IPMode, PMode
     ValueEnforcer.notNull (aPMode, "PMode");
     _validatePMode (aPMode);
 
-    m_aRWLock.writeLocked ( () -> _createPModeLocked (aPMode));
+    m_aRWLock.writeLocked (() -> _createPModeLocked (aPMode));
   }
 
   @NonNull

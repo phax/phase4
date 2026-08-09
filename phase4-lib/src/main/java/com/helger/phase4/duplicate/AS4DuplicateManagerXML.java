@@ -59,7 +59,7 @@ public class AS4DuplicateManagerXML extends AbstractPhotonMapBasedWALDAO <IAS4Du
     final AS4DuplicateItem aItem = new AS4DuplicateItem (sMessageID, sProfileID, sPModeID);
     try
     {
-      m_aRWLock.writeLocked ( () -> internalCreateItem (aItem));
+      m_aRWLock.writeLocked (() -> internalCreateItem (aItem));
     }
     catch (final IllegalArgumentException ex)
     {
@@ -84,7 +84,7 @@ public class AS4DuplicateManagerXML extends AbstractPhotonMapBasedWALDAO <IAS4Du
                                                             IAS4DuplicateItem::getMessageID);
     if (aEvictItems.isNotEmpty ())
       // Bulk erase all
-      m_aRWLock.writeLocked ( () -> {
+      m_aRWLock.writeLocked (() -> {
         for (final String sItemID : aEvictItems)
           internalDeleteItem (sItemID);
       });

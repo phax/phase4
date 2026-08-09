@@ -54,7 +54,7 @@ public class MPCManagerXML extends AbstractPhotonMapBasedWALDAO <IMPC, MPC> impl
   {
     ValueEnforcer.notNull (aMPC, "MPC");
 
-    m_aRWLock.writeLocked ( () -> internalCreateItem (aMPC));
+    m_aRWLock.writeLocked (() -> internalCreateItem (aMPC));
     AuditHelper.onAuditCreateSuccess (MPC.OT, aMPC.getID ());
   }
 

@@ -25,7 +25,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+import com.helger.json.IJsonObject;
 import com.helger.phase4.model.ESoapVersion;
+import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -187,6 +189,59 @@ public final class AS4SoapFaultTest
     assertNotNull (aFault);
     assertNull (aFault.getFaultCode ());
     assertSame (EAS4FaultDisposition.TRANSIENT, aFault.getDisposition ());
+  }
+
+  @Test
+  public void testGetAsJsonObject ()
+  {
+    final AS4SoapFault aFault = AS4SoapFault.createOrNull (DOMReader.readXMLDOM (SOAP12_FAULT));
+    assertNotNull (aFault);
+
+    final IJsonObject aJson = aFault.getAsJsonObject ();
+    assertEquals ("1.2", aJson.getAsString ("soapVersion"));
+    assertEquals ("{" + ESoapVersion.SOAP_12.getNamespaceURI () + "}Sender", aJson.getAsString ("faultCode"));
+    assertEquals ("{urn:example:subcodes}MessageTimeout", aJson.getAsString ("faultSubcode"));
+    assertEquals ("Sender timeout", aJson.getAsString ("faultReason"));
+    assertEquals ("urn:example:role", aJson.getAsString ("faultActorRole"));
+    assertTrue (aJson.getAsString ("faultDetail").contains ("expired"));
+    assertEquals (EAS4FaultDisposition.PERMANENT.getID (), aJson.getAsString ("disposition"));
+
+    // A minimal fault contains only the mandatory elements
+    final IJsonObject aMinimalJson = _createSoap11Fault ("S11:Server").getAsJsonObject ();
+    assertEquals ("1.1", aMinimalJson.getAsString ("soapVersion"));
+    assertNull (aMinimalJson.getAsString ("faultSubcode"));
+    assertNull (aMinimalJson.getAsString ("faultActorRole"));
+    assertNull (aMinimalJson.getAsString ("faultDetail"));
+    assertEquals (EAS4FaultDisposition.TRANSIENT.getID (), aMinimalJson.getAsString ("disposition"));
+  }
+
+  @Test
+  public void testGetAsMicroElement ()
+  {
+    final AS4SoapFault aFault = AS4SoapFault.createOrNull (DOMReader.readXMLDOM (SOAP12_FAULT));
+    assertNotNull (aFault);
+
+    final IMicroElement aElement = aFault.getAsMicroElement (null, "SoapFault");
+    assertEquals ("SoapFault", aElement.getTagName ());
+    assertEquals ("1.2", aElement.getFirstChildElement ("SoapVersion").getTextContentTrimmed ());
+    assertEquals ("{" + ESoapVersion.SOAP_12.getNamespaceURI () + "}Sender",
+                  aElement.getFirstChildElement ("FaultCode").getTextContentTrimmed ());
+    assertEquals ("{urn:example:subcodes}MessageTimeout",
+                  aElement.getFirstChildElement ("FaultSubcode").getTextContentTrimmed ());
+    assertEquals ("Sender timeout", aElement.getFirstChildElement ("FaultReason").getTextContentTrimmed ());
+    assertEquals ("urn:example:role", aElement.getFirstChildElement ("FaultActorRole").getTextContentTrimmed ());
+    assertTrue (aElement.getFirstChildElement ("FaultDetail").getTextContentTrimmed ().contains ("expired"));
+    assertEquals (EAS4FaultDisposition.PERMANENT.getID (),
+                  aElement.getFirstChildElement ("Disposition").getTextContentTrimmed ());
+
+    // A minimal fault contains only the mandatory elements
+    final IMicroElement aMinimalElement = _createSoap11Fault ("S11:Server").getAsMicroElement (null, "SoapFault");
+    assertEquals ("1.1", aMinimalElement.getFirstChildElement ("SoapVersion").getTextContentTrimmed ());
+    assertNull (aMinimalElement.getFirstChildElement ("FaultSubcode"));
+    assertNull (aMinimalElement.getFirstChildElement ("FaultActorRole"));
+    assertNull (aMinimalElement.getFirstChildElement ("FaultDetail"));
+    assertEquals (EAS4FaultDisposition.TRANSIENT.getID (),
+                  aMinimalElement.getFirstChildElement ("Disposition").getTextContentTrimmed ());
   }
 
   private static AS4SoapFault _createSoap11Fault (final String sFaultCode)

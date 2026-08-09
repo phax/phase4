@@ -46,7 +46,7 @@ public final class AS4ProfileSelector
   @Nullable
   public static String getCustomDefaultAS4ProfileID ()
   {
-    return RW_LOCK.readLockedGet ( () -> s_sAS4ProfileID);
+    return RW_LOCK.readLockedGet (() -> s_sAS4ProfileID);
   }
 
   /**
@@ -58,7 +58,7 @@ public final class AS4ProfileSelector
    */
   public static void setCustomDefaultAS4ProfileID (@Nullable final String sAS4ProfileID)
   {
-    RW_LOCK.writeLocked ( () -> s_sAS4ProfileID = sAS4ProfileID);
+    RW_LOCK.writeLocked (() -> s_sAS4ProfileID = sAS4ProfileID);
   }
 
   /**

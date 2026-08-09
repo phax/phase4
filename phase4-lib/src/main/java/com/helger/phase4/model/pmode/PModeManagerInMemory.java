@@ -86,7 +86,7 @@ public class PModeManagerInMemory implements IPModeManager
     ValueEnforcer.notNull (aPMode, "PMode");
     _validatePMode (aPMode);
 
-    m_aRWLock.writeLocked ( () -> _createPModeLocked (aPMode));
+    m_aRWLock.writeLocked (() -> _createPModeLocked (aPMode));
   }
 
   @NonNull
@@ -216,7 +216,7 @@ public class PModeManagerInMemory implements IPModeManager
   {
     if (StringHelper.isEmpty (sID))
       return null;
-    return m_aRWLock.readLockedGet ( () -> m_aMap.get (sID));
+    return m_aRWLock.readLockedGet (() -> m_aMap.get (sID));
   }
 
   @Nullable
@@ -228,14 +228,14 @@ public class PModeManagerInMemory implements IPModeManager
   @Nullable
   public IPMode findFirst (@NonNull final Predicate <? super IPMode> aFilter)
   {
-    return m_aRWLock.readLockedGet ( () -> CollectionFind.findFirst (m_aMap.values (), aFilter));
+    return m_aRWLock.readLockedGet (() -> CollectionFind.findFirst (m_aMap.values (), aFilter));
   }
 
   @NonNull
   @ReturnsMutableCopy
   public ICommonsList <IPMode> getAll ()
   {
-    return m_aRWLock.readLockedGet ( () -> new CommonsArrayList <> (m_aMap.values ()));
+    return m_aRWLock.readLockedGet (() -> new CommonsArrayList <> (m_aMap.values ()));
   }
 
   @NonNull

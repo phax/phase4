@@ -210,6 +210,11 @@ public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
                                                                                                   aMessageMetadata,
                                                                                                   aState) -> {
                                                                               aSendingReport.setAS4ReceivedSignalMsg (aSignalMsg);
+                                                                            })
+                                                                            .soapFaultConsumer ( (sMessageID,
+                                                                                                  aSoapFault,
+                                                                                                  aSentMsg) -> {
+                                                                              aSendingReport.setAS4SoapFault (aSoapFault);
                                                                             });
       final Wrapper <Phase4Exception> aCaughtEx = new Wrapper <> ();
       eResult = aBuilder.sendMessageAndCheckForReceipt (aCaughtEx::set);

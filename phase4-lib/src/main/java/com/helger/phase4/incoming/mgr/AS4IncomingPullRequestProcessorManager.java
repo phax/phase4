@@ -60,7 +60,7 @@ public final class AS4IncomingPullRequestProcessorManager
     else
       LOGGER.info ("Found " + aProcessorSPIs.size () + " AS4 pull requests processors");
 
-    RW_LOCK.writeLocked ( () -> PROCESSORS.setAll (aProcessorSPIs));
+    RW_LOCK.writeLocked (() -> PROCESSORS.setAll (aProcessorSPIs));
   }
 
   static

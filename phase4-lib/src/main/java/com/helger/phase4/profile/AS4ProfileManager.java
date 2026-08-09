@@ -50,7 +50,7 @@ public class AS4ProfileManager implements IAS4ProfileManager
 
   private void _registerAll ()
   {
-    m_aRWLock.writeLocked ( () -> { m_aProfiles.clear (); });
+    m_aRWLock.writeLocked (() -> { m_aProfiles.clear (); });
     for (final IAS4ProfileRegistrarSPI aSPI : ServiceLoaderHelper.getAllSPIImplementations (IAS4ProfileRegistrarSPI.class))
       aSPI.registerAS4Profile (this);
 
@@ -87,7 +87,7 @@ public class AS4ProfileManager implements IAS4ProfileManager
     if (StringHelper.isEmpty (sID))
       return null;
 
-    return m_aRWLock.readLockedGet ( () -> m_aProfiles.get (sID));
+    return m_aRWLock.readLockedGet (() -> m_aProfiles.get (sID));
   }
 
   public void registerProfile (@NonNull final IAS4Profile aAS4Profile)
@@ -95,7 +95,7 @@ public class AS4ProfileManager implements IAS4ProfileManager
     ValueEnforcer.notNull (aAS4Profile, "AS4Profile");
 
     final String sID = aAS4Profile.getID ();
-    m_aRWLock.writeLocked ( () -> {
+    m_aRWLock.writeLocked (() -> {
       if (m_aProfiles.containsKey (sID))
         throw new IllegalStateException ("An AS4 profile with ID '" + sID + "' is already registered!");
       m_aProfiles.put (sID, aAS4Profile);

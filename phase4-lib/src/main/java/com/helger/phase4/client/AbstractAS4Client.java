@@ -264,7 +264,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   public final IMPLTYPE setMessageID (@NonNull @Nonempty final String sMessageID)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
-    return setMessageIDFactory ( () -> sMessageID);
+    return setMessageIDFactory (() -> sMessageID);
   }
 
   /**

@@ -356,7 +356,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         {
           LOGGER.error ("Failed to write response attachment to temporary file '" + aTempFile.getAbsolutePath () + "'");
         }
-        aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
+        aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple (() -> FileHelper.getBufferedInputStream (aTempFile)));
       }
 
       // Remember in State
@@ -625,11 +625,11 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       if (AS4Configuration.isWSS4JSynchronizedSecurity ())
       {
         // Use static WSSConfig creation
-        eSuccess = WSSSynchronizer.call ( () -> _verifyAndDecrypt (aSoapDoc,
-                                                                   aAttachments,
-                                                                   aIncomingState,
-                                                                   aProcessingErrorMessagesTarget,
-                                                                   WSSConfigManager::createStaticWSSConfig));
+        eSuccess = WSSSynchronizer.call (() -> _verifyAndDecrypt (aSoapDoc,
+                                                                  aAttachments,
+                                                                  aIncomingState,
+                                                                  aProcessingErrorMessagesTarget,
+                                                                  WSSConfigManager::createStaticWSSConfig));
       }
       else
       {

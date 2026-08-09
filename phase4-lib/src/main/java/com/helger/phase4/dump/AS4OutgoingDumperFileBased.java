@@ -59,10 +59,10 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
    */
   public AS4OutgoingDumperFileBased ()
   {
-    this ( (eMsgMode, sMessageID, nTry) -> new File (AS4Configuration.getDumpBasePathFile (),
-                                                     DEFAULT_BASE_PATH +
-                                                                                              IAS4OutgoingDumperFileProvider.getDefaultDirectoryAndFilename (sMessageID,
-                                                                                                                                                             nTry)));
+    this ((eMsgMode, sMessageID, nTry) -> new File (AS4Configuration.getDumpBasePathFile (),
+                                                    DEFAULT_BASE_PATH +
+                                                                                             IAS4OutgoingDumperFileProvider.getDefaultDirectoryAndFilename (sMessageID,
+                                                                                                                                                            nTry)));
   }
 
   /**
@@ -111,8 +111,8 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   public static AS4OutgoingDumperFileBased createForDirectory (@NonNull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> new File (aBaseDirectory,
-                                                                                      IAS4OutgoingDumperFileProvider.getDefaultDirectoryAndFilename (sMessageID,
-                                                                                                                                                     nTry)));
+    return new AS4OutgoingDumperFileBased ((eMsgMode, sMessageID, nTry) -> new File (aBaseDirectory,
+                                                                                     IAS4OutgoingDumperFileProvider.getDefaultDirectoryAndFilename (sMessageID,
+                                                                                                                                                    nTry)));
   }
 }
