@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -594,24 +595,25 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
     // Read the decoded content up to the in-memory threshold
     final InputStream aDecodedIS = aMimePart.getDecodedContentStream ();
-    final byte [] aInMemoryData = new byte [MAX_IN_MEMORY_BYTES];
+    final byte [] aReadBuffer = new byte [MAX_IN_MEMORY_BYTES];
     int nInMemoryLen = 0;
     int nBytesRead;
-    while (nInMemoryLen < aInMemoryData.length &&
-      (nBytesRead = aDecodedIS.read (aInMemoryData, nInMemoryLen, aInMemoryData.length - nInMemoryLen)) >= 0)
+    while (nInMemoryLen < aReadBuffer.length &&
+      (nBytesRead = aDecodedIS.read (aReadBuffer, nInMemoryLen, aReadBuffer.length - nInMemoryLen)) >= 0)
       nInMemoryLen += nBytesRead;
 
     // Probe one more byte to determine, if the content fits into the threshold
-    final int nProbedByte = nInMemoryLen == aInMemoryData.length ? aDecodedIS.read () : -1;
+    final int nProbedByte = nInMemoryLen == aReadBuffer.length ? aDecodedIS.read () : -1;
     if (nProbedByte < 0)
     {
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Keeping incoming WSS4J attachment with " + nInMemoryLen + " bytes in-memory");
 
-      final int nFinalLen = nInMemoryLen;
-      ret.setSourceStreamProvider (HasInputStream.multiple (() -> new NonBlockingByteArrayInputStream (aInMemoryData,
-                                                                                                       0,
-                                                                                                       nFinalLen)));
+      // Retain only an array of the exact content size, so that the attachment
+      // does not hold on to the full read buffer (see issue #382)
+      final byte [] aInMemoryData = nInMemoryLen == aReadBuffer.length ? aReadBuffer : Arrays.copyOf (aReadBuffer,
+                                                                                                      nInMemoryLen);
+      ret.setSourceStreamProvider (HasInputStream.multiple (() -> new NonBlockingByteArrayInputStream (aInMemoryData)));
     }
     else
     {
@@ -623,7 +625,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
       try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
       {
-        aOS.write (aInMemoryData, 0, nInMemoryLen);
+        aOS.write (aReadBuffer, 0, nInMemoryLen);
         aOS.write (nProbedByte);
         StreamHelper.copyInputStreamToOutputStream (aDecodedIS, aOS);
       }

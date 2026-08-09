@@ -242,6 +242,22 @@ public final class WSS4JAttachmentTest
   }
 
   @Test
+  public void testIncomingEmpty () throws IOException, MessagingException
+  {
+    // Empty content - must be kept in memory
+    final byte [] aContent = new byte [0];
+
+    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+    {
+      final WSS4JAttachment a = WSS4JAttachment.createIncomingFileAttachment (_createIncomingMimePart (aContent),
+                                                                              aResHelper);
+      assertNotNull (a);
+      assertArrayEquals (aContent, StreamHelper.getAllBytes (a.getSourceStream ()));
+      assertArrayEquals (aContent, StreamHelper.getAllBytes (a.getSourceStream ()));
+    }
+  }
+
+  @Test
   public void testIncomingExactlyThresholdSize () throws IOException, MessagingException
   {
     // Content with exactly the threshold size - must be kept in memory

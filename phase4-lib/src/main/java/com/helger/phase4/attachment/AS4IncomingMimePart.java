@@ -189,7 +189,11 @@ public final class AS4IncomingMimePart
   /**
    * @return The content of this MIME part with the content transfer encoding applied in a streaming
    *         way (relevant e.g. for <code>base64</code>). The stream can be consumed only once.
-   *         Never <code>null</code>.
+   *         Never <code>null</code>. Note: in contrast to Jakarta Mail
+   *         (<code>MimePartDataSource</code>), the content transfer encoding is applied
+   *         unconditionally - also for the composite media types <code>multipart/*</code> and
+   *         <code>message/*</code>, for which Jakarta Mail would ignore <code>base64</code> and
+   *         <code>quoted-printable</code>.
    * @throws MessagingException
    *         If the content transfer encoding is unknown.
    */

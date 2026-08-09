@@ -328,6 +328,15 @@ public final class AS4IncomingHandler
                 aIncomingAttachments.add (aAttachment);
               }
             }
+            catch (final MessagingException ex)
+            {
+              // Happens e.g. if the header section of the MIME part exceeds the
+              // configured maximum size or if an unknown
+              // Content-Transfer-Encoding is used. This is a problem of the
+              // message itself, so retrying is pointless (see issue #382)
+              throw new Phase4IncomingException ("Failed to parse MIME part #" + nIndex, ex).setHttpStatusCode (CHttp.HTTP_BAD_REQUEST)
+                                                                                            .setRetryFeasible (false);
+            }
             nIndex++;
           }
         }
