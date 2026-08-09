@@ -20,6 +20,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +33,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
+import com.helger.annotation.Nonnegative;
+import com.helger.annotation.WillNotClose;
+import com.helger.base.iface.IThrowingRunnable;
+import com.helger.base.io.stream.NonClosingInputStream;
+import com.helger.base.io.stream.StreamHelper;
 import com.helger.io.file.SimpleFileIO;
 
 /**
@@ -44,7 +49,7 @@ public final class MarkableFileInputStreamTest
   public final TemporaryFolder m_aRule = new TemporaryFolder ();
 
   @NonNull
-  private static byte [] _createRandomBytes (final int nLen)
+  private static byte [] _createRandomBytes (@Nonnegative final int nLen)
   {
     final byte [] ret = new byte [nLen];
     // Deterministic seed
@@ -53,7 +58,7 @@ public final class MarkableFileInputStreamTest
   }
 
   @NonNull
-  private File _createFile (final byte [] aContent) throws IOException
+  private File _createFile (final byte @NonNull [] aContent) throws IOException
   {
     final File ret = m_aRule.newFile ();
     SimpleFileIO.writeFile (ret, aContent);
@@ -77,18 +82,24 @@ public final class MarkableFileInputStreamTest
     return ret;
   }
 
-  @NonNull
-  private static byte [] _readAll (@NonNull final InputStream aIS) throws IOException
+  private static void _assertFailsAfterClose (@NonNull final IThrowingRunnable <IOException> aRunnable)
   {
-    try (final NonBlockingByteArrayOutputStream aAll = new NonBlockingByteArrayOutputStream ())
+    try
     {
-      int nBytes;
-      // Same buffer size as WSS4J uses
-      final byte [] aBuf = new byte [8192];
-      while ((nBytes = aIS.read (aBuf)) != -1)
-        aAll.write (aBuf, 0, nBytes);
-      return aAll.toByteArray ();
+      aRunnable.run ();
+      fail ("Expected an IOException after close");
     }
+    catch (final IOException ex)
+    {
+      // Expected
+    }
+  }
+
+  @NonNull
+  private static byte [] _readAll (@NonNull @WillNotClose final InputStream aIS)
+  {
+    // Keep IS open
+    return StreamHelper.getAllBytes (new NonClosingInputStream (aIS));
   }
 
   @Test
@@ -200,7 +211,7 @@ public final class MarkableFileInputStreamTest
   @Test
   public void testReadLargerThanBuffer () throws IOException
   {
-    // Requests larger than the internal buffer are served from the channel
+    // Requests larger than the internal buffer are served from the file
     // directly
     final byte [] aPayload = _createRandomBytes (70_000);
     final File f = _createFile (aPayload);
@@ -223,9 +234,115 @@ public final class MarkableFileInputStreamTest
     }
   }
 
+  /**
+   * A request larger than the internal buffer that arrives while the buffer still holds unread
+   * bytes must deliver those buffered bytes first. Reading directly from the file in that situation
+   * would silently skip them, because the file pointer is already ahead of the logical stream
+   * position by exactly the number of buffered bytes. Delivering fewer bytes than requested is
+   * explicitly allowed by {@link InputStream#read(byte[], int, int)} - it is also what
+   * {@link java.io.BufferedInputStream} does.
+   *
+   * @throws IOException
+   *         in case of IO error
+   */
+  @Test
+  public void testReadLargerThanBufferWithPendingBufferedBytes () throws IOException
+  {
+    final int nBufSize = 1024;
+    final byte [] aPayload = _createRandomBytes (nBufSize * 8);
+    final File f = _createFile (aPayload);
+
+    try (final MarkableFileInputStream aIS = new MarkableFileInputStream (f, nBufSize))
+    {
+      // Fills the internal buffer and leaves it partially drained
+      assertEquals (aPayload[0] & 0xff, aIS.read ());
+
+      // Request more than the internal buffer size, while buffered bytes are
+      // still pending - only the buffered remainder is delivered
+      final byte [] aBig = new byte [nBufSize * 4];
+      final int nRead = aIS.read (aBig, 0, aBig.length);
+      assertEquals (nBufSize - 1, nRead);
+      assertArrayEquals (Arrays.copyOfRange (aPayload, 1, 1 + nRead), Arrays.copyOf (aBig, nRead));
+
+      // The buffer is empty now, so the next large request bypasses it - and
+      // must continue exactly where the previous one stopped
+      final int nRead2 = aIS.read (aBig, 0, aBig.length);
+      assertEquals (aBig.length, nRead2);
+      assertArrayEquals (Arrays.copyOfRange (aPayload, 1 + nRead, 1 + nRead + nRead2), Arrays.copyOf (aBig, nRead2));
+
+      // A request of exactly the buffer size bypasses the buffer as well
+      final int nOfs = 1 + nRead + nRead2;
+      final byte [] aExact = new byte [nBufSize];
+      assertEquals (nBufSize, aIS.read (aExact, 0, nBufSize));
+      assertArrayEquals (Arrays.copyOfRange (aPayload, nOfs, nOfs + nBufSize), aExact);
+
+      // Nothing may be skipped or duplicated along the way
+      assertArrayEquals (Arrays.copyOfRange (aPayload, nOfs + nBufSize, aPayload.length), _readAll (aIS));
+    }
+  }
+
   @Test
   public void testCreateNonExistingFile ()
   {
     assertNull (MarkableFileInputStream.create (new File (m_aRule.getRoot (), "does-not-exist.bin")));
+  }
+
+  /**
+   * A set interrupt flag on the reading thread must not affect reading. Every
+   * {@link java.nio.channels.FileChannel} is an {@link java.nio.channels.InterruptibleChannel} and
+   * would be closed permanently in that case.
+   *
+   * @throws IOException
+   *         in case of IO error
+   */
+  @Test
+  public void testReadWithInterruptedThread () throws IOException
+  {
+    final byte [] aPayload = _createRandomBytes (100_000);
+    final File f = _createFile (aPayload);
+
+    try (final MarkableFileInputStream aIS = new MarkableFileInputStream (f))
+    {
+      Thread.currentThread ().interrupt ();
+      try
+      {
+        assertArrayEquals (aPayload, _digestLikeWSS4J (aIS));
+        assertArrayEquals (aPayload, _readAll (aIS));
+      }
+      finally
+      {
+        // Clear the interrupt flag again
+        Thread.interrupted ();
+      }
+    }
+  }
+
+  /**
+   * Reading after {@link MarkableFileInputStream#close()} must consistently fail, and especially
+   * never deliver the bytes that are still in the internal buffer.
+   *
+   * @throws IOException
+   *         in case of IO error
+   */
+  @Test
+  public void testReadAfterCloseFails () throws IOException
+  {
+    // Smaller than the internal buffer, so that it is completely buffered on
+    // the first read and bytes would be left over after the close
+    final byte [] aPayload = _createRandomBytes (100);
+    final File f = _createFile (aPayload);
+
+    @SuppressWarnings ("resource")
+    final MarkableFileInputStream aIS = new MarkableFileInputStream (f);
+    assertEquals (aPayload[0] & 0xff, aIS.read ());
+    aIS.close ();
+    // Closing twice is okay
+    aIS.close ();
+
+    _assertFailsAfterClose (aIS::read);
+    _assertFailsAfterClose (() -> aIS.read (new byte [16], 0, 16));
+    _assertFailsAfterClose (aIS::available);
+    _assertFailsAfterClose (() -> aIS.skip (1));
+    _assertFailsAfterClose (aIS::reset);
   }
 }
