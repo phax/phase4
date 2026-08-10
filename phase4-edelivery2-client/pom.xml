@@ -95,6 +95,11 @@
       <artifactId>ph-unittest-support-ext</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-bc</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
