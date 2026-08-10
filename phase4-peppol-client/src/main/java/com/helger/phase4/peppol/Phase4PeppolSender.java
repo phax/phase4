@@ -39,6 +39,7 @@ import com.helger.annotation.concurrent.Immutable;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.io.iface.IHasInputStream;
+import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
 import com.helger.base.state.ESuccess;
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
@@ -53,6 +54,8 @@ import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.EPeppolMLSType;
 import com.helger.peppol.sbdh.PeppolSBDHData;
+import com.helger.peppol.sbdh.PeppolSBDHDataReadException;
+import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.sbdh.PeppolSBDHDataWriter;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadBinaryMarshaller;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadTextMarshaller;
@@ -1786,6 +1789,17 @@ public final class Phase4PeppolSender
     {}
 
     /**
+     * Get the SBDH payload to be send out.
+     *
+     * @return The currently set SBDH payload bytes. May be <code>null</code>.
+     * @since 4.6.0
+     */
+    public byte @Nullable [] payloadBytes ()
+    {
+      return m_aPayloadBytes;
+    }
+
+    /**
      * Set the SBDH payload to be used as a byte array. This means, that you need to pass in all
      * other mandatory fields manually (sender participant ID, receiver participant ID, document
      * Type ID, process ID and country C1).
@@ -1808,14 +1822,41 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Take the sender participant ID, the receiver participant ID, the document type ID, the
+     * process ID and the country C1 from the provided SBDH data. The payload is not touched.
+     *
+     * @param aSBDH
+     *        The SBDH to take the metadata from. May not be <code>null</code>.
+     * @return this for chaining
+     * @throws IllegalArgumentException
+     *         If the provided SBDH data is incomplete.
+     */
+    @NonNull
+    private PeppolUserMessageSBDHBuilder _applyMetadata (@NonNull final PeppolSBDHData aSBDH)
+    {
+      // Check with logging
+      if (!aSBDH.areAllFieldsSet (true))
+        throw new IllegalArgumentException ("The provided Peppol SBDH data is incomplete. See logs for details.");
+
+      return senderParticipantID (aSBDH.getSenderAsIdentifier ()).receiverParticipantID (aSBDH.getReceiverAsIdentifier ())
+                                                                 .documentTypeID (aSBDH.getDocumentTypeAsIdentifier ())
+                                                                 .processID (aSBDH.getProcessAsIdentifier ())
+                                                                 .countryC1 (aSBDH.getCountryC1 ());
+    }
+
+    /**
      * Set the payload, the sender participant ID, the receiver participant ID, the document type ID
-     * and the process ID.
+     * and the process ID.<br>
+     * Note: the SBDH is recreated from the provided data, so that everything that is not covered by
+     * {@link PeppolSBDHData} is lost. If you already have the SBDH as a byte array, use
+     * {@link #payloadAndMetadata(byte[])} instead, as it retains the original bytes.
      *
      * @param aSBDH
      *        The SBDH to use. May not be <code>null</code>.
      * @return this for chaining
      * @since 0.10.2
      * @see #payload(byte[])
+     * @see #payloadAndMetadata(byte[])
      * @see #senderParticipantID(IParticipantIdentifier)
      * @see #receiverParticipantID(IParticipantIdentifier)
      * @see #documentTypeID(IDocumentTypeIdentifier)
@@ -1827,16 +1868,62 @@ public final class Phase4PeppolSender
     {
       ValueEnforcer.notNull (aSBDH, "SBDH");
 
-      // Check with logging
-      if (!aSBDH.areAllFieldsSet (true))
-        throw new IllegalArgumentException ("The provided Peppol SBDH data is incomplete. See logs for details.");
-
       final StandardBusinessDocument aJaxbSbdh = new PeppolSBDHDataWriter ().createStandardBusinessDocument (aSBDH);
-      return senderParticipantID (aSBDH.getSenderAsIdentifier ()).receiverParticipantID (aSBDH.getReceiverAsIdentifier ())
-                                                                 .documentTypeID (aSBDH.getDocumentTypeAsIdentifier ())
-                                                                 .processID (aSBDH.getProcessAsIdentifier ())
-                                                                 .countryC1 (aSBDH.getCountryC1 ())
-                                                                 .payload (new SBDMarshaller ().getAsBytes (aJaxbSbdh));
+      return _applyMetadata (aSBDH).payload (new SBDMarshaller ().getAsBytes (aJaxbSbdh));
+    }
+
+    /**
+     * Set the payload from the provided SBDH bytes and additionally extract the sender participant
+     * ID, the receiver participant ID, the document type ID, the process ID and the country C1 from
+     * it. Contrary to {@link #payloadAndMetadata(PeppolSBDHData)} the provided bytes are sent out
+     * unaltered - the parsing only takes place to determine the metadata. That avoids the "parse and
+     * recreate" round trip and ensures, that SBDH content that is not covered by
+     * {@link PeppolSBDHData} is retained.<br>
+     * This method uses a default {@link PeppolSBDHDataReader} with all value checks enabled.
+     *
+     * @param aSBDHBytes
+     *        The SBDH bytes to be used. May not be <code>null</code>.
+     * @return this for chaining
+     * @throws PeppolSBDHDataReadException
+     *         If the provided bytes are not a valid Peppol SBDH.
+     * @since 4.6.0
+     * @see #payloadAndMetadata(byte[], PeppolSBDHDataReader)
+     */
+    @NonNull
+    public PeppolUserMessageSBDHBuilder payloadAndMetadata (final byte @NonNull [] aSBDHBytes) throws PeppolSBDHDataReadException
+    {
+      return payloadAndMetadata (aSBDHBytes, new PeppolSBDHDataReader (IF));
+    }
+
+    /**
+     * Set the payload from the provided SBDH bytes and additionally extract the sender participant
+     * ID, the receiver participant ID, the document type ID, the process ID and the country C1 from
+     * it, using the provided reader. Contrary to {@link #payloadAndMetadata(PeppolSBDHData)} the
+     * provided bytes are sent out unaltered - the parsing only takes place to determine the
+     * metadata. That avoids the "parse and recreate" round trip and ensures, that SBDH content that
+     * is not covered by {@link PeppolSBDHData} is retained.
+     *
+     * @param aSBDHBytes
+     *        The SBDH bytes to be used. May not be <code>null</code>.
+     * @param aSBDHReader
+     *        The reader to be used to extract the metadata. Allows e.g. to disable the value checks.
+     *        May not be <code>null</code>.
+     * @return this for chaining
+     * @throws PeppolSBDHDataReadException
+     *         If the provided bytes are not a valid Peppol SBDH.
+     * @since 4.6.0
+     */
+    @NonNull
+    public PeppolUserMessageSBDHBuilder payloadAndMetadata (final byte @NonNull [] aSBDHBytes,
+                                                            @NonNull final PeppolSBDHDataReader aSBDHReader) throws PeppolSBDHDataReadException
+    {
+      ValueEnforcer.notNull (aSBDHBytes, "SBDHBytes");
+      ValueEnforcer.notNull (aSBDHReader, "SBDHReader");
+
+      // Parse only to get the metadata - the original bytes are sent as-is
+      final PeppolSBDHData aSBDH = aSBDHReader.extractData (new NonBlockingByteArrayInputStream (aSBDHBytes));
+
+      return _applyMetadata (aSBDH).payload (aSBDHBytes);
     }
 
     @Override
