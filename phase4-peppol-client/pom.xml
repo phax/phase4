@@ -79,6 +79,11 @@
     </dependency>
     <dependency>
       <groupId>com.helger.phive.rules</groupId>
+      <artifactId>phive-rules-en16931</artifactId>
+      <version>${phive-rules.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.phive.rules</groupId>
       <artifactId>phive-rules-peppol</artifactId>
       <version>${phive-rules.version}</version>
     </dependency>
