@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.crypto;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -32,12 +33,16 @@ import com.helger.base.string.StringHelper;
 public final class ECryptoAlgorithmCryptTest
 {
   @Test
+  @SuppressWarnings ("deprecation")
   public void testBasic ()
   {
     for (final ECryptoAlgorithmCrypt e : ECryptoAlgorithmCrypt.values ())
     {
       assertTrue (StringHelper.isNotEmpty (e.getID ()));
+      assertTrue (StringHelper.isNotEmpty (e.getOIDString ()));
       assertNotNull (e.getOID ());
+      assertEquals (e.getOIDString (), e.getOID ().getId ());
+      assertSame (e.getOID (), e.getOID ());
       assertTrue (StringHelper.isNotEmpty (e.getAlgorithmURI ()));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrNull (e.getID ()));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrDefault (e.getID (), null));

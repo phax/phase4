@@ -63,6 +63,9 @@
     <dependency>
       <groupId>com.helger.commons</groupId>
       <artifactId>ph-bc</artifactId>
+      <!-- Optional for normal AS4 use. Required for the deprecated BC-based OID API and for
+           reflection/AOT tools that eagerly resolve all method descriptors. -->
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>com.helger.commons</groupId>
