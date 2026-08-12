@@ -107,6 +107,12 @@
     <dependency>
       <groupId>com.helger.masterdata</groupId>
       <artifactId>ph-tenancy</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.helger.masterdata</groupId>
+          <artifactId>ph-masterdata</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.helger.schedule</groupId>
