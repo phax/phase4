@@ -123,6 +123,12 @@
     <dependency>
       <groupId>com.helger.photon</groupId>
       <artifactId>ph-oton-security</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.helger.masterdata</groupId>
+          <artifactId>ph-tenancy-accarea</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
