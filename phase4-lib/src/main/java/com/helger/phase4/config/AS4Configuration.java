@@ -24,6 +24,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
+import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.concurrent.GuardedBy;
 import com.helger.base.CGlobal;
 import com.helger.base.concurrent.SimpleReadWriteLock;
@@ -94,6 +95,62 @@ public final class AS4Configuration
    * @since 4.6.0
    */
   public static final int MIN_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES = CGlobal.BYTES_PER_KILOBYTE;
+
+  /**
+   * The long property for the maximum size of a single incoming message, in bytes. A value &lt; 0
+   * disables the check.
+   *
+   * @since 4.6.0
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_MAX_MESSAGE_SIZE_BYTES = "phase4.incoming.maxmessagesize.bytes";
+  public static final long DEFAULT_PHASE4_INCOMING_MAX_MESSAGE_SIZE_BYTES = CGlobal.BYTES_PER_GIGABYTE;
+
+  /**
+   * The int property for the maximum number of attachments of a single incoming message. A value
+   * &lt; 0 disables the check.
+   *
+   * @since 4.6.0
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_MAX_ATTACHMENT_COUNT = "phase4.incoming.maxattachmentcount";
+  public static final int DEFAULT_PHASE4_INCOMING_MAX_ATTACHMENT_COUNT = 100;
+
+  /**
+   * The long property for the maximum size of a single incoming attachment, in bytes. This limit is
+   * applied to the data as received - see
+   * {@link #PROPERTY_PHASE4_INCOMING_ATTACHMENT_MAX_DECOMPRESSED_SIZE_BYTES} for the decompressed
+   * content. A value &lt; 0 disables the check.
+   *
+   * @since 4.6.0
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_ATTACHMENT_MAX_SIZE_BYTES = "phase4.incoming.attachment.maxsize.bytes";
+  public static final long DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_SIZE_BYTES = CGlobal.BYTES_PER_GIGABYTE;
+
+  /**
+   * The long property for the maximum size of the decompressed content of a single incoming
+   * attachment, in bytes. A value &lt; 0 disables the check.
+   *
+   * @since 4.6.0
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_ATTACHMENT_MAX_DECOMPRESSED_SIZE_BYTES = "phase4.incoming.attachment.maxdecompressedsize.bytes";
+  public static final long DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_DECOMPRESSED_SIZE_BYTES = CGlobal.BYTES_PER_GIGABYTE;
+
+  /**
+   * The long property for the maximum ratio of decompressed to compressed bytes of a single
+   * incoming attachment. A value &lt; 0 disables the check.
+   *
+   * @since 4.6.0
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_ATTACHMENT_MAX_COMPRESSION_RATIO = "phase4.incoming.attachment.maxcompressionratio";
+  public static final long DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_COMPRESSION_RATIO = 1000;
+
+  /**
+   * The boolean property that defines, if the signature of an incoming message must cover all
+   * relevant message parts (the ebMS Messaging header, the SOAP Body and all attachments) or not.
+   *
+   * @since 4.6.0
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE = "phase4.incoming.signature.requirefullcoverage";
+  public static final boolean DEFAULT_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE = true;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Configuration.class);
 
@@ -424,5 +481,83 @@ public final class AS4Configuration
       return DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES;
     }
     return nConfiguredValue;
+  }
+
+  /**
+   * @return The maximum size of a single incoming message, in bytes. Defaults to
+   *         {@link #DEFAULT_PHASE4_INCOMING_MAX_MESSAGE_SIZE_BYTES}. A value &lt; 0 means "no
+   *         limit".
+   * @since 4.6.0
+   */
+  @CheckForSigned
+  public static long getIncomingMaxMessageSizeBytes ()
+  {
+    return getConfig ().getAsLong (PROPERTY_PHASE4_INCOMING_MAX_MESSAGE_SIZE_BYTES,
+                                   DEFAULT_PHASE4_INCOMING_MAX_MESSAGE_SIZE_BYTES);
+  }
+
+  /**
+   * @return The maximum number of attachments of a single incoming message. Defaults to
+   *         {@value #DEFAULT_PHASE4_INCOMING_MAX_ATTACHMENT_COUNT}. A value &lt; 0 means "no
+   *         limit".
+   * @since 4.6.0
+   */
+  @CheckForSigned
+  public static int getIncomingMaxAttachmentCount ()
+  {
+    return getConfig ().getAsInt (PROPERTY_PHASE4_INCOMING_MAX_ATTACHMENT_COUNT,
+                                  DEFAULT_PHASE4_INCOMING_MAX_ATTACHMENT_COUNT);
+  }
+
+  /**
+   * @return The maximum size of a single incoming attachment, in bytes, as received. Defaults to
+   *         {@link #DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_SIZE_BYTES}. A value &lt; 0 means "no
+   *         limit".
+   * @since 4.6.0
+   */
+  @CheckForSigned
+  public static long getIncomingAttachmentMaxSizeBytes ()
+  {
+    return getConfig ().getAsLong (PROPERTY_PHASE4_INCOMING_ATTACHMENT_MAX_SIZE_BYTES,
+                                   DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_SIZE_BYTES);
+  }
+
+  /**
+   * @return The maximum size of the decompressed content of a single incoming attachment, in bytes.
+   *         Defaults to {@link #DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_DECOMPRESSED_SIZE_BYTES}. A
+   *         value &lt; 0 means "no limit".
+   * @since 4.6.0
+   */
+  @CheckForSigned
+  public static long getIncomingAttachmentMaxDecompressedSizeBytes ()
+  {
+    return getConfig ().getAsLong (PROPERTY_PHASE4_INCOMING_ATTACHMENT_MAX_DECOMPRESSED_SIZE_BYTES,
+                                   DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_DECOMPRESSED_SIZE_BYTES);
+  }
+
+  /**
+   * @return The maximum ratio of decompressed to compressed bytes of a single incoming attachment.
+   *         Defaults to {@value #DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_COMPRESSION_RATIO}. A value
+   *         &lt; 0 means "no limit".
+   * @since 4.6.0
+   */
+  @CheckForSigned
+  public static long getIncomingAttachmentMaxCompressionRatio ()
+  {
+    return getConfig ().getAsLong (PROPERTY_PHASE4_INCOMING_ATTACHMENT_MAX_COMPRESSION_RATIO,
+                                   DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_COMPRESSION_RATIO);
+  }
+
+  /**
+   * @return <code>true</code> if the signature of an incoming message must cover the ebMS Messaging
+   *         header, the SOAP Body and all attachments, <code>false</code> if an incomplete
+   *         signature coverage should only be logged. Defaults to
+   *         {@value #DEFAULT_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE}.
+   * @since 4.6.0
+   */
+  public static boolean isIncomingSignatureRequireFullCoverage ()
+  {
+    return getConfig ().getAsBoolean (PROPERTY_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE,
+                                      DEFAULT_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE);
   }
 }

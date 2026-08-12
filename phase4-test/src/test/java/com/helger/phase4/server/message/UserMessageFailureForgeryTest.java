@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.wss4j.dom.message.WSSecSignature;
 import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +42,7 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4SigningParams;
+import com.helger.phase4.crypto.IWSSecSignatureCustomizer;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
@@ -178,6 +180,80 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     sendMimeMessageExpectError (HttpMimeMessageEntity.create (aMimeMsg),
                                 EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
+
+  /**
+   * The signature must cover all attachments. A message that is correctly signed, but whose
+   * signature does not reference the attachment at all, must be rejected. See issue #318.
+   *
+   * @throws Exception
+   *         on error
+   */
+  @Test
+  public void testAttachmentNotCoveredBySignatureShouldFail () throws Exception
+  {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
+
+    // Create the UserMessage including the PartInfo for the attachment, but
+    // sign it as if there were no attachments at all - so no "cid:Attachments"
+    // part is part of the signature
+    final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments);
+    final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
+                                                         aMsg.getAsSoapDocument (),
+                                                         m_eSoapVersion,
+                                                         aMsg.getMessagingID (),
+                                                         null,
+                                                         s_aResMgr,
+                                                         false,
+                                                         AS4SigningParams.createDefault ());
+
+    final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
+    sendMimeMessageExpectError (HttpMimeMessageEntity.create (aMimeMsg),
+                                EEbmsError.EBMS_POLICY_NONCOMPLIANCE.getErrorCode ());
+  }
+
+  /**
+   * The signature must cover the ebMS Messaging header element. A cryptographically perfectly
+   * valid signature that simply omits the Messaging element must be rejected. See issue #318.
+   *
+   * @throws Exception
+   *         on error
+   */
+  @Test
+  public void testMessagingNotCoveredBySignatureShouldFail () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+
+    final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null);
+
+    // Remove the ID based ebMS Messaging part from the list of signed parts, so
+    // that the signature only covers the SOAP Body
+    final AS4SigningParams aSigningParams = AS4SigningParams.createDefault ()
+                                                            .setWSSecSignatureCustomizer (new IWSSecSignatureCustomizer ()
+                                                            {
+                                                              @Override
+                                                              public void customize (@NonNull final WSSecSignature aWSSecSignature)
+                                                              {
+                                                                aWSSecSignature.getParts ()
+                                                                               .removeIf (x -> x.getName () == null);
+                                                              }
+                                                            });
+
+    final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
+                                                         aMsg.getAsSoapDocument (aPayload),
+                                                         m_eSoapVersion,
+                                                         aMsg.getMessagingID (),
+                                                         null,
+                                                         s_aResMgr,
+                                                         false,
+                                                         aSigningParams);
+
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 EEbmsError.EBMS_POLICY_NONCOMPLIANCE.getErrorCode ());
   }
 
   // Encryption

@@ -26,15 +26,20 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.Nonnegative;
 import com.helger.annotation.WillNotClose;
 import com.helger.annotation.concurrent.NotThreadSafe;
+import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.enforce.ValueEnforcer;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsHashSet;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.collection.commons.ICommonsMap;
+import com.helger.collection.commons.ICommonsSet;
 import com.helger.datetime.xml.XMLOffsetDateTime;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -83,6 +88,8 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "phase4.pmode.effective.leg.number";
   private static final String KEY_WSS4J_SECURITY_ACTIONS = "phase4.soap.wss4j-security-actions";
   private static final String KEY_WSS4J_EXCEPTION = "phase4.soap.wss4j-exception";
+  private static final String KEY_SIGNED_ELEMENTS = "phase4.soap.signed.elements";
+  private static final String KEY_SIGNED_ATTACHMENT_IDS = "phase4.soap.signed.attachment.ids";
   private static final String KEY_PHASE4_PROFILE = "phase4.profile";
   private static final String KEY_AS4_MESSAGE_ID = "phase4.message.id";
   private static final String KEY_AS4_REF_TO_MESSAGE_ID = "phase4.ref.to.message.id";
@@ -337,6 +344,42 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   public boolean isSoapDecrypted ()
   {
     return (getSoapWSS4JSecurityActions () & WSConstants.ENCR) == WSConstants.ENCR;
+  }
+
+  @NonNull
+  @ReturnsMutableCopy
+  public ICommonsList <Element> getAllSignedElements ()
+  {
+    final ICommonsList <Element> aList = getCastedValue (KEY_SIGNED_ELEMENTS);
+    return aList == null ? new CommonsArrayList <> () : aList.getClone ();
+  }
+
+  @NonNull
+  @ReturnsMutableCopy
+  public ICommonsSet <String> getAllSignedAttachmentIDs ()
+  {
+    final ICommonsSet <String> aSet = getCastedValue (KEY_SIGNED_ATTACHMENT_IDS);
+    return aSet == null ? new CommonsHashSet <> () : aSet.getClone ();
+  }
+
+  /**
+   * Remember all elements and all attachment IDs that are covered by the signature of the incoming
+   * message. See issue #318.
+   *
+   * @param aSignedElements
+   *        All signed DOM elements. May not be <code>null</code> but empty.
+   * @param aSignedAttachmentIDs
+   *        The IDs of all signed attachments, without the leading <code>cid:</code> prefix. May not
+   *        be <code>null</code> but empty.
+   * @since 4.6.0
+   */
+  public void setSignatureCoverage (@NonNull final ICommonsList <Element> aSignedElements,
+                                    @NonNull final ICommonsSet <String> aSignedAttachmentIDs)
+  {
+    ValueEnforcer.notNull (aSignedElements, "SignedElements");
+    ValueEnforcer.notNull (aSignedAttachmentIDs, "SignedAttachmentIDs");
+    putIn (KEY_SIGNED_ELEMENTS, aSignedElements);
+    putIn (KEY_SIGNED_ATTACHMENT_IDS, aSignedAttachmentIDs);
   }
 
   @Nullable

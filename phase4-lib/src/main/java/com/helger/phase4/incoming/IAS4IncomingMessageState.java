@@ -24,13 +24,16 @@ import org.apache.wss4j.dom.str.STRParser;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.Nonnegative;
+import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.collection.commons.ICommonsMap;
+import com.helger.collection.commons.ICommonsSet;
 import com.helger.datetime.xml.XMLOffsetDateTime;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -443,6 +446,65 @@ public interface IAS4IncomingMessageState
    * @return <code>true</code> if the incoming message was decrypted, <code>false</code> otherwise.
    */
   boolean isSoapDecrypted ();
+
+  /**
+   * Get the list of all elements that are effectively covered by the signature of the incoming
+   * message. This is the base for the signature coverage check that prevents XML signature wrapping
+   * attacks. See issue #318.
+   *
+   * @return A list of all signed DOM elements. Never <code>null</code> but empty, if the incoming
+   *         message was not signed.
+   * @see #isSoapSignatureChecked()
+   * @since 4.6.0
+   */
+  @NonNull
+  @ReturnsMutableCopy
+  ICommonsList <Element> getAllSignedElements ();
+
+  /**
+   * Get the IDs of all attachments that are effectively covered by the signature of the incoming
+   * message. The IDs are provided without the leading <code>cid:</code> prefix. See issue #318.
+   *
+   * @return A set of all signed attachment IDs. Never <code>null</code> but empty, if the incoming
+   *         message was not signed or contains no attachments.
+   * @see #isSoapSignatureChecked()
+   * @since 4.6.0
+   */
+  @NonNull
+  @ReturnsMutableCopy
+  ICommonsSet <String> getAllSignedAttachmentIDs ();
+
+  /**
+   * Check if the provided DOM element is covered by the signature of the incoming message. The
+   * check is based on object identity, so that a semantically equal but different element - as it
+   * is used in XML signature wrapping attacks - is not accepted.
+   *
+   * @param aElement
+   *        The element to check. May be <code>null</code>.
+   * @return <code>true</code> if the provided element is not <code>null</code> and covered by the
+   *         signature, <code>false</code> otherwise.
+   * @since 4.6.0
+   */
+  default boolean isElementSigned (@Nullable final Element aElement)
+  {
+    return aElement != null && getAllSignedElements ().containsAny (x -> x == aElement);
+  }
+
+  /**
+   * Check if the attachment with the provided ID is covered by the signature of the incoming
+   * message.
+   *
+   * @param sAttachmentID
+   *        The attachment ID to check, without the leading <code>cid:</code> prefix. May be
+   *        <code>null</code>.
+   * @return <code>true</code> if the provided attachment ID is neither <code>null</code> nor empty
+   *         and covered by the signature, <code>false</code> otherwise.
+   * @since 4.6.0
+   */
+  default boolean isAttachmentSigned (@Nullable final String sAttachmentID)
+  {
+    return StringHelper.isNotEmpty (sAttachmentID) && getAllSignedAttachmentIDs ().contains (sAttachmentID);
+  }
 
   /**
    * @return An Exception that occurred during processing the incoming SOAP WS-Security handler. If

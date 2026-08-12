@@ -48,6 +48,7 @@ import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.spi.ServiceLoaderHelper;
 import com.helger.base.state.ESuccess;
 import com.helger.base.string.StringHelper;
+import com.helger.base.string.StringImplode;
 import com.helger.base.wrapper.Wrapper;
 import com.helger.collection.CollectionFind;
 import com.helger.collection.commons.CommonsArrayList;
@@ -61,8 +62,12 @@ import com.helger.http.header.HttpHeaderMap;
 import com.helger.io.file.FileHelper;
 import com.helger.mime.IMimeType;
 import com.helger.mime.parse.MimeTypeParser;
+import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
+import com.helger.phase4.attachment.AS4DecompressLimitInputStream;
 import com.helger.phase4.attachment.AS4IncomingMimePart;
+import com.helger.phase4.attachment.AS4SizeLimitException;
+import com.helger.phase4.attachment.AS4SizeLimitedInputStream;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -234,232 +239,276 @@ public final class AS4IncomingHandler
 
       final ErrorList aXSDErrorList = new ErrorList ();
 
-      if (aPlainContentType.equals (AS4RequestHandler.MT_MULTIPART_RELATED))
+      // Limit the overall size of the incoming message (see issue #318)
+      try (final AS4SizeLimitedInputStream aLimitedPayloadIS = new AS4SizeLimitedInputStream (aPayloadIS,
+                                                                                              "The incoming message",
+                                                                                              AS4Configuration.getIncomingMaxMessageSizeBytes ()))
       {
-        // MIME message
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Received MIME message");
-
-        final String sBoundary = aContentType.getParameterValueWithName ("boundary");
-        if (StringHelper.isEmpty (sBoundary))
-          throw new Phase4IncomingException ("Content-Type '" + sContentType + "' misses 'boundary' parameter")
-                                                                                                               .setRetryFeasible (false);
-
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("MIME Boundary: '" + sBoundary + "'");
-
-        // Ensure the stream gets closed correctly
-        // This methods opens the stream for the incoming dump
-        // Note: This closes the incoming dump stream, when InputStream is
-        // closed
-        try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
-                                                                                            aPayloadIS,
-                                                                                            aIncomingMessageMetadata,
-                                                                                            aHttpHeaders,
-                                                                                            aDumpOSHolder))
+        if (aPlainContentType.equals (AS4RequestHandler.MT_MULTIPART_RELATED))
         {
-          // PARSING MIME Message via MultipartStream
-          final MultipartStream aMulti = new MultipartStream (aRequestIS,
-                                                              sBoundary.getBytes (StandardCharsets.ISO_8859_1),
-                                                              (MultipartProgressNotifier) null);
-          final int nMaxPartHeaderSizeBytes = AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ();
+          // MIME message
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Received MIME message");
 
-          int nIndex = 0;
-          while (true)
-          {
-            final boolean bHasNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
-            if (!bHasNextPart)
-              break;
+          final String sBoundary = aContentType.getParameterValueWithName ("boundary");
+          if (StringHelper.isEmpty (sBoundary))
+            throw new Phase4IncomingException ("Content-Type '" + sContentType + "' misses 'boundary' parameter")
+                                                                                                                 .setRetryFeasible (false);
 
-            if (LOGGER.isDebugEnabled ())
-              LOGGER.debug ("Found MIME part #" + nIndex);
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("MIME Boundary: '" + sBoundary + "'");
 
-            try (final MultipartItemInputStream aBodyPartIS = aMulti.createInputStream ())
-            {
-              // Read the headers only - the content stays on the stream and is
-              // consumed in a streaming way (see issue #382)
-              final AS4IncomingMimePart aMimePart = AS4IncomingMimePart.parse (aBodyPartIS, nMaxPartHeaderSizeBytes);
-
-              if (nIndex == 0)
-              {
-                // First MIME part -> SOAP document
-                if (LOGGER.isDebugEnabled ())
-                  LOGGER.debug ("Parsing first MIME part as SOAP document");
-
-                // Read SOAP document
-                aSoapDocument = DOMReader.readXMLDOM (aMimePart.getDecodedContentStream (),
-                                                      new DOMReaderSettings ().setErrorHandler (new WrappedCollectingSAXErrorHandler (aXSDErrorList)));
-
-                IMimeType aPlainPartMT = MimeTypeParser.safeParseMimeType (aMimePart.getContentType ());
-                if (aPlainPartMT != null)
-                  aPlainPartMT = aPlainPartMT.getCopyWithoutParameters ();
-
-                // Determine SOAP version from MIME part content type
-                eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainPartMT);
-                if (eSoapVersion != null && LOGGER.isDebugEnabled ())
-                  LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from Content-Type");
-
-                if (eSoapVersion == null && aSoapDocument != null)
-                {
-                  // Determine SOAP version from the read document
-                  final String sNamespaceURI = XMLHelper.getNamespaceURI (aSoapDocument);
-                  eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (sNamespaceURI);
-                  if (eSoapVersion != null)
-                  {
-                    if (LOGGER.isDebugEnabled ())
-                      LOGGER.debug ("Determined SOAP version " +
-                                    eSoapVersion +
-                                    " from XML root element namespace URI '" +
-                                    sNamespaceURI +
-                                    "'");
-                  }
-                  else
-                    LOGGER.warn ("Failed to determine SOAP version from XML root element namespace URI '" +
-                                 sNamespaceURI +
-                                 "'");
-                }
-              }
-              else
-              {
-                // MIME Attachment (index is gt 0)
-                if (LOGGER.isDebugEnabled ())
-                  LOGGER.debug ("Parsing MIME part #" + nIndex + " as attachment");
-
-                final WSS4JAttachment aAttachment = aIAF.createAttachment (aMimePart, aResHelper);
-                aIncomingAttachments.add (aAttachment);
-              }
-            }
-            catch (final MessagingException ex)
-            {
-              // Happens e.g. if the header section of the MIME part exceeds the
-              // configured maximum size or if an unknown
-              // Content-Transfer-Encoding is used. This is a problem of the
-              // message itself, so retrying is pointless (see issue #382)
-              throw new Phase4IncomingException ("Failed to parse MIME part #" + nIndex, ex).setHttpStatusCode (CHttp.HTTP_BAD_REQUEST)
-                                                                                            .setRetryFeasible (false);
-            }
-            nIndex++;
-          }
-        }
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Read MIME message with " + aIncomingAttachments.size () + " attachment(s)");
-      }
-      else
-      {
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Received plain message");
-
-        // Expect plain SOAP - read whole request to DOM
-        // This methods opens the stream for the incoming dump
-        // Note: this may require a huge amount of memory for large requests
-        // Note: This closes the incoming dump stream, when InputStream is
-        // closed
-        aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
-                                                                                              aPayloadIS,
+          // Ensure the stream gets closed correctly
+          // This methods opens the stream for the incoming dump
+          // Note: This closes the incoming dump stream, when InputStream is
+          // closed
+          try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
+                                                                                              aLimitedPayloadIS,
                                                                                               aIncomingMessageMetadata,
                                                                                               aHttpHeaders,
-                                                                                              aDumpOSHolder),
-                                              new DOMReaderSettings ().setErrorHandler (new WrappedCollectingSAXErrorHandler (aXSDErrorList)));
-
-        if (LOGGER.isDebugEnabled ())
-        {
-          if (aSoapDocument != null)
-            LOGGER.debug ("Successfully parsed payload as XML");
-          else
-            LOGGER.debug ("Failed to parse payload as XML");
-        }
-
-        if (aSoapDocument != null)
-        {
-          // Determine SOAP version from the read document
-          final String sNamespaceURI = XMLHelper.getNamespaceURI (aSoapDocument);
-          eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (sNamespaceURI);
-          if (eSoapVersion != null)
+                                                                                              aDumpOSHolder))
           {
-            if (LOGGER.isDebugEnabled ())
-              LOGGER.debug ("Determined SOAP version " +
-                            eSoapVersion +
-                            " from XML root element namespace URI '" +
-                            sNamespaceURI +
-                            "'");
+            // PARSING MIME Message via MultipartStream
+            final MultipartStream aMulti = new MultipartStream (aRequestIS,
+                                                                sBoundary.getBytes (StandardCharsets.ISO_8859_1),
+                                                                (MultipartProgressNotifier) null);
+            final int nMaxPartHeaderSizeBytes = AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ();
+            final int nMaxAttachmentCount = AS4Configuration.getIncomingMaxAttachmentCount ();
+            final long nMaxAttachmentSizeBytes = AS4Configuration.getIncomingAttachmentMaxSizeBytes ();
+
+            int nIndex = 0;
+            while (true)
+            {
+              final boolean bHasNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
+              if (!bHasNextPart)
+                break;
+
+              if (LOGGER.isDebugEnabled ())
+                LOGGER.debug ("Found MIME part #" + nIndex);
+
+              // MIME part #0 is the SOAP document - all others are attachments
+              // (see issue #318)
+              if (nMaxAttachmentCount >= 0 && nIndex > nMaxAttachmentCount)
+                throw new AS4SizeLimitException ("The incoming message contains more than the maximum allowed number of " +
+                                                 nMaxAttachmentCount +
+                                                 " attachments");
+
+              try (final MultipartItemInputStream aBodyPartIS = aMulti.createInputStream ())
+              {
+                // Limit the size of a single attachment (see issue #318)
+                final InputStream aPartIS = nIndex == 0 ? aBodyPartIS
+                                                        : new AS4SizeLimitedInputStream (aBodyPartIS,
+                                                                                         "The incoming attachment #" +
+                                                                                                      nIndex,
+                                                                                         nMaxAttachmentSizeBytes);
+
+                // Read the headers only - the content stays on the stream and is
+                // consumed in a streaming way (see issue #382)
+                final AS4IncomingMimePart aMimePart = AS4IncomingMimePart.parse (aPartIS, nMaxPartHeaderSizeBytes);
+
+                if (nIndex == 0)
+                {
+                  // First MIME part -> SOAP document
+                  if (LOGGER.isDebugEnabled ())
+                    LOGGER.debug ("Parsing first MIME part as SOAP document");
+
+                  // Read SOAP document
+                  aSoapDocument = DOMReader.readXMLDOM (aMimePart.getDecodedContentStream (),
+                                                        new DOMReaderSettings ().setErrorHandler (new WrappedCollectingSAXErrorHandler (aXSDErrorList)));
+
+                  IMimeType aPlainPartMT = MimeTypeParser.safeParseMimeType (aMimePart.getContentType ());
+                  if (aPlainPartMT != null)
+                    aPlainPartMT = aPlainPartMT.getCopyWithoutParameters ();
+
+                  // Determine SOAP version from MIME part content type
+                  eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainPartMT);
+                  if (eSoapVersion != null && LOGGER.isDebugEnabled ())
+                    LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from Content-Type");
+
+                  if (eSoapVersion == null && aSoapDocument != null)
+                  {
+                    // Determine SOAP version from the read document
+                    final String sNamespaceURI = XMLHelper.getNamespaceURI (aSoapDocument);
+                    eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (sNamespaceURI);
+                    if (eSoapVersion != null)
+                    {
+                      if (LOGGER.isDebugEnabled ())
+                        LOGGER.debug ("Determined SOAP version " +
+                                      eSoapVersion +
+                                      " from XML root element namespace URI '" +
+                                      sNamespaceURI +
+                                      "'");
+                    }
+                    else
+                      LOGGER.warn ("Failed to determine SOAP version from XML root element namespace URI '" +
+                                   sNamespaceURI +
+                                   "'");
+                  }
+                }
+                else
+                {
+                  // MIME Attachment (index is gt 0)
+                  if (LOGGER.isDebugEnabled ())
+                    LOGGER.debug ("Parsing MIME part #" + nIndex + " as attachment");
+
+                  final WSS4JAttachment aAttachment = aIAF.createAttachment (aMimePart, aResHelper);
+                  aIncomingAttachments.add (aAttachment);
+                }
+              }
+              catch (final MessagingException ex)
+              {
+                // Happens e.g. if the header section of the MIME part exceeds the
+                // configured maximum size or if an unknown
+                // Content-Transfer-Encoding is used. This is a problem of the
+                // message itself, so retrying is pointless (see issue #382)
+                throw new Phase4IncomingException ("Failed to parse MIME part #" + nIndex, ex).setHttpStatusCode (
+                                                                                                                  CHttp.HTTP_BAD_REQUEST)
+                                                                                              .setRetryFeasible (false);
+              }
+              nIndex++;
+            }
           }
-          else
-            LOGGER.warn ("Failed to determine SOAP version from XML root element namespace URI '" +
-                         sNamespaceURI +
-                         "'");
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Read MIME message with " + aIncomingAttachments.size () + " attachment(s)");
         }
-
-        if (eSoapVersion == null)
-        {
-          // Determine SOAP version from content type
-          eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainContentType);
-          if (eSoapVersion != null)
-          {
-            if (LOGGER.isDebugEnabled ())
-              LOGGER.debug ("Determined SOAP version " +
-                            eSoapVersion +
-                            " from Content-Type '" +
-                            aPlainContentType.getAsString () +
-                            "'");
-          }
-          else
-            LOGGER.warn ("Failed to determine SOAP version from Content-Type '" +
-                         aPlainContentType.getAsString () +
-                         "'");
-        }
-      }
-
-      if (aSoapDocument == null || aXSDErrorList.containsAtLeastOneError ())
-      {
-        // We don't have a SOAP document
-        final StringBuilder aErrorMessage = new StringBuilder ();
-        aErrorMessage.append (eSoapVersion == null ? "Failed to parse incoming message as XML!"
-                                                   : "Failed to parse incoming SOAP " +
-                                                     eSoapVersion.getVersion () +
-                                                     " document!");
-        if (aXSDErrorList.isNotEmpty ())
-        {
-          aErrorMessage.append (" Technical details:");
-          for (final IError aError : aXSDErrorList)
-            aErrorMessage.append ('\n').append (aError.getAsStringLocaleIndepdent ());
-        }
-
-        // Don't throw an exception, so that a custom response status code can be returned
-        if (false)
-          throw new Phase4IncomingException (aErrorMessage.toString ()).setRetryFeasible (false);
-
-        // If this is the response to an outgoing message and the peer used a
-        // non-success HTTP status code, an unparseable body is most likely an
-        // infrastructure error page (e.g. from a load balancer or reverse proxy)
-        // rather than an AS4 protocol violation - log it as a warning only (see
-        // issue #378)
-        if (_isNonSuccessHttpResponse (aIncomingMessageMetadata))
-          LOGGER.warn (aErrorMessage.toString ());
         else
-          LOGGER.error (aErrorMessage.toString ());
-      }
-      else
-        if (eSoapVersion == null)
         {
-          // We're missing a SOAP version
-          final String sMsg = "Failed to determine SOAP version of XML document!";
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Received plain message");
+
+          // Expect plain SOAP - read whole request to DOM
+          // This methods opens the stream for the incoming dump
+          // Note: this may require a huge amount of memory for large requests
+          // Note: This closes the incoming dump stream, when InputStream is
+          // closed
+          aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
+                                                                                                aLimitedPayloadIS,
+                                                                                                aIncomingMessageMetadata,
+                                                                                                aHttpHeaders,
+                                                                                                aDumpOSHolder),
+                                                new DOMReaderSettings ().setErrorHandler (new WrappedCollectingSAXErrorHandler (aXSDErrorList)));
+
+          if (LOGGER.isDebugEnabled ())
+          {
+            if (aSoapDocument != null)
+              LOGGER.debug ("Successfully parsed payload as XML");
+            else
+              LOGGER.debug ("Failed to parse payload as XML");
+          }
+
+          if (aSoapDocument != null)
+          {
+            // Determine SOAP version from the read document
+            final String sNamespaceURI = XMLHelper.getNamespaceURI (aSoapDocument);
+            eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (sNamespaceURI);
+            if (eSoapVersion != null)
+            {
+              if (LOGGER.isDebugEnabled ())
+                LOGGER.debug ("Determined SOAP version " +
+                              eSoapVersion +
+                              " from XML root element namespace URI '" +
+                              sNamespaceURI +
+                              "'");
+            }
+            else
+              LOGGER.warn ("Failed to determine SOAP version from XML root element namespace URI '" +
+                           sNamespaceURI +
+                           "'");
+          }
+
+          if (eSoapVersion == null)
+          {
+            // Determine SOAP version from content type
+            eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainContentType);
+            if (eSoapVersion != null)
+            {
+              if (LOGGER.isDebugEnabled ())
+                LOGGER.debug ("Determined SOAP version " +
+                              eSoapVersion +
+                              " from Content-Type '" +
+                              aPlainContentType.getAsString () +
+                              "'");
+            }
+            else
+              LOGGER.warn ("Failed to determine SOAP version from Content-Type '" +
+                           aPlainContentType.getAsString () +
+                           "'");
+          }
+        }
+
+        // DOMReader silently swallows the exception thrown by the size limited
+        // stream, so the limit must be re-checked explicitly (see issue #318)
+        if (aLimitedPayloadIS.isLimitExceeded ())
+        {
+          throw new AS4SizeLimitException (aLimitedPayloadIS.getWhat () +
+                                           " exceeds the maximum allowed size of " +
+                                           aLimitedPayloadIS.getMaxBytes () +
+                                           " bytes");
+        }
+
+        if (aSoapDocument == null || aXSDErrorList.containsAtLeastOneError ())
+        {
+          // We don't have a SOAP document
+          final StringBuilder aErrorMessage = new StringBuilder ();
+          aErrorMessage.append (eSoapVersion == null ? "Failed to parse incoming message as XML!"
+                                                     : "Failed to parse incoming SOAP " +
+                                                       eSoapVersion.getVersion () +
+                                                       " document!");
+          if (aXSDErrorList.isNotEmpty ())
+          {
+            aErrorMessage.append (" Technical details:");
+            for (final IError aError : aXSDErrorList)
+              aErrorMessage.append ('\n').append (aError.getAsStringLocaleIndepdent ());
+          }
 
           // Don't throw an exception, so that a custom response status code can be returned
           if (false)
-            throw new Phase4IncomingException (sMsg).setRetryFeasible (false);
+            throw new Phase4IncomingException (aErrorMessage.toString ()).setRetryFeasible (false);
 
-          // See issue #378 - a non-success HTTP response body is most likely an
-          // infrastructure error page rather than a protocol violation
+          // If this is the response to an outgoing message and the peer used a
+          // non-success HTTP status code, an unparseable body is most likely an
+          // infrastructure error page (e.g. from a load balancer or reverse proxy)
+          // rather than an AS4 protocol violation - log it as a warning only (see
+          // issue #378)
           if (_isNonSuccessHttpResponse (aIncomingMessageMetadata))
-            LOGGER.warn (sMsg);
+            LOGGER.warn (aErrorMessage.toString ());
           else
-            LOGGER.error (sMsg);
+            LOGGER.error (aErrorMessage.toString ());
         }
         else
-        {
-          // Main processing of parsed message
-          aParsedMessageCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
-        }
+          if (eSoapVersion == null)
+          {
+            // We're missing a SOAP version
+            final String sMsg = "Failed to determine SOAP version of XML document!";
+
+            // Don't throw an exception, so that a custom response status code can be returned
+            if (false)
+              throw new Phase4IncomingException (sMsg).setRetryFeasible (false);
+
+            // See issue #378 - a non-success HTTP response body is most likely an
+            // infrastructure error page rather than a protocol violation
+            if (_isNonSuccessHttpResponse (aIncomingMessageMetadata))
+              LOGGER.warn (sMsg);
+            else
+              LOGGER.error (sMsg);
+          }
+          else
+          {
+            // Main processing of parsed message
+            aParsedMessageCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
+          }
+      }
+    }
+    catch (final AS4SizeLimitException ex)
+    {
+      // One of the configured size limits was exceeded. This is a problem of
+      // the message itself, so retrying is pointless (see issue #318)
+      final Phase4Exception aNewEx = new Phase4IncomingException (ex.getMessage (), ex).setHttpStatusCode (
+                                                                                                           CHttp.HTTP_BAD_REQUEST)
+                                                                                       .setRetryFeasible (false);
+      // Remember for callback
+      aCaughtException = aNewEx;
+      throw aNewEx;
     }
     catch (final Phase4Exception | IOException | MessagingException | WSSecurityException ex)
     {
@@ -621,6 +670,79 @@ public final class AS4IncomingHandler
   }
 
   /**
+   * Check if the signature of the incoming message really covers all relevant message parts - the
+   * ebMS Messaging header element, the SOAP Body element and all attachments. Without this check, a
+   * signature over an arbitrary other element would already be sufficient to let a message pass as
+   * "signed", which is the base for XML signature wrapping attacks. See issue #318.
+   *
+   * @param aSoapDocument
+   *        The SOAP document to check. May not be <code>null</code>.
+   * @param aIncomingAttachments
+   *        All incoming attachments as they were received. May not be <code>null</code> but empty.
+   * @param aIncomingState
+   *        The current message state. May not be <code>null</code>.
+   * @param aEbmsErrorMessagesTarget
+   *        The list of EBMS errors to be filled. May not be <code>null</code>.
+   */
+  private static void _checkSignatureCoverage (@NonNull final Document aSoapDocument,
+                                               @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                               @NonNull final AS4IncomingMessageState aIncomingState,
+                                               @NonNull final AS4ErrorList aEbmsErrorMessagesTarget)
+  {
+    final ESoapVersion eSoapVersion = aIncomingState.getSoapVersion ();
+    final Element aSoapEnvelope = aSoapDocument.getDocumentElement ();
+    final ICommonsList <String> aUncoveredParts = new CommonsArrayList <> ();
+
+    // The ebMS Messaging header element
+    final Element aSoapHeader = XMLHelper.getFirstChildElementOfName (aSoapEnvelope,
+                                                                      eSoapVersion.getNamespaceURI (),
+                                                                      eSoapVersion.getHeaderElementName ());
+    final Element aMessagingElement = aSoapHeader == null ? null
+                                                          : XMLHelper.getFirstChildElementOfName (aSoapHeader,
+                                                                                                  CAS4.EBMS_NS,
+                                                                                                  "Messaging");
+    if (!aIncomingState.isElementSigned (aMessagingElement))
+      aUncoveredParts.add ("the ebMS Messaging header element");
+
+    // The SOAP Body element
+    final Element aSoapBody = XMLHelper.getFirstChildElementOfName (aSoapEnvelope,
+                                                                    eSoapVersion.getNamespaceURI (),
+                                                                    eSoapVersion.getBodyElementName ());
+    if (!aIncomingState.isElementSigned (aSoapBody))
+      aUncoveredParts.add ("the SOAP Body element");
+
+    // All attachments
+    for (final WSS4JAttachment aAttachment : aIncomingAttachments)
+      if (!aIncomingState.isAttachmentSigned (aAttachment.getId ()))
+        aUncoveredParts.add ("the attachment with ID '" + aAttachment.getId () + "'");
+
+    if (aUncoveredParts.isEmpty ())
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("The signature of the incoming message covers all relevant message parts");
+      return;
+    }
+
+    final String sDetails = "The signature of the incoming message does not cover " +
+                            StringImplode.imploder ().source (aUncoveredParts).separator (", ").build ();
+    if (AS4Configuration.isIncomingSignatureRequireFullCoverage ())
+    {
+      LOGGER.error (sDetails + ". Rejecting the message.");
+      aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.errorBuilder (aIncomingState.getLocale ())
+                                                                        .refToMessageInError (aIncomingState.getMessageID ())
+                                                                        .errorDetail (sDetails)
+                                                                        .build ());
+    }
+    else
+    {
+      LOGGER.warn (sDetails +
+                   ". The message is processed anyway, because the configuration property '" +
+                   AS4Configuration.PROPERTY_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE +
+                   "' is disabled.");
+    }
+  }
+
+  /**
    * Create an input stream provider that can be read multiple times, by lazily copying the data of
    * the provided single-read input stream provider to a temporary file on first access.
    *
@@ -665,6 +787,9 @@ public final class AS4IncomingHandler
                                               @NonNull final Ebms3UserMessage aUserMessage,
                                               @NonNull final IAS4IncomingMessageState aIncomingState)
   {
+    final long nMaxDecompressedBytes = AS4Configuration.getIncomingAttachmentMaxDecompressedSizeBytes ();
+    final long nMaxCompressionRatio = AS4Configuration.getIncomingAttachmentMaxCompressionRatio ();
+
     // For all incoming attachments
     for (final WSS4JAttachment aIncomingAttachment : aIncomingDecryptedAttachments.getClone ())
     {
@@ -698,7 +823,18 @@ public final class AS4IncomingHandler
                             aIncomingAttachment.getId () +
                             "' using " +
                             eCompressionMode);
-            return eCompressionMode.getDecompressStream (aSrcIS);
+
+            // Limit the decompressed size and the compression ratio, to avoid
+            // decompression bombs (see issue #318)
+            final AS4SizeLimitedInputStream aCompressedIS = new AS4SizeLimitedInputStream (aSrcIS,
+                                                                                           "The incoming attachment with ID '" +
+                                                                                                   aIncomingAttachment.getId () +
+                                                                                                   "'",
+                                                                                           AS4SizeLimitedInputStream.NO_LIMIT);
+            return new AS4DecompressLimitInputStream (eCompressionMode.getDecompressStream (aCompressedIS),
+                                                      aCompressedIS::getPosition,
+                                                      nMaxDecompressedBytes,
+                                                      nMaxCompressionRatio);
           }
           catch (final IOException ex)
           {
@@ -793,6 +929,11 @@ public final class AS4IncomingHandler
                                 aEbmsErrorMessagesTarget);
 
     // Here we know, if the message was signed and/or decrypted
+
+    // If the message was signed, make sure the signature really covers all
+    // relevant message parts (see issue #318)
+    if (aEbmsErrorMessagesTarget.isEmpty () && aIncomingState.isSoapSignatureChecked ())
+      _checkSignatureCoverage (aSoapDocument, aIncomingAttachments, aIncomingState, aEbmsErrorMessagesTarget);
 
     // Remember if header processing was successful or not
     final boolean bSoapHeaderElementProcessingSuccess = aEbmsErrorMessagesTarget.isEmpty ();

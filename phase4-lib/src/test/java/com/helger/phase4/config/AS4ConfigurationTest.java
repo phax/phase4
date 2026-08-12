@@ -17,6 +17,7 @@
 package com.helger.phase4.config;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -81,6 +82,56 @@ public final class AS4ConfigurationTest
       SystemProperties.setPropertyValue (sKey, -1);
       assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES,
                     AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ());
+    }
+    finally
+    {
+      SystemProperties.removePropertyValue (sKey);
+    }
+  }
+
+  @Test
+  public void testIncomingSizeLimits ()
+  {
+    // Default values
+    assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_MAX_MESSAGE_SIZE_BYTES,
+                  AS4Configuration.getIncomingMaxMessageSizeBytes ());
+    assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_MAX_ATTACHMENT_COUNT,
+                  AS4Configuration.getIncomingMaxAttachmentCount ());
+    assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_SIZE_BYTES,
+                  AS4Configuration.getIncomingAttachmentMaxSizeBytes ());
+    assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_DECOMPRESSED_SIZE_BYTES,
+                  AS4Configuration.getIncomingAttachmentMaxDecompressedSizeBytes ());
+    assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_ATTACHMENT_MAX_COMPRESSION_RATIO,
+                  AS4Configuration.getIncomingAttachmentMaxCompressionRatio ());
+
+    final String sKey = AS4Configuration.PROPERTY_PHASE4_INCOMING_MAX_MESSAGE_SIZE_BYTES;
+    try
+    {
+      // Custom value
+      SystemProperties.setPropertyValue (sKey, 12345);
+      assertEquals (12345, AS4Configuration.getIncomingMaxMessageSizeBytes ());
+
+      // A negative value means "no limit" and is passed through
+      SystemProperties.setPropertyValue (sKey, -1);
+      assertEquals (-1, AS4Configuration.getIncomingMaxMessageSizeBytes ());
+    }
+    finally
+    {
+      SystemProperties.removePropertyValue (sKey);
+    }
+  }
+
+  @Test
+  public void testIncomingSignatureRequireFullCoverage ()
+  {
+    // Secure by default
+    assertTrue (AS4Configuration.isIncomingSignatureRequireFullCoverage ());
+
+    final String sKey = AS4Configuration.PROPERTY_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE;
+    try
+    {
+      SystemProperties.setPropertyValue (sKey, "false");
+      assertFalse (AS4Configuration.isIncomingSignatureRequireFullCoverage ());
     }
     finally
     {

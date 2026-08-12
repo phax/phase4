@@ -33,6 +33,7 @@ import org.apache.wss4j.common.crypto.AlgorithmSuite;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.AttachmentUtils;
 import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.dom.WSDataRef;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
@@ -51,7 +52,9 @@ import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.state.ESuccess;
 import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsHashSet;
 import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsSet;
 import com.helger.io.file.FileHelper;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -68,6 +71,7 @@ import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.AS4IncomingMessageState;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.error.EEbmsError;
+import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.util.MarkableFileInputStream;
@@ -193,6 +197,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       }
 
       // Enable CRL checking
+      // Only works if Merlin.setCRLCertStore is also called
       if (false)
         aRequestData.setEnableRevocation (true);
 
@@ -242,6 +247,11 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       X509Certificate aDecryptingCert = null;
       STRParser.REFERENCE_TYPE eDecryptingReferenceType = null;
 
+      // All elements and attachments that are effectively covered by the
+      // signature (see issue #318)
+      final ICommonsList <Element> aSignedElements = new CommonsArrayList <> ();
+      final ICommonsSet <String> aSignedAttachmentIDs = new CommonsHashSet <> ();
+
       int nWSS4JSecurityActions = 0;
       for (final WSSecurityEngineResult aResult : aResults)
       {
@@ -251,6 +261,31 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         final Integer aAction = (Integer) aResult.get (WSSecurityEngineResult.TAG_ACTION);
         final int nAction = aAction != null ? aAction.intValue () : 0;
         nWSS4JSecurityActions |= nAction;
+
+        // Remember what was signed, to be able to check the signature coverage
+        // afterwards (see issue #318)
+        if (nAction == WSConstants.SIGN &&
+            aResult.get (WSSecurityEngineResult.TAG_DATA_REF_URIS) instanceof final List <?> aDataRefs)
+        {
+          for (final Object aItem : aDataRefs)
+            if (aItem instanceof final WSDataRef aDataRef)
+            {
+              if (aDataRef.isAttachment ())
+              {
+                // The wsu:Id of an attachment reference is "cid:<attachment ID>"
+                final String sAttachmentID = StringHelper.trimStart (aDataRef.getWsuId (),
+                                                                     MessageHelperMethods.PREFIX_CID);
+                if (StringHelper.isNotEmpty (sAttachmentID))
+                  aSignedAttachmentIDs.add (sAttachmentID);
+              }
+              else
+              {
+                final Element aProtectedElement = aDataRef.getProtectedElement ();
+                if (aProtectedElement != null)
+                  aSignedElements.add (aProtectedElement);
+              }
+            }
+        }
 
         // Check the used certificate
         final X509Certificate aCert = (X509Certificate) aResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
@@ -329,6 +364,15 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       }
       // this determines if a signature check or a decryption happened
       aIncomingState.setSoapWSS4JSecurityActions (nWSS4JSecurityActions);
+
+      // Remember the signature coverage for the check in AS4IncomingHandler
+      // (see issue #318)
+      aIncomingState.setSignatureCoverage (aSignedElements, aSignedAttachmentIDs);
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("The signature of the incoming message covers " +
+                      aSignedElements.size () +
+                      " element(s) and the attachment(s) " +
+                      aSignedAttachmentIDs);
 
       // Remember in State
       aIncomingState.setSigningCertificate (aSigningCert);
