@@ -29,7 +29,6 @@ import com.helger.phase4.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.Phase4PeppolSender;
-import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -62,28 +61,19 @@ public final class MainPhase4PeppolSenderCisbox
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9930:de243208591");
-      final EAS4UserMessageSendResult eResult;
-      eResult = Phase4PeppolSender.builder ()
-                                  .httpClientFactory (new Phase4PeppolHttpClientSettings ().setSSLContextTrustAll ())
-                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
-                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
-                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
-                                  .receiverParticipantID (aReceiverID)
-                                  .senderPartyID ("POP000306")
-                                  .countryC1 ("AT")
-                                  .payload (aPayloadElement)
-                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                     aReceiverID,
-                                                                     ESML.PEPPOL_TEST).withHttpClientSettings (x -> {
-                                                                       try
-                                                                       {
-                                                                         x.setSSLContextTrustAll ();
-                                                                       }
-                                                                       catch (final Exception ex)
-                                                                       {}
-                                                                     }))
-                                  .sendMessageAndCheckForReceipt ();
+      final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
+                                                                  .peppolAP_CAChecker (PeppolTrustedCA.peppolTestAP ())
+                                                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
+                                                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
+                                                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
+                                                                  .receiverParticipantID (aReceiverID)
+                                                                  .senderPartyID ("POP000306")
+                                                                  .countryC1 ("AT")
+                                                                  .payload (aPayloadElement)
+                                                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                                                                     aReceiverID,
+                                                                                                     ESML.PEPPOL_TEST))
+                                                                  .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }
     catch (final Exception ex)
