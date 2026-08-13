@@ -31,8 +31,8 @@ import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.photon.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
-import com.helger.smpclient.exception.SMPClientParticipantNotFoundException;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
+import com.helger.smpclient.url.SMPDNSResolutionException;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -78,15 +78,13 @@ public final class MainPhase4PeppolSenderNonExistingReceiver
                                                                                                      ESML.PEPPOL_TEST))
                                                                   .sendMessageAndCheckForReceipt (aSendingException::set);
       if (aSendingException.isSet ())
-      {
-        final Throwable aCause = aSendingException.get ().getCause ();
-        if (aCause instanceof SMPClientParticipantNotFoundException)
-          LOGGER.error ("The receiver's Participant ID is not present in the Peppol Network");
-        else
-          LOGGER.error ("Failed to send Peppol AS4 message", aSendingException.get ());
-      }
+        LOGGER.error ("Failed to send Peppol AS4 message", aSendingException.get ());
       else
         LOGGER.info ("Peppol send result: " + eResult);
+    }
+    catch (final SMPDNSResolutionException ex)
+    {
+      LOGGER.error ("The receiver's Participant ID is not present in the Peppol Network");
     }
     catch (final Exception ex)
     {
