@@ -20,6 +20,7 @@ import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.concurrent.Immutable;
 import com.helger.annotation.misc.ChangeNextMajorRelease;
+import com.helger.base.CGlobal;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.xsds.xmldsig.CXMLDSig;
 
@@ -89,7 +90,7 @@ public final class CAS4
   public static final String DEFAULT_SERVICE_URL = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service";
   public static final String DEFAULT_MPC_ID = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC";
 
-  public static final int HTTP_STATUS_UNDEFINED = -1;
+  public static final int HTTP_STATUS_UNDEFINED = CGlobal.ILLEGAL_UINT;
 
   private CAS4 ()
   {}
