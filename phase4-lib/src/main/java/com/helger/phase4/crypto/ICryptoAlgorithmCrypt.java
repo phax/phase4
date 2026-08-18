@@ -27,6 +27,11 @@ import com.helger.base.id.IHasID;
  *
  * @author Philip Helger
  * @since v1.4.4
+ * @apiNote Implementations that override {@link #getOIDString()} can support direct use without
+ *          Bouncy Castle. This interface nevertheless retains the deprecated {@link #getOID()}
+ *          method for binary compatibility. Reflection and AOT tools that eagerly resolve every
+ *          method descriptor therefore still require Bouncy Castle until that method can be
+ *          removed in a future major release.
  */
 public interface ICryptoAlgorithmCrypt extends IHasID <String>
 {
@@ -38,9 +43,26 @@ public interface ICryptoAlgorithmCrypt extends IHasID <String>
   String getID ();
 
   /**
-   * @return The OID of the algorithm to be used by the Security Provider.
+   * @return The OID of the algorithm in dot-decimal notation.
+   * @implSpec Implementations should override this method to make direct invocation independent
+   *           of Bouncy Castle. The default implementation delegates to {@link #getOID()} for
+   *           binary compatibility with existing implementations.
+   * @since 4.6.0
    */
   @NonNull
+  @Nonempty
+  default String getOIDString ()
+  {
+    return getOID ().getId ();
+  }
+
+  /**
+   * @return The OID of the algorithm to be used by the Security Provider.
+   * @deprecated Use {@link #getOIDString()} instead. This compatibility method requires Bouncy
+   *             Castle to be present at runtime.
+   */
+  @NonNull
+  @Deprecated (since = "4.6.0")
   ASN1ObjectIdentifier getOID ();
 
   /**
