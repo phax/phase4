@@ -145,7 +145,8 @@ public final class AS4Configuration
 
   /**
    * The boolean property that defines, if the signature of an incoming message must cover all
-   * relevant message parts (the ebMS Messaging header, the SOAP Body and all attachments) or not.
+   * relevant message parts or not. Which parts these are, is defined by the AS4 profile - see
+   * <code>IAS4ProfileValidator.getRequiredSignedParts(boolean)</code>.
    *
    * @since 4.6.0
    */
@@ -549,9 +550,9 @@ public final class AS4Configuration
   }
 
   /**
-   * @return <code>true</code> if the signature of an incoming message must cover the ebMS Messaging
-   *         header, the SOAP Body and all attachments, <code>false</code> if an incomplete
-   *         signature coverage should only be logged. Defaults to
+   * @return <code>true</code> if the signature of an incoming message must cover all message parts
+   *         required by the AS4 profile, <code>false</code> if an incomplete signature coverage
+   *         should only be logged. Defaults to
    *         {@value #DEFAULT_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE}.
    * @since 4.6.0
    */

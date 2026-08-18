@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -101,6 +102,7 @@ import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.profile.IAS4ProfileValidator.EAS4ProfileValidationMode;
+import com.helger.phase4.profile.IAS4ProfileValidator.ESignedPart;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.MarkableFileInputStream;
@@ -170,7 +172,7 @@ public final class AS4IncomingHandler
     // indicates an infrastructure error page rather than an AS4 protocol
     // violation (see issue #378)
     return aIncomingMessageMetadata.hasResponseHttpStatusCode () &&
-      aIncomingMessageMetadata.getResponseHttpStatusCode () >= CHttp.HTTP_MULTIPLE_CHOICES;
+           aIncomingMessageMetadata.getResponseHttpStatusCode () >= CHttp.HTTP_MULTIPLE_CHOICES;
   }
 
   public static void parseAS4Message (@NonNull final IAS4IncomingAttachmentFactory aIAF,
@@ -210,8 +212,8 @@ public final class AS4IncomingHandler
       }
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
+                                                                                                             .getIncomingDumper ();
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
     final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
@@ -296,11 +298,10 @@ public final class AS4IncomingHandler
               try (final MultipartItemInputStream aBodyPartIS = aMulti.createInputStream ())
               {
                 // Limit the size of a single attachment (see issue #318)
-                final InputStream aPartIS = nIndex == 0 ? aBodyPartIS
-                                                        : new AS4SizeLimitedInputStream (aBodyPartIS,
-                                                                                         "The incoming attachment #" +
-                                                                                                      nIndex,
-                                                                                         nMaxAttachmentSizeBytes);
+                final InputStream aPartIS = nIndex == 0 ? aBodyPartIS : new AS4SizeLimitedInputStream (aBodyPartIS,
+                                                                                                       "The incoming attachment #" +
+                                                                                                                    nIndex,
+                                                                                                       nMaxAttachmentSizeBytes);
 
                 // Read the headers only - the content stays on the stream and is
                 // consumed in a streaming way (see issue #382)
@@ -670,10 +671,51 @@ public final class AS4IncomingHandler
   }
 
   /**
-   * Check if the signature of the incoming message really covers all relevant message parts - the
-   * ebMS Messaging header element, the SOAP Body element and all attachments. Without this check, a
-   * signature over an arbitrary other element would already be sufficient to let a message pass as
-   * "signed", which is the base for XML signature wrapping attacks. See issue #318.
+   * Determine the AS4 profile to be used for the incoming message and remember it in the provided
+   * state.
+   *
+   * @param aAS4ProfileSelector
+   *        The AS4 profile selector to be used. May not be <code>null</code>.
+   * @param aIncomingState
+   *        The current message state. May not be <code>null</code>.
+   * @return <code>null</code> if no AS4 profile ID could be determined.
+   * @throws IllegalStateException
+   *         If the determined AS4 profile ID is unknown.
+   */
+  @Nullable
+  private static IAS4Profile _determineAS4Profile (@NonNull final IAS4IncomingProfileSelector aAS4ProfileSelector,
+                                                   @NonNull final AS4IncomingMessageState aIncomingState)
+  {
+    // Determine AS4 profile ID (since 0.13.0)
+    final String sProfileID = aAS4ProfileSelector.getAS4ProfileID (aIncomingState);
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Determined AS4 profile ID '" + sProfileID + "' for current message");
+
+    if (StringHelper.isEmpty (sProfileID))
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("AS4 state contains no AS4 profile ID - therefore no consistency checks are performed");
+      return null;
+    }
+
+    // Resolve profile ID
+    final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
+    if (aProfile == null)
+      throw new IllegalStateException ("The configured AS4 profile '" + sProfileID + "' does not exist.");
+
+    aIncomingState.setAS4Profile (aProfile);
+    return aProfile;
+  }
+
+  /**
+   * Check if the signature of the incoming message really covers all relevant message parts.
+   * Without this check, a signature over an arbitrary other element would already be sufficient to
+   * let a message pass as "signed", which is the base for XML signature wrapping attacks. Which
+   * message parts must be covered is defined by the AS4 profile - see
+   * {@link IAS4ProfileValidator#getRequiredSignedParts(boolean)}. If no AS4 profile is set, or if
+   * the profile has no validator, the generic AS4 rules of
+   * {@link IAS4ProfileValidator#getDefaultRequiredSignedParts(boolean)} are used. See issues #318
+   * and #392.
    *
    * @param aSoapDocument
    *        The SOAP document to check. May not be <code>null</code>.
@@ -681,40 +723,60 @@ public final class AS4IncomingHandler
    *        All incoming attachments as they were received. May not be <code>null</code> but empty.
    * @param aIncomingState
    *        The current message state. May not be <code>null</code>.
+   * @param aProfile
+   *        The AS4 profile of the incoming message. May be <code>null</code>.
    * @param aEbmsErrorMessagesTarget
    *        The list of EBMS errors to be filled. May not be <code>null</code>.
    */
   private static void _checkSignatureCoverage (@NonNull final Document aSoapDocument,
                                                @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                @NonNull final AS4IncomingMessageState aIncomingState,
+                                               @Nullable final IAS4Profile aProfile,
                                                @NonNull final AS4ErrorList aEbmsErrorMessagesTarget)
   {
     final ESoapVersion eSoapVersion = aIncomingState.getSoapVersion ();
     final Element aSoapEnvelope = aSoapDocument.getDocumentElement ();
     final ICommonsList <String> aUncoveredParts = new CommonsArrayList <> ();
 
+    // What needs to be signed is AS4 profile specific (see issue #392)
+    final boolean bMessageHasAttachments = aIncomingAttachments.isNotEmpty ();
+    final IAS4ProfileValidator aValidator = aProfile == null ? null : aProfile.getValidator ();
+    final EnumSet <ESignedPart> aRequiredParts;
+    if (aValidator != null)
+      aRequiredParts = aValidator.getRequiredSignedParts (bMessageHasAttachments);
+    else
+      aRequiredParts = IAS4ProfileValidator.getDefaultRequiredSignedParts (bMessageHasAttachments);
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("The signature of the incoming message must cover " + aRequiredParts);
+
     // The ebMS Messaging header element
-    final Element aSoapHeader = XMLHelper.getFirstChildElementOfName (aSoapEnvelope,
-                                                                      eSoapVersion.getNamespaceURI (),
-                                                                      eSoapVersion.getHeaderElementName ());
-    final Element aMessagingElement = aSoapHeader == null ? null
-                                                          : XMLHelper.getFirstChildElementOfName (aSoapHeader,
-                                                                                                  CAS4.EBMS_NS,
-                                                                                                  "Messaging");
-    if (!aIncomingState.isElementSigned (aMessagingElement))
-      aUncoveredParts.add ("the ebMS Messaging header element");
+    if (aRequiredParts.contains (ESignedPart.EBMS_MESSAGING))
+    {
+      final Element aSoapHeader = XMLHelper.getFirstChildElementOfName (aSoapEnvelope,
+                                                                        eSoapVersion.getNamespaceURI (),
+                                                                        eSoapVersion.getHeaderElementName ());
+      final Element aMessagingElement = aSoapHeader == null ? null : XMLHelper.getFirstChildElementOfName (aSoapHeader,
+                                                                                                           CAS4.EBMS_NS,
+                                                                                                           "Messaging");
+      if (!aIncomingState.isElementSigned (aMessagingElement))
+        aUncoveredParts.add ("the ebMS Messaging header element");
+    }
 
     // The SOAP Body element
-    final Element aSoapBody = XMLHelper.getFirstChildElementOfName (aSoapEnvelope,
-                                                                    eSoapVersion.getNamespaceURI (),
-                                                                    eSoapVersion.getBodyElementName ());
-    if (!aIncomingState.isElementSigned (aSoapBody))
-      aUncoveredParts.add ("the SOAP Body element");
+    if (aRequiredParts.contains (ESignedPart.SOAP_BODY))
+    {
+      final Element aSoapBody = XMLHelper.getFirstChildElementOfName (aSoapEnvelope,
+                                                                      eSoapVersion.getNamespaceURI (),
+                                                                      eSoapVersion.getBodyElementName ());
+      if (!aIncomingState.isElementSigned (aSoapBody))
+        aUncoveredParts.add ("the SOAP Body element");
+    }
 
     // All attachments
-    for (final WSS4JAttachment aAttachment : aIncomingAttachments)
-      if (!aIncomingState.isAttachmentSigned (aAttachment.getId ()))
-        aUncoveredParts.add ("the attachment with ID '" + aAttachment.getId () + "'");
+    if (aRequiredParts.contains (ESignedPart.ATTACHMENTS))
+      for (final WSS4JAttachment aAttachment : aIncomingAttachments)
+        if (!aIncomingState.isAttachmentSigned (aAttachment.getId ()))
+          aUncoveredParts.add ("the attachment with ID '" + aAttachment.getId () + "'");
 
     if (aUncoveredParts.isEmpty ())
     {
@@ -854,10 +916,10 @@ public final class AS4IncomingHandler
         // href
         final Ebms3PartInfo aPartInfo = CollectionFind.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
                                                                   x -> x.getHref () != null &&
-                                                                    (x.getHref ().equals (sAttachmentContentID) ||
-                                                                      x.getHref ()
-                                                                       .equals (MessageHelperMethods.PREFIX_CID +
-                                                                                sAttachmentContentID)));
+                                                                       (x.getHref ().equals (sAttachmentContentID) ||
+                                                                        x.getHref ()
+                                                                         .equals (MessageHelperMethods.PREFIX_CID +
+                                                                                  sAttachmentContentID)));
         if (aPartInfo != null && aPartInfo.getPartProperties () != null)
         {
           // Find "MimeType" property
@@ -930,10 +992,18 @@ public final class AS4IncomingHandler
 
     // Here we know, if the message was signed and/or decrypted
 
+    // The AS4 profile defines which message parts must be covered by the signature, so it must be
+    // determined before the signature coverage check (see issue #392)
+    final IAS4Profile aProfile;
+    if (aEbmsErrorMessagesTarget.isEmpty ())
+      aProfile = _determineAS4Profile (aAS4ProfileSelector, aIncomingState);
+    else
+      aProfile = null;
+
     // If the message was signed, make sure the signature really covers all
-    // relevant message parts (see issue #318)
+    // relevant message parts (see issues #318 and #392)
     if (aEbmsErrorMessagesTarget.isEmpty () && aIncomingState.isSoapSignatureChecked ())
-      _checkSignatureCoverage (aSoapDocument, aIncomingAttachments, aIncomingState, aEbmsErrorMessagesTarget);
+      _checkSignatureCoverage (aSoapDocument, aIncomingAttachments, aIncomingState, aProfile, aEbmsErrorMessagesTarget);
 
     // Remember if header processing was successful or not
     final boolean bSoapHeaderElementProcessingSuccess = aEbmsErrorMessagesTarget.isEmpty ();
@@ -977,37 +1047,12 @@ public final class AS4IncomingHandler
                                                                           .build ());
       }
 
-      // Determine AS4 profile ID (since 0.13.0)
-      final String sProfileID = aAS4ProfileSelector.getAS4ProfileID (aIncomingState);
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Determined AS4 profile ID '" + sProfileID + "' for current message");
-
       final IPMode aPMode = aIncomingState.getPMode ();
       final PModeLeg aEffectiveLeg = aIncomingState.getEffectivePModeLeg ();
 
-      final IAS4Profile aProfile;
-      final IAS4ProfileValidator aValidator;
-      // Only do profile checks if a profile is set
-      if (StringHelper.isNotEmpty (sProfileID))
-      {
-        // Resolve profile ID
-        aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
-        if (aProfile == null)
-          throw new IllegalStateException ("The configured AS4 profile '" + sProfileID + "' does not exist.");
-
-        aIncomingState.setAS4Profile (aProfile);
-
-        // Profile Checks gets set when started with Server
-        aValidator = aProfile.getValidator ();
-      }
-      else
-      {
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("AS4 state contains no AS4 profile ID - therefore no consistency checks are performed");
-
-        aProfile = null;
-        aValidator = null;
-      }
+      // The AS4 profile was already determined above, for the signature coverage check.
+      // Only do profile checks if a profile is set - that gets set when started with Server
+      final IAS4ProfileValidator aValidator = aProfile == null ? null : aProfile.getValidator ();
 
       if (aEbmsUserMessage != null)
       {
@@ -1062,7 +1107,7 @@ public final class AS4IncomingHandler
           else
           {
             LOGGER.warn ("The AS4 profile '" +
-                         sProfileID +
+                         aProfile.getID () +
                          "' has a validation configured, but the usage was disabled using the IAS4IncomingProfileSelector");
           }
         }
@@ -1085,6 +1130,7 @@ public final class AS4IncomingHandler
             if (aPMode == null)
               throw new Phase4IncomingException ("No AS4 P-Mode configuration found for PullRequest!");
 
+          // Validator is only present if a Profile is present
           if (aValidator != null)
           {
             if (aAS4ProfileSelector.validateAgainstProfile ())
@@ -1122,7 +1168,7 @@ public final class AS4IncomingHandler
             else
             {
               LOGGER.warn ("The AS4 profile '" +
-                           sProfileID +
+                           aProfile.getID () +
                            "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
             }
           }

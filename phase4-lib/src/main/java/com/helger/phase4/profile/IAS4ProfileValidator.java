@@ -17,10 +17,13 @@
 package com.helger.phase4.profile;
 
 import java.security.cert.X509Certificate;
+import java.util.EnumSet;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
@@ -39,6 +42,63 @@ public interface IAS4ProfileValidator
   {
     USER_MESSAGE,
     SIGNAL_MESSAGE;
+  }
+
+  /**
+   * The parts of an incoming AS4 message that may be required to be covered by the message
+   * signature.
+   *
+   * @since 4.6.1
+   */
+  enum ESignedPart
+  {
+    /** The ebMS <code>Messaging</code> header element */
+    EBMS_MESSAGING,
+    /** The SOAP <code>Body</code> element */
+    SOAP_BODY,
+    /** All attachments of the message */
+    ATTACHMENTS;
+  }
+
+  /**
+   * Get the message parts that the generic AS4 profile requires to be covered by the signature of
+   * an incoming message. Chapter 5.1.4 requires the ebMS <code>Messaging</code> header element and
+   * the (possibly empty) SOAP <code>Body</code> element, whereas chapter 5.1.5 requires the ebMS
+   * <code>Messaging</code> header element and all MIME body parts for "SOAP with Attachments"
+   * messages.
+   *
+   * @param bMessageHasAttachments
+   *        <code>true</code> if the incoming message contains at least one attachment.
+   * @return A new mutable set with all required parts. Never <code>null</code> nor empty.
+   * @since 4.6.1
+   */
+  @NonNull
+  @Nonempty
+  @ReturnsMutableCopy
+  static EnumSet <ESignedPart> getDefaultRequiredSignedParts (final boolean bMessageHasAttachments)
+  {
+    return bMessageHasAttachments ? EnumSet.of (ESignedPart.EBMS_MESSAGING, ESignedPart.ATTACHMENTS) : EnumSet.of (
+                                                                                                                   ESignedPart.EBMS_MESSAGING,
+                                                                                                                   ESignedPart.SOAP_BODY);
+  }
+
+  /**
+   * Get the message parts that must be covered by the signature of an incoming message. Message
+   * parts that are not part of the returned set are not checked at all. This is the profile
+   * specific part of the protection against XML signature wrapping attacks.
+   *
+   * @param bMessageHasAttachments
+   *        <code>true</code> if the incoming message contains at least one attachment.
+   * @return A new mutable set with all required parts. May neither be <code>null</code> nor empty.
+   *         The default implementation returns {@link #getDefaultRequiredSignedParts(boolean)}.
+   * @since 4.6.1
+   */
+  @NonNull
+  @Nonempty
+  @ReturnsMutableCopy
+  default EnumSet <ESignedPart> getRequiredSignedParts (final boolean bMessageHasAttachments)
+  {
+    return getDefaultRequiredSignedParts (bMessageHasAttachments);
   }
 
   /**
