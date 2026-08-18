@@ -78,7 +78,7 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   }
 
   @NonNull
-  @Deprecated (since = "4.6.0")
+  @Deprecated (since = "4.6.1")
   public ASN1ObjectIdentifier getOID ()
   {
     ASN1ObjectIdentifier ret = m_aOID;
@@ -87,7 +87,7 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
       {
         ret = m_aOID;
         if (ret == null)
-          m_aOID = ret = new ASN1ObjectIdentifier (m_sOID);
+          m_aOID = ret = new ASN1ObjectIdentifier (m_sOID).intern ();
       }
     return ret;
   }

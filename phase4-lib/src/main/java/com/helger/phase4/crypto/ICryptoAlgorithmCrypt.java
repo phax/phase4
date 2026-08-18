@@ -30,8 +30,8 @@ import com.helger.base.id.IHasID;
  * @apiNote Implementations that override {@link #getOIDString()} can support direct use without
  *          Bouncy Castle. This interface nevertheless retains the deprecated {@link #getOID()}
  *          method for binary compatibility. Reflection and AOT tools that eagerly resolve every
- *          method descriptor therefore still require Bouncy Castle until that method can be
- *          removed in a future major release.
+ *          method descriptor therefore still require Bouncy Castle until that method can be removed
+ *          in a future major release.
  */
 public interface ICryptoAlgorithmCrypt extends IHasID <String>
 {
@@ -43,11 +43,20 @@ public interface ICryptoAlgorithmCrypt extends IHasID <String>
   String getID ();
 
   /**
+   * @return The OID of the algorithm to be used by the Security Provider.
+   * @deprecated Use {@link #getOIDString()} instead. This compatibility method requires Bouncy
+   *             Castle to be present at runtime.
+   */
+  @NonNull
+  @Deprecated (since = "4.6.1", forRemoval = true)
+  ASN1ObjectIdentifier getOID ();
+
+  /**
    * @return The OID of the algorithm in dot-decimal notation.
-   * @implSpec Implementations should override this method to make direct invocation independent
-   *           of Bouncy Castle. The default implementation delegates to {@link #getOID()} for
-   *           binary compatibility with existing implementations.
-   * @since 4.6.0
+   * @implSpec Implementations should override this method to make direct invocation independent of
+   *           Bouncy Castle. The default implementation delegates to {@link #getOID()} for binary
+   *           compatibility with existing implementations.
+   * @since 4.6.1
    */
   @NonNull
   @Nonempty
@@ -55,15 +64,6 @@ public interface ICryptoAlgorithmCrypt extends IHasID <String>
   {
     return getOID ().getId ();
   }
-
-  /**
-   * @return The OID of the algorithm to be used by the Security Provider.
-   * @deprecated Use {@link #getOIDString()} instead. This compatibility method requires Bouncy
-   *             Castle to be present at runtime.
-   */
-  @NonNull
-  @Deprecated (since = "4.6.0")
-  ASN1ObjectIdentifier getOID ();
 
   /**
    * @return The unique XMLDsig algorithm URI for this algorithm (as in

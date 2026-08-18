@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.junit.Test;
 
 import com.helger.base.string.StringHelper;
@@ -43,6 +44,9 @@ public final class ECryptoAlgorithmCryptTest
       assertNotNull (e.getOID ());
       assertEquals (e.getOIDString (), e.getOID ().getId ());
       assertSame (e.getOID (), e.getOID ());
+      // Must be the canonical interned instance, so that "==" against the Bouncy Castle
+      // constants (e.g. CMSAlgorithm.AES128_GCM) keeps working
+      assertSame (new ASN1ObjectIdentifier (e.getOIDString ()).intern (), e.getOID ());
       assertTrue (StringHelper.isNotEmpty (e.getAlgorithmURI ()));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrNull (e.getID ()));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrDefault (e.getID (), null));
