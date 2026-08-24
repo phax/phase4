@@ -26,11 +26,12 @@ import com.helger.base.lang.EnumHelper;
 
 /**
  * Enumeration with all message encryption algorithms supported.
+ * <p>
+ * Direct use of this enum, except for the deprecated {@link #getOID()} method, does not require
+ * Bouncy Castle. Reflection and AOT tools that eagerly resolve all method descriptors still require
+ * it for binary compatibility with that method.
  *
  * @author Philip Helger
- * @apiNote Direct use of this enum, except for the deprecated {@link #getOID()} method, does not
- *          require Bouncy Castle. Reflection and AOT tools that eagerly resolve all method
- *          descriptors still require it for binary compatibility with that method.
  */
 public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
 {

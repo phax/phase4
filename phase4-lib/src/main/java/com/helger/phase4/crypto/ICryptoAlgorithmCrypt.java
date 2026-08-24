@@ -24,14 +24,14 @@ import com.helger.base.id.IHasID;
 
 /**
  * Base interface for an encryption algorithm.
+ * <p>
+ * Implementations that override {@link #getOIDString()} can support direct use without Bouncy
+ * Castle. This interface nevertheless retains the deprecated {@link #getOID()} method for binary
+ * compatibility. Reflection and AOT tools that eagerly resolve every method descriptor therefore
+ * still require Bouncy Castle until that method can be removed in a future major release.
  *
  * @author Philip Helger
  * @since v1.4.4
- * @apiNote Implementations that override {@link #getOIDString()} can support direct use without
- *          Bouncy Castle. This interface nevertheless retains the deprecated {@link #getOID()}
- *          method for binary compatibility. Reflection and AOT tools that eagerly resolve every
- *          method descriptor therefore still require Bouncy Castle until that method can be removed
- *          in a future major release.
  */
 public interface ICryptoAlgorithmCrypt extends IHasID <String>
 {
@@ -52,10 +52,11 @@ public interface ICryptoAlgorithmCrypt extends IHasID <String>
   ASN1ObjectIdentifier getOID ();
 
   /**
+   * Implementations should override this method to make direct invocation independent of Bouncy
+   * Castle. The default implementation delegates to {@link #getOID()} for binary compatibility with
+   * existing implementations.
+   *
    * @return The OID of the algorithm in dot-decimal notation.
-   * @implSpec Implementations should override this method to make direct invocation independent of
-   *           Bouncy Castle. The default implementation delegates to {@link #getOID()} for binary
-   *           compatibility with existing implementations.
    * @since 4.6.1
    */
   @NonNull

@@ -67,6 +67,11 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName
    * for an incoming message has no other source for these two values, and a profile validator that
    * checks <code>PMode.Leg[x].BusinessInfo.Service</code> or <code>...Action</code> can therefore
    * never succeed on such a template. See issue #213.
+   * <p>
+   * The default implementation calls {@link #createPModeTemplate(String, String, String)} and
+   * afterwards copies the provided Service and Action into the business information of leg 1, but
+   * only if the created template left them empty. Implementations that need a different behaviour -
+   * e.g. because they use two legs - must override this method.
    *
    * @param sInitiatorID
    *        Initiator ID
@@ -80,11 +85,6 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName
    *        The Action of the message the PMode is created for. May be <code>null</code>.
    * @return A PMode that is NOT yet in the manager and is not complete! The following information
    *         is most likely not contained: URLs, certificates.
-   * @implSpec The default implementation calls
-   *           {@link #createPModeTemplate(String, String, String)} and afterwards copies the
-   *           provided Service and Action into the business information of leg 1, but only if the
-   *           created template left them empty. Implementations that need a different behaviour -
-   *           e.g. because they use two legs - must override this method.
    * @since 4.6.1
    */
   @NonNull
