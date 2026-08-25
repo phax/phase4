@@ -19,6 +19,9 @@ package com.helger.phase4.profile.peppol;
 import java.util.List;
 
 import org.jspecify.annotations.NonNull;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.enforce.ValueEnforcer;
@@ -55,6 +58,7 @@ import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.wss.EWSSVersion;
+import com.helger.xml.XMLHelper;
 
 /**
  * Validate certain requirements imposed by the Peppol project.
@@ -326,6 +330,53 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
                                         eCompressionMode));
       }
     }
+  }
+
+  public void validateSoapMessage (@NonNull final Document aSoapDocument,
+                                  @NonNull final ESoapVersion eSoapVersion,
+                                  @NonNull final ErrorList aErrorList)
+  {
+    ValueEnforcer.notNull (aSoapDocument, "SoapDocument");
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
+    ValueEnforcer.notNull (aErrorList, "ErrorList");
+
+    final Element aEnvelope = aSoapDocument.getDocumentElement ();
+    if (aEnvelope == null)
+    {
+      aErrorList.add (_createError ("SOAP Envelope is missing"));
+      return;
+    }
+
+    final Element aBodyElement = XMLHelper.getFirstChildElementOfName (aEnvelope,
+                                                                      eSoapVersion.getNamespaceURI (),
+                                                                      eSoapVersion.getBodyElementName ());
+    if (aBodyElement == null)
+    {
+      aErrorList.add (_createError ("SOAP Body is missing"));
+      return;
+    }
+
+    if (!_isSoapBodyEmpty (aBodyElement))
+      aErrorList.add (_createError ("SOAP Body must be empty"));
+  }
+
+  private static boolean _isSoapBodyEmpty (@NonNull final Element aBodyElement)
+  {
+    for (Node aChild = aBodyElement.getFirstChild (); aChild != null; aChild = aChild.getNextSibling ())
+      switch (aChild.getNodeType ())
+      {
+        case Node.ELEMENT_NODE:
+          return false;
+        case Node.TEXT_NODE, Node.CDATA_SECTION_NODE:
+          final String sNodeValue = aChild.getNodeValue ();
+          if (sNodeValue != null && !sNodeValue.trim ().isEmpty ())
+            return false;
+          break;
+        default:
+          // Ignore comments and processing instructions
+          break;
+      }
+    return true;
   }
 
   public void validateUserMessage (@NonNull final Ebms3UserMessage aUserMsg, @NonNull final ErrorList aErrorList)
