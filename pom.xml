@@ -169,6 +169,12 @@
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml-xacml-saml-impl</artifactId>
           </exclusion>
+          <!-- Cryptacular supports WSS4J's OpenSAML integration, which phase4 does not use, and
+               otherwise pulls Bouncy Castle into every AS4 application. -->
+          <exclusion>
+            <groupId>org.cryptacular</groupId>
+            <artifactId>cryptacular</artifactId>
+          </exclusion>
           <!-- See https://issues.apache.org/jira/browse/WSS-675 -->
           <exclusion>
             <groupId>com.google.guava</groupId>
