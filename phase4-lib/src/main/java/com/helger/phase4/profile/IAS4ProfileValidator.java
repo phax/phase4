@@ -144,9 +144,10 @@ public interface IAS4ProfileValidator
    * @param aSoapDocument
    *        The SOAP document to be validated. May not be <code>null</code>.
    * @param eSoapVersion
-   *       The SOAP version of the document to be validated.
+   *        The SOAP version of the document to be validated. May not be <code>null</code>.
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
+   * @since 4.6.2
    */
   default void validateSoapMessage (@NonNull final Document aSoapDocument, @NonNull ESoapVersion eSoapVersion, @NonNull final ErrorList aErrorList)
   {}

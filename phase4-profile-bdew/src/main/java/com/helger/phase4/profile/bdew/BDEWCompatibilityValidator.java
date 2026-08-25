@@ -527,7 +527,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   public void validateSoapMessage(@NonNull Document aSoapDocument, @NonNull ESoapVersion eSoapVersion, @NonNull ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aSoapDocument, "SoapDocument");
-    ValueEnforcer.notNull (aErrorList, "SoapVersion");
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aErrorList, "ErrorList");
 
     final Element aEnvelope = aSoapDocument.getDocumentElement ();
