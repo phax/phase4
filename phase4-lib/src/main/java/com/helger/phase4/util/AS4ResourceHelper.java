@@ -108,7 +108,7 @@ public class AS4ResourceHelper implements Closeable
   public File createTempFile () throws IOException
   {
     if (m_aInClose.get ())
-      throw new IllegalStateException ("ResourceManager is already closing/closed!");
+      throw new IllegalStateException ("AS4ResourceHelper is already closing/closed!");
 
     // Create
     final File ret = s_aTempDir != null ? Files.createTempFile (s_aTempDir.toPath (),
@@ -119,7 +119,7 @@ public class AS4ResourceHelper implements Closeable
     m_aRWLock.writeLocked (() -> m_aTempFiles.add (ret));
 
     if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("AS4ResourceHelper.created temporary file '" + ret.getAbsolutePath () + "'");
+      LOGGER.debug ("AS4ResourceHelper created temporary file '" + ret.getAbsolutePath () + "'");
 
     return ret;
   }
