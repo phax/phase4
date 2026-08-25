@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.profile.bdew;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -29,6 +30,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.UUID;
 
+import com.helger.xml.serialize.read.DOMReader;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -69,6 +71,7 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator.EAS4ProfileValidationMode;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
+import org.w3c.dom.Document;
 
 /**
  * All essentials need to be set and need to be not null since they are getting
@@ -630,6 +633,35 @@ public final class BDEWCompatibilityValidatorTest
 
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue (m_aErrorList.isEmpty ());
+  }
+
+  @Test
+  public void testValidateSoapDocumentHasEmptyBody ()
+  {
+    final Document aSoapDoc = DOMReader.readXMLDOM ("""
+                                                            <S12:Envelope xmlns:S12='http://www.w3.org/2003/05/soap-envelope'>
+                                                            <S12:Header/>
+                                                            <S12:Body>   </S12:Body>
+                                                            </S12:Envelope>""");
+    assertNotNull (aSoapDoc);
+
+    VALIDATOR.validateSoapMessage (aSoapDoc, ESoapVersion.SOAP_12, m_aErrorList);
+    assertTrue (m_aErrorList.isEmpty ());
+  }
+
+  @Test
+  public void testValidateSoapDocumentHasPayloadInBody ()
+  {
+    final Document aSoapDoc = DOMReader.readXMLDOM ("""
+                                                            <S12:Envelope xmlns:S12='http://www.w3.org/2003/05/soap-envelope'>
+                                                            <S12:Header/>
+                                                            <S12:Body><payload/></S12:Body>
+                                                            </S12:Envelope>""");
+    assertNotNull (aSoapDoc);
+
+    VALIDATOR.validateSoapMessage (aSoapDoc, ESoapVersion.SOAP_12, m_aErrorList);
+    assertFalse (m_aErrorList.isEmpty ());
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("SOAP Body must be empty")));
   }
 
   @Test

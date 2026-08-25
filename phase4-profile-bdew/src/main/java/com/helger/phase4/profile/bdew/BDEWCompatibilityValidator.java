@@ -17,7 +17,9 @@
 package com.helger.phase4.profile.bdew;
 
 import java.security.cert.X509Certificate;
+import java.util.EnumSet;
 
+import com.helger.xml.XMLHelper;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -63,6 +65,9 @@ import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.wss.EWSSVersion;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Validate certain requirements imposed by the BDEW project.
@@ -519,9 +524,57 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   }
 
   @Override
+  public void validateSoapMessage(@NonNull Document aSoapDocument, @NonNull ESoapVersion eSoapVersion, @NonNull ErrorList aErrorList)
+  {
+    ValueEnforcer.notNull (aSoapDocument, "SoapDocument");
+    ValueEnforcer.notNull (aErrorList, "SoapVersion");
+    ValueEnforcer.notNull (aErrorList, "ErrorList");
+
+    final Element aEnvelope = aSoapDocument.getDocumentElement ();
+    if (aEnvelope == null)
+    {
+      aErrorList.add (_createError ("SOAP Envelope is missing"));
+      return;
+    }
+
+    Element aBodyElement = XMLHelper.getFirstChildElementOfName (aEnvelope,
+                                                                 eSoapVersion.getNamespaceURI (),
+                                                                 eSoapVersion.getBodyElementName ());
+
+    if (aBodyElement == null)
+    {
+      aErrorList.add (_createError ("SOAP Body is missing"));
+      return;
+    }
+
+    if (!_isSoapBodyEmpty (aBodyElement))
+      aErrorList.add (_createError ("SOAP Body must be empty"));
+  }
+
+  private static boolean _isSoapBodyEmpty (@NonNull final Element aBodyElement)
+  {
+    for (Node aChild = aBodyElement.getFirstChild (); aChild != null; aChild = aChild.getNextSibling ())
+      switch (aChild.getNodeType ())
+      {
+        case Node.ELEMENT_NODE:
+          return false;
+        case Node.TEXT_NODE, Node.CDATA_SECTION_NODE:
+          final String sNodeValue = aChild.getNodeValue ();
+          if (sNodeValue != null && !sNodeValue.trim ().isEmpty ())
+            return false;
+          break;
+        default:
+          // Ignore comments and processing instructions
+          break;
+      }
+    return true;
+  }
+
+  @Override
   public void validateUserMessage (@NonNull final Ebms3UserMessage aUserMsg, @NonNull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
+    ValueEnforcer.notNull (aErrorList, "ErrorList");
 
     if (aUserMsg.getMessageInfo () == null)
     {
@@ -637,6 +690,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   public void validateSignalMessage (@NonNull final Ebms3SignalMessage aSignalMsg, @NonNull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aSignalMsg, "SignalMsg");
+    ValueEnforcer.notNull (aErrorList, "ErrorList");
 
     if (aSignalMsg.getMessageInfo () == null)
     {
@@ -647,5 +701,10 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       if (StringHelper.isEmpty (aSignalMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
     }
+  }
+
+  @Override
+  public @NonNull EnumSet<ESignedPart> getRequiredSignedParts(boolean bMessageHasAttachments) {
+    return EnumSet.of(ESignedPart.EBMS_MESSAGING, ESignedPart.ATTACHMENTS);
   }
 }

@@ -19,6 +19,7 @@ package com.helger.phase4.profile;
 import java.security.cert.X509Certificate;
 import java.util.EnumSet;
 
+import com.helger.phase4.model.ESoapVersion;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -29,6 +30,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
+import org.w3c.dom.Document;
 
 /**
  * Generic AS4 profile validator
@@ -137,7 +139,20 @@ public interface IAS4ProfileValidator
   {}
 
   /**
-   * Validation a UserMessage
+   * Validation of a SoapDocument
+   *
+   * @param aSoapDocument
+   *        The SOAP document to be validated. May not be <code>null</code>.
+   * @param eSoapVersion
+   *       The SOAP version of the document to be validated.
+   * @param aErrorList
+   *        The error list to be filled. May not be <code>null</code>.
+   */
+  default void validateSoapMessage (@NonNull final Document aSoapDocument, @NonNull ESoapVersion eSoapVersion, @NonNull final ErrorList aErrorList)
+  {}
+
+  /**
+   * Validation of a UserMessage
    *
    * @param aUserMsg
    *        The message to be validated. May not be <code>null</code>.
@@ -148,7 +163,7 @@ public interface IAS4ProfileValidator
   {}
 
   /**
-   * Validation a SignalMessage
+   * Validation of a SignalMessage
    *
    * @param aSignalMsg
    *        The message to be validated. May not be <code>null</code>.
