@@ -1072,6 +1072,7 @@ public final class AS4IncomingHandler
           {
             final ErrorList aErrorList = new ErrorList ();
             aValidator.validatePMode (aPMode, aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
+            aValidator.validateSoapMessage (aSoapDocument, aIncomingState.getSoapVersion(), aErrorList);
             aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
             aValidator.validateInitiatorIdentity (aEbmsUserMessage,
                                                   aIncomingState.getSigningCertificate (),
