@@ -307,9 +307,11 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
         aIncomingState.setMessageTimestamp (aMsgInfo.getTimestamp ());
         LOGGER.info ("Incoming AS4 UserMessage has AS4 Message ID '" +
                      aMsgInfo.getMessageId () +
-                     "', refers to message with AS4 Message ID '" +
-                     aMsgInfo.getRefToMessageId () +
-                     "' and uses timestamp " +
+                     "'," +
+                     (aMsgInfo.getRefToMessageId () != null ? " refers to message with AS4 Message ID '" +
+                                                              aMsgInfo.getRefToMessageId () +
+                                                              "'" : "") +
+                     " and uses timestamp " +
                      aMsgInfo.getTimestamp ());
       }
 
