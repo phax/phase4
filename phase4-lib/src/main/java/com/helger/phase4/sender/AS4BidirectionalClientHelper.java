@@ -121,8 +121,8 @@ public final class AS4BidirectionalClientHelper
                                                 @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer) throws Phase4Exception
   {
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
+                                                                                                             .getIncomingDumper ();
     if (aRealIncomingDumper != null)
     {
       if (aResponseMessageMetadata != null)
@@ -282,7 +282,7 @@ public final class AS4BidirectionalClientHelper
       // A SOAP Fault can never be contained in a multipart response
       final Header aContentTypeHeader = aHttpResponse.getFirstHeader (CHttpHeader.CONTENT_TYPE);
       final boolean bMayBeSoapFault = aContentTypeHeader == null ||
-        !StringHelper.startsWithIgnoreCase (aContentTypeHeader.getValue (), "multipart");
+                                      !StringHelper.startsWithIgnoreCase (aContentTypeHeader.getValue (), "multipart");
 
       final byte [] aResponsePayload;
       try

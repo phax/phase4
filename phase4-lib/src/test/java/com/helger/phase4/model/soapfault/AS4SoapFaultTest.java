@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.json.IJsonObject;
+import com.helger.json.JsonObject;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.serialize.read.DOMReader;
@@ -204,6 +205,7 @@ public final class AS4SoapFaultTest
     assertEquals ("Sender timeout", aJson.getAsString ("faultReason"));
     assertEquals ("urn:example:role", aJson.getAsString ("faultActorRole"));
     assertTrue (aJson.getAsString ("faultDetail").contains ("expired"));
+    assertEquals (aFault.getRawXML (), aJson.getAsString ("rawXML"));
     assertEquals (EAS4FaultDisposition.PERMANENT.getID (), aJson.getAsString ("disposition"));
 
     // A minimal fault contains only the mandatory elements
@@ -213,6 +215,64 @@ public final class AS4SoapFaultTest
     assertNull (aMinimalJson.getAsString ("faultActorRole"));
     assertNull (aMinimalJson.getAsString ("faultDetail"));
     assertEquals (EAS4FaultDisposition.TRANSIENT.getID (), aMinimalJson.getAsString ("disposition"));
+  }
+
+  @Test
+  public void testCreateFromJson ()
+  {
+    final AS4SoapFault aFault = AS4SoapFault.createOrNull (DOMReader.readXMLDOM (SOAP12_FAULT));
+    assertNotNull (aFault);
+
+    // Round trip
+    final AS4SoapFault aFault2 = AS4SoapFault.createFromJsonOrNull (aFault.getAsJsonObject ());
+    assertNotNull (aFault2);
+    assertSame (aFault.getSoapVersion (), aFault2.getSoapVersion ());
+    assertEquals (aFault.getFaultCode (), aFault2.getFaultCode ());
+    assertEquals (aFault.getFaultSubcode (), aFault2.getFaultSubcode ());
+    assertEquals (aFault.getFaultReason (), aFault2.getFaultReason ());
+    assertEquals (aFault.getFaultActorRole (), aFault2.getFaultActorRole ());
+    assertNotNull (aFault2.getDetailElement ());
+    assertEquals ("Detail", aFault2.getDetailElement ().getLocalName ());
+    assertEquals (ESoapVersion.SOAP_12.getNamespaceURI (), aFault2.getDetailElement ().getNamespaceURI ());
+    assertEquals (aFault.getRawXML (), aFault2.getRawXML ());
+    assertSame (aFault.getDisposition (), aFault2.getDisposition ());
+
+    // A minimal fault only has the mandatory elements
+    final AS4SoapFault aMinimal = _createSoap11Fault ("S11:Server");
+    final AS4SoapFault aMinimal2 = AS4SoapFault.createFromJsonOrNull (aMinimal.getAsJsonObject ());
+    assertNotNull (aMinimal2);
+    assertSame (ESoapVersion.SOAP_11, aMinimal2.getSoapVersion ());
+    assertEquals (aMinimal.getFaultCode (), aMinimal2.getFaultCode ());
+    assertNull (aMinimal2.getFaultSubcode ());
+    assertEquals ("test", aMinimal2.getFaultReason ());
+    assertNull (aMinimal2.getFaultActorRole ());
+    assertNull (aMinimal2.getDetailElement ());
+    assertEquals (aMinimal.getRawXML (), aMinimal2.getRawXML ());
+    assertSame (EAS4FaultDisposition.TRANSIENT, aMinimal2.getDisposition ());
+
+    // No JSON object at all
+    assertNull (AS4SoapFault.createFromJsonOrNull (null));
+
+    // No SOAP version contained
+    assertNull (AS4SoapFault.createFromJsonOrNull (new JsonObject ().add ("faultReason", "bla")));
+    assertNull (AS4SoapFault.createFromJsonOrNull (new JsonObject ().add ("soapVersion", "1.3")));
+
+    // No raw XML contained - as created by versions before v4.6.2
+    final IJsonObject aJsonNoRawXML = aFault.getAsJsonObject ();
+    aJsonNoRawXML.removeKey ("rawXML");
+    final AS4SoapFault aFault3 = AS4SoapFault.createFromJsonOrNull (aJsonNoRawXML);
+    assertNotNull (aFault3);
+    assertEquals ("", aFault3.getRawXML ());
+
+    // Unparsable fault code and fault detail are ignored
+    final IJsonObject aJsonBroken = aFault.getAsJsonObject ();
+    aJsonBroken.add ("faultCode", "{urn:example:incomplete");
+    aJsonBroken.add ("faultDetail", "this is no XML");
+    final AS4SoapFault aFault4 = AS4SoapFault.createFromJsonOrNull (aJsonBroken);
+    assertNotNull (aFault4);
+    assertNull (aFault4.getFaultCode ());
+    assertNull (aFault4.getDetailElement ());
+    assertSame (EAS4FaultDisposition.TRANSIENT, aFault4.getDisposition ());
   }
 
   @Test

@@ -20,6 +20,7 @@ import javax.xml.namespace.QName;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -30,10 +31,12 @@ import com.helger.base.string.StringHelper;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
+import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
 /**
@@ -47,6 +50,8 @@ import com.helger.xml.serialize.write.XMLWriter;
 @Immutable
 public class AS4SoapFault
 {
+  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4SoapFault.class);
+
   private final ESoapVersion m_eSoapVersion;
   private final QName m_aFaultCode;
   private final QName m_aFaultSubcode;
@@ -178,8 +183,9 @@ public class AS4SoapFault
   /**
    * Get the SOAP Fault as one JSON object for standardized serialization. Only the elements that
    * are present are contained. QNames are serialized in Clark notation
-   * (<code>{namespaceURI}localPart</code>). The raw XML is not contained - use {@link #getRawXML()}
-   * to access it.
+   * (<code>{namespaceURI}localPart</code>). Since v4.6.2 the raw XML is contained as well, so that
+   * the created JSON object can be converted back with
+   * {@link #createFromJsonOrNull(IJsonObject)}.
    *
    * @return The SOAP Fault as a JSON object. Never <code>null</code>.
    */
@@ -198,6 +204,7 @@ public class AS4SoapFault
       ret.add ("faultActorRole", m_sFaultActorRole);
     if (m_aDetailElement != null)
       ret.add ("faultDetail", XMLWriter.getNodeAsString (m_aDetailElement));
+    ret.add ("rawXML", m_sRawXML);
     ret.add ("disposition", getDisposition ().getID ());
     return ret;
   }
@@ -441,5 +448,84 @@ public class AS4SoapFault
                                 sRealRawXML);
       }
     };
+  }
+
+  /**
+   * Parse the provided value in Clark notation (<code>{namespaceURI}localPart</code>) back into a
+   * {@link QName}. As the namespace prefix is not part of that notation, it is not restored.
+   *
+   * @param sValue
+   *        The value to be parsed. May be <code>null</code>.
+   * @return <code>null</code> if the provided value is empty or not in Clark notation.
+   */
+  @Nullable
+  private static QName _parseClarkQName (@Nullable final String sValue)
+  {
+    final String sRealValue = StringHelper.trim (sValue);
+    if (StringHelper.isEmpty (sRealValue))
+      return null;
+
+    try
+    {
+      return QName.valueOf (sRealValue);
+    }
+    catch (final IllegalArgumentException ex)
+    {
+      LOGGER.warn ("Failed to parse '" + sRealValue + "' as a QName in Clark notation");
+      return null;
+    }
+  }
+
+  /**
+   * Create an {@link AS4SoapFault} from a JSON object that was created with
+   * {@link #getAsJsonObject()}. The contained "disposition" is not evaluated, because it is solely
+   * derived from the fault code. Namespace prefixes of the fault code and the fault subcode are not
+   * part of the Clark notation and are therefore not restored. If no raw XML is contained - as it
+   * was the case for JSON objects created before v4.6.2 - the empty String is used instead.
+   *
+   * @param aJson
+   *        The JSON object to be read. May be <code>null</code>.
+   * @return <code>null</code> if the provided JSON object is <code>null</code> or if it contains no
+   *         valid SOAP version.
+   * @see #getAsJsonObject()
+   * @since 4.6.2
+   */
+  @Nullable
+  public static AS4SoapFault createFromJsonOrNull (@Nullable final IJsonObject aJson)
+  {
+    if (aJson == null)
+      return null;
+
+    final ESoapVersion eSoapVersion = ESoapVersion.getFromVersionOrNull (aJson.getAsString ("soapVersion"));
+    if (eSoapVersion == null)
+    {
+      LOGGER.warn ("The provided JSON object contains no valid SOAP version and can therefore not be converted to an AS4SoapFault");
+      return null;
+    }
+
+    final QName aFaultCode = _parseClarkQName (aJson.getAsString ("faultCode"));
+    final QName aFaultSubcode = _parseClarkQName (aJson.getAsString ("faultSubcode"));
+    final String sFaultReason = aJson.getAsString ("faultReason");
+    final String sFaultActorRole = aJson.getAsString ("faultActorRole");
+
+    Element aDetailElement = null;
+    final String sFaultDetail = aJson.getAsString ("faultDetail");
+    if (StringHelper.isNotEmpty (sFaultDetail))
+    {
+      // The detail element was serialized as a standalone XML element
+      final Document aDetailDoc = DOMReader.readXMLDOM (sFaultDetail);
+      if (aDetailDoc == null)
+        LOGGER.warn ("Failed to parse the contained fault detail as XML");
+      else
+        aDetailElement = aDetailDoc.getDocumentElement ();
+    }
+
+    return new AS4SoapFault (eSoapVersion,
+                             aFaultCode,
+                             aFaultSubcode,
+                             sFaultReason,
+                             sFaultActorRole,
+                             aDetailElement,
+                             StringHelper.getNotNull (aJson.getAsString ("rawXML")));
   }
 }
