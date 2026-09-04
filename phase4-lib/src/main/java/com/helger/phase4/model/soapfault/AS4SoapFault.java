@@ -50,6 +50,15 @@ import com.helger.xml.serialize.write.XMLWriter;
 @Immutable
 public class AS4SoapFault
 {
+  public static final String JSON_SOAP_VERSION = "soapVersion";
+  public static final String JSON_FAULT_CODE = "faultCode";
+  public static final String JSON_FAULT_SUBCODE = "faultSubcode";
+  public static final String JSON_FAULT_REASON = "faultReason";
+  public static final String JSON_FAULT_ACTOR_ROLE = "faultActorRole";
+  public static final String JSON_FAULT_DETAIL = "faultDetail";
+  public static final String JSON_RAW_XML = "rawXML";
+  public static final String JSON_DISPOSITION = "disposition";
+
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4SoapFault.class);
 
   private final ESoapVersion m_eSoapVersion;
@@ -169,10 +178,10 @@ public class AS4SoapFault
       // SOAP 1.1 uses "Client" (with eventual dot-separated subcategories like
       // "Client.Authentication"), SOAP 1.2 uses "Sender"
       if ("Client".equals (sLocalPart) ||
-        sLocalPart.startsWith ("Client.") ||
-        "Sender".equals (sLocalPart) ||
-        "VersionMismatch".equals (sLocalPart) ||
-        "MustUnderstand".equals (sLocalPart))
+          sLocalPart.startsWith ("Client.") ||
+          "Sender".equals (sLocalPart) ||
+          "VersionMismatch".equals (sLocalPart) ||
+          "MustUnderstand".equals (sLocalPart))
         return EAS4FaultDisposition.PERMANENT;
     }
 
@@ -184,8 +193,7 @@ public class AS4SoapFault
    * Get the SOAP Fault as one JSON object for standardized serialization. Only the elements that
    * are present are contained. QNames are serialized in Clark notation
    * (<code>{namespaceURI}localPart</code>). Since v4.6.2 the raw XML is contained as well, so that
-   * the created JSON object can be converted back with
-   * {@link #createFromJsonOrNull(IJsonObject)}.
+   * the created JSON object can be converted back with {@link #createFromJsonOrNull(IJsonObject)}.
    *
    * @return The SOAP Fault as a JSON object. Never <code>null</code>.
    */
@@ -193,19 +201,19 @@ public class AS4SoapFault
   public IJsonObject getAsJsonObject ()
   {
     final IJsonObject ret = new JsonObject ();
-    ret.add ("soapVersion", m_eSoapVersion.getVersion ());
+    ret.add (JSON_SOAP_VERSION, m_eSoapVersion.getVersion ());
     if (m_aFaultCode != null)
-      ret.add ("faultCode", m_aFaultCode.toString ());
+      ret.add (JSON_FAULT_CODE, m_aFaultCode.toString ());
     if (m_aFaultSubcode != null)
-      ret.add ("faultSubcode", m_aFaultSubcode.toString ());
+      ret.add (JSON_FAULT_SUBCODE, m_aFaultSubcode.toString ());
     if (m_sFaultReason != null)
-      ret.add ("faultReason", m_sFaultReason);
+      ret.add (JSON_FAULT_REASON, m_sFaultReason);
     if (m_sFaultActorRole != null)
-      ret.add ("faultActorRole", m_sFaultActorRole);
+      ret.add (JSON_FAULT_ACTOR_ROLE, m_sFaultActorRole);
     if (m_aDetailElement != null)
-      ret.add ("faultDetail", XMLWriter.getNodeAsString (m_aDetailElement));
-    ret.add ("rawXML", m_sRawXML);
-    ret.add ("disposition", getDisposition ().getID ());
+      ret.add (JSON_FAULT_DETAIL, XMLWriter.getNodeAsString (m_aDetailElement));
+    ret.add (JSON_RAW_XML, m_sRawXML);
+    ret.add (JSON_DISPOSITION, getDisposition ().getID ());
     return ret;
   }
 
@@ -297,10 +305,10 @@ public class AS4SoapFault
                                                      @NonNull final String sLocalName)
   {
     final Element aChildElement = sNamespaceURI == null ? XMLHelper.getFirstChildElementOfName (aParentElement,
-                                                                                                sLocalName)
-                                                        : XMLHelper.getFirstChildElementOfName (aParentElement,
-                                                                                                sNamespaceURI,
-                                                                                                sLocalName);
+                                                                                                sLocalName) : XMLHelper
+                                                                                                                       .getFirstChildElementOfName (aParentElement,
+                                                                                                                                                    sNamespaceURI,
+                                                                                                                                                    sLocalName);
     return aChildElement == null ? null : StringHelper.trim (aChildElement.getTextContent ());
   }
 
@@ -395,9 +403,8 @@ public class AS4SoapFault
       {
         // All fault child elements are unqualified
         final Element aFaultCodeElement = XMLHelper.getFirstChildElementOfName (aFaultElement, "faultcode");
-        final QName aFaultCode = aFaultCodeElement == null ? null
-                                                           : _parseQName (aFaultCodeElement.getTextContent (),
-                                                                          aFaultCodeElement);
+        final QName aFaultCode = aFaultCodeElement == null ? null : _parseQName (aFaultCodeElement.getTextContent (),
+                                                                                 aFaultCodeElement);
         final String sFaultString = _getChildElementTextContent (aFaultElement, null, "faultstring");
         final String sFaultActor = _getChildElementTextContent (aFaultElement, null, "faultactor");
         final Element aDetailElement = XMLHelper.getFirstChildElementOfName (aFaultElement, "detail");
@@ -496,20 +503,20 @@ public class AS4SoapFault
     if (aJson == null)
       return null;
 
-    final ESoapVersion eSoapVersion = ESoapVersion.getFromVersionOrNull (aJson.getAsString ("soapVersion"));
+    final ESoapVersion eSoapVersion = ESoapVersion.getFromVersionOrNull (aJson.getAsString (JSON_SOAP_VERSION));
     if (eSoapVersion == null)
     {
       LOGGER.warn ("The provided JSON object contains no valid SOAP version and can therefore not be converted to an AS4SoapFault");
       return null;
     }
 
-    final QName aFaultCode = _parseClarkQName (aJson.getAsString ("faultCode"));
-    final QName aFaultSubcode = _parseClarkQName (aJson.getAsString ("faultSubcode"));
-    final String sFaultReason = aJson.getAsString ("faultReason");
-    final String sFaultActorRole = aJson.getAsString ("faultActorRole");
+    final QName aFaultCode = _parseClarkQName (aJson.getAsString (JSON_FAULT_CODE));
+    final QName aFaultSubcode = _parseClarkQName (aJson.getAsString (JSON_FAULT_SUBCODE));
+    final String sFaultReason = aJson.getAsString (JSON_FAULT_REASON);
+    final String sFaultActorRole = aJson.getAsString (JSON_FAULT_ACTOR_ROLE);
 
     Element aDetailElement = null;
-    final String sFaultDetail = aJson.getAsString ("faultDetail");
+    final String sFaultDetail = aJson.getAsString (JSON_FAULT_DETAIL);
     if (StringHelper.isNotEmpty (sFaultDetail))
     {
       // The detail element was serialized as a standalone XML element
@@ -526,6 +533,6 @@ public class AS4SoapFault
                              sFaultReason,
                              sFaultActorRole,
                              aDetailElement,
-                             StringHelper.getNotNull (aJson.getAsString ("rawXML")));
+                             StringHelper.getNotNull (aJson.getAsString (JSON_RAW_XML)));
   }
 }
