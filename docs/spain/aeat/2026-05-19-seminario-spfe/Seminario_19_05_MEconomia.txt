@@ -1,0 +1,350 @@
+                                              MINISTERIO
+                                              DE ECONOMÍA, COMERCIO Y
+                                              EMPRESA
+
+
+
+
+La facturación electrónica B2B
+Convertir una obligación en una oportunidad
+
+
+
+
+Seminario SPFE, Mayo 2026
+
+Dirección General de Política Económica
+                                                    MINISTERIO
+                                                    DE ECONOMÍA, COMERCIO Y
+                                                    EMPRESA
+
+
+
+
+1   Oportunidad para el crecimiento de la empresa
+
+
+
+
+2   Funcionamiento del Sistema
+
+
+
+
+3   Preparativos
+         Crecimiento de la empresa                                                                                                                       MINISTERIO
+
+1        Necesidades de circulante y plazos de pago en España por encima de media europea
+                                                                                                                                                         DE ECONOMÍA, COMERCIO Y
+                                                                                                                                                         EMPRESA
+
+
+
+
+                               Periodo medio de pago                                                  Necesidades de circulante de PYME
+                                            Días                                                   Ratios Circulante/Ventas y Clientes/Ventas
+    90                                                                                  30
+                  80
+    80
+                                                                                        25
+    70
+                                   60                       60                     60
+    60                                                                   57             20
+
+    50
+                                                                                        15
+                                               40
+    40
+                                                                                        10
+    30
+
+    20                                                                                   5
+
+    10
+                                                                                         0
+     0                                                                                        AT   BE DE ES       FR HR HU       IT   LU   PL   PT   SK
+             ES               FR          DE          ITA           PT        EU             2023 2024 2024 2024 2024 2024 2023 2024 2024 2024 2024 2024
+                       2019        2020   2021      2022     2023    2024                                   Circulante / Ventas      Clientes / Ventas
+
+    Fuente: EU Payment Observatory (2025).                                              Fuente: BACH database (2025), Banque de France.
+                                                                                                                                                                          3
+     Crecimiento de la empresa                                                                                               MINISTERIO
+
+1    Medidas para favorecer el crecimiento de las empresas en España, con vistas a ganar productividad
+                                                                                                                             DE ECONOMÍA, COMERCIO Y
+                                                                                                                             EMPRESA
+
+
+
+
+      Medidas Crea y Crece                    Objetivo                      Impacto en crecimiento de la empresa
+
+
+
+                                        Pago ágil a proveedores                  Reduce la necesidad de circulante.
+
+
+       Factura electrónica B2B
+
+
+                                             Digitalización                  Ahorra costes de gestión y tiempo de proceso
+
+
+
+
+       Reforma Ley General de
+                                              Incentivos                     Libera recursos para inversión / contratación
+           Subvenciones
+
+
+
+
+    Reforma Ley de Sociedades de
+                                            Transparencia                     Mejora la imagen frente a socios / clientes
+              Capital
+
+
+                                                                                                                                              4
+            Crecimiento de la empresa                                                                                                                             MINISTERIO
+
+1           La implantación de factura electrónica genera ahorros de tiempo y dinero significativos
+                                                                                                                                                                  DE ECONOMÍA, COMERCIO Y
+                                                                                                                                                                  EMPRESA
+
+
+
+
+                Volumen de facturas y ahorros generados                                                      Tiempo de trabajo ahorrado
+                 Millones de facturas y de euros ahorrados                                                                   Horas
+    3.500                                                                  557 600     2.500.000
+
+
+    3.000                                                                                                                                                     2.030.671
+                                                                          2.761 500
+                                                                                       2.000.000
+    2.500
+                                                                                 400
+
+    2.000                                                                              1.500.000
+                                                                         1.567   300
+    1.500
+
+                                                                                 200   1.000.000
+    1.000
+
+                                                                                 100
+      500                                                                                500.000
+                                                                                                                                                                  328.035
+
+        -                                                                        0
+               2016 2017 2018 2019 2020 2021 2022 2023 2024                                     0
+                  Ahorro en emisión                Ahorro en recepción                               2016    2017    2018    2019    2020    2021   2022   2023   2024
+
+                  No. Facturas Electrónicas                                                                 Horas en recepción         Horas en emisión
+
+    Fuente: Estudio de factura electrónica 2024, SERES.                                Fuente: Estudio de factura electrónica 2024, SERES.
+                                                                                                                                                                                   5
+    Funcionamiento del sistema                                                                                                                                MINISTERIO
+
+2   Sistema de factura electrónica B2B … usando plataformas privadas
+                                                                                                                                                              DE ECONOMÍA, COMERCIO Y
+                                                                                                                                                              EMPRESA
+
+
+
+
+                                                                           Factura electrónica
+                                 Plataforma                                                                             Plataforma
+                                 Facturación                                                                            Facturación
+                                 electrónica                                                                            electrónica
+                                                                          Estado de la factura
+
+
+
+         Factura electrónica /
+
+
+                                                Estado de la factura
+                                                                                                                                      Factura electrónica /
+
+
+                                                                                                 Estado de la factura
+                                                                         Solución Pública de
+                                                                       Facturación Electrónica
+
+
+            Datos factura                                                                                                                Datos factura
+
+
+
+
+                                     Software                                                                             Software
+
+
+
+
+                                    Proveedor                                                                             Cliente
+
+
+                                                                                                                                                                               6
+    Funcionamiento del sistema                                                         MINISTERIO
+
+2   Sistema de factura electrónica B2B … usando solo solución pública
+                                                                                       DE ECONOMÍA, COMERCIO Y
+                                                                                       EMPRESA
+
+
+
+
+                                                                           GRATIS
+
+
+
+                                                   Solución Pública de
+                                                 Facturación Electrónica
+
+
+
+
+                   Software                                                 Software
+
+
+
+
+                 Proveedor                                                  Cliente
+
+
+
+
+                                                                                                        7
+    Funcionamiento del sistema                                                                           MINISTERIO
+
+2   Funciones de la solución pública de facturación electrónica
+                                                                                                         DE ECONOMÍA, COMERCIO Y
+                                                                                                         EMPRESA
+
+
+
+
+                                         EMISIÓN
+
+
+
+                                    Genera factura electrónica
+       Proveedor                                                                               Cliente
+                                    en la sede electrónica AEAT
+                                                                        Formulario
+
+
+
+                                     INTERCONEXIÓN
+
+
+
+                      Software      Remite factura electrónica      Solución Pública de
+       Proveedor                                                                              Cliente
+                        ERP         completa por web services     Facturación Electrónica
+
+
+
+
+     Plataforma                     Remite factura electrónica                              Plataforma
+     Facturación                    completa por web services                               Facturación
+     electrónica                                                                            electrónica
+
+
+                                                                                                                          8
+    Preparativos                                                                                                             MINISTERIO
+
+3   Un año desde la aprobación de la OM para prepararse en empresas que facturan > 8M€
+                                                                                                                             DE ECONOMÍA, COMERCIO Y
+                                                                                                                             EMPRESA
+
+
+
+
+        Preparativos financieros                       Ajuste de procesos                    Revisión de proveedores
+
+
+    •   Estudio de plazos de pago y cobro      •   Coordinación con proveedores y        •   Ajustar el “onboarding” de
+        de la empresa                              clientes                                  proveedores (volumen facturación,
+                                                                                             pto. de entrada facturas..)
+    •   Previsiones de tesorería y recálculo   •   Revisión del clausulado de
+        de necesidades de circulante               condiciones de pago a proveedores     •   Plataforma privada o Solución
+                                                                                             Pública (ya sea vía ERP o vía
+    •   Ajustes de confirming / factoring      •   Identificación de facturas con            directa).
+        con entidades financieras                  pagos
+                                                                                         •   Esquema de Puntos de Entrada de
+    •   Preparación de información para        •   Ajustes en esquemas de                    facturas electrónicas
+        cuentas anuales                            autofacturación o facturación por
+                                                   un tercero (despacho/gestoría)
+                                                     • Apoderamiento
+                                                     • Colaborador social
+
+
+
+
+                                                                                                                                              9
+        Preparativos                                                                                                      MINISTERIO
+
+3       Año y medio para prepararse los intermediarios tecnológicos
+                                                                                                                          DE ECONOMÍA, COMERCIO Y
+                                                                                                                          EMPRESA
+
+
+
+
+          Plataformas de facturación
+                                                          Proveedores de ERP                     Despachos / Gestores
+                  electrónica
+
+    •    Interconexión con otras plataformas     •   Conexión con plataforma privada o   •   Conexión con plataforma privada o
+                                                     Solución Pública                        Solución Pública
+    •    Acceso a la Solución Pública de
+         facturación                             •   Integración del formato UBL en el   •   Forma de representación de los
+                                                     software                                clientes: apoderamiento vs
+    •    Forma de representación de los                                                      colaborador social
+         clientes: apoderamiento vs              •   Didáctica con clientes
+         colaborador social                                                              •   Didáctica con clientes
+                                                 •   Cambios en subsanaciones y
+    •    Implementar estados de factura              rectificativas                      •   Cambios en subsanaciones y
+                                                                                             rectificativas
+    •    Generación y transmisión de copias      •   Coordinación con Verifactu
+         fieles de facturas                                                              •   Coordinación con Verifactu
+
+    •    Coordinación con Verifactu
+
+
+
+
+                                                                                                                                         10
+    Preparativos                                                                                                          MINISTERIO
+
+3   Aplicación escalonada de las obligaciones
+                                                                                                                          DE ECONOMÍA, COMERCIO Y
+                                                                                                                          EMPRESA
+
+
+
+
+                                                                            Obligación de facturar
+                                                                              electrónicamente y
+                                                                              comunicar el pago
+                                                                             para empresas < 8M€
+                                Publicación OM                              Obligación de facturar
+                                Solución Pública                            electrónicamente para
+                                                                             profesionales < 8M€
+
+
+               2026                 2026                   2027                    2028                   2029
+           Publicación Real                        Obligación de facturar                              Obligación de
+           Decreto 238/2026                         electrónicamente y                               comunicar el pago
+                                                     comunicar el pago                               para profesionales
+                                                      para empresas y                                      < 8M€
+                                                    profesionales > 8M€
+
+
+
+
+                                                                                                                                         11
+

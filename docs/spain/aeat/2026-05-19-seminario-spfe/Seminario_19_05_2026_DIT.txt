@@ -1,0 +1,291 @@
+   SOLUCIÓN PÚBLICA DE FACTURACION
+          ELECTRÓNICA (SPFE)
+
+
+
+Aspectos técnicos
+Sistema español de factura electrónica y SPFE
+El sistema español de factura electrónica es un sistema mixto que se compone de
+plataformas privadas, así como de una Solución Pública de Facturación Electrónica (SPFE)
+gestionada por la AEAT.
+
+
+
+
+     La SPFE trabajará exclusivamente con sintaxis UBL (Universal Business Language)
+SFPE y distribución de facturas por volumen
+
+
+
+                                                            Plataforma
+                                                             Privada
+                                                                #2
+
+                                           Plataforma
+ SPFE                                       Privada
+                                               #1
+                                                                         Plataforma
+                                                                          Privada
+                                                                             #3
+ (FACTURAS ELECTRÓNICAS Y COPIAS FIELES)
+
+                                                        Plataforma
+                                                         Privada
+                                                            #N
+            SPFE - Estándar ISO 19845 - UBL
+• Estándar definido por OASIS, organización de estandarización internacional.
+• Formato basado en XML
+• Sintaxis con soporte para todo el proceso de negocio de una empresa:
+
+    o Gestión comercial
+    o Gestión de inventario
+    o Gestión de pedidos             UBL además está pensado
+    o Albaranes                      para ser
+    o Entregas/Recepciones           extendido y personalizado
+    o Licitación
+
+• Y por supuesto:
+    o Emisión de facturas (Invoice)
+    o Confirmación del pago/cobro de las facturas (ApplicationResponse)
+       SPFE - Estructura de una factura en UBL
+
+
+
+ID. FACTURA ÚNICO =
+
+    Nº de Serie-Factura
+    Fecha Expedición
+    NIF emisor
+
+No podrán coexistir dos
+facturas    con    el mismo
+identificador único.
+          SPFE - Validación sintáctica UBL
+• La validación de la sintaxis UBL no presenta ningún problema, dado que
+  OASIS publica un esquema (XSD – XML Schema Definition) para los
+  distintos componentes, incluyendo “Invoice” y “ApplicationResponse”.
+
+• Con este esquema, cualquier emisor/plataforma privada conoce la
+  estructura de la información que la SPFE (o plataforma privada que opere
+  en UBL) espera recibir.
+SPFE - Validación sintáctica UBL por el emisor
+• La comprobación de la factura con respecto al XML debe ser realizada por el
+  emisor o remitente en su defecto.
+
+• De esta forma se evitará el rechazo automático de la factura electrónica o
+  copia fiel por parte de la SPFE.
+         SPFE - Estándar europeo EN 16931
+• La norma EN 16931 es el estándar europeo para la facturación electrónica,
+  diseñado para garantizar la interoperabilidad en las transacciones
+  comerciales dentro de la Unión Europea.
+
+• Modelo de datos semánticos: Define los elementos básicos que debe
+  contener una factura electrónica (como datos del emisor, receptor,
+  impuestos y líneas de detalle)
+
+• No evalúa ni restringe el contenido adicional que pueda incluir la factura,
+  aunque hay que intentar evitar problemas de interoperabilidad.
+
+• Sintaxis aceptadas: El modelo semántico se traduce principalmente a dos
+  formatos técnicos (XML):
+     • UBL 2.x (Universal Business Language).
+     • UN/CEFACT CII (Cross Industry Invoice).
+SPFE - Estándar europeo EN 16931
+   SPFE – Extensiones del EN 16931 sobre UBL
+
+• El esquema europeo no cubre todos los
+  requisitos exigidos a día de hoy por el
+  Reglamento de Obligaciones de Facturación
+  (ROF) aprobado por el RD 1619/2022.
+                                                                      UBL                             CII
+
+• Por otro lado, UBL es muy flexible y habilita
+  campos      personalizables    para   poder
+  cumplimentar esta información.
+
+• La SPFE hará uso de esta flexibilidad de UBL                                         Solapamiento
+                                                                                          UBL/CII
+  para cubrir todos los requisitos del ROF, sin      EN 16931
+                                                     Común
+  romper la semántica europea.                       Específico
+                                                     Personalización para cubrir requisitos del ROF
+
+• Todos los campos personalizados en la sintaxis
+  de la FE se documentan en el Anexo I de la orden
+  ministerial.
+         SPFE - Soporte en el EN 16931:2026
+Casos de la facturación nacional no contemplados por el estándar europeo
+en su versión de 2019.
+
+Requisitos de las facturas rectificativas (Art. 15 del ROF).
+
+Pero también tiene problemas para reflejar:
+  •   Retenciones
+  •   Suplidos
+  •   Minoraciones
+  •   Recargo de equivalencia
+  •   Régimen especial de grandes empresas (nivel avanzado)
+
+La versión del EN 16931 de 2026 basada en UBL 2.5 sí permite dar soporte a
+estos requisitos.
+             SPFE - Validación del EN 16931
+¿Cómo garantizar que las facturas cumplen el esquema semántico?
+
+  • Definición de modelo de validación estandarizado: “Schematron”
+  • Disponible en repositorios públicos (Github). Tendrá que ser actualizado
+    a la versión del EN 16931 de 2026.
+  • Lenguaje declarativo. Puede ejecutarse en cualquier plataforma
+    tecnológica.
+       https://github.com/ConnectingEurope/eInvoicing-EN16931/tree/master/ubl/schematron
+SPFE - Validación del EN 16931. Ejemplo versión
+                      2019
+
+<assert id="BR-CO-16" flag="fatal" test="
+(not(exists(cbc:PrepaidAmount)) and not(exists(cbc:PayableRoundingAmount)) and xs:decimal(cbc:PayableAmount) =
+xs:decimal(cbc:TaxInclusiveAmount))
+or
+(exists(cbc:PrepaidAmount) and not(exists(cbc:PayableRoundingAmount)) and (xs:decimal(cbc:PayableAmount) =
+(redondea(xs:decimal(cbc:TaxInclusiveAmount) - xs:decimal(cbc:PrepaidAmount))))
+or
+(not(exists(cbc:PrepaidAmount)) and exists(cbc:PayableRoundingAmount) and
+((redondea(xs:decimal(cbc:PayableAmount) - xs:decimal(cbc:PayableRoundingAmount))) = xs:decimal(cbc:TaxInclusiveAmount)))
+or
+(exists(cbc:PrepaidAmount) and exists(cbc:PayableRoundingAmount) and
+((redondea(xs:decimal(cbc:PayableAmount) - xs:decimal(cbc:PayableRoundingAmount))) =
+(redondea(xs:decimal(cbc:TaxInclusiveAmount) - xs:decimal(cbc:PrepaidAmount)))))
+">
+[BR-CO-16]-Amount due for payment (BT-115) = Invoice total amount with VAT (BT-112) - Paid amount (BT-113) + Rounding amount
+(BT-114).
+</assert>
+SPFE - Validación del EN 16931. Ejemplo versión
+                    de 2026
+SPFE - Validación del EN 16931. Validación
+                semántica
+• El “schematron” es un modelo declarativo, y por lo tanto se debe
+  interpretar y ejecutar.
+• Funciona bien para un conjunto de facturas reducido.
+• Pero no tanto para volúmenes como el que manejará la AEAT, del orden de
+  miles de millones de facturas al año.
+
+• La AEAT implementará su propia solución de validación de alto
+  rendimiento basada en el Schematron.
+• Los remitentes de facturas deben utilizar el Schematron para validar la
+  factura antes de remitir, minimizando así el volumen de rechazos. Mismo
+  criterio que con el XSD.
+
+• No se publicará un servicio de validación de facturas online en
+  Producción.
+SPFE – Soporte en UBL para otras operativas
+UBL ofrece soporte para mensajes genéricos que dan soporte a la operativa
+de la SPFE:
+
+  •   Informar el pago completo de una factura (cliente)
+  •   Rechazar una factura recibida (cliente)
+  •   Informar el cobro/impago de una factura (proveedor)
+  •   Consultar el listado de facturas disponibles (Id. Único + estados)
+  •   Descargar una factura depositada en la solución pública a partir de su
+      Id. Único (emisor/destinatario)
+                                                 UBL
+                                       • ApplicationResponse
+                                       • DocumentStatus
+SPFE – Estados de la factura emisor/destinatario
+SPFE - Aplicación gratuita de facturación de la
+                    AEAT
+
+
+
+
+• Solo en nombre propio o con apoderamiento.
+• La FE emitida quedará depositada en la SPFE para su
+  recepción por parte del destinatario.
+          SPFE – Gestiones en la Sede de la AEAT
+
+
+
+
+• Operativa propia de la SPFE y no de
+  la Aplicación gratuita de facturación
+  de la AEAT
+                        SPFE - Servicios Web
+• La SPFE ofrecerá una serie de servicios web “síncronos”.
+• El uso de los servicios web requiere de autenticación con certificado electrónico.
+
+• Todos los servicios web de la SPFE (remisión y consulta) estarían disponibles en
+  calidad de:
+    1. Nombre propio
+    2. Apoderamiento
+
+• Adicionalmente, los servicios web de remisión de facturas/copias y cambio de estado
+  estarán disponibles en calidad de colaborador social. Pero un colaborador
+  social/plataforma/privada NO podrá consultar/descargar facturas recibidas o estados
+  de facturas sin el correspondiente apoderamiento.
+
+• Los servicios web no son un mecanismo reservado a una categoría específica de
+           o  La SPFE   no  es un módulo  de un ERP,   ni un  “sistema de
+  operador. Cualquier empresario o profesional debidamente autenticado y autorizado
+  podrá hacerbackup”    de una plataforma privada, ni un sistema de
+              uso de ellos.
+              almacenamiento gratuito de facturas en la nube.
+ SPFE - Operativa de las plataformas privadas
+• Se ofrecerán servicios específicos para Plataformas Privadas que gestionan las
+  facturas de una gran cantidad de empresas/profesionales diferentes.
+
+• El empresario/profesional tendrá que habilitar a la plataforma privada para poder
+  recuperar facturas/estados en su nombre.
+
+
+
+
+• Las plataformas privadas no deben operar con la SPFE en una modalidad factura a
+  factura ni cliente a cliente.
+ SPFE - Operativa de las plataformas privadas
+
+• Las plataformas privadas deben agrupar la información para la remisión a la SPFE.
+
+
+
+
+                                     Plataforma privada                          SPFE
+
+
+
+
+• De igual forma la SPFE agrupará la informacion que pondrá a disposición de las
+  plataformas privadas.
+   SPFE – Integración en entorno de pruebas
+
+• Como en todos los desarrollos de la AEAT, existirá un entorno de pruebas donde
+  realizar pruebas de integración.
+
+• Este entorno estará disponible con antelación suficiente, pero no antes de que la
+  orden ministerial que la regula esté publicada en el BOE. Fecha de referencia: 1 de
+  octubre de 2026.
+
+• El acceso a los servicios web del entorno de pruebas requiere de autenticación con
+  certificado electrónico, así como capacidad de representación suficiente sobre el
+  sujeto en nombre del cual actúa. Las facturas deben emitirse con NIFes reales o
+  aquellos específicamente diseñados para pruebas.
+                              SPFE - Documentación
+Con carácter previo al despliegue de la SPFE en el entorno de pruebas se publicarán en
+el            Portal             de             Entidades             Desarrolladoras:
+https://www.agenciatributaria.es/AEAT.desarrolladores/Desarrolladores/Desarrolladores.html
+
+
+   • Documentación técnica explicativa:
+     • Catálogo de servicios para empresas y para plataformas
+     • Estándares de remisión
+     • Autenticación y representación
+     • Limitaciones aplicables
+     • Listado de errores
+   • WSDL de acceso a los servicios
+   • Esquemas XSD de extensiones propias y referencias a OASIS (UBL)
+   • Documentos de validaciones (schematron)
+   • Ejemplos ilustrativos de los diferentes mensajes:
+     • Factura electrónica/copia fiel
+     • Confirmación pago/rechazo, anulación de pago/cobro/rechazo
+                      ¡Muchas Gracias!
+Para dudas exclusivamente técnicas sobre servicios/documentación/sintaxis relacionados
+                                    con la SPFE:
+
+                         facturaelectronica@correo.aeat.es
+

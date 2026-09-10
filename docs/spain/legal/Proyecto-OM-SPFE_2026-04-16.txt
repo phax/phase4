@@ -1,0 +1,823 @@
+Agencia Tributaria                                         Departamento de Gestión Tributaria
+
+
+
+
+    DOCUMENTO SOMETIDO A TRÁMITE DE AUDIENCIA E INFORMACIÓN PÚBLICA EL 17 DE ABRIL DE 2026
+
+
+PROYECTO DE ORDEN POR LA QUE SE REGULA LA SOLUCIÓN PÚBLICA DE FACTURACIÓN
+ELECTRÓNICA, DE ACUERDO CON LO DISPUESTO EN LA DISPOSICIÓN FINAL TERCERA DEL REAL
+
+DECRETO 238/2026, DE 25 DE MARZO, POR EL QUE SE DESARROLLA EL SISTEMA DE FACTURACIÓN
+ELECTRÓNICA OBLIGATORIA ENTRE EMPRESARIOS Y PROFESIONALES Y POR EL QUE SE MODIFICA
+
+EL REGLAMENTO POR EL QUE SE REGULAN LAS OBLIGACIONES DE FACTURACIÓN, APROBADO POR
+
+EL REAL DECRETO 1619/2012, DE 30 DE NOVIEMBRE.
+
+
+
+
+                                               I
+
+
+La Ley 18/2022, de 28 de septiembre, de creación y crecimiento de empresas, tiene como
+objetivo el impulso de la creación de empresas y el fomento de su crecimiento, tanto a través
+de la mejora regulatoria y eliminación de obstáculos a las actividades económicas como
+mediante el apoyo financiero al crecimiento empresarial.
+
+
+Dentro de las medidas de mejora del apoyo financiero al crecimiento empresarial se identifica
+como una de las prioridades la reducción de la morosidad comercial, y para ello se requiere
+contar con información fiable sobre los plazos de pago efectivos que permitan diseñar
+medidas que incentiven el cumplimiento de los plazos de pago.
+
+
+Con esta finalidad se adoptan cambios regulatorios entre los que destaca la promoción y
+obligatoriedad del uso de la factura electrónica en operaciones entre empresarios y
+profesionales. En concreto el artículo 12 de la Ley 18/2022, de 28 de septiembre, introduce
+este cambio mediante la modificación del artículo 2 bis de la Ley 56/2007, de 28 de diciembre,
+de Medidas de Impulso de la Sociedad de la Información.
+
+
+Esta obligación de factura electrónica afecta a todos los empresarios y profesionales que
+deberán expedir, remitir y recibir facturas electrónicas en sus relaciones comerciales con otros
+empresarios y profesionales. Respecto a estas facturas electrónicas se establece que también
+deberá proporcionarse información sobre los estados de la factura. A estos efectos el artículo
+2 bis establece que las soluciones tecnológicas y plataformas ofrecidas por empresas
+
+
+
+
+                                               1
+Agencia Tributaria                                           Departamento de Gestión Tributaria
+
+
+
+
+proveedoras de servicios de facturación electrónica a los empresarios y profesionales deberán
+garantizar su interconexión e interoperabilidad gratuitas.
+
+
+En relación con esta obligación, la disposición final séptima de la Ley 18/2022, de 28 de
+septiembre, establece que en el desarrollo reglamentario del artículo 2 bis deberán regularse
+los requisitos técnicos y de información a incluir en la factura electrónica a efectos de verificar
+la fecha de pago y obtener los periodos medios de pago, los requisitos de interoperabilidad
+mínima entre los prestadores de soluciones tecnológicas de facturas electrónicas, y los
+requisitos de seguridad, control y estandarización de los dispositivos y sistemas informáticos
+que generen los documentos. En concreto esta disposición final impone que estos requisitos
+técnicos deben tener en cuenta la realidad actual del uso de facturas electrónicas
+estructuradas basadas en estándares globales de forma que se minimice, en lo posible, el
+esfuerzo de cumplimiento y adaptación de las empresas que ya usan facturas electrónicas
+estructuradas basadas en dichos estándares.
+
+
+Por otra parte, la Ley 7/2024, de 20 de diciembre, por la que se establecen un Impuesto
+Complementario para garantizar un nivel mínimo global de imposición para los grupos
+multinacionales y los grupos nacionales de gran magnitud, un Impuesto sobre el margen de
+intereses y comisiones de determinadas entidades financieras y un Impuesto sobre los
+líquidos para cigarrillos electrónicos y otros productos relacionados con el tabaco, y se
+modifican otras normas tributarias, introduce la disposición adicional vigesimoprimera de la
+Ley 56/2007, de 28 de diciembre, para regular la denominada solución pública de facturación
+electrónica.
+
+
+En esta disposición adicional, se encomienda a la Agencia Estatal de Administración Tributaria
+el desarrollo y gestión, en los términos que se establezcan reglamentariamente, de una
+solución pública de facturación electrónica que, a los efectos de lo previsto en el artículo 2 bis
+de Ley 56/2007, de 28 de diciembre, preste los servicios de facturación electrónica de aquellos
+empresarios o profesionales que así lo elijan y sirva de repositorio universal y obligatorio de
+todas las facturas electrónicas expedidas, remitidas o recibidas conforme a la citada ley.
+
+
+En el apartado 2 de esta disposición adicional, también se preceptúa que las plataformas,
+soluciones o sistemas de facturación que utilicen los empresarios o profesionales obligados a
+
+
+
+
+                                                2
+Agencia Tributaria                                         Departamento de Gestión Tributaria
+
+
+
+
+emitir y recibir facturas electrónicas, que no utilicen la solución pública de facturación
+electrónica, estarán obligadas a remitir simultáneamente a su emisión una copia electrónica
+fiel de cada factura a la citada solución pública en los términos previstos reglamentariamente.
+
+
+Por otra parte, en el apartado 3 de la disposición, se indica que los empresarios o
+profesionales destinatarios de las facturas electrónicas estarán obligados a comunicar de
+forma electrónica a la solución pública de facturación electrónica el pago efectivo completo de
+las facturas o su rechazo, en los términos que se determinen reglamentariamente.
+
+
+El desarrollo reglamentario del artículo 2 bis y de la disposición adicional vigesimoprimera de
+la Ley 56/2007, de 28 de diciembre, lo encontramos en el Real Decreto 238/2026, de 25 de
+marzo, por el que se desarrolla el sistema de facturación electrónica obligatoria entre
+empresarios y profesionales y por el que se modifica el Reglamento por el que se regulan las
+obligaciones de facturación, aprobado por el Real Decreto 1619/2012, de 30 de noviembre.
+
+
+El artículo 3 del Real Decreto 238/2026, de 25 de marzo, delimita el ámbito de aplicación
+estableciendo que los empresarios y profesionales que, de conformidad con el Reglamento
+por el que se regulan las obligaciones de facturación, aprobado por el Real Decreto
+1619/2012, de 30 de noviembre, estén obligados a expedir y entregar factura por las
+operaciones que realicen en el desarrollo de su actividad empresarial o profesional, deberán
+hacerlo en formato electrónico cuando el destinatario de la operación sea un empresario o
+profesional que tenga en España la sede de su actividad económica, o tenga en España un
+establecimiento permanente o, en su defecto, el lugar de su domicilio o residencia habitual,
+siempre que se trate de operaciones que tengan por destinatarios a dicha sede,
+establecimiento permanente, domicilio o residencia habitual.
+
+
+En el artículo 5 del Real Decreto 238/2026, de 25 de marzo, se definen las características
+básicas del sistema español de factura electrónica, que estará conformado por las plataformas
+de intercambio de facturas electrónicas de carácter privado y por la solución pública de
+facturación electrónica.
+
+
+En este sentido, el artículo 6 Real Decreto 238/2026, de 25 de marzo, enumera las
+obligaciones de los sujetos intervinientes en el sistema: los empresarios y los profesionales
+
+
+
+
+                                              3
+Agencia Tributaria                                           Departamento de Gestión Tributaria
+
+
+
+
+estarán obligados a emitir las facturas electrónicas a sus clientes empresarios y profesionales
+y a recibirlas de sus proveedores a través de las plataformas privadas de intercambio de
+facturas electrónicas, mediante la solución pública de facturación electrónica o mediante la
+combinación de ambas vías.
+
+
+De forma adicional en este artículo 6 se establece que los empresarios o profesionales
+obligados que no utilicen la solución pública de facturación electrónica para emitir sus facturas,
+estarán obligados a remitir, simultáneamente a su emisión, una copia electrónica fiel de cada
+factura en la sintaxis UBL (Universal Business Language) a la solución pública. Dichas copias
+deberán contener la información de todos los conceptos de las facturas electrónicas originales
+que tengan correspondencia semántica equivalente y estén contemplados en la sintaxis de la
+solución pública de facturación electrónica, cumpliendo en todo caso con el contenido mínimo
+previsto en el Reglamento por el que se regulan las obligaciones de facturación, aprobado por
+Real Decreto 1619/2012, de 30 de noviembre.
+
+
+El artículo 11 del Real Decreto 238/2026, de 25 de marzo, describe las características de la
+solución pública de facturación electrónica, como plataforma alternativa básica de facturación
+que proporciona un acceso sencillo y asequible a estos servicios en favor de las pequeñas y
+medianas empresas (pymes) y profesionales, y cuyo desarrollo y gestión corresponde a la
+Agencia Estatal de Administración Tributaria. En consecuencia, la solución pública tiene la
+funcionalidad de hacer accesible el cumplimiento de la obligación de facturar electrónicamente
+a los empresarios, como también la de recepción de las facturas por su función de
+interconexión entre plataformas en los casos en los que prevé el artículo 6 del Real Decreto.
+
+
+Por último, la solución pública de facturación electrónica también cumple con la función de
+recepción de la información sobre el pago de las facturas electrónicas emitidas al amparo de
+la obligación prevista en el artículo 2 bis de la Ley 56/2007, de 28 de diciembre, con el objetivo
+prioritario de monitorizar los plazos de pago de las mismas a efectos del control de la
+morosidad en los términos previstos en el artículo 12 del Real Decreto 238/2026, de 25 de
+marzo.
+
+
+
+
+                                                4
+Agencia Tributaria                                         Departamento de Gestión Tributaria
+
+
+
+
+Tal y como se estipula en la Ley 56/2007, de 28 de diciembre, así como en el Real Decreto
+Real Decreto 238/2026, de 25 de marzo, el acceso a la solución pública y sus distintos usos
+tendrán carácter gratuito para los usuarios.
+
+
+Esta orden ministerial da cumplimiento al desarrollo normativo previsto en la disposición final
+tercera, apartado 1, del Real Decreto 238/2026, de 25 de marzo, el cual se encomienda a la
+persona titular del Ministerio de Hacienda, y que le habilita para regular todos los aspectos
+técnicos de la solución pública de facturación electrónica. En consecuencia, en esta orden se
+procede a especificar los elementos técnicos precisos para el funcionamiento correcto de la
+solución pública de facturación electrónica, en concreto para cumplir con las funciones de
+emisión e interconexión de facturas electrónicas. También se desarrollan las formas de
+autenticación, identificación y representación para acceder a la solución pública, las
+especificaciones del servicio de comunicación de pagos a la solución pública, la codificación
+única de las facturas electrónicas y su inserción en las sintaxis de factura, la comunicación
+entre la solución pública de facturación electrónica y las plataformas privadas de facturación;
+así como los detalles adicionales que conviene precisar para el adecuado funcionamiento y
+uso de la solución pública de facturación electrónica.
+
+
+A los efectos de este desarrollo normativo, se entenderá por función de interconexión de la
+solución pública de facturación electrónica tanto la capacidad de facilitar el intercambio de
+facturas electrónicas entre operadores de plataforma privadas de acuerdo con lo previsto en
+el artículo 8.2 del Real Decreto 238/2026, de 25 de marzo, como también la funcionalidad
+consistente en poner a disposición las facturas electrónicas y sus estados, permitiendo su
+acceso, consulta y recuperación.
+
+
+Con la entrada en vigor de esta orden ministerial se dará inicio al cómputo de los plazos
+previstos en la disposición final octava de la Ley 18/2022, de 28 de septiembre, y en las
+disposiciones transitorias primera a tercera, y disposición final cuarta, del Real Decreto
+238/2026, de 25 de marzo.
+
+
+
+
+                                               5
+Agencia Tributaria                                          Departamento de Gestión Tributaria
+
+
+
+
+                                               II
+
+
+Esta orden consta de 10 artículos, una disposición adicional, una disposición final y dos
+anexos.
+
+
+En el artículo 1 se regula el objeto de la presente orden, que es el de definir los elementos
+técnicos y funcionales de la solución pública de facturación electrónica, tal y como preceptúa
+la disposición final tercera, apartado primero, del Real Decreto 238/2026, de 25 de marzo.
+
+
+El ámbito de aplicación queda definido en el artículo 2 por remisión a lo previsto en el artículo
+3 del Real Decreto 238/2026, de 25 de marzo, con las excepciones y particularidades
+recogidas en sus disposiciones y en la normativa específica citada.
+
+
+En el artículo 3 se desarrolla el contenido y elementos técnicos determinantes del servicio de
+emisión e interconexión de facturas que debe prestar la solución pública. En concreto se
+establece el modelo semántico, la sintaxis y los elementos mínimos de las facturas
+electrónicas emitidas o interconectadas a través de la solución pública, así como las reglas
+sobre disponibilidad inmediata para la Administración, comunicación de bajas, la prohibición
+de anexos y la remisión de firmas electrónicas.
+
+
+En el artículo 4 de esta orden se concretan los elementos técnicos de la copia fiel,
+especialmente su contenido mínimo, identificación como copia y prohibición de anexos.
+
+
+En el artículo 5 se regula el procedimiento de uso de la solución pública y remisión de copias
+fieles. A estos efectos se definen los procedimientos de emisión, interconexión y remisión de
+copias fieles mediante formularios web o servicios web, los procesos de validación, las
+respuestas de la Administración, las causas de rechazo y los plazos excepcionales en caso
+de incidencias técnicas.
+
+
+En el artículo 6 se especifica la codificación única de las facturas de acuerdo con lo previsto
+en el artículo 7.5 del Real Decreto 238/2026, de 25 de marzo. Con este objetivo se prevé que
+cada factura tendrá un código único basado en la concatenación del conjunto de valores del
+NIF del emisor, número, serie y fecha de expedición, conforme a la sintaxis UBL definida.
+
+
+
+
+                                               6
+Agencia Tributaria                                         Departamento de Gestión Tributaria
+
+
+
+
+El servicio electrónico de comunicación de pagos se define y configura en el artículo 7 de la
+orden. En concreto se regula la comunicación del rechazo, del pago efectivo, del cobro o del
+impago de las facturas, tanto por el destinatario como, de forma voluntaria, por el emisor, así
+como el contenido y la sintaxis de dichas comunicaciones. A continuación, en el artículo 8 se
+establece el procedimiento para la comunicación de pagos, detallándose las formas de envío
+de la información de pagos, los requisitos de identificación de la factura, el sistema de
+validación y respuesta, los plazos en caso de incidencias técnicas y la posibilidad de anulación
+de comunicaciones erróneas.
+
+
+Por su parte, el artículo 9 dispone los requisitos y condiciones para acceder al servicio de
+recuperación de facturas. Para poder acceder a esta recuperación se obliga a que las
+plataformas privadas recuperen los mensajes de facturas intercambiados a través de la
+solución pública y se regula el acceso automatizado para la recuperación y puesta a
+disposición inmediata de las facturas por plataformas y destinatarios.
+
+
+Por último, en el artículo 10 se delimita el sistema de autenticación, identificación y
+representación necesarios para el acceso a la solución pública de facturación electrónica,
+incluyendo certificados electrónicos y, según los casos, el sistema Cl@ve, así como la
+posibilidad de actuación mediante representación conforme a la normativa tributaria aplicable.
+
+
+La disposición adicional única prevé la necesidad de que la solución pública de facturación
+electrónica esté puesta a disposición en la Sede de la Agencia Estatal de Administración
+Tributaria al menos dos meses antes de la primera aplicación efectiva de la misma.
+
+
+Por su parte, en la disposición final única, se determina la entrada en vigor y producción de
+efectos de la orden ministerial. La entrada en vigor se producirá el 1 de octubre de 2026. No
+obstante, los plazos previstos para que la misma surta efectos son los previstos en la
+disposición final octava de la Ley 18/2022, de 28 de septiembre, y la disposición final cuarta
+del Real Decreto 238/2026, de 25 de marzo.
+
+
+
+
+                                               7
+Agencia Tributaria                                          Departamento de Gestión Tributaria
+
+
+
+
+                                               III
+
+
+De acuerdo con lo dispuesto en la Ley 39/2015, de 1 de octubre, del Procedimiento
+Administrativo Común de las Administraciones Públicas, la elaboración de esta orden se ha
+efectuado de acuerdo con los principios de necesidad, eficacia, proporcionalidad, seguridad
+jurídica, transparencia y eficiencia.
+
+
+Se cumplen los principios de necesidad y eficacia jurídica por ser desarrollo de una norma
+legal y reglamentaria y el instrumento adecuado para dicho desarrollo.
+
+
+Se cumple también el principio de proporcionalidad al contener la regulación necesaria para
+conseguir los objetivos que justifican su aprobación.
+
+
+Respecto al principio de seguridad jurídica, se ha garantizado la coherencia del texto con el
+resto del ordenamiento jurídico nacional, generando un marco normativo estable, predecible,
+integrado, claro y de certidumbre que facilita su conocimiento y comprensión y, en
+consecuencia, la actuación y toma de decisiones de los diferentes sujetos afectados sin
+introducción de cargas administrativas innecesarias.
+
+
+El principio de transparencia, sin perjuicio de su publicación oficial en el «Boletín Oficial del
+Estado», se ha garantizado mediante la publicación del proyecto de orden en el portal web
+del Ministerio de Hacienda, a efectos de que pueda ser conocido dicho texto en el trámite de
+audiencia e información pública por todos los ciudadanos.
+
+
+Por último, en relación con el principio de eficiencia se ha procurado que la norma genere las
+menores cargas administrativas para los ciudadanos, así como los menores costes indirectos,
+fomentando el uso racional de los recursos públicos y el pleno respeto a los principios de
+estabilidad presupuestaria y sostenibilidad financiera.
+
+
+De acuerdo con lo previsto en la disposición adicional vigesimoprimera de la Ley 56/2007, de
+28 de diciembre, se establece la sujeción de los tratamientos de datos personales que resulten
+de la gestión de la solución pública de facturación electrónica al Reglamento (UE) 2016/679
+del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las
+
+
+
+
+                                               8
+Agencia Tributaria                                          Departamento de Gestión Tributaria
+
+
+
+
+personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación
+de estos datos y por el que se deroga la Directiva 95/46/CE y a la Ley Orgánica 3/2018, de 5
+de diciembre, de Protección de Datos Personales y garantía de los derechos digitales, así
+como las especificaciones requeridas a dichos efectos.
+
+
+Asimismo, la solución pública de factura electrónica será conforme a lo establecido en el
+Esquema Nacional de Seguridad, siendo de aplicación las medidas y requisitos establecidos
+en dicha normativa.
+
+
+Esta orden ministerial se dicta al amparo de las habilitaciones previstas en la disposición final
+tercera, apartado 1, del Real Decreto 238/2026, de 25 de marzo.
+
+
+En su virtud, dispongo,
+
+
+Artículo 1. Objeto.
+
+
+La presente orden tiene por objeto regular los elementos técnicos y funcionales de la solución
+pública de facturación electrónica previstos en la disposición final tercera, apartado 1 del Real
+Decreto 238/2026, de 25 de marzo, por el que se desarrolla el sistema de facturación
+electrónica obligatoria entre empresarios y profesionales y por el que se modifica el
+Reglamento por el que se regulan las obligaciones de facturación, aprobado por el Real
+Decreto 1619/2012, de 30 de noviembre.
+
+
+Artículo 2. Ámbito de aplicación.
+
+
+El ámbito de aplicación de la presente orden será el que se establece en el artículo 3 del Real
+Decreto 238/2026, de 25 de marzo, sin perjuicio de las excepciones o particularidades
+previstas en el artículo 4, y disposición adicional segunda del mismo real decreto y en el
+apartado séptimo de la disposición adicional vigesimoprimera de la Ley 56/2007, de 28 de
+diciembre, de Medidas de Impulso de la Sociedad de la Información.
+
+
+
+
+                                               9
+Agencia Tributaria                                          Departamento de Gestión Tributaria
+
+
+
+
+Artículo 3. Servicios de emisión de facturas y de interconexión de la solución pública de
+factura electrónica. Contenido y elementos técnicos.
+
+
+1. Las facturas electrónicas emitidas o interconectadas usando la solución pública de
+facturación electrónica se deberán ajustar al modelo semántico de datos EN16931 del Comité
+Europeo de Normalización bajo la sintaxis UBL (Universal Business Language). Las
+especificaciones técnicas y volumetría serán las que consten en la Sede electrónica de la
+Agencia Estatal de Administración Tributaria.
+
+
+2. En los supuestos en los que la solución pública de facturación electrónica actúe como medio
+de emisión o generación de facturas, de acuerdo con lo dispuesto en la disposición adicional
+primera del Real Decreto 238/2026, de 25 de marzo, el contenido de la factura electrónica se
+ajustará a los elementos definidos en el anexo I de esta orden en los que se concreta el
+contenido de las facturas de acuerdo a lo previsto en el Reglamento por el que se regulan las
+obligaciones de facturación, aprobado por el Real Decreto 1619/2012, de 30 de noviembre.
+
+
+3. En los supuestos en los que la solución pública de facturación electrónica actúe como medio
+de interconexión, la factura electrónica contendrá, como mínimo, los elementos definidos en
+el anexo I de esta orden en los que se concreta el contenido de las facturas de acuerdo a lo
+previsto en el Real Decreto 1619/2012, de 30 de noviembre. Estas facturas interconectadas
+podrán incluir contenido adicional al previsto en el Anexo I, que cumpla los requisitos previstos
+en el apartado primero y que por tanto se ajuste al modelo semántico de datos EN16931 del
+Comité Europeo de Normalización bajo la sintaxis UBL.
+
+
+4. Las facturas electrónicas para cuya emisión o interconexión se utilice la solución pública de
+facturación electrónica quedan a disposición inmediata de la Administración, por lo que no se
+debe remitir copia fiel de las mismas.
+
+
+5. En los casos en los que la factura objeto de emisión o de interconexión resultase ser
+improcedente por no corresponderse con la operación documentada, se podrá dar de baja en
+la solución pública de facturación electrónica, quedando en todo caso trazabilidad de la citada
+baja. El mensaje de baja se ajustará a las especificaciones que consten en la Sede electrónica
+de la Agencia Estatal de Administración Tributaria.
+
+
+
+
+                                                10
+Agencia Tributaria                                          Departamento de Gestión Tributaria
+
+
+
+
+6. Las facturas electrónicas emitidas o interconectadas a través de la solución pública de
+facturación electrónica no podrán incorporar otros ficheros integrados o embebidos.
+
+
+No obstante lo anterior, las facturas electrónicas interconectadas a través de la solución
+pública de facturación electrónica podrán remitirse junto con la firma electrónica.
+
+
+Artículo 4. Elementos técnicos de la copia fiel enviada a la solución pública de facturación
+electrónica.
+
+
+1. Las plataformas, soluciones o sistemas de facturación que utilicen los empresarios o
+profesionales obligados a emitir y recibir facturas electrónicas, que opten por no utilizar la
+solución pública de facturación electrónica para la emisión o interconexión, deben remitir una
+copia fiel electrónica, simultáneamente a la emisión de la factura electrónica, a la solución
+pública de facturación electrónica en los términos previstos en el artículo 6. 2 del Real Decreto
+Real Decreto 238/2026, de 25 de marzo.
+
+
+2. Las copias fieles deberán contener la información de los conceptos de las facturas
+electrónicas originales que tengan correspondencia semántica equivalente y estén
+contemplados en la sintaxis de la solución pública de facturación electrónica, cumpliendo en
+todo caso con el contenido mínimo regulado en el Real Decreto 1619/2012, de 30 de
+noviembre y ajustado a los elementos previstos en el anexo I. Las especificaciones técnicas
+y el tamaño máximo para estas copias fieles serán las que consten en la Sede electrónica de
+la Agencia Estatal de Administración Tributaria.
+
+
+3. La copia fiel de la factura deberá identificarse como tal en el elemento o campo denominado
+“original o copia” del anexo I de esta orden.
+
+
+4. Las copias fieles remitidas a la solución pública de facturación electrónica no podrán
+incorporar otros ficheros integrados o embebidos.
+
+
+
+
+                                                11
+Agencia Tributaria                                         Departamento de Gestión Tributaria
+
+
+
+
+Artículo 5. Procedimiento para el uso de la solución pública de facturación electrónica como
+medio de emisión o interconexión de facturas y remisión de copias fieles.
+
+
+1. En los supuestos en los que la solución pública de facturación electrónica actúe como medio
+de facturación, la emisión de la factura se realizará mediante la utilización del formulario de
+generación de facturas electrónicas. Se habilitará la emisión de forma individual y ofrecerá las
+funciones previstas en la disposición adicional primera del Real Decreto 238/2026, de 25 de
+marzo.
+
+
+Estos sistemas estarán habilitados en la Sede electrónica de la Agencia Estatal de
+Administración Tributaria.
+
+
+2. En los supuestos en los que la solución pública de facturación electrónica actúe como medio
+de interconexión, la misma deberá realizarse mediante los servicios web habilitados a tal
+efecto.
+
+
+3. La remisión de las copias fieles deberá realizarse a través del servicio web previsto en el
+apartado anterior, con la identificación a que se refiere el artículo 4.3 de esta orden para que
+se trate como una copia fiel.
+
+
+4. En el caso de envío a través del servicio web previsto en los apartados 2 y 3, las facturas
+electrónicas y las copias fieles se someterán a un proceso de validación de la sintaxis,
+semántica y especificaciones previstas en los artículos 3 y 4, respectivamente.
+
+
+Tras esta validación, la Agencia Estatal de Administración Tributaria emitirá mensaje de
+respuesta que contendrá la relación de las facturas o copias fieles admitidas o, en su caso, la
+relación de los envíos rechazados con errores junto con la identificación del motivo por el que
+han sido calificados de este modo.
+
+
+En el caso de que se utilice el formulario web previsto en el apartado 1, la respuesta de la
+Agencia Estatal de Administración Tributaria se emitirá de forma individual para cada factura
+de forma previa a su emisión.
+
+
+
+
+                                              12
+Agencia Tributaria                                          Departamento de Gestión Tributaria
+
+
+
+
+Tras el envío, la solución pública de facturación electrónica facilitará un acuse de recibo
+informando del código seguro de verificación correspondiente.
+
+
+5. Se rechazarán los envíos de copias fieles de facturas electrónicas para las que ya conste
+una copia fiel en la solución pública de facturación electrónica, así como para las que conste
+una factura electrónica original emitida o intercambiada usando la solución pública de
+facturación electrónica.
+
+
+Cuando se utilice la solución pública de facturación electrónica como medio de interconexión
+y ya se haya remitido una copia fiel de la factura electrónica original a la misma, deberá
+procederse con carácter previo a la baja de la copia fiel. También se rechazarán las facturas
+electrónicas para las que ya consta una factura electrónica original, emitida o intercambiada
+usando la solución pública de facturación electrónica.
+
+
+A los efectos de lo previsto en los párrafos anteriores, las facturas electrónicas originales y
+copias fieles se identificarán por su código único, regulado en el artículo 6.
+
+
+En los casos en los que la factura electrónica original resultase ser improcedente por no
+corresponderse con la operación documentada, se podrá dar de baja en la solución pública
+de facturación electrónica su copia fiel, quedando en todo caso trazabilidad de la citada baja.
+El mensaje de baja se ajustará a las especificaciones que consten en la Sede electrónica de
+la Agencia Estatal de Administración Tributaria.
+
+
+6. En aquellos supuestos en que por razones de carácter técnico no fuera posible utilizar la
+solución pública de facturación electrónica, la remisión de las facturas electrónicas y de las
+copias fieles podrá realizarse durante los cuatro días siguientes a la subsanación de la
+incidencia técnica.
+
+
+
+
+                                               13
+Agencia Tributaria                                          Departamento de Gestión Tributaria
+
+
+
+
+Artículo 6. Codificación única de las facturas electrónicas en la solución pública de facturación
+electrónica e inserción en la sintaxis de la factura.
+
+
+El código único de la factura quedará definido por la concatenación del conjunto de valores
+correspondientes al NIF del emisor, al número y serie de la factura y a la fecha de expedición,
+según lo especificado en el anexo I.
+
+
+Artículo 7. Servicio electrónico de comunicación de pagos a la solución pública de facturación
+electrónica.
+
+
+1. El destinatario de la factura deberá informar, en su caso, del rechazo de la factura, de la
+fecha del pago efectivo completo de la factura y de la fecha de vencimiento del plazo de pago.
+Podrá, asimismo, informar de la fecha de recepción de las mercancías o de la prestación de
+los servicios, o bien la fecha de recepción de la factura, cuando cualquiera de estas resulte
+relevante conforme a lo dispuesto en el artículo 4 de la Ley 3/2004, de 29 de diciembre, por
+la que se establecen medidas de lucha contra la morosidad en las operaciones comerciales o
+en la normativa específica que resulte de aplicación, en los términos previstos en el artículo
+12, apartados 1 y 3 del Real Decreto 238/2026, de 25 de marzo.
+
+
+2. El emisor de la factura podrá comunicar la información sobre el cobro o del impago de las
+facturas, así como posibles diferencias respecto a las fechas contenidas en la comunicación
+de pago realizada por el destinatario en los términos previstos en el artículo 12.4 de Real
+Decreto 238/2026, de 25 de marzo.
+
+
+3. El contenido de estas comunicaciones será el previsto en el anexo II de esta orden y la
+sintaxis a la que deberán ajustarse será UBL con las especificaciones técnicas y volumetría
+que consten en la Sede electrónica de la Agencia Estatal de Administración Tributaria.
+
+
+Artículo 8. Procedimiento para el uso del Servicio electrónico de comunicación de pagos a la
+solución pública de facturación electrónica.
+
+
+1. La información asociada al pago de la factura prevista en el artículo 7 podrá remitirse a
+través de una de las siguientes formas:
+
+
+
+
+                                                14
+Agencia Tributaria                                          Departamento de Gestión Tributaria
+
+
+
+
+a) Mediante los servicios web.
+
+
+b) Mediante la utilización del formulario de comunicación de estados sobre la factura. Se
+habilitará la remisión de la información de forma individual por cada factura y ofrecerá las
+funciones previstas en la disposición adicional primera del Real Decreto 238/2026, de 25 de
+marzo.
+
+
+Estos sistemas de envío estarán habilitados en la Sede electrónica de la Agencia Estatal de
+Administración Tributaria.
+
+
+2. En el supuesto previsto en el apartado 1.a), será necesaria la previa identificación de la
+factura con su codificación única de acuerdo a lo previsto en el artículo 6.
+
+
+3. La Agencia Estatal de Administración Tributaria emitirá un mensaje de respuesta que
+contendrá la relación de comunicaciones de pago admitidas o, en su caso, la relación de los
+envíos rechazados con errores junto con la identificación del motivo por el que han sido
+calificados de este modo.
+
+
+En el caso de que se utilice el formulario web previsto en el apartado 1.b), la respuesta de la
+Agencia Estatal de Administración Tributaria se emitirá de forma individual por cada
+comunicación.
+
+
+Tras el envío, la solución pública de facturación electrónica facilitará un acuse de recibo
+informando del código seguro de verificación correspondiente.
+
+
+4. En aquellos supuestos en que por razones de carácter técnico no fuera posible utilizar la
+solución pública de facturación electrónica para realizar estas comunicaciones, la remisión de
+la información asociada al pago de las facturas podrá realizarse durante los cuatro días
+siguientes a la subsanación de la incidencia técnica.
+
+
+5. En los casos en los que la comunicación resultara ser improcedente o errónea por no
+corresponderse con la información suministrada, se podrá anular en la solución pública de
+facturación electrónica, quedando en todo caso trazabilidad de la citada anulación. El mensaje
+
+
+
+
+                                               15
+Agencia Tributaria                                          Departamento de Gestión Tributaria
+
+
+
+
+de anulación se ajustará a las especificaciones que consten en la Sede electrónica de la
+Agencia Estatal de Administración Tributaria.
+
+
+Artículo 9. Servicio de recuperación de facturas de la solución pública de facturación
+electrónica.
+
+
+1. De acuerdo con lo dispuesto en el artículo 8.2 del Real Decreto 238/2026, de 25 de marzo,
+las plataformas privadas que intercambien facturas electrónicas utilizando la solución pública
+de facturación electrónica, estarán obligadas a recuperar los mensajes de factura electrónica
+intercambiados, cumpliendo con los requisitos de representación e identificación previstos en
+el artículo 10.
+
+
+2. Las plataformas privadas de facturación electrónica deberán automatizar el acceso a la
+solución pública de facturación electrónica para recuperar las facturas recibidas de sus
+clientes y ponerlas a su disposición de forma inmediata. Las características de este acceso
+serán las que se determinen en la Sede electrónica de la Agencia Estatal de Administración
+Tributaria.
+
+
+3. El destinatario de las facturas podrá recuperar en cualquier momento sus facturas recibidas,
+directamente o a través de un acceso automatizado a la solución pública de facturación
+electrónica. Las características de este acceso serán las que se determinen en la Sede
+electrónica de la Agencia Estatal de Administración Tributaria.
+
+
+Artículo 10. Formas de autenticación, identificación y representación para acceder a la
+solución pública de facturación electrónica.
+
+
+1. La utilización de la solución pública de facturación electrónica requerirá la autenticación e
+identificación electrónica del remitente mediante el uso de los certificados electrónicos válidos
+en cada momento en la Sede electrónica de la Agencia Estatal de Administración Tributaria.
+Además, dichos certificados electrónicos deberán ajustarse a las condiciones que se
+establezcan en la normativa vigente en cada momento en relación con los atributos mínimos
+que deben incluir los certificados electrónicos cualificados y los mecanismos que permiten
+verificar su vigencia y contenido en el ámbito de las Administraciones Públicas.
+
+
+
+
+                                                16
+Agencia Tributaria                                           Departamento de Gestión Tributaria
+
+
+
+
+En el caso de que se utilice el formulario de generación de facturas electrónicas o de
+comunicación de pagos de la solución pública de facturación electrónica, el remitente podrá
+utilizar también como medio de autenticación e identificación el sistema Cl@ve, regulado en
+la Orden PRE/1838/2014 que establece la plataforma común del Sector Público Administrativo
+Estatal para la identificación, autenticación y firma electrónica.
+
+
+2. La solución pública de facturación electrónica podrá ser utilizada por el propio empresario,
+profesional o sujeto pasivo obligado a la expedición de la factura o por un tercero que actúe
+en su representación, de acuerdo con lo establecido en los artículos 79 a 81, ambos inclusive,
+del Reglamento General de las actuaciones y los procedimientos de gestión e inspección
+tributaria y de desarrollo de las normas comunes de los procedimientos de aplicación de los
+tributos, aprobado por el Real Decreto 1065/2007, de 27 de julio, y en la Orden
+HAC/1398/2003, de 27 de mayo, por la que se establecen los supuestos y condiciones en que
+podrá hacerse efectiva la colaboración social en la gestión de los tributos, y se extiende ésta
+expresamente a la presentación telemática de determinados modelos de declaración y otros
+documentos tributarios.
+
+
+En el caso de que se utilice el formulario de generación de facturas electrónicas o de
+comunicación de pagos de la solución pública de facturación electrónica por un tercero en
+nombre del empresario, profesional o sujeto pasivo obligado a la expedición de la factura, este
+tercero deberá ser un apoderado de acuerdo con lo establecido en los artículos 79 a 81,
+ambos inclusive, Real Decreto 1065/2007, de 27 de julio.
+
+
+También será necesario que el tercero esté apoderado en los términos del párrafo anterior,
+para acceder al servicio de recuperación de facturas recibidas previsto en el artículo 9, bien
+sea directamente o a través de un acceso automatizado.
+
+
+Disposición adicional única. Puesta en funcionamiento de la solución pública de facturación
+electrónica.
+
+
+La solución pública de facturación electrónica deberá estar disponible para los empresarios y
+profesionales obligados a emitir y recibir facturas electrónicas al menos dos meses antes de
+la primera aplicación efectiva de esta orden, de acuerdo con la disposición final única.
+
+
+
+
+                                                17
+Agencia Tributaria                                         Departamento de Gestión Tributaria
+
+
+
+
+Disposición final única. Entrada en vigor y producción de efectos.
+
+
+Esta orden ministerial entrará en vigor el 1 de octubre de 2026, dándose inicio al cómputo de
+los plazos previstos en la Ley 18/2022, de 28 de septiembre, de creación y crecimiento de
+empresas, y en las disposiciones transitorias primera a tercera, y disposición final cuarta, del
+Real Decreto 238/2026, de 25 de marzo.
+
+
+
+
+                                              18
+
