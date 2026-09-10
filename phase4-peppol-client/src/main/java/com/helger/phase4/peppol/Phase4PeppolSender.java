@@ -1727,9 +1727,9 @@ public final class Phase4PeppolSender
 
       if (false)
       {
+        // XXX Develop Code to remove COUNTRY_C1
         // This is the developer code, to be able to send out messages without
-        // Country C1
-        // After all the checks, the Scope element is removed
+        // Country C1. After all the checks, the Scope element is removed
         LOGGER.error ("Explicitly removing COUNTRY_C1 from the SBDH. Development only!");
         aSBD.getStandardBusinessDocumentHeader ()
             .getBusinessScope ()
@@ -1876,8 +1876,8 @@ public final class Phase4PeppolSender
      * Set the payload from the provided SBDH bytes and additionally extract the sender participant
      * ID, the receiver participant ID, the document type ID, the process ID and the country C1 from
      * it. Contrary to {@link #payloadAndMetadata(PeppolSBDHData)} the provided bytes are sent out
-     * unaltered - the parsing only takes place to determine the metadata. That avoids the "parse and
-     * recreate" round trip and ensures, that SBDH content that is not covered by
+     * unaltered - the parsing only takes place to determine the metadata. That avoids the "parse
+     * and recreate" round trip and ensures, that SBDH content that is not covered by
      * {@link PeppolSBDHData} is retained.<br>
      * This method uses a default {@link PeppolSBDHDataReader} with all value checks enabled.
      *
@@ -1906,8 +1906,8 @@ public final class Phase4PeppolSender
      * @param aSBDHBytes
      *        The SBDH bytes to be used. May not be <code>null</code>.
      * @param aSBDHReader
-     *        The reader to be used to extract the metadata. Allows e.g. to disable the value checks.
-     *        May not be <code>null</code>.
+     *        The reader to be used to extract the metadata. Allows e.g. to disable the value
+     *        checks. May not be <code>null</code>.
      * @return this for chaining
      * @throws PeppolSBDHDataReadException
      *         If the provided bytes are not a valid Peppol SBDH.

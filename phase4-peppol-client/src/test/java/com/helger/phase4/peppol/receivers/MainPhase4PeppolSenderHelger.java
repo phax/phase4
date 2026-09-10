@@ -81,7 +81,7 @@ public final class MainPhase4PeppolSenderHelger
         final IAS4RawResponseConsumer aRRC = x -> {
           LOGGER.info ("Response status line: " + x.getResponseStatusLine ());
           LOGGER.info ("Response headers:");
-          x.getResponseHeaders ().forEachSingleHeader ( (k, v) -> LOGGER.info ("  " + k + "=" + v), false);
+          x.getResponseHeaders ().forEachSingleHeader ((k, v) -> LOGGER.info ("  " + k + "=" + v), false);
         };
         final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHdl = new LoggingAS4SignalMsgValidationResultHandler ();
 
