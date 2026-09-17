@@ -661,8 +661,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   @Override
   @NonNull
   public AS4ClientBuiltMessage buildMessage (@NonNull @Nonempty final String sMessageID,
-                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException,
-                                                                                                       MessagingException
+                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException, MessagingException
   {
     LOGGER.info ("phase4 --- usermessage-building:start");
 

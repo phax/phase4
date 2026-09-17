@@ -792,25 +792,25 @@ public class PModeLegSecurity implements Serializable
       return false;
     final PModeLegSecurity rhs = (PModeLegSecurity) o;
     return EqualsHelper.equals (m_eWSSVersion, rhs.m_eWSSVersion) &&
-      EqualsHelper.equals (m_aX509SignElements, rhs.m_aX509SignElements) &&
-      EqualsHelper.equals (m_aX509SignAttachments, rhs.m_aX509SignAttachments) &&
-      EqualsHelper.equals (m_sX509SignatureCertificate, rhs.m_sX509SignatureCertificate) &&
-      EqualsHelper.equals (m_eX509SignatureHashFunction, rhs.m_eX509SignatureHashFunction) &&
-      EqualsHelper.equals (m_eX509SignatureAlgorithm, rhs.m_eX509SignatureAlgorithm) &&
-      EqualsHelper.equals (m_aX509EncryptionEncryptElements, rhs.m_aX509EncryptionEncryptElements) &&
-      EqualsHelper.equals (m_aX509EncryptionEncryptAttachments, rhs.m_aX509EncryptionEncryptAttachments) &&
-      EqualsHelper.equals (m_sX509EncryptionCertificate, rhs.m_sX509EncryptionCertificate) &&
-      EqualsHelper.equals (m_eX509EncryptionAlgorithm, rhs.m_eX509EncryptionAlgorithm) &&
-      EqualsHelper.equals (m_aX509EncryptionMinimumStrength, rhs.m_aX509EncryptionMinimumStrength) &&
-      EqualsHelper.equals (m_sUsernameTokenUsername, rhs.m_sUsernameTokenUsername) &&
-      EqualsHelper.equals (m_sUsernameTokenPassword, rhs.m_sUsernameTokenPassword) &&
-      EqualsHelper.equals (m_eUsernameTokenDigest, rhs.m_eUsernameTokenDigest) &&
-      EqualsHelper.equals (m_eUsernameTokenNonce, rhs.m_eUsernameTokenNonce) &&
-      EqualsHelper.equals (m_eUsernameTokenCreated, rhs.m_eUsernameTokenCreated) &&
-      EqualsHelper.equals (m_ePModeAuthorize, rhs.m_ePModeAuthorize) &&
-      EqualsHelper.equals (m_eSendReceipt, rhs.m_eSendReceipt) &&
-      EqualsHelper.equals (m_eSendReceiptReplyPattern, rhs.m_eSendReceiptReplyPattern) &&
-      EqualsHelper.equals (m_eSendReceiptNonRepudiation, rhs.m_eSendReceiptNonRepudiation);
+           EqualsHelper.equals (m_aX509SignElements, rhs.m_aX509SignElements) &&
+           EqualsHelper.equals (m_aX509SignAttachments, rhs.m_aX509SignAttachments) &&
+           EqualsHelper.equals (m_sX509SignatureCertificate, rhs.m_sX509SignatureCertificate) &&
+           EqualsHelper.equals (m_eX509SignatureHashFunction, rhs.m_eX509SignatureHashFunction) &&
+           EqualsHelper.equals (m_eX509SignatureAlgorithm, rhs.m_eX509SignatureAlgorithm) &&
+           EqualsHelper.equals (m_aX509EncryptionEncryptElements, rhs.m_aX509EncryptionEncryptElements) &&
+           EqualsHelper.equals (m_aX509EncryptionEncryptAttachments, rhs.m_aX509EncryptionEncryptAttachments) &&
+           EqualsHelper.equals (m_sX509EncryptionCertificate, rhs.m_sX509EncryptionCertificate) &&
+           EqualsHelper.equals (m_eX509EncryptionAlgorithm, rhs.m_eX509EncryptionAlgorithm) &&
+           EqualsHelper.equals (m_aX509EncryptionMinimumStrength, rhs.m_aX509EncryptionMinimumStrength) &&
+           EqualsHelper.equals (m_sUsernameTokenUsername, rhs.m_sUsernameTokenUsername) &&
+           EqualsHelper.equals (m_sUsernameTokenPassword, rhs.m_sUsernameTokenPassword) &&
+           EqualsHelper.equals (m_eUsernameTokenDigest, rhs.m_eUsernameTokenDigest) &&
+           EqualsHelper.equals (m_eUsernameTokenNonce, rhs.m_eUsernameTokenNonce) &&
+           EqualsHelper.equals (m_eUsernameTokenCreated, rhs.m_eUsernameTokenCreated) &&
+           EqualsHelper.equals (m_ePModeAuthorize, rhs.m_ePModeAuthorize) &&
+           EqualsHelper.equals (m_eSendReceipt, rhs.m_eSendReceipt) &&
+           EqualsHelper.equals (m_eSendReceiptReplyPattern, rhs.m_eSendReceiptReplyPattern) &&
+           EqualsHelper.equals (m_eSendReceiptNonRepudiation, rhs.m_eSendReceiptNonRepudiation);
   }
 
   @Override

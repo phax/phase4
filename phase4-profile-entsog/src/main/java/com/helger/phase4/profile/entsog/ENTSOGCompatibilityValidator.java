@@ -183,10 +183,10 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
       }
 
       if (aPModeLegSecurity.isUsernameTokenCreatedDefined () ||
-        aPModeLegSecurity.isUsernameTokenDigestDefined () ||
-        aPModeLegSecurity.isUsernameTokenNonceDefined () ||
-        aPModeLegSecurity.hasUsernameTokenPassword () ||
-        aPModeLegSecurity.hasUsernameTokenUsername ())
+          aPModeLegSecurity.isUsernameTokenDigestDefined () ||
+          aPModeLegSecurity.isUsernameTokenNonceDefined () ||
+          aPModeLegSecurity.hasUsernameTokenPassword () ||
+          aPModeLegSecurity.hasUsernameTokenUsername ())
       {
         aErrorList.add (_createError (sFieldPrefix + "Username nor its part MUST NOT be set"));
       }
@@ -261,8 +261,8 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
       }
 
       if (aErrorHandling.getReportSenderErrorsTo () != null &&
-        aErrorHandling.getReportSenderErrorsTo ().addresses () != null &&
-        aErrorHandling.getReportSenderErrorsTo ().addresses ().isNotEmpty ())
+          aErrorHandling.getReportSenderErrorsTo ().addresses () != null &&
+          aErrorHandling.getReportSenderErrorsTo ().addresses ().isNotEmpty ())
       {
         aErrorList.add (_createError (sFieldPrefix + "ReportSenderErrorsTo must not be set"));
       }
@@ -296,7 +296,7 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
 
     if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
-      (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
+        (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
     {
       // Valid
     }

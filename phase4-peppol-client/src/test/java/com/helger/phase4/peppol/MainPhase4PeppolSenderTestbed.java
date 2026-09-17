@@ -66,9 +66,9 @@ public final class MainPhase4PeppolSenderTestbed
                                                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                                                      aReceiverID,
                                                                                                      ESML.PEPPOL_TEST))
-                                                                  .signalMsgConsumer ( (aSignalMsg,
-                                                                                        aMessageMetadata,
-                                                                                        aState) -> {
+                                                                  .signalMsgConsumer ((aSignalMsg,
+                                                                                       aMessageMetadata,
+                                                                                       aState) -> {
                                                                     LOGGER.info (new Ebms3SignalMessageMarshaller ().setFormattedOutput (true)
                                                                                                                     .getAsString (aSignalMsg));
                                                                   })

@@ -158,8 +158,8 @@ public final class DBNAlliancePMode
    * @param aPModeIDProvider
    *        PMode ID provider. May not be <code>null</code>.
    * @param bPersist
-   *        <code>true</code> to persist the PMode in the PModeManager,
-   *        <code>false</code> to have it only in memory.
+   *        <code>true</code> to persist the PMode in the PModeManager, <code>false</code> to have
+   *        it only in memory.
    * @return New PMode
    */
   @NonNull

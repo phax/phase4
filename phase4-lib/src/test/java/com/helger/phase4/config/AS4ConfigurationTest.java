@@ -41,7 +41,8 @@ public final class AS4ConfigurationTest
     assertTrue (AS4Configuration.isUseInMemoryManagers ());
     assertTrue (AS4Configuration.isWSS4JSynchronizedSecurity ());
 
-    final ConfiguredValue aCV = AS4Configuration.getConfig ().getConfiguredValue (AS4Configuration.PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
+    final ConfiguredValue aCV = AS4Configuration.getConfig ()
+                                                .getConfiguredValue (AS4Configuration.PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
     assertNotNull (aCV);
 
     final IConfigurationSource aCS = aCV.getConfigurationSource ();
@@ -71,7 +72,8 @@ public final class AS4ConfigurationTest
                     AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ());
 
       // Values below the minimum are rejected - the default value is used
-      SystemProperties.setPropertyValue (sKey, AS4Configuration.MIN_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES - 1);
+      SystemProperties.setPropertyValue (sKey,
+                                         AS4Configuration.MIN_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES - 1);
       assertEquals (AS4Configuration.DEFAULT_PHASE4_INCOMING_MIME_MAX_PART_HEADER_SIZE_BYTES,
                     AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ());
 

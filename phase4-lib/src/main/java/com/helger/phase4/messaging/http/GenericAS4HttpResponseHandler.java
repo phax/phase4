@@ -57,8 +57,7 @@ public class GenericAS4HttpResponseHandler implements HttpClientResponseHandler 
   {}
 
   @NonNull
-  public HttpResponseData handleResponse (@NonNull final ClassicHttpResponse aHttpResponse) throws ExtendedHttpResponseException,
-                                                                                            IOException
+  public HttpResponseData handleResponse (@NonNull final ClassicHttpResponse aHttpResponse) throws ExtendedHttpResponseException, IOException
   {
     final StatusLine aStatusLine = new StatusLine (aHttpResponse);
     final HttpEntity aEntity = aHttpResponse.getEntity ();

@@ -29,8 +29,8 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 
 /**
- * This is a small tool that demonstrates how the "as4in" files can be decrypted
- * later, assuming the correct certificate is provided.
+ * This is a small tool that demonstrates how the "as4in" files can be decrypted later, assuming the
+ * correct certificate is provided.
  *
  * @author Philip Helger
  */
@@ -53,12 +53,12 @@ public final class MainDecipherAS4In
 
     final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryConfiguration.getDefaultInstance ();
     // What to do with the decrypted payload
-    final IDecryptedPayloadConsumer aDecryptedConsumer = (idx,
-                                                          aDecryptedBytes) -> SimpleFileIO.writeFile (new File (aFile.getParentFile (),
-                                                                                                                "payload-" +
-                                                                                                                                        idx +
-                                                                                                                                        ".decrypted"),
-                                                                                                      aDecryptedBytes);
+    final IDecryptedPayloadConsumer aDecryptedConsumer = (idx, aDecryptedBytes) -> SimpleFileIO.writeFile (new File (
+                                                                                                                     aFile.getParentFile (),
+                                                                                                                     "payload-" +
+                                                                                                                                             idx +
+                                                                                                                                             ".decrypted"),
+                                                                                                           aDecryptedBytes);
 
     // Do it
     AS4DumpReader.decryptAS4In (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID,

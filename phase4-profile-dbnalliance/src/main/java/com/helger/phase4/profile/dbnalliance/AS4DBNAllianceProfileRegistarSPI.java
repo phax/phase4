@@ -44,13 +44,11 @@ public final class AS4DBNAllianceProfileRegistarSPI implements IAS4ProfileRegist
 
   public void registerAS4Profile (@NonNull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i,
-                                                            r,
-                                                            a) -> DBNAlliancePMode.createDBNAlliancePMode (i,
-                                                                                                           r,
-                                                                                                           a,
-                                                                                                           PMODE_ID_PROVIDER,
-                                                                                                           true);
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> DBNAlliancePMode.createDBNAlliancePMode (i,
+                                                                                                                 r,
+                                                                                                                 a,
+                                                                                                                 PMODE_ID_PROVIDER,
+                                                                                                                 true);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID + "'");

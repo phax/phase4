@@ -58,8 +58,7 @@ public final class AS4SignatureWithoutBCTest
     })
     {
       Thread.currentThread ().setContextClassLoader (aCL);
-      assertThrows (ClassNotFoundException.class,
-                    () -> aCL.loadClass ("org.bouncycastle.asn1.ASN1Primitive"));
+      assertThrows (ClassNotFoundException.class, () -> aCL.loadClass ("org.bouncycastle.asn1.ASN1Primitive"));
       assertThrows (ClassNotFoundException.class, () -> aCL.loadClass ("com.helger.bc.PBCProvider"));
       assertThrows (ClassNotFoundException.class, () -> aCL.loadClass ("org.cryptacular.util.CipherUtil"));
 

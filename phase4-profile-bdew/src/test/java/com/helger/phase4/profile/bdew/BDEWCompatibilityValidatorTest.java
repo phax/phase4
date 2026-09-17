@@ -74,9 +74,8 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
 import org.w3c.dom.Document;
 
 /**
- * All essentials need to be set and need to be not null since they are getting
- * checked, when a PMode is introduced into the system and these null checks
- * would be redundant in the profiles.
+ * All essentials need to be set and need to be not null since they are getting checked, when a
+ * PMode is introduced into the system and these null checks would be redundant in the profiles.
  *
  * @author Gregor Scholtysik
  */
@@ -639,10 +638,10 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidateSoapDocumentHasEmptyBody ()
   {
     final Document aSoapDoc = DOMReader.readXMLDOM ("""
-                                                            <S12:Envelope xmlns:S12='http://www.w3.org/2003/05/soap-envelope'>
-                                                            <S12:Header/>
-                                                            <S12:Body>   </S12:Body>
-                                                            </S12:Envelope>""");
+        <S12:Envelope xmlns:S12='http://www.w3.org/2003/05/soap-envelope'>
+        <S12:Header/>
+        <S12:Body>   </S12:Body>
+        </S12:Envelope>""");
     assertNotNull (aSoapDoc);
 
     VALIDATOR.validateSoapMessage (aSoapDoc, ESoapVersion.SOAP_12, m_aErrorList);
@@ -653,10 +652,10 @@ public final class BDEWCompatibilityValidatorTest
   public void testValidateSoapDocumentHasPayloadInBody ()
   {
     final Document aSoapDoc = DOMReader.readXMLDOM ("""
-                                                            <S12:Envelope xmlns:S12='http://www.w3.org/2003/05/soap-envelope'>
-                                                            <S12:Header/>
-                                                            <S12:Body><payload/></S12:Body>
-                                                            </S12:Envelope>""");
+        <S12:Envelope xmlns:S12='http://www.w3.org/2003/05/soap-envelope'>
+        <S12:Header/>
+        <S12:Body><payload/></S12:Body>
+        </S12:Envelope>""");
     assertNotNull (aSoapDoc);
 
     VALIDATOR.validateSoapMessage (aSoapDoc, ESoapVersion.SOAP_12, m_aErrorList);

@@ -171,8 +171,8 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
         aSSM = resolvedSchemeSpecificServiceMetadata (aReceiverID, aDocTypeID);
         // This is just a heuristic, because it is only evaluated in logging
         bWildcard = aSSM != null &&
-          PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ()) &&
-          aDocTypeID.getValue ().indexOf (PeppolIdentifierHelper.DOCUMENT_TYPE_WILDCARD_INDICATOR) >= 0;
+                    PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ()) &&
+                    aDocTypeID.getValue ().indexOf (PeppolIdentifierHelper.DOCUMENT_TYPE_WILDCARD_INDICATOR) >= 0;
 
         if (aSSM != null)
         {
@@ -214,9 +214,9 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
       catch (final SMPClientException ex)
       {
         final boolean bRetryFeasible = ex instanceof SMPClientBadRequestException ||
-          ex instanceof SMPClientBadResponseException ||
-          ex instanceof SMPClientUnauthorizedException ||
-          ex.getClass ().equals (SMPClientException.class);
+                                       ex instanceof SMPClientBadResponseException ||
+                                       ex instanceof SMPClientUnauthorizedException ||
+                                       ex.getClass ().equals (SMPClientException.class);
         throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
                                       aReceiverID.getURIEncoded () +
                                       ", " +

@@ -41,16 +41,14 @@ public final class EDelivery2CompatibilityValidatorTest
   public void testValidEdDSAPMode ()
   {
     final PMode aPMode = EDelivery2PMode.createEDelivery2PMode ("initiator",
-                                                                 "responder",
-                                                                 "https://test.example.com",
-                                                                 IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                                 false,
-                                                                 EDelivery2PMode.generatePModeLegSecurityEdDSA ());
+                                                                "responder",
+                                                                "https://test.example.com",
+                                                                IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                                false,
+                                                                EDelivery2PMode.generatePModeLegSecurityEdDSA ());
     final IAS4ProfileValidator aValidator = new EDelivery2CompatibilityValidator ().setExpectFourCornerModel (false);
     final ErrorList aErrorList = new ErrorList ();
-    aValidator.validatePMode (aPMode,
-                              aErrorList,
-                              IAS4ProfileValidator.EAS4ProfileValidationMode.USER_MESSAGE);
+    aValidator.validatePMode (aPMode, aErrorList, IAS4ProfileValidator.EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue ("Errors: " + aErrorList.toString (), aErrorList.containsNoError ());
   }
 
@@ -58,17 +56,15 @@ public final class EDelivery2CompatibilityValidatorTest
   public void testValidECDSAPMode ()
   {
     final PMode aPMode = EDelivery2PMode.createEDelivery2PMode ("initiator",
-                                                                 "responder",
-                                                                 "https://test.example.com",
-                                                                 IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                                 false,
-                                                                 EDelivery2PMode.generatePModeLegSecurityECDSA ());
+                                                                "responder",
+                                                                "https://test.example.com",
+                                                                IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                                false,
+                                                                EDelivery2PMode.generatePModeLegSecurityECDSA ());
     final IAS4ProfileValidator aValidator = new EDelivery2CompatibilityValidator ().setExpectFourCornerModel (false)
                                                                                    .setAllowECDSA (true);
     final ErrorList aErrorList = new ErrorList ();
-    aValidator.validatePMode (aPMode,
-                              aErrorList,
-                              IAS4ProfileValidator.EAS4ProfileValidationMode.USER_MESSAGE);
+    aValidator.validatePMode (aPMode, aErrorList, IAS4ProfileValidator.EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue ("Errors: " + aErrorList.toString (), aErrorList.containsNoError ());
   }
 
@@ -76,18 +72,16 @@ public final class EDelivery2CompatibilityValidatorTest
   public void testECDSANotAllowedByDefault ()
   {
     final PMode aPMode = EDelivery2PMode.createEDelivery2PMode ("initiator",
-                                                                 "responder",
-                                                                 "https://test.example.com",
-                                                                 IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                                 false,
-                                                                 EDelivery2PMode.generatePModeLegSecurityECDSA ());
+                                                                "responder",
+                                                                "https://test.example.com",
+                                                                IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                                false,
+                                                                EDelivery2PMode.generatePModeLegSecurityECDSA ());
     // Default validator does NOT allow ECDSA
     final IAS4ProfileValidator aValidator = new EDelivery2CompatibilityValidator ().setExpectFourCornerModel (false)
                                                                                    .setAllowECDSA (false);
     final ErrorList aErrorList = new ErrorList ();
-    aValidator.validatePMode (aPMode,
-                              aErrorList,
-                              IAS4ProfileValidator.EAS4ProfileValidationMode.USER_MESSAGE);
+    aValidator.validatePMode (aPMode, aErrorList, IAS4ProfileValidator.EAS4ProfileValidationMode.USER_MESSAGE);
     // Should have error about signature algorithm
     assertTrue ("Expected errors for ECDSA when not allowed", aErrorList.containsAtLeastOneError ());
   }
@@ -96,16 +90,14 @@ public final class EDelivery2CompatibilityValidatorTest
   public void testValidTwoWayPMode ()
   {
     final PMode aPMode = EDelivery2PMode.createEDelivery2PModeTwoWay ("initiator",
-                                                                       "responder",
-                                                                       "https://test.example.com",
-                                                                       IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                                       false,
-                                                                       EDelivery2PMode.generatePModeLegSecurityEdDSA ());
+                                                                      "responder",
+                                                                      "https://test.example.com",
+                                                                      IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                                      false,
+                                                                      EDelivery2PMode.generatePModeLegSecurityEdDSA ());
     final IAS4ProfileValidator aValidator = new EDelivery2CompatibilityValidator ().setExpectFourCornerModel (false);
     final ErrorList aErrorList = new ErrorList ();
-    aValidator.validatePMode (aPMode,
-                              aErrorList,
-                              IAS4ProfileValidator.EAS4ProfileValidationMode.USER_MESSAGE);
+    aValidator.validatePMode (aPMode, aErrorList, IAS4ProfileValidator.EAS4ProfileValidationMode.USER_MESSAGE);
     assertTrue ("Errors: " + aErrorList.toString (), aErrorList.containsNoError ());
   }
 }

@@ -28,7 +28,7 @@ public final class RunInJettyPHASE4DBNAlliance
   public static void main (final String... args) throws Exception
   {
     new JettyStarter (RunInJettyPHASE4DBNAlliance.class).setSessionCookieName ("PHASE4_PEPPOL_SESSION")
-                                                   .setContainerIncludeJarPattern (".*/classes/.*")
-                                                   .run ();
+                                                        .setContainerIncludeJarPattern (".*/classes/.*")
+                                                        .run ();
   }
 }

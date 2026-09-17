@@ -79,9 +79,8 @@ public interface IAS4ProfileValidator
   @ReturnsMutableCopy
   static EnumSet <ESignedPart> getDefaultRequiredSignedParts (final boolean bMessageHasAttachments)
   {
-    return bMessageHasAttachments ? EnumSet.of (ESignedPart.EBMS_MESSAGING, ESignedPart.ATTACHMENTS) : EnumSet.of (
-                                                                                                                   ESignedPart.EBMS_MESSAGING,
-                                                                                                                   ESignedPart.SOAP_BODY);
+    return bMessageHasAttachments ? EnumSet.of (ESignedPart.EBMS_MESSAGING, ESignedPart.ATTACHMENTS)
+                                  : EnumSet.of (ESignedPart.EBMS_MESSAGING, ESignedPart.SOAP_BODY);
   }
 
   /**
@@ -149,7 +148,9 @@ public interface IAS4ProfileValidator
    *        The error list to be filled. May not be <code>null</code>.
    * @since 4.6.2
    */
-  default void validateSoapMessage (@NonNull final Document aSoapDocument, @NonNull ESoapVersion eSoapVersion, @NonNull final ErrorList aErrorList)
+  default void validateSoapMessage (@NonNull final Document aSoapDocument,
+                                    @NonNull ESoapVersion eSoapVersion,
+                                    @NonNull final ErrorList aErrorList)
   {}
 
   /**

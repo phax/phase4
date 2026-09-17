@@ -217,8 +217,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   }
 
   /**
-   * The signature must cover the ebMS Messaging header element. A cryptographically perfectly
-   * valid signature that simply omits the Messaging element must be rejected. See issue #318.
+   * The signature must cover the ebMS Messaging header element. A cryptographically perfectly valid
+   * signature that simply omits the Messaging element must be rejected. See issue #318.
    *
    * @throws Exception
    *         on error

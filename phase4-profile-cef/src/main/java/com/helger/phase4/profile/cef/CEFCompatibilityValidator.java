@@ -297,7 +297,7 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
 
     if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
-      (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
+        (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
     {
       // Valid
     }

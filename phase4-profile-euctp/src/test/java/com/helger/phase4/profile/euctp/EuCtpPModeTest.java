@@ -36,13 +36,13 @@ public final class EuCtpPModeTest
   public static final PhotonAppWebTestRule RULE = new PhotonAppWebTestRule ();
 
   @Test
-  public void testEuCTPPMode()
+  public void testEuCTPPMode ()
   {
     final PMode aPMode = EuCtpPMode.createEuCtpPushPMode ("TestInitiator",
-                                                        "TestResponder",
-                                                        "https://test.example.org",
-                                                        IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                        false);
+                                                          "TestResponder",
+                                                          "https://test.example.org",
+                                                          IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                          false);
     assertNotNull (aPMode);
   }
 }

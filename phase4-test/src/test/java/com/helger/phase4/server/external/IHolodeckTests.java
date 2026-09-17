@@ -17,9 +17,9 @@
 package com.helger.phase4.server.external;
 
 /**
- * An interface is needed to use JUnits Category feature. Every test that is
- * tagged with IHolodeckTests, should be green when run with a holodeck instance
- * with esens-connector as plugin. For phase4 everything should be green!
+ * An interface is needed to use JUnits Category feature. Every test that is tagged with
+ * IHolodeckTests, should be green when run with a holodeck instance with esens-connector as plugin.
+ * For phase4 everything should be green!
  *
  * @author bayerlma
  */

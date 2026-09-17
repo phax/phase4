@@ -81,6 +81,7 @@ public final class StorageHelper
     ValueEnforcer.notEmpty (sFilenameExt, "Ext");
     ValueEnforcer.isTrue (sFilenameExt.contains ("."), "Extension must contain a dot");
 
-    return _getStorageFile (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), sMessageID + "-" + nTry + sFilenameExt);
+    return _getStorageFile (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (),
+                            sMessageID + "-" + nTry + sFilenameExt);
   }
 }

@@ -100,7 +100,7 @@ public final class BDEWPModeTemplateResolutionTest
     for (final IError aError : aErrorList)
       assertTrue ("Unexpected error: " + aError.getErrorText (Locale.US),
                   !aError.getErrorText (Locale.US).contains ("BusinessInfo.Service") &&
-                                                             !aError.getErrorText (Locale.US)
-                                                                    .contains ("BusinessInfo.Action"));
+                                                                          !aError.getErrorText (Locale.US)
+                                                                                 .contains ("BusinessInfo.Action"));
   }
 }

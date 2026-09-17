@@ -1269,7 +1269,7 @@ public class AS4RequestHandler implements AutoCloseable
     {
       // Note: this is enabled in Default PMode
       return aLeg.getSecurity ().isSendReceipt () &&
-        EPModeSendReceiptReplyPattern.RESPONSE.equals (aLeg.getSecurity ().getSendReceiptReplyPattern ());
+             EPModeSendReceiptReplyPattern.RESPONSE.equals (aLeg.getSecurity ().getSendReceiptReplyPattern ());
     }
     // Default behaviour if the value is not set or no security is existing
     return true;
@@ -1545,8 +1545,7 @@ public class AS4RequestHandler implements AutoCloseable
   private AS4MimeMessage _createMimeMessageForResponse (@NonNull final Document aResponseDoc,
                                                         @NonNull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                                         @NonNull final ESoapVersion eSoapVersion,
-                                                        @NonNull final AS4CryptParams aCryptParms) throws WSSecurityException,
-                                                                                                   MessagingException
+                                                        @NonNull final AS4CryptParams aCryptParms) throws WSSecurityException, MessagingException
   {
     final AS4MimeMessage aMimeMsg;
     if (aCryptParms.isCryptEnabled (LOGGER::warn))
@@ -1608,8 +1607,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                           @NonNull final AS4UserMessage aResponseUserMsg,
                                                           @NonNull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                                           @NonNull final AS4SigningParams aSigningParams,
-                                                          @NonNull final AS4CryptParams aCryptParams) throws WSSecurityException,
-                                                                                                      MessagingException
+                                                          @NonNull final AS4CryptParams aCryptParams) throws WSSecurityException, MessagingException
   {
     final String sResponseMessageID = aResponseUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
     final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
@@ -1672,9 +1670,7 @@ public class AS4RequestHandler implements AutoCloseable
   private IAS4ResponseFactory _handleIncomingSoapMessageAndInvokeSPIs (@NonNull final HttpHeaderMap aHttpHeaders,
                                                                        @NonNull final Document aSoapDocument,
                                                                        @NonNull final ESoapVersion eSoapVersion,
-                                                                       @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
-                                                                                                                                           MessagingException,
-                                                                                                                                           Phase4Exception
+                                                                       @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException, MessagingException, Phase4Exception
   {
     // Collect all runtime errors
     final AS4ErrorList aEbmsErrorMessages = new AS4ErrorList ();
@@ -1783,10 +1779,10 @@ public class AS4RequestHandler implements AutoCloseable
     {
       // PMode may be null for receipts
       if (aPMode == null ||
-        aPMode.getMEPBinding ().isSynchronous () ||
-        aPMode.getMEPBinding ().isAsynchronousInitiator () ||
-        aIncomingState.getEffectivePModeLegNumber () <= 0 ||
-        (aPMode.getMEPBinding () == EMEPBinding.PUSH_PUSH && aIncomingState.getEffectivePModeLegNumber () == 2))
+          aPMode.getMEPBinding ().isSynchronous () ||
+          aPMode.getMEPBinding ().isAsynchronousInitiator () ||
+          aIncomingState.getEffectivePModeLegNumber () <= 0 ||
+          (aPMode.getMEPBinding () == EMEPBinding.PUSH_PUSH && aIncomingState.getEffectivePModeLegNumber () == 2))
       {
         // Invoke SPIs synchronously
 
@@ -2036,8 +2032,8 @@ public class AS4RequestHandler implements AutoCloseable
             // way, we need to check if the current application is currently in
             // the pull phase
             if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL) ||
-              (aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && aSPIResult.hasPullReturnUserMsg ()) ||
-              (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ()))
+                (aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && aSPIResult.hasPullReturnUserMsg ()) ||
+                (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ()))
             {
               // TODO would be nice to have attachments here I guess
               final AS4UserMessage aResponseUserMsg = new AS4UserMessage (eSoapVersion,
@@ -2160,10 +2156,7 @@ public class AS4RequestHandler implements AutoCloseable
    */
   public void handleRequest (@NonNull @WillClose final InputStream aRequestInputStream,
                              @NonNull final HttpHeaderMap aRequestHttpHeaders,
-                             @NonNull final IAS4ResponseAbstraction aHttpResponse) throws Phase4Exception,
-                                                                                   IOException,
-                                                                                   MessagingException,
-                                                                                   WSSecurityException
+                             @NonNull final IAS4ResponseAbstraction aHttpResponse) throws Phase4Exception, IOException, MessagingException, WSSecurityException
   {
     final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
       // SOAP document and SOAP version are determined

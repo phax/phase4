@@ -28,10 +28,9 @@ import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
 
 /**
- * Library specific implementation of {@link IAS4ProfileRegistrarSPI}. This test
- * profile registrar was created after the profile usage was intensified and the
- * CEF profile would have had been chosen. The profile registered here is very
- * lax and tries to support as much as possible.
+ * Library specific implementation of {@link IAS4ProfileRegistrarSPI}. This test profile registrar
+ * was created after the profile usage was intensified and the CEF profile would have had been
+ * chosen. The profile registered here is very lax and tries to support as much as possible.
  *
  * @author Philip Helger
  * @since 2.3.0
@@ -47,9 +46,11 @@ public final class AS4TestProfileRegistarSPI implements IAS4ProfileRegistrarSPI
   {
     final IPModeIDProvider aPMIDProv = IPModeIDProvider.DEFAULT_DYNAMIC;
 
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i,
-                                                            r,
-                                                            a) -> TestPMode.createTestPMode (i, r, a, aPMIDProv, false);
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> TestPMode.createTestPMode (i,
+                                                                                                   r,
+                                                                                                   a,
+                                                                                                   aPMIDProv,
+                                                                                                   false);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Registering phase4 profile '" + AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT + "'");

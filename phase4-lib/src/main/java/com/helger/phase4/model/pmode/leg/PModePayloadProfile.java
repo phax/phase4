@@ -268,10 +268,10 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
       return false;
     final PModePayloadProfile rhs = (PModePayloadProfile) o;
     return m_sName.equals (rhs.m_sName) &&
-      m_aMimeType.equals (rhs.m_aMimeType) &&
-      EqualsHelper.equals (m_sXSDFilename, rhs.m_sXSDFilename) &&
-      EqualsHelper.equals (m_aMaxSizeKB, rhs.m_aMaxSizeKB) &&
-      m_eMandatory.equals (rhs.m_eMandatory);
+           m_aMimeType.equals (rhs.m_aMimeType) &&
+           EqualsHelper.equals (m_sXSDFilename, rhs.m_sXSDFilename) &&
+           EqualsHelper.equals (m_aMaxSizeKB, rhs.m_aMaxSizeKB) &&
+           m_eMandatory.equals (rhs.m_eMandatory);
   }
 
   @Override

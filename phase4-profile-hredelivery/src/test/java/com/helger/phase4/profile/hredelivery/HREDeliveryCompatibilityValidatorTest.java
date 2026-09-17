@@ -75,10 +75,10 @@ public final class HREDeliveryCompatibilityValidatorTest
   {
     m_aErrorList = new ErrorList ();
     m_aPMode = HREDeliveryPMode.createHREdeliveryPMode ("TestInitiator",
-                                                   "TestResponder",
-                                                   "http://localhost:8080",
-                                                   IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                   true);
+                                                        "TestResponder",
+                                                        "http://localhost:8080",
+                                                        IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                        true);
   }
 
   @Test

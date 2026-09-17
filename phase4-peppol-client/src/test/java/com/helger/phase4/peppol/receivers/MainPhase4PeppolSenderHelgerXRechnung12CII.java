@@ -89,7 +89,7 @@ public final class MainPhase4PeppolSenderHelgerXRechnung12CII
                                                                      aReceiverID,
                                                                      ESML.PEPPOL_TEST))
                                   .buildMessageCallback (aBuildMessageCallback)
-                                  .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> aSignalMsgWrapper.set (aSignalMsg))
+                                  .signalMsgConsumer ((aSignalMsg, aMMD, aState) -> aSignalMsgWrapper.set (aSignalMsg))
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
     }

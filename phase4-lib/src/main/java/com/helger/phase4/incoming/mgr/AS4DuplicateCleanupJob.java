@@ -54,8 +54,8 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
   {}
 
   @Override
-  protected void onExecute (@NonNull final JobDataMap aJobDataMap, @NonNull final IJobExecutionContext aContext)
-                                                                                                                 throws JobExecutionException
+  protected void onExecute (@NonNull final JobDataMap aJobDataMap,
+                            @NonNull final IJobExecutionContext aContext) throws JobExecutionException
   {
     final Duration aDisposalDuration = aJobDataMap.getCastedValue (KEY_DURATION);
     final OffsetDateTime aOldDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().minus (aDisposalDuration);

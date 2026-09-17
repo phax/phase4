@@ -63,7 +63,7 @@ public final class ECryptoKeyIdentifierTypeTest
     assertNull (ECryptoKeyIdentifierType.getFromIDOrNull (""));
     assertSame (ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE,
                 ECryptoKeyIdentifierType.getFromIDOrDefault ("does-not-exist",
-                                                              ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE));
+                                                             ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE));
   }
 
   @Test

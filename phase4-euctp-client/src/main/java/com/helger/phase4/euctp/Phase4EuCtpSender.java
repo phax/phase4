@@ -63,8 +63,7 @@ public final class Phase4EuCtpSender
   public static class EuCtpUserMessageBuilder extends AbstractEuCtpUserMessageBuilder <EuCtpUserMessageBuilder>
   {
     public EuCtpUserMessageBuilder ()
-    {
-    }
+    {}
   }
 
   /**
@@ -76,7 +75,6 @@ public final class Phase4EuCtpSender
   public static class EuCtpPullRequestBuilder extends AbstractEuCtpPullRequestBuilder <EuCtpPullRequestBuilder>
   {
     public EuCtpPullRequestBuilder ()
-    {
-    }
+    {}
   }
 }

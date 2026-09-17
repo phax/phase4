@@ -519,7 +519,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   {
     final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
     final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose@";
-    aClient.setMessageIDFactory ( () -> sMessageIDPrefix + MessageHelperMethods.createRandomMessageID ());
+    aClient.setMessageIDFactory (() -> sMessageIDPrefix + MessageHelperMethods.createRandomMessageID ());
     final String sMessageID = aClient.createMessageID ();
 
     assertTrue (EntityUtils.toString (aClient.buildMessage (sMessageID, null).getHttpEntity ())

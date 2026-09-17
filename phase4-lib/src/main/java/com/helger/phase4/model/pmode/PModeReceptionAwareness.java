@@ -264,10 +264,10 @@ public class PModeReceptionAwareness implements Serializable
       return false;
     final PModeReceptionAwareness rhs = (PModeReceptionAwareness) o;
     return m_eReceptionAwareness.equals (rhs.m_eReceptionAwareness) &&
-      m_eRetry.equals (rhs.m_eRetry) &&
-      m_nMaxRetries == rhs.m_nMaxRetries &&
-      m_nRetryIntervalMS == rhs.m_nRetryIntervalMS &&
-      m_eDuplicateDetection.equals (rhs.m_eDuplicateDetection);
+           m_eRetry.equals (rhs.m_eRetry) &&
+           m_nMaxRetries == rhs.m_nMaxRetries &&
+           m_nRetryIntervalMS == rhs.m_nRetryIntervalMS &&
+           m_eDuplicateDetection.equals (rhs.m_eDuplicateDetection);
   }
 
   @Override

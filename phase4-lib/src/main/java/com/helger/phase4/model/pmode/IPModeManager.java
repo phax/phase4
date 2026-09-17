@@ -136,7 +136,8 @@ public interface IPModeManager
     // The same PMode exists either if the ID is identical or if Initiator and
     // Responder are identical
     return x -> x.getID ().equals (sID) ||
-      (EqualsHelper.equals (x.getInitiator (), aInitiator) && EqualsHelper.equals (x.getResponder (), aResponder));
+                (EqualsHelper.equals (x.getInitiator (), aInitiator) &&
+                 EqualsHelper.equals (x.getResponder (), aResponder));
   }
 
   /**

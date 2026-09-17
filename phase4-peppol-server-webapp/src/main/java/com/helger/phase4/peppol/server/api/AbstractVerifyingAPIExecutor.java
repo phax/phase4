@@ -31,8 +31,7 @@ import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 
 /**
- * Abstract API executor class. Contains the check for the "X-Token" HTTP
- * header.
+ * Abstract API executor class. Contains the check for the "X-Token" HTTP header.
  *
  * @author Philip Helger
  */

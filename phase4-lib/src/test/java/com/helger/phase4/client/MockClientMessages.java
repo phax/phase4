@@ -101,8 +101,7 @@ final class MockClientMessages
   public static Document createReceiptMessageSigned (@NonNull final ESoapVersion eSoapVersion,
                                                      @Nullable final Node aPayload,
                                                      @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                     @NonNull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException,
-                                                                                                                DOMException
+                                                     @NonNull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException, DOMException
   {
     final Document aUserMessage = createUserMessageSigned (eSoapVersion, aPayload, aAttachments, aResHelper);
 

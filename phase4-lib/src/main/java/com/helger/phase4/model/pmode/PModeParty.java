@@ -248,10 +248,10 @@ public class PModeParty implements IHasID <String>, Serializable
       return false;
     final PModeParty rhs = (PModeParty) o;
     return EqualsHelper.equals (m_sIDType, rhs.m_sIDType) &&
-      m_sIDValue.equals (rhs.m_sIDValue) &&
-      m_sRole.equals (rhs.m_sRole) &&
-      EqualsHelper.equals (m_sUserName, rhs.m_sUserName) &&
-      EqualsHelper.equals (m_sPassword, rhs.m_sPassword);
+           m_sIDValue.equals (rhs.m_sIDValue) &&
+           m_sRole.equals (rhs.m_sRole) &&
+           EqualsHelper.equals (m_sUserName, rhs.m_sUserName) &&
+           EqualsHelper.equals (m_sPassword, rhs.m_sPassword);
   }
 
   @Override

@@ -58,8 +58,8 @@ public final class EAS4MessageTypeTest
   public void testSignalMessages ()
   {
     for (final EAS4MessageType e : new EAS4MessageType [] { EAS4MessageType.ERROR_MESSAGE,
-                                                             EAS4MessageType.PULL_REQUEST,
-                                                             EAS4MessageType.RECEIPT })
+                                                            EAS4MessageType.PULL_REQUEST,
+                                                            EAS4MessageType.RECEIPT })
     {
       assertFalse (e.isUserMessage ());
       assertTrue (e.isSignalMessage ());

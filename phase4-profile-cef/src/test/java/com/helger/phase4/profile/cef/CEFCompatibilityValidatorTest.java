@@ -55,9 +55,8 @@ import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
 /**
- * All essentials need to be set and need to be not null since they are getting
- * checked, when a PMode is introduced into the system and these null checks
- * would be redundant in the profiles.
+ * All essentials need to be set and need to be not null since they are getting checked, when a
+ * PMode is introduced into the system and these null checks would be redundant in the profiles.
  *
  * @author bayerlma
  */

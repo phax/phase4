@@ -49,8 +49,8 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.wss.EWSSVersion;
 
 /**
- * ENTSOG AS4 v4.0 PMode creation code. This version uses EdDSA/X25519 or
- * ECDSA/ECDH-ES instead of the RSA-based algorithms from v3.6.
+ * ENTSOG AS4 v4.0 PMode creation code. This version uses EdDSA/X25519 or ECDSA/ECDH-ES instead of
+ * the RSA-based algorithms from v3.6.
  *
  * @author Philip Helger
  * @since 4.4.2

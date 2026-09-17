@@ -132,7 +132,7 @@ public final class BrainpoolFuncTest
       pemObj = pemParser.readObject ();
     }
     final PrivateKeyInfo privateKeyInfo = pemObj instanceof PEMKeyPair p ? p.getPrivateKeyInfo ()
-                                                                       : PrivateKeyInfo.getInstance (pemObj);
+                                                                         : PrivateKeyInfo.getInstance (pemObj);
     final JcaPEMKeyConverter converter = new JcaPEMKeyConverter ();
     final BCECPrivateKey privKey = (BCECPrivateKey) converter.getPrivateKey (privateKeyInfo);
     assertNotNull (privKey);
@@ -213,7 +213,8 @@ public final class BrainpoolFuncTest
           // Tested with nginx 1.25.1 and openssl 3.0.9
           // - Does not work with native JSSE 17.0.4: handshake_failure
           // - Does not work with native JSSE 11.0.16: handshake_failure
-          final String [] cipherSuites = { "TLS_AES_256_GCM_SHA384", "TLS_AES_128_GCM_SHA256",
+          final String [] cipherSuites = { "TLS_AES_256_GCM_SHA384",
+                                           "TLS_AES_128_GCM_SHA256",
                                            "TLS_AES_128_CCM_SHA256" };
           aHCS.setTLSConfigurationMode (new TLSConfigurationMode (new ETLSVersion [] { ETLSVersion.TLS_13 },
                                                                   cipherSuites));

@@ -222,9 +222,9 @@ public final class DropFolderUserMessage
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("WatchEvent " + eAction + " - " + aCurFile);
         if (!eAction.equals (EWatchDirAction.DELETE) &&
-          aCurFile.toFile ().isFile () &&
-          aCurFile.getFileName () != null &&
-          aCurFile.getFileName ().toString ().endsWith (".xml"))
+            aCurFile.toFile ().isFile () &&
+            aCurFile.getFileName () != null &&
+            aCurFile.getFileName ().toString ().endsWith (".xml"))
         {
           _send (aCryptoFactory, aCurFile, aIncomingDir);
         }
@@ -234,10 +234,10 @@ public final class DropFolderUserMessage
       // Send initially for all existing files
       try (final DirectoryStream <Path> aStream = Files.newDirectoryStream (aOutgoingDir,
                                                                             x -> x.toFile ().isFile () &&
-                                                                              x.getFileName () != null &&
-                                                                              x.getFileName ()
-                                                                               .toString ()
-                                                                               .endsWith (".xml")))
+                                                                                 x.getFileName () != null &&
+                                                                                 x.getFileName ()
+                                                                                  .toString ()
+                                                                                  .endsWith (".xml")))
       {
         for (final Path aCur : aStream)
           _send (aCryptoFactory, aCur, aIncomingDir);

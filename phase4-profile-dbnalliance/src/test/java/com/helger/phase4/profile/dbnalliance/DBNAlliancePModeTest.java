@@ -39,10 +39,10 @@ public final class DBNAlliancePModeTest
   public void testDBNAlliancePMode ()
   {
     final PMode aPMode = DBNAlliancePMode.createDBNAlliancePMode ("TestInitiator",
-                                                  "TestResponder",
-                                                  "https://test.example.org",
-                                                  IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                  false);
+                                                                  "TestResponder",
+                                                                  "https://test.example.org",
+                                                                  IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                                  false);
     assertNotNull (aPMode);
   }
 }

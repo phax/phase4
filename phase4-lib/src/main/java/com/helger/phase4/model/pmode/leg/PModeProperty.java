@@ -222,9 +222,9 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
       return false;
     final PModeProperty rhs = (PModeProperty) o;
     return m_sName.equals (rhs.m_sName) &&
-      EqualsHelper.equals (m_sDescription, rhs.m_sDescription) &&
-      m_sDataType.equals (rhs.m_sDataType) &&
-      m_eMandatory.equals (rhs.m_eMandatory);
+           EqualsHelper.equals (m_sDescription, rhs.m_sDescription) &&
+           m_sDataType.equals (rhs.m_sDataType) &&
+           m_eMandatory.equals (rhs.m_eMandatory);
   }
 
   @Override

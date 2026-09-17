@@ -227,8 +227,8 @@ public final class Phase4ENTSOGSender
    * @since 4.4.2
    */
   public abstract static class AbstractENTSOG4UserMessageBuilder <IMPLTYPE extends AbstractENTSOG4UserMessageBuilder <IMPLTYPE>>
-                                                                  extends
-                                                                  AbstractENTSOGUserMessageBuilder <IMPLTYPE>
+                                                                 extends
+                                                                 AbstractENTSOGUserMessageBuilder <IMPLTYPE>
   {
     protected AbstractENTSOG4UserMessageBuilder (@NonNull final String sProfileID)
     {
@@ -256,7 +256,8 @@ public final class Phase4ENTSOGSender
    * @author Philip Helger
    * @since 4.4.2
    */
-  public static class ENTSOG4EdDSAUserMessageBuilder extends AbstractENTSOG4UserMessageBuilder <ENTSOG4EdDSAUserMessageBuilder>
+  public static class ENTSOG4EdDSAUserMessageBuilder extends
+                                                     AbstractENTSOG4UserMessageBuilder <ENTSOG4EdDSAUserMessageBuilder>
   {
     public ENTSOG4EdDSAUserMessageBuilder ()
     {
@@ -264,8 +265,7 @@ public final class Phase4ENTSOGSender
 
       // Set default crypto params for EdDSA/X25519
       signingParams ().setAlgorithmSign (ECryptoAlgorithmSign.EDDSA_ED25519);
-      cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM)
-                    .setEDelivery2KeyAgreementX25519 ();
+      cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM).setEDelivery2KeyAgreementX25519 ();
     }
   }
 
@@ -276,7 +276,8 @@ public final class Phase4ENTSOGSender
    * @author Philip Helger
    * @since 4.4.2
    */
-  public static class ENTSOG4ECDSAUserMessageBuilder extends AbstractENTSOG4UserMessageBuilder <ENTSOG4ECDSAUserMessageBuilder>
+  public static class ENTSOG4ECDSAUserMessageBuilder extends
+                                                     AbstractENTSOG4UserMessageBuilder <ENTSOG4ECDSAUserMessageBuilder>
   {
     public ENTSOG4ECDSAUserMessageBuilder ()
     {
@@ -284,8 +285,7 @@ public final class Phase4ENTSOGSender
 
       // Set default crypto params for ECDSA/ECDH-ES
       signingParams ().setAlgorithmSign (ECryptoAlgorithmSign.ECDSA_SHA_256);
-      cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM)
-                    .setEDelivery2KeyAgreementECDHES ();
+      cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM).setEDelivery2KeyAgreementECDHES ();
     }
   }
 

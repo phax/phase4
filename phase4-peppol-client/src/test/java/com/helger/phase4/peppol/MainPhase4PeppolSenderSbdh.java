@@ -37,8 +37,8 @@ import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
 
 /**
- * The main class that requires manual configuration before it can be run. This
- * is a dummy and needs to be adopted to your needs.
+ * The main class that requires manual configuration before it can be run. This is a dummy and needs
+ * to be adopted to your needs.
  *
  * @author Philip Helger
  */

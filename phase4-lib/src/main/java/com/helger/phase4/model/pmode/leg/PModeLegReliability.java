@@ -417,15 +417,15 @@ public class PModeLegReliability implements Serializable
       return false;
     final PModeLegReliability rhs = (PModeLegReliability) o;
     return m_eAtLeastOnceContract.equals (rhs.m_eAtLeastOnceContract) &&
-      m_eAtLeastOnceAckOnDelivery.equals (rhs.m_eAtLeastOnceAckOnDelivery) &&
-      EqualsHelper.equals (m_sAtLeastOnceContractAcksTo, rhs.m_sAtLeastOnceContractAcksTo) &&
-      m_eAtLeastOnceContractAckResponse.equals (rhs.m_eAtLeastOnceContractAckResponse) &&
-      EqualsHelper.equals (m_sAtLeastOnceReplyPattern, rhs.m_sAtLeastOnceReplyPattern) &&
-      m_eAtMostOnceContract.equals (rhs.m_eAtMostOnceContract) &&
-      m_eInOrderContract.equals (rhs.m_eInOrderContract) &&
-      m_eStartGroup.equals (rhs.m_eStartGroup) &&
-      m_aCorrelation.equals (rhs.m_aCorrelation) &&
-      m_eTerminateGroup.equals (rhs.m_eTerminateGroup);
+           m_eAtLeastOnceAckOnDelivery.equals (rhs.m_eAtLeastOnceAckOnDelivery) &&
+           EqualsHelper.equals (m_sAtLeastOnceContractAcksTo, rhs.m_sAtLeastOnceContractAcksTo) &&
+           m_eAtLeastOnceContractAckResponse.equals (rhs.m_eAtLeastOnceContractAckResponse) &&
+           EqualsHelper.equals (m_sAtLeastOnceReplyPattern, rhs.m_sAtLeastOnceReplyPattern) &&
+           m_eAtMostOnceContract.equals (rhs.m_eAtMostOnceContract) &&
+           m_eInOrderContract.equals (rhs.m_eInOrderContract) &&
+           m_eStartGroup.equals (rhs.m_eStartGroup) &&
+           m_aCorrelation.equals (rhs.m_aCorrelation) &&
+           m_eTerminateGroup.equals (rhs.m_eTerminateGroup);
   }
 
   @Override

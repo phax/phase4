@@ -180,9 +180,9 @@ public final class PeppolSender
                                                                   })
                                                                   .endpointURLConsumer (aSendingReport::setC3EndpointURL)
                                                                   .technicalContactConsumer (aSendingReport::setC3TechnicalContact)
-                                                                  .certificateConsumer ( (aAPCertificate,
-                                                                                          aCheckDT,
-                                                                                          eCertCheckResult) -> {
+                                                                  .certificateConsumer ((aAPCertificate,
+                                                                                         aCheckDT,
+                                                                                         eCertCheckResult) -> {
                                                                     // Determined by SMP lookup
                                                                     aSendingReport.setC3Cert (aAPCertificate);
                                                                     aSendingReport.setC3CertCheckDT (aCheckDT);
@@ -204,16 +204,16 @@ public final class PeppolSender
                                                                     }
                                                                   })
                                                                   .rawResponseConsumer (aSendingReport::setRawHttpResponse)
-                                                                  .signalMsgConsumer ( (aSignalMsg,
-                                                                                        aMessageMetadata,
-                                                                                        aState) -> {
+                                                                  .signalMsgConsumer ((aSignalMsg,
+                                                                                       aMessageMetadata,
+                                                                                       aState) -> {
                                                                     aSendingReport.setAS4ReceivedSignalMsg (aSignalMsg);
                                                                   })
-                                                                  .soapFaultConsumer ( (sMessageID,
-                                                                                        aSoapFault,
-                                                                                        aSentMsg) -> {
-                                                                    aSendingReport.setAS4SoapFault (aSoapFault);
-                                                                  });
+                                                                  .soapFaultConsumer ((sMessageID,
+                                                                                       aSoapFault,
+                                                                                       aSentMsg) -> {
+                                                                                         aSendingReport.setAS4SoapFault (aSoapFault);
+                                                                                       });
       final Wrapper <Phase4Exception> aCaughtEx = new Wrapper <> ();
       eResult = aBuilder.sendMessageAndCheckForReceipt (aCaughtEx::set);
       LOGGER.info ("Peppol client send result: " + eResult);
@@ -304,9 +304,9 @@ public final class PeppolSender
                                                                       .smpClient (aSMPClient)
                                                                       .endpointURLConsumer (aSendingReport::setC3EndpointURL)
                                                                       .technicalContactConsumer (aSendingReport::setC3TechnicalContact)
-                                                                      .certificateConsumer ( (aAPCertificate,
-                                                                                              aCheckDT,
-                                                                                              eCertCheckResult) -> {
+                                                                      .certificateConsumer ((aAPCertificate,
+                                                                                             aCheckDT,
+                                                                                             eCertCheckResult) -> {
                                                                         // Determined by SMP lookup
                                                                         aSendingReport.setC3Cert (aAPCertificate);
                                                                         aSendingReport.setC3CertCheckDT (aCheckDT);
@@ -328,16 +328,16 @@ public final class PeppolSender
                                                                         }
                                                                       })
                                                                       .rawResponseConsumer (aSendingReport::setRawHttpResponse)
-                                                                      .signalMsgConsumer ( (aSignalMsg,
-                                                                                            aMessageMetadata,
-                                                                                            aState) -> {
+                                                                      .signalMsgConsumer ((aSignalMsg,
+                                                                                           aMessageMetadata,
+                                                                                           aState) -> {
                                                                         aSendingReport.setAS4ReceivedSignalMsg (aSignalMsg);
                                                                       })
-                                                                      .soapFaultConsumer ( (sMessageID,
-                                                                                            aSoapFault,
-                                                                                            aSentMsg) -> {
-                                                                        aSendingReport.setAS4SoapFault (aSoapFault);
-                                                                      });
+                                                                      .soapFaultConsumer ((sMessageID,
+                                                                                           aSoapFault,
+                                                                                           aSentMsg) -> {
+                                                                                             aSendingReport.setAS4SoapFault (aSoapFault);
+                                                                                           });
       final Wrapper <Phase4Exception> aCaughtEx = new Wrapper <> ();
       eResult = aBuilder.sendMessageAndCheckForReceipt (aCaughtEx::set);
       LOGGER.info ("Peppol client send result: " + eResult);

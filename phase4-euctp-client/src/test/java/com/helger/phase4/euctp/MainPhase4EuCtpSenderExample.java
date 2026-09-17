@@ -164,9 +164,9 @@ public class MainPhase4EuCtpSenderExample
                                                                .httpClientFactory (aHttpClientSettings)
                                                                .endpointURL ("https://conformance.customs.ec.europa.eu:8445/domibus/services/msh")
                                                                .mpc (sMPC)
-                                                               .userMsgConsumer ( (aEbmsUserMsg,
-                                                                                   aIncomingMessageMetadata,
-                                                                                   aIncomingState) -> {
+                                                               .userMsgConsumer ((aEbmsUserMsg,
+                                                                                  aIncomingMessageMetadata,
+                                                                                  aIncomingState) -> {
                                                                  aUserMessageHolder.set (aEbmsUserMsg);
                                                                  aSoapDocHolder.set (aIncomingState.getEffectiveDecryptedSoapDocument ());
                                                                  if (aIncomingState.hasDecryptedAttachments ())
@@ -182,9 +182,9 @@ public class MainPhase4EuCtpSenderExample
                                                                    }
                                                                  }
                                                                })
-                                                               .signalMsgConsumer ( (aEbmsSignalMsg,
-                                                                                     aIncomingMessageMetadata,
-                                                                                     aIncomingState) -> {
+                                                               .signalMsgConsumer ((aEbmsSignalMsg,
+                                                                                    aIncomingMessageMetadata,
+                                                                                    aIncomingState) -> {
                                                                  aSignalMessageHolder.set (aEbmsSignalMsg);
                                                                  aSoapDocHolder.set (aIncomingState.getEffectiveDecryptedSoapDocument ());
                                                                })
@@ -320,7 +320,7 @@ public class MainPhase4EuCtpSenderExample
                                .endpointURL ("https://conformance.customs.ec.europa.eu:8445/domibus/services/msh")
                                .service ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service")
                                .action (EuCtpPMode.ACTION_TEST)
-                               .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> aSignalMsgHolder.set (aSignalMsg))
+                               .signalMsgConsumer ((aSignalMsg, aMMD, aState) -> aSignalMsgHolder.set (aSignalMsg))
                                .cryptoFactory (cryptoFactory)
                                // .payload(new
                                // AS4OutgoingAttachment.Builder().data(aPayloadBytes).mimeTypeXML())
@@ -349,7 +349,7 @@ public class MainPhase4EuCtpSenderExample
                                .endpointURL ("https://conformance.customs.ec.europa.eu:8445/domibus/services/msh")
                                .service (EuCtpPMode.DEFAULT_SERVICE_TYPE, EEuCtpService.TRADER_TO_CUSTOMS)
                                .action (EEuCtpAction.IE3F26)
-                               .signalMsgConsumer ( (aSignalMsg, aMMD, aState) -> aSignalMsgHolder.set (aSignalMsg))
+                               .signalMsgConsumer ((aSignalMsg, aMMD, aState) -> aSignalMsgHolder.set (aSignalMsg))
                                .cryptoFactory (cryptoFactory)
                                .conversationID (UUID.randomUUID ().toString ())
                                .payload (new AS4OutgoingAttachment.Builder ().compressionGZIP ()

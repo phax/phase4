@@ -31,8 +31,8 @@ import com.helger.security.keystore.KeyStoreAndKeyDescriptor;
 import com.helger.security.keystore.TrustStoreDescriptor;
 
 /**
- * This is a small tool that demonstrates how the "as4in" files can be decrypted
- * later, assuming the correct certificate is provided.
+ * This is a small tool that demonstrates how the "as4in" files can be decrypted later, assuming the
+ * correct certificate is provided.
  *
  * @author Philip Helger
  */
@@ -70,8 +70,7 @@ public final class MainDecipherAS4In
                                 aCryptoFactory,
                                 aCryptoFactory,
                                 null,
-                                (nIndex, aDecryptedBytes) -> SimpleFileIO.writeFile (
-                                                                                     new File (folder,
+                                (nIndex, aDecryptedBytes) -> SimpleFileIO.writeFile (new File (folder,
                                                                                                "payload-" +
                                                                                                        nIndex +
                                                                                                        ".decrypted"),

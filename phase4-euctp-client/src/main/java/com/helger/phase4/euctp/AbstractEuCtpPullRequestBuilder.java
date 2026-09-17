@@ -63,8 +63,8 @@ public abstract class AbstractEuCtpPullRequestBuilder <IMPLTYPE extends Abstract
   }
 
   @NonNull
-  public IMPLTYPE httpClientFactory (@Nullable final KeyStore aKeyStore, final char @Nullable [] aKeyPassword)
-                                                                                                               throws GeneralSecurityException
+  public IMPLTYPE httpClientFactory (@Nullable final KeyStore aKeyStore,
+                                     final char @Nullable [] aKeyPassword) throws GeneralSecurityException
   {
     return httpClientFactory (new Phase4EuCtpHttpClientSettings (aKeyStore, aKeyPassword));
   }

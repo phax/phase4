@@ -463,9 +463,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    */
   @NonNull
   public abstract AS4ClientBuiltMessage buildMessage (@NonNull @Nonempty String sMessageID,
-                                                      @Nullable IAS4ClientBuildMessageCallback aCallback) throws IOException,
-                                                                                                          WSSecurityException,
-                                                                                                          MessagingException;
+                                                      @Nullable IAS4ClientBuildMessageCallback aCallback) throws IOException, WSSecurityException, MessagingException;
 
   /**
    * Send the AS4 client message created by
@@ -503,9 +501,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                                     @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                                                     @Nullable final IAS4ClientBuildMessageCallback aCallback,
                                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws IOException,
-                                                                                                                      WSSecurityException,
-                                                                                                                      MessagingException
+                                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws IOException, WSSecurityException, MessagingException
   {
     ValueEnforcer.notNull (sURL, "URL");
     ValueEnforcer.notNull (aResponseHandler, "ResponseHandler");
@@ -527,8 +523,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     LOGGER.info ("phase4 --- sending.withretries:start");
 
     if (m_aHttpRetrySettings.isRetryEnabled () ||
-      aOutgoingDumper != null ||
-      AS4DumpManager.getOutgoingDumper () != null)
+        aOutgoingDumper != null ||
+        AS4DumpManager.getOutgoingDumper () != null)
     {
       // Ensure a repeatable entity is provided
       aBuiltEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);

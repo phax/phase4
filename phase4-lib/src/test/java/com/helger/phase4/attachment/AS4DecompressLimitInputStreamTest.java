@@ -101,9 +101,7 @@ public final class AS4DecompressLimitInputStreamTest
   {
     try
     {
-      _readAll (4 * CGlobal.BYTES_PER_MEGABYTE,
-                CGlobal.BYTES_PER_MEGABYTE,
-                AS4DecompressLimitInputStream.NO_LIMIT);
+      _readAll (4 * CGlobal.BYTES_PER_MEGABYTE, CGlobal.BYTES_PER_MEGABYTE, AS4DecompressLimitInputStream.NO_LIMIT);
       fail ();
     }
     catch (final AS4SizeLimitException ex)

@@ -40,8 +40,8 @@ public class AS4CertificateOnlySignatureTrustValidator extends SignatureTrustVal
 
   @Override
   @OverridingMethodsMustInvokeSuper
-  public Credential validate (@NonNull final Credential aCredential, @NonNull final RequestData aReqData)
-                                                                                                          throws WSSecurityException
+  public Credential validate (@NonNull final Credential aCredential,
+                              @NonNull final RequestData aReqData) throws WSSecurityException
   {
     if (aCredential == null)
       throw new WSSecurityException (WSSecurityException.ErrorCode.FAILURE, "noCredential");

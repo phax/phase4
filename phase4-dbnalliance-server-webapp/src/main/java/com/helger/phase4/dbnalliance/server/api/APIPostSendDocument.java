@@ -182,9 +182,9 @@ public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
                                                                             })
                                                                             .endpointURLConsumer (aSendingReport::setC3EndpointURL)
                                                                             .technicalContactConsumer (aSendingReport::setC3TechnicalContact)
-                                                                            .certificateConsumer ( (aAPCertificate,
-                                                                                                    aCheckDT,
-                                                                                                    eCertCheckResult) -> {
+                                                                            .certificateConsumer ((aAPCertificate,
+                                                                                                   aCheckDT,
+                                                                                                   eCertCheckResult) -> {
                                                                               // Determined by SMP
                                                                               // lookup
                                                                               aSendingReport.setC3Cert (aAPCertificate);
@@ -206,14 +206,14 @@ public final class APIPostSendDocument extends AbstractVerifyingAPIExecutor
                                                                                                                              .getConversationId ());
                                                                               }
                                                                             })
-                                                                            .signalMsgConsumer ( (aSignalMsg,
-                                                                                                  aMessageMetadata,
-                                                                                                  aState) -> {
-                                                                              aSendingReport.setAS4ReceivedSignalMsg (aSignalMsg);
-                                                                            })
-                                                                            .soapFaultConsumer ( (sMessageID,
-                                                                                                  aSoapFault,
-                                                                                                  aSentMsg) -> {
+                                                                            .signalMsgConsumer ((aSignalMsg,
+                                                                                                 aMessageMetadata,
+                                                                                                 aState) -> {
+                                                                                                   aSendingReport.setAS4ReceivedSignalMsg (aSignalMsg);
+                                                                                                 })
+                                                                            .soapFaultConsumer ((sMessageID,
+                                                                                                 aSoapFault,
+                                                                                                 aSentMsg) -> {
                                                                               aSendingReport.setAS4SoapFault (aSoapFault);
                                                                             });
       final Wrapper <Phase4Exception> aCaughtEx = new Wrapper <> ();

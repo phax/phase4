@@ -262,11 +262,11 @@ public class PModeLegErrorHandling implements Serializable
       return false;
     final PModeLegErrorHandling rhs = (PModeLegErrorHandling) o;
     return EqualsHelper.equals (m_aReportSenderErrorsTo, rhs.m_aReportSenderErrorsTo) &&
-      EqualsHelper.equals (m_aReportReceiverErrorsTo, rhs.m_aReportReceiverErrorsTo) &&
-      m_eReportAsResponse.equals (rhs.m_eReportAsResponse) &&
-      m_eReportProcessErrorNotifyConsumer.equals (rhs.m_eReportProcessErrorNotifyConsumer) &&
-      m_eReportProcessErrorNotifyProducer.equals (rhs.m_eReportProcessErrorNotifyProducer) &&
-      m_eReportDeliveryFailuresNotifyProducer.equals (rhs.m_eReportDeliveryFailuresNotifyProducer);
+           EqualsHelper.equals (m_aReportReceiverErrorsTo, rhs.m_aReportReceiverErrorsTo) &&
+           m_eReportAsResponse.equals (rhs.m_eReportAsResponse) &&
+           m_eReportProcessErrorNotifyConsumer.equals (rhs.m_eReportProcessErrorNotifyConsumer) &&
+           m_eReportProcessErrorNotifyProducer.equals (rhs.m_eReportProcessErrorNotifyProducer) &&
+           m_eReportDeliveryFailuresNotifyProducer.equals (rhs.m_eReportDeliveryFailuresNotifyProducer);
   }
 
   @Override

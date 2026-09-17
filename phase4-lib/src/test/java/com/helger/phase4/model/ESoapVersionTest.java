@@ -94,7 +94,6 @@ public final class ESoapVersionTest
     assertNull (ESoapVersion.getFromNamespaceURIOrNull (null));
     assertNull (ESoapVersion.getFromNamespaceURIOrNull (""));
     assertNull (ESoapVersion.getFromMimeTypeOrNull (null));
-    assertSame (ESoapVersion.SOAP_12,
-                ESoapVersion.getFromVersionOrDefault ("does-not-exist", ESoapVersion.SOAP_12));
+    assertSame (ESoapVersion.SOAP_12, ESoapVersion.getFromVersionOrDefault ("does-not-exist", ESoapVersion.SOAP_12));
   }
 }

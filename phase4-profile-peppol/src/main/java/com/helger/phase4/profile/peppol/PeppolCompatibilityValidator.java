@@ -333,8 +333,8 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
   }
 
   public void validateSoapMessage (@NonNull final Document aSoapDocument,
-                                  @NonNull final ESoapVersion eSoapVersion,
-                                  @NonNull final ErrorList aErrorList)
+                                   @NonNull final ESoapVersion eSoapVersion,
+                                   @NonNull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aSoapDocument, "SoapDocument");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
@@ -348,8 +348,8 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     }
 
     final Element aBodyElement = XMLHelper.getFirstChildElementOfName (aEnvelope,
-                                                                      eSoapVersion.getNamespaceURI (),
-                                                                      eSoapVersion.getBodyElementName ());
+                                                                       eSoapVersion.getNamespaceURI (),
+                                                                       eSoapVersion.getBodyElementName ());
     if (aBodyElement == null)
     {
       aErrorList.add (_createError ("SOAP Body is missing"));

@@ -48,9 +48,8 @@ public interface IAS4IncomingAttachmentFactory
    *         In case MIME part reading fails.
    */
   @NonNull
-  WSS4JAttachment createAttachment (@NonNull AS4IncomingMimePart aMimePart, @NonNull AS4ResourceHelper aResHelper)
-                                                                                                                   throws IOException,
-                                                                                                                   MessagingException;
+  WSS4JAttachment createAttachment (@NonNull AS4IncomingMimePart aMimePart,
+                                    @NonNull AS4ResourceHelper aResHelper) throws IOException, MessagingException;
 
   /**
    * The default instance of {@link IAS4IncomingAttachmentFactory} that uses

@@ -27,8 +27,8 @@ import org.junit.Test;
 
 /**
  * Verifies direct enum initialization and provider-neutral OID access without Bouncy Castle. This
- * deliberately does not reflect over all enum methods because the retained legacy method
- * descriptor still references a Bouncy Castle type.
+ * deliberately does not reflect over all enum methods because the retained legacy method descriptor
+ * still references a Bouncy Castle type.
  */
 public final class ECryptoAlgorithmCryptWithoutBCTest
 {
@@ -40,7 +40,7 @@ public final class ECryptoAlgorithmCryptWithoutBCTest
   public void testDirectEnumUseWithoutBC () throws Exception
   {
     final URL [] aURLs = { new File ("target/classes").toURI ().toURL (),
-                          new File ("target/test-classes").toURI ().toURL () };
+                           new File ("target/test-classes").toURI ().toURL () };
     try (final URLClassLoader aCL = new URLClassLoader (aURLs, getClass ().getClassLoader ())
     {
       @Override
@@ -77,13 +77,12 @@ public final class ECryptoAlgorithmCryptWithoutBCTest
       final Class <?> aProbeClass = Class.forName (PROBE_CLASS, true, aCL);
       final String [] aActual = (String []) aProbeClass.getMethod ("getOIDStrings").invoke (null);
       assertArrayEquals (new String [] { "1.2.840.113549.3.7",
-                                        "2.16.840.1.101.3.4.1.2",
-                                        "2.16.840.1.101.3.4.1.6",
-                                        "2.16.840.1.101.3.4.1.22",
-                                        "2.16.840.1.101.3.4.1.26",
-                                        "2.16.840.1.101.3.4.1.42",
-                                        "2.16.840.1.101.3.4.1.46" },
-                         aActual);
+                                         "2.16.840.1.101.3.4.1.2",
+                                         "2.16.840.1.101.3.4.1.6",
+                                         "2.16.840.1.101.3.4.1.22",
+                                         "2.16.840.1.101.3.4.1.26",
+                                         "2.16.840.1.101.3.4.1.42",
+                                         "2.16.840.1.101.3.4.1.46" }, aActual);
     }
   }
 }

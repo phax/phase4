@@ -39,10 +39,10 @@ public final class HREDeliveryPModeTest
   public void testCEFPMode ()
   {
     final PMode aPMode = HREDeliveryPMode.createHREdeliveryPMode ("TestInitiator",
-                                                             "TestResponder",
-                                                             "https://test.example.org",
-                                                             IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                             false);
+                                                                  "TestResponder",
+                                                                  "https://test.example.org",
+                                                                  IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                                  false);
     assertNotNull (aPMode);
   }
 }

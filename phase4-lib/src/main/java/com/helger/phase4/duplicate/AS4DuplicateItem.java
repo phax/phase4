@@ -106,8 +106,8 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
     final AS4DuplicateItem rhs = (AS4DuplicateItem) o;
     // DT not contained!
     return m_sMessageID.equals (rhs.m_sMessageID) &&
-      EqualsHelper.equals (m_sProfileID, rhs.m_sProfileID) &&
-      EqualsHelper.equals (m_sPModeID, rhs.m_sPModeID);
+           EqualsHelper.equals (m_sProfileID, rhs.m_sProfileID) &&
+           EqualsHelper.equals (m_sPModeID, rhs.m_sPModeID);
   }
 
   @Override

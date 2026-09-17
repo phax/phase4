@@ -116,7 +116,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
                                    @Nullable final String sExecptedResponseContent) throws IOException
   {
     // Debug code
-    AS4HttpDebug.debug ( () -> {
+    AS4HttpDebug.debug (() -> {
       final StringBuilder aSB = new StringBuilder ();
       aSB.append ("TEST-SEND-START to ").append (aPost.toString ()).append ("\n");
       try
@@ -193,8 +193,8 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
         // 200, 400 or 500
         assertTrue ("Server responded with StatusCode=" + nStatusCode + ". Response:\n" + sResponse,
                     nStatusCode == CHttp.HTTP_OK ||
-                      nStatusCode == CHttp.HTTP_BAD_REQUEST ||
-                      nStatusCode == CHttp.HTTP_INTERNAL_SERVER_ERROR);
+                                                                                                     nStatusCode == CHttp.HTTP_BAD_REQUEST ||
+                                                                                                     nStatusCode == CHttp.HTTP_INTERNAL_SERVER_ERROR);
         assertTrue ("Server responded with different error message than expected (" +
                     sExecptedResponseContent +
                     ")." +
@@ -228,8 +228,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
   @NonNull
   private final String _sendMimeMessage (@NonNull final HttpMimeMessageEntity aHttpEntity,
                                          final boolean bExpectSuccess,
-                                         @Nullable final String sExecptedResponseContent) throws IOException,
-                                                                                          MessagingException
+                                         @Nullable final String sExecptedResponseContent) throws IOException, MessagingException
   {
     final HttpPost aPost = _createMockPostToLocalJetty ();
 
@@ -252,8 +251,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
    *         in case there is some error with the MIME message
    */
   @NonNull
-  protected final String sendMimeMessageExpectSuccess (@NonNull final HttpMimeMessageEntity aHttpEntity) throws IOException,
-                                                                                                         MessagingException
+  protected final String sendMimeMessageExpectSuccess (@NonNull final HttpMimeMessageEntity aHttpEntity) throws IOException, MessagingException
   {
     return _sendMimeMessage (aHttpEntity, true, null);
   }
@@ -274,8 +272,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
    */
   @NonNull
   protected final String sendMimeMessageExpectError (@NonNull final HttpMimeMessageEntity aHttpEntity,
-                                                     @NonNull final String sExecptedResponseContent) throws IOException,
-                                                                                                     MessagingException
+                                                     @NonNull final String sExecptedResponseContent) throws IOException, MessagingException
   {
     return _sendMimeMessage (aHttpEntity, false, sExecptedResponseContent);
   }

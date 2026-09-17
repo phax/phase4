@@ -283,8 +283,8 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     {
       final String sName = aEntry.getKey ();
       if (!sName.equals (CHttpHeader.CONTENT_ID) &&
-        !sName.equals (CHttpHeader.CONTENT_TRANSFER_ENCODING) &&
-        !sName.equals (CHttpHeader.CONTENT_TYPE))
+          !sName.equals (CHttpHeader.CONTENT_TRANSFER_ENCODING) &&
+          !sName.equals (CHttpHeader.CONTENT_TYPE))
         aMimeBodyPart.setHeader (sName, aEntry.getValue ());
     }
 
@@ -577,8 +577,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    */
   @NonNull
   public static WSS4JAttachment createIncomingFileAttachment (@NonNull final AS4IncomingMimePart aMimePart,
-                                                              @NonNull final AS4ResourceHelper aResHelper) throws MessagingException,
-                                                                                                           IOException
+                                                              @NonNull final AS4ResourceHelper aResHelper) throws MessagingException, IOException
   {
     ValueEnforcer.notNull (aMimePart, "MimePart");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
@@ -600,7 +599,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     int nInMemoryLen = 0;
     int nBytesRead;
     while (nInMemoryLen < aReadBuffer.length &&
-      (nBytesRead = aDecodedIS.read (aReadBuffer, nInMemoryLen, aReadBuffer.length - nInMemoryLen)) >= 0)
+           (nBytesRead = aDecodedIS.read (aReadBuffer, nInMemoryLen, aReadBuffer.length - nInMemoryLen)) >= 0)
       nInMemoryLen += nBytesRead;
 
     // Probe one more byte to determine, if the content fits into the threshold
@@ -669,8 +668,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   @Deprecated (forRemoval = true, since = "4.6.0")
   @NonNull
   public static WSS4JAttachment createIncomingFileAttachment (@NonNull final MimeBodyPart aBodyPart,
-                                                              @NonNull final AS4ResourceHelper aResHelper) throws MessagingException,
-                                                                                                           IOException
+                                                              @NonNull final AS4ResourceHelper aResHelper) throws MessagingException, IOException
   {
     ValueEnforcer.notNull (aBodyPart, "BodyPart");
     ValueEnforcer.notNull (aResHelper, "ResHelper");

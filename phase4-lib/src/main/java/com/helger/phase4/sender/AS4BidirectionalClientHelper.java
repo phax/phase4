@@ -121,8 +121,8 @@ public final class AS4BidirectionalClientHelper
                                                 @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer) throws Phase4Exception
   {
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
-                                                                                                             .getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
+                                                                           : AS4DumpManager.getIncomingDumper ();
     if (aRealIncomingDumper != null)
     {
       if (aResponseMessageMetadata != null)
@@ -185,10 +185,7 @@ public final class AS4BidirectionalClientHelper
                                                                    @Nullable final IAS4RetryCallback aRetryCallback,
                                                                    @Nullable final IAS4RawResponseConsumer aRawResponseConsumer,
                                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
-                                                                   @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler) throws IOException,
-                                                                                                                                                               Phase4Exception,
-                                                                                                                                                               WSSecurityException,
-                                                                                                                                                               MessagingException
+                                                                   @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler) throws IOException, Phase4Exception, WSSecurityException, MessagingException
   {
     sendAS4UserMessageAndReceiveAS4SignalMessage (aCryptoFactorySign,
                                                   aCryptoFactoryCrypt,
@@ -235,10 +232,7 @@ public final class AS4BidirectionalClientHelper
                                                                    @Nullable final IAS4RawResponseConsumer aRawResponseConsumer,
                                                                    @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
                                                                    @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler,
-                                                                   @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer) throws IOException,
-                                                                                                                             Phase4Exception,
-                                                                                                                             WSSecurityException,
-                                                                                                                             MessagingException
+                                                                   @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer) throws IOException, Phase4Exception, WSSecurityException, MessagingException
   {
     LOGGER.info ("Sending AS4 UserMessage to '" +
                  sURL +
@@ -471,10 +465,7 @@ public final class AS4BidirectionalClientHelper
                                                                  @Nullable final IAS4RetryCallback aRetryCallback,
                                                                  @Nullable final IAS4RawResponseConsumer aResponseConsumer,
                                                                  @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
-                                                                 @Nullable final IPMode aPMode) throws IOException,
-                                                                                                Phase4Exception,
-                                                                                                WSSecurityException,
-                                                                                                MessagingException
+                                                                 @Nullable final IPMode aPMode) throws IOException, Phase4Exception, WSSecurityException, MessagingException
   {
     LOGGER.info ("Sending AS4 PullRequest to '" +
                  sURL +
@@ -566,10 +557,7 @@ public final class AS4BidirectionalClientHelper
                                                                          @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
                                                                          @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
                                                                          @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler,
-                                                                         @Nullable final IPMode aPMode) throws IOException,
-                                                                                                        Phase4Exception,
-                                                                                                        WSSecurityException,
-                                                                                                        MessagingException
+                                                                         @Nullable final IPMode aPMode) throws IOException, Phase4Exception, WSSecurityException, MessagingException
   {
     LOGGER.info ("Sending AS4 PullRequest to '" +
                  sURL +

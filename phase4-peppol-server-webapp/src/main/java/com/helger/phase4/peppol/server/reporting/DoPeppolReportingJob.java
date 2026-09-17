@@ -46,8 +46,8 @@ public final class DoPeppolReportingJob extends AbstractScopeAwareJob
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (DoPeppolReportingJob.class);
 
   @Override
-  protected void onExecute (final JobDataMap aJobDataMap, final IJobExecutionContext aContext)
-                                                                                               throws JobExecutionException
+  protected void onExecute (final JobDataMap aJobDataMap,
+                            final IJobExecutionContext aContext) throws JobExecutionException
   {
     if (APConfig.isSchedulePeppolReporting ())
     {

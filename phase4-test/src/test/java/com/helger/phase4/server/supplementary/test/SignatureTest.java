@@ -105,7 +105,7 @@ public final class SignatureTest
                                                                        aCryptoFactory.getCrypto (ECryptoMode.ENCRYPT_SIGN));
 
     final List <WSSecurityEngineResult> aSignActionResults = aResults.getActionResults ()
-                                                               .get (Integer.valueOf (WSConstants.SIGN));
+                                                                     .get (Integer.valueOf (WSConstants.SIGN));
     assertEquals (1, aSignActionResults.size ());
     final WSSecurityEngineResult aActionResult = aSignActionResults.get (0);
     assertNotNull (aActionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));

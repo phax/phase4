@@ -305,10 +305,10 @@ public class AS4SoapFault
                                                      @NonNull final String sLocalName)
   {
     final Element aChildElement = sNamespaceURI == null ? XMLHelper.getFirstChildElementOfName (aParentElement,
-                                                                                                sLocalName) : XMLHelper
-                                                                                                                       .getFirstChildElementOfName (aParentElement,
-                                                                                                                                                    sNamespaceURI,
-                                                                                                                                                    sLocalName);
+                                                                                                sLocalName)
+                                                        : XMLHelper.getFirstChildElementOfName (aParentElement,
+                                                                                                sNamespaceURI,
+                                                                                                sLocalName);
     return aChildElement == null ? null : StringHelper.trim (aChildElement.getTextContent ());
   }
 
@@ -403,8 +403,9 @@ public class AS4SoapFault
       {
         // All fault child elements are unqualified
         final Element aFaultCodeElement = XMLHelper.getFirstChildElementOfName (aFaultElement, "faultcode");
-        final QName aFaultCode = aFaultCodeElement == null ? null : _parseQName (aFaultCodeElement.getTextContent (),
-                                                                                 aFaultCodeElement);
+        final QName aFaultCode = aFaultCodeElement == null ? null
+                                                           : _parseQName (aFaultCodeElement.getTextContent (),
+                                                                          aFaultCodeElement);
         final String sFaultString = _getChildElementTextContent (aFaultElement, null, "faultstring");
         final String sFaultActor = _getChildElementTextContent (aFaultElement, null, "faultactor");
         final Element aDetailElement = XMLHelper.getFirstChildElementOfName (aFaultElement, "detail");

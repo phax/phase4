@@ -154,9 +154,9 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
   {
     boolean bComparedReferences = false;
     if (m_aClientSetMsg.getBuiltMessage ().hasDSReferences () &&
-      aEbmsSignalMsg != null &&
-      aEbmsSignalMsg.getReceipt () != null &&
-      aEbmsSignalMsg.getReceipt ().hasAnyEntries ())
+        aEbmsSignalMsg != null &&
+        aEbmsSignalMsg.getReceipt () != null &&
+        aEbmsSignalMsg.getReceipt ().hasAnyEntries ())
     {
       // Verify that stored references match the ones contained in the NRR
       // of the signal message

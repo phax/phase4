@@ -24,10 +24,9 @@ import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.scope.ScopeHelper;
 
 /**
- * The test classes for the usermessage, are split up for a better overview.
- * Since all these classes need the same setup and a helper method, this class
- * was created. Also with the help of Parameterized.class, each test will be
- * done for both SOAP Versions.
+ * The test classes for the usermessage, are split up for a better overview. Since all these classes
+ * need the same setup and a helper method, this class was created. Also with the help of
+ * Parameterized.class, each test will be done for both SOAP Versions.
  *
  * @author bayerlma
  * @author Philip Helger

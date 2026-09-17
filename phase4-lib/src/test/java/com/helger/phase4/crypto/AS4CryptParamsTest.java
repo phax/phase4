@@ -74,8 +74,7 @@ public final class AS4CryptParamsTest
   public void testCryptEnabledWithAlias ()
   {
     final AS4CryptParams aParams = new AS4CryptParams ();
-    aParams.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM)
-           .setAlias ("test-alias");
+    aParams.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM).setAlias ("test-alias");
     assertTrue (aParams.isCryptEnabled (null));
     assertTrue (aParams.hasAlias ());
     assertEquals ("test-alias", aParams.getAlias ());
@@ -85,8 +84,7 @@ public final class AS4CryptParamsTest
   public void testEDelivery2X25519 ()
   {
     final AS4CryptParams aParams = new AS4CryptParams ();
-    aParams.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM)
-           .setEDelivery2KeyAgreementX25519 ();
+    aParams.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM).setEDelivery2KeyAgreementX25519 ();
 
     assertTrue (aParams.hasKeyAgreementMethod ());
     assertEquals (ECryptoKeyAgreementMethod.X25519, aParams.getKeyAgreementMethod ());
@@ -98,8 +96,7 @@ public final class AS4CryptParamsTest
   public void testEDelivery2ECDHES ()
   {
     final AS4CryptParams aParams = new AS4CryptParams ();
-    aParams.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM)
-           .setEDelivery2KeyAgreementECDHES ();
+    aParams.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM).setEDelivery2KeyAgreementECDHES ();
 
     assertTrue (aParams.hasKeyAgreementMethod ());
     assertEquals (ECryptoKeyAgreementMethod.ECDH_ES, aParams.getKeyAgreementMethod ());
@@ -115,9 +112,7 @@ public final class AS4CryptParamsTest
     assertTrue (aParams.hasKeyAgreementMethod ());
 
     // Reset key agreement to null (back to key transport mode)
-    aParams.setKeyAgreementMethod (null)
-           .setKeyDerivationMethod (null)
-           .setKeyWrapAlgorithm (null);
+    aParams.setKeyAgreementMethod (null).setKeyDerivationMethod (null).setKeyWrapAlgorithm (null);
     assertFalse (aParams.hasKeyAgreementMethod ());
     assertNull (aParams.getKeyAgreementMethod ());
     assertNull (aParams.getKeyDerivationMethod ());
@@ -143,8 +138,7 @@ public final class AS4CryptParamsTest
   public void testCloneWithKeyAgreement ()
   {
     final AS4CryptParams aParams = new AS4CryptParams ();
-    aParams.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM)
-           .setEDelivery2KeyAgreementX25519 ();
+    aParams.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM).setEDelivery2KeyAgreementX25519 ();
 
     final AS4CryptParams aClone = aParams.getClone ();
     assertNotNull (aClone);
@@ -184,8 +178,7 @@ public final class AS4CryptParamsTest
   public void testToString ()
   {
     final AS4CryptParams aParams = new AS4CryptParams ();
-    aParams.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM)
-           .setEDelivery2KeyAgreementX25519 ();
+    aParams.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM).setEDelivery2KeyAgreementX25519 ();
     final String sToString = aParams.toString ();
     assertNotNull (sToString);
     assertTrue (sToString.contains ("KeyAgreementMethod"));

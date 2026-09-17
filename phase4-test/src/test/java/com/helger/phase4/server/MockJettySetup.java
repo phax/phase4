@@ -50,7 +50,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
 
   static
   {
-    Thread.setDefaultUncaughtExceptionHandler ( (t, e) -> LOGGER.error ("Thread " + t.getId () + " oopsed", e));
+    Thread.setDefaultUncaughtExceptionHandler ((t, e) -> LOGGER.error ("Thread " + t.getId () + " oopsed", e));
   }
 
   private MockJettySetup ()

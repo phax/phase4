@@ -254,12 +254,12 @@ public class PModeLegBusinessInformation implements Serializable
       return false;
     final PModeLegBusinessInformation rhs = (PModeLegBusinessInformation) o;
     return EqualsHelper.equals (m_sServiceValue, rhs.m_sServiceValue) &&
-      EqualsHelper.equals (m_sServiceType, rhs.m_sServiceType) &&
-      EqualsHelper.equals (m_sAction, rhs.m_sAction) &&
-      m_aProperties.equals (rhs.m_aProperties) &&
-      m_aPayloadProfiles.equals (rhs.m_aPayloadProfiles) &&
-      EqualsHelper.equals (m_aPayloadProfileMaxKB, rhs.m_aPayloadProfileMaxKB) &&
-      EqualsHelper.equals (m_sMPCID, rhs.m_sMPCID);
+           EqualsHelper.equals (m_sServiceType, rhs.m_sServiceType) &&
+           EqualsHelper.equals (m_sAction, rhs.m_sAction) &&
+           m_aProperties.equals (rhs.m_aProperties) &&
+           m_aPayloadProfiles.equals (rhs.m_aPayloadProfiles) &&
+           EqualsHelper.equals (m_aPayloadProfileMaxKB, rhs.m_aPayloadProfileMaxKB) &&
+           EqualsHelper.equals (m_sMPCID, rhs.m_sMPCID);
   }
 
   @Override

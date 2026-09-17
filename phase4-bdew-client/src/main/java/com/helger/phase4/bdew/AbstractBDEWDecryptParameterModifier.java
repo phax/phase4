@@ -29,8 +29,8 @@ import com.helger.collection.commons.CommonsArrayList;
 import com.helger.phase4.crypto.IAS4DecryptParameterModifier;
 
 /**
- * Abstract base implementation of {@link IAS4DecryptParameterModifier} show
- * casing the ignorance of a BSP rule.
+ * Abstract base implementation of {@link IAS4DecryptParameterModifier} show casing the ignorance of
+ * a BSP rule.
  *
  * @author Philip Helger
  */

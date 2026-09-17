@@ -181,9 +181,9 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     AS4ServerInitializer.initAS4Server ();
 
     // Store the incoming file as is
-    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ( (aMessageMetadata,
-                                                                        aHttpHeaderMap) -> StorageHelper.getStorageFile (aMessageMetadata,
-                                                                                                                         ".as4in"))
+    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ((aMessageMetadata,
+                                                                       aHttpHeaderMap) -> StorageHelper.getStorageFile (aMessageMetadata,
+                                                                                                                        ".as4in"))
     {
       @Override
       public void onEndRequest (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
@@ -202,10 +202,10 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     });
 
     // Store the outgoings file as well
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> StorageHelper
-                                                                                                                    .getStorageFile (sMessageID,
-                                                                                                                                     nTry,
-                                                                                                                                     ".as4out")));
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ((eMsgMode, sMessageID, nTry) -> StorageHelper
+                                                                                                                   .getStorageFile (sMessageID,
+                                                                                                                                    nTry,
+                                                                                                                                    ".as4out")));
   }
 
   private static void _initPeppolAS4 ()

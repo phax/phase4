@@ -195,10 +195,7 @@ public final class AS4DumpReader
                                    @NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                    @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                    @Nullable final Consumer <HttpHeaderMap> aHttpHeaderConsumer,
-                                   @NonNull final IDecryptedPayloadConsumer aDecryptedConsumer) throws WSSecurityException,
-                                                                                                Phase4Exception,
-                                                                                                IOException,
-                                                                                                MessagingException
+                                   @NonNull final IDecryptedPayloadConsumer aDecryptedConsumer) throws WSSecurityException, Phase4Exception, IOException, MessagingException
   {
     ValueEnforcer.notEmpty (sAS4ProfileID, "AS4ProfileID");
     ValueEnforcer.notNull (aAS4InData, "AS4InData");

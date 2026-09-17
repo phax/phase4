@@ -160,9 +160,9 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
       catch (final SMPClientException ex)
       {
         final boolean bRetryFeasible = ex instanceof SMPClientBadRequestException ||
-          ex instanceof SMPClientBadResponseException ||
-          ex instanceof SMPClientUnauthorizedException ||
-          ex.getClass ().equals (SMPClientException.class);
+                                       ex instanceof SMPClientBadResponseException ||
+                                       ex instanceof SMPClientUnauthorizedException ||
+                                       ex.getClass ().equals (SMPClientException.class);
         throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
                                       aReceiverID.getURIEncoded () +
                                       ", " +

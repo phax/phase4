@@ -73,7 +73,7 @@ public final class AS4SignatureWithoutBCProbe
                                                                          aCryptoFactory.getCrypto (ECryptoMode.ENCRYPT_SIGN));
 
       final List <WSSecurityEngineResult> aSignResults = aResults.getActionResults ()
-                                                                .get (Integer.valueOf (WSConstants.SIGN));
+                                                                 .get (Integer.valueOf (WSConstants.SIGN));
       if (aSignResults == null || aSignResults.size () != 1)
         throw new IllegalStateException ("Expected exactly one verified signature result");
 

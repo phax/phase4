@@ -130,7 +130,7 @@ public final class SecP256R1FuncTest
       pemObj = pemParser.readObject ();
     }
     final PrivateKeyInfo privateKeyInfo = pemObj instanceof PEMKeyPair p ? p.getPrivateKeyInfo ()
-                                                                       : PrivateKeyInfo.getInstance (pemObj);
+                                                                         : PrivateKeyInfo.getInstance (pemObj);
     final JcaPEMKeyConverter converter = new JcaPEMKeyConverter ();
     final BCECPrivateKey privKey = (BCECPrivateKey) converter.getPrivateKey (privateKeyInfo);
     assertNotNull (privKey);

@@ -176,9 +176,9 @@ public class EDelivery2CompatibilityValidator implements IAS4ProfileValidator
         }
         else
           if (m_bAllowECDSA &&
-            (eSignAlgo.equals (ECryptoAlgorithmSign.ECDSA_SHA_256) ||
-              eSignAlgo.equals (ECryptoAlgorithmSign.ECDSA_SHA_384) ||
-              eSignAlgo.equals (ECryptoAlgorithmSign.ECDSA_SHA_512)))
+              (eSignAlgo.equals (ECryptoAlgorithmSign.ECDSA_SHA_256) ||
+               eSignAlgo.equals (ECryptoAlgorithmSign.ECDSA_SHA_384) ||
+               eSignAlgo.equals (ECryptoAlgorithmSign.ECDSA_SHA_512)))
           {
             // Alternative EC Profile - valid when ECDSA is allowed
           }
@@ -335,7 +335,7 @@ public class EDelivery2CompatibilityValidator implements IAS4ProfileValidator
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
 
     if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
-      (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
+        (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
     {
       // Valid - eDelivery AS4 2.0 requires one-way/push and two-way/push-push
     }

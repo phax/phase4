@@ -235,10 +235,10 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       }
 
       if (aPModeLegSecurity.isUsernameTokenCreatedDefined () ||
-        aPModeLegSecurity.isUsernameTokenDigestDefined () ||
-        aPModeLegSecurity.isUsernameTokenNonceDefined () ||
-        aPModeLegSecurity.hasUsernameTokenPassword () ||
-        aPModeLegSecurity.hasUsernameTokenUsername ())
+          aPModeLegSecurity.isUsernameTokenDigestDefined () ||
+          aPModeLegSecurity.isUsernameTokenNonceDefined () ||
+          aPModeLegSecurity.hasUsernameTokenPassword () ||
+          aPModeLegSecurity.hasUsernameTokenUsername ())
       {
         aErrorList.add (_createError (sFieldPrefix + "Username nor its part MUST NOT be set"));
       }
@@ -313,8 +313,8 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
       }
 
       if (aErrorHandling.getReportSenderErrorsTo () != null &&
-        aErrorHandling.getReportSenderErrorsTo ().addresses () != null &&
-        aErrorHandling.getReportSenderErrorsTo ().addresses ().isNotEmpty ())
+          aErrorHandling.getReportSenderErrorsTo ().addresses () != null &&
+          aErrorHandling.getReportSenderErrorsTo ().addresses ().isNotEmpty ())
       {
         aErrorList.add (_createError (sFieldPrefix + "ReportSenderErrorsTo must not be set"));
       }
@@ -428,7 +428,7 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
         }
 
         if (!aPModeReceptionAwareness.isDuplicateDetectionDefined () ||
-          !aPModeReceptionAwareness.isDuplicateDetection ())
+            !aPModeReceptionAwareness.isDuplicateDetection ())
         {
           aErrorList.add (_createError ("PMode[1].ReceptionAwareness.DuplicateDetection must be defined and set to 'true'"));
         }
@@ -524,7 +524,9 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   }
 
   @Override
-  public void validateSoapMessage(@NonNull Document aSoapDocument, @NonNull ESoapVersion eSoapVersion, @NonNull ErrorList aErrorList)
+  public void validateSoapMessage (@NonNull Document aSoapDocument,
+                                   @NonNull ESoapVersion eSoapVersion,
+                                   @NonNull ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aSoapDocument, "SoapDocument");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
@@ -704,7 +706,8 @@ public class BDEWCompatibilityValidator implements IAS4ProfileValidator
   }
 
   @Override
-  public @NonNull EnumSet<ESignedPart> getRequiredSignedParts(boolean bMessageHasAttachments) {
-    return EnumSet.of(ESignedPart.EBMS_MESSAGING, ESignedPart.ATTACHMENTS);
+  public @NonNull EnumSet <ESignedPart> getRequiredSignedParts (boolean bMessageHasAttachments)
+  {
+    return EnumSet.of (ESignedPart.EBMS_MESSAGING, ESignedPart.ATTACHMENTS);
   }
 }

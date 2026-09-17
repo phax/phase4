@@ -155,9 +155,7 @@ public final class AS4IncomingHandler
     void handle (@NonNull HttpHeaderMap aHttpHeaders,
                  @NonNull Document aSoapDocument,
                  @NonNull ESoapVersion eSoapVersion,
-                 @NonNull ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
-                                                                               MessagingException,
-                                                                               Phase4Exception;
+                 @NonNull ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException, MessagingException, Phase4Exception;
   }
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4IncomingHandler.class);
@@ -181,10 +179,7 @@ public final class AS4IncomingHandler
                                       @NonNull @WillClose final InputStream aPayloadIS,
                                       @NonNull final HttpHeaderMap aHttpHeaders,
                                       @NonNull final IAS4ParsedMessageCallback aParsedMessageCallback,
-                                      @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception,
-                                                                                          IOException,
-                                                                                          MessagingException,
-                                                                                          WSSecurityException
+                                      @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception, IOException, MessagingException, WSSecurityException
   {
     ValueEnforcer.notNull (aIAF, "IncomingAttachmentFactory");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
@@ -212,8 +207,8 @@ public final class AS4IncomingHandler
       }
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager
-                                                                                                             .getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
+                                                                           : AS4DumpManager.getIncomingDumper ();
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
     final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
@@ -298,10 +293,11 @@ public final class AS4IncomingHandler
               try (final MultipartItemInputStream aBodyPartIS = aMulti.createInputStream ())
               {
                 // Limit the size of a single attachment (see issue #318)
-                final InputStream aPartIS = nIndex == 0 ? aBodyPartIS : new AS4SizeLimitedInputStream (aBodyPartIS,
-                                                                                                       "The incoming attachment #" +
-                                                                                                                    nIndex,
-                                                                                                       nMaxAttachmentSizeBytes);
+                final InputStream aPartIS = nIndex == 0 ? aBodyPartIS
+                                                        : new AS4SizeLimitedInputStream (aBodyPartIS,
+                                                                                         "The incoming attachment #" +
+                                                                                                      nIndex,
+                                                                                         nMaxAttachmentSizeBytes);
 
                 // Read the headers only - the content stays on the stream and is
                 // consumed in a streaming way (see issue #382)
@@ -755,9 +751,10 @@ public final class AS4IncomingHandler
       final Element aSoapHeader = XMLHelper.getFirstChildElementOfName (aSoapEnvelope,
                                                                         eSoapVersion.getNamespaceURI (),
                                                                         eSoapVersion.getHeaderElementName ());
-      final Element aMessagingElement = aSoapHeader == null ? null : XMLHelper.getFirstChildElementOfName (aSoapHeader,
-                                                                                                           CAS4.EBMS_NS,
-                                                                                                           "Messaging");
+      final Element aMessagingElement = aSoapHeader == null ? null
+                                                            : XMLHelper.getFirstChildElementOfName (aSoapHeader,
+                                                                                                    CAS4.EBMS_NS,
+                                                                                                    "Messaging");
       if (!aIncomingState.isElementSigned (aMessagingElement))
         aUncoveredParts.add ("the ebMS Messaging header element");
     }
@@ -1072,7 +1069,7 @@ public final class AS4IncomingHandler
           {
             final ErrorList aErrorList = new ErrorList ();
             aValidator.validatePMode (aPMode, aErrorList, EAS4ProfileValidationMode.USER_MESSAGE);
-            aValidator.validateSoapMessage (aSoapDocument, aIncomingState.getSoapVersion(), aErrorList);
+            aValidator.validateSoapMessage (aSoapDocument, aIncomingState.getSoapVersion (), aErrorList);
             aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
             aValidator.validateInitiatorIdentity (aEbmsUserMessage,
                                                   aIncomingState.getSigningCertificate (),

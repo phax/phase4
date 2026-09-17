@@ -50,6 +50,6 @@ public final class ECryptoKeyEncryptionAlgorithmTest
     assertNull (ECryptoKeyEncryptionAlgorithm.getFromIDOrNull (""));
     assertSame (ECryptoKeyEncryptionAlgorithm.RSA_OAEP,
                 ECryptoKeyEncryptionAlgorithm.getFromIDOrDefault ("does-not-exist",
-                                                                   ECryptoKeyEncryptionAlgorithm.RSA_OAEP));
+                                                                  ECryptoKeyEncryptionAlgorithm.RSA_OAEP));
   }
 }

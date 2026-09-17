@@ -103,14 +103,14 @@ public class Phase4PeppolHttpClientSettings extends HttpClientSettings
   /**
    * Install an {@link SSLContext} that uses the Mozilla NSS root certificate trust store provided
    * by <code>peppol-commons</code>. This is the strictest production option for Peppol TLS
-   * connections - it limits trust to the same set of root CAs that Mozilla products use, instead
-   * of relying on what happens to be in the JVM's <code>cacerts</code>.
+   * connections - it limits trust to the same set of root CAs that Mozilla products use, instead of
+   * relying on what happens to be in the JVM's <code>cacerts</code>.
    * <p>
    * As soon as a custom {@link SSLContext} is set, the revocation check mode configured via
    * {@link #setRevocationCheckMode(com.helger.security.revocation.ERevocationCheckMode)} is no
-   * longer applied - the custom SSLContext takes precedence. If revocation checking is required
-   * in combination with the Mozilla NSS root trust store, build a PKIX-aware SSLContext
-   * separately and install it via {@link #setSSLContext(SSLContext)}.
+   * longer applied - the custom SSLContext takes precedence. If revocation checking is required in
+   * combination with the Mozilla NSS root trust store, build a PKIX-aware SSLContext separately and
+   * install it via {@link #setSSLContext(SSLContext)}.
    * </p>
    *
    * @return this for chaining

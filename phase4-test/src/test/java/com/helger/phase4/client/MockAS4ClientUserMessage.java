@@ -45,9 +45,7 @@ final class MockAS4ClientUserMessage extends AS4ClientUserMessage
 
   @Nullable
   @VisibleForTesting
-  public IMicroDocument sendMessageAndGetMicroDocument (@NonNull final String sURL) throws WSSecurityException,
-                                                                                    IOException,
-                                                                                    MessagingException
+  public IMicroDocument sendMessageAndGetMicroDocument (@NonNull final String sURL) throws WSSecurityException, IOException, MessagingException
   {
     final IAS4ClientBuildMessageCallback aCallback = null;
     return sendMessageAndGetMicroDocument (sURL, aCallback);
@@ -56,9 +54,7 @@ final class MockAS4ClientUserMessage extends AS4ClientUserMessage
   @Nullable
   @VisibleForTesting
   public IMicroDocument sendMessageAndGetMicroDocument (@NonNull final String sURL,
-                                                        @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException,
-                                                                                                                  IOException,
-                                                                                                                  MessagingException
+                                                        @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException, IOException, MessagingException
   {
     final int nOldStarted = MockAS4IncomingMessageProcessingStatusSPI.getStarted ();
     final int nOldEnded = MockAS4IncomingMessageProcessingStatusSPI.getEnded ();
@@ -70,8 +66,8 @@ final class MockAS4ClientUserMessage extends AS4ClientUserMessage
                                                        aCallback,
                                                        aOutgoingDumper,
                                                        aRetryCallback).getResponseContent ();
-    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
-                               MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
+    AS4HttpDebug.debug (() -> "SEND-RESPONSE received: " +
+                              MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
 
     final int nNewStarted = MockAS4IncomingMessageProcessingStatusSPI.getStarted ();
     final int nNewEnded = MockAS4IncomingMessageProcessingStatusSPI.getEnded ();
