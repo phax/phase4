@@ -202,7 +202,8 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         aRequestData.setEnableRevocation (true);
 
       final Collection <Pattern> aSignatureSubjectCertConstraints = m_aSigningParams != null &&
-        m_aSigningParams.hasSubjectCertConstraints () ? m_aSigningParams.getAllSubjectCertConstraints () : null;
+                                                                    m_aSigningParams.hasSubjectCertConstraints () ? m_aSigningParams.getAllSubjectCertConstraints ()
+                                                                                                                  : null;
       if (aSignatureSubjectCertConstraints != null)
       {
         if (LOGGER.isTraceEnabled ())
@@ -596,6 +597,24 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       {
         final boolean bBodyPayloadPresent = aIncomingState.isSoapBodyPayloadPresent ();
 
+        // Add +1 because the payload has index 0
+        // Check index once at the beginning to avoid an IndexOutOfBoundsExeption afterwards
+        final int nMaxPartInfoIdx = (bBodyPayloadPresent ? 1 : 0) + aAttachments.size ();
+        if (nMaxPartInfoIdx >= aUserMessage.getPayloadInfo ().getPartInfoCount ())
+        {
+          final String sDetails = "The usermessage contains too little part information elements (" +
+                                  aUserMessage.getPayloadInfo ().getPartInfoCount () +
+                                  ") compared to the number of attachments (" +
+                                  nMaxPartInfoIdx +
+                                  (bBodyPayloadPresent ? " incl. the SOAP body payload" : "") +
+                                  ")";
+          LOGGER.error (sDetails);
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                .errorDetail (sDetails)
+                                                                                .build ());
+          return ESuccess.FAILURE;
+        }
+
         // Check if Attachment IDs are the same
         for (int i = 0; i < aAttachments.size (); i++)
         {
@@ -645,11 +664,9 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
           sAttachmentID = sAttachmentID.substring (WSS4JAttachment.CONTENT_ID_PREFIX.length (),
                                                    sAttachmentID.length () -
                                                                                                 WSS4JAttachment.CONTENT_ID_SUFFIX.length ());
-
           // Add +1 because the payload has index 0
-          final String sHref = aUserMessage.getPayloadInfo ()
-                                           .getPartInfoAtIndex ((bBodyPayloadPresent ? 1 : 0) + i)
-                                           .getHref ();
+          final int nPartInfoIdx = (bBodyPayloadPresent ? 1 : 0) + i;
+          final String sHref = aUserMessage.getPayloadInfo ().getPartInfoAtIndex (nPartInfoIdx).getHref ();
           if (!sHref.contains (sAttachmentID))
           {
             final String sDetails = "The usermessage part information '" +
