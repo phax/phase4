@@ -600,7 +600,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
         // Add +1 because the payload has index 0
         // Check index once at the beginning to avoid an IndexOutOfBoundsExeption afterwards
         final int nMaxPartInfoIdx = (bBodyPayloadPresent ? 1 : 0) + aAttachments.size ();
-        if (nMaxPartInfoIdx >= aUserMessage.getPayloadInfo ().getPartInfoCount ())
+        if (nMaxPartInfoIdx > aUserMessage.getPayloadInfo ().getPartInfoCount ())
         {
           final String sDetails = "The usermessage contains too little part information elements (" +
                                   aUserMessage.getPayloadInfo ().getPartInfoCount () +
