@@ -92,12 +92,12 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   }
 
   @NonNull
-  protected Document testSignedUserMessage (@NonNull final ESoapVersion eSOAPVersion,
-                                            @Nullable final Node aPayload,
-                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                            @NonNull @WillNotClose final AS4ResourceHelper aResMgr) throws WSSecurityException
+  protected Document createSignedUserMessage (@NonNull final ESoapVersion eSOAPVersion,
+                                              @Nullable final Node aPayload,
+                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                              @NonNull @WillNotClose final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
-    final AS4UserMessage aMsg = testUserMessageSoapNotSigned (aPayload, aAttachments);
+    final AS4UserMessage aMsg = createUserMessageNotSigned (aPayload, aAttachments);
     return AS4Signer.createSignedMessage (m_aCryptoFactory,
                                           aMsg.getAsSoapDocument (aPayload),
                                           eSOAPVersion,
@@ -109,8 +109,8 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   }
 
   @NonNull
-  protected AS4UserMessage testUserMessageSoapNotSigned (@Nullable final Node aPayload,
-                                                         @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  protected AS4UserMessage createUserMessageNotSigned (@Nullable final Node aPayload,
+                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();

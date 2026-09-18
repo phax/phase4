@@ -65,7 +65,7 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
     aIncomingDuplicateMgr.clearCache ();
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
-    final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
+    final Document aDoc = createSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
     final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
 
     // Avoid stopping server to receive async response
@@ -77,9 +77,9 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 
     final NodeList aNL = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
-    final String aID = aNL.item (0).getTextContent ();
+    final String sID = aNL.item (0).getTextContent ();
 
-    assertNotNull (aIncomingDuplicateMgr.getItemOfMessageID (aID));
+    assertNotNull (aIncomingDuplicateMgr.getItemOfMessageID (sID));
     assertEquals (2, aIncomingDuplicateMgr.getAll ().size ());
   }
 
@@ -107,7 +107,7 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
     aIncomingDuplicateMgr.clearCache ();
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
-    final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
+    final Document aDoc = createSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
     final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
 
     // Avoid stopping server to receive async response
@@ -116,10 +116,11 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 
     final NodeList aNL = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
-    final String aID = aNL.item (0).getTextContent ();
+    final String sID = aNL.item (0).getTextContent ();
     assertTrue (sResponse.contains ("eb:RefToMessageId"));
-    assertTrue (sResponse.contains (aID));
-    assertNotNull (aIncomingDuplicateMgr.getItemOfMessageID (aID));
+    assertTrue (sResponse.contains (sID));
+
+    assertNotNull (aIncomingDuplicateMgr.getItemOfMessageID (sID));
     assertEquals (2, aIncomingDuplicateMgr.getAll ().size ());
   }
 }

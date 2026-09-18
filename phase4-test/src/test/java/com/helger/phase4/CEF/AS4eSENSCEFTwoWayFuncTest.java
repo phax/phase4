@@ -51,7 +51,7 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
   @Test
   public void testEsens_TA02_PushPush () throws Exception
   {
-    final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
+    final Document aDoc = createSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
 
@@ -90,7 +90,7 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
                                                                                          .build (), s_aResMgr));
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
-                                                                          testSignedUserMessage (m_eSoapVersion,
+                                                                          createSignedUserMessage (m_eSoapVersion,
                                                                                                  m_aPayload,
                                                                                                  aAttachments,
                                                                                                  s_aResMgr),
