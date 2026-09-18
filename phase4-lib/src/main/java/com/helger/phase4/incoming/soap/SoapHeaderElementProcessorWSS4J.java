@@ -597,22 +597,34 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       {
         final boolean bBodyPayloadPresent = aIncomingState.isSoapBodyPayloadPresent ();
 
-        // Add +1 because the payload has index 0
-        // Check index once at the beginning to avoid an IndexOutOfBoundsExeption afterwards
-        final int nMaxPartInfoIdx = (bBodyPayloadPresent ? 1 : 0) + aAttachments.size ();
-        if (nMaxPartInfoIdx > aUserMessage.getPayloadInfo ().getPartInfoCount ())
+        if (aAttachments.isNotEmpty ())
         {
-          final String sDetails = "The usermessage contains too little part information elements (" +
-                                  aUserMessage.getPayloadInfo ().getPartInfoCount () +
-                                  ") compared to the number of attachments (" +
-                                  nMaxPartInfoIdx +
-                                  (bBodyPayloadPresent ? " incl. the SOAP body payload" : "") +
-                                  ")";
-          LOGGER.error (sDetails);
-          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
-                                                                                .errorDetail (sDetails)
-                                                                                .build ());
-          return ESuccess.FAILURE;
+          if (aUserMessage.getPayloadInfo () == null)
+          {
+            final String sDetails = "The usermessage contains no PayloadInfo even though at least one attachment is present";
+            LOGGER.error (sDetails);
+            aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                  .errorDetail (sDetails)
+                                                                                  .build ());
+            return ESuccess.FAILURE;
+          }
+
+          // Check index once at the beginning to avoid an IndexOutOfBoundsExeption afterwards
+          // Check only the attachments - because there are good reasons why a SOAP Body may not
+          // lead to a PartInfo
+          if (aAttachments.size () > aUserMessage.getPayloadInfo ().getPartInfoCount ())
+          {
+            final String sDetails = "The usermessage contains too little part information elements (" +
+                                    aUserMessage.getPayloadInfo ().getPartInfoCount () +
+                                    ") compared to the number of attachments (" +
+                                    aAttachments.size () +
+                                    ")";
+            LOGGER.error (sDetails);
+            aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.errorBuilder (aLocale)
+                                                                                  .errorDetail (sDetails)
+                                                                                  .build ());
+            return ESuccess.FAILURE;
+          }
         }
 
         // Check if Attachment IDs are the same
