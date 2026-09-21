@@ -91,9 +91,9 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 
     final AS4MimeMessage aMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                           createSignedUserMessage (m_eSoapVersion,
-                                                                                                 m_aPayload,
-                                                                                                 aAttachments,
-                                                                                                 s_aResMgr),
+                                                                                                   m_aPayload,
+                                                                                                   aAttachments,
+                                                                                                   s_aResMgr),
                                                                           aAttachments);
 
     final String sResponse = sendMimeMessageExpectSuccess (HttpMimeMessageEntity.create (aMsg));
