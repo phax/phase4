@@ -15,7 +15,9 @@ and what was not found.
 "EESSI" is an overloaded acronym. This document is about **Electronic Exchange of Social
 Security Information** (European Commission, DG EMPL). It is *not*:
 
-* EESSI - European Environment for Scientific Software Installations (`eessi.io`, HPC)
+* EESSI - European Environment for Scientific Software Installations (`eessi.io`, HPC).
+  Checked 2026-09-21: `https://www.eessi.io/docs/` is a scientific software stack for HPC
+  clusters and contains no mention of AS4, ebMS, social security or DG EMPL. Not relevant.
 * EESSI - European Electronic Signature Standardization Initiative (CEN/ETSI, 1999)
 
 Several search engines conflate all three.
@@ -47,6 +49,28 @@ E6 places the legally significant boundary at the **ebMS endpoint**, not at the 
 An AS4 stack acting as an institution's endpoint therefore sits on the legally relevant side -
 its receipt generation affects statutory deadlines.
 
+### Historical note: EESSI before AS4
+
+**Material for this assessment only in the negative sense - do not mine pre-2014 EESSI sources
+for AS4 information.** EESSI in its first generation was a different system with a different
+transport, and the vocabulary from that era still circulates in secondary sources, which is a
+live source of confusion.
+
+A CNPAS (Romania) presentation of April 2010 describes that architecture: Member States on
+sTESTA, **Coordination Nodes (CN)**, Access Points (Romania deployed four, one per branch:
+unemployment, family benefits, sickness, pensions/accidents), Competent Institutions, a
+**"EESSI Protocol"** for international traffic with an **"Internal Bridging Protocol"** and an
+**"ICD2 interface"** towards national systems, plus **WEBIC** and a **Master Directory**.
+
+It contains **no** mention of AS4, ebMS, SOAP, web services or a PKI. That is a different design
+from the 2017-and-later AS4 / RINA architecture described in the rest of this document. When and
+why the transition happened is **not verified here** - only that the two architectures differ.
+
+Practical consequence: the term **"Master Directory"** is genuine but belongs to the *old*
+architecture. Today's primary sources say **Institution Repository (IR)**. A secondary source
+that mixes "Master Directory", "Coordination Node" and "AS4" in one breath is blending two
+generations and should not be trusted on detail.
+
 ## Architecture
 
 | Corner | Role | Speaks AS4? |
@@ -77,31 +101,80 @@ different flows" leaves room and no source enumerates them.
 
 > **Evidence quality warning.** None of the following comes from a specification. It is read off
 > the PMode sample and conformance-test configuration XML shipped in the `eessi-as4.net`
-> reference implementation, whose last upstream commit is **2019-02-27**. These are
-> configuration artefacts, not normative text. Whether production still matches them is
-> unverified - in particular the crypto may since have moved towards eDelivery AS4 2.0.
->
-> Files: `output/samples/pmodes/eessi/eessi-push-send-pmode.xml`,
-> `eessi-pull-send-pmode.xml`, `eessi-pull-receive-pmode.xml`,
-> `output/config/eessi-conformancetest-settings/{C2,C3}/`,
-> `output/doc/wiki/runtime/getting-started/sample-scenarios.md`.
+> reference implementation. These are configuration artefacts, not normative text. Whether
+> production still matches them is unverified - in particular the crypto may since have moved
+> towards eDelivery AS4 2.0.
+
+Verified first-hand on 2026-09-21 by cloning the repository (anonymous `git clone` works, ca.
+227 MB). HEAD is commit `83cd0a85df7ae5cd730b91e63eb9b66438974340`, **2019-02-27**, author
+Frederik Gheysels. Files read:
+
+* `output/samples/pmodes/eessi/eessi-push-send-pmode.xml`
+* `output/samples/pmodes/eessi/eessi-pull-send-pmode.xml`
+* `output/samples/pmodes/eessi/eessi-pull-receive-pmode.xml`
+* `output/config/eessi-conformancetest-settings/c2-settings.xml` and `C2/{send,receive}-pmodes/*`
+  (the C3 set mirrors it)
+* `output/doc/wiki/runtime/getting-started/sample-scenarios.md`
+* `source/Eu.EDelivery.AS4/Constants.cs`,
+  `source/Eu.EDelivery.AS4/Serialization/SoapEnvelopeSerializer.cs`
 
 | Parameter | Observed value |
 |---|---|
-| MEP / binding | One-Way **Push** (send) **and** One-Way **Pull** (receive) |
-| Multi-hop | `<IsMultiHop>true</IsMultiHop>` on the user message send PMode |
-| MPC | `http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC/<InstitutionId>` - i.e. **per-institution sub-channels** |
+| MEP / binding | One-Way **Push** (send) **and** One-Way **Pull** (receive). The PullRequest itself is configured as a `OneWay`/`Push` sending PMode aimed at the AP Inbox. |
+| Multi-hop | `<IsMultiHop>true</IsMultiHop>` - **only on the push user message send PMode**. The pull-send and pull-receive PModes do not set it. |
+| MPC | `http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC/UK:UK001` in the C2 config - i.e. the suffix is the **pulling institution's own party ID**, giving per-institution sub-channels. The sample placeholder reads "[Add your Institution's PULL endpoint here]". |
 | PartyId type | `urn:eu:europa:ec:dgempl:eessi:ir` (ir = Institution Repository) |
 | PartyId value | `<CC>:<INSTID>`, e.g. `UK:UK001` |
-| Role | `urn:eu:europa:ec:dgempl:eessi:ir:institution` |
+| Role | `urn:eu:europa:ec:dgempl:eessi:ir:institution` (both From and To) |
 | Service | value `BusinessMessaging`, type `urn:eu:europa:ec:dgempl:eessi` |
 | Action | `Send` |
-| Signature | `rsa-sha256`, digest `sha256`, security token reference = BinarySecurityToken |
-| Encryption | `<Encryption>Ignored</Encryption>` on receive - **no WS-Security message layer encryption** on the institution-to-AP hop |
-| Receipts | `<UseNRRFormat>true</UseNRRFormat>`, reply pattern **`Callback`** (asynchronous, to the AP Outbox URL) |
-| Transport security | **TLS 1.2 with a client certificate** (mutual TLS) on every hop |
-| Endpoint URL shape | `https://<host>/EESSI/BusinessMessaging/v0.0/{Outbox,Inbox}/Service.svc` |
+| Signature | `http://www.w3.org/2001/04/xmldsig-more#rsa-sha256`, hash `http://www.w3.org/2001/04/xmlenc#sha256`, `<KeyReferenceMethod>BSTReference</KeyReferenceMethod>` |
+| Signature verification | `<SigningVerification><Signature>Allowed</Signature>` - i.e. **not `Required`**. An unsigned inbound message is accepted by this configuration. |
+| Encryption | `<Encryption>Ignored</Encryption>` on receive, and no `<Encryption>` block at all on send - **no WS-Security message layer encryption** on the institution-to-AP hop |
+| Compression | **Not configured.** No `UseAS4Compression` element appears in any EESSI PMode, although other (eDelivery interop) PModes in the same repository do set it. |
+| Receipts | `<UseNRRFormat>true</UseNRRFormat>`, reply pattern **`Callback`** - the receipt is signed and pushed to the AP Outbox URL as a separate request, not returned in the HTTP response |
+| Transport security | **TLS 1.2 with a client certificate** (mutual TLS) on every hop, `FindBySerialNumber` against the Windows certificate store |
+| Certificates | Two distinct certificates per institution: a **TLS client certificate** and an **ebMS signing certificate** |
+| Endpoint URL shape | `https://<host>/EESSI/BusinessMessaging/v0.0/{Outbox,Inbox}/Service.svc` (conformance test host: `eessidev09.eessi.be`) |
+| Pull polling | Adaptive interval 1 s to 25 s - increases while PullRequests come back empty, resets to the minimum when a message is received |
 | Piggybacking | AS4.NET v4.0.0 added "sending response signal messages via reliable piggybacking in a pull receive scenario" - ebMS3 Part 2 bundling on the PullRequest |
+
+### Multi-hop mechanics as implemented by AS4.NET
+
+Exact values, from `Constants.cs` and `SoapEnvelopeSerializer.SetMultiHopHeaders`:
+
+| Constant | Value |
+|---|---|
+| Multi-hop namespace | `http://docs.oasis-open.org/ebxml-msg/ns/ebms/v3.0/multihop/200902/` |
+| `nextmsh` | `http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/part2/200811/nextmsh` |
+| `icloud` | `http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/part2/200811/icloud` |
+| Receipt multi-hop action | `http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/oneWay.receipt` |
+| Error multi-hop action | `http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/oneWay.error` |
+| WS-Addressing | `http://www.w3.org/2005/08/addressing` |
+
+Behaviour:
+
+* On a **user message** with `IsMultiHop=true`, the `eb:Messaging` header gets
+  `@S12:role = <nextmsh>`.
+* On a **signal message** that is a multi-hop signal, three SOAP headers are added: `wsa:To`
+  with `@Role = <nextmsh>`, `wsa:Action` set to the `oneWay.receipt` / `oneWay.error` value
+  above, and a `RoutingInput` header carrying a `RoutingInputUserMessage` (the reversed user
+  message), with `mustUnderstand=false` and `IsReferenceParameter=true`.
+* On receipt, the intermediary/endpoint locates the routing data with the XPath
+  `//*[local-name()='RoutingInput']`.
+
+This is the concrete shape phase4 would have to produce and consume.
+
+### Documentation inconsistency in the reference implementation
+
+`sample-scenarios.md` states that **four** PModes are required for an EESSI ebMS endpoint and
+names them `eessi-push-send-pmode-AP`, `eessi-pull-send-pmode`, `eessi-pull-receive-pmode` and
+`eessi-pull-response-send-pmode`. Only **three** skeleton files ship in
+`output/samples/pmodes/eessi/`, and the push one is named `eessi-push-send-pmode.xml`, not
+`...-AP.xml`. The `eessi-pull-response-send-pmode.xml` file is referenced by the documentation
+but does not exist in the repository (the instructions also spell it two different ways). Its
+content is implied by the `<ResponseConfiguration>` block already embedded in
+`eessi-pull-receive-pmode.xml`.
 
 ### This is not "eDelivery AS4 with tweaks"
 
@@ -109,10 +182,13 @@ EESSI is a *sibling* profile of the eDelivery AS4 Common Profile, not a derivati
 Common Profile:
 
 * is explicitly **not** ebMS3 Part 2 multi-hop (its Four Corner enhancement is a message
-  property convention, not `ebint:RoutingInput`)
+  property convention, not a `RoutingInput` SOAP header)
 * does **not** include Pull (optional enhancement only, since 1.14)
-* mandates AES-128-GCM message layer encryption
+* mandates AES-128-GCM message layer encryption; EESSI uses none on this hop
 * uses the `Response` receipt reply pattern, never `Callback`
+* requires GZIP compression (1.15) or recommends it (2.0); no EESSI PMode configures it
+* identifies parties with ebCore party ID types; EESSI uses its own
+  `urn:eu:europa:ec:dgempl:eessi:ir` scheme
 
 Which eDelivery AS4 base version (1.12 / 1.13 / 1.14 / 1.15 / 1.16 / 2.0) EESSI derives from, if
 any, could not be determined. The 2016-2017 timing suggests the e-SENS 1.12 era, but no source
@@ -126,7 +202,8 @@ Verified in the working tree at commit `94584c9ad`.
 |---|---|
 | RSA-SHA256 / SHA-256, BinarySecurityToken | OK - `ECryptoAlgorithmSign.RSA_SHA_256` |
 | Signing without encryption | OK - exactly what `HREDeliveryPMode` already does |
-| GZIP compression, MIME payloads, empty SOAP body | OK |
+| MIME payloads, empty SOAP body | OK |
+| GZIP compression | OK, but **not required** - no EESSI PMode configures compression |
 | NRR receipts (`ebbp:NonRepudiationInformation`) | OK |
 | One-Way / Pull and the MPC model | OK - `EMEPBinding.PULL`, `com.helger.phase4.model.mpc`, `AbstractAS4PullRequestBuilder`, `IAS4IncomingPullRequestProcessorSPI` |
 | Mutual TLS | OK - via `HttpClientSettings` |
@@ -134,13 +211,16 @@ Verified in the working tree at commit `94584c9ad`.
 | **`Callback` receipt reply pattern** | **MISSING** - `EPModeSendReceiptReplyPattern.CALLBACK` exists as an enum constant and is referenced nowhere else in the codebase |
 | **Signal piggybacking on PullRequest** | **MISSING** - no bundling support |
 
-The first six rows are profile configuration. The last three are `phase4-lib` changes.
+The first seven rows are profile configuration. The last three are `phase4-lib` changes.
 
-Multi-hop alone means: `ebint:RoutingInput` in the
-`http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/multihop/200902/` namespace, `wsa:To` /
-`wsa:Action` multi-hop values including `nextmsh` and `icloud`, `eb:Messaging` with
-`@role=nextmsh`, and multi-hop receipt routing - new XSDs, new JAXB generation, and changes in
-both the incoming and the outgoing path. It is a core library feature, not profile work.
+Multi-hop alone means the `RoutingInput` SOAP header in the
+`http://docs.oasis-open.org/ebxml-msg/ns/ebms/v3.0/multihop/200902/` namespace, WS-Addressing
+`wsa:To` / `wsa:Action` headers with the `nextmsh` / `oneWay.receipt` / `oneWay.error` values
+listed above, `eb:Messaging/@role=nextmsh`, and multi-hop receipt routing - new XSDs, new JAXB
+generation, and changes in both the incoming and the outgoing path. It is a core library
+feature, not profile work. See
+[Multi-hop mechanics as implemented by AS4.NET](#multi-hop-mechanics-as-implemented-by-as4net)
+for the exact constants.
 
 ## What a phase4-profile-eessi module would look like
 
@@ -265,7 +345,8 @@ that listing says nothing about EESSI.
 * **AS4.NET** ("EESSI AS4.NET") - the DG EMPL reference implementation. C# / .NET Framework,
   **EUPL v1.1**, hosted on the Commission's own Bitbucket. Specified by DG EMPL, implemented by
   Codit (the commit history is overwhelmingly `@codit.eu`; no document states it, so treat the
-  attribution as inference). **Last upstream commit 2019-02-27** (v4.0.1) - effectively
+  attribution as inference). **Last upstream commit `83cd0a85` of 2019-02-27** by Frederik
+  Gheysels, verified by cloning the repository on 2026-09-21 (v4.0.1) - effectively
   unmaintained. DIGIT's Market Guide files it under "User Implementations of AS4 Messaging
   Software" with the caveat that such solutions "are not officially supported for third
   parties". Contact: `empl-eessi-edelivery@ec.europa.eu`.
@@ -351,6 +432,10 @@ Suggested order if this is pursued:
 10. Does the AP-to-AP leg use the same mutual TLS configuration as the institution-to-AP leg?
 11. Does the live profile still match the 2017-2019 parameters, or has it moved to TLS 1.3 and
     eDelivery AS4 2.0 cryptography?
+12. When and why did EESSI move from the 2010 architecture (Coordination Nodes, "EESSI
+    Protocol", WEBIC, Master Directory) to the AS4 / RINA architecture? Not established here.
+    Relevant only for dating a source correctly - if a document predates the switch, its
+    transport content is worthless for this purpose.
 
 ## Sources
 
@@ -358,9 +443,10 @@ Primary:
 
 * Reference implementation (EUPL v1.1, last commit 2019-02-27):
   https://ec.europa.eu/digital-building-blocks/code/projects/EDELIVERY/repos/eessi-as4.net/browse
-  * Anonymous `git clone https://ec.europa.eu/digital-building-blocks/code/scm/edelivery/eessi-as4.net.git`
-    works and is by far the most productive route. The Bitbucket code search API returns 0 for
-    this repository (not indexed); the REST browse API and `/raw/<path>?at=refs%2Fheads%2FRelease%2Fv4.0.1` both work.
+  * Anonymous `git clone --depth 1 https://ec.europa.eu/digital-building-blocks/code/scm/edelivery/eessi-as4.net.git`
+    works, takes ca. 227 MB, and is by far the most productive route - it is how every parameter
+    in this document was verified. The Bitbucket code search API returns 0 for this repository
+    (not indexed); the REST browse API and `/raw/<path>?at=refs%2Fheads%2FRelease%2Fv4.0.1` both work.
   * GitHub mirror (2021 fork, one commit on top): https://github.com/thomsonreuters/eessi-as4.net
 * EESSI AS4.NET Component deck (DIGIT):
   https://ec.europa.eu/digital-building-blocks/sites/download/attachments/467110150/EESSI%20AS4.NET%20Component.pdf
@@ -401,11 +487,29 @@ Secondary (treat with care):
   http://serviziweb2.inps.it/safeportal/downloadAttachment?idContentBlob=103
 * INPS document citing the non-public EESSI Collaboration Space:
   https://serviziweb2.inps.it/safeportal/downloadAttachment?idContentBlob=121
+* Bianca Culea (CNPAS, Romania), "EESSI - Electronic Exchange of Social Security Information",
+  April 2010, 14 slides - the pre-AS4 architecture, see
+  [Historical note](#historical-note-eessi-before-as4):
+  https://de.slideshare.net/slideshow/2010-eessi-electronic-exchange-of-social-security-information/15568177
 * DYPA (Greece) on national RINA alternatives:
   https://www.dypa.gov.gr/en/oaed-eessi-hlektroniki-antallaghi-pliroforiwn-koinonikis-asfalisis-metaksy-ton-khorwn-tis-ee-1
 
 Research limits during this assessment (2026-09-21): the Internet Archive was down for the whole
-session, which blocked retrieval of the archived `EESSI - Architecture Overview Document v1.0.0`
-whose reference list is the single most likely place to settle question 1. Google was
-unreachable and fallback search engines served CAPTCHAs. Several EC and EDPS PDFs return HTTP
-403 to plain fetching and need `curl` with a browser user agent.
+session - both the Wayback availability API (HTTP 429) and the CDX API ("Internet Archive
+services are temporarily offline"), re-checked twice. That blocked retrieval of the archived
+`EESSI - Architecture Overview Document v1.0.0`, whose reference list is the single most likely
+place to settle open question 1, and is the first thing to retry when the Archive is back.
+Google was unreachable and fallback search engines served CAPTCHAs. Several EC and EDPS PDFs
+return HTTP 403 to plain fetching and need `curl` with a browser user agent.
+
+Leads that were checked and are dead ends, so as not to repeat them:
+
+* `https://www.eessi.io/docs/` - the HPC project, unrelated (see
+  [Disambiguation](#disambiguation)).
+* Bitbucket *code search* API for this repository - returns 0 results, the repository is not
+  indexed. Clone it instead.
+* Public Digital Building Blocks Confluence - no EESSI space exists; only AS4.NET artefacts and
+  the dashboard PDF are indexed.
+* Pre-2014 EESSI material (conference decks, national presentations, the 2010 CNPAS slides)
+  - describes a different architecture with no AS4 content at all. See
+  [Historical note](#historical-note-eessi-before-as4).
