@@ -386,6 +386,7 @@ public class AS4RequestHandler implements AutoCloseable
   /** By default get all message processors from the global SPI registry */
   private Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> m_aProcessorSupplier = AS4IncomingMessageProcessorManager::getAllProcessors;
   private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
+  private IAS4ResponseSignalCustomizer m_aResponseSignalCustomizer;
 
   public AS4RequestHandler (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
@@ -809,6 +810,34 @@ public class AS4RequestHandler implements AutoCloseable
   public final AS4RequestHandler setErrorConsumer (@Nullable final IAS4RequestHandlerErrorConsumer aErrorConsumer)
   {
     m_aErrorConsumer = aErrorConsumer;
+    return this;
+  }
+
+  /**
+   * @return An optional response signal customizer. <code>null</code> by default.
+   * @since 5.0.0
+   */
+  @Nullable
+  public final IAS4ResponseSignalCustomizer getResponseSignalCustomizer ()
+  {
+    return m_aResponseSignalCustomizer;
+  }
+
+  /**
+   * Set an optional customizer that is invoked for every outgoing Receipt and Error signal message,
+   * after the SOAP document was created but before it is signed. This allows to add additional SOAP
+   * header elements to the response and to have them covered by the signature.<br>
+   * Note: this is NOT invoked for response User Messages.
+   *
+   * @param aResponseSignalCustomizer
+   *        The customizer to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 5.0.0
+   */
+  @NonNull
+  public final AS4RequestHandler setResponseSignalCustomizer (@Nullable final IAS4ResponseSignalCustomizer aResponseSignalCustomizer)
+  {
+    m_aResponseSignalCustomizer = aResponseSignalCustomizer;
     return this;
   }
 
@@ -1384,6 +1413,15 @@ public class AS4RequestHandler implements AutoCloseable
     final Document aResponseDoc = aReceiptMessage.getAsSoapDocument ();
     final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
                                                                      .setFromPMode (aEffectiveLeg.getSecurity ());
+
+    // Call optional customizer before signing
+    if (m_aResponseSignalCustomizer != null)
+      m_aResponseSignalCustomizer.customizeResponseSignal (aIncomingState,
+                                                           EAS4MessageType.RECEIPT,
+                                                           eResponseSoapVersion,
+                                                           aResponseDoc,
+                                                           aSigningParams.isSigningEnabled () ? aSigningParams : null);
+
     final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
                                                        aSigningParams,
                                                        aResponseDoc,
@@ -1454,7 +1492,27 @@ public class AS4RequestHandler implements AutoCloseable
       eResponseSoapVersion = eSoapVersion;
 
     Document aResponseDoc = aErrorMsg.getAsSoapDocument ();
+
+    // Determine the signing parameters upfront, so that the customizer below may modify them.
+    // They are non-null exactly if a PMode Leg is present.
+    final AS4SigningParams aSigningParams;
     if (aEffectiveLeg != null)
+      aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
+                                                .setFromPMode (aEffectiveLeg.getSecurity ());
+    else
+      aSigningParams = null;
+
+    // Call optional customizer before signing
+    if (m_aResponseSignalCustomizer != null)
+      m_aResponseSignalCustomizer.customizeResponseSignal (aIncomingState,
+                                                           EAS4MessageType.ERROR_MESSAGE,
+                                                           eResponseSoapVersion,
+                                                           aResponseDoc,
+                                                           aSigningParams != null &&
+                                                                              aSigningParams.isSigningEnabled () ? aSigningParams
+                                                                                                                 : null);
+
+    if (aSigningParams != null)
     {
       // Sign the Error if possible
       if (LOGGER.isDebugEnabled ())
@@ -1462,8 +1520,6 @@ public class AS4RequestHandler implements AutoCloseable
 
       try
       {
-        final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
-                                                                         .setFromPMode (aEffectiveLeg.getSecurity ());
         final Document aSignedDoc = _signResponseIfNeeded (null,
                                                            aSigningParams,
                                                            aResponseDoc,
