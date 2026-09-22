@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+   OASIS ebXML Messaging Services Version 3.0: Part 2, Advanced Features
+   Committee Specification 01
+   19 May 2011
+   Source: http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/part2/201004/cs01/
+
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://docs.oasis-open.org/ebxml-msg/ns/ebms/v3.0/multihop/200902/"
+    xmlns:ebint="http://docs.oasis-open.org/ebxml-msg/ns/ebms/v3.0/multihop/200902/"
+    xmlns:eb3="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+    xmlns:wsa="http://www.w3.org/2005/08/addressing"
+    xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:S12="http://www.w3.org/2003/05/soap-envelope" 
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    targetNamespace="http://docs.oasis-open.org/ebxml-msg/ns/ebms/v3.0/multihop/200902/">
+
+    <xs:import namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+        schemaLocation="ebms-header-3_0-200704_refactored.xsd"/>
+
+    <xs:import namespace="http://www.w3.org/2005/08/addressing"
+        schemaLocation="http://www.w3.org/2002/ws/addr/ns/ws-addr"/>
+
+    <xs:import namespace="http://www.w3.org/2003/05/soap-envelope"
+        schemaLocation="http://www.w3.org/2003/05/soap-envelope"/>
+
+    <xs:import namespace="http://schemas.xmlsoap.org/soap/envelope/"
+        schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"/>
+
+    <xs:element name="RoutingInput" type="RoutingInput"/>
+    <xs:complexType name="RoutingInput">
+        <xs:sequence>
+            <xs:element name="UserMessage">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="eb3:MessageInfo" minOccurs="0"/>
+                        <xs:element ref="eb3:PartyInfo"/>
+                        <xs:element ref="eb3:CollaborationInfo"/>
+                        <xs:element ref="eb3:MessageProperties" minOccurs="0"/>
+                        <xs:element ref="eb3:PayloadInfo" minOccurs="0"/>
+                    </xs:sequence>
+                    <xs:attribute name="mpc" type="xs:anyURI" use="optional"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID" use="optional"/>
+        <xs:attribute ref="wsa:IsReferenceParameter" fixed="true"/>
+        <xs:attributeGroup ref="S12atts"/>
+        <xs:attributeGroup ref="S11atts"/>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+
+    <xs:attributeGroup name="S12atts">
+        <xs:attribute ref="S12:mustUnderstand" use="optional">
+            <xs:annotation>
+                <xs:documentation> if SOAP 1.2 is being used, this attribute is required, other
+                    attributes in the S12atts group are allowed and attributes in the S11atts group
+                    are prohibited.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute ref="S12:encodingStyle"/>
+        <xs:attribute ref="S12:relay"/>
+        <xs:attribute ref="S12:role"
+            fixed="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/part2/200811/nextmsh"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="S11atts">
+        <xs:attribute ref="S11:mustUnderstand" use="optional">
+            <xs:annotation>
+                <xs:documentation> if SOAP 1.1 is being used, this attribute is required, other
+                    attributes in the S11atts group are allowed and attributes in the S12atts group
+                    are prohibited.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute ref="S11:encodingStyle"/>
+        <xs:attribute ref="S11:actor"
+            fixed="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/part2/200811/nextmsh"/>
+    </xs:attributeGroup>
+</xs:schema>

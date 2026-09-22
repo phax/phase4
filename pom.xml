@@ -221,6 +221,11 @@
         <artifactId>phase4-dynamic-discovery</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-multihop</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       
       <dependency>
         <groupId>com.helger.phase4</groupId>
@@ -364,6 +369,7 @@
     <module>phase4-test</module>
     <module>phase4-server-webapp</module>
     <module>phase4-dynamic-discovery</module>
+    <module>phase4-multihop</module>
     
     <!-- profile specific stuff -->
     <module>phase4-bdew-client</module>
