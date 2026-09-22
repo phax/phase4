@@ -58,7 +58,9 @@ import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.AS4IncomingMessageState;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.mgr.AS4IncomingPullRequestProcessorManager;
+import com.helger.phase4.incoming.mgr.AS4IncomingSignalMessagePModeProviderManager;
 import com.helger.phase4.incoming.spi.IAS4IncomingPullRequestProcessorSPI;
+import com.helger.phase4.incoming.spi.IAS4IncomingSignalMessagePModeProviderSPI;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -214,6 +216,36 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
   {
     if (m_aPModeConsumer != null)
       m_aPModeConsumer.accept (aPMode);
+  }
+
+  /**
+   * Try to resolve the PMode of a standalone Receipt or Error signal message via the registered SPI
+   * implementations. Such signal messages carry no PMode relevant information on their own.
+   *
+   * @param aSignalMessage
+   *        The signal message to resolve the PMode for. May not be <code>null</code>.
+   * @param sSignalTypeName
+   *        The name of the signal message type, for logging only.
+   * @return <code>null</code> if no SPI was able to resolve a PMode. That is not an error - it just
+   *         means the behaviour is unchanged compared to having no SPI at all.
+   * @since 5.0.0
+   */
+  @Nullable
+  private IPMode _findPModeForSignalMessage (@NonNull final Ebms3SignalMessage aSignalMessage,
+                                             @NonNull final String sSignalTypeName)
+  {
+    for (final IAS4IncomingSignalMessagePModeProviderSPI aProvider : AS4IncomingSignalMessagePModeProviderManager.getAllProviders ())
+    {
+      final IPMode aPMode = aProvider.findPMode (aSignalMessage);
+      if (aPMode != null)
+      {
+        LOGGER.info ("Found PMode '" + aPMode.getID () + "' for incoming " + sSignalTypeName + " SignalMessage");
+
+        _notifyPModeResolved (aPMode);
+        return aPMode;
+      }
+    }
+    return null;
   }
 
   @NonNull
@@ -739,6 +771,10 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
                                                                                .build ());
             return ESuccess.FAILURE;
           }
+
+          // Optional SPI based PMode resolution - needed to be able to verify the
+          // signature of a standalone Receipt
+          aPMode = _findPModeForSignalMessage (aSignalMessage, "Receipt");
         }
         else
         {
@@ -763,6 +799,10 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
                 }
             }
           }
+
+          // Optional SPI based PMode resolution - needed to be able to verify the
+          // signature of a standalone Error message
+          aPMode = _findPModeForSignalMessage (aSignalMessage, "Error");
         }
     }
 
