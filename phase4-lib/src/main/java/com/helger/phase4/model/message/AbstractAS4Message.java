@@ -39,6 +39,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.helger.annotation.Nonempty;
+import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.base.trait.IGenericImplTrait;
@@ -108,6 +109,23 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   public final String getMessagingID ()
   {
     return m_sMessagingID;
+  }
+
+  /**
+   * @return The mutable Ebms3 Messaging object of this message. Never <code>null</code>. Handle with
+   *         care - modifications are directly reflected in the created SOAP document. This is e.g.
+   *         the place where additional attributes of the <code>eb:Messaging</code> element can be
+   *         set, via
+   *         {@link com.helger.phase4.ebms3header.Ebms3Messaging#getOtherAttributes()}. Attributes of
+   *         a foreign namespace are marshalled because the underlying XSD declares
+   *         <code>anyAttribute namespace="##other"</code>.
+   * @since 5.0.0
+   */
+  @NonNull
+  @ReturnsMutableObject
+  public final Ebms3Messaging getMessaging ()
+  {
+    return m_aMessaging;
   }
 
   @NonNull
