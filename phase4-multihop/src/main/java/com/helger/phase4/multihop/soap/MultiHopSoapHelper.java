@@ -19,6 +19,7 @@ package com.helger.phase4.multihop.soap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import org.jspecify.annotations.NonNull;
@@ -144,11 +145,27 @@ public final class MultiHopSoapHelper
                                                    CWSAddr.DEFAULT_PREFIX + ":" + sLocalName);
     aElement.setTextContent (sValue);
 
+    /*
+     * Declare every namespace that is used by a prefixed attribute of this element explicitly on
+     * the element itself. Without that the prefix has no declaration in scope, the serializer has
+     * to invent one, and the canonical form after serialization no longer matches the one the
+     * signature was computed over - the signature then fails to verify at the receiver.
+     */
+    aElement.setAttributeNS (XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
+                             XMLConstants.XMLNS_ATTRIBUTE + ":" + CWSAddr.DEFAULT_PREFIX,
+                             CWSAddr.NAMESPACE_URI);
+    aElement.setAttributeNS (XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
+                             XMLConstants.XMLNS_ATTRIBUTE + ":wsu",
+                             CAS4.WSU_NS);
+
     // R8 - wsa:To carries the role/actor, wsa:Action does not.
     // Neither carries mustUnderstand.
     if (bWithRole)
     {
       final QName aRoleQName = getRoleOrActorQName (eSoapVersion);
+      aElement.setAttributeNS (XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
+                               XMLConstants.XMLNS_ATTRIBUTE + ":" + eSoapVersion.getNamespacePrefix (),
+                               eSoapVersion.getNamespaceURI ());
       aElement.setAttributeNS (aRoleQName.getNamespaceURI (),
                                eSoapVersion.getNamespacePrefix () + ":" + aRoleQName.getLocalPart (),
                                CAS4MultiHop.NEXT_MSH_ROLE);
