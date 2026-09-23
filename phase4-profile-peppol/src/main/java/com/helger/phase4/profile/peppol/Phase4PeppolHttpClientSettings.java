@@ -67,9 +67,10 @@ import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 public class Phase4PeppolHttpClientSettings extends HttpClientSettings
 {
   public static final Timeout DEFAULT_PEPPOL_CONNECTION_REQUEST_TIMEOUT = Timeout.ofSeconds (1);
-  public static final Timeout DEFAULT_PEPPOL_CONNECT_TIMEOUT = Timeout.ofSeconds (5);
+  // 10 seconds according to Peppol SLAs
+  public static final Timeout DEFAULT_PEPPOL_CONNECT_TIMEOUT = Timeout.ofSeconds (10);
   // 2 minutes according new Peppol SLAs
-  public static final Timeout DEFAULT_PEPPOL_RESPONSE_TIMEOUT = Timeout.ofMinutes (2);
+  public static final Timeout DEFAULT_PEPPOL_RESPONSE_TIMEOUT = Timeout.ofSeconds (120);
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolHttpClientSettings.class);
 
