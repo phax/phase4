@@ -72,8 +72,6 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   private static X509Certificate s_aAPCertificate;
   private static IIdentifierFactory s_aSBDHIdentifierFactory = DEFAULT_SBDH_IDENTIFIER_FACTORY;
   private static boolean s_bPerformSBDHValueChecks = AbstractSBDHDataReader.DEFAULT_PERFORM_VALUE_CHECKS;
-  @Deprecated
-  private static boolean s_bCheckSBDHForMandatoryCountryC1 = true;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
   private static TrustedCAChecker s_aAPCAChecker = DEFAULT_PEPPOL_AP_CA_CHECKER;
   private static boolean s_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
@@ -358,7 +356,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   @Deprecated (forRemoval = true, since = "4.2.4")
   public static boolean isCheckSBDHForMandatoryCountryC1 ()
   {
-    return s_bCheckSBDHForMandatoryCountryC1;
+    return true;
   }
 
   /**
@@ -374,14 +372,7 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   @Deprecated (forRemoval = true, since = "4.2.4")
   public static void setCheckSBDHForMandatoryCountryC1 (final boolean b)
   {
-    final boolean bChange = b != s_bCheckSBDHForMandatoryCountryC1;
-    s_bCheckSBDHForMandatoryCountryC1 = b;
-    if (bChange)
-    {
-      LOGGER.info (CAS4.LIB_NAME +
-                   " Peppol SBDH checking for mandatory C1 Country Code is now " +
-                   (b ? "enabled" : "disabled"));
-    }
+    LOGGER.warn ("Calling setCheckSBDHForMandatoryCountryC1 has no effect - remove the call, as the option no longer exists");
   }
 
   /**
