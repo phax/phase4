@@ -1,12 +1,37 @@
 # AS4 relevance of the Spanish B2B e-invoicing mandate
 
-Status: 2026-09-10 (updated after the AEAT webinar of the same day).
-Based on the documents in this folder plus the slides shown in the AEAT webinar
-"Actualizacion sobre la SPFE" of 2026-09-10, including the XML message examples on those
-slides. The webinar material is **draft content presented from slides and not verified against
-any published text** - everything attributed to it below is flagged as such and must be
-re-checked against the final Ministerial Order and the technical documentation once AEAT
-publishes it. Values transcribed from slide screenshots may contain reading errors.
+Status: 2026-09-23.
+
+**Dear reader:** this file answers one question - *what does the Spanish mandatory B2B
+e-invoicing system mean for an AS4 implementation such as phase4?* Read section 1 first: the
+mandate contains exactly one sentence about AS4. Everything else follows from that. Section 2
+describes the transport of the **public hub (SPFE)**, which is *not* AS4 but is genuine
+ebMS 3.0 and therefore the part phase4 could plausibly speak. Section 3 describes the
+**platform-to-platform leg**, which *is* the AS4 obligation but has no profile at all.
+Sections 5 and 6 are the open questions and the practical position.
+
+History of this file:
+
+* **2026-09-10** - first version, written after the AEAT webinar "Actualizacion sobre la SPFE"
+  of the same day, from notes taken on the live slides. No documents were published at that
+  time, so all SPFE transport content was flagged as unverified.
+* **2026-09-23** - AEAT published the three decks of that session on a new page of the developer
+  portal. They are stored in `aeat/2026-09-10-actualizacion-spfe/`. Everything below has been
+  re-checked against those PDFs; the XML examples in the decks are screenshots, so they were
+  read from the rendered slides. Points that changed in this pass are marked
+  **(corrected 2026-09-23)**.
+
+Still unpublished as of 2026-09-23, and therefore still unknown:
+
+* the final Ministerial Order - **not in the BOE**; the draft is unchanged in substance and is
+  still scheduled to enter into force on 2026-10-01;
+* the WSDLs, the XSDs of the Spanish extensions, the Schematron files, the service catalogue,
+  the authentication/representation document, the limits and the error list. AEAT repeats that
+  all of these appear on the developer portal *before* the test environment is deployed
+  (reference date: October 2026).
+
+The decks are draft material presented by AEAT, not normative text. Nothing below is a
+specification; it is the best reading of what AEAT has shown so far.
 
 ## 1. The complete normative AS4 text
 
@@ -32,16 +57,17 @@ The word "AS4" does **not** appear at all in the AEAT developer seminar of 2026-
 neither in the technical deck (`Seminario_19_05_2026_DIT.pdf`), nor in the tax administration
 deck, nor in the 150+ entry FAQ. Verified by full-text search over all four documents.
 
-In the 2026-09-10 webinar AS4 is mentioned exactly once, as a single bullet
+In the published deck of 2026-09-10 AS4 is mentioned exactly once, as a single bullet
 ("Compatible AS4 / Peppol") justifying AEAT's choice of an ebXML envelope for the SPFE's own
-services - see section 2. That bullet says nothing about the platform-to-platform leg, and it is
-the only occurrence of the word Peppol in that deck as well.
+services - `DIT_FE_Seminario_10_septiembre.pdf`, slide 8; see section 2. That bullet says
+nothing about the platform-to-platform leg, and it is the only occurrence of the word Peppol in
+that deck as well.
 
-## 2. The SPFE speaks ebMS 3.0 over SOAP 1.2
+## 2. The SPFE speaks ebMS 3.0
 
 Correction to the picture drawn by the May 2026 seminar, which mentioned only "servicios web"
-and WSDLs. The slides of the AEAT webinar of 2026-09-10 show the SPFE web services using an
-**ebXML envelope**, and AEAT devoted a slide ("Por que ebXML?") to justifying that choice:
+and WSDLs. The SPFE web services use an **ebXML envelope**, and AEAT devoted a slide
+("Por que ebXML?", DIT slide 8) to justifying that choice:
 
 * international standard - ebXML is an OASIS standard like UBL, so integrators implement
   nothing SPFE-exclusive, and AEAT avoids defining "a basic envelope of its own";
@@ -55,7 +81,8 @@ and WSDLs. The slides of the AEAT webinar of 2026-09-10 show the SPFE web servic
   in one does not affect the rest and no batch pre-processing is required;
 * size control over the invoices submitted.
 
-The slides show real message examples, and they are **ebMS 3.0, not a loose interpretation**:
+The published examples are **ebMS 3.0, not a loose interpretation**. Submission request
+(DIT slides 21 and 22, reproduced with the two slides joined):
 
 ```xml
 <soap:Envelope
@@ -81,12 +108,17 @@ The slides show real message examples, and they are **ebMS 3.0, not a loose inte
           </eb:To>
         </eb:PartyInfo>
         <eb:CollaborationInfo>
-          <eb:Service>urn:cen.eu:en16931:cancelinvoice</eb:Service>
-          <eb:Action>CANCELINVOICE</eb:Action>
+          <eb:Service>urn:cen.eu:en16931:submitinvoice</eb:Service>
+          <eb:Action>SubmitInvoice</eb:Action>
           <eb:ConversationId>c73b7fdc-1ab0-4b1e-b295-ac9e4a35d764</eb:ConversationId>
         </eb:CollaborationInfo>
         <eb:PayloadInfo>
-          <eb:PartInfo href="cid:anulacion.xml">
+          <eb:PartInfo href="cid:factura1">
+            <eb:PartProperties>
+              <eb:Property name="MimeType">application/xml</eb:Property>
+            </eb:PartProperties>
+          </eb:PartInfo>
+          <eb:PartInfo href="cid:factura2">
             <eb:PartProperties>
               <eb:Property name="MimeType">application/xml</eb:Property>
             </eb:PartProperties>
@@ -101,9 +133,10 @@ The slides show real message examples, and they are **ebMS 3.0, not a loose inte
 
 Confirmed from the examples:
 
-* **SOAP 1.2** (`http://www.w3.org/2003/05/soap-envelope`) plus the **ebMS 3.0 core namespace**
-  (`http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/`) - the exact header model
-  phase4 already implements.
+* the **ebMS 3.0 core namespace** `http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/` -
+  the exact header model phase4 already implements. The cancel and status examples declare it in
+  an `xsi:schemaLocation` on `eb:Messaging` pointing at a local relative schema copy (the file
+  name is cut off in the slide screenshots).
 * **Party identifiers use the eBCore scheme**
   `urn:oasis:names:tc:ebcore:partyid-type:iso6523:9920` - ICD 9920, Spanish VAT. The sender's
   PartyId is the NIF in its certificate; the SPFE's is AEAT's own NIF `Q2826000H`.
@@ -111,38 +144,85 @@ Confirmed from the examples:
 * **The SOAP Body is empty** - every payload is a MIME part referenced by
   `PartInfo/@href="cid:..."`, with the `MimeType` part property, exactly as AS4 does it.
 * The response reuses the same `UserMessage` structure with `RefToMessageId` pointing at the
-  request's `MessageId`.
+  request's `MessageId`, and **swaps the two `PartyId` values** (slide 25 marks the swap with an
+  arrow, and slide 20 states it in words).
 * **There is no WS-Security header at all** in any example, consistent with the
   "minimalist version without cryptographic signature".
 
-Service / Action values seen (note the **CEN namespace, not a Spanish one**):
+**The SOAP version is not consistent across the published examples (new 2026-09-23).** The
+submission example uses SOAP 1.2 (`http://www.w3.org/2003/05/soap-envelope`, slide 21), while the
+cancellation (slide 28) and the status-change (slide 38) examples use **SOAP 1.1**
+(`http://schemas.xmlsoap.org/soap/envelope/`). AS4 and eBMS 3.0 are defined over SOAP 1.2. This
+needs clarification from AEAT - see the open questions.
 
-| Operation | Service | Action |
-|---|---|---|
-| Submit invoices | `urn:cen.eu:en16931:invoice` | `SUBMITINVOICE` |
-| Cancel invoice | `urn:cen.eu:en16931:cancelinvoice` | `CANCELINVOICE` |
-| Query by filter | `urn:cen.eu:en16931:queryinvoices` | `QUERYBYFILTER` |
-| Status events | `urn:cen.eu:en16931:submitstatus` | `AccountingCustomerParty` / `AccountingSupplierParty` |
+Service / Action values (note the **CEN namespace, not a Spanish one**)
+**(corrected 2026-09-23** - the earlier table was taken from the response example only and had
+the status service wrong):
 
-For the status service the `Action` is used to say whether the batch carries issuer-side or
-recipient-side statuses; the slide annotates the envelope as "ebXML no relevante" because the
-substance sits in the `ApplicationResponse` payload.
+| Operation | Service | Action | Source |
+|---|---|---|---|
+| Submit invoices - request | `urn:cen.eu:en16931:submitinvoice` | `SubmitInvoice` | DIT slide 22 |
+| Submit invoices - response | `urn:cen.eu:en16931:invoice` | `SUBMITINVOICE` | DIT slide 25 |
+| Cancel invoice | `urn:cen.eu:en16931:cancelinvoice` | `CANCELINVOICE` | DIT slide 28 |
+| Query by ID | `urn:cen.eu:en16931:queryinvoice` | `QUERYBYID` | DIT slide 30 |
+| Query by filter | `urn:cen.eu:en16931:queryinvoices` | `QUERYBYFILTER` | DIT slide 31 |
+| Status events - recipient | `urn:cen.eu:en16931:submitaction` | `AccountingCustomerPartyAction` | DIT slide 38 |
+| Status events - issuer | `urn:cen.eu:en16931:submitaction` | `AccountingSupplierPartyAction` (*not shown - inferred*) | - |
+
+The submission **request and response do not use the same Service/Action pair**
+(`submitinvoice` / `SubmitInvoice` going out, `invoice` / `SUBMITINVOICE` coming back), and the
+casing convention differs between the two. Either the deck is inconsistent or the values really
+are asymmetric; the WSDLs will tell.
+
+For the status service the `Action` says whether the batch carries issuer-side or recipient-side
+statuses; the slide annotates the envelope as "ebXML no relevante" because the substance sits in
+the `ApplicationResponse` payload.
 
 Query-by-filter parameters ride in `eb:MessageProperties`: `Role`
 (`AccountingSupplierParty` | `AccountingCustomerParty`), `InvoiceCompanyID`,
 `InvoiceRegistrationName`, `RegistrationStartDate` and `RegistrationEndDate` (the slide notes
 that both dates must fall inside the same period and fiscal year, and flags the time zone).
+Query-by-ID uses the same `Role` property plus an `ApplicationResponse` payload.
 
-Services and message shapes:
+Services and message shapes **(completed 2026-09-23** - the endpoint names for query and
+download were unknown before):
 
 | Operation | Endpoint | Request | Response |
 |---|---|---|---|
-| Submit invoices | `ws/SendInvoiceSOAP` | ebXML (`SUBMITINVOICE`) + N parts (`Invoice`) | ebXML + 1 part (`DocumentStatus`) |
-| Cancel invoice | `ws/CancelInvoiceSOAP` | ebXML (`CANCELINVOICE`) + 1 part (`ApplicationResponse`) | ebXML + 1 part (`DocumentStatus`) |
-| Download invoices | - | ebXML + 1 part (`ApplicationResponse` with N `DocumentReference`, ID only) | ebXML + **N parts (`Invoice`)** |
-| Query invoices | - | ebXML only (by filter) or + 1 part (`ApplicationResponse`, by ID) | ebXML + 1 part (`DocumentStatus` with N `AdditionalDocumentResponse`) |
+| Submit invoices | `ws/SendInvoiceSOAP` | ebXML + N parts (`Invoice`) | ebXML + 1 part (`DocumentStatus`) |
+| Cancel invoice | `ws/CancelInvoiceSOAP` | ebXML + 1 part (`ApplicationResponse`) | ebXML + 1 part (`DocumentStatus`) |
+| Query by ID | `ws/GetInvoicesSOAP` | ebXML + 1 part (`ApplicationResponse`) | ebXML + 1 part (`DocumentStatus` with N `AdditionalDocumentResponse`) |
+| Query by filter | `ws/GetRegisteredInvoiceSOAP` | ebXML only | ebXML + 1 part (`DocumentStatus` with N `AdditionalDocumentResponse`) |
+| Download by ID | `ws/DownloadInvoicesByIDSOAP` | ebXML + 1 part (`ApplicationResponse` with N `DocumentReference`, ID only) | ebXML + **N parts (`Invoice`)** |
+| Download by localizador | `ws/DownloadInvoicesByLOCSOAP` | ebXML + 1 part (`ApplicationResponse` with N `DocumentReference`, localizador) | ebXML + **N parts (`Invoice`)** |
 | Recipient status events | `ws/CustomerInvoiceEventsSOAP` | ebXML + 1 part (`ApplicationResponse`) | ebXML + 1 part (`DocumentStatus`) |
 | Issuer status events | `ws/SupplierInvoiceEventsSOAP` | ebXML + 1 part (`ApplicationResponse`) | ebXML + 1 part (`DocumentStatus`) |
+
+Note the endpoint naming: `GetInvoicesSOAP` is the query **by ID** and
+`GetRegisteredInvoiceSOAP` the query **by filter**, i.e. the plural/singular is the opposite of
+what the semantics suggest.
+
+### 2.1 Results and error reporting
+
+* The submission response carries a UBL `DocumentStatus` whose `cbc:ID` is the **CSV**
+  (Codigo Seguro de Verificacion) of the acuse de recibo, plus `cbc:IssueDate`.
+* Batch-level outcome in `cac:DocumentResponse/cac:Response/cbc:ResponseCode`: `200` all correct,
+  **`206` "Facturas parcialmente correctas"**, `400` all failed **(answered 2026-09-23** - the
+  earlier note guessed 206 because the slide read from the live session showed "200" twice).
+* Per invoice, one `cac:DocumentReference` carrying the three key identifiers (`cbc:ID`,
+  `cbc:IssueDate`, `IssuerParty/.../cbc:CompanyID`), the localizador in
+  `cbc:ReferencedDocumentInternalAddress`, and `cbc:DocumentStatusCode` - `200` on success, or an
+  SPFE error code such as `SPFE-GEN-45` with a `cbc:DocumentDescription`. The slide states that
+  no description is sent for code 200; it is only used for errors.
+* The **download response reports status per payload inside the ebMS header** (DIT slide 35):
+  each `eb:PartInfo` carries `eb:PartProperties` with `statusCode` (`200` / `400`),
+  `statusDescription` and `id`. That is a non-standard use of `PartProperties` and is the one
+  place where the SPFE puts business results into the ebMS layer rather than into UBL.
+* Query responses paginate through `DocumentStatus/cac:DocumentResponse/cac:Response/cac:Status`
+  with `cbc:StatusReasonCode`, `cbc:StatusReason` and a `cbc:SequenceID` identifying the last
+  invoice returned.
+* The localizador is an encrypted string of the form `LOCGENV1:O:<base64>`, where the flag marks
+  original or copy. AEAT recommends it over the unique invoice ID for retrieval.
 
 Limits: 1-100 invoices per batch (configurable); 5,120 KB max per invoice, applied per invoice
 (configurable); **zero binary attachments** - `cbc:EmbeddedDocumentBinaryObject` and
@@ -152,7 +232,7 @@ query capped at 1,000; up to 100 status events per `ApplicationResponse`, with i
 recipient actions neither mixed nor duplicated for the same invoice. Private platforms must act
 as a "concentrador" and must not operate invoice-by-invoice or customer-by-customer.
 
-### 2.1 Where this diverges from AS4
+### 2.2 Where this diverges from AS4
 
 The envelope is ebMS 3.0, but the exchange is not the AS4 profile:
 
@@ -168,20 +248,21 @@ The envelope is ebMS 3.0, but the exchange is not the AS4 profile:
    signed-Receipt mechanism cannot apply.
 3. **No AS4 Receipt.** Acknowledgement is business-level - a `DocumentStatus` payload plus an
    "acuse de recibo" carrying a Codigo Seguro de Verificacion (CSV), not an ebMS Receipt.
-4. **Partial-success semantics.** `DocumentStatus` reports per-invoice outcomes across the batch,
-   which has no equivalent in AS4's per-message all-or-nothing model. The response-code slide
-   lists "200 all actions correct", "200 actions partially correct" and "400 all actions failed" -
-   200 appears twice, so the middle value is probably 206 and needs confirming.
+4. **Partial-success semantics.** `DocumentStatus` reports per-invoice outcomes across the batch
+   (`206` at batch level, per-invoice codes below it), which has no equivalent in AS4's
+   per-message all-or-nothing model.
 5. **Authentication is transport/business level** - a qualified electronic certificate plus the
    AEAT representation model (nombre propio / apoderamiento / colaborador social), not
    WS-Security tokens. The `From/PartyId` is expected to match the NIF in that certificate.
-6. **Roles do not swap in the response.** In the reply the `From` is AEAT carrying
-   `ebms:initiator` and the `To` is the original sender carrying `ebms:responder`, i.e. the role
-   stays bound to the header position rather than to the party's role in the exchange. Worth
-   raising with AEAT - it looks like a slide error, but if it is intentional a strict ebMS
-   implementation will need to tolerate it.
-7. **`ConversationId` is inconsistent** across the examples - a UUID in the cancel and query
-   messages, empty in the submit response.
+6. **Roles do not swap in the response.** The response swaps the two `PartyId` values but keeps
+   `ebms:initiator` on `From` and `ebms:responder` on `To`, so in the reply AEAT is the
+   "initiator". Confirmed from the published slide, i.e. **not** a transcription error
+   **(confirmed 2026-09-23)**; whether it is intentional is still unknown, and a strict ebMS
+   implementation must tolerate it.
+7. **`ConversationId` is inconsistent** across the examples - a UUID in the request messages,
+   an empty element in the submit response.
+8. **SOAP 1.1 appears in two of the three envelope examples** - see above. AS4 requires SOAP 1.2.
+9. **Business status inside `PartProperties`** on download responses, which no AS4 profile defines.
 
 Net effect: phase4 cannot talk to the SPFE out of the box, but this is much closer than the May
 material suggested. The ebMS 3.0 marshalling, `PartyInfo` / `CollaborationInfo` / `PayloadInfo`
@@ -233,15 +314,26 @@ but the mechanism to discover a counterparty's endpoint and certificate is not r
   of the AS4/WS-Security message signature - both are needed.
   Note the asymmetry: according to the AEAT FAQ, an invoice sent **through the SPFE** does not
   need to be signed; there, integrity and non-repudiation are guaranteed by AEAT's own procedures
-  (Art. 11.7).
+  (Art. 11.7). The updated draft Order states it as an option - invoices interconnected through
+  the SPFE "podran enviarse con firma electronica" (may be sent with an electronic signature).
 * **Status messages travel over the same interconnection** (Art. 8.3): the interconnection must
   carry at least the invoices and the Art. 10.1 statuses (commercial acceptance/rejection plus
   date, full effective payment plus date). On the SPFE these are UBL `ApplicationResponse` /
-  `DocumentStatus`. Over AS4 there is no defined Service/Action to distinguish an invoice from a
-  status message.
+  `DocumentStatus`, with `cbc:ResponseCode` one of `PAYMENT`, `CANCELPAYMENT`, `REJECTION`,
+  `CANCELREJECTION` (recipient) or `SETTLEMENT`, `CANCELSETTLEMENT`, `DEFAULT`, `CANCELDEFAULT`
+  (issuer), an `cbc:EffectiveDate` and dates qualified via
+  `cac:Status/cac:Condition/cbc:AttributeID` (`DueDate`, `ShipmentDate`,
+  `FinancingArrangement`). Payments are reported for the full invoice amount only - no partials.
+  Over AS4 there is no defined Service/Action to distinguish an invoice from a status message.
 * **Unique invoice code** (Art. 7.5): NIF of the issuer + invoice series/number + issue date.
   This is a natural business-level message identifier, but no mapping to ebMS message properties
   is defined.
+* **Faithful copies are flagged in the payload**, not in the envelope: the draft Anexo I adds
+  `BT-ES-1` mapped to `/in:Invoice/cbc:CopyIndicator` (`true` = copy, `false` or absent =
+  original).
+* A **cancellation message** (UBL `ApplicationResponse`) is now part of Anexo I, matching
+  Art. 3.5 of the draft Order: an invoice that turns out to be improcedente because the
+  underlying operation does not exist can be withdrawn, with traceability kept.
 * Platform requirement Art. 13.1.c: capability for eIDAS advanced electronic signature **and seal**.
   Art. 13.1.a: ISO/IEC 27001 (or equivalent). Art. 13.2: data governance may be evidenced via
   UNE 0080 maturity level 2.
@@ -271,41 +363,50 @@ but the mechanism to discover a counterparty's endpoint and certificate is not r
 
 ### SPFE leg (the ebXML envelope)
 
-9. ~~What exactly is "compatible with AS4/Peppol"?~~ Answered by the slide examples: SOAP 1.2
-   plus the ebMS 3.0 core namespace, eBCore party identifiers, empty SOAP body, payloads as
-   MIME parts - the AS4 header model minus security. What remains open is whether AEAT will
-   also accept genuinely AS4-conformant messages (signed, with Receipts) from clients that
-   send them.
+9. ~~What exactly is "compatible with AS4/Peppol"?~~ Answered by the published examples: the
+   ebMS 3.0 core namespace, eBCore party identifiers, empty SOAP body, payloads as MIME parts -
+   the AS4 header model minus security. What remains open is whether AEAT will also accept
+   genuinely AS4-conformant messages (signed, with Receipts) from clients that send them.
 10. Is the exchange a declared ebMS Two-Way/Sync MEP, and are there any ebMS signal messages
-    (Receipt, Error) at all? Every response in the slides is a business `UserMessage`, so
+    (Receipt, Error) at all? Every response in the decks is a business `UserMessage`, so
     apparently not - but transport-level error handling is undocumented.
-11. Are the response `Role` values (`From`=AEAT as `ebms:initiator`) intentional or a slide
-    error, and is `ConversationId` mandatory? It is a UUID in some examples and empty in others.
-12. What are the exact `DocumentStatus` response codes - is the second "200" actually 206?
+11. Are the response `Role` values (`From`=AEAT as `ebms:initiator`) intentional? Confirmed to
+    be what AEAT published, so no longer a suspected reading error - but still not explained.
+    Is `ConversationId` mandatory? It is a UUID in the requests and empty in the submit response.
+12. ~~What are the exact `DocumentStatus` response codes - is the second "200" actually 206?~~
+    Answered: `200` / `206` / `400` at batch level, per-invoice `cbc:DocumentStatusCode` with
+    SPFE error codes such as `SPFE-GEN-45`. The full error list is still unpublished.
 13. Is message-level signing genuinely absent, or only absent in the first release? If it is
     later added, which policy?
 14. How is the 24-hour-outage rule (submission allowed within the following four business days)
     expected to interact with client-side retry behaviour?
 15. Will AEAT publish the ebXML envelope as a documented profile, or only as WSDLs plus examples?
+16. **Which SOAP version?** The submission example is SOAP 1.2, the cancellation and
+    status-change examples are SOAP 1.1. AS4 and ebMS 3.0 require SOAP 1.2.
+17. **Why do request and response use different Service/Action values** for submission
+    (`submitinvoice`/`SubmitInvoice` vs `invoice`/`SUBMITINVOICE`), and which casing is
+    normative?
+18. Are the `statusCode` / `statusDescription` / `id` `PartProperties` of the download response
+    a fixed vocabulary, and are they expected on other services too?
 
 ## 6. Practical position for phase4
 
 * Nothing has to be implemented today for the platform-to-platform leg: RD Art. 13.1.b) is
   satisfied by *any* conformant AS4 implementation, and phase4 is one.
-* The SPFE leg is now the more interesting one. Its envelope is genuine ebMS 3.0 over SOAP 1.2
-  with eBCore party identifiers and CID-referenced MIME payloads - the model phase4 already
-  implements - and AEAT explicitly aims at AS4/Peppol compatibility. The divergences in
-  section 2.1 (synchronous business responses, no WS-Security at all, no Receipts,
-  partial-success batches) are what stand in the way. Worth a concrete feasibility check of
-  how far the phase4 ebMS layer reaches once AEAT publishes the WSDLs and message examples,
-  because the answer looks like "most of the way".
+* The SPFE leg is the more interesting one. Its envelope is genuine ebMS 3.0 with eBCore party
+  identifiers and CID-referenced MIME payloads - the model phase4 already implements - and AEAT
+  explicitly aims at AS4/Peppol compatibility. The divergences in section 2.2 (synchronous
+  business responses, no WS-Security at all, no Receipts, partial-success batches, SOAP version
+  inconsistency) are what stand in the way. Worth a concrete feasibility check of how far the
+  phase4 ebMS layer reaches once AEAT publishes the WSDLs, because the answer looks like
+  "most of the way".
 * The plausible convergence path for the platform-to-platform leg remains **Peppol** - the RD
   already blesses Peppol BIS as a syntax between private platforms, and Peppol supplies exactly
   the missing pieces (AS4 profile, SMP/SML discovery, identifier schemes, conformance testing).
   If the Spanish market converges there, `phase4-profile-peppol` / `phase4-peppol-client`
   already cover it with no new code.
 * A `phase4-profile-spain` module only becomes meaningful once a Spanish AS4 usage profile
-  actually exists - from the Ministry, AEAT, or an industry association. As of 2026-09-10
+  actually exists - from the Ministry, AEAT, or an industry association. As of 2026-09-23
   there is none.
 * The useful interim deliverable is documentation on running phase4 with **per-counterparty
   PModes**, which is what Art. 7.4 plus Art. 9 effectively force.
@@ -317,5 +418,9 @@ All quotes above come from:
 * `legal/BOE-A-2026-7295_RD-238-2026.pdf` - Real Decreto 238/2026, de 25 de marzo (BOE 79, 2026-03-31)
 * `legal/Proyecto-OM-SPFE_2026-04-16.pdf` - draft Ministerial Order on the SPFE (public consultation)
 * `aeat/2026-05-19-seminario-spfe/` - AEAT developer seminar of 2026-05-19 (3 decks + FAQ)
-* Notes taken from the slides of the AEAT webinar of 2026-09-10 (not stored here; draft,
-  unpublished and unverified content - see the caveat at the top of this file)
+* `aeat/2026-09-10-actualizacion-spfe/` - AEAT seminar of 2026-09-10, published 2026-09:
+  * `DIT_FE_Seminario_10_septiembre.pdf` - technical deck, 45 slides, source of all of section 2
+  * `Actualizacion_proyecto_OM_Seminario_10-09-2026.pdf` - updated draft Ministerial Order
+  * `Novedades_AnexoI_Seminario_10-9-26.pdf` - changes to Anexo I (UBL content)
+
+Slide numbers cited above refer to the PDF page numbers of `DIT_FE_Seminario_10_septiembre.pdf`.

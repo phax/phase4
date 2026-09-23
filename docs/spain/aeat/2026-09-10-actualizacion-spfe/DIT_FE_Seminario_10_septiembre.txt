@@ -1,0 +1,774 @@
+SOLUCIÓN PÚBLICA DE FACTURACION ELECTRÓNICA
+                   (SPFE)
+
+
+
+Información técnica sobre los servicios de la SPFE y ejemplos
+
+                                                                 Subdirección General de Aplicaciones
+                                                                Departamento de Informática Tributaria
+                                Contenido de la sesión
+
+Introducción de los estándares
+                                                           01   Aspectos relevantes de una factura
+                                                                                                                                 02
+
+ISO 19845 – UBL · OASIS – ebXML                                 Identificador único · Localizador · Estados y ciclo de vida
+
+
+
+
+Tipos de servicios de la SPFE
+                                                           03   Descripción técnica de los servicios web
+                                                                                                                                 04
+
+Aplicación AEAT · Formulario de consulta · Servicios web        Remisión · Cancelación · Consulta · Descarga · Estados
+
+
+
+
+                                                                                                  Subdirección General de Aplicaciones
+                                                                                                 Departamento de Informática Tributaria
+          Sistema español de factura electrónica y SPFE
+El sistema español de factura electrónica es un sistema mixto que se compone de plataformas privadas, así
+como de una Solución Pública de Facturación Electrónica (SPFE) gestionada por la AEAT.
+
+
+
+
+              La SPFE trabajará exclusivamente con sintaxis UBL (Universal Business Language)
+                                                                                       Subdirección General de Aplicaciones
+                                                                                      Departamento de Informática Tributaria
+                             Uso de estándares internacionales
+               UBL (ISO 19845)                                                                        ebXML
+               El contenido: la factura                                                               El transporte: el «sobre»
+
+
+• Estándar definido por OASIS, organización de estandarización                       • Mensaje de transporte de las peticiones a los servicios de la SPFE
+  internacional                                                                      • Evita definir un «sobre básico» propio exclusivo de la SPFE
+• Formato basado en XML
+• Sintaxis con soporte para todo el proceso de negocio de una empresa
+                                                                                      Símil: correo con todo el contenido en el texto vs. correo sencillo con la
+                                                                                      información relevante en documentos adjuntos.
+Documentos UBL empleados
+
+          Invoice                Emisión de facturas
+
+
+
+   ApplicationResponse           Pago/cobro · consulta y descarga · anulación
+
+
+
+      DocumentStatus             Respuesta de todos los servicios (salvo descarga)
+
+
+
+
+                                                                                                                                      Subdirección General de Aplicaciones
+                                                                                                                                     Departamento de Informática Tributaria
+                                   Uso de estándares internacionales
+               ISO 19845 · UBL
+               El contenido: la factura
+
+
+• Estándar definido por OASIS, organización de estandarización
+  internacional
+• Formato basado en XML
+• Sintaxis con soporte para todo el proceso de negocio de una empresa
+
+
+
+Documentos UBL empleados
+
+          Invoice                Emisión de facturas
+
+
+
+   ApplicationResponse           Pago/cobro · consulta y descarga · anulación
+
+
+
+      DocumentStatus             Respuesta de todos los servicios (salvo descarga)
+
+
+
+
+                                                                                      Subdirección General de Aplicaciones
+                                                                                     Departamento de Informática Tributaria
+                                  Identificador único y localizador
+              Identificador único de factura                                             Localizador
+
+                                                                            • Identificador «técnico» cifrado que da acceso al fichero XML original
+                                                                              de la factura con un rendimiento muy elevado
+                 Nº de Serie-Factura
+                                                                            • Se devuelve en la propia remisión de la factura y en los servicios de
+                                                                              consulta
+                          +
+                                                                 ID único   • Especialmente importante en la recuperación de facturas para
+                Fecha de expedición                                           plataformas; recomendable para el resto de emisores.
+
+                                                                            • Solo permite la recuperación en nombre propio o mediante
+                          +                                                   apoderamiento, desencriptando la cadena
+
+                   NIF del emisor
+
+
+
+
+No podrán coexistir dos facturas con el mismo identificador único.
+
+
+
+
+                                                                                                                         Subdirección General de Aplicaciones
+                                                                                                                        Departamento de Informática Tributaria
+             Identificador único y localizador
+Identificador único de factura       Localizador
+
+
+
+
+                                                    Subdirección General de Aplicaciones
+                                                   Departamento de Informática Tributaria
+                                                         ¿Por qué ebXML?
+              Estándar internacional                                    Compatible AS4 / Peppol                                   Un mismo sobre para todo
+
+
+
+ebXML es un estándar OASIS (como UBL): las                Versión minimalista sin firma criptográfica; mejora la
+                                                                                                                                         Estándar internacional
+                                                                                                                   Remisión, estados, consulta y descarga (las facturas
+empresas no integran nada exclusivo de la SPFE            interoperabilidad en el contexto de ViDA                 viajan en el mensaje de respuesta)
+
+
+
+
+               Encabezado con parámetros                                 Facturas independientes                                  Control del tamaño
+
+
+
+Índice con datos a nivel de mensaje y de factura. Útil    Sin vínculos entre facturas del mismo sobre: un error    Mejor control sobre el tamaño de las facturas
+a medio plazo: p. ej. factura pagada o factura C-VIES     de sintaxis XML no afecta al resto ni exige              remitidas
+                                                          preprocesar el lote
+
+
+
+
+                                                                                                                                      Subdirección General de Aplicaciones
+                                                                                                                                     Departamento de Informática Tributaria
+                            Tres vías para relacionarse con la SPFE
+
+              Aplicación de facturación de la                   Formulario de consulta y gestión
+                                                                                                                     Servicios web
+              AEAT                                              de estados
+
+
+
+• Aplicación «de último recurso», especialmente   • Consulta individual y listado por ejercicio y      • Servicios web «síncronos»
+  indicada para pymes                               periodo, filtrando por fecha de presentación
+                                                                                                       • Requieren autenticación con certificado
+                                                    (cambio de criterio respecto al SII)
+• Genera facturas electrónicas                                                                           electrónico
+                                                  • Detalle de cada factura: datos básicos, estados,
+• Permite descargar su XML                                                                             • Disponibles para cualquier empresario o
+                                                    fechas y descarga del XML
+                                                                                                         profesional debidamente autenticado y
+• Conserva el original en la SPFE
+                                                  • Operativa propia de la SPFE, no de la aplicación     autorizado
+                                                    gratuita de la AEAT
+
+
+
+
+                                                                                                                     Subdirección General de Aplicaciones
+                                                                                                                    Departamento de Informática Tributaria
+          Aplicación gratuita de facturación de la AEAT
+
+
+
+
+• Generará facturas electrónicas descargables en UBL 2.5.
+• La FE emitida quedará depositada en la SPFE para su recepción por
+  parte del destinatario.
+• Solo en nombre propio o con apoderamiento.
+                                                                       Subdirección General de Aplicaciones
+                                                                      Departamento de Informática Tributaria
+Formulario de consulta y gestión de estados
+          • Búsqueda de facturas individuales
+
+
+
+
+                                                 Subdirección General de Aplicaciones
+                                                Departamento de Informática Tributaria
+    Formulario de consulta y gestión de estados
+                 • Búsqueda por fechas de presentación (*)
+
+
+
+
+(*) Criterio diferente al SII/VERIFACTU
+
+                                                              Subdirección General de Aplicaciones
+                                                             Departamento de Informática Tributaria
+Formulario de consulta y gestión de estados
+          Listado de facturas electrónicas
+
+
+
+
+                                              Subdirección General de Aplicaciones
+                                             Departamento de Informática Tributaria
+Formulario de consulta y gestión de estados
+         Estado de una factura
+
+
+
+
+                                       Subdirección General de Aplicaciones
+                                      Departamento de Informática Tributaria
+Formulario de consulta y gestión de estados
+           Detalle y gestión de estados
+
+
+
+
+                                           Subdirección General de Aplicaciones
+                                          Departamento de Informática Tributaria
+                                        Servicios Web
+• La SPFE ofrecerá una serie de servicios web “síncronos”.
+
+• El uso de los servicios web requiere de autenticación con certificado electrónico.
+
+• Los servicios web no son un mecanismo reservado a una categoría específica de operador. Cualquier
+  empresario o profesional debidamente autenticado y autorizado podrá hacer uso de ellos.
+
+• La SPFE no es un sistema de almacenamiento de facturas en la nube.
+
+
+
+
+                                                                                        Subdirección General de Aplicaciones
+                                                                                       Departamento de Informática Tributaria
+              Modelo de autorización en servicios web
+
+
+     Nombre propio                                            Apoderamiento                                           Colaborador social
+Todos los servicios web de la SPFE                       Todos los servicios web de la SPFE                  Solo remisión de facturas y cambios de estado.
+                                                                                                             Excepción: Consulta y descarga de las facturas
+                                                                                                              siempre que haya sido el presentador original
+                                                                                                                             de las mismas
+
+
+
+
+        Importante:
+        Los servicios web no están reservados a una categoría específica de operador: cualquier empresario o profesional debidamente autenticado y
+        autorizado podrá usarlos.
+
+
+
+
+                                                                                                                           Subdirección General de Aplicaciones
+                                                                                                                          Departamento de Informática Tributaria
+                                 Catálogo de servicios
+Remisión de facturas                                                   Anulación de facturas
+ws/SendInvoiceSOAP                                                     ws/CancelInvoiceSOAP
+
+
+Envía una factura electronica a la SPFE                                Anula o cancela una factura remitida por error; el identifcador
+                                                                       queda reutilizable
+
+
+
+
+Consultas de facturas                                                  Descarga de factura
+Por ID · ws/GetInvoicesSOAP                                            Por ID · ws/DownloadInvoicesByIDSOAP
+Por filtro · ws/GetRegisteredInvoiceSOAP                               Por localizador · ws/DownloadInvoicesByLOCSOAP
+
+
+Consulta el identificador y estados de una factura concreta a partir   Descarga el XML de la factura por su identificador.
+de su identificador o filtros
+
+
+
+Cambios de estado · destinatario                                       Cambios de estado · emisor
+ws/CustomerInvoiceEventsSOAP                                           ws/SupplierInvoiceEventsSOAP
+Pago y rechazo comercial (y sus cancelaciones)                         Cobro y no cobrado (y sus cancelaciones)
+
+
+Informa pago y rechazo comercial (y sus cancelaciones)                 Informa cobro e impago (y sus cancelaciones)
+
+
+                                                                                                    Subdirección General de Aplicaciones
+                                                                                                   Departamento de Informática Tributaria
+                   Remisión de facturas · ws/SendInvoiceSOAP
+                                                      Petición: ebXML (SUBMITINVOICE) + N Multipart (InvoiceType)
+
+      Emisor                                                                                                                                         SPFE
+ ERP / Plataforma                                                                                                                                    AEAT
+                                                  Respuesta: ebXML (SUBMITINVOICE) + 1 Multipart (DocumentStatus)
+
+
+
+1–100                                                                5.120                                                 0
+                                                                     kbytes máx. por factura, de forma unitaria
+facturas por remesa (configurable)                                                                                         adjuntos binarios admitidos
+                                                                     (configurable)
+
+
+
+Sin adjuntos binarios
+                                                                                                <cac:Attachment>
+• No pueden existir binarios en nodos cbc:EmbeddedDocumentBinaryObject ni
+                                                                                                  <cac:ExternalReference>
+  cbc:EmbeddedDocument                                                                              <cbc:URI>http://www.suppliersite.eu/sheet001.html</cbc:URI>
+• Sí se permiten adjuntos como URL (p. ej., un albarán o pedido alojado en la plataforma o        </cac:ExternalReference>
+  ERP)                                                                                          </cac:Attachment>
+
+
+
+
+                                                                                                                                         Subdirección General de Aplicaciones
+                                                                                                                                        Departamento de Informática Tributaria
+                    Uso de sobre ebXML en remisión
+                                                    PETICIÓN                                                                        RESPUESTA
+
+
+                    Contenido obligatorio pero de libre disposición: sirve para trazar la respuesta del       La respuesta añade la referencia al mensaje que originó la
+   MessageInfo
+                    sistema                                                                                   petición
+
+
+
+
+                    FROM: remitente (NIF del certificado), el propio obligado o el sistema que actúa en su
+    PartyInfo                                                                                                 En la respuesta se invierte la información de FROM y TO
+                    nombre · TO: NIF de la AEAT donde recibe la SPFE
+
+
+
+
+                    Declara el servicio (endpoint llamado) y la acción concreta; relación 1..1 salvo en los
+CollaborationInfo                                                                                             Sin cambios
+                    cambios de estado
+
+
+
+
+                    Referencia a todas las facturas (MIME XML de tipo InvoiceType), sin repetidos; los        Referencia al único XML de la respuesta: un DocumentStatus
+   PayloadInfo
+                    adjuntos MTOM no declarados se ignoran y no pueden superar el máximo                      con el estado de cada factura (alta o error sintáctico/semántico)
+
+
+
+
+                                                                                                                                          Subdirección General de Aplicaciones
+                                                                                                                                         Departamento de Informática Tributaria
+              Uso de sobre ebXML en remisión
+                             PETICIÓN
+
+
+
+
+MessageInfo
+
+
+
+
+PartyInfo
+
+
+
+
+                                                Subdirección General de Aplicaciones
+                                               Departamento de Informática Tributaria
+                 Uso de sobre ebXML en remisión
+                                PETICIÓN
+
+
+
+
+CollaborationInfo
+
+
+
+
+   PayloadInfo
+
+
+
+
+                                                   Subdirección General de Aplicaciones
+                                                  Departamento de Informática Tributaria
+Validación del Invoice (UBL) del emisor
+
+
+
+
+                                      Subdirección General de Aplicaciones
+                                     Departamento de Informática Tributaria
+Validación del Invoice (UBL) del emisor
+
+                    Validación semántica
+
+       • Actualización de documentos pubicados por UNE
+
+       UNE-EN 16931-1:2026 (Versión junio)
+
+       Facturación electrónica. Parte 1: Modelo semántico de datos de los
+       elementos principales de una factura electrónica
+
+       UNE-CEN/TS 16931-3-2:2026 (versión septiembre)
+
+       Facturación electrónica. Parte 3-2 Correspondencia sintáctica de la
+       factura y nota de crédito de la norma EN 16931-1 con la norma ISO/IEC
+       19845 (UBL)
+
+       • Recursos adicionales (pendiente de actualizar a UBL 2.5): GITHUB
+
+
+
+
+                                                                                Subdirección General de Aplicaciones
+                                                                               Departamento de Informática Tributaria
+Uso de sobre ebXML en remisión
+            RESPUESTA
+
+
+
+
+                                  Subdirección General de Aplicaciones
+                                 Departamento de Informática Tributaria
+DocumentStatus en remisión
+RESPUESTA
+
+
+
+
+                              Subdirección General de Aplicaciones
+                             Departamento de Informática Tributaria
+      Anulación de facturas · ws/CancelInvoiceSOAP
+                                         Petición: ebXML (CANCELINVOICE) + 1 Multipart (ApplicationResponse)
+
+     Emisor                                                                                                                                  SPFE
+ERP / Plataforma                                                                                                                             AEAT
+                                          Respuesta: ebXML (CANCELINVOICE) + 1 Multipart (DocumentStatus)
+
+
+                                                                                          Eliminación completa
+      Incorporada al Anexo I de la orden ministerial, junto con la                        Cancela la factura electrónica emitida, eliminándola completamente de la
+      operación de alta.                                                                  SPFE a los efectos de consulta.
+
+
+
+
+      ID reutilizable                                                                     No sustituye a la rectificativa
+      Se puede volver a enviar una nueva factura reutilizando el identificador de         No procede cuando corresponda emitir una factura rectificativa
+      la factura cancelada
+
+
+
+
+                                                                                                                               Subdirección General de Aplicaciones
+                                                                                                                              Departamento de Informática Tributaria
+Petición de cancelación de facturas
+    ebXML                  ApplicationResponse
+
+
+
+
+                                         Subdirección General de Aplicaciones
+                                        Departamento de Informática Tributaria
+                                                      Consulta de facturas
+                                                              Petición: depende del tipo de consulta
+
+     Emisor                                                                                                                                SPFE
+ERP / Plataforma                                                                                                                           AEAT
+                                                      Respuesta: ebXML + 1 Multipart (DocumentStatus con N
+                                                                  AdditionalDocumentResponse)
+
+
+
+                                                                                                             Misma respuesta
+             Consultas de facturas                                                                           La respuesta siempre es la misma: identificador de la
+                                                                                                             factura encontrada más los estados finales del
+                                                                                                             emisor o del destinatario
+
+Por ID                                                  Por filtro
+Consulta de una factura concreta por su                 Entre rangos de fecha de presentación
+identificador
+                                                                                                              Límites
+Petición: ebXML + 1 Multipart (ApplicationResponse)     Petición: solo ebXML
+                                                                                                              Consultas limitadas a 1.000 facturas.
+                                                                                                              Posibilidad de servicios limitado o degradado a
+                                                                                                              determinar en tiempo y forma.
+
+
+
+
+                                                                                                                              Subdirección General de Aplicaciones
+                                                                                                                             Departamento de Informática Tributaria
+                   Consulta por ID de facturas
+                    Petición: ebXML (QUERYBYID) + 1 Multipart (ApplicationResponse)
+
+     Emisor                                                                                          SPFE
+ERP / Plataforma                                                                                     AEAT
+                    Respuesta: ebXML (QUERYBYID) + 1 Multipart (DocumentStatus con N
+                                      AdditionalDocumentResponse)
+
+
+
+
+                                                                                        Subdirección General de Aplicaciones
+                                                                                       Departamento de Informática Tributaria
+                   Consulta de facturas por FILTRO
+                                          Petición: ebXML
+
+     Emisor                                                                                   SPFE
+ERP / Plataforma                                                                              AEAT
+                         Respuesta: ebXML + 1 Multipart (DocumentStatus con N
+                                     AdditionalDocumentResponse)
+
+
+
+
+                                                                                 Subdirección General de Aplicaciones
+                                                                                Departamento de Informática Tributaria
+                       Respuesta de consulta de facturas
+
+     Emisor                                                                                        SPFE
+                              Respuesta: ebXML + 1 Multipart (DocumentStatus con N
+ERP / Plataforma                          AdditionalDocumentResponse)                              AEAT
+
+
+
+
+                                                 ESTADO DESTINATARIO
+
+
+
+
+       ESTADO EMISOR
+
+
+
+                                            FACTURA RECUPERADA
+
+
+
+
+   ID Y LOCALIZADOR
+
+
+
+
+                                                                                      Subdirección General de Aplicaciones
+                                                                                     Departamento de Informática Tributaria
+                                                    Descarga de facturas
+                                          Petición: ebXML+ 1 Multipart (ApplicationResponse con N DocumentReference
+                                                                         sólo con el ID)
+     Emisor                                                                                                                               SPFE
+ERP / Plataforma                                                                                                                          AEAT
+                                                          Respuesta: ebXML + N Multipart (InvoiceType)
+
+
+
+
+                                                                                                            Uso de localizador
+            Descarga de facturas                                                                            Recomendación de uso de localizador en vez de ID de la
+                                                                                                            factura
+
+
+
+Por ID                                                  Por Localizador
+Descarga de una factura concreta por su                 Descarga de una factura concreta por su
+identificador                                           identificador
+                                                                                                             Límites
+                                                                                                             Descargas limitadas a 100 facturas.
+
+
+
+
+                                                                                                                             Subdirección General de Aplicaciones
+                                                                                                                            Departamento de Informática Tributaria
+                   Petición de descarga de facturas
+                    Petición: ebXML+ 1 Multipart (ApplicationResponse con N DocumentReference
+                                                   sólo con el ID)
+     Emisor                                                                                                   SPFE
+ERP / Plataforma                                                                                              AEAT
+                                    Respuesta: ebXML + N Multipart (InvoiceType)
+
+
+
+
+                                                                                                 Subdirección General de Aplicaciones
+                                                                                                Departamento de Informática Tributaria
+                   Respuesta de descarga de facturas
+                     Petición: ebXML+ 1 Multipart (ApplicationResponse con N DocumentReference
+                                                    sólo con el ID)
+     Emisor                                                                                                    SPFE
+ERP / Plataforma                                                                                               AEAT
+                                     Respuesta: ebXML + N Multipart (InvoiceType)
+
+
+
+
+                                                                                                  Subdirección General de Aplicaciones
+                                                                                                 Departamento de Informática Tributaria
+Estados de la factura emisor/destinatario
+
+
+
+
+                                       Subdirección General de Aplicaciones
+                                      Departamento de Informática Tributaria
+                      Cambios de estado – Emisor y destinatario
+                                                                     Petición: ebXML + 1 Multipart (ApplicationResponse)
+
+          Emisor                                                                                                                                                            SPFE
+     ERP / Plataforma                                                                                                                                                       AEAT
+                                                                      Respuesta: ebXML + 1 Multipart (DocumentStatus)
+
+ DESTINATARIO · ws/CustomerInvoiceEventsSOAP                                                        EMISOR · ws/SupplierInvoiceEventsSOAP
+
+
+CÓDIGO                         SIGNIFICADO                                                        CÓDIGO                           SIGNIFICADO
+
+
+PAYMENT                       Pago efectivo completo de la factura                                SETTLEMENT                      Cobro íntegro de la factura
+
+CANCELPAYMENT                 Cancelación de un pago comunicado antes                             CANCELSETTLEMENT                Cancelación de un cobro anterior
+
+REJECTION                     Rechazo comercial de la factura                                     DEFAULT                         Factura resultó impagada
+
+CANCELREJECTION               Cancelación de un rechazo anterior de la factura                    CANCELDEFAULT                   Cancelación de un impago anterior
+
+
+
+   • Hasta 100 estados por ApplicationResponse. No se pueden mezclar acciones de emisor y destinatario, ni duplicar acciones sobre la misma factura.
+   • Sin parciales. El pago y el cobro se informan siempre por el importe total de la factura, junto con la fecha efectiva y los indicadores asociados (recepción de mercancía, entrega de
+     bienes/servicios, prepago o financiación).
+   • Anexo II de la O.M. En el Anexo II se recogen todos los estados posibles y fechas asociadas.
+
+
+
+                                                                                                                                                              Subdirección General de Aplicaciones
+                                                                                                                                                             Departamento de Informática Tributaria
+Cambios de estado – Ejemplo de pago por destinatario
+                    Petición: ebXML + 1 Multipart (ApplicationResponse)
+
+      Emisor                                                                                                      SPFE
+ ERP / Plataforma                                                                                                 AEAT
+                     Respuesta: ebXML + 1 Multipart (DocumentStatus)
+
+
+
+
+                                                                  ebXML no relevante
+                                                                  Marca si se enviarán estados del emisor o del
+                                                                  destinatario.
+
+                                                                  Se enviará un ApplicationResponse con todos los
+                                                                  estados
+
+
+
+
+                                                                                                Subdirección General de Aplicaciones
+                                                                                               Departamento de Informática Tributaria
+Cambios de estado – Ejemplo de pago por destinatario
+                    Petición: ebXML + 1 Multipart (ApplicationResponse)
+
+      Emisor                                                                             SPFE
+ ERP / Plataforma                                                                        AEAT
+                        Respuesta: ebXML + 1 Multipart (DocumentStatus)
+
+
+
+
+                                                                           Subdirección General de Aplicaciones
+                                                                          Departamento de Informática Tributaria
+Cambios de estado – Ejemplo de pago por destinatario
+                    Petición: ebXML + 1 Multipart (ApplicationResponse)
+
+     Emisor                                                                              SPFE
+ERP / Plataforma                                                                         AEAT
+                   Respuesta: ebXML + 1 Multipart (DocumentStatus)
+
+
+
+
+                                                                           Subdirección General de Aplicaciones
+                                                                          Departamento de Informática Tributaria
+       Observaciones de uso para plataformas privadas
+• Existirán servicios especiales para Plataformas Privadas que gestionan las facturas de una gran cantidad
+  de empresas/profesionales diferentes.
+
+• Las plataformas privadas no deben operar con la SPFE en una modalidad factura a factura ni cliente a
+  cliente.
+
+
+
+
+                                                                                        Subdirección General de Aplicaciones
+                                                                                       Departamento de Informática Tributaria
+                 Operativa de las plataformas privadas
+
+• Las plataformas privadas deben agrupar la información para la remisión a la SPFE.
+
+
+
+
+                                             Plataforma privada                                            SPFE
+
+
+
+
+• De igual forma la SPFE agrupará la informacion que pondrá a disposición de las plataformas privadas.
+
+
+                                                                                        Subdirección General de Aplicaciones
+                                                                                       Departamento de Informática Tributaria
+            SPFE – Integración en entorno de pruebas
+
+• Como en todos los desarrollos de la AEAT, existirá un entorno de pruebas donde realizar pruebas de
+  integración.
+
+• Este entorno estará disponible con antelación suficiente, pero no antes de que la orden ministerial que
+  la regula esté publicada en el BOE. Fecha de referencia: octubre de 2026.
+
+• El acceso a los servicios web del entorno de pruebas requiere de autenticación con certificado
+  electrónico, así como capacidad de representación suficiente sobre el sujeto en nombre del cual actúa.
+  Las facturas deben emitirse con NIFes reales o aquellos específicamente diseñados para pruebas.
+
+
+
+
+                                                                                       Subdirección General de Aplicaciones
+                                                                                      Departamento de Informática Tributaria
+                                  SPFE - Documentación
+Con carácter previo al despliegue de la SPFE en el entorno de pruebas se publicarán en el Portal de
+Entidades Desarrolladoras: https://www.agenciatributaria.es/AEAT.desarrolladores/Desarrolladores/Desarrolladores.html
+
+   • Documentación técnica explicativa:
+     • Catálogo de servicios para empresas y para plataformas
+     • Estándares de remisión
+     • Autenticación y representación
+   • Ejemplos ilustrativos de los diferentes mensajes:
+     • Factura electrónica/copia fiel
+     • Confirmación pago/rechazo, anulación de pago/cobro/rechazo
+   • WSDL de acceso a los servicios
+   • Documentos de validaciones
+
+
+
+
+                                                                                                 Subdirección General de Aplicaciones
+                                                                                                Departamento de Informática Tributaria
+                            ¡Muchas Gracias!
+Para dudas exclusivamente técnicas sobre servicios/documentación/sintaxis relacionados con la SPFE:
+
+                               facturaelectronica@correo.aeat.es
+

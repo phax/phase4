@@ -1,0 +1,146 @@
+Proyecto de OM SOLUCIÓN PÚBLICA
+DE FACTURACIÓN ELECTRÓNICA
+PRINCIPALES NOVEDADES ANEXO I – FACTURA ELECTRÓNICA
+
+
+
+
+                                                      SEMINARIO 10.09.2026
+                            Novedades Anexo I
+ Indicador de copia – cardinalidad 0..1
+
+
+
+
+ Eliminada extensión de facturas rectificativas – Uso de grupo BG-24
+
+
+
+
+ Incorporados campos a nivel de documento y de línea para incluir menciones
+  legales
+
+
+
+
+                                                                        SEMINARIO 10.09.2026
+                            Novedades Anexo I
+ Se incorporan 3 campos para la identificación fiscal del vendedor.
+
+
+
+
+                                                                       En la columna “ruta
+                                                                       UBL”,    determinados
+                                                                       campos     incorporan
+                                                                       también información
+                                                                       adicional   sobre la
+                                                                       forma de completar el
+                                                                       XML correctamente.
+
+En el caso del comprador, se podrá identificar de la misma forma, utilizandos los
+campos BT-47/BT-48.
+
+
+
+                                                                         SEMINARIO 10.09.2026
+                            Novedades Anexo I
+ La expedición de facturas por el destinatario o por tercero está plenamente
+  contemplada en el Anexo I.
+
+ En el caso de expedición de facturas por el destinatario, se contemplan códigos de
+  tipo de factura específicos, 389 y 471:
+
+
+
+
+ En el caso de expedición de facturas por un tercero, será obligatoria la incorporación
+  de un grupo DATOS DEL TERCERO (BG-ES-1):
+
+
+
+
+                                                                             SEMINARIO 10.09.2026
+                           Novedades Anexo I
+ Se incorporan campos específicos para aportar información sobre el cargo o
+  minoración a nivel de documento o de línea, especialmente si se trata de Impuestos
+  Especiales.
+
+
+
+
+                                                                         SEMINARIO 10.09.2026
+                           Novedades Anexo I
+ En el caso del IEDMT, se usará el grupo de términos de negocio BG-34.
+
+
+
+
+                                         El grupo BG-34 (campos BT-179 y BT-180) están
+                                         presentes en la nueva versión e la EN16931
+
+
+
+                                                                          SEMINARIO 10.09.2026
+                           Novedades Anexo I
+ Se aprovechan las nuevas categorías de IVA de la última versión de la EN16931
+
+
+
+
+                                                          Específicamente, La nueva clave N
+                                                          permite encajar los regímenes
+                                                          nacionales de forma natural en el
+                                                          documento de FE
+
+
+
+ Se han solicitado al mecanismo CEF (ahora, DIGITAL), códigos VATEX específicos
+  para España
+
+                                                                          SEMINARIO 10.09.2026
+                            Novedades Anexo I
+ La listas L3A – Clave de régimen,
+  territorio común, se ve reducida para
+  eliminar los regímenes que no deben
+  mencionarse en factura (régimen
+  simplificado, recargo de equivalencia y
+  agricultura, ganadería y pesca). El
+  campo clave de régimen mantiene la
+  cardinalidad 1..2.
+
+
+
+
+ La lista L10 incorpora los distintos usos
+  del    grupo    “Additional    Document
+  Reference”. En el caso de los usos
+  relativos a la factura rectificativa, se
+  informa del tipo, modalidad e importe
+  rectificado haciendo uso de las listas
+  L2.
+
+                                                SEMINARIO 10.09.2026
+                         Novedades Anexo I
+ Se incorpora un mensaje de anulación de factura electrónica (documento de UBL
+  application response)
+
+
+                                                         Se tiene así en cuenta lo dispuesto
+                                                         en el artículo 3.5 del proyecto de
+                                                         OM: “En los casos en los que la
+                                                         factura objeto de emisión o de
+                                                         interconexión     resultase     ser
+                                                         improcedente por inexistencia de la
+                                                         operación, se podrá dar de baja en
+                                                         la solución pública de facturación
+                                                         electrónica, quedando en todo
+                                                         caso trazabilidad de la citada baja.
+                                                         El mensaje de baja se ajustará a lo
+                                                         dispuesto en el Anexo I”.
+
+
+
+
+                                                                      SEMINARIO 10.09.2026
+

@@ -1,0 +1,535 @@
+ Actualización PROYECTO de OM SOLUCIÓN
+ PÚBLICA DE FACTURACIÓN ELECTRÓNICA
+
+
+SEMINARIO 10.09.2026
+CONTEXTO NORMATIVO - PROYECTO de OM SOLUCIÓN PÚBLICA DE FACTURACIÓN ELECTRÓNICA
+
+
+  LEY 18/2022, DE 28 DE SEPTIEMBRE - «LEY CREA Y CRECE»: Origen de la
+  obligación.
+  - Extiende la obligación de expedir, remitir y recibir factura electrónica a las
+    relaciones comerciales entre empresarios y profesionales “nacionales”
+    (B2B).
+  - Impone requisitos de interoperabilidad entre las soluciones y plataformas de
+    facturación.
+  - Prevé información sobre los estados de la factura para facilitar el control de
+    los plazos de pago y combatir la morosidad.
+
+  - Remite a un posterior desarrollo reglamentario.
+
+
+
+
+                                         2
+CONTEXTO NORMATIVO - PROYECTO de OM SOLUCIÓN PÚBLICA DE FACTURACIÓN ELECTRÓNICA
+
+
+
+
+   REAL DECRETO 238/2026, DE 25 DE MARZO:
+
+   - Desarrolla el sistema español de factura electrónica: integrado por plataformas privadas de
+     intercambio; y solución pública de facturación electrónica, gestionada por la AEAT.
+
+   - Regula los requisitos técnicos, formatos, interoperabilidad, estados de las facturas y suministro de
+     información.
+
+   - Entrada en vigor del RD: 20 de abril de 2026, pero su aplicación efectiva queda condicionada a la
+     aprobación de la Orden ministerial que complete su desarrollo.
+
+
+
+
+                                                   3
+              APARTADO 1 DISPOSICIÓN FINAL TERCERA REAL DECRETO 238/2026,
+              de 25 de marzo:
+
+              Mediante Orden del Ministerio de Hacienda se deberán desarrollar
+              determinados aspectos del sistema español de FE:
+  ORDEN           •   Elementos técnicos de la SPFE y formas de acceso a la misma.
+
+MINISTERIAL       •   Especificaciones del servicio de comunicación de pagos.
+
+                  •   Términos de uso de la sintaxis UBL y codificación única de las FE.
+
+                  •   Comunicación entre la SPFE y las plataformas privadas.
+
+
+
+
+                                    4
+         SOLUCIÓN PÚBLICA DE FACTURA
+                ELECTRÓNICA
+                                              FUNCIONES               Su gestión se encomienda a la
+                                                                           Agencia Tributaria
+
+
+Repositorio universal                                                   Solución gratuita de facturación
+de copias fieles de FE                                                  disponible para EyP
+•   Conexión con Plataformas privadas
+                                                   SPFE                 •   Emisión y recepción de FE.
+•   Mensajes informáticos (sintaxis UBL)                                    Interconexión con plat. Privadas
+                                                                            y dentro de la SPFE.
+•   Acceso a copias fieles.
+                                                                        •   Contenido de las FE.
+                                                                        •   Acceso a información (descarga,
+    Interconexion de/con plataformas                                        informes).
+    privadas a través de la SPFE                           Gestión de los
+    •   Interconexión entre Plataformas privadas          estados de pago
+    •   SPFE usada como plataforma
+
+
+                                                     5
+                  Proyecto de orden de SPFE
+• Tramite de audiencia e información pública: finalizado el 8 de mayo.
+
+• Procedimiento de información en materia de reglamentaciones técnicas y de reglas
+  relativas a los servicios de la sociedad de la información previsto en la Directiva (UE)
+  2015/1535 del Parlamento Europeo y del Consejo, de 9 de septiembre de 2015: finalizado
+  el 6 de agosto.
+
+
+• Actual proyecto de orden: 11 artículos, dos disposiciones adicionales, una disposición final
+  y dos anexos.
+
+
+
+
+                                                 6
+       Proyecto de orden de SPFE
+         Definir y regular los elementos técnicos y funcionales de la solución pública de
+         facturación electrónica previstos en la disposición final tercera del RD 238/2026.
+         Regula la emisión/generación, interconexión y servicios asociados a la SPFE,
+  1º     todo ello de acuerdo con de acuerdo con el artículo 2 bis de la Ley 56/2007, de 28
+         de diciembre, de Medidas de Impulso de la Sociedad de la Información.
+
+
+
+OBJETO    Se entenderá por función de interconexión de la solución pública de facturación
+          electrónica:
+          • tanto la capacidad de facilitar el intercambio de facturas electrónicas de
+            acuerdo con lo previsto en los artículos 6.1 y 8.2 del Real Decreto 238/2026,
+            de 25 de marzo,
+          • como también la funcionalidad consistente en poner a disposición las
+            facturas electrónicas y sus estados, permitiendo su acceso, consulta y
+            recuperación.
+
+                                  7
+         Proyecto de orden de SPFE
+
+             •   Remisión expresa al artículo 3 del RD 238/2026: obligados a FE los Eº/Pº
+                 sujetos a las obligaciones de facturación (RD 1619/2012) por las
+                 operaciones que realicen en el desarrollo de su actividad cuando el
+
+    2º           destinatario de la operación sea un empresario o profesional que tenga en
+                 España la sede de su actividad económica, o tenga en España un
+                 establecimiento permanente o, en su defecto, el lugar de su domicilio o
+                 residencia habitual, siempre que se trate de operaciones que tengan por
+ÁMBITO DE        destinatarios a dicha sede, establecimiento permanente, domicilio o
+                 residencia habitual. Remisión a las definiciones del artículo 2 del RD
+APLICACIÓN       238/2026.
+
+             •   Excepciones: artículo 4 (facturas simplificadas o autorización) DA 2ª
+                 (sectores excluidos);
+
+             •   Particularidades: apartados séptimo de la DA 21ª de la Ley 56/2007.
+
+
+
+                                   8
+          Proyecto de orden de SPFE
+                • La EMISIÓN y la INTERCONEXIÓN a través de la SPFE se ajusta al
+                  modelo semántico de datos basado en EN16931 del Comité Europeo
+                  de Normalización bajo la Sintaxis UBL. Las especificaciones
+     3º           técnicas y volúmenes estarán en la Sede electrónica de la AEAT.
+
+                                    Garantiza la interoperabilidad artículo 7.1 del Real Decreto 238/2026
+
+   SERVICIO     • Función de emisión/generación: se realizará a través del formulario
+
+   EMISIÓN E      web y se ajustará al contenido desarrollado en el Anexo I.
+                • Función interconexión: contenido del Anexo I pero podrá tener
+INTERCONEXIÓN     contenido adicional siempre que se ajuste al modelo semántico,
+                  sintaxis y especificaciones señalados en el artículo 3.1. de la Orden.
+                • Las facturas no podrán incorporar otros ficheros integrados o
+                  embebidos.
+                • Las facturas        interconectados         podrán       enviarse      con     firma
+                  electrónica.
+
+                                9
+                    Proyecto de orden de SPFE
+                                        • Cuando la emisión y la interconexión de FE NO se haga a través de la
+                                          SPFE, se debe enviar una COPIA FIEL a la SPFE simultáneamente a la
+                                          emisión. Si en este caso, la emisión se ha hecho por el destinatario o
+          4º                              tercero, la copia fiel se enviará por su plataforma, solución o sistema.
+                                        • La semántica, sintaxis y especificaciones las definidas por la SPFE.
+                                        • No admite ficheros integrados o embebidos.
+COPIA FIEL                              • Las copias electrónicas fieles estarán “marcadas” como tal en la SPFE.
+
+                                                                ¿cómo se marcan o identifican las copias electrónicas fieles de las FE originales?
+
+
+
+                                                      Se identificarán con el campo “Indicador de copia” cumplimentado con el
+                                                      indicador “True: copia”: <cbc:CopyIndicator>false</cbc:CopyIndicator>
+
+                                                                                                                               Tipo
+  ID      Nivel   Cardinalidad       Término de negocio (BT)                             Descripción                        semántico                 Ruta UBL
+                                                                                                                             de dato
+ BT-1      +          1..1       Serie y número de la factura    Serie y número que identifican la factura emitida.        Identificador
+                                                                 Adoptará alguno de los siguientes valores: True: copia.
+BT-ES-1    +          0..1       Indicador de copia                                                                         Indicador      /in:Invoice/cbc:CopyIndicator
+                                                                 False (o sin informar): original.
+
+
+                                                                           10
+          Proyecto de orden de SPFE
+                • La EMISIÓN de la FE a través de la SPFE se realizará mediante el
+                  Formulario de generación de FE. La emisión se realizará de
+                  forma individual y estas facturas serán verificables.
+     5º         • La INTERCONEXIÓN de la FE a través de la SPFE se realizará a
+                  través de servicios web.
+                • La remisión de las COPIAS a la SPFE se realizará a través de
+PROCEDIMIENTO     servicios web.
+
+ DE USO DE LA   • En todo caso
+                  especificaciones.
+                                      validación   de    sintaxis,   semántica   y
+
+
+    SPFE (I)
+                    MENSAJE DE RESPUESTA: facturas y copia admitidas y/o
+                    envíos rechazados con errores (con identificación de errores).
+
+                    Y ACUSE DE RECIBO: cuando la factura o copia es admitida se
+                    facilitará un acuse de recibo (con un CÓDIGO SEGURO DE
+                    VERIFICACIÓN).
+
+
+                              11
+          Proyecto de orden de SPFE
+                                            Situación Previa en la Solución
+                            Envío                                                    Reglas
+                                                       Pública
+
+     5º               Envío de copia fiel   Ya existe una copia fiel registrada.
+                                                                                   Rechazo del
+                                                                                     envío.
+
+                                             Ya existe una factura electrónica     Rechazo del
+                      Envío de copia fiel
+                                            original (emitida o intercambiada).      envío.
+PROCEDIMIENTO          Envío de factura      Ya existe una factura electrónica     Rechazo del
+
+ DE USO DE LA              original         original (emitida o intercambiada).      envío.
+
+
+   SPFE (II)     Requisito previo para reenvío:
+                 Si se utiliza la solución pública como medio de interconexión y ya se ha
+                 remitido una copia fiel, es obligatorio dar de baja dicha copia fiel antes
+                 de proceder con cualquier nuevo envío de la factura original.
+
+                 Identificación:
+                 Tanto las facturas originales como las copias fieles se identifican por su
+                 código único (regulado en el artículo 6).
+
+                                 12
+          Proyecto de orden de SPFE
+                                                          Acción Correctiva        Impacto en Factura
+                 Escenario      Causa del Rechazo
+                                                             Obligatoria                Original
+
+     5º         Rechazo de
+                                 Causa genérica (no
+                                     superación de
+                                                           Subsanar la causa y
+                              validaciones de la copia y                              Mantiene su validez.
+                 Copia Fiel                              remitir nueva copia fiel.
+                              no se debe a un error en
+                                  la factura original).
+PROCEDIMIENTO                    Errores en la factura
+                                   original (sintaxis,   1. Emitir factura original
+                                                                                    Requiere emisión de una
+ DE USO DE LA
+                Rechazo de     semántica, contenido no           correcta.
+                                                                                     nueva factura original
+                 Copia Fiel    contemplados en el art.      2. Remitir copia fiel
+                                                                                           correcta.
+                                15 del RD 1619/2012             simultánea
+   SPFE (IV)                      sobre rectificación)
+
+
+
+                Nota: La validez de la factura original no se ve afectada por el rechazo de
+                su copia fiel, salvo que el error sea intrínseco a la propia factura, en cuyo
+                caso debe emitirse una nueva.
+
+
+
+
+                                  13
+          Proyecto de orden de SPFE
+
+     5º
+                  No disponibilidad      de   la   solución   pública    de   factura
+                  electrónica:
+
+PROCEDIMIENTO     En aquellos supuestos en que, por razones de carácter técnico
+                  imputables a la solución pública de factura electrónica, no fuera
+ DE USO DE LA     posible su utilización por un periodo superior a veinticuatro horas,
+                  la remisión de las facturas electrónicas y de las copias fieles
+   SPFE (V)       podrá realizarse durante los cuatro días hábiles siguientes a la
+                  subsanación de la incidencia técnica.
+
+
+
+
+                              14
+       Proyecto de orden de SPFE
+                           • Cada factura debe incorporar un código único (art. 7.5 del RD 238/2026) que
+                             será el resultado de la concatenación del conjunto de los valores siguientes:
+                                             • Serie y número de la factura.
+
+                      6º                     • Fecha de expedición de la factura.
+                                             • El NIF del emisor.
+
+                           • Su inserción en la sintaxis (anexo I) es:
+CODIFICACIÓN                                  ID
+
+                                             BT-1
+                                                                    Nivel
+
+                                                                     +
+                                                                            Cardinalidad
+
+                                                                                1..1
+                                                                                            Término de negocio (BT)
+
+                                                                                           Serie y número de la factura
+                                                                                                                                               Descripción
+
+                                                                                                                          Serie y número que identifican la factura emitida.
+                                                                                                                                                                                    Tipo
+                                                                                                                                                                               semántico de
+                                                                                                                                                                                    dato
+                                                                                                                                                                                Identificador
+                                                                                                                                                                                                Ruta UBL
+
+
+
+
+   ÚNICA
+                                                                                           Fecha de expedición de la
+                                             BT-2                    +          1..1                                      Fecha en la que se ha expedido la factura.              Fecha
+                                                                                           factura
+
+                                                                                                                            BT-31: En este caso
+                                                                     Bt-31: Número de identificación fiscal a               /in:Invoice/cac:AccountingSupplie
+                                                        Número       efectos de IVA del vendedor, con el                    rParty/cac:Party/cac:PartyTaxSche
+       AAAA-MM-DD                                       de           prefijo correspondiente a España, según                me/cac:TaxScheme/cbc:ID tomará
+                                                        identificac los códigos ISO 3166-1.                                 el valor "VAT“
+                                                        ión fiscal a Será obligatorio consignar un NIF-IVA                  BT-32: En este caso
+                NIF           BT-31 /
+                                                        efectos de válido en el caso de que el campo BT-32                  /in:Invoice/cac:AccountingSupplie
+                                        ++         0..1 IVA del      no tenga contenido.                      Identificador rParty/cac:Party/cac:PartyTaxSche
+                              BT-32
+Permite      identificar                                vendedor / BT-32: Número de identificación fiscal                   me/cac:TaxScheme/cbc:ID tomará
+                                                        entificador (NIF) del vendedor.                                     el valor "LOC" y el atributo
+inequívocamente cada                                    fiscal del Será obligatorio consignar un NIF válido                 /in:Invoice/cac:AccountingSupplie
+factura (trazabilidad e                                 vendedor en el caso de que el campo BT-31 no                        rParty/cac:Party/cac:PartyTaxSche
+imposibilidad         de                                             tenga contenido.                                       me/cbc:CompanyID@schemeID
+                                                                                                                            tomará el valor "FC"
+duplicidades).
+
+
+                                                                    15
+           Proyecto de orden de SPFE
+                  • El DESTINATARIO deberá informar:
+
+                            TIPO DE COMUNICACIÓN               INFORMACIÓN OBLIGATORIA
+
+      7º                      Rechazo (Alta / Baja)
+                                                       En defecto de esta comunicación de rechazo la
+                                                               factura se presume aceptada
+
+                                                      Motivo rechazo: Rechazo comercial / No afectación
+
+                                                                  Fecha de efecto / pago
+                               Pago (Alta / Baja)
+COMUNICACIÓN                                              Fecha del vencimiento del plazo de pago
+
+
+
+ DE PAGOS (I) -   • El DESTINATARIO podrá informar cuando resulte relevante de acuerdo
+ DESTINATARIO       a lo previsto en el artículo 4 de la Ley 3/2004, de 29 de diciembre, o por
+                    otra normativa específica en esta materia que resulte aplicable:
+                        • Fecha recepción mercancías / prestación del servicio.
+                        • Fecha recepción de la factura.
+
+
+
+
+                                   16
+            Proyecto de orden de SPFE
+                   • El EMISOR de la
+                    factura PODRÁ informar:
+
+       7º                 TIPO DE COMUNICACIÓN                            INFORMACIÓN VOLUNTARIA
+                             Impago (Alta / Baja)                         Fecha de vencimiento del pago
+                                                                                  Fecha de cobro
+                                                                        Fecha del vencimiento del plazo de
+
+COMUNICACIÓN                   Cobro (Alta / Baja)
+                                                                                       pago
+                                                                       Mecanismo de financiación concertado
+
+ DE PAGOS (II) -
+                                                                                   por el emisor
+                                                                           Fecha recepción mercancías /
+                                                                               prestación servicios
+    EMISOR                                                               Fecha de recepción de la factura
+
+                                                                                       Tipo
+                         Cardinalida    Término de negocio                           semántico
+                   Nivel      d                (BT)                Descripción        de dato                       Ruta UBL
+                                                             Indicador de si el
+                                                             cobro se ha producido
+                                                             a través de un                      ApplicationResponse/cac:DocumentResponse/cac:
+                                       Mecanismo de
+                    +       0..1                             mecanismo de            Indicador   Response/cac:Status/cac:Condition/cbc:AttributeID
+                                       financiación
+                                                             financiación                        =FinancingArrangement
+                                                             concertado por el
+                                                             emisor.
+
+
+
+                                                 17
+           Proyecto de orden de SPFE
+
+                  • El contenido de estas comunicaciones se recoge en el Anexo II de
+      7º            la orden junto con su inserción en la sintaxis UBL. Sus
+                    especificaciones técnicas estarán en la Sede electrónica de la
+                    AEAT.
+
+COMUNICACIÓN      • SIMPLIFICACIÓN “pagos al contado”:
+ DE PAGOS (III)   La obligación del destinatario de informar sobre el estado de pago
+                  de la factura electrónica se entenderá cumplida cuando la propia
+                  factura, o su copia fiel, incluya una fecha de pago anterior o
+                  coincidente con su fecha de expedición y coincidente con la fecha
+                  de la operación o de devengo. Lo anterior no será de aplicación
+                  cuando el destinatario comunique expresamente el estado de pago.
+
+
+
+
+                                 18
+          Proyecto de orden de SPFE
+
+                 • Las COMUNICACIONES a la solución de pagos de la SPFE, se
+     8º            podrán hacer:
+                        • Mediante formulario web. La comunicación será individual
+                          por factura, y para informar será necesario identificar la
+                          factura (código único).
+PROCEDIMIENTO           • Mediante servicios web.
+      DE
+COMUNICACIÓN     MENSAJE DE RESPUESTA: comunicaciones admitidas y/o rechazados
+  DE ESTADOS     con errores (con identificación de errores).
+
+                 Y ACUSE DE RECIBO: cuando la comunicación es admitida se facilitará
+                 un acuse de recibo (con un CÓDIGO SEGURO DE VERIFICACIÓN).
+
+
+
+                              19
+      Proyecto de orden de SPFE
+
+
+
+     9º        • Las plataformas privadas que intercambien la facturas a
+                 través de la SPFE están obligadas a recuperar las FE
+                 intercambiadas. Esta recuperación debe estar automatizada e
+                 implicará la puesta a disposición inmediata de sus clientes.
+RECUPERACIÓN   • El destinatario (que no utilice una plataforma) de las facturas
+                 recuperará sus facturas directamente o con un acceso
+ DE FACTURAS     automatizado.
+
+
+
+
+                           20
+     Proyecto de orden de SPFE
+
+             Consulta y descarga de facturas, copias fieles y estados de pago:
+
+
+   10º       Podrán acceder a las facturas electrónicas y copias fieles y sus
+             estados de pago : Emisores, destinatarios y terceros autorizados.
+
+
+CONSULTA Y   Métodos de consulta:
+
+DESCARGA     • Servicios web.
+             • Formulario electrónico.
+
+
+
+
+                          21
+       Proyecto de orden de SPFE
+                 • AUTENTICACIÓN: Para el ENVÍO a la SPFE se requiere la
+                   autenticación del remitente con certificado electrónico. Si el
+                   envío se hace mediante los formularios podrá utilizarse además
+                   del certificado, cuando corresponda, el sistema cl@ve.
+     11º
+                 • REPRESENTACIÓN:
+                 • Para el ENVÍO: La SPFE podrá ser utilizada por el empresario o
+IDENTIFICACIÓN     profesional obligado o por un apoderado o colaborador social.
+                   No obstante, en el caso de se utilicen los formularios, solo será
+ Y ACCESO A LA     válida la representación acreditada mediante apoderamiento
+                   inscrito en el registro de apoderamiento de la AEAT.
+     SPFE        • Para la CONSULTA Y RECUPERACIÓN: La representación solo
+                   podrá acreditarse mediante apoderamiento (tanto para la
+                   recuperación directa como a través de un acceso automatizado).
+
+
+
+                              22
+     Proyecto de orden de SPFE
+
+
+
+
+ENTRADA EN    La ORDEN entrará en vigor el 1 de octubre de 2026.
+  VIGOR
+
+
+
+
+                     23
+  PLAZOS FACTURA ELECTRÓNICA B2B NACIONAL
+
+       1 octubre 2026   1 octubre 2027   1 octubre 2028    1 octubre 2029
+
+
+
+
+MAYO
+2026
+
+        ENTRADA EN         FACTURA          FACTURA
+        VIGOR DE LA      ELECTRÓNICA     ELECTRÓNICA
+           ORDEN        (empresas VO >   (resto con VO ≤
+                             8 M)              8M)
+
+                                             PAGOS              PAGOS
+                           PAGOS             (PYMES        (PYMES: ERARs
+                        (empresas VO >      personas          y personas
+                             8 M)        jurídicas VO ≤    físicas VO ≤ 8M)
+                                               8M)
+
+
+
+                                 24
+
