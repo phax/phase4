@@ -535,7 +535,6 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    * @return Completely filled builder. Never <code>null</code>.
    * @since 3.0.0 Beta7
    */
-  @SuppressWarnings ("removal")
   @NonNull
   public static Phase4PeppolReceiverConfigurationBuilder getAsReceiverCheckDataBuilder ()
   {
@@ -561,7 +560,6 @@ public final class Phase4PeppolDefaultReceiverConfiguration
                                             .apCertificate (aAPCertificate)
                                             .sbdhIdentifierFactory (getSBDHIdentifierFactory ())
                                             .performSBDHValueChecks (isPerformSBDHValueChecks ())
-                                            .checkSBDHForMandatoryCountryC1 (isCheckSBDHForMandatoryCountryC1 ())
                                             .checkAPSigningCertificateRevocation (isCheckSigningCertificateRevocation ())
                                             .apCAChecker (getAPCAChecker ())
                                             .apRevocationSoftFail (isAPRevocationSoftFail ())
