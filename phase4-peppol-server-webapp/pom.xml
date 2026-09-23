@@ -40,6 +40,8 @@
   </licenses>
 
   <properties>
+    <!-- Don't publish this WAR module to Maven Central -->
+    <skipPublishing>true</skipPublishing>
     <m2e.jaxrs.activation>false</m2e.jaxrs.activation>
     <m2e.jpa.activation>false</m2e.jpa.activation>
     <m2e.jsf.activation>false</m2e.jsf.activation>

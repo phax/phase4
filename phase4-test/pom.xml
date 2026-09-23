@@ -40,6 +40,8 @@
   </licenses>
 
   <properties>
+    <!-- Don't publish this WAR module to Maven Central -->
+    <skipPublishing>true</skipPublishing>
     <littleproxy.version>2.9.1</littleproxy.version>
   </properties>
 
