@@ -84,7 +84,7 @@
     <ph-ubl.version>10.2.0</ph-ubl.version>
     <ph-web.version>11.4.5</ph-web.version>
     <phive.version>12.1.0</phive.version>
-    <phive-rules.version>4.5.6</phive-rules.version>
+    <phive-rules.version>4.6.0</phive-rules.version>
     <peppol-commons.version>12.10.0</peppol-commons.version>
     <peppol-reporting.version>4.3.0</peppol-reporting.version>
     <peppol-ap-support.version>2.3.0</peppol-ap-support.version>
@@ -109,7 +109,7 @@
       <dependency>
         <groupId>com.helger.schedule</groupId>
         <artifactId>ph-schedule-parent-pom</artifactId>
-        <version>6.1.1</version>
+        <version>6.2.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
