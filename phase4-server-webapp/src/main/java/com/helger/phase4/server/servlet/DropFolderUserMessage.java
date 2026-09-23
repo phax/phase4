@@ -64,14 +64,14 @@ import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
-import com.helger.smpclient.url.IPeppolURLProvider;
-import com.helger.smpclient.url.PeppolNaptrURLProvider;
+import com.helger.smpclient.url.dns.IBDXLURLProvider;
+import com.helger.smpclient.url.dns.PeppolNaptrURLProvider;
 import com.helger.xsds.peppol.smp1.EndpointType;
 
 public final class DropFolderUserMessage
 {
   private static final IIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
-  private static final IPeppolURLProvider UP = PeppolNaptrURLProvider.INSTANCE;
+  private static final IBDXLURLProvider UP = PeppolNaptrURLProvider.INSTANCE;
   private static final String PATH_DONE = "done";
   private static final String PATH_ERROR = "error";
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (DropFolderUserMessage.class);

@@ -35,6 +35,7 @@ import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.datetime.helper.PDTFactory;
 import com.helger.datetime.web.PDTWebDateHelper;
+import com.helger.hredelivery.commons.smp.EHREDeliveryTransportProfile;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
@@ -42,7 +43,6 @@ import com.helger.json.JsonObject;
 import com.helger.json.serialize.IJsonWriterSettings;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.sml.ISMLInfo;
-import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -120,7 +120,7 @@ public class Phase4HREdeliverySendingReport
   {
     m_aCurrentDateTimeUTC = PDTFactory.getCurrentOffsetDateTimeMillisOnlyUTC ();
     m_sSMLDNSZone = aSMLInfo.getDNSZone ();
-    m_sTransportProfileID = ESMPTransportProfile.TRANSPORT_PROFILE_ERACUN_AS4_V1.getID ();
+    m_sTransportProfileID = EHREDeliveryTransportProfile.AS4_V1.getID ();
   }
 
   /**

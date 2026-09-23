@@ -54,6 +54,10 @@
       <artifactId>peppol-commons</artifactId>
       <version>${peppol-commons.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>ph-nss</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>jakarta.servlet</groupId>

@@ -31,7 +31,7 @@ import com.helger.base.CGlobal;
 import com.helger.http.tls.ETLSVersion;
 import com.helger.http.tls.TLSConfigurationMode;
 import com.helger.httpclient.HttpClientSettings;
-import com.helger.peppol.security.MozillaNSSTrustStore;
+import com.helger.nss.MozillaNSSTrustStore;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.CAS4Version;
 import com.helger.phase4.logging.Phase4LoggerFactory;

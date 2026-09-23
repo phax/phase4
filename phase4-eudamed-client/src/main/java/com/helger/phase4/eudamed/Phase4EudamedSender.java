@@ -43,8 +43,8 @@ import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.smpclient.url.BDXLURLProvider;
-import com.helger.smpclient.url.IBDXLURLProvider;
+import com.helger.smpclient.url.dns.BDXLURLProvider;
+import com.helger.smpclient.url.dns.IBDXLURLProvider;
 
 /**
  * This class contains all the specifics to send AS4 messages with the CEF profile. See

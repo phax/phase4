@@ -48,12 +48,12 @@ import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.diagnostics.error.IError;
 import com.helger.diagnostics.error.list.ErrorList;
+import com.helger.edelivery.smp.ISMPTransportProfile;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHData;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHDataReadException;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHDataReader;
+import com.helger.hredelivery.commons.smp.EHREDeliveryTransportProfile;
 import com.helger.http.header.HttpHeaderMap;
-import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -161,7 +161,7 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
     }
   }
 
-  public static final ESMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_ERACUN_AS4_V1;
+  public static final EHREDeliveryTransportProfile DEFAULT_TRANSPORT_PROFILE = EHREDeliveryTransportProfile.AS4_V1;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4HREDeliveryServletMessageProcessorSPI.class);
 
@@ -467,15 +467,8 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                                                                          .checkCertificate (aSenderSigningCert, aNow);
       if (eCertCheckResult.isInvalid ())
       {
-        if (aReceiverCheckData.isAPRevocationSoftFail () &&
-            eCertCheckResult == ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN)
-        {
-          LOGGER.warn (sLogPrefix +
-                       "The revocation status of the inbound HR eDelivery AP signing certificate could not be determined (at " +
-                       aNow +
-                       "); accepting the message because revocation soft-fail is enabled.");
-        }
-        else
+        if (!aReceiverCheckData.isAPRevocationSoftFail () ||
+            (eCertCheckResult != ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN))
         {
           final String sDetails = "The received HR eDelivery message is signed with a HR eDelivery AP certificate invalid at " +
                                   aNow +
@@ -488,6 +481,10 @@ public class Phase4HREDeliveryServletMessageProcessorSPI implements IAS4Incoming
                                                                              .build ());
           return AS4MessageProcessorResult.createFailure ();
         }
+        LOGGER.warn (sLogPrefix +
+                     "The revocation status of the inbound HR eDelivery AP signing certificate could not be determined (at " +
+                     aNow +
+                     "); accepting the message because revocation soft-fail is enabled.");
       }
     }
     else

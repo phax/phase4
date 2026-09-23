@@ -34,13 +34,13 @@ import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.datetime.helper.PDTFactory;
 import com.helger.datetime.web.PDTWebDateHelper;
+import com.helger.dbnalliance.commons.smp.EDBNAllianceTransportProfile;
 import com.helger.json.IJsonArray;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonArray;
 import com.helger.json.JsonObject;
 import com.helger.json.serialize.IJsonWriterSettings;
 import com.helger.json.serialize.JsonWriterSettings;
-import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -113,7 +113,7 @@ public class Phase4DBNAllianceSendingReport
   {
     m_aCurrentDateTimeUTC = PDTFactory.getCurrentOffsetDateTimeUTC ();
     m_sSMLDNSZone = sDNSZone;
-    m_sTransportProfileID = ESMPTransportProfile.TRANSPORT_PROFILE_DBNA_AS4_V1.getID ();
+    m_sTransportProfileID = EDBNAllianceTransportProfile.AS4_V1.getID ();
   }
 
   /**

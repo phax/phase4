@@ -21,8 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIInterface;
+import com.helger.dbnalliance.xhe.DBNAllianceXHEData;
 import com.helger.http.header.HttpHeaderMap;
-import com.helger.peppol.xhe.DBNAllianceXHEData;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;

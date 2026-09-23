@@ -85,9 +85,9 @@
     <ph-web.version>11.4.6</ph-web.version>
     <phive.version>12.1.0</phive.version>
     <phive-rules.version>4.6.0</phive-rules.version>
-    <peppol-commons.version>12.10.0</peppol-commons.version>
-    <peppol-reporting.version>4.3.0</peppol-reporting.version>
-    <peppol-ap-support.version>2.3.0</peppol-ap-support.version>
+    <peppol-commons.version>13.0.0</peppol-commons.version>
+    <peppol-reporting.version>4.4.0</peppol-reporting.version>
+    <peppol-ap-support.version>2.4.0</peppol-ap-support.version>
   </properties>
 
   <dependencyManagement>
@@ -133,6 +133,11 @@
         <version>10.6.0</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>ph-nss</artifactId>
+        <version>1.0.0</version>
       </dependency>
       
       <dependency>

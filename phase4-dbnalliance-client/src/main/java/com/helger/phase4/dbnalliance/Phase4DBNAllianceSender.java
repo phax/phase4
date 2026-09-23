@@ -35,12 +35,12 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.state.ESuccess;
 import com.helger.base.state.ETriState;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
+import com.helger.dbnalliance.commons.smp.EDBNAllianceTransportProfile;
+import com.helger.dbnalliance.xhe.DBNAlliancePayload;
+import com.helger.dbnalliance.xhe.DBNAllianceXHEData;
+import com.helger.dbnalliance.xhe.write.DBNAllianceXHEDataWriter;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
-import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.xhe.DBNAlliancePayload;
-import com.helger.peppol.xhe.DBNAllianceXHEData;
-import com.helger.peppol.xhe.write.DBNAllianceXHEDataWriter;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -68,8 +68,8 @@ import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
-import com.helger.smpclient.url.DBNAURLProviderSMP;
 import com.helger.smpclient.url.ISMPURLProvider;
+import com.helger.smpclient.url.dns.DBNAURLProviderSMP;
 import com.helger.xhe.v10.CXHE10;
 import com.helger.xhe.v10.XHE10Marshaller;
 import com.helger.xhe.v10.XHE10XHEType;
@@ -401,7 +401,7 @@ public final class Phase4DBNAllianceSender
     public final IMPLTYPE smpClient (@NonNull final IBDXR2ServiceMetadataProvider aSMPClient)
     {
       final AS4EndpointDetailProviderBDXR2 aEndpointDetailProvider = new AS4EndpointDetailProviderBDXR2 (aSMPClient);
-      aEndpointDetailProvider.setTransportProfile (ESMPTransportProfile.TRANSPORT_PROFILE_DBNA_AS4_V1);
+      aEndpointDetailProvider.setTransportProfile (EDBNAllianceTransportProfile.AS4_V1);
       return endpointDetailProvider (aEndpointDetailProvider);
     }
 

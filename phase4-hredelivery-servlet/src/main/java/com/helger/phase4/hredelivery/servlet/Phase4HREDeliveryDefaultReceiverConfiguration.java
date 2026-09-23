@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
-import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHDataReader;
+import com.helger.edelivery.sbdh.AbstractSBDHDataReader;
 import com.helger.hredelivery.commons.security.HREDeliveryTrustedCA;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
@@ -61,7 +61,7 @@ public final class Phase4HREDeliveryDefaultReceiverConfiguration
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
   private static IIdentifierFactory s_aSBDHIdentifierFactory = DEFAULT_SBDH_IDENTIFIER_FACTORY;
-  private static boolean s_bPerformSBDHValueChecks = HREDeliverySBDHDataReader.DEFAULT_PERFORM_VALUE_CHECKS;
+  private static boolean s_bPerformSBDHValueChecks = AbstractSBDHDataReader.DEFAULT_PERFORM_VALUE_CHECKS;
   private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
   private static TrustedCAChecker s_aAPCAChecker = DEFAULT_HREDELIVERY_AP_CA_CHECKER;
   private static boolean s_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();

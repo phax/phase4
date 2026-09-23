@@ -32,7 +32,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
-import com.helger.smpclient.url.DBNAURLProviderSMP;
+import com.helger.smpclient.url.dns.DBNAURLProviderSMP;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 

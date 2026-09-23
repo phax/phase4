@@ -44,11 +44,11 @@ import com.helger.base.string.StringHelper;
 import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHData;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHDataWriter;
+import com.helger.hredelivery.commons.smp.EHREDeliveryTransportProfile;
 import com.helger.hredelivery.commons.smp.HRMPSClientReadOnly;
 import com.helger.hredelivery.commons.url.HREDeliveryNaptrURLProvider;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
-import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -657,7 +657,7 @@ public final class Phase4HREdeliverySender
     @NonNull
     public final IMPLTYPE smpClient (@NonNull final HRMPSClientReadOnly aSMPClient)
     {
-      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (aSMPClient).setTransportProfile (ESMPTransportProfile.TRANSPORT_PROFILE_ERACUN_AS4_V1));
+      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (aSMPClient).setTransportProfile (EHREDeliveryTransportProfile.AS4_V1));
     }
 
     /**

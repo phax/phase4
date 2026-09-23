@@ -54,6 +54,7 @@ import com.helger.collection.commons.ICommonsList;
 import com.helger.datetime.xml.XMLOffsetDateTime;
 import com.helger.diagnostics.error.IError;
 import com.helger.diagnostics.error.list.ErrorList;
+import com.helger.edelivery.smp.ISMPTransportProfile;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.peppol.reporting.api.CPeppolReporting;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
@@ -61,7 +62,6 @@ import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppol.sbdh.PeppolSBDHDataReadException;
 import com.helger.peppol.sbdh.PeppolSBDHDataReader;
 import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -523,7 +523,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                   @NonNull final IAS4IncomingMessageState aState)
   {}
 
-  @SuppressWarnings ("removal")
   @NonNull
   public AS4MessageProcessorResult processAS4UserMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                           @NonNull final HttpHeaderMap aHttpHeaders,
@@ -639,15 +638,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                                                             aReceiverCheckData.getAPRevocationCheckMode ());
       if (eCertCheckResult.isInvalid ())
       {
-        if (aReceiverCheckData.isAPRevocationSoftFail () &&
-            eCertCheckResult == ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN)
-        {
-          LOGGER.warn (sLogPrefix +
-                       "The revocation status of the inbound Peppol AP signing certificate could not be determined (at " +
-                       aNow +
-                       "); accepting the message because revocation soft-fail is enabled.");
-        }
-        else
+        if (!aReceiverCheckData.isAPRevocationSoftFail () ||
+            (eCertCheckResult != ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN))
         {
           final String sDetails = "The received Peppol message is signed with a Peppol AP certificate invalid at " +
                                   aNow +
@@ -660,6 +652,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                                              .build ());
           return AS4MessageProcessorResult.createFailure ();
         }
+        LOGGER.warn (sLogPrefix +
+                     "The revocation status of the inbound Peppol AP signing certificate could not be determined (at " +
+                     aNow +
+                     "); accepting the message because revocation soft-fail is enabled.");
       }
     }
     else
@@ -792,9 +788,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
 
       // Interpret as Peppol SBDH and eventually perform consistency checks
       final boolean bPerformValueChecks = aReceiverCheckData.isPerformSBDHValueChecks ();
-      final boolean bCheckForCountryC1 = aReceiverCheckData.isCheckSBDHForMandatoryCountryC1 ();
-      final PeppolSBDHDataReader aReader = new PeppolSBDHDataReader (aIdentifierFactory).setPerformValueChecks (bPerformValueChecks)
-                                                                                        .setCheckForCountryC1 (bCheckForCountryC1);
+      final PeppolSBDHDataReader aReader = new PeppolSBDHDataReader (aIdentifierFactory).setPerformValueChecks (bPerformValueChecks);
 
       aPeppolSBDH = aReader.extractData (aReadAttachment.standardBusinessDocument ());
 

@@ -26,7 +26,7 @@ import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.dbnalliance.commons.security.DBNAllianceTrustStores;
-import com.helger.peppol.xhe.read.DBNAllianceXHEDataReader;
+import com.helger.dbnalliance.xhe.read.DBNAllianceXHEDataReader;
 import com.helger.peppolid.factory.DBNAllianceIdentifierFactory;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.phase4.CAS4;

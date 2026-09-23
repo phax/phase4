@@ -47,14 +47,14 @@ import com.helger.base.string.StringHelper;
 import com.helger.collection.CollectionFind;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
+import com.helger.dbnalliance.commons.smp.EDBNAllianceTransportProfile;
+import com.helger.dbnalliance.xhe.DBNAllianceXHEData;
+import com.helger.dbnalliance.xhe.read.DBNAllianceXHEDataReadException;
+import com.helger.dbnalliance.xhe.read.DBNAllianceXHEDataReader;
 import com.helger.diagnostics.error.IError;
 import com.helger.diagnostics.error.list.ErrorList;
+import com.helger.edelivery.smp.ISMPTransportProfile;
 import com.helger.http.header.HttpHeaderMap;
-import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.smp.ISMPTransportProfile;
-import com.helger.peppol.xhe.DBNAllianceXHEData;
-import com.helger.peppol.xhe.read.DBNAllianceXHEDataReadException;
-import com.helger.peppol.xhe.read.DBNAllianceXHEDataReader;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -163,7 +163,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
     }
   }
 
-  public static final ESMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_DBNA_AS4_V1;
+  public static final EDBNAllianceTransportProfile DEFAULT_TRANSPORT_PROFILE = EDBNAllianceTransportProfile.AS4_V1;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4DBNAllianceServletMessageProcessorSPI.class);
 
@@ -496,15 +496,8 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
                                                                          .checkCertificate (aSenderSigningCert, aNow);
       if (eCertCheckResult.isInvalid ())
       {
-        if (aReceiverCheckData.isAPRevocationSoftFail () &&
-            eCertCheckResult == ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN)
-        {
-          LOGGER.warn (sLogPrefix +
-                       "The revocation status of the inbound DBNAlliance AP signing certificate could not be determined (at " +
-                       aNow +
-                       "); accepting the message because revocation soft-fail is enabled.");
-        }
-        else
+        if (!aReceiverCheckData.isAPRevocationSoftFail () ||
+            (eCertCheckResult != ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN))
         {
           final String sDetails = "The received DBNAlliance message is signed with a DBNAlliance AP certificate invalid at " +
                                   aNow +
@@ -517,6 +510,10 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
                                                                              .build ());
           return AS4MessageProcessorResult.createFailure ();
         }
+        LOGGER.warn (sLogPrefix +
+                     "The revocation status of the inbound DBNAlliance AP signing certificate could not be determined (at " +
+                     aNow +
+                     "); accepting the message because revocation soft-fail is enabled.");
       }
     }
     else

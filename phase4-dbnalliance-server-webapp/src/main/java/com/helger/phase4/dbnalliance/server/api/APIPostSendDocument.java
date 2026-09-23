@@ -52,7 +52,7 @@ import com.helger.photon.api.IAPIDescriptor;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
-import com.helger.smpclient.url.DBNAURLProviderSMP;
+import com.helger.smpclient.url.dns.DBNAURLProviderSMP;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.read.DOMReader;
 

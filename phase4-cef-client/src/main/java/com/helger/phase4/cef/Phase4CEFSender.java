@@ -47,8 +47,8 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
-import com.helger.smpclient.url.BDXLURLProvider;
-import com.helger.smpclient.url.IBDXLURLProvider;
+import com.helger.smpclient.url.dns.BDXLURLProvider;
+import com.helger.smpclient.url.dns.IBDXLURLProvider;
 
 /**
  * This class contains all the specifics to send AS4 messages with the CEF profile. See

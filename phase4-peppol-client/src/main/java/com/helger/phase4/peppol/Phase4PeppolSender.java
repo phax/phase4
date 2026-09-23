@@ -96,8 +96,8 @@ import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
 import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
-import com.helger.smpclient.url.IPeppolURLProvider;
-import com.helger.smpclient.url.PeppolNaptrURLProvider;
+import com.helger.smpclient.url.dns.IBDXLURLProvider;
+import com.helger.smpclient.url.dns.PeppolNaptrURLProvider;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xsds.peppol.smp1.EndpointType;
 
@@ -112,7 +112,7 @@ import com.helger.xsds.peppol.smp1.EndpointType;
 public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
-  public static final IPeppolURLProvider URL_PROVIDER = PeppolNaptrURLProvider.INSTANCE;
+  public static final IBDXLURLProvider URL_PROVIDER = PeppolNaptrURLProvider.INSTANCE;
   @Deprecated (forRemoval = true, since = "4.3.0")
   public static final String REGEX_SEAT_ID = PeppolIdentifierHelper.REGEX_SEAT_ID;
 
