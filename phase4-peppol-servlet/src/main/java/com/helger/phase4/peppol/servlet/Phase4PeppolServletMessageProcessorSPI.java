@@ -1047,6 +1047,55 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       }
     }
 
+    // Check if Service and Action match the requirements of the Peppol AS4 specification, section
+    // 4.6
+    // https://docs.peppol.eu/edelivery/as4/specification/#_service_action_and_role
+    // TODO In one of the next versions, a mismatch should be elevated from a warning to an error,
+    // rejecting the message (honoring "bRejectOnNonCompliance") like the checks of section 4.5 do
+    {
+      // The Service Type defaults to "cenbii-procid-ubl" if it is not specified
+      final String sAS4ServiceType = StringHelper.isEmpty (sServiceType) ? PeppolIdentifierHelper.PROCESS_SCHEME_CENBII_PROCID_UBL
+                                                                         : sServiceType;
+      // Make sure the Peppol ID is on the left hand side, as it depends on the IdentifierFactory of
+      // the SBDH which is flexible
+      final IProcessIdentifier aAS4ProcessID = aIdentifierFactory.createProcessIdentifier (sAS4ServiceType, sService);
+      if (aAS4ProcessID == null || !aAS4ProcessID.hasSameContent (aPeppolSBDH.getProcessAsIdentifier ()))
+      {
+        final String sMsg = "The AS4 'CollaborationInfo/Service' (" +
+                            (aAS4ProcessID == null ? "not compliant to the Peppol rules - " +
+                                                     sAS4ServiceType +
+                                                     "::" +
+                                                     sService : aAS4ProcessID.getURIEncoded ()) +
+                            ") is different from the SBDH Process Identifier (" +
+                            aPeppolSBDH.getProcessURIEncoded () +
+                            ")";
+        LOGGER.warn (sLogPrefix + sMsg);
+      }
+
+      // The Action is the URI encoded Document Type ID.
+      // If it cannot be parsed as-is, the Document Type ID scheme is considered to be missing, in
+      // which case "busdox-docid-qns" is the default, and it is parsed a second time.
+      // Note: the presence of "::" cannot be used as the indicator, because a Peppol Document Type
+      // ID value contains "::" itself - a scheme less Action therefore splits into a first segment
+      // that is way longer than the 25 characters an identifier scheme may have.
+      // Values using URL percent encoding are not parsable either and therefore lead to a warning.
+      IDocumentTypeIdentifier aAS4DocTypeID = aIdentifierFactory.parseDocumentTypeIdentifier (sAction);
+      if (aAS4DocTypeID == null)
+        aAS4DocTypeID = aIdentifierFactory.createDocumentTypeIdentifier (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_BUSDOX_DOCID_QNS,
+                                                                         sAction);
+
+      if (aAS4DocTypeID == null || !aAS4DocTypeID.hasSameContent (aPeppolSBDH.getDocumentTypeAsIdentifier ()))
+      {
+        final String sMsg = "The AS4 'CollaborationInfo/Action' (" +
+                            (aAS4DocTypeID == null ? "not compliant to the Peppol rules - " + sAction
+                                                   : aAS4DocTypeID.getURIEncoded ()) +
+                            ") is different from the SBDH Document Type Identifier (" +
+                            aPeppolSBDH.getDocumentTypeURIEncoded () +
+                            ")";
+        LOGGER.warn (sLogPrefix + sMsg);
+      }
+    }
+
     // If the receiver checks are activated, run them now
     if (aReceiverCheckData.isReceiverCheckEnabled ())
     {
