@@ -89,7 +89,7 @@ import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
-import com.helger.phase4.messaging.http.AS4TlsConnectionDetails;
+import com.helger.phase4.messaging.http.AS4ConnectionDetails;
 import com.helger.phase4.messaging.http.BasicHttpPoster;
 import com.helger.phase4.messaging.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
@@ -1932,7 +1932,7 @@ public class AS4RequestHandler implements AutoCloseable
             final HttpHeaderMap aResponseHttpHeaders = null;
             // TODO make async send parameters customizable
             final HttpRetrySettings aRetrySettings = new HttpRetrySettings ();
-            final Consumer <? super AS4TlsConnectionDetails> aTlsConnectionDetailsConsumer = null;
+            final Consumer <? super AS4ConnectionDetails> aConnectionDetailsConsumer = null;
             aAsyncResponse = aSender.sendGenericMessageWithRetries (sAsyncResponseURL,
                                                                     aResponseHttpHeaders,
                                                                     aHttpEntity,
@@ -1941,7 +1941,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                     new ResponseHandlerXml (),
                                                                     m_aOutgoingDumper,
                                                                     m_aRetryCallback,
-                                                                    aTlsConnectionDetailsConsumer);
+                                                                    aConnectionDetailsConsumer);
           }
           AS4HttpDebug.debug (() -> "SEND-RESPONSE [async sent] received: " +
                                     (aAsyncResponse == null ? "null"

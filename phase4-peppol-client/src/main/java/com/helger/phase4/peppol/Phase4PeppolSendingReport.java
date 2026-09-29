@@ -55,6 +55,7 @@ import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
+import com.helger.phase4.messaging.http.AS4ConnectionDetails;
 import com.helger.phase4.messaging.http.AS4TlsConnectionDetails;
 import com.helger.phase4.model.soapfault.AS4SoapFault;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
@@ -753,16 +754,39 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * @return The details of the TLS connection to C3 - like the TLS protocol version and the
-   *         negotiated cipher suite. May be <code>null</code> if C3 was contacted via plain HTTP,
-   *         or if no raw HTTP response was provided via
-   *         {@link #setRawHttpResponse(AS4ClientSentMessage)}.
+   * @return The details of the connection to C3 - the negotiated HTTP version, the socket
+   *         addresses of both ends and the TLS layer. May be <code>null</code> if no raw HTTP
+   *         response was provided via {@link #setRawHttpResponse(AS4ClientSentMessage)}.
+   * @since 4.8.0
+   */
+  @Nullable
+  public AS4ConnectionDetails getConnectionDetails ()
+  {
+    return m_aRawHttpResponse == null ? null : m_aRawHttpResponse.getConnectionDetails ();
+  }
+
+  /**
+   * @return <code>true</code> if connection details are present, <code>false</code> if not.
+   * @see #getConnectionDetails()
+   * @since 4.8.0
+   */
+  public boolean hasConnectionDetails ()
+  {
+    return getConnectionDetails () != null;
+  }
+
+  /**
+   * @return The details of the TLS layer of the connection to C3 - like the TLS protocol version
+   *         and the negotiated cipher suite. May be <code>null</code> if C3 was contacted via
+   *         plain HTTP. This is a shortcut for
+   *         <code>getConnectionDetails ().getTlsDetails ()</code>.
    * @since 4.8.0
    */
   @Nullable
   public AS4TlsConnectionDetails getTlsConnectionDetails ()
   {
-    return m_aRawHttpResponse == null ? null : m_aRawHttpResponse.getTlsConnectionDetails ();
+    final AS4ConnectionDetails aConnectionDetails = getConnectionDetails ();
+    return aConnectionDetails == null ? null : aConnectionDetails.getTlsDetails ();
   }
 
   /**
@@ -1094,10 +1118,10 @@ public class Phase4PeppolSendingReport
     if (hasAS4SendingDT ())
       aJson.add ("as4SendingDateTime", PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
 
-    // The TLS connection parameters are always rendered, because they are small. The peer
+    // The connection parameters are always rendered, because they are small. The TLS
     // certificates are not contained, because they are pretty large.
-    if (hasTlsConnectionDetails ())
-      aJson.add ("tlsConnection", getTlsConnectionDetails ().getAsJsonObject (false));
+    if (hasConnectionDetails ())
+      aJson.add ("connection", getConnectionDetails ().getAsJsonObject (false));
 
     // AS4 response
     // Don't render Raw response in case of success, as the Signal Message is contained anyway
@@ -1307,10 +1331,10 @@ public class Phase4PeppolSendingReport
       ret.addElementNS (sNamespaceURI, "AS4SendingDateTime")
          .addText (PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
 
-    // The TLS connection parameters are always rendered, because they are small. The peer
+    // The connection parameters are always rendered, because they are small. The TLS
     // certificates are not contained, because they are pretty large.
-    if (hasTlsConnectionDetails ())
-      ret.addChild (getTlsConnectionDetails ().getAsMicroElement (sNamespaceURI, "TlsConnection", false));
+    if (hasConnectionDetails ())
+      ret.addChild (getConnectionDetails ().getAsMicroElement (sNamespaceURI, "Connection", false));
 
     // AS4 response
     // Don't render Raw response in case of success, as the Signal Message is contained anyway

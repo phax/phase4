@@ -18,6 +18,7 @@ package com.helger.phase4.messaging.http;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -94,7 +95,7 @@ public final class BasicHttpPosterTest
   }
 
   @Test
-  public void testNoTlsConnectionDetailsForPlainHttp () throws IOException
+  public void testConnectionDetailsForPlainHttp () throws IOException
   {
     final HttpServer aServer = HttpServer.create (new InetSocketAddress ("127.0.0.1", 0), 0);
     aServer.createContext ("/", aExchange -> {
@@ -110,7 +111,7 @@ public final class BasicHttpPosterTest
     {
       final BasicHttpPoster aPoster = new BasicHttpPoster ();
       final MutableBoolean aInvoked = new MutableBoolean (false);
-      final Wrapper <AS4TlsConnectionDetails> aTlsDetails = new Wrapper <> ();
+      final Wrapper <AS4ConnectionDetails> aConnectionDetails = new Wrapper <> ();
       final String sURL = "http://127.0.0.1:" + aServer.getAddress ().getPort () + '/';
       final String sResponse = aPoster.sendGenericMessage (sURL,
                                                            null,
@@ -118,12 +119,15 @@ public final class BasicHttpPosterTest
                                                            x -> EntityUtils.toString (x.getEntity ()),
                                                            x -> {
                                                              aInvoked.set (true);
-                                                             aTlsDetails.set (x);
+                                                             aConnectionDetails.set (x);
                                                            });
       assertEquals ("ok", sResponse);
-      // The consumer must be invoked, but without any TLS details
+      // The consumer must be invoked, and the details must not contain a TLS layer
       assertTrue (aInvoked.booleanValue ());
-      assertNull (aTlsDetails.get ());
+      assertNotNull (aConnectionDetails.get ());
+      assertFalse (aConnectionDetails.get ().hasTlsDetails ());
+      assertEquals ("HTTP/1.1", aConnectionDetails.get ().getHttpVersion ());
+      assertEquals ("127.0.0.1", aConnectionDetails.get ().getRemoteAddress ());
     }
     finally
     {

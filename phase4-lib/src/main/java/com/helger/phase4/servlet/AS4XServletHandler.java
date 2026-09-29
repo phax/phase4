@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 
 import com.helger.annotation.style.OverrideOnDemand;
 import com.helger.base.io.iface.IHasInputStream;
+import com.helger.base.state.ETriState;
 import com.helger.http.CHttp;
 import com.helger.http.EHttpMethod;
 import com.helger.http.EHttpVersion;
@@ -146,10 +147,17 @@ public class AS4XServletHandler implements IXServletSimpleHandler
       LOGGER.warn ("No TLS connection details provided: " + ex.getMessage ());
     }
 
+    // The protocol version, the SNI and the principals are not available via the Servlet API. The
+    // certificates the client presented are exposed via
+    // IAS4IncomingMessageMetadata.remoteTlsClientCerts() instead.
     final AS4TlsConnectionDetails ret = new AS4TlsConnectionDetails (null,
                                                                      sCipherSuite,
                                                                      nKeySize,
                                                                      sSessionID,
+                                                                     null,
+                                                                     null,
+                                                                     null,
+                                                                     null,
                                                                      null);
     return ret.isEmpty () ? null : ret;
   }
@@ -189,6 +197,11 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                      .setRemoteHost (aRequestScope.getRemoteHost ())
                                      .setRemotePort (aRequestScope.getRemotePort ())
                                      .setRemoteUser (aRequestScope.getRemoteUser ())
+                                     .setLocalAddr (aRequestScope.getLocalAddr ())
+                                     .setLocalPort (aRequestScope.getLocalPort ())
+                                     .setServerName (aRequestScope.getServerName ())
+                                     .setHttpVersion (aHttpRequest.getProtocol ())
+                                     .setSecure (ETriState.valueOf (aRequestScope.isSecure ()))
                                      .setCookies (aRequestScope.getCookies ())
                                      .setHttpHeaders (aRequestScope.headers ())
                                      .setRemoteTlsClientCerts (aClientTlsCerts)

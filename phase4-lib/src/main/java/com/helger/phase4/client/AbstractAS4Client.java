@@ -44,7 +44,7 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
-import com.helger.phase4.messaging.http.AS4TlsConnectionDetails;
+import com.helger.phase4.messaging.http.AS4ConnectionDetails;
 import com.helger.phase4.messaging.http.BasicHttpPoster;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.messaging.http.IHttpPoster;
@@ -549,9 +549,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       return aResponseHandler.handleResponse (resp);
     };
 
-    // Capture the details of the TLS connection of the (last) successful
-    // HTTPS exchange so they can be surfaced via AS4ClientSentMessage
-    final Wrapper <AS4TlsConnectionDetails> aTlsConnectionDetailsHolder = new Wrapper <> ();
+    // Capture the details of the connection of the (last) successful HTTP
+    // exchange so they can be surfaced via AS4ClientSentMessage
+    final Wrapper <AS4ConnectionDetails> aConnectionDetailsHolder = new Wrapper <> ();
     final T aResponseContent;
     try
     {
@@ -563,7 +563,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                                       aRealResponseHandler,
                                                                       aOutgoingDumper,
                                                                       aRetryCallback,
-                                                                      aTlsConnectionDetailsHolder::set);
+                                                                      aConnectionDetailsHolder::set);
     }
     catch (final AS4SoapFaultException ex)
     {
@@ -571,7 +571,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       throw ex.setSentMessageID (sMessageID);
     }
     final AS4ClientSentMessage <T> ret = new AS4ClientSentMessage <> (aBuiltMsg,
-                                                                      aTlsConnectionDetailsHolder.get (),
+                                                                      aConnectionDetailsHolder.get (),
                                                                       aStatusLineKeeper.get (),
                                                                       aResponseHeaders,
                                                                       aResponseContent);

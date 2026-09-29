@@ -29,6 +29,7 @@ import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.array.ArrayHelper;
 import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.state.ETriState;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
@@ -56,6 +57,11 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private String m_sRemoteHost;
   private int m_nRemotePort = -1;
   private String m_sRemoteUser;
+  private String m_sLocalAddr;
+  private int m_nLocalPort = -1;
+  private String m_sServerName;
+  private String m_sHttpVersion;
+  private ETriState m_eSecure = ETriState.UNDEFINED;
   private ICommonsList <X509Certificate> m_aRemoteTlsClientCerts;
   private ICommonsList <X509Certificate> m_aRemoteTlsPeerCerts;
   private AS4TlsConnectionDetails m_aTlsConnectionDetails;
@@ -222,6 +228,112 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   public AS4IncomingMessageMetadata setRemoteUser (@Nullable final String sRemoteUser)
   {
     m_sRemoteUser = sRemoteUser;
+    return this;
+  }
+
+  @Nullable
+  public String getLocalAddr ()
+  {
+    return m_sLocalAddr;
+  }
+
+  /**
+   * Set the local address to be used.
+   *
+   * @param sLocalAddr
+   *        The local address. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.8.0
+   */
+  @NonNull
+  public AS4IncomingMessageMetadata setLocalAddr (@Nullable final String sLocalAddr)
+  {
+    m_sLocalAddr = sLocalAddr;
+    return this;
+  }
+
+  @CheckForSigned
+  public int getLocalPort ()
+  {
+    return m_nLocalPort;
+  }
+
+  /**
+   * Set the local port to be used.
+   *
+   * @param nLocalPort
+   *        The local port.
+   * @return this for chaining
+   * @since 4.8.0
+   */
+  @NonNull
+  public AS4IncomingMessageMetadata setLocalPort (final int nLocalPort)
+  {
+    m_nLocalPort = nLocalPort;
+    return this;
+  }
+
+  @Nullable
+  public String getServerName ()
+  {
+    return m_sServerName;
+  }
+
+  /**
+   * Set the server name to be used.
+   *
+   * @param sServerName
+   *        The server name. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.8.0
+   */
+  @NonNull
+  public AS4IncomingMessageMetadata setServerName (@Nullable final String sServerName)
+  {
+    m_sServerName = sServerName;
+    return this;
+  }
+
+  @Nullable
+  public String getHttpVersion ()
+  {
+    return m_sHttpVersion;
+  }
+
+  /**
+   * Set the HTTP version to be used.
+   *
+   * @param sHttpVersion
+   *        The HTTP version - e.g. <code>HTTP/1.1</code>. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.8.0
+   */
+  @NonNull
+  public AS4IncomingMessageMetadata setHttpVersion (@Nullable final String sHttpVersion)
+  {
+    m_sHttpVersion = sHttpVersion;
+    return this;
+  }
+
+  @NonNull
+  public ETriState getSecure ()
+  {
+    return m_eSecure;
+  }
+
+  /**
+   * Set whether the message was transmitted using a secure channel like HTTPS.
+   *
+   * @param eSecure
+   *        The secure state to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 4.8.0
+   */
+  @NonNull
+  public AS4IncomingMessageMetadata setSecure (@NonNull final ETriState eSecure)
+  {
+    ValueEnforcer.notNull (eSecure, "Secure");
+    m_eSecure = eSecure;
     return this;
   }
 
@@ -411,6 +523,11 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
                                        .append ("RemoteHost", m_sRemoteHost)
                                        .append ("RemotePort", m_nRemotePort)
                                        .append ("RemoteUser", m_sRemoteUser)
+                                       .append ("LocalAddr", m_sLocalAddr)
+                                       .append ("LocalPort", m_nLocalPort)
+                                       .append ("ServerName", m_sServerName)
+                                       .append ("HttpVersion", m_sHttpVersion)
+                                       .append ("Secure", m_eSecure)
                                        .append ("RemoteTlsClientCerts", m_aRemoteTlsClientCerts)
                                        .append ("RemoteTlsPeerCerts", m_aRemoteTlsPeerCerts)
                                        .append ("TlsConnectionDetails", m_aTlsConnectionDetails)

@@ -33,6 +33,7 @@ import org.w3c.dom.Document;
 
 import com.helger.base.array.ArrayHelper;
 import com.helger.base.io.stream.StreamHelper;
+import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
 import com.helger.base.wrapper.Wrapper;
 import com.helger.http.CHttp;
@@ -383,7 +384,11 @@ public final class AS4BidirectionalClientHelper
       final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestAS4MessageID)
                                                                                             .setRemoteAddr (sURL)
                                                                                             .setRemoteTlsPeerCerts (aClientSentMessage.getRemoteTlsPeerCerts ())
-                                                                                            .setTlsConnectionDetails (aClientSentMessage.getTlsConnectionDetails ());
+                                                                                            .setTlsConnectionDetails (aClientSentMessage.getTlsConnectionDetails ())
+                                                                                            .setHttpVersion (aClientSentMessage.hasConnectionDetails () ? aClientSentMessage.getConnectionDetails ()
+                                                                                                                                                                            .getHttpVersion ()
+                                                                                                                                                        : null)
+                                                                                            .setSecure (ETriState.valueOf (aClientSentMessage.hasTlsConnectionDetails ()));
       if (aWrappedHttpResponse.isSet ())
       {
         // Remember HTTP response status code retrieved
@@ -509,7 +514,11 @@ public final class AS4BidirectionalClientHelper
       final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
                                                                                             .setRemoteAddr (sURL)
                                                                                             .setRemoteTlsPeerCerts (aClientSentMessage.getRemoteTlsPeerCerts ())
-                                                                                            .setTlsConnectionDetails (aClientSentMessage.getTlsConnectionDetails ());
+                                                                                            .setTlsConnectionDetails (aClientSentMessage.getTlsConnectionDetails ())
+                                                                                            .setHttpVersion (aClientSentMessage.hasConnectionDetails () ? aClientSentMessage.getConnectionDetails ()
+                                                                                                                                                                            .getHttpVersion ()
+                                                                                                                                                        : null)
+                                                                                            .setSecure (ETriState.valueOf (aClientSentMessage.hasTlsConnectionDetails ()));
       if (aWrappedHttpResponse.isSet ())
       {
         // Remember HTTP response status code retrieved
@@ -602,7 +611,11 @@ public final class AS4BidirectionalClientHelper
       final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
                                                                                             .setRemoteAddr (sURL)
                                                                                             .setRemoteTlsPeerCerts (aClientSentMessage.getRemoteTlsPeerCerts ())
-                                                                                            .setTlsConnectionDetails (aClientSentMessage.getTlsConnectionDetails ());
+                                                                                            .setTlsConnectionDetails (aClientSentMessage.getTlsConnectionDetails ())
+                                                                                            .setHttpVersion (aClientSentMessage.hasConnectionDetails () ? aClientSentMessage.getConnectionDetails ()
+                                                                                                                                                                            .getHttpVersion ()
+                                                                                                                                                        : null)
+                                                                                            .setSecure (ETriState.valueOf (aClientSentMessage.hasTlsConnectionDetails ()));
       if (aWrappedHttpResponse.isSet ())
       {
         // Remember HTTP response status code retrieved

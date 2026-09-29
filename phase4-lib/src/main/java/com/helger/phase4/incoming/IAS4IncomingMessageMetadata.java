@@ -26,6 +26,7 @@ import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.annotation.style.ReturnsMutableObject;
+import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
@@ -143,6 +144,97 @@ public interface IAS4IncomingMessageMetadata
   {
     return StringHelper.isNotEmpty (getRemoteUser ());
   }
+
+  /**
+   * Returns the Internet Protocol (IP) address of the interface on which the request was received.
+   *
+   * @return a <code>String</code> containing the local IP address, or <code>null</code>
+   * @since 4.8.0
+   */
+  @Nullable
+  String getLocalAddr ();
+
+  /**
+   * @return <code>true</code> if the local address is present, <code>false</code> if not.
+   * @see #getLocalAddr()
+   * @since 4.8.0
+   */
+  default boolean hasLocalAddr ()
+  {
+    return StringHelper.isNotEmpty (getLocalAddr ());
+  }
+
+  /**
+   * Returns the Internet Protocol (IP) port number of the interface on which the request was
+   * received.
+   *
+   * @return an integer specifying the local port number or a negative value if not set
+   * @since 4.8.0
+   */
+  @CheckForSigned
+  int getLocalPort ();
+
+  /**
+   * @return <code>true</code> if the local port is present, <code>false</code> if not.
+   * @see #getLocalPort()
+   * @since 4.8.0
+   */
+  default boolean hasLocalPort ()
+  {
+    return getLocalPort () > 0;
+  }
+
+  /**
+   * Returns the host name of the server to which the request was sent - the value of the part
+   * before the ":" in the <code>Host</code> header, or the resolved server name. This matters if
+   * one AS4 instance serves more than one endpoint.
+   *
+   * @return a <code>String</code> containing the server name, or <code>null</code>
+   * @since 4.8.0
+   */
+  @Nullable
+  String getServerName ();
+
+  /**
+   * @return <code>true</code> if the server name is present, <code>false</code> if not.
+   * @see #getServerName()
+   * @since 4.8.0
+   */
+  default boolean hasServerName ()
+  {
+    return StringHelper.isNotEmpty (getServerName ());
+  }
+
+  /**
+   * Returns the name and version of the protocol the message was transmitted with - e.g.
+   * <code>HTTP/1.1</code> or <code>HTTP/2</code>.
+   *
+   * @return a <code>String</code> containing the protocol name and version, or <code>null</code>
+   * @since 4.8.0
+   */
+  @Nullable
+  String getHttpVersion ();
+
+  /**
+   * @return <code>true</code> if the HTTP version is present, <code>false</code> if not.
+   * @see #getHttpVersion()
+   * @since 4.8.0
+   */
+  default boolean hasHttpVersion ()
+  {
+    return StringHelper.isNotEmpty (getHttpVersion ());
+  }
+
+  /**
+   * Returns whether the message was transmitted using a secure channel like HTTPS.
+   * {@link ETriState#UNDEFINED} means, that it could not be determined. Note: if TLS is terminated
+   * by a reverse proxy, this refers to the connection between the proxy and this instance.
+   *
+   * @return The secure state. Never <code>null</code>.
+   * @since 4.8.0
+   */
+  @NonNull
+  ETriState getSecure ();
 
   /**
    * Returns the TLS certificates presented by the remote client to authenticate itself.

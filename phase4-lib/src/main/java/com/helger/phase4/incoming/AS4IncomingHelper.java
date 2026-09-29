@@ -69,6 +69,16 @@ public final class AS4IncomingHelper
       aMap.add ("RemotePort", aMessageMetadata.getRemotePort ());
     if (aMessageMetadata.hasRemoteUser ())
       aMap.add ("RemoteUser", aMessageMetadata.getRemoteUser ());
+    if (aMessageMetadata.hasLocalAddr ())
+      aMap.add ("LocalAddr", aMessageMetadata.getLocalAddr ());
+    if (aMessageMetadata.hasLocalPort ())
+      aMap.add ("LocalPort", aMessageMetadata.getLocalPort ());
+    if (aMessageMetadata.hasServerName ())
+      aMap.add ("ServerName", aMessageMetadata.getServerName ());
+    if (aMessageMetadata.hasHttpVersion ())
+      aMap.add ("HttpVersion", aMessageMetadata.getHttpVersion ());
+    if (aMessageMetadata.getSecure ().isDefined ())
+      aMap.add ("Secure", aMessageMetadata.getSecure ().getAsBooleanValue ());
     if (aMessageMetadata.hasRemoteTlsClientCerts ())
     {
       final IJsonArray aArray = new JsonArray ();

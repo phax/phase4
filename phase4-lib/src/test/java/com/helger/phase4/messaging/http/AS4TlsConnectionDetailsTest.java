@@ -34,12 +34,18 @@ import com.helger.xml.microdom.IMicroElement;
  */
 public final class AS4TlsConnectionDetailsTest
 {
+  private static final int NO_KEY_SIZE = AS4TlsConnectionDetails.KEY_SIZE_UNDEFINED;
+
   @Test
   public void testEmpty ()
   {
     final AS4TlsConnectionDetails aDetails = new AS4TlsConnectionDetails (null,
                                                                           null,
-                                                                          AS4TlsConnectionDetails.KEY_SIZE_UNDEFINED,
+                                                                          NO_KEY_SIZE,
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          null,
                                                                           null,
                                                                           null);
     assertTrue (aDetails.isEmpty ());
@@ -47,12 +53,15 @@ public final class AS4TlsConnectionDetailsTest
     assertFalse (aDetails.hasCipherSuite ());
     assertFalse (aDetails.hasKeySize ());
     assertFalse (aDetails.hasSessionID ());
+    assertFalse (aDetails.hasRequestedServerNames ());
+    assertFalse (aDetails.hasPeerPrincipal ());
     assertFalse (aDetails.hasPeerCerts ());
-    assertNull (aDetails.getProtocol ());
-    assertNull (aDetails.getCipherSuite ());
-    assertEquals (AS4TlsConnectionDetails.KEY_SIZE_UNDEFINED, aDetails.getKeySize ());
-    assertNull (aDetails.getSessionID ());
+    assertFalse (aDetails.hasLocalPrincipal ());
+    assertFalse (aDetails.hasLocalCerts ());
+    assertEquals (NO_KEY_SIZE, aDetails.getKeySize ());
     assertNull (aDetails.peerCerts ());
+    assertNull (aDetails.localCerts ());
+    assertNull (aDetails.requestedServerNames ());
     assertEquals (0, aDetails.getAsJsonObject ().size ());
   }
 
@@ -62,31 +71,44 @@ public final class AS4TlsConnectionDetailsTest
     // As it looks for an outgoing connection - no key size available
     final AS4TlsConnectionDetails aDetails = new AS4TlsConnectionDetails ("TLSv1.3",
                                                                           "TLS_AES_256_GCM_SHA384",
-                                                                          AS4TlsConnectionDetails.KEY_SIZE_UNDEFINED,
+                                                                          NO_KEY_SIZE,
                                                                           "abcdef01",
+                                                                          new CommonsArrayList <> ("ap.example.org"),
+                                                                          "CN=ap.example.org",
+                                                                          null,
+                                                                          "CN=me",
                                                                           null);
     assertFalse (aDetails.isEmpty ());
-    assertTrue (aDetails.hasProtocol ());
     assertEquals ("TLSv1.3", aDetails.getProtocol ());
-    assertTrue (aDetails.hasCipherSuite ());
     assertEquals ("TLS_AES_256_GCM_SHA384", aDetails.getCipherSuite ());
     assertFalse (aDetails.hasKeySize ());
-    assertTrue (aDetails.hasSessionID ());
     assertEquals ("abcdef01", aDetails.getSessionID ());
+    assertEquals (new CommonsArrayList <> ("ap.example.org"), aDetails.requestedServerNames ());
+    assertEquals ("CN=ap.example.org", aDetails.getPeerPrincipal ());
+    assertEquals ("CN=me", aDetails.getLocalPrincipal ());
 
     final IJsonObject aJson = aDetails.getAsJsonObject ();
-    assertEquals (3, aJson.size ());
+    assertEquals (6, aJson.size ());
     assertEquals ("TLSv1.3", aJson.getAsString (AS4TlsConnectionDetails.JSON_PROTOCOL));
     assertEquals ("TLS_AES_256_GCM_SHA384", aJson.getAsString (AS4TlsConnectionDetails.JSON_CIPHER_SUITE));
     assertNull (aJson.get (AS4TlsConnectionDetails.JSON_KEY_SIZE));
     assertEquals ("abcdef01", aJson.getAsString (AS4TlsConnectionDetails.JSON_SESSION_ID));
+    assertEquals (1, aJson.getAsArray (AS4TlsConnectionDetails.JSON_REQUESTED_SERVER_NAMES).size ());
+    assertEquals ("CN=ap.example.org", aJson.getAsString (AS4TlsConnectionDetails.JSON_PEER_PRINCIPAL));
+    assertEquals ("CN=me", aJson.getAsString (AS4TlsConnectionDetails.JSON_LOCAL_PRINCIPAL));
 
-    final IMicroElement aElement = aDetails.getAsMicroElement (null, "TlsConnection");
-    assertEquals ("TlsConnection", aElement.getTagName ());
+    final IMicroElement aElement = aDetails.getAsMicroElement (null, "Tls");
+    assertEquals ("Tls", aElement.getTagName ());
     assertEquals ("TLSv1.3", aElement.getFirstChildElement ("Protocol").getTextContent ());
     assertEquals ("TLS_AES_256_GCM_SHA384", aElement.getFirstChildElement ("CipherSuite").getTextContent ());
     assertNull (aElement.getFirstChildElement ("KeySize"));
     assertEquals ("abcdef01", aElement.getFirstChildElement ("SessionID").getTextContent ());
+    assertEquals ("ap.example.org",
+                  aElement.getFirstChildElement ("RequestedServerNames")
+                          .getFirstChildElement ("ServerName")
+                          .getTextContent ());
+    assertEquals ("CN=ap.example.org", aElement.getFirstChildElement ("PeerPrincipal").getTextContent ());
+    assertEquals ("CN=me", aElement.getFirstChildElement ("LocalPrincipal").getTextContent ());
   }
 
   @Test
@@ -97,6 +119,10 @@ public final class AS4TlsConnectionDetailsTest
                                                                           "TLS_AES_128_GCM_SHA256",
                                                                           128,
                                                                           "0011",
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          null,
                                                                           null);
     assertFalse (aDetails.isEmpty ());
     assertFalse (aDetails.hasProtocol ());
@@ -112,22 +138,35 @@ public final class AS4TlsConnectionDetailsTest
   @Test
   public void testNegativeKeySizeIsUndefined ()
   {
-    final AS4TlsConnectionDetails aDetails = new AS4TlsConnectionDetails (null, null, -42, null, null);
-    assertEquals (AS4TlsConnectionDetails.KEY_SIZE_UNDEFINED, aDetails.getKeySize ());
+    final AS4TlsConnectionDetails aDetails = new AS4TlsConnectionDetails (null,
+                                                                          null,
+                                                                          -42,
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          null,
+                                                                          null);
+    assertEquals (NO_KEY_SIZE, aDetails.getKeySize ());
     assertFalse (aDetails.hasKeySize ());
     assertTrue (aDetails.isEmpty ());
   }
 
   @Test
-  public void testEmptyPeerCertListIsNull ()
+  public void testEmptyListsAreNull ()
   {
     final AS4TlsConnectionDetails aDetails = new AS4TlsConnectionDetails (null,
                                                                           null,
-                                                                          AS4TlsConnectionDetails.KEY_SIZE_UNDEFINED,
+                                                                          NO_KEY_SIZE,
+                                                                          null,
+                                                                          new CommonsArrayList <> (),
+                                                                          null,
+                                                                          new CommonsArrayList <> (),
                                                                           null,
                                                                           new CommonsArrayList <> ());
+    assertFalse (aDetails.hasRequestedServerNames ());
     assertFalse (aDetails.hasPeerCerts ());
-    assertNull (aDetails.peerCerts ());
+    assertFalse (aDetails.hasLocalCerts ());
     assertTrue (aDetails.isEmpty ());
   }
 
