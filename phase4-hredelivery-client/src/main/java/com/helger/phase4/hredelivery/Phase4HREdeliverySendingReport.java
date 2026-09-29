@@ -51,6 +51,7 @@ import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.marshaller.Ebms3SignalMessageMarshaller;
+import com.helger.phase4.messaging.http.AS4TlsConnectionDetails;
 import com.helger.phase4.model.soapfault.AS4SoapFault;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.security.certificate.CertificateHelper;
@@ -618,6 +619,29 @@ public class Phase4HREdeliverySendingReport
   }
 
   /**
+   * @return The details of the TLS connection to C3 - like the TLS protocol version and the
+   *         negotiated cipher suite. May be <code>null</code> if C3 was contacted via plain HTTP,
+   *         or if no raw HTTP response was provided via
+   *         {@link #setRawHttpResponse(AS4ClientSentMessage)}.
+   * @since 4.8.0
+   */
+  @Nullable
+  public AS4TlsConnectionDetails getTlsConnectionDetails ()
+  {
+    return m_aRawHttpResponse == null ? null : m_aRawHttpResponse.getTlsConnectionDetails ();
+  }
+
+  /**
+   * @return <code>true</code> if TLS connection details are present, <code>false</code> if not.
+   * @see #getTlsConnectionDetails()
+   * @since 4.8.0
+   */
+  public boolean hasTlsConnectionDetails ()
+  {
+    return getTlsConnectionDetails () != null;
+  }
+
+  /**
    * @return The overall AS4 sending result. May be <code>null</code>.
    * @since 4.2.0
    */
@@ -881,6 +905,11 @@ public class Phase4HREdeliverySendingReport
     if (hasAS4SendingDT ())
       aJson.add ("as4SendingDateTime", PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
 
+    // The TLS connection parameters are always rendered, because they are small. The peer
+    // certificates are not contained, because they are pretty large.
+    if (hasTlsConnectionDetails ())
+      aJson.add ("tlsConnection", getTlsConnectionDetails ().getAsJsonObject (false));
+
     // Don't render Raw response in case of success, as the Signal Message is contained anyway
     if (hasRawHttpResponse () && hasUnsuccessfulAS4SendingResult ())
     {
@@ -1054,6 +1083,11 @@ public class Phase4HREdeliverySendingReport
     if (hasAS4SendingDT ())
       ret.addElementNS (sNamespaceURI, "AS4SendingDateTime")
          .addText (PDTWebDateHelper.getAsStringXSD (m_aAS4SendingDT));
+
+    // The TLS connection parameters are always rendered, because they are small. The peer
+    // certificates are not contained, because they are pretty large.
+    if (hasTlsConnectionDetails ())
+      ret.addChild (getTlsConnectionDetails ().getAsMicroElement (sNamespaceURI, "TlsConnection", false));
 
     // Don't render Raw response in case of success, as the Signal Message is contained anyway
     if (hasRawHttpResponse () && hasUnsuccessfulAS4SendingResult ())

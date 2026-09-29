@@ -76,6 +76,8 @@ public final class AS4IncomingHelper
         aArray.add (CertificateHelper.getPEMEncodedCertificate (aCert));
       aMap.add ("RemoteTlsCerts", aArray);
     }
+    if (aMessageMetadata.hasTlsConnectionDetails ())
+      aMap.add ("TlsConnection", aMessageMetadata.getTlsConnectionDetails ().getAsJsonObject ());
     {
       final IJsonArray aArray = new JsonArray ();
       for (final Cookie aCookie : aMessageMetadata.cookies ())

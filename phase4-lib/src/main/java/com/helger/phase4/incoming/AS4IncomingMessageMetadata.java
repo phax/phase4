@@ -35,6 +35,7 @@ import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.messaging.EAS4MessageMode;
+import com.helger.phase4.messaging.http.AS4TlsConnectionDetails;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
 import jakarta.servlet.http.Cookie;
@@ -57,6 +58,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private String m_sRemoteUser;
   private ICommonsList <X509Certificate> m_aRemoteTlsClientCerts;
   private ICommonsList <X509Certificate> m_aRemoteTlsPeerCerts;
+  private AS4TlsConnectionDetails m_aTlsConnectionDetails;
   private final ICommonsList <Cookie> m_aCookies = new CommonsArrayList <> ();
   private final HttpHeaderMap m_aHttpHeaderMap = new HttpHeaderMap ();
   private String m_sRequestMessageID;
@@ -292,6 +294,27 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return this;
   }
 
+  @Nullable
+  public AS4TlsConnectionDetails getTlsConnectionDetails ()
+  {
+    return m_aTlsConnectionDetails;
+  }
+
+  /**
+   * Set the details of the TLS connection the message was transmitted over.
+   *
+   * @param aTlsConnectionDetails
+   *        The TLS connection details to use. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.8.0
+   */
+  @NonNull
+  public AS4IncomingMessageMetadata setTlsConnectionDetails (@Nullable final AS4TlsConnectionDetails aTlsConnectionDetails)
+  {
+    m_aTlsConnectionDetails = aTlsConnectionDetails;
+    return this;
+  }
+
   @NonNull
   @ReturnsMutableObject
   public ICommonsList <Cookie> cookies ()
@@ -390,6 +413,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
                                        .append ("RemoteUser", m_sRemoteUser)
                                        .append ("RemoteTlsClientCerts", m_aRemoteTlsClientCerts)
                                        .append ("RemoteTlsPeerCerts", m_aRemoteTlsPeerCerts)
+                                       .append ("TlsConnectionDetails", m_aTlsConnectionDetails)
                                        .append ("Cookies", m_aCookies)
                                        .append ("RequestMessageID", m_sRequestMessageID)
                                        .append ("ResponseHttpStatusCode", m_nResponseHttpStatusCode)

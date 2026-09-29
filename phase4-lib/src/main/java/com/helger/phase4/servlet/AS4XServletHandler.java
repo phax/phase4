@@ -42,6 +42,7 @@ import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
+import com.helger.phase4.messaging.http.AS4TlsConnectionDetails;
 import com.helger.phase4.model.pmode.resolve.AS4DefaultPModeResolver;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.servlet.response.UnifiedResponse;
@@ -59,6 +60,13 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class AS4XServletHandler implements IXServletSimpleHandler
 {
+  // Servlet request attribute names as defined by the Jakarta Servlet specification. No constants
+  // are available in the API for them.
+  private static final String SERVLET_ATTR_X509_CERTIFICATE = "jakarta.servlet.request.X509Certificate";
+  private static final String SERVLET_ATTR_CIPHER_SUITE = "jakarta.servlet.request.cipher_suite";
+  private static final String SERVLET_ATTR_KEY_SIZE = "jakarta.servlet.request.key_size";
+  private static final String SERVLET_ATTR_SSL_SESSION_ID = "jakarta.servlet.request.ssl_session_id";
+
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4XServletHandler.class);
 
   private IAS4ServletRequestHandlerCustomizer m_aRequestHandlerCustomizer;
@@ -106,6 +114,47 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   /**
+   * Create the TLS connection details of an incoming request, based on the TLS related request
+   * attributes defined by the Jakarta Servlet specification. This method may be overridden by
+   * sub-classes to add container specific details - like the negotiated TLS protocol version, for
+   * which the Servlet specification defines no attribute.
+   *
+   * @param aHttpRequest
+   *        The HTTP servlet request to read the attributes from. May not be <code>null</code>.
+   * @return <code>null</code> if the request was not received via TLS, or if the Servlet container
+   *         provides none of the respective attributes.
+   * @since 4.8.0
+   */
+  @Nullable
+  @OverrideOnDemand
+  protected AS4TlsConnectionDetails createTlsConnectionDetails (@NonNull final HttpServletRequest aHttpRequest)
+  {
+    String sCipherSuite = null;
+    int nKeySize = AS4TlsConnectionDetails.KEY_SIZE_UNDEFINED;
+    String sSessionID = null;
+    try
+    {
+      if (aHttpRequest.getAttribute (SERVLET_ATTR_CIPHER_SUITE) instanceof final String s)
+        sCipherSuite = s;
+      if (aHttpRequest.getAttribute (SERVLET_ATTR_KEY_SIZE) instanceof final Number aKeySize)
+        nKeySize = aKeySize.intValue ();
+      if (aHttpRequest.getAttribute (SERVLET_ATTR_SSL_SESSION_ID) instanceof final String s)
+        sSessionID = s;
+    }
+    catch (final Exception ex)
+    {
+      LOGGER.warn ("No TLS connection details provided: " + ex.getMessage ());
+    }
+
+    final AS4TlsConnectionDetails ret = new AS4TlsConnectionDetails (null,
+                                                                     sCipherSuite,
+                                                                     nKeySize,
+                                                                     sSessionID,
+                                                                     null);
+    return ret.isEmpty () ? null : ret;
+  }
+
+  /**
    * Create the incoming message metadata based on the provided request. This method may be
    * overridden by sub-classes to customize the header generation e.g. when sitting behind a proxy
    * or the like.
@@ -119,17 +168,21 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   @OverrideOnDemand
   protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@NonNull final IRequestWebScopeWithoutResponse aRequestScope)
   {
+    final HttpServletRequest aHttpRequest = aRequestScope.getRequest ();
+
     X509Certificate [] aClientTlsCerts = null;
     try
     {
-      // No constant available
-      aClientTlsCerts = (X509Certificate []) aRequestScope.getRequest ()
-                                                          .getAttribute ("jakarta.servlet.request.X509Certificate");
+      aClientTlsCerts = (X509Certificate []) aHttpRequest.getAttribute (SERVLET_ATTR_X509_CERTIFICATE);
     }
     catch (final Exception ex)
     {
       LOGGER.warn ("No client TLS certificate provided: " + ex.getMessage ());
     }
+
+    // The Servlet specification has no attribute for the negotiated TLS protocol version, so it
+    // stays undefined for incoming requests
+    final AS4TlsConnectionDetails aTlsConnectionDetails = createTlsConnectionDetails (aHttpRequest);
 
     return AS4IncomingMessageMetadata.createForRequest ()
                                      .setRemoteAddr (aRequestScope.getRemoteAddr ())
@@ -138,7 +191,8 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                      .setRemoteUser (aRequestScope.getRemoteUser ())
                                      .setCookies (aRequestScope.getCookies ())
                                      .setHttpHeaders (aRequestScope.headers ())
-                                     .setRemoteTlsClientCerts (aClientTlsCerts);
+                                     .setRemoteTlsClientCerts (aClientTlsCerts)
+                                     .setTlsConnectionDetails (aTlsConnectionDetails);
   }
 
   /**

@@ -30,6 +30,7 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.tostring.ToStringGenerator;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
+import com.helger.phase4.messaging.http.AS4TlsConnectionDetails;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
 /**
@@ -44,7 +45,7 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 public class AS4ClientSentMessage <T>
 {
   private final AS4ClientBuiltMessage m_aBuiltMsg;
-  private final ICommonsList <X509Certificate> m_aRemoteTlsPeerCerts;
+  private final AS4TlsConnectionDetails m_aTlsConnectionDetails;
   private final StatusLine m_aResponseStatusLine;
   private final HttpHeaderMap m_aResponseHeaders;
   private final T m_aResponseContent;
@@ -78,18 +79,18 @@ public class AS4ClientSentMessage <T>
    *        The HTTP response header. May not be <code>null</code>.
    * @param aResponseContent
    *        The response payload. May be <code>null</code>.
-   * @param aRemoteTlsPeerCerts
-   *        The remote TLS server certificates captured during the HTTPS handshake. May be
-   *        <code>null</code>.
+   * @param aTlsConnectionDetails
+   *        The details of the TLS connection that was used - including the remote TLS server
+   *        certificates. May be <code>null</code>.
    */
   public AS4ClientSentMessage (@NonNull final AS4ClientBuiltMessage aBuiltMsg,
-                               @Nullable final ICommonsList <X509Certificate> aRemoteTlsPeerCerts,
+                               @Nullable final AS4TlsConnectionDetails aTlsConnectionDetails,
                                @Nullable final StatusLine aResponseStatusLine,
                                @NonNull final HttpHeaderMap aResponseHeaders,
                                @Nullable final T aResponseContent)
   {
     this (aBuiltMsg,
-          aRemoteTlsPeerCerts,
+          aTlsConnectionDetails,
           aResponseStatusLine,
           aResponseHeaders,
           aResponseContent,
@@ -105,14 +106,14 @@ public class AS4ClientSentMessage <T>
    *        The HTTP response header. May not be <code>null</code>.
    * @param aResponseContent
    *        The response payload. May be <code>null</code>.
-   * @param aRemoteTlsPeerCerts
-   *        The remote TLS server certificates captured during the HTTPS handshake. May be
-   *        <code>null</code>.
+   * @param aTlsConnectionDetails
+   *        The details of the TLS connection that was used - including the remote TLS server
+   *        certificates. May be <code>null</code>.
    * @param aSentDateTime
    *        The sending date time. May not be <code>null</code>.
    */
   protected AS4ClientSentMessage (@NonNull final AS4ClientBuiltMessage aBuiltMsg,
-                                  @Nullable final ICommonsList <X509Certificate> aRemoteTlsPeerCerts,
+                                  @Nullable final AS4TlsConnectionDetails aTlsConnectionDetails,
                                   @Nullable final StatusLine aResponseStatusLine,
                                   @NonNull final HttpHeaderMap aResponseHeaders,
                                   @Nullable final T aResponseContent,
@@ -122,7 +123,7 @@ public class AS4ClientSentMessage <T>
     ValueEnforcer.notNull (aResponseHeaders, "ResponseHeaders");
     ValueEnforcer.notNull (aSentDateTime, "SentDateTime");
     m_aBuiltMsg = aBuiltMsg;
-    m_aRemoteTlsPeerCerts = aRemoteTlsPeerCerts;
+    m_aTlsConnectionDetails = aTlsConnectionDetails;
     m_aResponseStatusLine = aResponseStatusLine;
     m_aResponseHeaders = aResponseHeaders;
     m_aResponseContent = aResponseContent;
@@ -150,16 +151,38 @@ public class AS4ClientSentMessage <T>
   }
 
   /**
+   * @return The details of the TLS connection that was used for the transmission. May be
+   *         <code>null</code> if the transmission did not use TLS at all.
+   * @since 4.8.0
+   */
+  @Nullable
+  public final AS4TlsConnectionDetails getTlsConnectionDetails ()
+  {
+    return m_aTlsConnectionDetails;
+  }
+
+  /**
+   * @return <code>true</code> if TLS connection details are present, <code>false</code> if not.
+   * @see #getTlsConnectionDetails()
+   * @since 4.8.0
+   */
+  public final boolean hasTlsConnectionDetails ()
+  {
+    return m_aTlsConnectionDetails != null;
+  }
+
+  /**
    * @return The remote TLS server certificate chain captured during the HTTPS handshake (index 0 =
    *         leaf/server certificate). May be <code>null</code> if no certificates were captured
-   *         (e.g. plain HTTP, connection reuse without new handshake).
+   *         (e.g. plain HTTP or an unverified peer). This is a shortcut for
+   *         <code>getTlsConnectionDetails ().peerCerts ()</code>.
    * @since 4.5.1
    */
   @Nullable
   @ReturnsMutableObject
   public final ICommonsList <X509Certificate> getRemoteTlsPeerCerts ()
   {
-    return m_aRemoteTlsPeerCerts;
+    return m_aTlsConnectionDetails == null ? null : m_aTlsConnectionDetails.peerCerts ();
   }
 
   /**
@@ -228,7 +251,7 @@ public class AS4ClientSentMessage <T>
   public String toString ()
   {
     return new ToStringGenerator (this).append ("BuiltMsg", m_aBuiltMsg)
-                                       .append ("RemoteTlsPeerCerts", m_aRemoteTlsPeerCerts)
+                                       .append ("TlsConnectionDetails", m_aTlsConnectionDetails)
                                        .append ("ResponseStatusLine", m_aResponseStatusLine)
                                        .append ("ResponseHeaders", m_aResponseHeaders)
                                        .append ("ResponseContent", m_aResponseContent)

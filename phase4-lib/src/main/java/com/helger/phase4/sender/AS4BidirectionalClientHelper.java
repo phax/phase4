@@ -382,7 +382,8 @@ public final class AS4BidirectionalClientHelper
     {
       final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestAS4MessageID)
                                                                                             .setRemoteAddr (sURL)
-                                                                                            .setRemoteTlsPeerCerts (aClientSentMessage.getRemoteTlsPeerCerts ());
+                                                                                            .setRemoteTlsPeerCerts (aClientSentMessage.getRemoteTlsPeerCerts ())
+                                                                                            .setTlsConnectionDetails (aClientSentMessage.getTlsConnectionDetails ());
       if (aWrappedHttpResponse.isSet ())
       {
         // Remember HTTP response status code retrieved
@@ -507,7 +508,8 @@ public final class AS4BidirectionalClientHelper
     {
       final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
                                                                                             .setRemoteAddr (sURL)
-                                                                                            .setRemoteTlsPeerCerts (aClientSentMessage.getRemoteTlsPeerCerts ());
+                                                                                            .setRemoteTlsPeerCerts (aClientSentMessage.getRemoteTlsPeerCerts ())
+                                                                                            .setTlsConnectionDetails (aClientSentMessage.getTlsConnectionDetails ());
       if (aWrappedHttpResponse.isSet ())
       {
         // Remember HTTP response status code retrieved
@@ -599,7 +601,8 @@ public final class AS4BidirectionalClientHelper
     {
       final AS4IncomingMessageMetadata aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (sRequestMessageID)
                                                                                             .setRemoteAddr (sURL)
-                                                                                            .setRemoteTlsPeerCerts (aClientSentMessage.getRemoteTlsPeerCerts ());
+                                                                                            .setRemoteTlsPeerCerts (aClientSentMessage.getRemoteTlsPeerCerts ())
+                                                                                            .setTlsConnectionDetails (aClientSentMessage.getTlsConnectionDetails ());
       if (aWrappedHttpResponse.isSet ())
       {
         // Remember HTTP response status code retrieved

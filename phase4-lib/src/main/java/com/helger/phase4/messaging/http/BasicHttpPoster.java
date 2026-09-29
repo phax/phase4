@@ -206,10 +206,10 @@ public class BasicHttpPoster implements IHttpPoster
    * @param aResponseHandler
    *        The Http response handler that should be used to convert the HTTP response to a domain
    *        object.
-   * @param aRemoteTlsPeerCertConsumer
-   *        An optional consumer that is invoked with the remote TLS server certificates after a
-   *        successful HTTPS request. May be <code>null</code>. The list passed in may be
-   *        <code>null</code> if no certificates were captured (e.g. plain HTTP).
+   * @param aTlsConnectionDetailsConsumer
+   *        An optional consumer that is invoked with the details of the TLS connection after a
+   *        successful HTTPS request. May be <code>null</code>. The value passed in may be
+   *        <code>null</code> if no TLS details were captured (e.g. plain HTTP).
    * @return The HTTP response. May be <code>null</code>.
    * @throws IOException
    *         In case of IO error
@@ -220,7 +220,7 @@ public class BasicHttpPoster implements IHttpPoster
                                    @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                    @NonNull final HttpEntity aHttpEntity,
                                    @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
-                                   @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsPeerCertConsumer) throws IOException
+                                   @Nullable final Consumer <? super AS4TlsConnectionDetails> aTlsConnectionDetailsConsumer) throws IOException
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -236,7 +236,7 @@ public class BasicHttpPoster implements IHttpPoster
                                                      aCustomHttpHeaders,
                                                      aHttpEntity,
                                                      aResponseHandler,
-                                                     aRemoteTlsPeerCertConsumer,
+                                                     aTlsConnectionDetailsConsumer,
                                                      m_aSharedHttpClientManager);
 
       try (final HttpClientManager aClientMgr = new HttpClientManager (m_aHttpClientFactory))
@@ -245,7 +245,7 @@ public class BasicHttpPoster implements IHttpPoster
                                                      aCustomHttpHeaders,
                                                      aHttpEntity,
                                                      aResponseHandler,
-                                                     aRemoteTlsPeerCertConsumer,
+                                                     aTlsConnectionDetailsConsumer,
                                                      aClientMgr);
       }
     }
@@ -279,7 +279,7 @@ public class BasicHttpPoster implements IHttpPoster
                                                       @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                                       @NonNull final HttpEntity aHttpEntity,
                                                       @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
-                                                      @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsPeerCertConsumer,
+                                                      @Nullable final Consumer <? super AS4TlsConnectionDetails> aTlsConnectionDetailsConsumer,
                                                       @NonNull final HttpClientManager aClientMgr) throws IOException
   {
     final HttpPost aPost = new HttpPost (sURL);
@@ -323,12 +323,25 @@ public class BasicHttpPoster implements IHttpPoster
     final HttpClientContext aHttpClientContext = HttpClientContext.create ();
     final T ret = aClientMgr.execute (aPost, aHttpClientContext, aResponseHandler);
 
-    // Surface the TLS peer (server) certificates if requested. The
-    // CapturingTlsSocketStrategy is wired in by HttpClientFactory by default.
-    if (aRemoteTlsPeerCertConsumer != null)
+    // Surface the details of the used TLS connection if requested. The SSL session is set by the
+    // Apache HttpClient connect executor for every request, including the ones that reuse a
+    // pooled connection.
+    if (aTlsConnectionDetailsConsumer != null)
     {
-      final ICommonsList <X509Certificate> aRemoteTlsCerts = CapturingTlsSocketStrategy.getRemoteTLSCertificates (aHttpClientContext);
-      aRemoteTlsPeerCertConsumer.accept (aRemoteTlsCerts);
+      AS4TlsConnectionDetails aTlsDetails = AS4TlsConnectionDetails.createFromSSLSession (aHttpClientContext.getSSLSession ());
+      if (aTlsDetails == null)
+      {
+        // Fallback: the CapturingTlsSocketStrategy is wired in by HttpClientFactory by default
+        // and captures the peer certificates of a freshly established TLS connection
+        final ICommonsList <X509Certificate> aRemoteTlsCerts = CapturingTlsSocketStrategy.getRemoteTLSCertificates (aHttpClientContext);
+        if (aRemoteTlsCerts != null)
+          aTlsDetails = new AS4TlsConnectionDetails (null,
+                                                     null,
+                                                     AS4TlsConnectionDetails.KEY_SIZE_UNDEFINED,
+                                                     null,
+                                                     aRemoteTlsCerts);
+      }
+      aTlsConnectionDetailsConsumer.accept (aTlsDetails);
     }
 
     return ret;
@@ -412,7 +425,7 @@ public class BasicHttpPoster implements IHttpPoster
   /**
    * Same as
    * {@link #sendGenericMessageWithRetries(String, HttpHeaderMap, HttpEntity, String, HttpRetrySettings, HttpClientResponseHandler, IAS4OutgoingDumper, IAS4RetryCallback)}
-   * but additionally surfaces the remote TLS server certificates of the (last) successful HTTPS
+   * but additionally surfaces the details of the TLS connection of the (last) successful HTTPS
    * exchange to the provided consumer.
    *
    * @param <T>
@@ -436,10 +449,10 @@ public class BasicHttpPoster implements IHttpPoster
    * @param aRetryCallback
    *        An optional retry callback that is invoked, before a retry happens. May be
    *        <code>null</code>.
-   * @param aRemoteTlsPeerCertConsumer
-   *        An optional consumer that is invoked with the remote TLS server certificates after each
-   *        successful HTTPS attempt. May be <code>null</code>. The list passed in may be
-   *        <code>null</code> if no certificates were captured (e.g. plain HTTP).
+   * @param aTlsConnectionDetailsConsumer
+   *        An optional consumer that is invoked with the details of the TLS connection after each
+   *        successful HTTPS attempt. May be <code>null</code>. The value passed in may be
+   *        <code>null</code> if no TLS details were captured (e.g. plain HTTP).
    * @return The HTTP response data as indicated by the ResponseHandler. Should not be
    *         <code>null</code> but basically depends on the response handler.
    * @throws IOException
@@ -455,7 +468,7 @@ public class BasicHttpPoster implements IHttpPoster
                                               @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                               @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                               @Nullable final IAS4RetryCallback aRetryCallback,
-                                              @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsPeerCertConsumer) throws IOException
+                                              @Nullable final Consumer <? super AS4TlsConnectionDetails> aTlsConnectionDetailsConsumer) throws IOException
   {
     // Parameter or global one - may still be null
     final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper
@@ -496,7 +509,7 @@ public class BasicHttpPoster implements IHttpPoster
                                        aCustomHttpHeaders,
                                        aDumpingEntity,
                                        aResponseHandler,
-                                       aRemoteTlsPeerCertConsumer);
+                                       aTlsConnectionDetailsConsumer);
           }
           catch (final AS4SoapFaultException ex)
           {
@@ -573,7 +586,7 @@ public class BasicHttpPoster implements IHttpPoster
                                      aCustomHttpHeaders,
                                      aDumpingEntity,
                                      aResponseHandler,
-                                     aRemoteTlsPeerCertConsumer);
+                                     aTlsConnectionDetailsConsumer);
         }
         finally
         {

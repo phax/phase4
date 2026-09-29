@@ -17,7 +17,6 @@
 package com.helger.phase4.client;
 
 import java.io.IOException;
-import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.function.Supplier;
@@ -38,7 +37,6 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.base.trait.IGenericImplTrait;
 import com.helger.base.wrapper.Wrapper;
-import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -46,6 +44,7 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.messaging.http.AS4TlsConnectionDetails;
 import com.helger.phase4.messaging.http.BasicHttpPoster;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.messaging.http.IHttpPoster;
@@ -550,9 +549,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       return aResponseHandler.handleResponse (resp);
     };
 
-    // Capture the remote TLS server certificates of the (last) successful
+    // Capture the details of the TLS connection of the (last) successful
     // HTTPS exchange so they can be surfaced via AS4ClientSentMessage
-    final Wrapper <ICommonsList <X509Certificate>> aRemoteTlsPeerCertsHolder = new Wrapper <> ();
+    final Wrapper <AS4TlsConnectionDetails> aTlsConnectionDetailsHolder = new Wrapper <> ();
     final T aResponseContent;
     try
     {
@@ -564,7 +563,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                                       aRealResponseHandler,
                                                                       aOutgoingDumper,
                                                                       aRetryCallback,
-                                                                      aRemoteTlsPeerCertsHolder::set);
+                                                                      aTlsConnectionDetailsHolder::set);
     }
     catch (final AS4SoapFaultException ex)
     {
@@ -572,7 +571,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       throw ex.setSentMessageID (sMessageID);
     }
     final AS4ClientSentMessage <T> ret = new AS4ClientSentMessage <> (aBuiltMsg,
-                                                                      aRemoteTlsPeerCertsHolder.get (),
+                                                                      aTlsConnectionDetailsHolder.get (),
                                                                       aStatusLineKeeper.get (),
                                                                       aResponseHeaders,
                                                                       aResponseContent);

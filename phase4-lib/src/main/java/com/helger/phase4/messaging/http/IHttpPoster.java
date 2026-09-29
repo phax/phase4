@@ -17,7 +17,6 @@
 package com.helger.phase4.messaging.http;
 
 import java.io.IOException;
-import java.security.cert.X509Certificate;
 import java.util.function.Consumer;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -27,7 +26,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
-import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.IHttpClientProvider;
@@ -126,8 +124,7 @@ public interface IHttpPoster
    * as well as the customizer. Additionally the AS4 HTTP debugging is invoked in here. This method
    * does NOT retry. Compared to
    * {@link #sendGenericMessage(String, HttpHeaderMap, HttpEntity, HttpClientResponseHandler)} this
-   * variant additionally surfaces the remote TLS server certificates of the underlying HTTPS
-   * connection.
+   * variant additionally surfaces the details of the underlying TLS connection.
    * <p>
    * The default implementation ignores the consumer and simply forwards to the cert-less variant,
    * which preserves backward compatibility for custom implementations of this interface.
@@ -143,10 +140,10 @@ public interface IHttpPoster
    * @param aResponseHandler
    *        The HTTP response handler that should be used to convert the HTTP response to a domain
    *        object.
-   * @param aRemoteTlsCertConsumer
-   *        An optional consumer that is invoked with the remote TLS server certificates after a
-   *        successful HTTPS request. May be <code>null</code>. The list passed in may be
-   *        <code>null</code> if no certificates were captured (e.g. plain HTTP).
+   * @param aTlsConnectionDetailsConsumer
+   *        An optional consumer that is invoked with the details of the TLS connection after a
+   *        successful HTTPS request. May be <code>null</code>. The value passed in may be
+   *        <code>null</code> if no TLS details were captured (e.g. plain HTTP).
    * @return The HTTP response data as indicated by the ResponseHandler. Should not be
    *         <code>null</code> but basically depends on the response handler.
    * @throws IOException
@@ -158,7 +155,7 @@ public interface IHttpPoster
                                     @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                     @NonNull final HttpEntity aHttpEntity,
                                     @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
-                                    @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsCertConsumer) throws IOException
+                                    @Nullable final Consumer <? super AS4TlsConnectionDetails> aTlsConnectionDetailsConsumer) throws IOException
   {
     return sendGenericMessage (sURL, aCustomHttpHeaders, aHttpEntity, aResponseHandler);
   }
@@ -206,7 +203,7 @@ public interface IHttpPoster
   /**
    * Same as
    * {@link #sendGenericMessageWithRetries(String, HttpHeaderMap, HttpEntity, String, HttpRetrySettings, HttpClientResponseHandler, IAS4OutgoingDumper, IAS4RetryCallback)}
-   * but additionally surfaces the remote TLS server certificates of the (last) successful HTTPS
+   * but additionally surfaces the details of the TLS connection of the (last) successful HTTPS
    * exchange to the provided consumer.
    * <p>
    * The default implementation ignores the consumer and simply forwards to the cert-less variant,
@@ -233,10 +230,10 @@ public interface IHttpPoster
    * @param aRetryCallback
    *        An optional retry callback that is invoked, before a retry happens. May be
    *        <code>null</code>.
-   * @param aRemoteTlsPeerCertConsumer
-   *        An optional consumer that is invoked with the remote TLS server certificates after each
-   *        successful HTTPS attempt. May be <code>null</code>. The list passed in may be
-   *        <code>null</code> if no certificates were captured (e.g. plain HTTP).
+   * @param aTlsConnectionDetailsConsumer
+   *        An optional consumer that is invoked with the details of the TLS connection after each
+   *        successful HTTPS attempt. May be <code>null</code>. The value passed in may be
+   *        <code>null</code> if no TLS details were captured (e.g. plain HTTP).
    * @return The HTTP response data as indicated by the ResponseHandler. Should not be
    *         <code>null</code> but basically depends on the response handler.
    * @throws IOException
@@ -252,7 +249,7 @@ public interface IHttpPoster
                                                @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                                @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                @Nullable final IAS4RetryCallback aRetryCallback,
-                                               @Nullable final Consumer <? super ICommonsList <X509Certificate>> aRemoteTlsPeerCertConsumer) throws IOException
+                                               @Nullable final Consumer <? super AS4TlsConnectionDetails> aTlsConnectionDetailsConsumer) throws IOException
   {
     return sendGenericMessageWithRetries (sURL,
                                           aCustomHttpHeaders,

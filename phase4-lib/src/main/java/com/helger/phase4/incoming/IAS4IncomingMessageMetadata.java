@@ -30,6 +30,7 @@ import com.helger.base.string.StringHelper;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.phase4.messaging.EAS4MessageMode;
+import com.helger.phase4.messaging.http.AS4TlsConnectionDetails;
 
 import jakarta.servlet.http.Cookie;
 
@@ -213,6 +214,28 @@ public interface IAS4IncomingMessageMetadata
   {
     final var aCerts = remoteTlsPeerCerts ();
     return aCerts != null && aCerts.isNotEmpty ();
+  }
+
+  /**
+   * Returns the parameters of the TLS connection the message was transmitted over - like the TLS
+   * protocol version and the negotiated cipher suite.
+   *
+   * @return The TLS connection details. May be <code>null</code> if the message was not
+   *         transmitted over TLS, or if the Servlet container does not provide the respective
+   *         request attributes.
+   * @since 4.8.0
+   */
+  @Nullable
+  AS4TlsConnectionDetails getTlsConnectionDetails ();
+
+  /**
+   * @return <code>true</code> if TLS connection details are present, <code>false</code> if not.
+   * @see #getTlsConnectionDetails()
+   * @since 4.8.0
+   */
+  default boolean hasTlsConnectionDetails ()
+  {
+    return getTlsConnectionDetails () != null;
   }
 
   /**
