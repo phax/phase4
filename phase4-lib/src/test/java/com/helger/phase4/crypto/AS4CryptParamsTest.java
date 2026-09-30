@@ -235,4 +235,25 @@ public final class AS4CryptParamsTest
     assertEquals (16, aClone.getSessionKeyProvider ().getSessionKey ().getEncoded ().length);
     assertEquals (32, aParams.getSessionKeyProvider ().getSessionKey ().getEncoded ().length);
   }
+
+  @Test
+  public void testSessionKeyProviderCanBeResetToDerived ()
+  {
+    final AS4CryptParams aParams = new AS4CryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_256_GCM)
+                                                        .setSessionKeyProvider (ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_128);
+    assertTrue (aParams.hasExplicitSessionKeyProvider ());
+    aParams.setSessionKeyProvider (null);
+    assertFalse (aParams.hasExplicitSessionKeyProvider ());
+    assertEquals (32, aParams.getSessionKeyProvider ().getSessionKey ().getEncoded ().length);
+  }
+
+  @Test
+  public void testCloneKeepsExplicitSessionKeyProvider ()
+  {
+    final AS4CryptParams aParams = new AS4CryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_256_GCM)
+                                                        .setSessionKeyProvider (ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_256);
+    final AS4CryptParams aClone = aParams.getClone ();
+    assertTrue (aClone.hasExplicitSessionKeyProvider ());
+    assertSame (ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_256, aClone.getSessionKeyProvider ());
+  }
 }

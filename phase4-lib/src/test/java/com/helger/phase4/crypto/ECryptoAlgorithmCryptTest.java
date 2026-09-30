@@ -21,6 +21,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import javax.crypto.SecretKey;
+
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.junit.Test;
 
@@ -51,6 +53,18 @@ public final class ECryptoAlgorithmCryptTest
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrNull (e.getID ()));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrDefault (e.getID (), null));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrThrow (e.getID ()));
+    }
+  }
+
+  @Test
+  public void testKeyGeneratorMatchesKeySize ()
+  {
+    for (final ECryptoAlgorithmCrypt e : ECryptoAlgorithmCrypt.values ())
+    {
+      assertTrue (e.getID (), e.getKeySizeBits () > 0);
+      final SecretKey aKey = e.createKeyGenerator ().generateKey ();
+      assertNotNull (e.getID (), aKey);
+      assertEquals (e.getID (), e.getKeySizeBits (), aKey.getEncoded ().length * 8);
     }
   }
 }

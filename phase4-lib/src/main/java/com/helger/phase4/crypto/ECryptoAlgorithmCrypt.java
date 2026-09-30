@@ -16,6 +16,11 @@
  */
 package com.helger.phase4.crypto;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.function.Supplier;
+
+import javax.crypto.KeyGenerator;
+
 import org.apache.wss4j.common.WSS4JConstants;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.jspecify.annotations.NonNull;
@@ -36,13 +41,37 @@ import com.helger.base.lang.EnumHelper;
  */
 public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
 {
-  CRYPT_3DES ("3des", "1.2.840.113549.3.7", WSS4JConstants.TRIPLE_DES, 192),
-  AES_128_CBC ("aes128-cbc", "2.16.840.1.101.3.4.1.2", WSS4JConstants.AES_128, 128),
-  AES_128_GCM ("aes128-gcm", "2.16.840.1.101.3.4.1.6", WSS4JConstants.AES_128_GCM, 128),
-  AES_192_CBC ("aes192-cbc", "2.16.840.1.101.3.4.1.22", WSS4JConstants.AES_192, 192),
-  AES_192_GCM ("aes192-gcm", "2.16.840.1.101.3.4.1.26", WSS4JConstants.AES_192_GCM, 192),
-  AES_256_CBC ("aes256-cbc", "2.16.840.1.101.3.4.1.42", WSS4JConstants.AES_256, 256),
-  AES_256_GCM ("aes256-gcm", "2.16.840.1.101.3.4.1.46", WSS4JConstants.AES_256_GCM, 256);
+  CRYPT_3DES ("3des", "1.2.840.113549.3.7", WSS4JConstants.TRIPLE_DES, 192, () -> _createKeyGenerator ("DESede", 168)),
+  AES_128_CBC ("aes128-cbc",
+               "2.16.840.1.101.3.4.1.2",
+               WSS4JConstants.AES_128,
+               128,
+               () -> _createKeyGenerator ("AES", 128)),
+  AES_128_GCM ("aes128-gcm",
+               "2.16.840.1.101.3.4.1.6",
+               WSS4JConstants.AES_128_GCM,
+               128,
+               () -> _createKeyGenerator ("AES", 128)),
+  AES_192_CBC ("aes192-cbc",
+               "2.16.840.1.101.3.4.1.22",
+               WSS4JConstants.AES_192,
+               192,
+               () -> _createKeyGenerator ("AES", 192)),
+  AES_192_GCM ("aes192-gcm",
+               "2.16.840.1.101.3.4.1.26",
+               WSS4JConstants.AES_192_GCM,
+               192,
+               () -> _createKeyGenerator ("AES", 192)),
+  AES_256_CBC ("aes256-cbc",
+               "2.16.840.1.101.3.4.1.42",
+               WSS4JConstants.AES_256,
+               256,
+               () -> _createKeyGenerator ("AES", 256)),
+  AES_256_GCM ("aes256-gcm",
+               "2.16.840.1.101.3.4.1.46",
+               WSS4JConstants.AES_256_GCM,
+               256,
+               () -> _createKeyGenerator ("AES", 256));
 
   /** Default encrypt algorithm */
   public static final ECryptoAlgorithmCrypt ENCRYPTION_ALGORITHM_DEFAULT = AES_128_GCM;
@@ -55,17 +84,42 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   private final String m_sOID;
   private final String m_sAlgorithmURI;
   private final int m_nKeySizeBits;
+  private final Supplier <KeyGenerator> m_aKeyGeneratorSupplier;
   private volatile ASN1ObjectIdentifier m_aOID;
 
   ECryptoAlgorithmCrypt (@NonNull @Nonempty final String sID,
                          @NonNull @Nonempty final String sOID,
                          @NonNull @Nonempty final String sAlgorithmURI,
-                         @Nonnegative final int nKeySizeBits)
+                         @Nonnegative final int nKeySizeBits,
+                         @NonNull final Supplier <KeyGenerator> aKeyGeneratorSupplier)
   {
     m_sID = sID;
     m_sOID = sOID;
     m_sAlgorithmURI = sAlgorithmURI;
     m_nKeySizeBits = nKeySizeBits;
+    m_aKeyGeneratorSupplier = aKeyGeneratorSupplier;
+  }
+
+  @NonNull
+  private static KeyGenerator _createKeyGenerator (@NonNull @Nonempty final String sJCEAlgorithm,
+                                                   @Nonnegative final int nInitKeySizeBits)
+  {
+    try
+    {
+      // Plain JCE, so that this also works before WSS4J/XMLSec was initialized
+      final KeyGenerator ret = KeyGenerator.getInstance (sJCEAlgorithm);
+      ret.init (nInitKeySizeBits);
+      return ret;
+    }
+    catch (final NoSuchAlgorithmException ex)
+    {
+      throw new IllegalStateException ("Failed to create a " +
+                                       nInitKeySizeBits +
+                                       " bit KeyGenerator for '" +
+                                       sJCEAlgorithm +
+                                       "'",
+                                       ex);
+    }
   }
 
   @NonNull
@@ -108,14 +162,27 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   }
 
   /**
-   * @return The size of the symmetric key this algorithm requires, in bits. E.g. 256 for
-   *         AES-256-GCM.
-   * @since 4.7.1
+   * @return The size of the encoded symmetric key this algorithm requires, in bits. E.g. 256 for
+   *         AES-256-GCM, and 192 for 3DES (168 effective bits plus parity).
+   * @since 4.8.0
    */
   @Nonnegative
   public int getKeySizeBits ()
   {
     return m_nKeySizeBits;
+  }
+
+  /**
+   * @return A new key generator that is initialized to create symmetric keys matching this
+   *         algorithm. Never <code>null</code>.
+   * @throws IllegalStateException
+   *         if the JCE algorithm is not available in the current runtime
+   * @since 4.8.0
+   */
+  @NonNull
+  public KeyGenerator createKeyGenerator ()
+  {
+    return m_aKeyGeneratorSupplier.get ();
   }
 
   @Nullable

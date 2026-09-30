@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.crypto;
 
-import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
@@ -82,30 +80,12 @@ public interface ICryptoSessionKeyProvider
    * @param eAlgorithmCrypt
    *        The encryption algorithm the keys are used for. May not be <code>null</code>.
    * @return A new session key provider. Never <code>null</code>.
-   * @since 4.7.1
+   * @since 4.8.0
    */
   @NonNull
   static ICryptoSessionKeyProvider createRandomFor (@NonNull final ECryptoAlgorithmCrypt eAlgorithmCrypt)
   {
     ValueEnforcer.notNull (eAlgorithmCrypt, "AlgorithmCrypt");
-    return () -> {
-      try
-      {
-        // Plain JCE, so that this also works before WSS4J/XMLSec was initialized
-        final KeyGenerator aKeyGen;
-        if (eAlgorithmCrypt == ECryptoAlgorithmCrypt.CRYPT_3DES)
-          aKeyGen = KeyGenerator.getInstance ("DESede");
-        else
-        {
-          aKeyGen = KeyGenerator.getInstance ("AES");
-          aKeyGen.init (eAlgorithmCrypt.getKeySizeBits ());
-        }
-        return aKeyGen.generateKey ();
-      }
-      catch (final NoSuchAlgorithmException ex)
-      {
-        throw new IllegalStateException ("Failed to create session key (" + eAlgorithmCrypt.getID () + ")", ex);
-      }
-    };
+    return () -> eAlgorithmCrypt.createKeyGenerator ().generateKey ();
   }
 }

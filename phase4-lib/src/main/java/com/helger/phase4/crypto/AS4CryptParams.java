@@ -432,7 +432,7 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * @return <code>true</code> if a session key provider was set explicitly via
    *         {@link #setSessionKeyProvider(ICryptoSessionKeyProvider)}, <code>false</code> if it is
    *         derived from the encryption algorithm.
-   * @since 4.7.1
+   * @since 4.8.0
    */
   public final boolean hasExplicitSessionKeyProvider ()
   {
@@ -444,14 +444,14 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * a <code>null</code> key.
    *
    * @param aSessionKeyProvider
-   *        The session key provider to be used. May not be <code>null</code>.
+   *        The session key provider to be used. May be <code>null</code> (since 4.8.0) to derive the
+   *        session key from the encryption algorithm, which is the default.
    * @return this for chaining
    * @since 2.1.2
    */
   @NonNull
-  public final AS4CryptParams setSessionKeyProvider (@NonNull final ICryptoSessionKeyProvider aSessionKeyProvider)
+  public final AS4CryptParams setSessionKeyProvider (@Nullable final ICryptoSessionKeyProvider aSessionKeyProvider)
   {
-    ValueEnforcer.notNull (aSessionKeyProvider, "SessionKeyProvider");
     m_aSessionKeyProvider = aSessionKeyProvider;
     return this;
   }
@@ -609,12 +609,11 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
            .setKeyWrapAlgorithm (m_eKeyWrapAlgorithm)
            .setCertificate (m_aCert)
            .setAlias (m_sAlias)
+           .setSessionKeyProvider (m_aSessionKeyProvider)
            .setSecurityProviderEncrypt (m_aSecurityProviderEncrypt)
            .setSecurityProviderDecrypt (m_aSecurityProviderDecrypt)
            .setEncryptSymmetricSessionKey (m_bEncryptSymmetricSessionKey)
            .setWSSecEncryptCustomizer (m_aWSSecEncryptCustomizer);
-    // Copy the field directly, so that "derived from the algorithm" survives the clone
-    aTarget.m_aSessionKeyProvider = m_aSessionKeyProvider;
   }
 
   @NonNull
