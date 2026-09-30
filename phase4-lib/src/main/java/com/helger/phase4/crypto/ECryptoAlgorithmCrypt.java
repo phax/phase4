@@ -80,26 +80,6 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   @Deprecated (since = "4.4.0", forRemoval = true)
   public static final ECryptoAlgorithmCrypt ENCRPYTION_ALGORITHM_DEFAULT = ENCRYPTION_ALGORITHM_DEFAULT;
 
-  private final String m_sID;
-  private final String m_sOID;
-  private final String m_sAlgorithmURI;
-  private final int m_nKeySizeBits;
-  private final Supplier <KeyGenerator> m_aKeyGeneratorSupplier;
-  private volatile ASN1ObjectIdentifier m_aOID;
-
-  ECryptoAlgorithmCrypt (@NonNull @Nonempty final String sID,
-                         @NonNull @Nonempty final String sOID,
-                         @NonNull @Nonempty final String sAlgorithmURI,
-                         @Nonnegative final int nKeySizeBits,
-                         @NonNull final Supplier <KeyGenerator> aKeyGeneratorSupplier)
-  {
-    m_sID = sID;
-    m_sOID = sOID;
-    m_sAlgorithmURI = sAlgorithmURI;
-    m_nKeySizeBits = nKeySizeBits;
-    m_aKeyGeneratorSupplier = aKeyGeneratorSupplier;
-  }
-
   @NonNull
   private static KeyGenerator _createKeyGenerator (@NonNull @Nonempty final String sJCEAlgorithm,
                                                    @Nonnegative final int nInitKeySizeBits)
@@ -120,6 +100,28 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
                                        "'",
                                        ex);
     }
+  }
+
+  private final String m_sID;
+  private final String m_sOID;
+  private final String m_sAlgorithmURI;
+  private final int m_nKeySizeBits;
+  private final Supplier <KeyGenerator> m_aKeyGeneratorSupplier;
+  private volatile ASN1ObjectIdentifier m_aOID;
+
+  ECryptoAlgorithmCrypt (@NonNull @Nonempty final String sID,
+                         @NonNull @Nonempty final String sOID,
+                         @NonNull @Nonempty final String sAlgorithmURI,
+                         @Nonnegative final int nKeySizeBits,
+                         // Supplier instead of a shared instance: KeyGenerator is not guaranteed to be thread-safe,
+                         // and the JCE provider must be resolved per call, not at enum class init
+                         @NonNull final Supplier <KeyGenerator> aKeyGeneratorSupplier)
+  {
+    m_sID = sID;
+    m_sOID = sOID;
+    m_sAlgorithmURI = sAlgorithmURI;
+    m_nKeySizeBits = nKeySizeBits;
+    m_aKeyGeneratorSupplier = aKeyGeneratorSupplier;
   }
 
   @NonNull
