@@ -35,39 +35,40 @@ public final class AS4SignatureWithoutBCTest
   public void testSignAndVerifyWithoutBC () throws Exception
   {
     final String sTestClasspath = System.getProperty ("surefire.test.class.path");
-    if (sTestClasspath == null)
-      throw new IllegalStateException ("The Surefire test classpath is unavailable");
-
-    final String [] aClasspathEntries = sTestClasspath.split (Pattern.quote (File.pathSeparator));
-    final URL [] aURLs = new URL [aClasspathEntries.length];
-    for (int i = 0; i < aClasspathEntries.length; ++i)
-      aURLs[i] = new File (aClasspathEntries[i]).toURI ().toURL ();
-
-    final ClassLoader aOldContextClassLoader = Thread.currentThread ().getContextClassLoader ();
-    try (final URLClassLoader aCL = new URLClassLoader (aURLs, ClassLoader.getPlatformClassLoader ())
+    if (sTestClasspath != null)
     {
-      @Override
-      protected Class <?> loadClass (final String sName, final boolean bResolve) throws ClassNotFoundException
+      // Only when run via Maven, but not when run in the IDE
+      final String [] aClasspathEntries = sTestClasspath.split (Pattern.quote (File.pathSeparator));
+      final URL [] aURLs = new URL [aClasspathEntries.length];
+      for (int i = 0; i < aClasspathEntries.length; ++i)
+        aURLs[i] = new File (aClasspathEntries[i]).toURI ().toURL ();
+
+      final ClassLoader aOldContextClassLoader = Thread.currentThread ().getContextClassLoader ();
+      try (final URLClassLoader aCL = new URLClassLoader (aURLs, ClassLoader.getPlatformClassLoader ())
       {
-        if (sName.startsWith ("org.bouncycastle.") ||
-            sName.startsWith ("com.helger.bc.") ||
-            sName.startsWith ("org.cryptacular."))
-          throw new ClassNotFoundException ("Optional crypto/SAML dependency deliberately hidden from test class loader");
-        return super.loadClass (sName, bResolve);
-      }
-    })
-    {
-      Thread.currentThread ().setContextClassLoader (aCL);
-      assertThrows (ClassNotFoundException.class, () -> aCL.loadClass ("org.bouncycastle.asn1.ASN1Primitive"));
-      assertThrows (ClassNotFoundException.class, () -> aCL.loadClass ("com.helger.bc.PBCProvider"));
-      assertThrows (ClassNotFoundException.class, () -> aCL.loadClass ("org.cryptacular.util.CipherUtil"));
+        @Override
+        protected Class <?> loadClass (final String sName, final boolean bResolve) throws ClassNotFoundException
+        {
+          if (sName.startsWith ("org.bouncycastle.") ||
+              sName.startsWith ("com.helger.bc.") ||
+              sName.startsWith ("org.cryptacular."))
+            throw new ClassNotFoundException ("Optional crypto/SAML dependency deliberately hidden from test class loader");
+          return super.loadClass (sName, bResolve);
+        }
+      })
+      {
+        Thread.currentThread ().setContextClassLoader (aCL);
+        assertThrows (ClassNotFoundException.class, () -> aCL.loadClass ("org.bouncycastle.asn1.ASN1Primitive"));
+        assertThrows (ClassNotFoundException.class, () -> aCL.loadClass ("com.helger.bc.PBCProvider"));
+        assertThrows (ClassNotFoundException.class, () -> aCL.loadClass ("org.cryptacular.util.CipherUtil"));
 
-      final Class <?> aProbeClass = Class.forName (PROBE_CLASS, true, aCL);
-      assertEquals ("DIRECT_REF", aProbeClass.getMethod ("verify").invoke (null));
-    }
-    finally
-    {
-      Thread.currentThread ().setContextClassLoader (aOldContextClassLoader);
+        final Class <?> aProbeClass = Class.forName (PROBE_CLASS, true, aCL);
+        assertEquals ("DIRECT_REF", aProbeClass.getMethod ("verify").invoke (null));
+      }
+      finally
+      {
+        Thread.currentThread ().setContextClassLoader (aOldContextClassLoader);
+      }
     }
   }
 }
