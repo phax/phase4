@@ -25,13 +25,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.base.concurrent.ThreadHelper;
+import com.helger.collection.commons.CommonsHashMap;
+import com.helger.collection.commons.ICommonsMap;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
+import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.error.EEbmsError;
+import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.model.pmode.PMode;
+import com.helger.phase4.model.pmode.PModeReceptionAwareness;
 import com.helger.phase4.server.message.MockMessages;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -101,5 +107,39 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
 
     // Send second
     sendPlainMessageExpectError (aEntity, EEbmsError.EBMS_PHASE4_DUPLICATE.getErrorCode ());
+  }
+
+  @Test
+  public void testDuplicateDetectionDisabledInPMode () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+
+    // Disable duplicate detection in all PModes of the receiving side
+    final ICommonsMap <PMode, PModeReceptionAwareness> aOldValues = new CommonsHashMap <> ();
+    for (final IPMode aPMode : MetaAS4Manager.getPModeMgr ().getAll ())
+      if (aPMode instanceof final PMode aRealPMode)
+      {
+        aOldValues.put (aRealPMode, aRealPMode.getReceptionAwareness ());
+        final PModeReceptionAwareness aRA = PModeReceptionAwareness.createDefault ();
+        aRA.setDuplicateDetection (false);
+        aRealPMode.setReceptionAwareness (aRA);
+      }
+    assertTrue (aOldValues.isNotEmpty ());
+
+    try
+    {
+      final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null)
+                                        .getAsSoapDocument (aPayload);
+      final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
+
+      // The same message is accepted twice, because the PMode disables duplicate detection
+      sendPlainMessageExpectSuccess (aEntity);
+      sendPlainMessageExpectSuccess (aEntity);
+    }
+    finally
+    {
+      for (final var aEntry : aOldValues.entrySet ())
+        aEntry.getKey ().setReceptionAwareness (aEntry.getValue ());
+    }
   }
 }

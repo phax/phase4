@@ -107,6 +107,7 @@ import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.model.message.EAS4MessageType;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.model.pmode.PModeReceptionAwareness;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
@@ -1709,34 +1710,49 @@ public class AS4RequestHandler implements AutoCloseable
     {
       final String sProfileID = aIncomingState.getProfileID ();
 
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Now checking for duplicate message with message ID '" +
-                      sMessageID +
-                      "' and profile ID '" +
-                      sProfileID +
-                      "'");
-
-      // Run duplicate message check
-      final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
-                                                 .registerAndCheck (sMessageID,
-                                                                    sProfileID,
-                                                                    aPMode == null ? null : aPMode.getID ())
-                                                 .isBreak ();
-      if (bIsDuplicate)
+      // Duplicate detection can be disabled per PMode (PMode[].ReceptionAwareness.DetectDuplicates).
+      // Without a PMode, or without an explicit setting, duplicates are always detected.
+      final PModeReceptionAwareness aReceptionAwareness = aPMode == null ? null : aPMode.getReceptionAwareness ();
+      if (aReceptionAwareness != null && !aReceptionAwareness.isDuplicateDetection ())
       {
-        final String sDetails = "Not invoking SPIs, because message with Message ID '" +
-                                sMessageID +
-                                "' was already handled (this is a duplicate)";
-        LOGGER.error (sDetails);
-        aEbmsErrorMessages.add (EEbmsError.EBMS_PHASE4_DUPLICATE.errorBuilder (m_aLocale)
-                                                                .refToMessageInError (sMessageID)
-                                                                .errorDetail (sDetails)
-                                                                .build ());
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Not checking for duplicate message with message ID '" +
+                        sMessageID +
+                        "', because PMode '" +
+                        aPMode.getID () +
+                        "' disables duplicate detection");
       }
       else
       {
         if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Message with ID '" + sMessageID + "' is not a duplicate");
+          LOGGER.debug ("Now checking for duplicate message with message ID '" +
+                        sMessageID +
+                        "' and profile ID '" +
+                        sProfileID +
+                        "'");
+
+        // Run duplicate message check
+        final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
+                                                   .registerAndCheck (sMessageID,
+                                                                      sProfileID,
+                                                                      aPMode == null ? null : aPMode.getID ())
+                                                   .isBreak ();
+        if (bIsDuplicate)
+        {
+          final String sDetails = "Not invoking SPIs, because message with Message ID '" +
+                                  sMessageID +
+                                  "' was already handled (this is a duplicate)";
+          LOGGER.error (sDetails);
+          aEbmsErrorMessages.add (EEbmsError.EBMS_PHASE4_DUPLICATE.errorBuilder (m_aLocale)
+                                                                  .refToMessageInError (sMessageID)
+                                                                  .errorDetail (sDetails)
+                                                                  .build ());
+        }
+        else
+        {
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Message with ID '" + sMessageID + "' is not a duplicate");
+        }
       }
     }
 
