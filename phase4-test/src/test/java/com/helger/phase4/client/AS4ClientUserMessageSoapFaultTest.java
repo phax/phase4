@@ -43,6 +43,7 @@ import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
@@ -285,7 +286,7 @@ public final class AS4ClientUserMessageSoapFaultTest
     // If "accept all status codes" is disabled, a non-2xx response leads to an IOException that is
     // normally retried. A permanent SOAP Fault must stop all retries immediately.
     final IStringMap aSettings = new StringMap ();
-    aSettings.putIn ("phase4.http.response.accept.allstatuscodes", false);
+    aSettings.putIn (AS4Configuration.PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES, false);
     try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.create (aSettings))
     {
       final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
@@ -325,7 +326,7 @@ public final class AS4ClientUserMessageSoapFaultTest
     // If "accept all status codes" is disabled, a transient SOAP Fault must keep the normal retry
     // behaviour, but must still be surfaced after all retries are exhausted
     final IStringMap aSettings = new StringMap ();
-    aSettings.putIn ("phase4.http.response.accept.allstatuscodes", false);
+    aSettings.putIn (AS4Configuration.PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES, false);
     try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.create (aSettings))
     {
       final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();

@@ -79,6 +79,9 @@ public final class AS4Configuration
   public static final long DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = 10;
   public static final Duration DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_DURATION = Duration.ofMinutes (DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
 
+  public static final String PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES = "phase4.http.response.accept.allstatuscodes";
+  public static final boolean DEFAULT_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES = true;
+
   /**
    * The int property for the maximum size of the header section of a single MIME part of an
    * incoming multipart message, in bytes.
@@ -453,7 +456,8 @@ public final class AS4Configuration
    */
   public static boolean isHttpResponseAcceptAllStatusCodes ()
   {
-    return getConfig ().getAsBoolean ("phase4.http.response.accept.allstatuscodes", true);
+    return getConfig ().getAsBoolean (PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES,
+                                      DEFAULT_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES);
   }
 
   /**
