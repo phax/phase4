@@ -77,7 +77,7 @@
     <dnsjava.version>3.6.5</dnsjava.version>
     <log4j.version>2.26.1</log4j.version>
     <xmlsec.version>4.0.4</xmlsec.version>
-    <wss4j.version>4.0.1</wss4j.version>
+    <wss4j.version>4.0.2</wss4j.version>
 
     <ph-commons.version>12.5.0</ph-commons.version>
     <ph-xsds.version>4.1.0</ph-xsds.version>
