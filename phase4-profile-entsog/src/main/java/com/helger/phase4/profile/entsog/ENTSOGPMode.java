@@ -24,6 +24,7 @@ import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.concurrent.Immutable;
+import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.state.ETriState;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
@@ -58,14 +59,67 @@ public final class ENTSOGPMode
 {
   public static final String DEFAULT_AGREEMENT_ID = "urn:as4:agreement";
   /**
+   * The prefix of the RECOMMENDED AgreementRef naming convention. See the ENTSOG AS4 Usage Profile,
+   * section 2.3.2.
+   *
+   * @since 4.8.0
+   */
+  public static final String AGREEMENT_ID_PREFIX = "http://entsog.eu/communication/agreements/";
+  /**
    * The fixed value of the <code>type</code> attribute of <code>PartyId</code>, indicating that the
    * value is an EIC code. Note the host name is "entsoe.eu" (ENTSO-E maintains the EIC scheme), not
    * "entsog.eu". See the ENTSOG AS4 Usage Profile, section "Party Identification".
    */
   public static final String ENTSOG_PARTY_ID_TYPE = "http://www.entsoe.eu/eic-codes/eic-party-codes-x";
+  /**
+   * The default action for business messages, if no specific action is defined in the ENTSOG AS4
+   * Mapping Table. See the ENTSOG AS4 Usage Profile, section 2.3.1.2.2.
+   *
+   * @since 4.8.0
+   */
+  public static final String ACTION_DEFAULT = "http://docs.oasis-open.org/ebxml-msg/as4/200902/action";
+  /**
+   * The action to be used for the pre-defined test service. See the ENTSOG AS4 Usage Profile,
+   * section 2.3.1.2.2.
+   *
+   * @since 4.8.0
+   */
+  public static final String ACTION_TEST_SERVICE = CAS4.DEFAULT_ACTION_URL;
 
   private ENTSOGPMode ()
   {}
+
+  /**
+   * Create the AgreementRef value according to the RECOMMENDED URI naming convention of the ENTSOG
+   * AS4 Usage Profile, section 2.3.2:
+   * <code>http://entsog.eu/communication/agreements/&lt;EIC_CODE_Party_A&gt;/&lt;EIC_CODE_Party_B&gt;/&lt;version&gt;</code>
+   * where Party A is the party whose EIC code alphabetically precedes the one of Party B. Therefore
+   * both parties get the same value, independent of the order the EIC codes are passed in.
+   *
+   * @param sEICCode1
+   *        The EIC code of one party. May neither be <code>null</code> nor empty.
+   * @param sEICCode2
+   *        The EIC code of the other party. May neither be <code>null</code> nor empty.
+   * @param nVersion
+   *        The agreement version. Initially 1 and incremented for every update. Must be &gt; 0.
+   * @return The AgreementRef value and never <code>null</code>.
+   * @since 4.8.0
+   */
+  @NonNull
+  @Nonempty
+  public static String createAgreementID (@NonNull @Nonempty final String sEICCode1,
+                                          @NonNull @Nonempty final String sEICCode2,
+                                          final int nVersion)
+  {
+    ValueEnforcer.notEmpty (sEICCode1, "EICCode1");
+    ValueEnforcer.notEmpty (sEICCode2, "EICCode2");
+    ValueEnforcer.isGT0 (nVersion, "Version");
+
+    final boolean bInOrder = sEICCode1.compareTo (sEICCode2) <= 0;
+    final String sPartyA = bInOrder ? sEICCode1 : sEICCode2;
+    final String sPartyB = bInOrder ? sEICCode2 : sEICCode1;
+    return AGREEMENT_ID_PREFIX + sPartyA + "/" + sPartyB + "/" + nVersion;
+  }
 
   @NonNull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
@@ -78,7 +132,7 @@ public final class ENTSOGPMode
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     final String sService = null;
-    final String sAction = CAS4.DEFAULT_ACTION_URL;
+    final String sAction = ACTION_DEFAULT;
     final Long nPayloadProfileMaxKB = null;
     final String sMPCID = CAS4.DEFAULT_MPC_ID;
     return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);

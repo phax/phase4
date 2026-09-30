@@ -21,6 +21,7 @@ package com.helger.phase4.profile.entsog;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -53,5 +54,48 @@ public final class ENTSOGPModeTest
     // set to the fixed value http://www.entsoe.eu/eic-codes/eic-party-codes-x"
     assertEquals ("http://www.entsoe.eu/eic-codes/eic-party-codes-x", aPMode.getInitiator ().getIDType ());
     assertEquals ("http://www.entsoe.eu/eic-codes/eic-party-codes-x", aPMode.getResponder ().getIDType ());
+
+    // ENTSOG AS4 Usage Profile, section 2.3.1.2.2: default action for business messages
+    assertEquals ("http://docs.oasis-open.org/ebxml-msg/as4/200902/action",
+                  aPMode.getLeg1 ().getBusinessInfo ().getAction ());
+  }
+
+  @Test
+  public void testENTSOG4PMode ()
+  {
+    final PMode aPMode = ENTSOG4PMode.createENTSOG4PMode ("TestInitiator",
+                                                          "TestResponder",
+                                                          "https://test.example.org",
+                                                          IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                          false,
+                                                          ENTSOG4PMode.generatePModeLegSecurityEdDSA ());
+    assertNotNull (aPMode);
+    assertEquals ("http://www.entsoe.eu/eic-codes/eic-party-codes-x", aPMode.getInitiator ().getIDType ());
+    assertEquals ("http://www.entsoe.eu/eic-codes/eic-party-codes-x", aPMode.getResponder ().getIDType ());
+    assertEquals ("http://docs.oasis-open.org/ebxml-msg/as4/200902/action",
+                  aPMode.getLeg1 ().getBusinessInfo ().getAction ());
+  }
+
+  @Test
+  public void testCreateAgreementID ()
+  {
+    // Example from the ENTSOG AS4 Usage Profile 4.0, section 3.1
+    assertEquals ("http://entsog.eu/communication/agreements/21X-EU-A-X0A0Y-Z/21X-EU-B-P0Q0R-S/3",
+                  ENTSOGPMode.createAgreementID ("21X-EU-A-X0A0Y-Z", "21X-EU-B-P0Q0R-S", 3));
+    // Order of the parties does not matter
+    assertEquals ("http://entsog.eu/communication/agreements/21X-EU-A-X0A0Y-Z/21X-EU-B-P0Q0R-S/1",
+                  ENTSOGPMode.createAgreementID ("21X-EU-B-P0Q0R-S", "21X-EU-A-X0A0Y-Z", 1));
+    assertEquals (ENTSOGPMode.createAgreementID ("21X-EU-A-X0A0Y-Z", "21X-EU-B-P0Q0R-S", 2),
+                  ENTSOG4PMode.createAgreementID ("21X-EU-B-P0Q0R-S", "21X-EU-A-X0A0Y-Z", 2));
+
+    try
+    {
+      ENTSOGPMode.createAgreementID ("21X-EU-A-X0A0Y-Z", "21X-EU-B-P0Q0R-S", 0);
+      fail ();
+    }
+    catch (final IllegalArgumentException ex)
+    {
+      // expected
+    }
   }
 }

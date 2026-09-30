@@ -59,10 +59,36 @@ import com.helger.phase4.wss.EWSSVersion;
 public final class ENTSOG4PMode
 {
   public static final String DEFAULT_AGREEMENT_ID = ENTSOGPMode.DEFAULT_AGREEMENT_ID;
+  public static final String AGREEMENT_ID_PREFIX = ENTSOGPMode.AGREEMENT_ID_PREFIX;
   public static final String ENTSOG_PARTY_ID_TYPE = ENTSOGPMode.ENTSOG_PARTY_ID_TYPE;
+  public static final String ACTION_DEFAULT = ENTSOGPMode.ACTION_DEFAULT;
+  public static final String ACTION_TEST_SERVICE = ENTSOGPMode.ACTION_TEST_SERVICE;
 
   private ENTSOG4PMode ()
   {}
+
+  /**
+   * Create the AgreementRef value according to the RECOMMENDED URI naming convention of the ENTSOG
+   * AS4 Usage Profile, section 2.3.2.
+   *
+   * @param sEICCode1
+   *        The EIC code of one party. May neither be <code>null</code> nor empty.
+   * @param sEICCode2
+   *        The EIC code of the other party. May neither be <code>null</code> nor empty.
+   * @param nVersion
+   *        The agreement version. Initially 1 and incremented for every update. Must be &gt; 0.
+   * @return The AgreementRef value and never <code>null</code>.
+   * @see ENTSOGPMode#createAgreementID(String, String, int)
+   * @since 4.8.0
+   */
+  @NonNull
+  @Nonempty
+  public static String createAgreementID (@NonNull @Nonempty final String sEICCode1,
+                                          @NonNull @Nonempty final String sEICCode2,
+                                          final int nVersion)
+  {
+    return ENTSOGPMode.createAgreementID (sEICCode1, sEICCode2, nVersion);
+  }
 
   @NonNull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
@@ -75,7 +101,7 @@ public final class ENTSOG4PMode
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     final String sService = null;
-    final String sAction = CAS4.DEFAULT_ACTION_URL;
+    final String sAction = ACTION_DEFAULT;
     final Long nPayloadProfileMaxKB = null;
     final String sMPCID = CAS4.DEFAULT_MPC_ID;
     return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);
