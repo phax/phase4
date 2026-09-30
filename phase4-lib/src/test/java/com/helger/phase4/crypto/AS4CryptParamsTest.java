@@ -195,4 +195,65 @@ public final class AS4CryptParamsTest
     // Key agreement fields should not appear when null
     assertFalse (sToString.contains ("KeyAgreementMethod"));
   }
+
+  @Test
+  public void testSessionKeyMatchesAlgorithmByDefault ()
+  {
+    for (final ECryptoAlgorithmCrypt e : ECryptoAlgorithmCrypt.values ())
+    {
+      final AS4CryptParams aParams = new AS4CryptParams ().setAlgorithmCrypt (e);
+      assertFalse (aParams.hasExplicitSessionKeyProvider ());
+      final int nBits = aParams.getSessionKeyProvider ().getSessionKey ().getEncoded ().length * 8;
+      assertEquals (e.getID (), e.getKeySizeBits (), nBits);
+    }
+  }
+
+  @Test
+  public void testSessionKeyWithoutAlgorithmUsesDefault ()
+  {
+    final AS4CryptParams aParams = new AS4CryptParams ();
+    assertSame (AS4CryptParams.DEFAULT_SESSION_KEY_PROVIDER, aParams.getSessionKeyProvider ());
+  }
+
+  @Test
+  public void testExplicitSessionKeyProviderWins ()
+  {
+    final AS4CryptParams aParams = new AS4CryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_256_GCM)
+                                                        .setSessionKeyProvider (ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_128);
+    assertTrue (aParams.hasExplicitSessionKeyProvider ());
+    assertSame (ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_128, aParams.getSessionKeyProvider ());
+  }
+
+  @Test
+  public void testCloneKeepsDerivedSessionKeyProvider ()
+  {
+    final AS4CryptParams aParams = new AS4CryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_256_CBC);
+    final AS4CryptParams aClone = aParams.getClone ();
+    assertFalse (aClone.hasExplicitSessionKeyProvider ());
+    // Changing the algorithm of the clone must change the derived key size
+    aClone.setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+    assertEquals (16, aClone.getSessionKeyProvider ().getSessionKey ().getEncoded ().length);
+    assertEquals (32, aParams.getSessionKeyProvider ().getSessionKey ().getEncoded ().length);
+  }
+
+  @Test
+  public void testSessionKeyProviderCanBeResetToDerived ()
+  {
+    final AS4CryptParams aParams = new AS4CryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_256_GCM)
+                                                        .setSessionKeyProvider (ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_128);
+    assertTrue (aParams.hasExplicitSessionKeyProvider ());
+    aParams.setSessionKeyProvider (null);
+    assertFalse (aParams.hasExplicitSessionKeyProvider ());
+    assertEquals (32, aParams.getSessionKeyProvider ().getSessionKey ().getEncoded ().length);
+  }
+
+  @Test
+  public void testCloneKeepsExplicitSessionKeyProvider ()
+  {
+    final AS4CryptParams aParams = new AS4CryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_256_GCM)
+                                                        .setSessionKeyProvider (ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_256);
+    final AS4CryptParams aClone = aParams.getClone ();
+    assertTrue (aClone.hasExplicitSessionKeyProvider ());
+    assertSame (ICryptoSessionKeyProvider.INSTANCE_RANDOM_AES_256, aClone.getSessionKeyProvider ());
+  }
 }

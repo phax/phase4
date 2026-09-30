@@ -39,6 +39,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
+import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoMode;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -64,6 +65,31 @@ public final class AS4Encryptor
 
   private AS4Encryptor ()
   {}
+
+  /**
+   * Make sure the session key has exactly the size the encryption algorithm requires. A key of the
+   * wrong size would otherwise be used silently, e.g. a 128 bit key for "aes256-gcm", which weakens
+   * the encryption and may be rejected by the receiver.
+   */
+  static void checkSessionKeySize (@NonNull final AS4CryptParams aCryptParams,
+                                   @NonNull final SecretKey aSymmetricKey)
+  {
+    final ECryptoAlgorithmCrypt eAlgorithmCrypt = aCryptParams.getAlgorithmCrypt ();
+    final byte [] aEncoded = aSymmetricKey.getEncoded ();
+    if (eAlgorithmCrypt != null && aEncoded != null)
+    {
+      final int nActualBits = aEncoded.length * 8;
+      if (nActualBits != eAlgorithmCrypt.getKeySizeBits ())
+        throw new IllegalStateException ("The session key has " +
+                                         nActualBits +
+                                         " bits, but encryption algorithm '" +
+                                         eAlgorithmCrypt.getID () +
+                                         "' requires " +
+                                         eAlgorithmCrypt.getKeySizeBits () +
+                                         " bits. Check the session key provider " +
+                                         aCryptParams.getSessionKeyProvider ());
+    }
+  }
 
   @NonNull
   private static WSSecEncrypt _createEncrypt (@NonNull final WSSecHeader aSecHeader,
@@ -173,6 +199,7 @@ public final class AS4Encryptor
     if (aSymmetricKey == null)
       throw new IllegalStateException ("Failed to create a symmetric session key from " +
                                        aCryptParams.getSessionKeyProvider ());
+    checkSessionKeySize (aCryptParams, aSymmetricKey);
 
     return aBuilder.build (aCryptoFactoryCrypt.getCrypto (ECryptoMode.ENCRYPT_SIGN), aSymmetricKey);
   }
@@ -286,6 +313,7 @@ public final class AS4Encryptor
     if (aSymmetricKey == null)
       throw new IllegalStateException ("Failed to create a symmetric session key from " +
                                        aCryptParams.getSessionKeyProvider ());
+    checkSessionKeySize (aCryptParams, aSymmetricKey);
 
     // Main sign and/or encrypt
     final Document aEncryptedDoc = aBuilder.build (aCryptoFactoryCrypt.getCrypto (ECryptoMode.ENCRYPT_SIGN),
