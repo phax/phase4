@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.jspecify.annotations.NonNull;
 
+import com.helger.base.io.stream.StreamHelper;
 import com.helger.http.EHttpMethod;
 import com.helger.io.file.SimpleFileIO;
 import com.helger.mime.IMimeType;
@@ -56,6 +57,13 @@ public final class MockAS4Servlet extends AbstractXServlet
                                           final IMimeType aMimeType = MimeTypeParser.parseMimeType (aRequestScope.params ()
                                                                                                                  .getAsString (MIMETYPE,
                                                                                                                                "text/plain"));
+
+                                          // Always read the complete request body before responding. Otherwise
+                                          // Jetty may close the connection while the client is still writing
+                                          // the request, which results in a "Broken pipe" on the client side.
+                                          // That is a transport error that is retried, making tests that count
+                                          // retries flaky.
+                                          StreamHelper.getAllBytes (aRequestScope.getRequest ().getInputStream ());
 
                                           // Hack to get long data
                                           if ("receipt12".equals (sContentID))
