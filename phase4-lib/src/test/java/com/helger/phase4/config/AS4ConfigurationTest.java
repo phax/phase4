@@ -140,4 +140,22 @@ public final class AS4ConfigurationTest
       SystemProperties.removePropertyValue (sKey);
     }
   }
+
+  @Test
+  public void testIncomingSecurityEnforcePMode ()
+  {
+    // Disabled by default for backwards compatibility
+    assertFalse (AS4Configuration.isIncomingSecurityEnforcePMode ());
+
+    final String sKey = AS4Configuration.PROPERTY_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE;
+    try
+    {
+      SystemProperties.setPropertyValue (sKey, "true");
+      assertTrue (AS4Configuration.isIncomingSecurityEnforcePMode ());
+    }
+    finally
+    {
+      SystemProperties.removePropertyValue (sKey);
+    }
+  }
 }
