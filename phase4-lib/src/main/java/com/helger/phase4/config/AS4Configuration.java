@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 
 import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.concurrent.GuardedBy;
+import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.CGlobal;
 import com.helger.base.concurrent.SimpleReadWriteLock;
 import com.helger.base.debug.GlobalDebug;
@@ -155,6 +156,18 @@ public final class AS4Configuration
    */
   public static final String PROPERTY_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE = "phase4.incoming.signature.requirefullcoverage";
   public static final boolean DEFAULT_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE = true;
+
+  /**
+   * The boolean property that defines, if the security settings of the effective PMode leg are
+   * enforced on incoming UserMessages. If enabled, an incoming UserMessage must be signed, if the
+   * PMode leg defines a signature algorithm, and it must be encrypted, if the PMode leg defines an
+   * encryption algorithm. Signal messages are not affected.
+   *
+   * @since 4.8.0
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE = "phase4.incoming.security.enforcepmode";
+  @ChangeNextMajorRelease ("Swap to true")
+  public static final boolean DEFAULT_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE = false;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Configuration.class);
 
@@ -564,5 +577,17 @@ public final class AS4Configuration
   {
     return getConfig ().getAsBoolean (PROPERTY_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE,
                                       DEFAULT_PHASE4_INCOMING_SIGNATURE_REQUIRE_FULL_COVERAGE);
+  }
+
+  /**
+   * @return <code>true</code> if incoming UserMessages must be signed and/or encrypted as defined
+   *         by the security settings of the effective PMode leg, <code>false</code> if not.
+   *         Defaults to {@value #DEFAULT_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE}.
+   * @since 4.8.0
+   */
+  public static boolean isIncomingSecurityEnforcePMode ()
+  {
+    return getConfig ().getAsBoolean (PROPERTY_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE,
+                                      DEFAULT_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE);
   }
 }
