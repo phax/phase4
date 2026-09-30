@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.crypto;
 
+import java.security.NoSuchAlgorithmException;
+
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
@@ -24,9 +26,12 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.KeyUtils;
 import org.jspecify.annotations.NonNull;
 
+import com.helger.base.enforce.ValueEnforcer;
+
 /**
  * Interface for a "session key" provider, that is used for encrypting documents. Default instances
- * for AES-128 and AES-256 are provided for simplicity.
+ * for AES-128 and AES-256 are provided for simplicity, and {@link #createRandomFor(ECryptoAlgorithmCrypt)}
+ * creates a provider whose key size matches a given encryption algorithm.
  *
  * @author Philip Helger
  */
@@ -69,4 +74,38 @@ public interface ICryptoSessionKeyProvider
       throw new IllegalStateException ("Failed to create session key (AES-256)", ex);
     }
   };
+
+  /**
+   * Create a session key provider that creates random keys of exactly the size the provided
+   * encryption algorithm requires (e.g. 256 bits for AES-256-GCM).
+   *
+   * @param eAlgorithmCrypt
+   *        The encryption algorithm the keys are used for. May not be <code>null</code>.
+   * @return A new session key provider. Never <code>null</code>.
+   * @since 4.7.1
+   */
+  @NonNull
+  static ICryptoSessionKeyProvider createRandomFor (@NonNull final ECryptoAlgorithmCrypt eAlgorithmCrypt)
+  {
+    ValueEnforcer.notNull (eAlgorithmCrypt, "AlgorithmCrypt");
+    return () -> {
+      try
+      {
+        // Plain JCE, so that this also works before WSS4J/XMLSec was initialized
+        final KeyGenerator aKeyGen;
+        if (eAlgorithmCrypt == ECryptoAlgorithmCrypt.CRYPT_3DES)
+          aKeyGen = KeyGenerator.getInstance ("DESede");
+        else
+        {
+          aKeyGen = KeyGenerator.getInstance ("AES");
+          aKeyGen.init (eAlgorithmCrypt.getKeySizeBits ());
+        }
+        return aKeyGen.generateKey ();
+      }
+      catch (final NoSuchAlgorithmException ex)
+      {
+        throw new IllegalStateException ("Failed to create session key (" + eAlgorithmCrypt.getID () + ")", ex);
+      }
+    };
+  }
 }

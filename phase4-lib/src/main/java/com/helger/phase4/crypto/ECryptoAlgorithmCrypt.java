@@ -22,6 +22,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import com.helger.annotation.Nonempty;
+import com.helger.annotation.Nonnegative;
 import com.helger.base.lang.EnumHelper;
 
 /**
@@ -35,13 +36,13 @@ import com.helger.base.lang.EnumHelper;
  */
 public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
 {
-  CRYPT_3DES ("3des", "1.2.840.113549.3.7", WSS4JConstants.TRIPLE_DES),
-  AES_128_CBC ("aes128-cbc", "2.16.840.1.101.3.4.1.2", WSS4JConstants.AES_128),
-  AES_128_GCM ("aes128-gcm", "2.16.840.1.101.3.4.1.6", WSS4JConstants.AES_128_GCM),
-  AES_192_CBC ("aes192-cbc", "2.16.840.1.101.3.4.1.22", WSS4JConstants.AES_192),
-  AES_192_GCM ("aes192-gcm", "2.16.840.1.101.3.4.1.26", WSS4JConstants.AES_192_GCM),
-  AES_256_CBC ("aes256-cbc", "2.16.840.1.101.3.4.1.42", WSS4JConstants.AES_256),
-  AES_256_GCM ("aes256-gcm", "2.16.840.1.101.3.4.1.46", WSS4JConstants.AES_256_GCM);
+  CRYPT_3DES ("3des", "1.2.840.113549.3.7", WSS4JConstants.TRIPLE_DES, 192),
+  AES_128_CBC ("aes128-cbc", "2.16.840.1.101.3.4.1.2", WSS4JConstants.AES_128, 128),
+  AES_128_GCM ("aes128-gcm", "2.16.840.1.101.3.4.1.6", WSS4JConstants.AES_128_GCM, 128),
+  AES_192_CBC ("aes192-cbc", "2.16.840.1.101.3.4.1.22", WSS4JConstants.AES_192, 192),
+  AES_192_GCM ("aes192-gcm", "2.16.840.1.101.3.4.1.26", WSS4JConstants.AES_192_GCM, 192),
+  AES_256_CBC ("aes256-cbc", "2.16.840.1.101.3.4.1.42", WSS4JConstants.AES_256, 256),
+  AES_256_GCM ("aes256-gcm", "2.16.840.1.101.3.4.1.46", WSS4JConstants.AES_256_GCM, 256);
 
   /** Default encrypt algorithm */
   public static final ECryptoAlgorithmCrypt ENCRYPTION_ALGORITHM_DEFAULT = AES_128_GCM;
@@ -53,15 +54,18 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   private final String m_sID;
   private final String m_sOID;
   private final String m_sAlgorithmURI;
+  private final int m_nKeySizeBits;
   private volatile ASN1ObjectIdentifier m_aOID;
 
   ECryptoAlgorithmCrypt (@NonNull @Nonempty final String sID,
                          @NonNull @Nonempty final String sOID,
-                         @NonNull @Nonempty final String sAlgorithmURI)
+                         @NonNull @Nonempty final String sAlgorithmURI,
+                         @Nonnegative final int nKeySizeBits)
   {
     m_sID = sID;
     m_sOID = sOID;
     m_sAlgorithmURI = sAlgorithmURI;
+    m_nKeySizeBits = nKeySizeBits;
   }
 
   @NonNull
@@ -101,6 +105,17 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   public String getAlgorithmURI ()
   {
     return m_sAlgorithmURI;
+  }
+
+  /**
+   * @return The size of the symmetric key this algorithm requires, in bits. E.g. 256 for
+   *         AES-256-GCM.
+   * @since 4.7.1
+   */
+  @Nonnegative
+  public int getKeySizeBits ()
+  {
+    return m_nKeySizeBits;
   }
 
   @Nullable

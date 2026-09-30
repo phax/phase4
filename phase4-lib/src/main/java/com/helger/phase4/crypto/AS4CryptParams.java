@@ -81,7 +81,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   // The alias into the WSS4J crypto config
   private String m_sAlias;
   // The session key provider
-  private ICryptoSessionKeyProvider m_aSessionKeyProvider = DEFAULT_SESSION_KEY_PROVIDER;
+  // null means: derive the key size from the encryption algorithm
+  private ICryptoSessionKeyProvider m_aSessionKeyProvider;
   private Provider m_aSecurityProviderEncrypt;
   private Provider m_aSecurityProviderDecrypt;
   private boolean m_bEncryptSymmetricSessionKey = DEFAULT_ENCRYPT_SYMMETRIC_SESSION_KEY;
@@ -411,13 +412,31 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
   }
 
   /**
-   * @return The session key provider to be used. Never <code>null</code>.
+   * @return The session key provider to be used. Never <code>null</code>. If no provider was set
+   *         explicitly, the returned provider creates keys matching the key size of the configured
+   *         encryption algorithm (e.g. 256 bits for AES-256-GCM), and falls back to
+   *         {@link #DEFAULT_SESSION_KEY_PROVIDER} only if no encryption algorithm is set.
    * @since 2.1.2
    */
   @NonNull
   public final ICryptoSessionKeyProvider getSessionKeyProvider ()
   {
-    return m_aSessionKeyProvider;
+    if (m_aSessionKeyProvider != null)
+      return m_aSessionKeyProvider;
+    if (m_eAlgorithmCrypt != null)
+      return ICryptoSessionKeyProvider.createRandomFor (m_eAlgorithmCrypt);
+    return DEFAULT_SESSION_KEY_PROVIDER;
+  }
+
+  /**
+   * @return <code>true</code> if a session key provider was set explicitly via
+   *         {@link #setSessionKeyProvider(ICryptoSessionKeyProvider)}, <code>false</code> if it is
+   *         derived from the encryption algorithm.
+   * @since 4.7.1
+   */
+  public final boolean hasExplicitSessionKeyProvider ()
+  {
+    return m_aSessionKeyProvider != null;
   }
 
   /**
@@ -590,11 +609,12 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
            .setKeyWrapAlgorithm (m_eKeyWrapAlgorithm)
            .setCertificate (m_aCert)
            .setAlias (m_sAlias)
-           .setSessionKeyProvider (m_aSessionKeyProvider)
            .setSecurityProviderEncrypt (m_aSecurityProviderEncrypt)
            .setSecurityProviderDecrypt (m_aSecurityProviderDecrypt)
            .setEncryptSymmetricSessionKey (m_bEncryptSymmetricSessionKey)
            .setWSSecEncryptCustomizer (m_aWSSecEncryptCustomizer);
+    // Copy the field directly, so that "derived from the algorithm" survives the clone
+    aTarget.m_aSessionKeyProvider = m_aSessionKeyProvider;
   }
 
   @NonNull
