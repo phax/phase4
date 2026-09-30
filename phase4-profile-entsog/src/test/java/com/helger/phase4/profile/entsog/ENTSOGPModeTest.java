@@ -19,6 +19,7 @@
  */
 package com.helger.phase4.profile.entsog;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.ClassRule;
@@ -47,5 +48,10 @@ public final class ENTSOGPModeTest
                                                         IPModeIDProvider.DEFAULT_DYNAMIC,
                                                         false);
     assertNotNull (aPMode);
+
+    // ENTSOG AS4 Usage Profile: "The type attribute on the PartyId element MUST be present and
+    // set to the fixed value http://www.entsoe.eu/eic-codes/eic-party-codes-x"
+    assertEquals ("http://www.entsoe.eu/eic-codes/eic-party-codes-x", aPMode.getInitiator ().getIDType ());
+    assertEquals ("http://www.entsoe.eu/eic-codes/eic-party-codes-x", aPMode.getResponder ().getIDType ());
   }
 }

@@ -57,7 +57,12 @@ import com.helger.phase4.wss.EWSSVersion;
 public final class ENTSOGPMode
 {
   public static final String DEFAULT_AGREEMENT_ID = "urn:as4:agreement";
-  public static final String ENTSOG_PARTY_ID_TYPE = "http://www.entsog.eu/eic-codes/eic-party-codes-x";
+  /**
+   * The fixed value of the <code>type</code> attribute of <code>PartyId</code>, indicating that the
+   * value is an EIC code. Note the host name is "entsoe.eu" (ENTSO-E maintains the EIC scheme), not
+   * "entsog.eu". See the ENTSOG AS4 Usage Profile, section "Party Identification".
+   */
+  public static final String ENTSOG_PARTY_ID_TYPE = "http://www.entsoe.eu/eic-codes/eic-party-codes-x";
 
   private ENTSOGPMode ()
   {}
