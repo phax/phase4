@@ -174,8 +174,8 @@ public class AS4ClientSentMessage <T>
 
   /**
    * @return The details of the TLS layer of the connection that was used for the transmission. May
-   *         be <code>null</code> if the transmission did not use TLS at all. This is a shortcut
-   *         for <code>getConnectionDetails ().getTlsDetails ()</code>.
+   *         be <code>null</code> if the transmission did not use TLS at all. This is a shortcut for
+   *         <code>getConnectionDetails ().getTlsDetails ()</code>.
    * @since 4.8.0
    */
   @Nullable

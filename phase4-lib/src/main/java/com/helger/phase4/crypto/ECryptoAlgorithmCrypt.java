@@ -113,7 +113,8 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
                          @NonNull @Nonempty final String sOID,
                          @NonNull @Nonempty final String sAlgorithmURI,
                          @Nonnegative final int nKeySizeBits,
-                         // Supplier instead of a shared instance: KeyGenerator is not guaranteed to be thread-safe,
+                         // Supplier instead of a shared instance: KeyGenerator is not guaranteed to
+                         // be thread-safe,
                          // and the JCE provider must be resolved per call, not at enum class init
                          @NonNull final Supplier <KeyGenerator> aKeyGeneratorSupplier)
   {

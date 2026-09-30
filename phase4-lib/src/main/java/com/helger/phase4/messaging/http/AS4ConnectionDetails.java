@@ -45,8 +45,8 @@ import com.helger.xml.microdom.MicroElement;
  * was used - the {@link AS4TlsConnectionDetails}.
  * <p>
  * This is only created for outgoing connections. For an incoming request the same information is
- * part of <code>IAS4IncomingMessageMetadata</code> itself, because the Servlet request already is
- * a flat set of such properties.
+ * part of <code>IAS4IncomingMessageMetadata</code> itself, because the Servlet request already is a
+ * flat set of such properties.
  *
  * @author Philip Helger
  * @since 4.8.0
@@ -106,8 +106,7 @@ public class AS4ConnectionDetails
   /**
    * @return The HTTP version of the received response - e.g. <code>HTTP/1.1</code>. May be
    *         <code>null</code>. Note: the classic Apache HttpClient that is used for outgoing
-   *         messages only speaks HTTP/1.1, so anything else can only show up on the receiving
-   *         side.
+   *         messages only speaks HTTP/1.1, so anything else can only show up on the receiving side.
    */
   @Nullable
   public final String getHttpVersion ()

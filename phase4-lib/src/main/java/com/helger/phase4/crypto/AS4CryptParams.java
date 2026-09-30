@@ -444,8 +444,8 @@ public class AS4CryptParams implements ICloneable <AS4CryptParams>
    * a <code>null</code> key.
    *
    * @param aSessionKeyProvider
-   *        The session key provider to be used. May be <code>null</code> (since 4.8.0) to derive the
-   *        session key from the encryption algorithm, which is the default.
+   *        The session key provider to be used. May be <code>null</code> (since 4.8.0) to derive
+   *        the session key from the encryption algorithm, which is the default.
    * @return this for chaining
    * @since 2.1.2
    */

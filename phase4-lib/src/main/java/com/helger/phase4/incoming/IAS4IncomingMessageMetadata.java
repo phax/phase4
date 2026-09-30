@@ -312,9 +312,9 @@ public interface IAS4IncomingMessageMetadata
    * Returns the parameters of the TLS connection the message was transmitted over - like the TLS
    * protocol version and the negotiated cipher suite.
    *
-   * @return The TLS connection details. May be <code>null</code> if the message was not
-   *         transmitted over TLS, or if the Servlet container does not provide the respective
-   *         request attributes.
+   * @return The TLS connection details. May be <code>null</code> if the message was not transmitted
+   *         over TLS, or if the Servlet container does not provide the respective request
+   *         attributes.
    * @since 4.8.0
    */
   @Nullable

@@ -71,8 +71,7 @@ public final class AS4Encryptor
    * wrong size would otherwise be used silently, e.g. a 128 bit key for "aes256-gcm", which weakens
    * the encryption and may be rejected by the receiver.
    */
-  static void checkSessionKeySize (@NonNull final AS4CryptParams aCryptParams,
-                                   @NonNull final SecretKey aSymmetricKey)
+  static void checkSessionKeySize (@NonNull final AS4CryptParams aCryptParams, @NonNull final SecretKey aSymmetricKey)
   {
     final ECryptoAlgorithmCrypt eAlgorithmCrypt = aCryptParams.getAlgorithmCrypt ();
     final byte [] aEncoded = aSymmetricKey.getEncoded ();

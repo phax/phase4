@@ -754,9 +754,9 @@ public class Phase4PeppolSendingReport
   }
 
   /**
-   * @return The details of the connection to C3 - the negotiated HTTP version, the socket
-   *         addresses of both ends and the TLS layer. May be <code>null</code> if no raw HTTP
-   *         response was provided via {@link #setRawHttpResponse(AS4ClientSentMessage)}.
+   * @return The details of the connection to C3 - the negotiated HTTP version, the socket addresses
+   *         of both ends and the TLS layer. May be <code>null</code> if no raw HTTP response was
+   *         provided via {@link #setRawHttpResponse(AS4ClientSentMessage)}.
    * @since 4.8.0
    */
   @Nullable
@@ -777,9 +777,8 @@ public class Phase4PeppolSendingReport
 
   /**
    * @return The details of the TLS layer of the connection to C3 - like the TLS protocol version
-   *         and the negotiated cipher suite. May be <code>null</code> if C3 was contacted via
-   *         plain HTTP. This is a shortcut for
-   *         <code>getConnectionDetails ().getTlsDetails ()</code>.
+   *         and the negotiated cipher suite. May be <code>null</code> if C3 was contacted via plain
+   *         HTTP. This is a shortcut for <code>getConnectionDetails ().getTlsDetails ()</code>.
    * @since 4.8.0
    */
   @Nullable

@@ -28,8 +28,9 @@ import com.helger.base.enforce.ValueEnforcer;
 
 /**
  * Interface for a "session key" provider, that is used for encrypting documents. Default instances
- * for AES-128 and AES-256 are provided for simplicity, and {@link #createRandomFor(ECryptoAlgorithmCrypt)}
- * creates a provider whose key size matches a given encryption algorithm.
+ * for AES-128 and AES-256 are provided for simplicity, and
+ * {@link #createRandomFor(ECryptoAlgorithmCrypt)} creates a provider whose key size matches a given
+ * encryption algorithm.
  *
  * @author Philip Helger
  */

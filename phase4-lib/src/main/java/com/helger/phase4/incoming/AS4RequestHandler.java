@@ -1710,7 +1710,8 @@ public class AS4RequestHandler implements AutoCloseable
     {
       final String sProfileID = aIncomingState.getProfileID ();
 
-      // Duplicate detection can be disabled per PMode (PMode[].ReceptionAwareness.DetectDuplicates).
+      // Duplicate detection can be disabled per PMode
+      // (PMode[].ReceptionAwareness.DetectDuplicates).
       // Without a PMode, or without an explicit setting, duplicates are always detected.
       final PModeReceptionAwareness aReceptionAwareness = aPMode == null ? null : aPMode.getReceptionAwareness ();
       if (aReceptionAwareness != null && !aReceptionAwareness.isDuplicateDetection ())

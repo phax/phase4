@@ -89,12 +89,7 @@ public final class AS4ConnectionDetailsTest
                                                                       null,
                                                                       null,
                                                                       null);
-    final AS4ConnectionDetails aDetails = new AS4ConnectionDetails ("HTTP/1.1",
-                                                                    "10.0.0.1",
-                                                                    443,
-                                                                    null,
-                                                                    NO_PORT,
-                                                                    aTls);
+    final AS4ConnectionDetails aDetails = new AS4ConnectionDetails ("HTTP/1.1", "10.0.0.1", 443, null, NO_PORT, aTls);
     assertTrue (aDetails.hasTlsDetails ());
     assertSame (aTls, aDetails.getTlsDetails ());
 
