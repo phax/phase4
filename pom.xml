@@ -73,19 +73,19 @@
     <jaxb-plugin.version>4.0.16</jaxb-plugin.version>
     <ph-jaxb-plugin.version>5.1.3</ph-jaxb-plugin.version>
 
-    <bctls.version>1.86.1</bctls.version>
+    <bctls.version>1.86.2</bctls.version>
     <dnsjava.version>3.6.5</dnsjava.version>
     <log4j.version>2.26.1</log4j.version>
     <xmlsec.version>4.0.4</xmlsec.version>
     <wss4j.version>4.0.2</wss4j.version>
 
-    <ph-commons.version>12.5.0</ph-commons.version>
+    <ph-commons.version>12.5.1</ph-commons.version>
     <ph-xsds.version>4.1.0</ph-xsds.version>
     <ph-ubl.version>10.2.0</ph-ubl.version>
-    <ph-web.version>11.4.6</ph-web.version>
+    <ph-web.version>11.4.7</ph-web.version>
     <phive.version>12.2.0</phive.version>
     <phive-rules.version>4.6.3</phive-rules.version>
-    <peppol-commons.version>13.1.1</peppol-commons.version>
+    <peppol-commons.version>13.2.0</peppol-commons.version>
     <peppol-reporting.version>4.4.0</peppol-reporting.version>
     <peppol-ap-support.version>2.4.0</peppol-ap-support.version>
   </properties>
@@ -130,7 +130,7 @@
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>10.6.0</version>
+        <version>10.7.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
