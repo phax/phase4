@@ -80,7 +80,7 @@
     <wss4j.version>4.0.2</wss4j.version>
 
     <ph-commons.version>12.5.1</ph-commons.version>
-    <ph-xsds.version>4.1.0</ph-xsds.version>
+    <ph-xsds.version>4.1.1</ph-xsds.version>
     <ph-ubl.version>10.2.0</ph-ubl.version>
     <ph-web.version>11.4.7</ph-web.version>
     <phive.version>12.2.0</phive.version>
