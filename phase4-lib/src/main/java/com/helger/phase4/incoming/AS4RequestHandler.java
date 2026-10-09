@@ -61,6 +61,7 @@ import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -1706,6 +1707,7 @@ public class AS4RequestHandler implements AutoCloseable
     final Ebms3UserMessage aEbmsUserMessage = aIncomingState.getEbmsUserMessage ();
     final Ebms3SignalMessage aEbmsSignalMessage = aIncomingState.getEbmsSignalMessage ();
 
+    boolean bIgnoredDuplicate = false;
     if (aIncomingState.isSoapHeaderElementProcessingSuccessful ())
     {
       final String sProfileID = aIncomingState.getProfileID ();
@@ -1743,11 +1745,20 @@ public class AS4RequestHandler implements AutoCloseable
           final String sDetails = "Not invoking SPIs, because message with Message ID '" +
                                   sMessageID +
                                   "' was already handled (this is a duplicate)";
-          LOGGER.error (sDetails);
-          aEbmsErrorMessages.add (EEbmsError.EBMS_PHASE4_DUPLICATE.errorBuilder (m_aLocale)
-                                                                  .refToMessageInError (sMessageID)
-                                                                  .errorDetail (sDetails)
-                                                                  .build ());
+          if (AS4Configuration.isIncomingDuplicateReturnError ())
+          {
+            LOGGER.error (sDetails);
+            aEbmsErrorMessages.add (EEbmsError.EBMS_PHASE4_DUPLICATE.errorBuilder (m_aLocale)
+                                                                    .refToMessageInError (sMessageID)
+                                                                    .errorDetail (sDetails)
+                                                                    .build ());
+          }
+          else
+          {
+            // Silently ignore - no error, but no SPI invocation either
+            LOGGER.warn (sDetails + " - silently ignoring it");
+            bIgnoredDuplicate = true;
+          }
         }
         else
         {
@@ -1772,6 +1783,11 @@ public class AS4RequestHandler implements AutoCloseable
     if (aEbmsErrorMessages.isNotEmpty ())
     {
       // Previous processing errors
+      bCanInvokeSPIs = false;
+    }
+    if (bIgnoredDuplicate)
+    {
+      // Duplicate that is silently ignored
       bCanInvokeSPIs = false;
     }
 

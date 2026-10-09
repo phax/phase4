@@ -80,6 +80,16 @@ public final class AS4Configuration
   public static final long DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = 10;
   public static final Duration DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_DURATION = Duration.ofMinutes (DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
 
+  /**
+   * The boolean property to define whether an incoming duplicate message is answered with an ebMS
+   * Error (<code>EBMS:4001</code>) or whether it is silently ignored (the SPIs are not invoked and
+   * the usual Receipt is returned).
+   *
+   * @since 4.8.1
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_DUPLICATE_RETURNERROR = "phase4.incoming.duplicate.returnerror";
+  public static final boolean DEFAULT_PHASE4_INCOMING_DUPLICATE_RETURNERROR = true;
+
   public static final String PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES = "phase4.http.response.accept.allstatuscodes";
   public static final boolean DEFAULT_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES = true;
 
@@ -340,6 +350,20 @@ public final class AS4Configuration
     // Parse manually
     final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
     return StringParser.parseBool (sValue, DEFAULT_PHASE4_WSS4J_SYNCSECURITY);
+  }
+
+  /**
+   * @return <code>true</code> if an incoming duplicate message should be answered with an ebMS
+   *         Error (<code>EBMS:4001</code>), <code>false</code> if it should be silently ignored
+   *         (no SPI invocation, normal Receipt). The configuration item is
+   *         <code>phase4.incoming.duplicate.returnerror</code>. Defaults to <code>true</code>.
+   * @since 4.8.1
+   */
+  public static boolean isIncomingDuplicateReturnError ()
+  {
+    // Parse manually
+    final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_INCOMING_DUPLICATE_RETURNERROR);
+    return StringParser.parseBool (sValue, DEFAULT_PHASE4_INCOMING_DUPLICATE_RETURNERROR);
   }
 
   /**
