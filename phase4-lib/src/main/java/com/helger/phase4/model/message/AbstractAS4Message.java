@@ -26,7 +26,6 @@ import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
-import java.time.temporal.ChronoField;
 import java.util.Locale;
 
 import javax.xml.namespace.QName;
@@ -198,9 +197,11 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
           {
             final String sValue = XMLHelper.getFirstChildText (aEbms3Timestamp);
             final OffsetDateTime aODT = PDTWebDateHelper.getOffsetDateTimeFromXSD (sValue);
-            if ((aODT.get (ChronoField.MILLI_OF_SECOND) % 10) == 0)
+            // Always use exactly 3 fraction digits, independent of the number of trailing zeroes
+            // in the original value. See phoss-ap#106
+            final String sNewValue = DOMIBUS_XSD_DATE_TIME.format (aODT);
+            if (!sNewValue.equals (sValue))
             {
-              String sNewValue = DOMIBUS_XSD_DATE_TIME.format (aODT);
               LOGGER.info ("Changing MessageInfo/Timestamp from '" + sValue + "' to '" + sNewValue + "' for Domibus");
 
               // Replace in DOM
