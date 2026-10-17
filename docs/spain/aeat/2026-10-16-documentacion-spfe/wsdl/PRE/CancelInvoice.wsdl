@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="CancelInvoiceService"
+    targetNamespace="https://www.agenciatributaria.gob.es/spfe/ns/services/CancelInvoice/v1"
+    xmlns:tns="https://www.agenciatributaria.gob.es/spfe/ns/services/CancelInvoice/v1"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:eb3="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+
+    <wsdl:documentation>
+        SPFE (Solución Pública de Factura Electrónica) - servicio CancelInvoice - entorno PRE.
+
+        Mensajería ebMS 3.0:
+        - La cabecera eb3:Messaging viaja en el header SOAP; el body SOAP va vacío.
+        - Los errores se devuelven como SOAP Fault estándar de SOAP 1.1 (faultcode y
+          faultstring), sin elemento detail propio.
+        - Los documentos UBL de entrada y salida viajan como adjuntos MIME, referenciados
+          desde eb3:UserMessage/PayloadInfo/PartInfo mediante href="cid:...".
+        - WSDL 1.1 no permite declarar un número variable de adjuntos: este WSDL describe una
+          única parte "payload" a título orientativo, y el mensaje puede llevar tantos
+          adjuntos como PartInfo declare la cabecera ebMS.
+
+        Acceso: dos puertos alternativos y equivalentes, cada uno con su propio dominio:
+        - CancelInvoiceCertPort: acceso con certificado electrónico (no de sello).
+        - CancelInvoiceSealPort: acceso con certificado de sello electrónico.
+    </wsdl:documentation>
+
+    <!-- ============================================================
+         TYPES
+         Solo se importa el esquema de mensajería ebMS 3.0 (ruta relativa
+         a este WSDL). Los documentos UBL no se tipan aquí: viajan como
+         adjuntos opacos y se validan en la capa de negocio.
+         ============================================================ -->
+    <wsdl:types>
+        <xsd:schema targetNamespace="https://www.agenciatributaria.gob.es/spfe/ns/services/CancelInvoice/v1" elementFormDefault="qualified">
+            <xsd:import
+                namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+                schemaLocation="xsd/ebms/ebms-header-3_0-200704.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+
+    <!-- ============================================================
+         MESSAGES
+         - ebmsHeader: cabecera eb3:Messaging (header SOAP)
+         - payload:    adjunto MIME con el documento UBL (contenido opaco,
+                       base64Binary a nivel WSDL)
+         ============================================================ -->
+    <wsdl:message name="CancelInvoiceRequest">
+        <wsdl:part name="ebmsHeader" element="eb3:Messaging"/>
+        <wsdl:part name="payload" type="xsd:base64Binary"/>
+    </wsdl:message>
+
+    <wsdl:message name="CancelInvoiceResponse">
+        <wsdl:part name="ebmsHeader" element="eb3:Messaging"/>
+        <wsdl:part name="payload" type="xsd:base64Binary"/>
+    </wsdl:message>
+
+    <!-- ============================================================
+         PORT TYPE
+         ============================================================ -->
+    <wsdl:portType name="CancelInvoicePortType">
+        <wsdl:operation name="CancelInvoice">
+            <wsdl:documentation>
+                Recibe un mensaje ebMS 3.0 con los documentos UBL adjuntos y devuelve un
+                mensaje ebMS 3.0 (señal Receipt y/o UserMessage de respuesta) con los
+                documentos UBL de respuesta adjuntos.
+            </wsdl:documentation>
+            <wsdl:input name="CancelInvoiceInput" message="tns:CancelInvoiceRequest"/>
+            <wsdl:output name="CancelInvoiceOutput" message="tns:CancelInvoiceResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <!-- ============================================================
+         BINDING: SOAP 1.1 + MIME multipart
+         - eb3:Messaging como soap:header en petición y respuesta
+         - body SOAP vacío (patrón ebMS 3.0 / AS4)
+         - documentos UBL como adjuntos MIME (Content-ID = cid: de cada PartInfo)
+         ============================================================ -->
+    <wsdl:binding name="CancelInvoiceSoapBinding" type="tns:CancelInvoicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="CancelInvoice">
+            <soap:operation soapAction="https://www.agenciatributaria.gob.es/spfe/ns/services/CancelInvoice/v1/CancelInvoice"/>
+
+            <wsdl:input name="CancelInvoiceInput">
+                <mime:multipartRelated>
+                    <mime:part>
+                        <soap:header message="tns:CancelInvoiceRequest"
+                                     part="ebmsHeader" use="literal"/>
+                        <soap:body parts="" use="literal"/>
+                    </mime:part>
+                    <mime:part>
+                        <mime:content part="payload" type="application/xml"/>
+                    </mime:part>
+                </mime:multipartRelated>
+            </wsdl:input>
+
+            <wsdl:output name="CancelInvoiceOutput">
+                <mime:multipartRelated>
+                    <mime:part>
+                        <soap:header message="tns:CancelInvoiceResponse"
+                                     part="ebmsHeader" use="literal"/>
+                        <soap:body parts="" use="literal"/>
+                    </mime:part>
+                    <mime:part>
+                        <mime:content part="payload" type="application/xml"/>
+                    </mime:part>
+                </mime:multipartRelated>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <!-- ============================================================
+         SERVICE
+         Un wsdl:port admite una unica direccion (WSDL 1.1, sec. 2.6), por
+         eso cada modo de acceso, con su dominio, es un puerto distinto.
+         Los dos puertos son alternativas equivalentes del mismo servicio.
+         ============================================================ -->
+    <wsdl:service name="CancelInvoiceService">
+        <wsdl:port name="CancelInvoiceCertPort" binding="tns:CancelInvoiceSoapBinding">
+            <wsdl:documentation>Acceso con certificado electrónico (no de sello).</wsdl:documentation>
+            <soap:address location="https://prewww1.aeat.es/wlpl/SPFE-FACT/ws/CancelInvoiceSOAP"/>
+        </wsdl:port>
+        <wsdl:port name="CancelInvoiceSealPort" binding="tns:CancelInvoiceSoapBinding">
+            <wsdl:documentation>Acceso con certificado de sello electrónico.</wsdl:documentation>
+            <soap:address location="https://prewww10.aeat.es/wlpl/SPFE-FACT/ws/CancelInvoiceSOAP"/>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

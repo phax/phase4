@@ -1,0 +1,41 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" 
+xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+   <soap:Header>
+      <eb:Messaging>
+         <eb:UserMessage>
+            <eb:MessageInfo>
+               <eb:Timestamp>2026-05-28T09:00:00.000Z</eb:Timestamp>
+               <eb:MessageId>uuid-invoices-123</eb:MessageId>
+            </eb:MessageInfo>
+            <eb:PartyInfo>
+               <eb:From>
+                  <!--NIF del certificado del remitente-->
+                  <eb:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:iso6523:9920">xxxx</eb:PartyId>
+                  <eb:Role>ebms:initiator</eb:Role>
+               </eb:From>
+               <eb:To>
+                  <!--NIF de la AEAT (SPFE)-->
+                  <eb:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:iso6523:9920">Q2826000H</eb:PartyId>
+                  <eb:Role>ebms:responder</eb:Role>
+               </eb:To>
+            </eb:PartyInfo>
+			
+			
+            <eb:CollaborationInfo>
+               <eb:Service>urn:cen.eu:en16931:submitinvoice</eb:Service>
+               <eb:Action>SUBMITINVOICE</eb:Action>
+               <eb:ConversationId>c73b7fdc-1ab0-4b1e-b295-ac9e4a35d764</eb:ConversationId>
+            </eb:CollaborationInfo>
+            <eb:PayloadInfo>              
+               <eb:PartInfo href="cid:altaFacturas.xml">
+                  <eb:PartProperties>
+                     <eb:Property name="MimeType">application/xml</eb:Property>
+                  </eb:PartProperties>
+               </eb:PartInfo>
+            </eb:PayloadInfo>
+         </eb:UserMessage>
+      </eb:Messaging>
+   </soap:Header>
+   <soap:Body/>
+</soap:Envelope>
+

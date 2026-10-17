@@ -1,0 +1,299 @@
+              Departamento de Informática Tributaria
+              Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                       Versión: 0.1.0
+
+
+
+ Descripción de validaciones de
+  factura electrónica en SPFE
+
+
+Autor: AEAT                   Fecha:        16/10/2026   Versión:      0.1.0
+
+
+
+
+Revisiones
+Edic. Rev.      Fecha         Descripción                             A(*)     Páginas
+
+0      0.1.0    15/10/26      Versión inicial
+
+
+
+
+(*) Acción:     A = Añadir;     R = Reemplazar
+
+
+
+
+                                                                    Página: 1/9
+                  Departamento de Informática Tributaria
+                  Subdirección General Aplicaciones
+
+
+           Solución Pública de Facturación                                                                  Versión: 0.1.0
+
+
+
+
+Índice
+
+1.     INTRODUCCIÓN ...............................................................................................................3
+
+2.     CONTROL DE VERSIONES ............................................................................................. 4
+
+2.1.       Versión 0.1.0 ............................................................................................................................. 4
+
+
+3.     ESQUEMA GENERAL DE FUNCIONAMIENTO .......................................................... 5
+
+4.     VALIDACIONES DE LA FACTURA ELECTRÓNICA ..................................................6
+
+4.1.       Validación sintáctica.................................................................................................................. 6
+
+4.2.     Validación semántica ................................................................................................................ 6
+   4.2.1.     Documentación UNE de referencia ........................................................................................ 7
+
+4.3.       Validaciones de negocio de la AEAT .......................................................................................... 7
+
+
+5.     SERVICIO INDIVIDUAL DE VALIDACIÓN DE FACTURAS ....................................8
+
+6.     RECOMENDACIONES PARA EMISORES Y PLATAFORMAS .................................9
+
+
+
+
+                                                                                                                         Página: 2/9
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                        Versión: 0.1.0
+
+
+1.     Introducción
+El presente documento describe las validaciones que se aplicarán a los mensajes de
+factura electrónica recibidos por la Solución Pública de Facturación Electrónica
+(SPFE), con especial atención al documento Invoice en sintaxis UBL. El objetivo es
+exponer las distintas capas de validación, su finalidad y las recomendaciones dirigidas
+a emisores y plataformas privadas para reducir los rechazos y facilitar la
+interoperabilidad.
+
+El proceso contempla tres grandes niveles: validación sintáctica del XML frente al
+esquema XSD de UBL, validación semántica conforme a EN 16931 y validaciones
+específicas de negocio de la AEAT. La factura deberá superar las validaciones que
+correspondan para ser aceptada y enviada a la SPFE.
+
+
+
+
+                                                                     Página: 3/9
+         Departamento de Informática Tributaria
+         Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación        Versión: 0.1.0
+
+
+
+
+2.    Control de versiones
+      2.1. Versión 0.1.0
+Creación del documento.
+
+
+
+
+                                                    Página: 4/9
+           Departamento de Informática Tributaria
+           Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                        Versión: 0.1.0
+
+
+3.     Esquema general de funcionamiento
+La SPFE recibirá documentos electrónicos en formato XML basados en UBL 2.5. El
+formato de entrada para la remisión de facturas admite exclusivamente documentos de
+tipo Invoice que se enviarán como ficheros adjuntos MIME y referenciados en un
+documento con el formato ebXML de OASIS utilizado como un simple transporte para
+dichos documentos UBL. No se admitirán documentos UBL de tipo CreditNote ni otros
+tipos de documento como sustitutos de una factura Invoice.
+
+       1. Recepción del XML del mesaje ebXML con las facturas como adjuntos
+       2. Recepción del XML de factura (UBL 2.5). El mensaje debe ajustarse al
+          formato de entrada establecido. Únicamente se admitirán documentos de
+          tipo Invoice; no se admitirán documentos de tipo CreditNote.
+       3. Validación sintáctica. Se comprueba la estructura y el formato del XML
+          mediante el esquema XSD correspondiente a UBL y a ebXML
+       4. Validación semántica. Se aplican las reglas de negocio del modelo
+          semántico EN 16931, incluidas las reglas implementadas mediante
+          Schematron. La AEAT ha realizado una implementación de alto rendimiento
+          para ejecutar estas comprobaciones.
+       5. Validaciones de negocio de la AEAT. Se verifican las reglas específicas del
+          negocio y del entorno de la AEAT, así como los controles de coherencia
+          que correspondan.
+
+Si la factura supera las validaciones, se considera válida y se acepta para su envío a
+la SPFE. Si no las supera, se produce un error de validación y la factura se rechaza. El
+mensaje de rechazo deberá permitir identificar técnicamente el incumplimiento
+detectado.
+
+
+
+
+                                                                      Página: 5/9
+           Departamento de Informática Tributaria
+           Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                        Versión: 0.1.0
+
+
+4.     Validaciones de la factura electrónica
+
+       4.1. Validación sintáctica
+La validación sintáctica comprueba que el documento XML respeta la estructura
+definida por los esquemas XSD aplicables tanto a UBL 2.5 como ebXML. OASIS
+publica el estándar y los esquemas correspondientes, incluidos los relativos a Invoice,
+ApplicationResponse y DocumentStatus, que permiten automatizar la comprobación
+de la estructura de los mensajes.
+
+El estándar UBL 2.5 está publicado por OASIS en https://docs.oasis-open.org/ubl/os-
+UBL-2.5/ y el estándar ebXML en https://docs.oasis-open.org/ebxml-msg/ebms/v3.0.
+
+ Aunque la referencia de la SPFE es UBL 2.5, podrán utilizarse versiones anteriores de
+UBL siempre que el documento cumpla el contenido mínimo exigido en el Anexo I de
+la Orden Ministerial de factura electrónica y se ajuste al formato de entrada
+establecido. La admisión de versiones anteriores no implica que se admitan tipos de
+documento distintos de Invoice para la remisión de facturas.
+
+El esquema XSD permite detectar, entre otros, errores estructurales y de formato. Por
+ejemplo, la ausencia de un nodo obligatorio como ID, o la consignación de una fecha
+en un formato no válido en el elemento IssueDate, puede provocar el rechazo del
+mensaje. La validación previa por parte del remitente es especialmente importante: la
+SPFE aplicará esta comprobación a todos los mensajes recibidos. Corresponde al
+emisor ajustar el documento al esquema aplicable.
+
+
+
+       4.2. Validación semántica
+La norma europea EN 16931 define el modelo semántico de los elementos principales
+de una factura electrónica, sus cardinalidades y un conjunto de reglas de contenido.
+Estas reglas permiten comprobar, entre otros aspectos, restricciones entre datos y la
+coherencia de los importes y sumatorios tributarios.
+
+La AEAT ha desarrollado una implementación de alto rendimiento para aplicar las
+reglas semánticas del modelo EN 16931, incluidas las reglas expresadas mediante
+Schematron. Se recomienda a los remitentes validar las facturas con estas reglas
+antes de enviarlas a la SPFE, con el fin de minimizar los rechazos. Esta comprobación
+previa debe realizarse en origen, sin perjuicio de las validaciones que ejecute la SPFE.
+
+
+
+
+                                                                      Página: 6/9
+           Departamento de Informática Tributaria
+           Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                        Versión: 0.1.0
+
+4.2.1. Documentación UNE de referencia
+En el material de referencia se identifican las siguientes publicaciones actualizadas de
+UNE:
+
+       UNE-EN 16931-1:2026 (versión de junio): “Facturación electrónica. Parte 1:
+       Modelo semántico de datos de los elementos principales de una factura
+       electrónica”.
+       UNE-CEN/TS 16931-3-2:2026 (versión de septiembre): “Facturación
+       electrónica. Parte 3-2: Correspondencia sintáctica de la factura y nota de
+       crédito de la norma EN 16931-1 con la norma ISO/IEC 19845 (UBL)”.
+
+Como recurso adicional, pueden consultarse los repositorios públicos de GitHub de
+Connecting Europe, que incluyen implementaciones de las reglas Schematron. Según
+el material de referencia, estos recursos estaban pendientes de actualizarse a UBL
+2.5; por tanto, debe comprobarse su adecuación antes de utilizarlos como referencia
+definitiva.
+
+
+
+       4.3. Validaciones de negocio de la AEAT
+El esquema semántico europeo no cubre por sí solo todos los requisitos exigidos por
+el Reglamento de Obligaciones de Facturación (ROF), aprobado por el Real Decreto
+1619/2012. Además, UBL permite utilizar campos de extensión o personalización para
+incorporar información específica, manteniendo la estructura general del formato.
+
+La SPFE utilizará esa flexibilidad de UBL para cubrir los requisitos adicionales del ROF
+sin alterar la semántica europea. Los campos personalizados de la sintaxis de factura
+electrónica se documentarán en el anexo I de la orden ministerial correspondiente.
+
+Asimismo, la AEAT incorporará otras validaciones específicas del negocio y del
+entorno —incluidas las relativas a coherencia y reglas propias— que se publicarán
+progresivamente en el Portal de Desarrolladores.
+
+
+
+
+                                                                      Página: 7/9
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                        Versión: 0.1.0
+
+
+5.     Servicio individual de validación de facturas
+La AEAT ofrecerá un servicio individual de validación de facturas exclusivamente en el
+entorno de preproducción (PRE). Este servicio no estará disponible en producción.
+
+El servicio dispondrá de dos modalidades de acceso: un formulario web y un servicio
+web específico. En ambos casos, únicamente será posible validar una factura cada
+vez. El acceso al servicio de validación en PRE requerirá autenticación mediante
+certificado electrónico.
+
+Su finalidad es permitir a los emisores y a las plataformas comprobar que la estructura
+de la factura electrónica generada es correcta y que supera las validaciones
+disponibles en el entorno PRE. No está concebido para utilizarse como mecanismo de
+validación sistemática previo a cada envío de facturas a la SPFE. Se supervisará el
+uso del servicio y podrá considerarse un uso inadecuado su empleo para validar
+individualmente, de forma recurrente, todas las facturas antes de su remisión.
+
+
+
+
+                                                                     Página: 8/9
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                        Versión: 0.1.0
+
+
+
+
+6.     Recomendaciones                         para           emisores              y
+       plataformas
+Antes de remitir una factura a la SPFE, el emisor o la plataforma debería:
+
+       Validar el XML frente al XSD correspondiente a UBL 2.5.
+       Ejecutar las reglas semánticas EN 16931/Schematron aplicables y corregir los
+       incumplimientos detectados.
+       Comprobar los requisitos específicos de negocio de la AEAT y la
+       cumplimentación de los campos personalizados que resulten exigibles.
+       Mantener actualizadas las herramientas de validación y contrastar sus
+       versiones con la documentación publicada por UNE y con las instrucciones del
+       Portal de Desarrolladores.
+
+Estas comprobaciones en origen no sustituyen las validaciones de la SPFE, pero
+permiten reducir el número de rechazos y los contratiempos derivados de errores en
+los mensajes transmitidos.
+
+
+
+
+                                                                      Página: 9/9
+
