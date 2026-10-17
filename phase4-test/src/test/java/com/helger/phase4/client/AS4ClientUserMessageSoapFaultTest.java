@@ -22,6 +22,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jspecify.annotations.NonNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 
@@ -37,6 +40,7 @@ import com.helger.base.state.EContinue;
 import com.helger.base.string.StringHelper;
 import com.helger.base.url.URLHelper;
 import com.helger.base.wrapper.Wrapper;
+import com.helger.http.header.HttpHeaderMap;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
 import com.helger.phase4.AS4TestConstants;
@@ -44,6 +48,8 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.dump.IAS4IncomingDumper;
+import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
@@ -51,6 +57,7 @@ import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.soapfault.AS4SoapFault;
 import com.helger.phase4.model.soapfault.EAS4FaultDisposition;
+import com.helger.phase4.sender.AbstractAS4PullRequestBuilder;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.server.AS4JettyRunner;
@@ -71,6 +78,9 @@ import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 public final class AS4ClientUserMessageSoapFaultTest
 {
   private static final class MockAS4Builder extends AbstractAS4UserMessageBuilderMIMEPayload <MockAS4Builder>
+  {}
+
+  private static final class MockAS4PullBuilder extends AbstractAS4PullRequestBuilder <MockAS4PullBuilder>
   {}
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4ClientUserMessageSoapFaultTest.class);
@@ -102,6 +112,9 @@ public final class AS4ClientUserMessageSoapFaultTest
                                                       "  </env:Fault>\n" +
                                                       " </env:Body>\n" +
                                                       "</env:Envelope>";
+
+  private static final String SOAP12_FAULT_DATA_ENCODING_UNKNOWN = SOAP12_FAULT_SENDER.replace ("env:Sender",
+                                                                                                 "env:DataEncodingUnknown");
 
   private static final String SOAP11_FAULT_CLIENT = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                                                     "<S11:Envelope xmlns:S11=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
@@ -185,6 +198,223 @@ public final class AS4ClientUserMessageSoapFaultTest
                      .addParam (MockAS4Servlet.MIMETYPE, aMimeType.getAsString ())
                      .build ()
                      .getAsString ();
+  }
+
+  @NonNull
+  private static String _buildURL (final String sContent,
+                                   final String sContentID,
+                                   final int nStatusCode,
+                                   final IMimeType aMimeType)
+  {
+    return URLBuilder.of (MockJettySetup.getServerAddressFromSettings ())
+                     .addParam (MockAS4Servlet.CONTENT, sContent)
+                     .addParam (MockAS4Servlet.CONTENTID, sContentID)
+                     .addParam (MockAS4Servlet.STATUSCODE, nStatusCode)
+                     .addParam (MockAS4Servlet.MIMETYPE, aMimeType.getAsString ())
+                     .build ()
+                     .getAsString ();
+  }
+
+  @NonNull
+  private static EAS4UserMessageSendResult _send (@NonNull final String sURL,
+                                                  @NonNull final Wrapper <AS4SoapFault> aFaultKeeper,
+                                                  @NonNull final AtomicInteger aRetryCount)
+  {
+    return _createBuilder ().endpointURL (sURL)
+                            .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (2)
+                                                                        .setDurationBeforeRetry (Duration.ofMillis (50)))
+                            .retryCallback ( (sMessageID, sRetryURL, nTry, nMaxTries, nRetryIntervalMS, ex) -> {
+                              aRetryCount.incrementAndGet ();
+                              return EContinue.CONTINUE;
+                            })
+                            .soapFaultConsumer ( (sSentMessageID, aSoapFault, aClientSentMessage) -> aFaultKeeper.set (aSoapFault))
+                            .sendMessageAndCheckForReceipt ();
+  }
+
+  @Test
+  public void testSoap12PermanentFaultWithHttp400 ()
+  {
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+    final AtomicInteger aRetryCount = new AtomicInteger (0);
+
+    assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED,
+                  _send (_buildURL (SOAP12_FAULT_SENDER, 400, ESoapVersion.SOAP_12.getMimeType ()),
+                         aFaultKeeper,
+                         aRetryCount));
+    assertNotNull (aFaultKeeper.get ());
+    assertSame (EAS4FaultDisposition.PERMANENT, aFaultKeeper.get ().getDisposition ());
+    assertEquals (0, aRetryCount.intValue ());
+  }
+
+  @Test
+  public void testSoap12TransientFaultWithHttp500 ()
+  {
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+
+    assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED,
+                  _send (_buildURL (SOAP12_FAULT_RECEIVER, 500, ESoapVersion.SOAP_12.getMimeType ()),
+                         aFaultKeeper,
+                         new AtomicInteger (0)));
+    assertNotNull (aFaultKeeper.get ());
+    assertSame (EAS4FaultDisposition.TRANSIENT, aFaultKeeper.get ().getDisposition ());
+  }
+
+  @Test
+  public void testSoap12TransientFaultWithHttp503 ()
+  {
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+
+    assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED,
+                  _send (_buildURL (SOAP12_FAULT_RECEIVER, 503, ESoapVersion.SOAP_12.getMimeType ()),
+                         aFaultKeeper,
+                         new AtomicInteger (0)));
+    assertNotNull (aFaultKeeper.get ());
+    assertSame (EAS4FaultDisposition.TRANSIENT, aFaultKeeper.get ().getDisposition ());
+  }
+
+  @Test
+  public void testSoap12PermanentFaultWithHttp422 ()
+  {
+    // Unknown 4xx codes are handled like 400
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+    final AtomicInteger aRetryCount = new AtomicInteger (0);
+
+    assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED,
+                  _send (_buildURL (SOAP12_FAULT_SENDER, 422, ESoapVersion.SOAP_12.getMimeType ()),
+                         aFaultKeeper,
+                         aRetryCount));
+    assertNotNull (aFaultKeeper.get ());
+    assertSame (EAS4FaultDisposition.PERMANENT, aFaultKeeper.get ().getDisposition ());
+    assertEquals (0, aRetryCount.intValue ());
+  }
+
+  @Test
+  public void testSoap12DataEncodingUnknownFaultIsPermanent ()
+  {
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+
+    assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED,
+                  _send (_buildURL (SOAP12_FAULT_DATA_ENCODING_UNKNOWN, 500, ESoapVersion.SOAP_12.getMimeType ()),
+                         aFaultKeeper,
+                         new AtomicInteger (0)));
+    assertNotNull (aFaultKeeper.get ());
+    assertSame (EAS4FaultDisposition.PERMANENT, aFaultKeeper.get ().getDisposition ());
+  }
+
+  @Test
+  public void testHttp401IsHardFailureWithoutRetry ()
+  {
+    for (final boolean bAcceptAll : new boolean [] { true, false })
+    {
+      final IStringMap aSettings = new StringMap ();
+      aSettings.putIn (AS4Configuration.PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES, bAcceptAll);
+      try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.create (aSettings))
+      {
+        final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+        final AtomicInteger aRetryCount = new AtomicInteger (0);
+
+        // Even a SOAP Fault body must not be processed
+        assertEquals (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY,
+                      _send (_buildURL (SOAP12_FAULT_SENDER, 401, ESoapVersion.SOAP_12.getMimeType ()),
+                             aFaultKeeper,
+                             aRetryCount));
+        assertNull (aFaultKeeper.get ());
+        assertEquals (0, aRetryCount.intValue ());
+      }
+    }
+  }
+
+  @Test
+  public void testHttp405WithoutEnvelope ()
+  {
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+
+    assertEquals (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED,
+                  _send (_buildURL ("Method Not Allowed", 405, CMimeType.TEXT_PLAIN),
+                         aFaultKeeper,
+                         new AtomicInteger (0)));
+    assertNull (aFaultKeeper.get ());
+  }
+
+  @Test
+  public void testHttp405WithFaultIsTransportFailure ()
+  {
+    // The envelope is not processed as a SOAP Fault, so it is rejected as an invalid signal message
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+
+    assertEquals (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY,
+                  _send (_buildURL (SOAP12_FAULT_SENDER, 405, ESoapVersion.SOAP_12.getMimeType ()),
+                         aFaultKeeper,
+                         new AtomicInteger (0)));
+    assertNull (aFaultKeeper.get ());
+  }
+
+  @Test
+  public void testHttp415WithFaultIsTransportFailure ()
+  {
+    // The envelope is not processed as a SOAP Fault, so it is rejected as an invalid signal message
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+
+    assertEquals (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY,
+                  _send (_buildURL (SOAP12_FAULT_SENDER, 415, ESoapVersion.SOAP_12.getMimeType ()),
+                         aFaultKeeper,
+                         new AtomicInteger (0)));
+    assertNull (aFaultKeeper.get ());
+  }
+
+  @Test
+  public void testPullRequestSoapFaultWithHttp500 () throws Exception
+  {
+    // The fault is not interpreted as ebMS message but routed to the SOAP Fault consumer and the
+    // incoming dumper
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+    final ByteArrayOutputStream aDumped = new ByteArrayOutputStream ();
+    final AtomicInteger aDumpCount = new AtomicInteger (0);
+    final IAS4IncomingDumper aDumper = new IAS4IncomingDumper ()
+    {
+      public OutputStream onNewRequest (final IAS4IncomingMessageMetadata aMetadata, final HttpHeaderMap aHeaders)
+      {
+        aDumpCount.incrementAndGet ();
+        return aDumped;
+      }
+
+      public void onEndRequest (final IAS4IncomingMessageMetadata aMetadata, final Exception aCaughtException)
+      {}
+    };
+
+    new MockAS4PullBuilder ().as4ProfileID (AS4TestProfileRegistarSPI.AS4_PROFILE_ID_MAY_SIGN_MAY_CRYPT)
+                             .mpc ("urn:test:mpc")
+                             .endpointURL (_buildURL (SOAP12_FAULT_RECEIVER, 500, ESoapVersion.SOAP_12.getMimeType ()))
+                             .incomingDumper (aDumper)
+                             .soapFaultConsumer ( (sSentMessageID, aSoapFault, aClientSentMessage) -> aFaultKeeper.set (aSoapFault))
+                             .sendMessage ();
+    assertNotNull (aFaultKeeper.get ());
+    assertSame (EAS4FaultDisposition.TRANSIENT, aFaultKeeper.get ().getDisposition ());
+    assertEquals (1, aDumpCount.intValue ());
+    assertTrue (new String (aDumped.toByteArray (), StandardCharsets.UTF_8).contains ("Database temporarily unavailable"));
+  }
+
+  @Test
+  public void testHttp202EmptyBody ()
+  {
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+
+    assertEquals (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED,
+                  _send (_buildURL ("", 202, CMimeType.TEXT_PLAIN), aFaultKeeper, new AtomicInteger (0)));
+    assertNull (aFaultKeeper.get ());
+  }
+
+  @Test
+  @Ignore ("Needs a mock that returns a valid Receipt for the sent message; TestReceipt12.xml fails WSS validation")
+  public void testHttp202WithEnvelopeIsProcessed ()
+  {
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+
+    assertEquals (EAS4UserMessageSendResult.SUCCESS,
+                  _send (_buildURL ("", "receipt12", 202, CMimeType.APPLICATION_XML),
+                         aFaultKeeper,
+                         new AtomicInteger (0)));
+    assertNull (aFaultKeeper.get ());
   }
 
   @Test

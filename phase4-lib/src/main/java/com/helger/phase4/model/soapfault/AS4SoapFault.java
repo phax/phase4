@@ -181,7 +181,8 @@ public class AS4SoapFault
           sLocalPart.startsWith ("Client.") ||
           "Sender".equals (sLocalPart) ||
           "VersionMismatch".equals (sLocalPart) ||
-          "MustUnderstand".equals (sLocalPart))
+          "MustUnderstand".equals (sLocalPart) ||
+          "DataEncodingUnknown".equals (sLocalPart))
         return EAS4FaultDisposition.PERMANENT;
     }
 

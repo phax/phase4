@@ -499,6 +499,12 @@ public class BasicHttpPoster implements IHttpPoster
                          "' - stopping all retries");
             throw ex;
           }
+          catch (final AS4HttpUnauthorizedException ex)
+          {
+            // HTTP 401 must never be retried
+            LOGGER.warn ("Received HTTP 401 for message with ID '" + sMessageID + "' - stopping all retries");
+            throw ex;
+          }
           catch (final IOException ex)
           {
             // Last try? -> propagate exception

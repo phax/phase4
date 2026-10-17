@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import com.helger.annotation.style.OverrideOnDemand;
 import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.state.ETriState;
-import com.helger.http.CHttp;
 import com.helger.http.EHttpMethod;
 import com.helger.http.EHttpVersion;
 import com.helger.http.header.HttpHeaderMap;
@@ -41,11 +40,13 @@ import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.incoming.IAS4ResponseAbstraction;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
+import com.helger.phase4.incoming.soap.CAS4Soap;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.AS4HttpDebug;
 import com.helger.phase4.messaging.http.AS4TlsConnectionDetails;
 import com.helger.phase4.model.pmode.resolve.AS4DefaultPModeResolver;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.phase4.util.Phase4IncomingException;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -314,12 +315,15 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     catch (final Phase4Exception ex)
     {
       // Logged inside
-      aHttpResponse.setResponseError (CHttp.HTTP_BAD_REQUEST, "Bad Request: " + ex.getMessage (), ex.getCause ());
+      // Use the status code of the exception, if present (e.g. 500 for MustUnderstand)
+      final int nStatusCode = ex instanceof final Phase4IncomingException aIncomingEx && aIncomingEx.hasHttpStatusCode () ? aIncomingEx.getHttpStatusCode ()
+                                                                                                                             : CAS4Soap.HTTP_STATUS_CODE_SENDER;
+      aHttpResponse.setResponseError (nStatusCode, ex.getMessage (), ex.getCause ());
     }
     catch (final Exception ex)
     {
       // Logged inside
-      aHttpResponse.setResponseError (CHttp.HTTP_INTERNAL_SERVER_ERROR, "Internal error processing AS4 request", ex);
+      aHttpResponse.setResponseError (CAS4Soap.HTTP_STATUS_CODE_RECEIVER, "Internal error processing AS4 request", ex);
     }
   }
 

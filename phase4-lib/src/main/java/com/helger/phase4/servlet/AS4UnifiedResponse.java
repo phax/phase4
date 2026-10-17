@@ -23,6 +23,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.Nonnegative;
+import com.helger.base.debug.GlobalDebug;
 import com.helger.base.rt.StackTraceHelper;
 import com.helger.http.EHttpMethod;
 import com.helger.http.EHttpVersion;
@@ -58,7 +59,8 @@ public class AS4UnifiedResponse extends UnifiedResponse
     LOGGER.error ("HTTP " + nStatusCode + ": " + sMsg, t);
 
     String sBody = sMsg;
-    if (t != null)
+    // The stack trace is logged above and only returned to the client in debug mode
+    if (t != null && GlobalDebug.isDebugMode ())
       sBody += "\nTechnical details:\n" + StackTraceHelper.getStackAsString (t);
 
     setContentAndCharset (sBody, StandardCharsets.UTF_8);

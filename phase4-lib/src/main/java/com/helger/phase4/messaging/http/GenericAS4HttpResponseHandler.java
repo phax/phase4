@@ -62,6 +62,10 @@ public class GenericAS4HttpResponseHandler implements HttpClientResponseHandler 
     final StatusLine aStatusLine = new StatusLine (aHttpResponse);
     final HttpEntity aEntity = aHttpResponse.getEntity ();
 
+    // HTTP 401 is always a hard failure, because no credentials can be provided on retry
+    if (aStatusLine.getStatusCode () == CHttp.HTTP_UNAUTHORIZED)
+      throw new AS4HttpUnauthorizedException (aStatusLine.toString ());
+
     if (AS4Configuration.isHttpResponseAcceptAllStatusCodes ())
     {
       // continue - new way since 4.1.1
