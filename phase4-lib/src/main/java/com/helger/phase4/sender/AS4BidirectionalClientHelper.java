@@ -650,6 +650,7 @@ public final class AS4BidirectionalClientHelper
       LOGGER.info ("AS4 ResponseEntity is empty");
   }
 
+  @Deprecated (forRemoval = true, since = "4.8.2")
   public static void sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                                          @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                                          @NonNull final IAS4PModeResolver aPModeResolver,
