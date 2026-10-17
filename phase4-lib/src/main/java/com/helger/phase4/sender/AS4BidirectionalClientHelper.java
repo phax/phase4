@@ -34,10 +34,8 @@ import org.w3c.dom.Document;
 import com.helger.base.array.ArrayHelper;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.state.ETriState;
-import com.helger.base.string.StringHelper;
 import com.helger.base.wrapper.Wrapper;
 import com.helger.http.CHttp;
-import com.helger.http.CHttpHeader;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.httpclient.response.ExtendedHttpResponseException;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
@@ -45,6 +43,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
+import com.helger.phase4.client.AbstractAS4Client;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -60,6 +59,7 @@ import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
 import com.helger.phase4.incoming.IAS4UserMessageConsumer;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
+import com.helger.phase4.incoming.soap.CAS4Soap;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.GenericAS4HttpResponseHandler;
 import com.helger.phase4.messaging.http.GenericAS4HttpResponseHandler.HttpResponseData;
@@ -169,6 +169,123 @@ public final class AS4BidirectionalClientHelper
     aRealSoapFaultConsumer.handleSoapFault (sSentMessageID, aSoapFault, aClientSentMessage);
   }
 
+  /**
+   * Send the message of the provided client and detect SOAP Faults in the response, independent of
+   * the HTTP status code (except for 405 and 415). If a SOAP Fault with a permanent disposition is
+   * received, all HTTP level retries are stopped and an {@link AS4SoapFaultException} is thrown.
+   */
+  @NonNull
+  private static AS4ClientSentMessage <byte []> _sendWithSoapFaultDetection (@NonNull final AbstractAS4Client <?> aClient,
+                                                                             @NonNull final String sURL,
+                                                                             @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
+                                                                             @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                                                             @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                                             @Nullable final IAS4RetryCallback aRetryCallback,
+                                                                             @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer,
+                                                                             @NonNull final Wrapper <HttpResponse> aWrappedHttpResponse,
+                                                                             @NonNull final Wrapper <AS4SoapFault> aSoapFaultKeeper) throws IOException, Phase4Exception, WSSecurityException, MessagingException
+  {
+    final HttpClientResponseHandler <byte []> aHttpResponseHdl = aHttpResponse -> {
+      // Remember source response object
+      aWrappedHttpResponse.set (aHttpResponse);
+
+      // SOAP 1.2 Part 2, Table 17: 405 and 415 are always transport failures, even if the body
+      // contains a SOAP envelope
+      final int nResponseStatusCode = aHttpResponse.getCode ();
+      final boolean bMayBeSoapFault = nResponseStatusCode != CAS4Soap.HTTP_STATUS_CODE_METHOD_NOT_ALLOWED &&
+                                      nResponseStatusCode != CAS4Soap.HTTP_STATUS_CODE_UNSUPPORTED_MEDIA_TYPE;
+
+      final byte [] aResponsePayload;
+      try
+      {
+        // Accepts all response codes, if enabled in the configuration
+        final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
+
+        // Read response payload
+        aResponsePayload = EntityUtils.toByteArray (aResponseData.entity ());
+      }
+      catch (final ExtendedHttpResponseException ex)
+      {
+        // Only thrown for non-success status codes, if "accept all status codes" is disabled.
+        // Check if the response body contains a SOAP Fault, to eventually stop pointless retries
+        if (bMayBeSoapFault)
+        {
+          final AS4SoapFault aSoapFault = _findSoapFault (ex.directGetResponseBody (), ex.getResponseBodyAsString ());
+          if (aSoapFault != null)
+          {
+            aSoapFaultKeeper.set (aSoapFault);
+
+            // Only throw exception for permanent errors
+            if (aSoapFault.getDisposition ().isPermanent ())
+              throw new AS4SoapFaultException (aSoapFault);
+          }
+        }
+        throw ex;
+      }
+
+      // Check for a SOAP Fault independent of the HTTP status code, because non-conforming peers
+      // may return a fault with HTTP 200
+      if (bMayBeSoapFault)
+      {
+        final AS4SoapFault aSoapFault = _findSoapFault (aResponsePayload, null);
+        if (aSoapFault != null)
+          aSoapFaultKeeper.set (aSoapFault);
+      }
+      return aResponsePayload;
+    };
+
+    final AS4ClientSentMessage <byte []> aClientSentMessage;
+    try
+    {
+      // Main HTTP sending
+      aClientSentMessage = aClient.sendMessageWithRetries (sURL,
+                                                                  aHttpResponseHdl,
+                                                                  aBuildMessageCallback,
+                                                                  aOutgoingDumper,
+                                                                  aRetryCallback);
+    }
+    catch (final AS4SoapFaultException ex)
+    {
+      // A SOAP Fault with a permanent disposition stopped all retries
+      LOGGER.info ("The synchronous AS4 response was classified as " + EAS4ResponseType.SOAP_FAULT);
+      AS4IncomingMessageMetadata aResponseMessageMetadata = null;
+      if (ex.hasSentMessageID ())
+      {
+        aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (ex.getSentMessageID ())
+                                                             .setRemoteAddr (sURL);
+        if (aWrappedHttpResponse.isSet ())
+          aResponseMessageMetadata.setResponseHttpStatusCode (aWrappedHttpResponse.get ().getCode ());
+      }
+      _handleReceivedSoapFault (ex.getSoapFault (),
+                                ex.getSentMessageID (),
+                                null,
+                                aResponseMessageMetadata,
+                                aWrappedHttpResponse.get (),
+                                aIncomingDumper,
+                                aSoapFaultConsumer);
+      throw ex;
+    }
+    catch (final IOException ex)
+    {
+      // If a SOAP Fault with a transient disposition was detected on the way (only possible if
+      // "accept all status codes" is disabled), surface it nevertheless
+      final AS4SoapFault aSoapFault = aSoapFaultKeeper.get ();
+      if (aSoapFault != null)
+      {
+        LOGGER.info ("The synchronous AS4 response was classified as " + EAS4ResponseType.SOAP_FAULT);
+        _handleReceivedSoapFault (aSoapFault,
+                                  null,
+                                  null,
+                                  null,
+                                  aWrappedHttpResponse.get (),
+                                  aIncomingDumper,
+                                  aSoapFaultConsumer);
+      }
+      throw ex;
+    }
+    return aClientSentMessage;
+  }
+
   @Deprecated (forRemoval = true, since = "4.6.0")
   public static void sendAS4UserMessageAndReceiveAS4SignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                                    @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
@@ -267,106 +384,17 @@ public final class AS4BidirectionalClientHelper
       }
     }
 
-    // Define the HTTP response handler
     final Wrapper <HttpResponse> aWrappedHttpResponse = new Wrapper <> ();
     final Wrapper <AS4SoapFault> aSoapFaultKeeper = new Wrapper <> ();
-    final HttpClientResponseHandler <byte []> aHttpResponseHdl = aHttpResponse -> {
-      // Remember source response object
-      aWrappedHttpResponse.set (aHttpResponse);
-
-      // A SOAP Fault can never be contained in a multipart response
-      final Header aContentTypeHeader = aHttpResponse.getFirstHeader (CHttpHeader.CONTENT_TYPE);
-      final boolean bMayBeSoapFault = aContentTypeHeader == null ||
-                                      !StringHelper.startsWithIgnoreCase (aContentTypeHeader.getValue (), "multipart");
-
-      final byte [] aResponsePayload;
-      try
-      {
-        // Accepts all response codes, if enabled in the configuration
-        final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
-
-        // Read response payload
-        aResponsePayload = EntityUtils.toByteArray (aResponseData.entity ());
-      }
-      catch (final ExtendedHttpResponseException ex)
-      {
-        // Only thrown for non-success status codes, if "accept all status codes" is disabled.
-        // Check if the response body contains a SOAP Fault, to eventually stop pointless retries
-        if (bMayBeSoapFault)
-        {
-          final AS4SoapFault aSoapFault = _findSoapFault (ex.directGetResponseBody (), ex.getResponseBodyAsString ());
-          if (aSoapFault != null)
-          {
-            aSoapFaultKeeper.set (aSoapFault);
-
-            // Only throw exception for permanent errors
-            if (aSoapFault.getDisposition ().isPermanent ())
-              throw new AS4SoapFaultException (aSoapFault);
-          }
-        }
-        throw ex;
-      }
-
-      // Check for a SOAP Fault independent of the HTTP status code, because non-conforming peers
-      // may return a fault with HTTP 200
-      if (bMayBeSoapFault)
-      {
-        final AS4SoapFault aSoapFault = _findSoapFault (aResponsePayload, null);
-        if (aSoapFault != null)
-          aSoapFaultKeeper.set (aSoapFault);
-      }
-      return aResponsePayload;
-    };
-
-    final AS4ClientSentMessage <byte []> aClientSentMessage;
-    try
-    {
-      // Main HTTP sending
-      aClientSentMessage = aClientUserMsg.sendMessageWithRetries (sURL,
-                                                                  aHttpResponseHdl,
-                                                                  aBuildMessageCallback,
-                                                                  aOutgoingDumper,
-                                                                  aRetryCallback);
-    }
-    catch (final AS4SoapFaultException ex)
-    {
-      // A SOAP Fault with a permanent disposition stopped all retries
-      LOGGER.info ("The synchronous AS4 response was classified as " + EAS4ResponseType.SOAP_FAULT);
-      AS4IncomingMessageMetadata aResponseMessageMetadata = null;
-      if (ex.hasSentMessageID ())
-      {
-        aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (ex.getSentMessageID ())
-                                                             .setRemoteAddr (sURL);
-        if (aWrappedHttpResponse.isSet ())
-          aResponseMessageMetadata.setResponseHttpStatusCode (aWrappedHttpResponse.get ().getCode ());
-      }
-      _handleReceivedSoapFault (ex.getSoapFault (),
-                                ex.getSentMessageID (),
-                                null,
-                                aResponseMessageMetadata,
-                                aWrappedHttpResponse.get (),
-                                aIncomingDumper,
-                                aSoapFaultConsumer);
-      throw ex;
-    }
-    catch (final IOException ex)
-    {
-      // If a SOAP Fault with a transient disposition was detected on the way (only possible if
-      // "accept all status codes" is disabled), surface it nevertheless
-      final AS4SoapFault aSoapFault = aSoapFaultKeeper.get ();
-      if (aSoapFault != null)
-      {
-        LOGGER.info ("The synchronous AS4 response was classified as " + EAS4ResponseType.SOAP_FAULT);
-        _handleReceivedSoapFault (aSoapFault,
-                                  null,
-                                  null,
-                                  null,
-                                  aWrappedHttpResponse.get (),
-                                  aIncomingDumper,
-                                  aSoapFaultConsumer);
-      }
-      throw ex;
-    }
+    final AS4ClientSentMessage <byte []> aClientSentMessage = _sendWithSoapFaultDetection (aClientUserMsg,
+                                                                                           sURL,
+                                                                                           aBuildMessageCallback,
+                                                                                           aOutgoingDumper,
+                                                                                           aIncomingDumper,
+                                                                                           aRetryCallback,
+                                                                                           aSoapFaultConsumer,
+                                                                                           aWrappedHttpResponse,
+                                                                                           aSoapFaultKeeper);
     final String sRequestAS4MessageID = aClientSentMessage.getMessageID ();
     LOGGER.info ("Successfully transmitted AS4 UserMessage with message ID '" +
                  sRequestAS4MessageID +
@@ -473,6 +501,52 @@ public final class AS4BidirectionalClientHelper
                                                                  @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
                                                                  @Nullable final IPMode aPMode) throws IOException, Phase4Exception, WSSecurityException, MessagingException
   {
+    sendAS4PullRequestAndReceiveAS4UserMessage (aCryptoFactorySign,
+                                                aCryptoFactoryCrypt,
+                                                aPModeResolver,
+                                                aIAF,
+                                                aIncomingProfileSelector,
+                                                aClientPullRequest,
+                                                aLocale,
+                                                sURL,
+                                                aBuildMessageCallback,
+                                                aOutgoingDumper,
+                                                aIncomingDumper,
+                                                aIncomingSecurityConfiguration,
+                                                aIncomingReceiverConfiguration,
+                                                aRetryCallback,
+                                                aResponseConsumer,
+                                                aUserMsgConsumer,
+                                                aPMode,
+                                                null);
+  }
+
+  /**
+   * Same as the other overload, but with an additional SOAP Fault consumer that is invoked if the
+   * response is a plain SOAP Fault instead of an ebMS message. If none is provided, the SOAP Fault
+   * is logged on error level.
+   *
+   * @since 4.8.2
+   */
+  public static void sendAS4PullRequestAndReceiveAS4UserMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                 @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                                 @NonNull final IAS4PModeResolver aPModeResolver,
+                                                                 @NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                                                 @NonNull final IAS4IncomingProfileSelector aIncomingProfileSelector,
+                                                                 @NonNull final AS4ClientPullRequestMessage aClientPullRequest,
+                                                                 @NonNull final Locale aLocale,
+                                                                 @NonNull final String sURL,
+                                                                 @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
+                                                                 @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                                                 @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                                 @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                 @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
+                                                                 @Nullable final IAS4RetryCallback aRetryCallback,
+                                                                 @Nullable final IAS4RawResponseConsumer aResponseConsumer,
+                                                                 @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
+                                                                 @Nullable final IPMode aPMode,
+                                                                 @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer) throws IOException, Phase4Exception, WSSecurityException, MessagingException
+  {
     LOGGER.info ("Sending AS4 PullRequest to '" +
                  sURL +
                  "' with max. " +
@@ -483,21 +557,16 @@ public final class AS4BidirectionalClientHelper
       LOGGER.debug ("  MPC = '" + aClientPullRequest.getMPC () + "'");
 
     final Wrapper <HttpResponse> aWrappedHttpResponse = new Wrapper <> ();
-    final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
-      // Accepts all response codes
-      final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
-
-      // Remember HTTP Response
-      aWrappedHttpResponse.set (aHttpResponse);
-      return EntityUtils.toByteArray (aResponseData.entity ());
-    };
-
-    // Generic AS4 PullRequest sending
-    final AS4ClientSentMessage <byte []> aClientSentMessage = aClientPullRequest.sendMessageWithRetries (sURL,
-                                                                                                         aResponseHdl,
-                                                                                                         aBuildMessageCallback,
-                                                                                                         aOutgoingDumper,
-                                                                                                         aRetryCallback);
+    final Wrapper <AS4SoapFault> aSoapFaultKeeper = new Wrapper <> ();
+    final AS4ClientSentMessage <byte []> aClientSentMessage = _sendWithSoapFaultDetection (aClientPullRequest,
+                                                                                           sURL,
+                                                                                           aBuildMessageCallback,
+                                                                                           aOutgoingDumper,
+                                                                                           aIncomingDumper,
+                                                                                           aRetryCallback,
+                                                                                           aSoapFaultConsumer,
+                                                                                           aWrappedHttpResponse,
+                                                                                           aSoapFaultKeeper);
     final String sRequestMessageID = aClientSentMessage.getMessageID ();
     LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
                  sRequestMessageID +
@@ -526,6 +595,21 @@ public final class AS4BidirectionalClientHelper
         aResponseMessageMetadata.setResponseHttpStatusCode (nHttpStatusCode);
         if (nHttpStatusCode >= CHttp.HTTP_MULTIPLE_CHOICES)
           LOGGER.warn ("HTTP response uses status code " + nHttpStatusCode);
+      }
+
+      final AS4SoapFault aSoapFault = aSoapFaultKeeper.get ();
+      if (aSoapFault != null)
+      {
+        // A SOAP Fault was received - it cannot be interpreted as an ebMS message
+        LOGGER.info ("The synchronous AS4 response was classified as " + EAS4ResponseType.SOAP_FAULT);
+        _handleReceivedSoapFault (aSoapFault,
+                                  sRequestMessageID,
+                                  aClientSentMessage,
+                                  aResponseMessageMetadata,
+                                  aWrappedHttpResponse.get (),
+                                  aIncomingDumper,
+                                  aSoapFaultConsumer);
+        return;
       }
 
       // Read response as EBMS3 User Message or Signal Message
@@ -570,6 +654,56 @@ public final class AS4BidirectionalClientHelper
                                                                          @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler,
                                                                          @Nullable final IPMode aPMode) throws IOException, Phase4Exception, WSSecurityException, MessagingException
   {
+    sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (aCryptoFactorySign,
+                                                        aCryptoFactoryCrypt,
+                                                        aPModeResolver,
+                                                        aIAF,
+                                                        aIncomingProfileSelector,
+                                                        aClientPullRequest,
+                                                        aLocale,
+                                                        sURL,
+                                                        aBuildMessageCallback,
+                                                        aOutgoingDumper,
+                                                        aIncomingDumper,
+                                                        aIncomingSecurityConfiguration,
+                                                        aIncomingReceiverConfiguration,
+                                                        aRetryCallback,
+                                                        aResponseConsumer,
+                                                        aUserMsgConsumer,
+                                                        aSignalMsgConsumer,
+                                                        aSignalMsgValidationResultHandler,
+                                                        aPMode,
+                                                        null);
+  }
+
+  /**
+   * Same as the other overload, but with an additional SOAP Fault consumer that is invoked if the
+   * response is a plain SOAP Fault instead of an ebMS message. If none is provided, the SOAP Fault
+   * is logged on error level.
+   *
+   * @since 4.8.2
+   */
+  public static void sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+                                                                         @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
+                                                                         @NonNull final IAS4PModeResolver aPModeResolver,
+                                                                         @NonNull final IAS4IncomingAttachmentFactory aIAF,
+                                                                         @NonNull final IAS4IncomingProfileSelector aIncomingProfileSelector,
+                                                                         @NonNull final AS4ClientPullRequestMessage aClientPullRequest,
+                                                                         @NonNull final Locale aLocale,
+                                                                         @NonNull final String sURL,
+                                                                         @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
+                                                                         @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                                                         @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                                         @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
+                                                                         @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
+                                                                         @Nullable final IAS4RetryCallback aRetryCallback,
+                                                                         @Nullable final IAS4RawResponseConsumer aResponseConsumer,
+                                                                         @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
+                                                                         @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
+                                                                         @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler,
+                                                                         @Nullable final IPMode aPMode,
+                                                                         @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer) throws IOException, Phase4Exception, WSSecurityException, MessagingException
+  {
     LOGGER.info ("Sending AS4 PullRequest to '" +
                  sURL +
                  "' with max. " +
@@ -580,21 +714,16 @@ public final class AS4BidirectionalClientHelper
       LOGGER.debug ("  MPC = '" + aClientPullRequest.getMPC () + "'");
 
     final Wrapper <HttpResponse> aWrappedHttpResponse = new Wrapper <> ();
-    final HttpClientResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
-      // Accepts all response codes
-      final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
-
-      // Remember HTTP Response
-      aWrappedHttpResponse.set (aHttpResponse);
-      return EntityUtils.toByteArray (aResponseData.entity ());
-    };
-
-    // Generic AS4 PullRequest sending
-    final AS4ClientSentMessage <byte []> aClientSentMessage = aClientPullRequest.sendMessageWithRetries (sURL,
-                                                                                                         aResponseHdl,
-                                                                                                         aBuildMessageCallback,
-                                                                                                         aOutgoingDumper,
-                                                                                                         aRetryCallback);
+    final Wrapper <AS4SoapFault> aSoapFaultKeeper = new Wrapper <> ();
+    final AS4ClientSentMessage <byte []> aClientSentMessage = _sendWithSoapFaultDetection (aClientPullRequest,
+                                                                                           sURL,
+                                                                                           aBuildMessageCallback,
+                                                                                           aOutgoingDumper,
+                                                                                           aIncomingDumper,
+                                                                                           aRetryCallback,
+                                                                                           aSoapFaultConsumer,
+                                                                                           aWrappedHttpResponse,
+                                                                                           aSoapFaultKeeper);
     final String sRequestMessageID = aClientSentMessage.getMessageID ();
     LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
                  sRequestMessageID +
@@ -623,6 +752,21 @@ public final class AS4BidirectionalClientHelper
         aResponseMessageMetadata.setResponseHttpStatusCode (nHttpStatusCode);
         if (nHttpStatusCode >= CHttp.HTTP_MULTIPLE_CHOICES)
           LOGGER.warn ("HTTP response uses status code " + nHttpStatusCode);
+      }
+
+      final AS4SoapFault aSoapFault = aSoapFaultKeeper.get ();
+      if (aSoapFault != null)
+      {
+        // A SOAP Fault was received - it cannot be interpreted as an ebMS message
+        LOGGER.info ("The synchronous AS4 response was classified as " + EAS4ResponseType.SOAP_FAULT);
+        _handleReceivedSoapFault (aSoapFault,
+                                  sRequestMessageID,
+                                  aClientSentMessage,
+                                  aResponseMessageMetadata,
+                                  aWrappedHttpResponse.get (),
+                                  aIncomingDumper,
+                                  aSoapFaultConsumer);
+        return;
       }
 
       // Validate the DSSig references between sent and received msg

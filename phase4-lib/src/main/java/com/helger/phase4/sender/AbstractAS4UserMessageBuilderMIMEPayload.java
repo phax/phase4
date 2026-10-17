@@ -38,6 +38,7 @@ import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.messaging.http.AS4HttpUnauthorizedException;
 import com.helger.phase4.model.soapfault.AS4SoapFaultException;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
@@ -279,6 +280,11 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
     {
       // A SOAP Fault with a permanent disposition was received - a retry is not feasible
       throw new Phase4Exception ("A permanent SOAP Fault was received", ex).setRetryFeasible (false);
+    }
+    catch (final AS4HttpUnauthorizedException ex)
+    {
+      // HTTP 401 - a retry is not feasible
+      throw new Phase4Exception ("The peer responded with HTTP 401", ex).setRetryFeasible (false);
     }
     catch (final Exception ex)
     {

@@ -59,6 +59,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   protected String m_sEndpointURL;
   protected IAS4UserMessageConsumer m_aUserMsgConsumer;
   protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
+  protected IAS4SoapFaultConsumer m_aSoapFaultConsumer;
   protected IAS4SignalMessageValidationResultHandler m_aSignalMsgValidationResultHdl;
 
   /**
@@ -244,6 +245,33 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
+   * @return The optional SOAP Fault consumer. May be <code>null</code>.
+   * @since 4.8.2
+   */
+  @Nullable
+  public final IAS4SoapFaultConsumer soapFaultConsumer ()
+  {
+    return m_aSoapFaultConsumer;
+  }
+
+  /**
+   * Set an optional SOAP Fault consumer that is invoked, if the synchronous response is a plain
+   * SOAP Fault instead of an ebMS message. If no consumer is set, a received SOAP Fault is logged
+   * on error level. This method is optional and must not be called prior to sending.
+   *
+   * @param aSoapFaultConsumer
+   *        The optional SOAP Fault consumer. May be <code>null</code>.
+   * @return this for chaining
+   * @since 4.8.2
+   */
+  @NonNull
+  public final IMPLTYPE soapFaultConsumer (@Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer)
+  {
+    m_aSoapFaultConsumer = aSoapFaultConsumer;
+    return thisAsT ();
+  }
+
+  /**
    * @return The optional Ebms3 Signal Message validation result handled. May be <code>null</code>.
    * @since 3.0.1
    */
@@ -310,6 +338,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
 
     // m_aUserMsgConsumer is optional
     // m_aSignalMsgConsumer is optional
+    // m_aSoapFaultConsumer is optional
 
     // All valid
     return true;
@@ -415,7 +444,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
                                                                                        m_aUserMsgConsumer,
                                                                                        m_aSignalMsgConsumer,
                                                                                        m_aSignalMsgValidationResultHdl,
-                                                                                       m_aPMode);
+                                                                                       m_aPMode,
+                                                                                       m_aSoapFaultConsumer);
     }
     catch (final Phase4Exception ex)
     {

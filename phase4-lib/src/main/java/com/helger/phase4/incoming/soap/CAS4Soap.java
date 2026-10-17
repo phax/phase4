@@ -38,6 +38,13 @@ public final class CAS4Soap
   public static final int HTTP_STATUS_CODE_RECEIVER = CHttp.HTTP_INTERNAL_SERVER_ERROR;
   public static final int HTTP_STATUS_CODE_DATA_ENCODING_UNKNOWN = CHttp.HTTP_INTERNAL_SERVER_ERROR;
 
+  /**
+   * Source: https://www.w3.org/TR/soap12-part2/#soapinhttp chapter 7.5.1, "Table 17": these status
+   * codes are always a transport failure, even if the response body contains a SOAP envelope.
+   */
+  public static final int HTTP_STATUS_CODE_METHOD_NOT_ALLOWED = CHttp.HTTP_METHOD_NOT_ALLOWED;
+  public static final int HTTP_STATUS_CODE_UNSUPPORTED_MEDIA_TYPE = CHttp.HTTP_UNSUPPORTED_MEDIA_TYPE;
+
   private CAS4Soap ()
   {}
 }

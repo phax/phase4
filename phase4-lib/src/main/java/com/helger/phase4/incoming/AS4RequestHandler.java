@@ -81,6 +81,7 @@ import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.mgr.AS4IncomingMessageProcessorManager;
+import com.helger.phase4.incoming.soap.CAS4Soap;
 import com.helger.phase4.incoming.soap.SoapHeaderElementProcessorRegistry;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.incoming.spi.AS4SignalMessageProcessorResult;
@@ -2118,7 +2119,8 @@ public class AS4RequestHandler implements AutoCloseable
             // synchronous TWO - WAY (= "SYNC")
             final PModeLeg aLeg2 = aPMode.getLeg2 ();
             if (aLeg2 == null)
-              throw new Phase4IncomingException ("PMode has no leg2!").setRetryFeasible (false);
+              throw new Phase4IncomingException ("PMode has no leg2!").setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_RECEIVER)
+                                                                    .setRetryFeasible (false);
 
             if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (),
                                                    aPMode.getMEPBinding (),

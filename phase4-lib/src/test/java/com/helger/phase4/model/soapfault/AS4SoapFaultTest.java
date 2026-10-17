@@ -176,10 +176,10 @@ public final class AS4SoapFaultTest
     assertSame (EAS4FaultDisposition.PERMANENT, _createSoap12Fault ("env:Sender").getDisposition ());
     assertSame (EAS4FaultDisposition.PERMANENT, _createSoap12Fault ("env:VersionMismatch").getDisposition ());
     assertSame (EAS4FaultDisposition.PERMANENT, _createSoap12Fault ("env:MustUnderstand").getDisposition ());
+    assertSame (EAS4FaultDisposition.PERMANENT, _createSoap12Fault ("env:DataEncodingUnknown").getDisposition ());
     assertSame (EAS4FaultDisposition.TRANSIENT, _createSoap12Fault ("env:Receiver").getDisposition ());
 
     // Unknown fault codes are transient
-    assertSame (EAS4FaultDisposition.TRANSIENT, _createSoap12Fault ("env:DataEncodingUnknown").getDisposition ());
     assertSame (EAS4FaultDisposition.TRANSIENT, _createSoap11Fault ("S11:Whatever").getDisposition ());
 
     // Absent fault code is transient

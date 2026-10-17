@@ -221,7 +221,7 @@ public final class AS4IncomingHandler
       // Determine content type
       final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
       if (StringHelper.isEmpty (sContentType))
-        throw new Phase4IncomingException ("Content-Type header is missing").setHttpStatusCode (CHttp.HTTP_BAD_REQUEST)
+        throw new Phase4IncomingException ("Content-Type header is missing").setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_SENDER)
                                                                             .setRetryFeasible (false);
 
       if (LOGGER.isDebugEnabled ())
@@ -230,8 +230,7 @@ public final class AS4IncomingHandler
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Received Content-Type object: " + aContentType);
       if (aContentType == null)
-        throw new Phase4IncomingException ("Failed to parse Content-Type '" + sContentType + "'").setHttpStatusCode (
-                                                                                                                     CHttp.HTTP_BAD_REQUEST)
+        throw new Phase4IncomingException ("Failed to parse Content-Type '" + sContentType + "'").setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_SENDER)
                                                                                                  .setRetryFeasible (false);
       final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
@@ -359,8 +358,7 @@ public final class AS4IncomingHandler
                 // configured maximum size or if an unknown
                 // Content-Transfer-Encoding is used. This is a problem of the
                 // message itself, so retrying is pointless (see issue #382)
-                throw new Phase4IncomingException ("Failed to parse MIME part #" + nIndex, ex).setHttpStatusCode (
-                                                                                                                  CHttp.HTTP_BAD_REQUEST)
+                throw new Phase4IncomingException ("Failed to parse MIME part #" + nIndex, ex).setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_SENDER)
                                                                                               .setRetryFeasible (false);
               }
               nIndex++;
@@ -501,8 +499,7 @@ public final class AS4IncomingHandler
     {
       // One of the configured size limits was exceeded. This is a problem of
       // the message itself, so retrying is pointless (see issue #318)
-      final Phase4Exception aNewEx = new Phase4IncomingException (ex.getMessage (), ex).setHttpStatusCode (
-                                                                                                           CHttp.HTTP_BAD_REQUEST)
+      final Phase4Exception aNewEx = new Phase4IncomingException (ex.getMessage (), ex).setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_SENDER)
                                                                                        .setRetryFeasible (false);
       // Remember for callback
       aCaughtException = aNewEx;
@@ -1322,7 +1319,7 @@ public final class AS4IncomingHandler
     catch (final Exception ex)
     {
       // Wrap in Phase4Exception
-      throw new Phase4IncomingException ("Error parsing AS4 message", ex).setHttpStatusCode (CHttp.HTTP_BAD_REQUEST);
+      throw new Phase4IncomingException ("Error parsing AS4 message", ex).setHttpStatusCode (CAS4Soap.HTTP_STATUS_CODE_SENDER);
     }
 
     // This one contains the result
