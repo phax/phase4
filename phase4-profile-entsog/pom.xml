@@ -56,6 +56,12 @@
       <artifactId>phase4-lib</artifactId>
     </dependency>
 
+    <!-- for Brainpool curve support -->
+    <dependency>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-bc</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
