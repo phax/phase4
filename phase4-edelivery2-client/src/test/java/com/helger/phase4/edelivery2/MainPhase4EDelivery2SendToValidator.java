@@ -19,10 +19,8 @@ package com.helger.phase4.edelivery2;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
-import java.security.Security;
 import java.security.cert.X509Certificate;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 
@@ -120,9 +118,6 @@ public final class MainPhase4EDelivery2SendToValidator
 
   public static void main (final String [] args)
   {
-    // Register BouncyCastle for Ed25519/X25519 support
-    Security.addProvider (new BouncyCastleProvider ());
-
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
     // Enable message dumping for debugging
