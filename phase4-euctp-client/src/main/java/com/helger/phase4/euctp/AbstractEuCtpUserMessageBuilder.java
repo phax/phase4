@@ -22,14 +22,12 @@ import java.util.UUID;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
-import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.profile.euctp.AS4EuCtpProfileRegistarSPI;
 import com.helger.phase4.profile.euctp.EEuCtpAction;
 import com.helger.phase4.profile.euctp.EEuCtpService;
@@ -48,8 +46,6 @@ public abstract class AbstractEuCtpUserMessageBuilder <IMPLTYPE extends Abstract
                                                       extends
                                                       AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
 {
-  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AbstractEuCtpUserMessageBuilder.class);
-
   // Default per section 2.2.6.2.1
   public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE_SIGN = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
   // Default per section 2.2.6.2.2
@@ -87,8 +83,8 @@ public abstract class AbstractEuCtpUserMessageBuilder <IMPLTYPE extends Abstract
   }
 
   @NonNull
-  public IMPLTYPE httpClientFactory (@Nullable final KeyStore aKeyStore,
-                                     final char @Nullable [] aKeyPassword) throws GeneralSecurityException
+  public IMPLTYPE httpClientFactory (@Nullable final KeyStore aKeyStore, final char @Nullable [] aKeyPassword)
+                                                                                                               throws GeneralSecurityException
   {
     return httpClientFactory (new Phase4EuCtpHttpClientSettings (aKeyStore, aKeyPassword));
   }

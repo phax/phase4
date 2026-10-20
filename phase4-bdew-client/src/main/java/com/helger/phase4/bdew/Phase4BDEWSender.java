@@ -24,7 +24,6 @@ import java.time.LocalDate;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.annotation.concurrent.Immutable;
@@ -36,7 +35,6 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.ECryptoAlgorithmC14N;
 import com.helger.phase4.crypto.ECryptoKeyEncryptionAlgorithm;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
-import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.profile.bdew.AS4BDEWProfileRegistarSPI;
 import com.helger.phase4.profile.bdew.BDEWPMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
@@ -53,8 +51,6 @@ import com.helger.phase4.util.AS4ResourceHelper;
 @Immutable
 public final class Phase4BDEWSender
 {
-  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4BDEWSender.class);
-
   private Phase4BDEWSender ()
   {}
 

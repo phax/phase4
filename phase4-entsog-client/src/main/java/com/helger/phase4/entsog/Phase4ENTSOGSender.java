@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
 
 import com.helger.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.annotation.concurrent.Immutable;
@@ -33,7 +32,6 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
-import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.profile.entsog.AS4ENTSOGProfileRegistarSPI;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -49,8 +47,6 @@ import com.helger.phase4.util.AS4ResourceHelper;
 @Immutable
 public final class Phase4ENTSOGSender
 {
-  private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4ENTSOGSender.class);
-
   private Phase4ENTSOGSender ()
   {}
 
