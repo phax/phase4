@@ -1107,34 +1107,34 @@ public final class Phase4PeppolSender
 
       if (m_aPayload == null)
       {
-        LOGGER.warn ("The field 'payload' is not set");
+        logHandler ().warn ("The field 'payload' is not set");
         return false;
       }
       if (m_aSenderID == null)
       {
-        LOGGER.warn ("The field 'senderID' is not set");
+        logHandler ().warn ("The field 'senderID' is not set");
         return false;
       }
       if (m_aReceiverID == null)
       {
-        LOGGER.warn ("The field 'receiverID' is not set");
+        logHandler ().warn ("The field 'receiverID' is not set");
         return false;
       }
       if (m_aDocTypeID == null)
       {
-        LOGGER.warn ("The field 'docTypeID' is not set");
+        logHandler ().warn ("The field 'docTypeID' is not set");
         return false;
       }
       if (m_aProcessID == null)
       {
-        LOGGER.warn ("The field 'processID' is not set");
+        logHandler ().warn ("The field 'processID' is not set");
         return false;
       }
 
       // m_sCountryC1 is mandatory since 1.1.2024
       if (StringHelper.isEmpty (m_sCountryC1))
       {
-        LOGGER.warn ("The field 'countryC1' is not set");
+        logHandler ().warn ("The field 'countryC1' is not set");
         return false;
       }
 
@@ -1144,7 +1144,7 @@ public final class Phase4PeppolSender
 
       if (m_aEndpointDetailProvider == null)
       {
-        LOGGER.warn ("The field 'endpointDetailProvider' is not set");
+        logHandler ().warn ("The field 'endpointDetailProvider' is not set");
         return false;
       }
       // m_aCertificateConsumer may be null
@@ -1156,16 +1156,16 @@ public final class Phase4PeppolSender
         // Peppol specific checks
         if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, m_sFromPartyID))
         {
-          LOGGER.warn ("The field 'fromPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
-                       PeppolIdentifierHelper.REGEX_SEAT_ID +
-                       "'");
+          logHandler ().warn ("The field 'fromPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
+                              PeppolIdentifierHelper.REGEX_SEAT_ID +
+                              "'");
           return false;
         }
         if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, m_sToPartyID))
         {
-          LOGGER.warn ("The field 'toPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
-                       PeppolIdentifierHelper.REGEX_SEAT_ID +
-                       "'");
+          logHandler ().warn ("The field 'toPartyID' does not seem to be a Peppol Seat ID. It must follow the regular expression '" +
+                              PeppolIdentifierHelper.REGEX_SEAT_ID +
+                              "'");
           return false;
         }
       }
@@ -1935,7 +1935,7 @@ public final class Phase4PeppolSender
 
       if (m_aPayloadBytes == null)
       {
-        LOGGER.warn ("The field 'payloadBytes' is not set");
+        logHandler ().warn ("The field 'payloadBytes' is not set");
         return false;
       }
       // All valid

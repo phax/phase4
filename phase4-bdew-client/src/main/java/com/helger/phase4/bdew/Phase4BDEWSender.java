@@ -184,14 +184,14 @@ public final class Phase4BDEWSender
         if (!m_sAction.equals (BDEWPMode.ACTION_REQUEST_SWITCH) && !m_sAction.equals (BDEWPMode.ACTION_CONFIRM_SWITCH))
         {
           // Payload is mandatory
-          LOGGER.warn ("The field 'payload' is not set");
+          logHandler ().warn ("The field 'payload' is not set");
           return false;
         }
       }
 
       if (!"".equals (m_sConversationID))
       {
-        LOGGER.warn ("The field 'conversationID' must not be changed");
+        logHandler ().warn ("The field 'conversationID' must not be changed");
         return false;
       }
 

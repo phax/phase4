@@ -815,7 +815,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
     if (m_aPMode == null)
     {
-      LOGGER.warn ("The field 'PMode' is not set");
+      logHandler ().warn ("The field 'PMode' is not set");
       return false;
     }
 
@@ -829,24 +829,24 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // m_sFromPartyIDType may be null
     if (StringHelper.isEmpty (m_sFromPartyID))
     {
-      LOGGER.warn ("The field 'fromPartyID' is not set");
+      logHandler ().warn ("The field 'fromPartyID' is not set");
       return false;
     }
     if (StringHelper.isEmpty (m_sFromRole))
     {
-      LOGGER.warn ("The field 'fromRole' is not set");
+      logHandler ().warn ("The field 'fromRole' is not set");
       return false;
     }
 
     // m_sToPartyIDType may be null
     if (StringHelper.isEmpty (m_sToPartyID))
     {
-      LOGGER.warn ("The field 'toPartyID' is not set");
+      logHandler ().warn ("The field 'toPartyID' is not set");
       return false;
     }
     if (StringHelper.isEmpty (m_sToRole))
     {
-      LOGGER.warn ("The field 'toRole' is not set");
+      logHandler ().warn ("The field 'toRole' is not set");
       return false;
     }
 
@@ -856,7 +856,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
     if (StringHelper.isEmpty (m_sEndpointURL))
     {
-      LOGGER.warn ("The field 'endpointURL' is not set");
+      logHandler ().warn ("The field 'endpointURL' is not set");
       return false;
     }
 

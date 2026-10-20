@@ -666,28 +666,28 @@ public final class Phase4DBNAllianceSender
 
       if (m_aPayload == null)
       {
-        LOGGER.warn ("The field 'payload' is not set");
+        logHandler ().warn ("The field 'payload' is not set");
         return false;
       }
       if (m_aReceiverID == null)
       {
-        LOGGER.warn ("The field 'receiverID' is not set");
+        logHandler ().warn ("The field 'receiverID' is not set");
         return false;
       }
       if (m_aDocTypeID == null)
       {
-        LOGGER.warn ("The field 'docTypeID' is not set");
+        logHandler ().warn ("The field 'docTypeID' is not set");
         return false;
       }
       if (m_aProcessID == null)
       {
-        LOGGER.warn ("The field 'processID' is not set");
+        logHandler ().warn ("The field 'processID' is not set");
         return false;
       }
 
       if (m_aEndpointDetailProvider == null)
       {
-        LOGGER.warn ("The field 'endpointDetailProvider' is not set");
+        logHandler ().warn ("The field 'endpointDetailProvider' is not set");
         return false;
       }
       // m_aCertificateConsumer may be null
@@ -937,7 +937,7 @@ public final class Phase4DBNAllianceSender
 
       if (m_aPayloadBytes == null)
       {
-        LOGGER.warn ("The field 'payloadBytes' is not set");
+        logHandler ().warn ("The field 'payloadBytes' is not set");
         return false;
       }
       // All valid

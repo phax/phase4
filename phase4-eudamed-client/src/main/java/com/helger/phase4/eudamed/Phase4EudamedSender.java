@@ -302,32 +302,32 @@ public final class Phase4EudamedSender
 
       if (m_aPayload == null)
       {
-        LOGGER.warn ("The field 'payload' is not set");
+        logHandler ().warn ("The field 'payload' is not set");
         return false;
       }
       if (StringHelper.isEmpty (m_sSenderID))
       {
-        LOGGER.warn ("The field 'senderID' is not set");
+        logHandler ().warn ("The field 'senderID' is not set");
         return false;
       }
       if (StringHelper.isEmpty (m_sReceiverID))
       {
-        LOGGER.warn ("The field 'receiverID' is not set");
+        logHandler ().warn ("The field 'receiverID' is not set");
         return false;
       }
       if (m_aDocTypeID == null && StringHelper.isEmpty (m_sAction))
       {
-        LOGGER.warn ("Neither the field 'docTypeID' nor the field 'action' is set");
+        logHandler ().warn ("Neither the field 'docTypeID' nor the field 'action' is set");
         return false;
       }
       if (m_aProcessID == null && StringHelper.isEmpty (m_sService))
       {
-        LOGGER.warn ("Neither the field 'processID' nor the field 'service' is set");
+        logHandler ().warn ("Neither the field 'processID' nor the field 'service' is set");
         return false;
       }
       if (m_aEndpointDetailProvider == null)
       {
-        LOGGER.warn ("The field 'endpointDetailProvider' is not set");
+        logHandler ().warn ("The field 'endpointDetailProvider' is not set");
         return false;
       }
       // m_aCertificateConsumer is optional

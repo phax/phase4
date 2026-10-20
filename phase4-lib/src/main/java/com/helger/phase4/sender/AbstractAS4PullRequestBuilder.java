@@ -326,13 +326,13 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
 
     if (StringHelper.isEmpty (m_sMPC))
     {
-      LOGGER.warn ("The field 'MPC' is not set");
+      logHandler ().warn ("The field 'MPC' is not set");
       return false;
     }
 
     if (StringHelper.isEmpty (m_sEndpointURL))
     {
-      LOGGER.warn ("The field 'endpointURL' is not set");
+      logHandler ().warn ("The field 'endpointURL' is not set");
       return false;
     }
 

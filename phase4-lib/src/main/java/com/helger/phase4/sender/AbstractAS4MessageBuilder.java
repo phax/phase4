@@ -29,6 +29,7 @@ import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.OverrideOnDemand;
 import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.enforce.ValueEnforcer;
+import com.helger.base.log.ILogHandler;
 import com.helger.base.state.ESuccess;
 import com.helger.base.string.StringHelper;
 import com.helger.base.trait.IGenericImplTrait;
@@ -71,6 +72,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AbstractAS4MessageBuilder.class);
 
+  private ILogHandler m_aLogHandler = ILogHandler.createForLogger (LOGGER);
   protected IHttpPoster m_aCustomHttpPoster;
   protected HttpClientFactory m_aHttpClientFactory;
   protected IAS4CryptoFactory m_aCryptoFactorySign;
@@ -188,6 +190,35 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   public final IMPLTYPE httpClientFactory (@Nullable final HttpClientFactory aHttpClientFactory)
   {
     m_aHttpClientFactory = aHttpClientFactory;
+    return thisAsT ();
+  }
+
+  /**
+   * @return The log handler that receives the messages of {@link #isEveryRequiredFieldSet()}. By
+   *         default it logs to the logger of this class. Never <code>null</code>.
+   * @since 4.8.2
+   */
+  @NonNull
+  public final ILogHandler logHandler ()
+  {
+    return m_aLogHandler;
+  }
+
+  /**
+   * Set the log handler that receives the messages of {@link #isEveryRequiredFieldSet()}, e.g. to
+   * collect the names of all missing fields instead of logging them. By default the messages are
+   * logged as warnings.
+   *
+   * @param aLogHandler
+   *        The log handler to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 4.8.2
+   */
+  @NonNull
+  public final IMPLTYPE logHandler (@NonNull final ILogHandler aLogHandler)
+  {
+    ValueEnforcer.notNull (aLogHandler, "LogHandler");
+    m_aLogHandler = aLogHandler;
     return thisAsT ();
   }
 
@@ -839,7 +870,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {
     if (m_aHttpClientFactory == null)
     {
-      LOGGER.warn ("The field 'httpClientFactory' is not set");
+      logHandler ().warn ("The field 'httpClientFactory' is not set");
       return false;
     }
     // m_aCryptoFactorySign may be null
@@ -849,29 +880,29 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     // m_aSendingDateTime may be null
     if (m_eSoapVersion == null)
     {
-      LOGGER.warn ("The field 'soapVersion' is not set");
+      logHandler ().warn ("The field 'soapVersion' is not set");
       return false;
     }
     // m_aHttpRetrySettings may be null
     if (m_aLocale == null)
     {
-      LOGGER.warn ("The field 'locale' is not set");
+      logHandler ().warn ("The field 'locale' is not set");
       return false;
     }
     if (StringHelper.isEmpty (m_sAS4ProfileID))
     {
-      LOGGER.warn ("The field 'as4ProfileID' is not set");
+      logHandler ().warn ("The field 'as4ProfileID' is not set");
       return false;
     }
 
     if (m_aPModeResolver == null)
     {
-      LOGGER.warn ("The field 'pmodeResolver' is not set");
+      logHandler ().warn ("The field 'pmodeResolver' is not set");
       return false;
     }
     if (m_aIAF == null)
     {
-      LOGGER.warn ("The field 'incomingAttachmentFactory' is not set");
+      logHandler ().warn ("The field 'incomingAttachmentFactory' is not set");
       return false;
     }
     // m_aIncomingProfileSelector may be null

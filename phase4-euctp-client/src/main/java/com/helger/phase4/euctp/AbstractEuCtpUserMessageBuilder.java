@@ -121,7 +121,7 @@ public abstract class AbstractEuCtpUserMessageBuilder <IMPLTYPE extends Abstract
       if (!EuCtpPMode.ACTION_TEST.equals (m_sAction))
       {
         // Payload is mandatory
-        LOGGER.warn ("The field 'payload' is not set");
+        logHandler ().warn ("The field 'payload' is not set");
         return false;
       }
     }
