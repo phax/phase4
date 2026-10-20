@@ -813,6 +813,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                            .getAsBoolean ("phase4.peppol.inbound.reject-on-non-compliance",
                                                                           true);
 
+    // Peppol seat ID check of the AS4 PartyIDs - may be disabled e.g. for Nemhandel
+    final boolean bCheckSeatID = AS4Configuration.getConfig ()
+                                                 .getAsBoolean ("phase4.peppol.inbound.check-seat-id", true);
+
     // Compare C1 ID from SBDH with the one of AS4
     {
       // Theoretically the MessageProperties must be present, but if someone disables the phase4
@@ -964,7 +968,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       }
 
       final Ebms3PartyId aFromParty = aFrom.getPartyIdAtIndex (0);
-      if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, aFromParty.getValue ()))
+      if (bCheckSeatID &&
+          !RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, aFromParty.getValue ()))
       {
         final String sMsg = "The AS4 'PartyInfo/From/PartyId' value does not not follow the required regular expression '" +
                             PeppolIdentifierHelper.REGEX_SEAT_ID +
@@ -1015,7 +1020,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       }
 
       final Ebms3PartyId aToParty = aTo.getPartyIdAtIndex (0);
-      if (!RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, aToParty.getValue ()))
+      if (bCheckSeatID &&
+          !RegExHelper.stringMatchesPattern (PeppolIdentifierHelper.REGEX_SEAT_ID, aToParty.getValue ()))
       {
         final String sMsg = "The AS4 'PartyInfo/To/PartyId' value does not not follow the required regular expression '" +
                             PeppolIdentifierHelper.REGEX_SEAT_ID +
