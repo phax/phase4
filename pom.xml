@@ -193,6 +193,12 @@
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
           </exclusion>
+          <!-- Only used by WSS4J's JasyptPasswordEncryptor for "ENC(...)" crypto properties, which
+               phase4 never creates. -->
+          <exclusion>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
