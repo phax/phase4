@@ -112,10 +112,6 @@
       <artifactId>ph-tenancy</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger.schedule</groupId>
-      <artifactId>ph-schedule</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.helger.photon</groupId>
       <artifactId>ph-oton-io</artifactId>
     </dependency>

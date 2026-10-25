@@ -17,6 +17,7 @@
 package com.helger.phase4.incoming;
 
 import java.time.Duration;
+import java.util.concurrent.ScheduledFuture;
 
 import org.slf4j.Logger;
 
@@ -27,7 +28,6 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.incoming.mgr.AS4DuplicateCleanupJob;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.quartz.TriggerKey;
 
 /**
  * This class contains the init method for the server:
@@ -46,7 +46,7 @@ public final class AS4ServerInitializer
 
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   @GuardedBy ("RW_LOCK")
-  private static TriggerKey s_aTriggerKey;
+  private static ScheduledFuture <?> s_aScheduledCleanup;
 
   private AS4ServerInitializer ()
   {}
@@ -68,12 +68,12 @@ public final class AS4ServerInitializer
     // Schedule jobs
     RW_LOCK.writeLocked (() -> {
       // Consecutive calls return null
-      final TriggerKey aTriggerKey = AS4DuplicateCleanupJob.scheduleMe (aDisposalDuration);
-      if (aTriggerKey != null)
+      final ScheduledFuture <?> aScheduledCleanup = AS4DuplicateCleanupJob.scheduleMe (aDisposalDuration);
+      if (aScheduledCleanup != null)
       {
-        if (s_aTriggerKey != null)
+        if (s_aScheduledCleanup != null)
           throw new IllegalStateException ("Failed to schedule AS4DuplicateCleanupJob  - seems like some cleanup is missing");
-        s_aTriggerKey = aTriggerKey;
+        s_aScheduledCleanup = aScheduledCleanup;
       }
     });
   }
@@ -86,8 +86,8 @@ public final class AS4ServerInitializer
   public static void shutdownAS4Server ()
   {
     RW_LOCK.writeLocked (() -> {
-      AS4DuplicateCleanupJob.unschedule (s_aTriggerKey);
-      s_aTriggerKey = null;
+      AS4DuplicateCleanupJob.unschedule (s_aScheduledCleanup);
+      s_aScheduledCleanup = null;
     });
   }
 }

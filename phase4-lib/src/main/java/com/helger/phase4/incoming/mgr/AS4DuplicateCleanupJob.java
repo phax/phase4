@@ -18,46 +18,46 @@ package com.helger.phase4.incoming.mgr;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
-import com.helger.base.lang.clazz.ClassHelper;
+import com.helger.annotation.concurrent.ThreadSafe;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.quartz.DisallowConcurrentExecution;
-import com.helger.quartz.IJobExecutionContext;
-import com.helger.quartz.JobDataMap;
-import com.helger.quartz.JobExecutionException;
-import com.helger.quartz.SimpleScheduleBuilder;
-import com.helger.quartz.TriggerKey;
-import com.helger.schedule.quartz.GlobalQuartzScheduler;
-import com.helger.schedule.quartz.trigger.JDK8TriggerBuilder;
-import com.helger.web.scope.util.AbstractScopeAwareJob;
 
 /**
- * A special job, that removes all entries
+ * A special job, that regularly removes all incoming duplicate message IDs that are older than
+ * the disposal duration. It runs on a single daemon thread.
  *
  * @author Philip Helger
  */
-@DisallowConcurrentExecution
-public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
+@ThreadSafe
+public final class AS4DuplicateCleanupJob
 {
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);
-  private static final String KEY_DURATION = "duration";
   private static final AtomicBoolean WAS_SCHEDULED = new AtomicBoolean (false);
+  private static final AtomicReference <ScheduledExecutorService> EXECUTOR = new AtomicReference <> ();
 
-  public AS4DuplicateCleanupJob ()
+  private AS4DuplicateCleanupJob ()
   {}
 
-  @Override
-  protected void onExecute (@NonNull final JobDataMap aJobDataMap,
-                            @NonNull final IJobExecutionContext aContext) throws JobExecutionException
+  /**
+   * Remove all incoming duplicate message IDs that are older than the provided duration.
+   *
+   * @param aDisposalDuration
+   *        The duration after which a message ID is removed. May not be <code>null</code>.
+   */
+  static void evictOldItems (@NonNull final Duration aDisposalDuration)
   {
-    final Duration aDisposalDuration = aJobDataMap.getCastedValue (KEY_DURATION);
     final OffsetDateTime aOldDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().minus (aDisposalDuration);
 
     if (LOGGER.isDebugEnabled ())
@@ -70,49 +70,45 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
   }
 
   /**
-   * Start a job that runs every minute, that removes all messages older than a certain time from
-   * duplication check. If the job is already scheduled, it cannot be scheduled again.
+   * Schedule the cleanup to run immediately and then every minute, or every disposal duration if
+   * that is shorter than a minute.
    *
    * @param aDisposalDuration
-   *        Messages older than this duration will not be checked for duplicates. Must not be
-   *        <code>null</code>.
-   * @return <code>null</code> if no job was scheduled, the trigger key of the respective job
-   *         otherwise.
+   *        The duration after which a message ID is removed. Only positive durations schedule the
+   *        cleanup. May not be <code>null</code>.
+   * @return The scheduled cleanup, to be passed to {@link #unschedule(ScheduledFuture)}, or
+   *         <code>null</code> if the cleanup is disabled or was already scheduled.
    */
   @Nullable
-  public static TriggerKey scheduleMe (@NonNull final Duration aDisposalDuration)
+  public static ScheduledFuture <?> scheduleMe (@NonNull final Duration aDisposalDuration)
   {
-    TriggerKey aTriggerKey = null;
+    ScheduledFuture <?> ret = null;
     // Only for positive durations
     if (aDisposalDuration.compareTo (Duration.ZERO) > 0)
     {
       if (!WAS_SCHEDULED.getAndSet (true))
       {
-        final JobDataMap aJobDataMap = new JobDataMap ();
-        aJobDataMap.putIn (KEY_DURATION, aDisposalDuration);
-
         // For some tests the disposal is less then 1 minute - in this case the job needs to run
         // more often
-        final SimpleScheduleBuilder aSchedule;
-        if (aDisposalDuration.compareTo (Duration.ofMinutes (1)) < 0)
-        {
-          // Be as precise as possible
-          aSchedule = SimpleScheduleBuilder.simpleSchedule ()
-                                           .withIntervalInMilliseconds (aDisposalDuration.toMillis ())
-                                           .repeatForever ();
-        }
-        else
-          aSchedule = SimpleScheduleBuilder.repeatMinutelyForever (1);
-
-        aTriggerKey = GlobalQuartzScheduler.getInstance ()
-                                           .scheduleJob (ClassHelper.getClassLocalName (AS4DuplicateCleanupJob.class) +
-                                                         "-" +
-                                                         aDisposalDuration.toString (),
-                                                         JDK8TriggerBuilder.newTrigger ()
-                                                                           .startNow ()
-                                                                           .withSchedule (aSchedule),
-                                                         AS4DuplicateCleanupJob.class,
-                                                         aJobDataMap);
+        final Duration aInterval = aDisposalDuration.compareTo (Duration.ofMinutes (1)) < 0 ? aDisposalDuration
+                                                                                             : Duration.ofMinutes (1);
+        final ScheduledExecutorService aExecutor = Executors.newSingleThreadScheduledExecutor (r -> {
+          final Thread aThread = new Thread (r, "phase4-duplicate-cleanup");
+          aThread.setDaemon (true);
+          return aThread;
+        });
+        EXECUTOR.set (aExecutor);
+        ret = aExecutor.scheduleWithFixedDelay ( () -> {
+          try
+          {
+            evictOldItems (aDisposalDuration);
+          }
+          catch (final Exception ex)
+          {
+            // An exception would cancel all further executions
+            LOGGER.error ("Failed to evict incoming AS4 duplicate message IDs", ex);
+          }
+        }, 0, aInterval.toMillis (), TimeUnit.MILLISECONDS);
 
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("AS4DuplicateCleanupJob was successfully scheduled");
@@ -127,17 +123,26 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
     {
       LOGGER.warn ("Incoming AS4 duplicate message cleanup is disabled!");
     }
-    return aTriggerKey;
+    return ret;
   }
 
-  public static void unschedule (@Nullable final TriggerKey aTriggerKey)
+  /**
+   * Stop the cleanup scheduled by {@link #scheduleMe(Duration)}.
+   *
+   * @param aScheduledCleanup
+   *        The value returned by {@link #scheduleMe(Duration)}. May be <code>null</code>.
+   */
+  public static void unschedule (@Nullable final ScheduledFuture <?> aScheduledCleanup)
   {
-    if (aTriggerKey != null)
+    if (aScheduledCleanup != null)
     {
       // Was the job scheduled?
       if (WAS_SCHEDULED.getAndSet (false))
       {
-        GlobalQuartzScheduler.getInstance ().unscheduleJob (aTriggerKey);
+        aScheduledCleanup.cancel (false);
+        final ScheduledExecutorService aExecutor = EXECUTOR.getAndSet (null);
+        if (aExecutor != null)
+          aExecutor.shutdown ();
 
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("AS4DuplicateCleanupJob was successfully unscheduled");
