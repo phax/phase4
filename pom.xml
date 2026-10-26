@@ -74,12 +74,12 @@
     <ph-jaxb-plugin.version>5.1.3</ph-jaxb-plugin.version>
 
     <bctls.version>1.86.2</bctls.version>
-    <dnsjava.version>3.6.5</dnsjava.version>
+    <dnsjava.version>3.7.0</dnsjava.version>
     <log4j.version>2.26.1</log4j.version>
     <xmlsec.version>4.0.4</xmlsec.version>
     <wss4j.version>4.0.2</wss4j.version>
 
-    <ph-commons.version>12.5.2</ph-commons.version>
+    <ph-commons.version>12.5.3</ph-commons.version>
     <ph-xsds.version>4.1.1</ph-xsds.version>
     <ph-ubl.version>10.2.0</ph-ubl.version>
     <ph-web.version>11.4.8</ph-web.version>
