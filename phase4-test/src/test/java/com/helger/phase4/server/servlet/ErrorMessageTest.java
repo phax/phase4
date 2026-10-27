@@ -52,6 +52,46 @@ public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
+  public void testSendErrorMessageMessageIDPadded () throws Exception
+  {
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageMessageIDPadded.xml"));
+    assertNotNull (aDoc);
+
+    // Surrounding whitespaces are trimmed
+    sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()));
+  }
+
+  @Test
+  public void testSendErrorMessageMessageIDWhitespaceOnlyWarns () throws Exception
+  {
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageMessageIDWhitespace.xml"));
+    assertNotNull (aDoc);
+
+    // Invalid IDs of SignalMessages only lead to a warning
+    sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()));
+  }
+
+  @Test
+  public void testSendErrorMessageMessageIDInvalidOnlyWarns () throws Exception
+  {
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageMessageIDInvalid.xml"));
+    assertNotNull (aDoc);
+
+    // Invalid IDs of SignalMessages only lead to a warning
+    sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()));
+  }
+
+  @Test
+  public void testSendErrorMessageRefToMessageIDInvalidOnlyWarns () throws Exception
+  {
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageRefToMessageIDInvalid.xml"));
+    assertNotNull (aDoc);
+
+    // Invalid IDs of SignalMessages only lead to a warning
+    sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()));
+  }
+
+  @Test
   @Ignore ("Allowed since 0.9.14")
   public void testSendErrorMessageNoRefToMessageID () throws Exception
   {

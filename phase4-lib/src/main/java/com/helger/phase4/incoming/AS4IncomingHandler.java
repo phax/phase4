@@ -1015,6 +1015,7 @@ public final class AS4IncomingHandler
 
     // This is where all data from the SOAP headers is stored to
     final AS4IncomingMessageState aIncomingState = new AS4IncomingMessageState (eSoapVersion, aResHelper, aLocale);
+    aIncomingState.setMessageMode (aMessageMetadata.getMode ());
 
     // Handle all headers - modifies the state
     _processSoapHeaderElements (aRegistry,

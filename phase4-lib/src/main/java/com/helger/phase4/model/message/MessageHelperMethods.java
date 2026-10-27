@@ -87,6 +87,42 @@ public final class MessageHelperMethods
   @RegEx
   public static final String MESSAGE_ID_SUFFIX_REGEX = "^[a-zA-Z0-9\\._\\-]+$";
 
+  // RFC 2822 section 3.2.4: dot-atom-text = 1*atext *("." 1*atext)
+  private static final String RFC2822_ATEXT = "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]";
+  private static final String RFC2822_DOT_ATOM_TEXT = RFC2822_ATEXT + "+(?:\\." + RFC2822_ATEXT + "+)*";
+  // RFC 2822 section 3.2.1: NO-WS-CTL (as character class content) and quoted-pair
+  private static final String RFC2822_NO_WS_CTL = "\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F";
+  private static final String RFC2822_QUOTED_PAIR = "\\\\[\\x01-\\x09\\x0B\\x0C\\x0E-\\x7F]";
+  // RFC 2822 section 3.6.4: no-fold-quote and no-fold-literal
+  private static final String RFC2822_NO_FOLD_QUOTE = "\"(?:[" +
+                                                      RFC2822_NO_WS_CTL +
+                                                      "\\x21\\x23-\\x5B\\x5D-\\x7E]|" +
+                                                      RFC2822_QUOTED_PAIR +
+                                                      ")*\"";
+  private static final String RFC2822_NO_FOLD_LITERAL = "\\[(?:[" +
+                                                        RFC2822_NO_WS_CTL +
+                                                        "\\x21-\\x5A\\x5E-\\x7E]|" +
+                                                        RFC2822_QUOTED_PAIR +
+                                                        ")*\\]";
+
+  /**
+   * The regular expression that an ebMS Message ID must follow. It is the <code>msg-id</code> of
+   * RFC 2822 section 3.6.4 without the enclosing angle brackets and without the obsolete syntax:
+   * <code>id-left "@" id-right</code>. See ebMS 3.0 Core, section 5.2.2.1.
+   *
+   * @since 4.8.3
+   */
+  @RegEx
+  public static final String MESSAGE_ID_REGEX = "^(?:" +
+                                                RFC2822_DOT_ATOM_TEXT +
+                                                "|" +
+                                                RFC2822_NO_FOLD_QUOTE +
+                                                ")@(?:" +
+                                                RFC2822_DOT_ATOM_TEXT +
+                                                "|" +
+                                                RFC2822_NO_FOLD_LITERAL +
+                                                ")$";
+
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MessageHelperMethods.class);
 
   private static String s_sCustomMessageIDSuffix = null;
@@ -117,7 +153,8 @@ public final class MessageHelperMethods
    *
    * @param sSuffix
    *        The suffix to be used. May be <code>null</code>. If present it must match the
-   *        {@link #MESSAGE_ID_SUFFIX_REGEX} regular expression.
+   *        {@link #MESSAGE_ID_SUFFIX_REGEX} regular expression and the resulting message IDs must
+   *        match {@link #MESSAGE_ID_REGEX} (e.g. no trailing dot and no consecutive dots).
    * @since 1.1.1
    */
   public static void setCustomMessageIDSuffix (@Nullable final String sSuffix)
@@ -131,7 +168,12 @@ public final class MessageHelperMethods
                                             MESSAGE_ID_SUFFIX_REGEX);
     }
     // Remove any leading dot, as this will be added in the message ID handler
-    s_sCustomMessageIDSuffix = StringHelper.trimStart (sSuffix, '.');
+    final String sRealSuffix = StringHelper.trimStart (sSuffix, '.');
+    if (!isValidMessageID ("id@" + StringHelper.getConcatenatedOnDemand (CAS4.LIB_NAME, '.', sRealSuffix)))
+      throw new IllegalArgumentException ("The provided message ID suffix '" +
+                                          sSuffix +
+                                          "' would create message IDs that are not valid RFC 2822 msg-id values");
+    s_sCustomMessageIDSuffix = sRealSuffix;
   }
 
   /**
@@ -150,6 +192,22 @@ public final class MessageHelperMethods
     return UUID.randomUUID ().toString () +
            "@" +
            StringHelper.getConcatenatedOnDemand (CAS4.LIB_NAME, '.', s_sCustomMessageIDSuffix);
+  }
+
+  /**
+   * Check if the provided value is a valid ebMS Message ID, so if it matches
+   * {@link #MESSAGE_ID_REGEX}. This applies to <code>eb:MessageId</code> and
+   * <code>eb:RefToMessageId</code>. The value is not trimmed, so leading or trailing whitespaces
+   * make it invalid.
+   *
+   * @param sMessageID
+   *        The value to check. May be <code>null</code>.
+   * @return <code>true</code> if the value is a valid Message ID, <code>false</code> if not.
+   * @since 4.8.3
+   */
+  public static boolean isValidMessageID (@Nullable final String sMessageID)
+  {
+    return StringHelper.isNotEmpty (sMessageID) && RegExHelper.stringMatchesPattern (MESSAGE_ID_REGEX, sMessageID);
   }
 
   /**
@@ -208,9 +266,11 @@ public final class MessageHelperMethods
    * Create a new message info.
    *
    * @param sMessageID
-   *        The message ID. May neither be <code>null</code> nor empty.
+   *        The message ID. May neither be <code>null</code> nor empty and must match
+   *        {@link #MESSAGE_ID_REGEX}.
    * @param sRefToMessageID
-   *        to set the reference to the previous message needed for two way exchanges
+   *        to set the reference to the previous message needed for two way exchanges. If it does
+   *        not match {@link #MESSAGE_ID_REGEX}, only a warning is logged.
    * @return Never <code>null</code>.
    */
   @NonNull
@@ -226,9 +286,11 @@ public final class MessageHelperMethods
    * Create a new message info.
    *
    * @param sMessageID
-   *        The message ID. May neither be <code>null</code> nor empty.
+   *        The message ID. May neither be <code>null</code> nor empty and must match
+   *        {@link #MESSAGE_ID_REGEX}.
    * @param sRefToMessageID
-   *        to set the reference to the previous message needed for two way exchanges
+   *        to set the reference to the previous message needed for two way exchanges. If it does
+   *        not match {@link #MESSAGE_ID_REGEX}, only a warning is logged.
    * @param aDateTime
    *        Date and time. May not be <code>null</code>.
    * @return Never <code>null</code>.
@@ -240,7 +302,17 @@ public final class MessageHelperMethods
                                                          @NonNull final OffsetDateTime aDateTime)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
+    ValueEnforcer.isTrue (isValidMessageID (sMessageID),
+                          () -> "The MessageID '" +
+                                sMessageID +
+                                "' is not a valid RFC 2822 msg-id (expected 'id-left@id-right' without angle brackets)");
     ValueEnforcer.notNull (aDateTime, "DateTime");
+
+    // The referenced ID may stem from a received message, so it is sent unchanged
+    if (StringHelper.isNotEmpty (sRefToMessageID) && !isValidMessageID (sRefToMessageID))
+      LOGGER.warn ("The RefToMessageID '" +
+                   sRefToMessageID +
+                   "' is not a valid RFC 2822 msg-id (expected 'id-left@id-right' without angle brackets)");
 
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
 

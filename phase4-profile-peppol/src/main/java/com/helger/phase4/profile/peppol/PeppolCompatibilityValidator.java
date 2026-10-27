@@ -48,6 +48,7 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.ESoapVersion;
+import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PModePayloadService;
 import com.helger.phase4.model.pmode.PModeValidationException;
@@ -391,6 +392,16 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     {
       if (StringHelper.isEmpty (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
+      else
+        if (!MessageHelperMethods.isValidMessageID (aUserMsg.getMessageInfo ().getMessageId ()))
+          aErrorList.add (_createWarn ("MessageInfo/MessageId '" +
+                                        aUserMsg.getMessageInfo ().getMessageId () +
+                                        "' is not a valid RFC 2822 msg-id"));
+      if (StringHelper.isNotEmpty (aUserMsg.getMessageInfo ().getRefToMessageId ()) &&
+          !MessageHelperMethods.isValidMessageID (aUserMsg.getMessageInfo ().getRefToMessageId ()))
+        aErrorList.add (_createWarn ("MessageInfo/RefToMessageId '" +
+                                      aUserMsg.getMessageInfo ().getRefToMessageId () +
+                                      "' is not a valid RFC 2822 msg-id"));
 
       {
         // Check if originalSender and finalRecipient are present
@@ -518,8 +529,18 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
       final Ebms3MessageInfo aMessageInfo = aSignalMsg.getMessageInfo ();
       if (StringHelper.isEmpty (aMessageInfo.getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
+      else
+        if (!MessageHelperMethods.isValidMessageID (aMessageInfo.getMessageId ()))
+          aErrorList.add (_createWarn ("MessageInfo/MessageId '" +
+                                        aMessageInfo.getMessageId () +
+                                        "' is not a valid RFC 2822 msg-id"));
       if (StringHelper.isEmpty (aMessageInfo.getRefToMessageId ()))
         aErrorList.add (_createError ("MessageInfo/RefToMessageId is missing"));
+      else
+        if (!MessageHelperMethods.isValidMessageID (aMessageInfo.getRefToMessageId ()))
+          aErrorList.add (_createWarn ("MessageInfo/RefToMessageId '" +
+                                        aMessageInfo.getRefToMessageId () +
+                                        "' is not a valid RFC 2822 msg-id"));
     }
 
     if (aSignalMsg.getReceipt () != null)

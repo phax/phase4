@@ -51,6 +51,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.messaging.http.IHttpPoster;
 import com.helger.phase4.model.ESoapVersion;
+import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.resolve.AS4DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -876,7 +877,21 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     // m_aCryptoFactorySign may be null
     // m_aCryptoFactoryCrypt may be null
     // m_sMessageID is optional
+    if (StringHelper.isNotEmpty (m_sMessageID) && !MessageHelperMethods.isValidMessageID (m_sMessageID))
+    {
+      logHandler ().warn ("The field 'messageID' value '" +
+                          m_sMessageID +
+                          "' is not a valid RFC 2822 msg-id (expected 'id-left@id-right' without angle brackets)");
+      return false;
+    }
     // m_sRefToMessageID is optional
+    if (StringHelper.isNotEmpty (m_sRefToMessageID) && !MessageHelperMethods.isValidMessageID (m_sRefToMessageID))
+    {
+      logHandler ().warn ("The field 'refToMessageID' value '" +
+                          m_sRefToMessageID +
+                          "' is not a valid RFC 2822 msg-id (expected 'id-left@id-right' without angle brackets)");
+      return false;
+    }
     // m_aSendingDateTime may be null
     if (m_eSoapVersion == null)
     {

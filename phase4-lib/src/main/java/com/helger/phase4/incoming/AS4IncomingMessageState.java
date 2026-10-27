@@ -46,6 +46,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.ESoapVersion;
 import com.helger.phase4.model.mpc.IMPC;
@@ -95,6 +96,7 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   private static final String KEY_AS4_REF_TO_MESSAGE_ID = "phase4.ref.to.message.id";
   private static final String KEY_AS4_MESSAGE_TIMESTAMP = "phase4.message.timestamp";
   private static final String KEY_IS_PING_MESSAGE = "phase4.is.ping.message";
+  private static final String KEY_MESSAGE_MODE = "phase4.message.mode";
   private static final String KEY_SOAP_BODY_PAYLOAD_NODE = "phase4.soap.body.first.child";
   private static final String KEY_SOAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL = "phase4.soap.header.element.processing.successful";
   private static final String KEY_CRYPTO_FACTORY_SIGN = "phase4.crypto-factory.sign";
@@ -474,6 +476,29 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   public void setPingMessage (final boolean bIsPingMessage)
   {
     putIn (KEY_IS_PING_MESSAGE, bIsPingMessage);
+  }
+
+  /**
+   * @return The mode of the incoming message, so whether it was received as a request or as a
+   *         response (e.g. a pulled UserMessage). May be <code>null</code> if not set.
+   * @since 4.8.3
+   */
+  @Nullable
+  public EAS4MessageMode getMessageMode ()
+  {
+    return getCastedValue (KEY_MESSAGE_MODE);
+  }
+
+  /**
+   * Set the mode of the incoming message.
+   *
+   * @param eMessageMode
+   *        The message mode to be set. May be <code>null</code>.
+   * @since 4.8.3
+   */
+  public void setMessageMode (@Nullable final EAS4MessageMode eMessageMode)
+  {
+    putIn (KEY_MESSAGE_MODE, eMessageMode);
   }
 
   @Nullable

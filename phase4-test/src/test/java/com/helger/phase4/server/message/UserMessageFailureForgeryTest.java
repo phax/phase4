@@ -123,6 +123,16 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                  EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
   }
 
+  @Test
+  public void testUserMessageWithWhitespaceMessageIDShouldFail () throws Exception
+  {
+    // A pushed UserMessage on leg 1 with an invalid MessageId is rejected
+    final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/UserMessageMessageIDWhitespace.xml"));
+
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
+  }
+
   // Tinkering with the signature
 
   @Test

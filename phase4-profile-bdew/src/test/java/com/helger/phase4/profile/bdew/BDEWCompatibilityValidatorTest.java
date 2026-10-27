@@ -28,7 +28,6 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.UUID;
 
 import com.helger.xml.serialize.read.DOMReader;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -881,7 +880,7 @@ public final class BDEWCompatibilityValidatorTest
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
 
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
-    aMessageInfo.setMessageId (UUID.randomUUID ().toString ());
+    aMessageInfo.setMessageId (MessageHelperMethods.createRandomMessageID ());
     aUserMessage.setMessageInfo (aMessageInfo);
 
     final Ebms3From aFromPart = new Ebms3From ();

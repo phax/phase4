@@ -127,6 +127,45 @@ public final class Ebms3MessagingMarshallerTest
   }
 
   @Test
+  public void testUserMessageMessageInfoIDEmpty ()
+  {
+    final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
+    final Soap11Envelope aEnv = new Soap11EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
+                                                               .read (new ClassPathResource (PATH11 +
+                                                                                             "MessageInfoIDEmpty.xml"));
+    assertNotNull (aEnv);
+    assertTrue (aCVEH.getErrorList ().isEmpty ());
+
+    // Rejected by the XSD (non-empty-string has minLength 1)
+    final Ebms3Messaging aMessage = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH)
+                                                                   .read ((Element) aEnv.getHeader ()
+                                                                                        .getAnyAtIndex (0));
+    assertTrue (aCVEH.getErrorList ().containsAtLeastOneError ());
+    assertNull (aMessage);
+  }
+
+  @Test
+  public void testUserMessageMessageInfoIDWhitespaceOnly ()
+  {
+    final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
+    final Soap11Envelope aEnv = new Soap11EnvelopeMarshaller ().setValidationEventHandler (aCVEH)
+                                                               .read (new ClassPathResource (PATH11 +
+                                                                                             "MessageInfoIDWhitespace.xml"));
+    assertNotNull (aEnv);
+    assertTrue (aCVEH.getErrorList ().isEmpty ());
+
+    // Accepted by the XSD, because xsd:string does not collapse whitespace
+    final Ebms3Messaging aMessage = new Ebms3MessagingMarshaller ().setValidationEventHandler (aCVEH)
+                                                                   .read ((Element) aEnv.getHeader ()
+                                                                                        .getAnyAtIndex (0));
+    assertTrue ("Ebms Errors: " + aCVEH.getErrorList (), aCVEH.getErrorList ().isEmpty ());
+    assertNotNull (aMessage);
+    final String sMessageID = aMessage.getUserMessageAtIndex (0).getMessageInfo ().getMessageId ();
+    assertEquals ("   ", sMessageID);
+    assertTrue (sMessageID.trim ().isEmpty ());
+  }
+
+  @Test
   public void testExpectSoap11ButFileIsSoap12 ()
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();

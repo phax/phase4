@@ -460,6 +460,50 @@ public final class PeppolCompatibilityValidatorTest
   }
 
   @Test
+  public void testValidateUserMessageInvalidMessageID ()
+  {
+    for (final String sMessageID : new String [] { "   ", "abc", "<a@b>", " a@b" })
+    {
+      m_aErrorList.clear ();
+      final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+      aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
+      aUserMessage.getMessageInfo ().setMessageId (sMessageID);
+      VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
+      assertTrue (m_aErrorList.containsAny (x -> !x.isError () &&
+                                                 x.getErrorText (LOCALE)
+                                                  .contains ("MessageInfo/MessageId '" +
+                                                             sMessageID +
+                                                             "' is not a valid RFC 2822 msg-id")));
+    }
+  }
+
+  @Test
+  public void testValidateUserMessageInvalidRefToMessageID ()
+  {
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+    aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
+    aUserMessage.getMessageInfo ().setMessageId ("a@b");
+    aUserMessage.getMessageInfo ().setRefToMessageId ("   ");
+    VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
+    assertFalse (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageInfo/MessageId")));
+    assertTrue (m_aErrorList.containsAny (x -> !x.isError () &&
+                                               x.getErrorText (LOCALE).contains ("MessageInfo/RefToMessageId '   ' is not a valid RFC 2822 msg-id")));
+  }
+
+  @Test
+  public void testValidateSignalMessageInvalidRefToMessageID ()
+  {
+    final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
+    aSignalMessage.setMessageInfo (new Ebms3MessageInfo ());
+    aSignalMessage.getMessageInfo ().setMessageId ("a@b");
+    aSignalMessage.getMessageInfo ().setRefToMessageId ("1234");
+    VALIDATOR.validateSignalMessage (aSignalMessage, m_aErrorList);
+    assertFalse (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageInfo/MessageId")));
+    assertTrue (m_aErrorList.containsAny (x -> !x.isError () &&
+                                               x.getErrorText (LOCALE).contains ("MessageInfo/RefToMessageId '1234' is not a valid RFC 2822 msg-id")));
+  }
+
+  @Test
   public void testValidateUserMessageMoreThanOnePartyID ()
   {
     final Ebms3PartyId aFirstId = MessageHelperMethods.createEbms3PartyId ("type", "value");

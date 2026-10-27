@@ -40,6 +40,7 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.ESoapVersion;
+import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PModePayloadService;
 import com.helger.phase4.model.pmode.PModeValidationException;
@@ -357,6 +358,11 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
     {
       if (StringHelper.isEmpty (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
+      else
+        if (!MessageHelperMethods.isValidMessageID (aUserMsg.getMessageInfo ().getMessageId ()))
+          aErrorList.add (_createWarn ("MessageInfo/MessageId '" +
+                                        aUserMsg.getMessageInfo ().getMessageId () +
+                                        "' is not a valid RFC 2822 msg-id"));
 
       if (StringHelper.isNotEmpty (aUserMsg.getMessageInfo ().getRefToMessageId ()))
         aErrorList.add (_createError ("MessageInfo/RefToMessageId must not be set"));
@@ -411,6 +417,16 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
     {
       if (StringHelper.isEmpty (aSignalMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
+      else
+        if (!MessageHelperMethods.isValidMessageID (aSignalMsg.getMessageInfo ().getMessageId ()))
+          aErrorList.add (_createWarn ("MessageInfo/MessageId '" +
+                                        aSignalMsg.getMessageInfo ().getMessageId () +
+                                        "' is not a valid RFC 2822 msg-id"));
+      if (StringHelper.isNotEmpty (aSignalMsg.getMessageInfo ().getRefToMessageId ()) &&
+          !MessageHelperMethods.isValidMessageID (aSignalMsg.getMessageInfo ().getRefToMessageId ()))
+        aErrorList.add (_createWarn ("MessageInfo/RefToMessageId '" +
+                                      aSignalMsg.getMessageInfo ().getRefToMessageId () +
+                                      "' is not a valid RFC 2822 msg-id"));
     }
   }
 }

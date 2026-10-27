@@ -61,6 +61,7 @@ import com.helger.phase4.incoming.mgr.AS4IncomingPullRequestProcessorManager;
 import com.helger.phase4.incoming.spi.IAS4IncomingPullRequestProcessorSPI;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.marshaller.Ebms3MessagingMarshaller;
+import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.message.MessageHelperMethods;
@@ -210,6 +211,52 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
     return aBody != null && aBody.hasChildNodes ();
   }
 
+  @Nullable
+  private static String _getTrimmedID (@Nullable final String sID)
+  {
+    // Only use the trimmed value if something remains
+    final String sTrimmed = StringHelper.trim (sID);
+    return StringHelper.isNotEmpty (sTrimmed) ? sTrimmed : sID;
+  }
+
+  /**
+   * Trim the MessageId and the RefToMessageId of the provided MessageInfo in place, so that all
+   * subsequent processing steps use the trimmed values. Whitespace-only values are kept as they
+   * are.
+   *
+   * @param aMsgInfo
+   *        The MessageInfo to modify. May not be <code>null</code>.
+   */
+  private static void _trimMessageIDs (@NonNull final Ebms3MessageInfo aMsgInfo)
+  {
+    aMsgInfo.setMessageId (_getTrimmedID (aMsgInfo.getMessageId ()));
+    aMsgInfo.setRefToMessageId (_getTrimmedID (aMsgInfo.getRefToMessageId ()));
+  }
+
+  @NonNull
+  private static String _getInvalidMessageIDDetails (@NonNull final String sFieldName, @Nullable final String sValue)
+  {
+    return "The MessageInfo/" +
+           sFieldName +
+           " '" +
+           sValue +
+           "' is not a valid RFC 2822 msg-id (expected 'id-left@id-right' without angle brackets)";
+  }
+
+  /**
+   * Log a warning if the RefToMessageId of the provided MessageInfo is present but not a valid RFC
+   * 2822 msg-id as required by ebMS 3.0 Core, section 5.2.2.1.
+   *
+   * @param aMsgInfo
+   *        The MessageInfo to check. May not be <code>null</code>.
+   */
+  private static void _warnOnInvalidRefToMessageID (@NonNull final Ebms3MessageInfo aMsgInfo)
+  {
+    final String sRefToMessageID = aMsgInfo.getRefToMessageId ();
+    if (sRefToMessageID != null && !MessageHelperMethods.isValidMessageID (sRefToMessageID))
+      LOGGER.warn (_getInvalidMessageIDDetails ("RefToMessageId", sRefToMessageID));
+  }
+
   private void _notifyPModeResolved (@NonNull final IPMode aPMode)
   {
     if (m_aPModeConsumer != null)
@@ -300,6 +347,8 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
       final Ebms3MessageInfo aMsgInfo = aUserMessage.getMessageInfo ();
       if (aMsgInfo != null)
       {
+        _trimMessageIDs (aMsgInfo);
+
         // Set this is as early as possible, so that eventually occurring error
         // messages can use the "RefToMessageId" element properly
         aIncomingState.setMessageID (aMsgInfo.getMessageId ());
@@ -313,6 +362,25 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
                                                               "'" : "") +
                      " and uses timestamp " +
                      aMsgInfo.getTimestamp ());
+
+        final String sMessageID = aMsgInfo.getMessageId ();
+        if (!MessageHelperMethods.isValidMessageID (sMessageID))
+        {
+          final String sDetails = _getInvalidMessageIDDetails ("MessageId", sMessageID);
+
+          // Only a pushed UserMessage on leg 1 is rejected, because only there an Error can be
+          // returned without disrupting an ongoing message exchange
+          if (aIncomingState.getMessageMode () == EAS4MessageMode.REQUEST && _isUseLeg1 (aUserMessage))
+          {
+            LOGGER.error (sDetails);
+            aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_INVALID_HEADER.errorBuilder (aLocale)
+                                                                              .errorDetail (sDetails)
+                                                                              .build ());
+            return ESuccess.FAILURE;
+          }
+          LOGGER.warn (sDetails);
+        }
+        _warnOnInvalidRefToMessageID (aMsgInfo);
       }
 
       // PartyInfo is mandatory in UserMessage
@@ -666,6 +734,8 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
       final Ebms3MessageInfo aMsgInfo = aSignalMessage.getMessageInfo ();
       if (aMsgInfo != null)
       {
+        _trimMessageIDs (aMsgInfo);
+
         // Set this is as early as possible, so that eventually occurring error
         // messages can use the "RefToMessageId" element properly
         aIncomingState.setMessageID (aMsgInfo.getMessageId ());
@@ -677,6 +747,12 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
                      aMsgInfo.getRefToMessageId () +
                      "' and uses timestamp " +
                      aMsgInfo.getTimestamp ());
+
+        // Invalid IDs of SignalMessages are only warned about, to not disrupt the message exchange
+        final String sMessageID = aMsgInfo.getMessageId ();
+        if (!MessageHelperMethods.isValidMessageID (sMessageID))
+          LOGGER.warn (_getInvalidMessageIDDetails ("MessageId", sMessageID));
+        _warnOnInvalidRefToMessageID (aMsgInfo);
       }
 
       final Ebms3PullRequest aEbms3PullRequest = aSignalMessage.getPullRequest ();
