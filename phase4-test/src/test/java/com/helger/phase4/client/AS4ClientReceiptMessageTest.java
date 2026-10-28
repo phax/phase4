@@ -67,7 +67,7 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
   {
     try
     {
-      aClient.buildMessage ("bla", null);
+      aClient.buildMessage ("testmessageid@example.org", null);
       fail ();
     }
     catch (final IllegalStateException ex)
@@ -80,7 +80,7 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
   {
     try
     {
-      aClient.buildMessage ("bla", null);
+      aClient.buildMessage ("testmessageid@example.org", null);
       // expected
     }
     catch (final IllegalStateException ex)

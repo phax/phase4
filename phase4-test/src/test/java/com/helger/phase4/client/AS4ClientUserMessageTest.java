@@ -153,7 +153,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   {
     try
     {
-      aClient.buildMessage ("bla", null);
+      aClient.buildMessage ("testmessageid@example.org", null);
       fail ();
     }
     catch (final Exception ex)
@@ -166,7 +166,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   {
     try
     {
-      aClient.buildMessage ("bla", null);
+      aClient.buildMessage ("testmessageid@example.org", null);
       // expected
     }
     catch (final Exception ex)
@@ -518,7 +518,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   public void testBuildMessageWithOwnPrefix () throws Exception
   {
     final MockAS4ClientUserMessage aClient = _createMandatoryAttributesSuccessMessage ();
-    final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose@";
+    final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose-";
     aClient.setMessageIDFactory (() -> sMessageIDPrefix + MessageHelperMethods.createRandomMessageID ());
     final String sMessageID = aClient.createMessageID ();
 
