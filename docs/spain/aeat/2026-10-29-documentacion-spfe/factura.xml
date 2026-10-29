@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<in:Invoice xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:in="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
+	<cbc:CustomizationID>urn:cen.eu:en16931:2026#conformant#urn:aeat.es:spfe:1.0.0:extended</cbc:CustomizationID>
+	<cbc:ProfileID>urn:aeat:names:specification:schema:profile:B2B</cbc:ProfileID>
+	<cbc:ID>CLASEA00000182</cbc:ID>
+	<cbc:CopyIndicator>false</cbc:CopyIndicator>
+	<cbc:IssueDate>2026-10-05</cbc:IssueDate>
+	<cbc:DueDate>2026-12-04</cbc:DueDate>
+	<cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+	<cbc:DocumentCurrencyCode listID="ISO 4217 Alpha">EUR</cbc:DocumentCurrencyCode>
+	<cac:AdditionalDocumentReference>
+		<cbc:ID>urn:aeat:names:specification:schema:QR</cbc:ID>
+		<cbc:UUID>https://www2.agenciatributaria.gob.aeat/wlpl/TIKE-CONT/ValidarQR?fecha=05-10-2026&amp;numserie=CLASEA00000182&amp;nif=xxxx&amp;idioma=es&amp;importe=135.52</cbc:UUID>
+		<cbc:DocumentDescription>VERIFACTU</cbc:DocumentDescription>
+	</cac:AdditionalDocumentReference>
+	<cac:Annotation>
+		<cbc:AnnotationContent>fasdfasdf</cbc:AnnotationContent>
+	</cac:Annotation>
+	<cac:AccountingSupplierParty>
+		<cac:Party>
+			<cbc:WebsiteURI>http://www.emisor.com</cbc:WebsiteURI>
+			<cac:PostalAddress>
+				<cbc:StreetName>C/ aaaa 230</cbc:StreetName>
+				<cbc:CityName>ALPEDRETE</cbc:CityName>
+				<cbc:PostalZone>28430</cbc:PostalZone>
+				<cbc:CountrySubentity>MADRID</cbc:CountrySubentity>
+				<cac:Country>
+					<cbc:IdentificationCode>ES</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyTaxScheme>
+				<cbc:CompanyID schemeID="FC">xxxx</cbc:CompanyID>
+				<cac:TaxScheme>
+					<cbc:ID>LOC</cbc:ID>
+				</cac:TaxScheme>
+			</cac:PartyTaxScheme>
+			<cac:PartyLegalEntity>
+				<cbc:RegistrationName>aaa</cbc:RegistrationName>
+				<cbc:CompanyID>xxxx</cbc:CompanyID>
+				<cbc:CompanyLegalForm>Datos de carácter mercantil o específica/sectoria</cbc:CompanyLegalForm>
+			</cac:PartyLegalEntity>
+			<cac:Contact>
+				<cbc:Name>aaa</cbc:Name>
+				<cbc:Telephone>900000000</cbc:Telephone>
+				<cbc:ElectronicMail>emisor@ya.com</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:AccountingSupplierParty>
+	<cac:AccountingCustomerParty>
+		<cac:Party>
+			<cac:PostalAddress>
+				<cbc:StreetName>Calle aaaa 3</cbc:StreetName>
+				<cbc:CityName>BOGARRA</cbc:CityName>
+				<cbc:PostalZone>02130</cbc:PostalZone>
+				<cbc:CountrySubentity>ALBACETE</cbc:CountrySubentity>
+				<cac:Country>
+					<cbc:IdentificationCode>ES</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyTaxScheme>
+				<cbc:CompanyID schemeID="FC">yyyy</cbc:CompanyID>
+				<cac:TaxScheme>
+					<cbc:ID>LOC</cbc:ID>
+				</cac:TaxScheme>
+			</cac:PartyTaxScheme>
+			<cac:PartyLegalEntity>
+				<cbc:RegistrationName>bbb</cbc:RegistrationName>
+				<cbc:CompanyID>yyyy</cbc:CompanyID>
+			</cac:PartyLegalEntity>
+			<cac:Contact/>
+		</cac:Party>
+	</cac:AccountingCustomerParty>
+	<cac:PaymentMeans>
+		<cbc:PaymentMeansCode listID="UN/ECE 4461">30</cbc:PaymentMeansCode>
+		<cac:PayeeFinancialAccount>
+			<cbc:ID schemeID="IBAN">ESXXXXXXXXXXXXXXXXXXXXX</cbc:ID>
+		</cac:PayeeFinancialAccount>
+	</cac:PaymentMeans>
+	<cac:PaymentTerms>
+		<cbc:Note>Transferencia Bancaria </cbc:Note>
+		<cbc:Amount currencyID="EUR">135.52</cbc:Amount>
+		<cbc:PaymentDueDate>2026-12-04</cbc:PaymentDueDate>
+	</cac:PaymentTerms>
+	<cac:TaxTotal>
+		<cbc:TaxAmount currencyID="EUR">12.32</cbc:TaxAmount>
+		<cac:TaxSubtotal>
+			<cbc:TaxableAmount currencyID="EUR">123.2</cbc:TaxableAmount>
+			<cbc:TaxAmount currencyID="EUR">12.32</cbc:TaxAmount>
+			<cac:TaxCategory>
+				<cbc:ID>S</cbc:ID>
+				<cbc:Percent>10.0</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:TaxCategory>
+		</cac:TaxSubtotal>
+	</cac:TaxTotal>
+	<cac:LegalMonetaryTotal>
+		<cbc:LineExtensionAmount currencyID="EUR">123.2</cbc:LineExtensionAmount>
+		<cbc:TaxExclusiveAmount currencyID="EUR">123.2</cbc:TaxExclusiveAmount>
+		<cbc:TaxInclusiveAmount currencyID="EUR">135.52</cbc:TaxInclusiveAmount>
+		<cbc:PayableAmount currencyID="EUR">135.52</cbc:PayableAmount>
+	</cac:LegalMonetaryTotal>
+	<cac:InvoiceLine>
+		<cbc:ID>1</cbc:ID>
+		<cbc:InvoicedQuantity unitCode="EA">44</cbc:InvoicedQuantity>
+		<cbc:LineExtensionAmount currencyID="EUR">123.20</cbc:LineExtensionAmount>
+		<cac:Item>
+			<cbc:Description>Producto 1</cbc:Description>
+			<cbc:Name>Producto 1</cbc:Name>
+			<cac:ClassifiedTaxCategory>
+				<cbc:ID>S</cbc:ID>
+				<cbc:Percent>10.0</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:ClassifiedTaxCategory>
+			<cac:AdditionalItemProperty>
+				<cbc:Name>urn:aeat:names:specification:schema:lin:REGI</cbc:Name>
+				<cbc:Value>01</cbc:Value>
+				<cbc:ValueQualifier>IVA</cbc:ValueQualifier>
+			</cac:AdditionalItemProperty>
+		</cac:Item>
+		<cac:Price>
+			<cbc:PriceAmount currencyID="EUR">2.80</cbc:PriceAmount>
+		</cac:Price>
+	</cac:InvoiceLine>
+</in:Invoice>

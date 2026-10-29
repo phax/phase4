@@ -1,0 +1,1564 @@
+Agencia Tributaria
+
+                                                                     ANEXO I
+
+    CONTENIDO Y ESTRUCTURA DE LOS CAMPOS DE LA FACTURA ELECTRÓNICA CONFORME AL MODELO UBL Y LA EN 16931.
+
+
+Las facturas electrónicas y copias fieles que, en cumplimiento de lo dispuesto en la presente orden, sean transmitidas a la Agencia Estatal de
+Administración Tributaria deberán contener como mínimo, en los términos establecidos en los artículos 7.1 y 11.2 y 11.3 del Real Decreto
+238/2026, de 25 de marzo, por el que se desarrolla el sistema de facturación electrónica obligatoria entre empresarios y profesionales y por el
+que se modifica el Reglamento por el que se regulan las obligaciones de facturación, aprobado por el Real Decreto 1619/2012, de 30 de
+noviembre, la información que se muestra a continuación.
+
+
+CAMPOS DE REGISTRO Y ESPECIFICACIONES FUNCIONALES DE LA FACTURA ELECTRÓNICA Y LAS COPIAS FIELES REMITIDAS A
+      LA SOLUCIÓN PÚBLICA DE FACTURACIÓN ELECTRÓNICA.
+
+
+Cada elemento de información o grupo de elementos de información que constituye el modelo semántico de datos de los elementos principales
+de una factura electrónica, se define en las filas de la siguiente tabla, incluyendo cada columna la siguiente información:
+
+
+-     ID: identificador del elemento de información (BT-Término de negocio, por sus siglas en inglés), y grupo de elementos de información (BG-
+       Grupo de términos de negocio, por sus siglas en inglés), tal y como se definen en la EN 16931. En el caso de campos no definidos
+       expresamente en la EN 16931, se identifican con los códigos BT-ES y BG-ES, respectivamente.
+
+
+-     Nivel: indica el nivel en el que el elemento de información interviene en el modelo:
+
+
+
+
+                                                                                                                                             1
+Agencia Tributaria
+
+    +: primer nivel del modelo;
+
+
+    ++: segundo nivel del modelo. El elemento o grupo de elementos de información es parte de un grupo de elementos de información que
+    se definen en el primer nivel del modelo;
+
+
+    +++: tercer nivel del modelo. El elemento o grupo de elementos de información es parte de un grupo de elementos de información que se
+    definen en el segundo nivel del modelo;
+
+
+    ++++: cuarto nivel del modelo. El elemento o grupo de elementos de información es parte de un grupo de elementos de información que
+    se definen en el tercer nivel del modelo.
+
+
+-   Cardinalidad: se utiliza para indicar si un elemento o grupo de elementos de información es obligatorio o no (condicional), y si se puede
+    repetir. Pueden darse las siguientes cardinalidades:
+
+
+    1..1: elemento obligatorio y no repetitivo.
+
+
+    1..n: elemento obligatorio y repetitivo.
+
+
+    0..1: elemento condicional y no repetitivo.
+
+
+    0..n: elemento condicional y repetitivo.
+
+
+
+
+                                                                                                                                           2
+Agencia Tributaria
+
+    -   Término de negocio: el nombre del elemento o grupo de elementos de información utilizado en el modelo de factura electrónica.
+
+
+    -   Descripción: descripción del significado semántico del elemento de información.
+
+
+    -   Tipo semántico de dato: formato de dato que se aplica al elemento de información.
+
+
+    -   Ruta UBL: expresión que identifica un elemento o atributo dentro de la estructura XML del documento de factura electrónica UBL, en
+        su última versión aprobada. Aparecerá especificado en aquellos campos que no tienen término de negocio definido en la EN 16931,
+        así como en aquellos campos cuyo uso implica informar con un valor determinado campos sin término de negocio definido en la EN
+        16931 y que no están expresamente incluidos en el anexo I.
+
+
+
+
+                                                                                                                                        3
+Agencia Tributaria
+
+         FACTURA ELECTRÓNICA O COPIA FIEL - Mensaje de alta                      /Invoice/
+
+
+                                                                                                                                                Tipo
+                     Cardinalida
+   ID        Nivel                      Término de negocio (BT)                                    Descripción                                semántico                   Ruta UBL
+                          d
+                                                                                                                                               de dato
+  BT-1        +         1..1       Serie y número de la factura        Serie y número que identifican la factura emitida.                    Identificador
+
+
+                                                                       Adoptará alguno de los siguientes valores:
+ BT-ES-1      +         0..1       Indicador de copia                  True: copia.                                                           Indicador      /in:Invoice/cbc:CopyIndicator
+                                                                       False (o sin informar): original.
+
+
+  BT-2        +         1..1       Fecha de expedición de la factura   Fecha en la que se ha expedido la factura.                               Fecha
+
+
+
+ BT-166       +         0..1       Hora de expedición de la factura    Hora en la que se ha expedido la factura.                                 Hora
+
+
+                                                                       Las facturas comerciales se definen de acuerdo con los códigos
+                                                                       definidos en UNTDID 1001. Sólo podrán adoptarse los valores
+                                                                       definidos en la lista L1.
+                                                                       Las facturas emitidas con valores 384 y 471 incorporarán el grupo
+  BT-3        +         1..1       Código de tipo de factura                                                                                 Código (L1)
+                                                                       de términos de negocio de tipo de factura rectificativa (BG-24), el
+                                                                       grupo de términos de negocio de modalidad de factura rectificativa
+                                                                       (BG-24) y, en su caso, hasta tres grupos de términos de negocio de
+                                                                       importes rectificados (BG-24).
+
+
+
+                                                                       Moneda en la que se expresan todos los importes de la factura,
+                                                                       excepto aquellos campos en los que se indica expresamente que
+  BT-5        +         1..1       Código de moneda de la factura                                                                              Código
+                                                                       deben expresarse en euros. Los códigos se definen en la Norma
+                                                                       ISO-4217 "códigos para la representación de monedas y fondos".
+
+
+
+
+                                                                                                                                                                                             4
+Agencia Tributaria
+
+                                                                                                                                               Tipo
+                   Cardinalida
+   ID      Nivel                       Término de negocio (BT)                                   Descripción                                 semántico               Ruta UBL
+                        d
+                                                                                                                                              de dato
+                                                                     En aquellos casos en los que la moneda de la factura no sea el euro,
+                                 Código de moneda de
+  BT-6      +         0..1                                           se consignará obligatoriamente como moneda de contabilización            Código
+                                 contabilización del IVA
+                                                                     del IVA el euro. Valor obligatorio: usar "EUR".
+
+                                 Tipo de cambio de contabilización   Tipo de cambio aplicado para contabilizar el IVA, en aquellos casos
+ BT-167     +         0..1                                                                                                                    Importe
+                                 del IVA                             en los que la moneda de la factura no sea el euro.
+
+
+                                 Fecha de realización de las         Fecha en la que se realiza la operación siempre que sea diferente a
+  BT-7      +         0..1                                                                                                                    Fecha
+                                 operaciones                         la fecha de expedición.
+
+                                                                     Fecha de vencimiento del pago, calculada de acuerdo con lo
+                                                                     dispuesto en el artículo 4 de la Ley 3/2004, de 29 de diciembre, por
+  BT-9      +         0..1       Fecha de vencimiento del pago       la que se establecen medidas de lucha contra la morosidad en las         Fecha
+                                                                     operaciones comerciales o en la normativa específica que resulte
+                                                                     de aplicación.
+                                                                     En aquellos casos en los que la factura ha sido pagada con
+                                                                     anterioridad a la fecha de expedición de la factura o en dicha fecha,
+                                                                                                                                                         /in:Invoice/cac:PrepaidPayment/cbc
+ BT-ES-2    +         0..1       Fecha efectiva de pago              el emisor podrá consignar la fecha efectiva de pago de la misma.         Fecha
+                                                                                                                                                         :PaidDate
+                                                                     Esta fecha deberá ser necesariamente coincidente o posterior a la
+                                                                     fecha de realización de las operaciones.
+                                                                     Un identificador asignado por el comprador para especificar rutas
+ BT-10      +         0..n       Referencia del comprador                                                                                      Texto
+                                                                     internas de la factura.
+
+                                                                     Grupo de términos de negocio que contienen notas de texto que
+                                                                     son relevantes para la factura. En este grupo podrán incluirse
+  BG-1      +         0..n                NOTA DE FACTURA            menciones obligatorias en factura de acuerdo con normativa
+                                                                     específica, o bien de carácter adicional que el emisor considere
+                                                                     conveniente incluir.
+                                                                     Código que identifica la tipología de la nota de la factura. Se
+                                                                     utilizarán los valores definidos en la UNTDID 4451. En el caso de
+ BT-21      ++        0..1       Código de la nota de factura                                                                                 Código
+                                                                     menciones obligatorias en factura de acuerdo con normativa
+                                                                     específica, se debe usar el valor "REG".
+
+                                                                                                                                                                                        5
+Agencia Tributaria
+
+                                                                                                                                             Tipo
+                 Cardinalida
+  ID     Nivel                       Término de negocio (BT)                                    Descripción                                semántico                 Ruta UBL
+                      d
+                                                                                                                                            de dato
+ BT-22    ++        1..1       Nota de factura                      Descripción de la nota o mención en factura.                             Texto
+                                                                    Un conjunto de términos de negocio que aportan información
+ BG-2     +         1..1              CONTROL DE PROCESO            sobre el proceso de negocio y reglas aplicables al documento
+                                                                    Factura.
+                                                                    Adoptará el valor:
+ BT-23    ++        1..1       Tipo de proceso de negocio                                                                                    Texto
+                                                                    urn:aeat:names:specification:schema:profile:B2B
+                                                                    Adoptará el valor:
+ BT-24    ++        1..1       Identificador de especificación      urn:cen.eu:en16931:2026#conformant#urn:aeat.es:spfe:1.0.0:exte        Identificador
+                                                                    nded
+
+                                  REFERENCIA DE UNA FACTURA         Información relativa a una factura o facturas previamente emitidas,
+ BG-3     +         0..n
+                                          ANTERIOR                  con relación con la factura que se expide.
+
+                                                                                                                                          Referencia
+                               Serie y número de la factura         Serie y número que identifican la factura emitida referenciada o
+ BT-25    ++        1..1                                                                                                                      de
+                               referenciada                         sustituida.
+                                                                                                                                          documento
+                               Fecha de expedición de la factura
+ BT-26    ++        1..1                                            Fecha de expedición de la factura referenciada o sustituida.             Fecha
+                               referenciada
+
+                                                                    Grupo de términos de negocio que proporcionan información sobre
+ BG-4     +         1..1             DATOS DEL VENDEDOR
+                                                                    el vendedor.
+ BT-27    ++        1..1       Nombre o razón social del vendedor   Nombre y apellidos o razón social del vendedor.                          Texto
+
+                                                                                                                                                        En este caso
+                                                                    Número de identificación fiscal a efectos de IVA del vendedor, con
+                                                                                                                                                        /in:Invoice/cac:AccountingSupplierP
+                               Número de identificación fiscal a    el prefijo correspondiente a España, según los códigos ISO 3166-1.
+ BT-31    ++        0..1                                                                                                                  Identificador arty/cac:Party/cac:PartyTaxScheme/
+                               efectos de IVA del vendedor          Será obligatorio consignar un NIF-IVA válido en el caso de que el
+                                                                                                                                                        cac:TaxScheme/cbc:ID tomará el
+                                                                    campo BT-32 no tenga contenido.
+                                                                                                                                                        valor "VAT"
+
+
+
+
+                                                                                                                                                                                        6
+Agencia Tributaria
+
+                                                                                                                                                 Tipo
+                 Cardinalida
+  ID     Nivel                       Término de negocio (BT)                                        Descripción                                semántico                 Ruta UBL
+                      d
+                                                                                                                                                de dato
+                                                                                                                                                            En este caso
+                                                                                                                                                            /in:Invoice/cac:AccountingSupplierP
+                                                                                                                                                            arty/cac:Party/cac:PartyTaxScheme/
+                                                                        Número de identificación fiscal (NIF) del vendedor.                                 cac:TaxScheme/cbc:ID tomará el
+ BT-32    ++        0..1       Identificador fiscal del vendedor        Será obligatorio consignar un NIF válido en el caso de que el campo   Identificador valor "LOC" y el atributo
+                                                                        BT-31 no tenga contenido.                                                           /in:Invoice/cac:AccountingSupplierP
+                                                                                                                                                            arty/cac:Party/cac:PartyTaxScheme/
+                                                                                                                                                            cbc:CompanyID@schemeID tomará
+                                                                                                                                                            el valor "FC"
+
+                                                                        Número de identificación fiscal (NIF) del vendedor.
+                               Identificador de inscripción legal del
+ BT-30    ++        0..1                                                Será obligatorio en los casos en los que venga informado el campo     Identificador
+                               vendedor
+                                                                        BT-32.
+
+                               Información jurídica adicional del
+ BT-33    ++        0..1                                                Información jurídica relevante adicional del vendedor.                   Texto
+                               vendedor
+
+                                                                        Grupo de términos de negocio que proporciona información de la
+ BG-5     ++        1..1       DIRECCIÓN POSTAL DEL VENDEDOR
+                                                                        dirección del vendedor.
+
+                                                                        Se consignará la dirección correspondiente al vendedor, incluyendo
+ BT-35   +++        1..1       Dirección del vendedor                   tipo de vía, nombre largo de la vía pública, tipo de numeración de       Texto
+                                                                        la vía pública y número de la dirección o punto kilométrico.
+
+
+                                                                        Se consignará el nombre del municipio. Este campo será obligatorio
+ BT-37   +++        0..1       Municipio del vendedor                                                                                            Texto
+                                                                        cuando la dirección postal del vendedor esté en España.
+
+
+                                                                        Se consignará el código postal correspondiente a la dirección del
+                               Código de dirección postal del
+ BT-38   +++        0..1                                                domicilio. Este campo será obligatorio cuando la dirección postal        Texto
+                               vendedor
+                                                                        del vendedor esté en España.
+
+
+
+
+                                                                                                                                                                                            7
+Agencia Tributaria
+
+                                                                                                                                             Tipo
+                 Cardinalida
+  ID     Nivel                      Término de negocio (BT)                                      Descripción                               semántico               Ruta UBL
+                      d
+                                                                                                                                            de dato
+
+                                                                     Se consignará la provincia. Este campo será obligatorio cuando la
+ BT-39   +++        0..1       Provincia del vendedor                                                                                        Texto
+                                                                     dirección postal del vendedor esté en España.
+
+
+                                                                     El listado con países válidos se encuentra en la Norma EN ISO 3166-
+ BT-40   +++        1..1       Código de país del vendedor           1 "Códigos para la representación de los nombres de los países y       Código
+                                                                     sus subdivisiones".
+
+                                                                     Un grupo de términos de negocio que ofrecen información de
+ BG-6     ++        0..1           CONTACTO DEL VENDEDOR
+                                                                     contacto del vendedor.
+
+                               Número de teléfono de contacto del
+ BT-42   +++        0..1                                          Número de teléfono de contacto del vendedor.                               Texto
+                               Vendedor
+
+                               Dirección de correo electrónico del
+ BT-43   +++        0..1                                             Dirección de correo electrónico de contacto del vendedor.               Texto
+                               vendedor
+
+                                                                     Un conjunto de términos de negocio que ofrecen información
+ BG-7     +         1..1            DATOS DEL COMPRADOR
+                                                                     sobre el comprador.
+
+ BT-44    ++        1..1       Nombre del comprador                  Nombre y apellidos o razón social del comprador.                        Texto
+
+                                                                                                                                                       En este caso
+                                                                                                                                                       /in:Invoice/cac:AccountingCustomer
+                                                                                                                                                       Party/cac:Party/cac:PartyTaxScheme
+                                                                     Número de identificación fiscal (NIF) del comprador.                              /cac:TaxScheme/cbc:ID tomará el
+ BT-47    ++        0..1       Identificador fiscal del comprador    Será obligatorio consignar un NIF válido en el caso de que el campo               valor "LOC" y el atributo
+                                                                     BT-48 no tenga contenido.                                                         /in:Invoice/cac:AccountingCustomer
+                                                                                                                                                       Party/cac:Party/cac:PartyTaxScheme
+                                                                                                                                                       /cbc:CompanyID@schemeID tomará
+                                                                                                                                                       el valor "FC"
+
+
+
+
+                                                                                                                                                                                      8
+Agencia Tributaria
+
+                                                                                                                                           Tipo
+                 Cardinalida
+  ID     Nivel                      Término de negocio (BT)                                    Descripción                               semántico               Ruta UBL
+                      d
+                                                                                                                                          de dato
+                                                                                                                                                     En este caso
+                                                                   Número de identificación fiscal a efectos de IVA del comprador, con
+                                                                                                                                                     /in:Invoice/cac:AccountingCustomer
+                               Número de identificación fiscal a   el prefijo correspondiente a España, según los códigos ISO 3166-1.
+ BT-48    ++        0..1                                                                                                               Identificador Party/cac:Party/cac:PartyTaxScheme
+                               efectos de IVA del comprador        Será obligatorio consignar un NIF-IVA válido en el caso de que el
+                                                                                                                                                     /cac:TaxScheme/cbc:ID tomará el
+                                                                   campo BT-47 no tenga contenido.
+                                                                                                                                                     valor "VAT"
+
+
+                                     DIRECCIÓN POSTAL DEL          Un grupo de términos de negocio que ofrecen información sobre la
+ BG-8     ++        1..1
+                                         COMPRADOR                 dirección postal del comprador.
+
+
+                                                                   Se consignará la dirección correspondiente al comprador,
+                                                                   incluyendo tipo de vía, nombre largo de la vía pública, tipo de
+ BT-50   +++        1..1       Dirección del comprador                                                                                     Texto
+                                                                   numeración de la vía pública y número de la dirección o punto
+                                                                   kilométrico.
+
+
+                                                                   Se consignará el nombre del municipio. Este campo será obligatorio
+ BT-52   +++        0..1       Municipio del comprador                                                                                     Texto
+                                                                   cuando la dirección postal del comprador esté en España.
+
+
+                                                                   Se consignará el código postal correspondiente a la dirección del
+                               Código de dirección postal del
+ BT-53   +++        0..1                                           domicilio. Este campo será obligatorio cuando la dirección postal       Texto
+                               comprador
+                                                                   del comprador esté en España.
+
+
+                                                                   Se consignará la provincia. Este campo será obligatorio cuando la
+ BT-54   +++        0..1       Provincia del comprador                                                                                     Texto
+                                                                   dirección postal del comprador esté en España.
+
+
+                                                                   El listado con países válidos se encuentra en la Norma EN ISO 3166-
+ BT-55   +++        1..1       Código de país del comprador        1 "Códigos para la representación de los nombres de los países y       Código
+                                                                   sus subdivisiones".
+
+
+
+
+                                                                                                                                                                                    9
+Agencia Tributaria
+
+                                                                                                                                              Tipo
+                   Cardinalida
+   ID      Nivel                      Término de negocio (BT)                                     Descripción                               semántico                Ruta UBL
+                        d
+                                                                                                                                             de dato
+
+                                                                       Un grupo de términos de negocio que ofrecen información de
+  BG-9      ++        0..1          CONTACTO DEL COMPRADOR
+                                                                       contacto relevante del comprador.
+
+ BT-57     +++        0..1       Teléfono de contacto del comprador Número de teléfono de contacto del comprador.                             Texto
+                                 Dirección de correo electrónico del
+ BT-58     +++        0..1                                             Dirección de correo electrónico de contacto del comprador.             Texto
+                                 comprador
+
+                                                                       Información relativa a un tercero. Este grupo de términos de
+                                                                       negocio será obligatorio en el caso del tercero que expide
+                                                                                                                                                        /in:Invoice/cac:AccountingSupplierP
+                                                                       materialmente la factura en lugar del obligado a expedirla, de
+BG-ES-1     +         0..n              DATOS DEL TERCERO                                                                                               arty/cac:Party/cac:ServiceProviderP
+                                                                       acuerdo con el artículo 5 del Reglamento por el que se regulan las
+                                                                                                                                                        arty
+                                                                       obligaciones de facturación, aprobado por Real Decreto 1619/2012,
+                                                                       de 30 de noviembre.
+
+                                                                                                                                                        /in:Invoice/cac:AccountingSupplierP
+                                                                                                                                                        arty/cac:Party/cac:ServiceProviderP
+ BT-ES-3    ++        1..1       Nombre o razón social del tercero     Nombre completo o razón social del tercero informado.                  Texto
+                                                                                                                                                        arty/cac:Party/cac:PartyLegalEntity/
+                                                                                                                                                        cbc:RegistrationName
+
+
+
+
+                                                                                                                                                                                        10
+Agencia Tributaria
+
+                                                                                                                                            Tipo
+                   Cardinalida
+   ID      Nivel                       Término de negocio (BT)                               Descripción                                  semántico                 Ruta UBL
+                        d
+                                                                                                                                           de dato
+
+                                                                                                                                                       /in:Invoice/cac:AccountingSupplierP
+                                                                                                                                                       arty/cac:Party/cac:ServiceProviderP
+                                                                                                                                                       arty/cac:Party/cac:PartyTaxScheme/
+                                                                                                                                                       cbc:CompanyID
+
+                                                                                                                                                       En caso de NIF además:
+                                                                                                                                                       /in:Invoice/cac:AccountingSupplierP
+                                                                                                                                                       arty/cac:Party/cac:ServiceProviderP
+                                                                                                                                                       arty/cac:Party/cac:PartyTaxScheme/
+                                                                                                                                                       cac:TaxScheme/cbc:ID tomará el
+                                                                                                                                                       valor "LOC" y el atributo
+ BT-ES-4    ++        1..1       NIF del tercero                 Número de identificación fiscal (NIF) del tercero informado.            Identificador /in:Invoice/cac:AccountingSupplierP
+                                                                                                                                                       arty/cac:Party/cac:ServiceProviderP
+                                                                                                                                                       arty/cac:Party/cac:PartyTaxScheme/
+                                                                                                                                                       cbc:CompanyID@schemeID tomará
+                                                                                                                                                       el valor "FC"
+
+                                                                                                                                                       En caso contrario
+                                                                                                                                                       /in:Invoice/cac:AccountingSupplierP
+                                                                                                                                                       arty/cac:Party/cac:ServiceProviderP
+                                                                                                                                                       arty/cac:Party/cac:PartyTaxScheme/
+                                                                                                                                                       cac:TaxScheme/cbc:ID tomará el
+                                                                                                                                                       valor "VAT"
+
+
+                                                                 Código que define el tipo de tercero informado. En el caso de un                      /in:Invoice/cac:AccountingSupplierP
+ BT-ES-5    ++        1..1       Tipología de tercero            tercero que expide materialmente la factura en lugar del vendedor,        Código      arty/cac:Party/cac:ServiceProviderP
+                                                                 se debe usar obligatoriamente el código "FacturaciónPorTercero".                      arty/cbc:ServiceTypeCode
+
+
+                                                                 Grupo de términos de negocio que sirven para indicar la fecha de
+                                      PERIODO DE LA FACTURA
+ BG-14      +         0..1                                       inicio y fin del periodo abarcado por la factura expedida, en el caso
+                                          RECAPITULATIVA
+                                                                 de que se trate de una factura recapitulativa.
+
+
+
+                                                                                                                                                                                      11
+Agencia Tributaria
+
+                                                                                                                                                Tipo
+                 Cardinalida
+  ID     Nivel                      Término de negocio (BT)                                        Descripción                                semántico                 Ruta UBL
+                      d
+                                                                                                                                               de dato
+                               Fecha de inicio del período de
+ BT-73    ++        0..1                                              Fecha inicial del plazo de la factura recapitulativa.                     Fecha
+                               facturación
+
+                               Fecha de fin del período de
+ BT-74    ++        0..1                                              Fecha final del plazo de la factura recapitulativa.                       Fecha
+                               facturación
+
+                                                                                                                                                                 Su uso implica que todos los
+                                                                                                                                                                          elementos
+                                   MINORACIONES A NIVEL DE            Un grupo de términos de negocio que ofrecen información sobre
+ BG-20    +         0..n                                                                                                                                    /in:Invoice/cac:AllowanceCharge/cb
+                                        DOCUMENTO                     minoraciones aplicables a la factura en su totalidad.
+                                                                                                                                                             c:ChargeIndicator del grupo deben
+                                                                                                                                                                     tener el valor "false"
+
+                               Importe de la minoración a nivel de
+ BT-92    ++        1..1                                              Importe de las minoraciones aplicables a la factura, IVA excluido.       Importe
+                                           documento
+
+                                                                                                                                                            Implica que
+                                                                      Identificación codificada de la categoría de IVA aplicable a la
+                                Código de categoría de IVA de la                                                                                            /in:Invoice/cac:AllowanceCharge/ca
+ BT-95    ++        1..1                                              minoración definida a nivel de documento. Se utilizarán los valores     Código (L4)
+                                minoración a nivel de documento                                                                                             c:TaxCategory/cac:TaxScheme/cbc:I
+                                                                      definidos en la UNTDID 5305, incluidos en la lista L4.
+                                                                                                                                                            D tome el valor "VAT"
+
+
+                               Tipo de IVA de la minoración a nivel   Tipo de IVA representado como porcentaje que es aplicable a la
+ BT-96    ++        0..1                                                                                                                      Porcentaje
+                                         de documento                 minoración definida a nivel de documento.
+
+                                Razón de la minoración a nivel de     La razón de la minoración definida a nivel de documento,
+ BT-97    ++        1..1                                                                                                                        Texto
+                                           documento                  expresada como texto.
+                                                                                                                                                                 Su uso implica que todos los
+                                                                      Grupo de términos de negocio que proporcionan información sobre                                     elementos
+ BG-21    +         0..n        CARGOS A NIVEL DE DOCUMENTO           cargos e impuestos distintos al IVA que se aplican a la factura en su                 /in:Invoice/cac:AllowanceCharge/cb
+                                                                      conjunto.                                                                              c:ChargeIndicator del grupo deben
+                                                                                                                                                                     tener el valor "true"
+                                   Importe del cargo a nivel de
+ BT-99    ++        1..1                                              Importe del cargo aplicable a la factura, sin IVA.                       Importe
+                                          documento
+
+
+
+                                                                                                                                                                                          12
+Agencia Tributaria
+
+                                                                                                                                                 Tipo
+                   Cardinalida
+   ID      Nivel                       Término de negocio (BT)                                       Descripción                               semántico                  Ruta UBL
+                        d
+                                                                                                                                                de dato
+
+                                                                                                                                                             Implica que
+                                                                      Identificación codificada de la categoría de IVA aplicable al cargo
+                                 Código de categoría de IVA del cargo                                                                                        /in:Invoice/cac:AllowanceCharge/ca
+ BT-102     ++        1..1                                            definido a nivel de factura. Se utilizarán los valores definidos en la   Código (L4)
+                                 a nivel de documento                                                                                                        c:TaxCategory/cac:TaxScheme/cbc:I
+                                                                      UNTDID 5305, incluidos en la lista L4.
+                                                                                                                                                             D tome el valor "VAT"
+
+                                 Tipo de IVA del cargo a nivel de       Tipo de IVA representado como porcentaje que es aplicable al
+ BT-103     ++        0..1                                                                                                                     Porcentaje
+                                 documento                              cargo definido a nivel de factura.
+
+                                 Razón de cargo a nivel de              La razón del cargo definido a nivel de factura, expresado como
+ BT-104     ++        1..1                                                                                                                       Texto
+                                 documento                              texto.
+
+                                                                        Grupo de términos de negocio que proporcionan información sobre
+                                  DETALLE DEL IMPUESTO O TASA A
+BG-ES-2     ++        0..1                                              tasas o impuestos distintos al IVA que aplican a la factura en su
+                                      NIVEL DE DOCUMENTO
+                                                                        conjunto.
+
+                                                                                                                                                             /in:Invoice/cac:AllowanceCharge/ca
+ BT-ES-6   +++        0..1       Base del impuesto o tasa               Base imponible del impuesto o tasa correspondiente.                     Importe
+                                                                                                                                                             c:TaxTotal/cac:TaxSubtotal/cbc:Taxa
+                                                                                                                                                             bleAmount
+
+                                                                        Tipo del impuesto o tasa representado como porcentaje, que es                        /in:Invoice/cac:AllowanceCharge/ca
+ BT-ES-7   +++        0..1       Tipo del impuesto o tasa                                                                                      Porcentaje
+                                                                        aplicable a la base del impuesto o tasa correspondiente.                             c:TaxTotal/cac:TaxSubtotal/cac:TaxC
+                                                                                                                                                             ategory/cbc:Percent
+                                                                                                                                                             El mismo importe debe consignarse
+                                                                                                                                                             en dos rutas distintas:
+
+                                                                                                                                                             /in:Invoice/cac:AllowanceCharge/ca
+                                                                                                                                                             c:TaxTotal/cbc:TaxAmount
+                                                                        Resultado de aplicar a la base del impuesto o tasa el tipo
+ BT-ES-8   +++        1..1       Cuota del impuesto o tasa                                                                                      Importe
+                                                                        correspondiente.
+                                                                                                                                                             Y también en:
+
+                                                                                                                                                             /in:Invoice/cac:AllowanceCharge/ca
+                                                                                                                                                             c:TaxTotal/cac:TaxSubtotal/cbc:TaxA
+                                                                                                                                                             mount
+
+
+
+
+                                                                                                                                                                                            13
+Agencia Tributaria
+
+                                                                                                                                                  Tipo
+                   Cardinalida
+   ID      Nivel                       Término de negocio (BT)                                       Descripción                                semántico                  Ruta UBL
+                        d
+                                                                                                                                                 de dato
+                                                                                                                                                              /in:Invoice/cac:AllowanceCharge/ca
+                                 Código del tipo de impuesto incluido Tipo de impuesto (no IVA) incluido como cargo a nivel de                                c:TaxTotal/cac:TaxSubtotal/cac:TaxC
+ BT-ES-9   +++        1..1                                                                                                                      Código (L9)
+                                 como cargo a nivel de documento      documento, expresado como código.                                                       ategory/cac:TaxScheme/cbc:TaxTyp
+                                                                                                                                                              eCode
+                                                                        Grupo de términos de negocio que proporcionan los totales
+ BG-22      +         1..1       TOTALES A NIVEL DE DOCUMENTO
+                                                                        monetarios de la factura.
+
+                                 Suma del importe neto de las líneas
+ BT-106     ++        1..1                                              Suma de todos los importes netos de las líneas de la factura.            Importe
+                                 de factura
+
+                                 Suma de minoraciones a nivel de        Suma de todas las minoraciones definidas a nivel de documento de
+ BT-107     ++        0..1                                                                                                                       Importe
+                                 documento                              la factura.
+
+                                 Suma de cargos a nivel de              Suma de todos los cargos definidos a nivel de documento de la
+ BT-108     ++        0..1                                                                                                                       Importe
+                                 documento                              factura.
+
+ BT-109     ++        1..1       Importe total de la factura sin IVA    Importe total de la factura antes de aplicar el IVA.                     Importe
+
+ BT-110     ++        1..1       Cuota total del IVA de la factura      Cuota total del IVA para la factura.                                     Importe
+
+                                                                        Cuando la moneda de la factura no sea el euro, la cuota total del
+                                                                        IVA de la factura deberá expresarse adicionalmente en euros. En el
+                                 Cuota total del IVA de la factura en
+ BT-111     ++        0..1                                              caso de que en la misma factura se repercutan cantidades en              Importe
+                                 la moneda contable
+                                                                        concepto de recargo de equivalencia, se adicionarán las cuotas del
+                                                                        recargo en euros.
+
+ BT-112     ++        1..1       Importe total de la factura con IVA    Importe total de la factura después de aplicar el IVA.                   Importe
+
+                                                                        La suma de los importes que han sido pagados por adelantado.
+
+ BT-113     ++        0..1       Importe pagado                         Este campo no debe ser utilizado en el caso de pagos anticipados         Importe
+                                                                        que hayan supuesto el devengo del IVA previsto en el artículo
+                                                                        75.Dos de la Ley 37/1992, de 28 de diciembre.
+                                                                        El importe a añadir o restar al total de la factura para redondear el
+ BT-114     ++        0..1       Importe de redondeo                                                                                             Importe
+                                                                        importe a pagar.
+
+
+                                                                                                                                                                                             14
+Agencia Tributaria
+
+                                                                                                                                               Tipo
+                   Cardinalida
+   ID      Nivel                      Término de negocio (BT)                                     Descripción                                semántico                  Ruta UBL
+                        d
+                                                                                                                                              de dato
+
+                                                                      Este importe es igual al importe total de la factura con IVA menos
+                                                                      los importes que han sido pagados por adelantado, junto con los
+                                                                      importes correspondientes a los conceptos BT-179 y los importes
+ BT-115     ++        1..1       Total a pagar                                                                                                Importe
+                                                                      redondeados, BT-114. El importe es cero en el caso de una factura
+                                                                      pagada en su totalidad. El importe puede ser negativo; en ese caso,
+                                                                      el vendedor debe dicho importe al comprador.
+
+                                     CARGOS EN NOMBRE DE UN           Importes a favor de un tercero distinto del vendedor, a pagar por el
+ BG-34      ++        0..n
+                                             TERCERO                  comprador.
+
+                                                                      Se consignarán suplidos y/o cantidades repercutidas o exigidas en
+                                 Importe del cargo cobrado en
+ BT-179    +++        1..1                                            nombre de un tercero, sin reflejo en la base imponible de la            Importe
+                                 nombre de un tercero
+                                                                      operación.
+
+
+
+                                 Descripción del cargo en nombre de
+ BT-180    +++        1..1                                          Descripción del motivo del cargo en nombre de un tercero.                  Texto
+                                 un tercero
+
+
+
+                                 Identificación del cargo en nombre   Código de identificación del cargo en nombre de un tercero. Código                   /in:Invoice/cac:CollectionInvoiceLine
+BT-ES-10   +++        1..1                                                                                                                   Código (L7)
+                                 de un tercero                        obligatorio, usar "SUPL".                                                            /cbc:ID
+
+                                                                      En caso de que se incluyan cargos en nombre de un tercero
+                                                                      correspondientes a impuestos y tasas, en este grupo de términos
+ BG-34      ++        0..n               IMPUESTOS Y TASAS
+                                                                      de negocio se incluirá la información relativa a su cálculo que
+                                                                      resulte obligatoria.
+
+                                 Suma de las cuotas de los impuestos Suma de las cuotas de los impuestos y tasas incluidos como cargos
+ BT-179    +++        1..1                                                                                                                    Importe
+                                 o tasas                             en nombre de un tercero.
+
+ BT-180    +++        1..1       Denominación del impuesto o tasa     Denominación del Impuesto o tasa.                                        Texto
+
+
+
+
+                                                                                                                                                                                           15
+Agencia Tributaria
+
+                                                                                                                                             Tipo
+                   Cardinalida
+   ID      Nivel                      Término de negocio (BT)                                     Descripción                              semántico                  Ruta UBL
+                        d
+                                                                                                                                            de dato
+
+                                                                      Código de identificación del impuesto o tasa. Código obligatorio,
+                                                                                                                                                         /in:Invoice/cac:CollectionInvoiceLine
+BT-ES-11   +++        1..1       Identificación del impuesto o tasa   usar "IEDMT" en el caso del Impuesto Especial sobre Determinados     Código (L7)
+                                                                                                                                                         /cbc:ID
+                                                                      medios de transporte. En el resto de casos, se consignará "OTROS".
+
+                                                                                                                                                          Su uso implica que la ruta
+                                                                                                                                                         /in:Invoice/cac:CollectionInvoiceLine
+                                                                                                                                                         /cac:TaxTotal/cac:TaxSubtotal/cac:T
+                                                                      Grupo de términos de negocio que se emplean para detallar el                       axCategory/cac:TaxScheme/cbc:ID
+BG-ES- 3   +++        0..n         DESGLOSE IMPUESTOS Y TASAS         cálculo de los impuestos y tasas incluidos como cargos en nombre                   tomará el valor "VAT", y la ruta
+                                                                      de un tercero.                                                                     /in:Invoice/cac:CollectionInvoiceLine
+                                                                                                                                                         /cac:TaxTotal/cac:TaxSubtotal/cac:T
+                                                                                                                                                         axCategory/cbc:ID adoptará el valor
+                                                                                                                                                         "S"
+                                                                                                                                                         /in:Invoice/cac:CollectionInvoiceLine
+                                                                      Importe correspondiente a la base de cálculo del impuesto o tasa
+BT-ES-12   ++++       0..1       Base del impuesto o tasa                                                                                   Importe      /cac:TaxTotal/cac:TaxSubtotal/cbc:T
+                                                                      incluido como cargo en nombre de un tercero.
+                                                                                                                                                         axableAmount
+
+                                                                                                                                                         /in:Invoice/cac:CollectionInvoiceLine
+                                                                      Tipo aplicable para el cálculo del impuesto o tasa incluido como
+BT-ES-13   ++++       0..1       Tipo del impuesto o tasa                                                                                  Porcentaje    /cac:TaxTotal/cac:TaxSubtotal/cac:T
+                                                                      cargo en nombre de un tercero.
+                                                                                                                                                         axCategory/cbc:Percent
+
+                                                                                                                                                         /in:Invoice/cac:CollectionInvoiceLine
+                                                                      Cuota resultante de aplicar a la base del impuesto o tasa el tipo
+BT-ES-14   ++++       1..1       Cuota total del impuesto o tasa                                                                            Importe      /cac:TaxTotal/cac:TaxSubtotal/cbc:T
+                                                                      correspondiente.
+                                                                                                                                                         axAmount
+
+
+                                 MINORACIONES EN NOMBRE DE UN Minoraciones, no parte de la factura, que deben minorar el total a
+ BG-34      ++        0..n
+                                           TERCERO            pagar, como la devolución de un suplido.
+
+
+                                 Importe de la minoración en          Se consignarán minoraciones de las cantidades exigidas en nombre
+ BT-179    +++        1..1                                                                                                                  Importe
+                                 nombre de un tercero                 de un tercero, sin reflejo en la base imponible de la operación.
+
+
+
+
+                                                                                                                                                                                         16
+Agencia Tributaria
+
+                                                                                                                                              Tipo
+                   Cardinalida
+   ID      Nivel                      Término de negocio (BT)                                     Descripción                               semántico                  Ruta UBL
+                        d
+                                                                                                                                             de dato
+                                 Descripción de la minoración en
+ BT-180    +++        1..1                                            Descripción del motivo de la minoración en nombre de un tercero.        Texto
+                                 nombre de un tercero
+
+                                 Identificación de la minoración en   Código de identificación de la minoración en nombre de un tercero.                  /in:Invoice/cac:CollectionInvoiceLin
+BT-ES-15   +++        1..1                                                                                                                  Código (L7)
+                                 nombre de un tercero                 Código obligatorio, usar "MINO".                                                    e/cbc:ID
+
+
+                                                                      Grupo de términos de negocio que proporcionan información
+ BG-34      ++        0..1                  RETENCIONES
+                                                                      relativa a las retenciones practicadas en la factura.
+
+
+ BT-179    +++        1..1       Suma de retenciones                  Sumatorio de todas las retenciones practicadas en factura.             Importe
+
+ BT-180    +++        1..1       Descripción de la retención          Descripción del motivo de la retención.                                 Texto
+                                                                      Código de identificación de la retención en factura. Código                         /in:Invoice/cac:CollectionInvoiceLine
+BT-ES-16   +++        1..1       Identificación de retención                                                                                Código (L7)
+                                                                      obligatorio, usar "RETE".                                                           /cbc:ID
+
+                                                                                                                                                          /in:Invoice/cac:WithholdingTaxTotal
+BT-ES-17   +++        1..1       Suma de retenciones                  Sumatorio de todas las retenciones practicadas en factura.             Importe
+                                                                                                                                                          /cbc:TaxAmount
+                                                                                                                                                           Su uso implica que la ruta
+                                                                                                                                                          /in:Invoice/cac:WithholdingTaxTotal
+                                                                                                                                                          /cac:TaxSubtotal/cac:TaxCategory/c
+                                                                      Grupo de términos de negocio que proporcionan información                           bc:ID tome el valor "S", y la ruta
+BG-ES-4    +++        0..n              RETENCIÓN APLICADA
+                                                                      relativa a una retención practicada en la factura.                                  /in:Invoice/cac:WithholdingTaxTotal
+                                                                                                                                                          /cac:TaxSubtotal/cac:TaxCategory/c
+                                                                                                                                                          ac:TaxScheme/cbc:ID adopte el
+                                                                                                                                                          valor "WTH"
+                                                                                                                                                          /in:Invoice/cac:WithholdingTaxTotal
+                                                                      Base de cálculo sobre la que se aplicará el porcentaje de retención
+BT-ES-18   ++++       1..1       Base imponible retención                                                                                    Importe      /cac:TaxSubtotal/cbc:TaxableAmoun
+                                                                      para calcular la retención correspondiente.
+                                                                                                                                                          t
+
+
+
+
+                                                                                                                                                                                          17
+Agencia Tributaria
+
+                                                                                                                                                 Tipo
+                   Cardinalida
+   ID      Nivel                       Término de negocio (BT)                                      Descripción                                semántico                   Ruta UBL
+                        d
+                                                                                                                                                de dato
+
+                                                                       Resultado de aplicar a la Base imponible de la retención, el                           /in:Invoice/cac:WithholdingTaxTotal
+BT-ES-19   ++++       1..1       Total retención                                                                                                Importe
+                                                                       porcentaje de retención correspondiente.                                               /cac:TaxSubtotal/cbc:TaxAmount
+
+
+                                                                                                                                                              /in:Invoice/cac:WithholdingTaxTotal
+BT-ES-20   ++++       1..1       Porcentaje                            Porcentaje de retención aplicable.                                      Porcentaje     /cac:TaxSubtotal/cac:TaxCategory/c
+                                                                                                                                                              bc:Percent
+
+                                                                                                                                                              /in:Invoice/cac:WithholdingTaxTotal
+                                                                       Información relativa a la retención practicada. Se usarán las claves
+BT-ES-21   ++++       1..1       Concepto                                                                                                     Código (L5)     /cac:TaxSubtotal/cac:TaxCategory/c
+                                                                       contenidas en la tabla L5.
+                                                                                                                                                              ac:TaxScheme/cbc:TaxTypeCode
+
+
+                                                                       Un grupo de términos de negocio que proporcionan información a
+ BG-25      +         1..n                LÍNEA DE FACTURA
+                                                                       nivel de líneas individuales de la factura.
+
+
+ BT-126     ++        1..1       Identificador de línea de factura     Un identificador único de una línea individual de la factura.          Identificador
+
+                                                                       La cantidad de artículos (bienes o servicios) que se cargan en la
+ BT-129     ++        1..1       Cantidad facturada                                                                                            Cantidad
+                                                                       línea de factura.
+                                                                       La unidad de medida aplicable a la cantidad facturada. La unidad de
+                                                                       medida debe elegirse de las listas de la Recomendación UN/ECE Nº
+                                 Código de la unidad de medida de la   20 "Códigos de Unidades de Medida utilizados en el comercio
+ BT-130     ++        1..1                                                                                                                      Código
+                                 cantidad facturada                    internacional" y la Recomendación UN/ECE Nº 21 "Tipos de
+                                                                       Pasajeros, tipos de carga, embalajes y materiales de embalaje (con
+                                                                       códigos complementarios para los nombres de embalajes)".
+                                                                       El importe total a nivel de la línea de factura.
+                                 Importe neto a nivel de línea de      En las operaciones acogidas al régimen especial de grupo de
+ BT-131     ++        1..1                                                                                                                      Importe
+                                 factura                               entidades, nivel avanzado, se informará del importe total de la
+                                                                       contraprestación.
+
+
+
+
+                                                                                                                                                                                             18
+Agencia Tributaria
+
+                                                                                                                                                Tipo
+                   Cardinalida
+   ID      Nivel                      Término de negocio (BT)                                        Descripción                              semántico                  Ruta UBL
+                        d
+                                                                                                                                               de dato
+                                                                                                                                                                Su uso implica que todos los
+                                                                                                                                                                         elementos
+                                    MINORACIONES DE LÍNEA DE           Grupo de elementos de negocio que proporciona información                            /in:Invoice/cac:InvoiceLine/cac:Allo
+ BG-27      ++        0..n
+                                           FACTURA                     sobre minoraciones aplicables a una línea de factura individual.                     wanceCharge/cbc:ChargeIndicator
+                                                                                                                                                               del grupo deben tener el valor
+                                                                                                                                                                           "false"
+                                 Importe de la minoración de línea
+ BT-136    +++        1..1                                             Importe de la minoración, sin IVA.                                      Importe
+                                 de factura
+
+                                 Razón de la minoración de línea de    La razón de la minoración de línea de factura, expresada como
+ BT-139    +++        1..1                                                                                                                      Texto
+                                 factura                               texto.
+                                                                                                                                                                Su uso implica que todos los
+                                                                                                                                                                         elementos
+                                                                       Grupo de elementos de negocio que proporciona información
+                                                                                                                                                            /in:Invoice/cac:InvoiceLine/cac:Allo
+ BG-28      ++        0..n         CARGOS DE LÍNEA DE FACTURA          sobre cargos, tasas e impuestos distintos del IVA aplicables a una
+                                                                                                                                                            wanceCharge/cbc:ChargeIndicator
+                                                                       línea individual de la factura.
+                                                                                                                                                               del grupo deben tener el valor
+                                                                                                                                                                           "true"
+                                 Importe del cargo de línea de
+ BT-141    +++        1..1                                             Importe del cargo, sin IVA.                                             Importe
+                                 factura
+                                                                       El importe base que puede utilizarse, junto con el porcentaje de
+                                 Base del importe de cargo de línea    cargo, tasa o impuesto de la línea de factura, para calcular el
+ BT-142    +++        0..1                                                                                                                     Importe
+                                 de factura                            importe del cargo o del impuesto correspondiente a dicha línea de
+                                                                       factura.
+
+
+                                                                       Porcentaje que puede utilizarse, junto con la base del importe, para
+                                 Tipo aplicable a la base del cargo de
+ BT-143    +++        0..1                                             calcular el importe del cargo, tasa o del impuesto correspondiente     Porcentaje
+                                 línea de factura
+                                                                       a dicha línea de factura.
+
+
+                                 Código del tipo de impuesto incluido Tipo de impuesto (no IVA) o tasa incluido como cargo, expresado                       /in:Invoice/cac:InvoiceLine/cac:Allo
+BT-ES-22   +++        1..1                                                                                                                    Código (L9)
+                                 como cargo de línea de factura       como código.                                                                          wanceCharge/cac:TaxCategory/cac:
+                                                                                                                                                            TaxScheme/cbc:TaxTypeCode
+
+
+                                                                                                                                                                                             19
+Agencia Tributaria
+
+                                                                                                                                                 Tipo
+                  Cardinalida
+   ID     Nivel                       Término de negocio (BT)                                      Descripción                                 semántico                  Ruta UBL
+                       d
+                                                                                                                                                de dato
+
+ BT-144   +++        1..1       Razón del cargo de línea de factura   La razón del cargo de línea de factura, expresada como texto.              Texto
+
+
+                                                                      Grupo de términos de negocio que proporcionan información sobre
+ BG-29     ++        1..1              DETALLES DEL PRECIO            el precio aplicado a los bienes y servicios facturados en la línea de
+                                                                      factura.
+
+
+                                                                                                                                               Importe de
+                                                                      Precio de un artículo, excluido el IVA, una vez minorado por el
+ BT-146   +++        1..1       Precio neto del artículo                                                                                          precio
+                                                                      descuento sobre el precio del artículo.
+                                                                                                                                                 unitario
+
+ BT-149    ++        0..1       Cantidad del precio base por artículo Número de unidades de artículos a las que se aplica el precio.            Cantidad
+
+                                                                                                                                                              Su uso implica que la ruta
+                                INFORMACIÓN DEL IVA A NIVEL DE        Un grupo de términos de negocio que ofrecen información sobre el                       /in:Invoice/cac:InvoiceLine/cac:Item
+ BG-30     ++        1..1
+                                           LÍNEA                      IVA aplicable a los bienes y servicios a nivel de línea de la factura.                 /cac:ClassifiedTaxCategory/cac:TaxS
+                                                                                                                                                             cheme/cbc:ID tomará el valor "VAT"
+
+                                                                      Identificación codificada de la categoría de IVA correspondiente al
+                                Código de categoría de IVA del
+ BT-151   +++        1..1                                             artículo facturado. Se utilizarán los valores definidos en la UNTDID     Código (L4)
+                                artículo facturado
+                                                                      5305, incluidos en la lista L4.
+
+
+                                Tipo impositivo de IVA del artículo   El tipo impositivo, representado como un porcentaje aplicable al
+ BT-152   +++        0..1                                                                                                                      Porcentaje
+                                facturado                             artículo facturado.
+
+
+                                                                      Lista de códigos creada y mantenida por el Mecanismo "Conectar
+ BT-195   +++        0..1       Código de razón de exención           Europa" (CEF, Connecting Europe Facility). Lista CEF-VATEX. Solo           Código
+                                                                      podrán adoptar valores VATEX-EU o VATEX-ES.
+
+
+
+
+                                                                                                                                                                                             20
+Agencia Tributaria
+
+                                                                                                                                                  Tipo
+                   Cardinalida
+   ID      Nivel                      Término de negocio (BT)                                      Descripción                                  semántico                  Ruta UBL
+                        d
+                                                                                                                                                 de dato
+
+                                                                       Un grupo de términos de negocio que ofrecen información sobre
+ BG-31      ++        1..1          INFORMACIÓN DE ARTÍCULO
+                                                                       los bienes y servicios facturados.
+
+ BT-153    +++        1..1       Nombre de artículo                    Nombre del artículo.                                                       Texto
+
+                                                                       Permite la descripción del artículo y sus prestaciones en mayor
+ BT-154    +++        0..1       Descripción de artículo                                                                                          Texto
+                                                                       detalle que el campo nombre de artículo.
+
+
+                                                                       Un grupo de términos de negocio que ofrece información adicional
+                                 INFORMACIÓN ADICIONAL A NIVEL         de inclusión obligatoria en factura de acuerdo con normativa
+ BG-32     +++        0..n
+                                           DE LÍNEA                    específica, así como información adicional que el emisor considere
+                                                                       conveniente introducir.
+
+
+
+                                 Código de la propiedad -
+                                                                       Código de identificación de la información adicional a nivel de línea.
+ BT-160    +++        1..1       Información adicional a nivel de                                                                               Código (L8)
+                                                                       Adoptará el valor fijo "INFO".
+                                 línea
+
+
+                                 Información adicional a nivel de
+ BT-161    +++        1..1                                             Descripción de la información adicional a nivel de línea.                  Texto
+                                 línea
+
+                                                                       Un grupo de términos de negocio que ofrece información relativa al
+ BG-32     +++        0..1             REFERENCIA CATASTRAL
+                                                                       inmueble sobre el que recae la operación facturada.
+
+                                 Código de la propiedad - Referencia   Código de identificación de la referencia catastral. Adoptará el valor
+ BT-160    ++++       1..1                                                                                                                      Código (L8)
+                                 catastral                             fijo "RCAT".
+ BT-161    +++        1..1       Referencia catastral                  Referencia catastral del inmueble.                                         Texto
+
+                                                                                                                                                              /in:Invoice/cac:InvoiceLine/cac:Item
+BT-ES-23   +++        1..1       Situación del inmueble                Identificador que especifica la situación del inmueble.                  Código (L6)   /cac:AdditionalItemProperty/cbc:Val
+                                                                                                                                                              ueQualifier
+
+
+                                                                                                                                                                                              21
+Agencia Tributaria
+
+                                                                                                                                                  Tipo
+                   Cardinalida
+   ID      Nivel                      Término de negocio (BT)                                      Descripción                                  semántico              Ruta UBL
+                        d
+                                                                                                                                                 de dato
+                                                                       Un grupo de términos de negocio que ofrece información relativa al
+ BG-32     +++        1..2               CLAVE DE RÉGIMEN
+                                                                       régimen aplicable a la operación facturada.
+
+                                                                       Código de identificación de la clave de régimen. Adoptará el valor
+ BT-160    ++++       1..1       Código de la propiedad - Régimen                                                                               Código (L8)
+                                                                       fijo "REGI".
+
+                                                                                                                                                  Código
+                                                                       Se consignará la clave de régimen correspondiente a la operación,
+ BT-161    ++++       1..1       Código de clave de régimen                                                                                    (L3A/L3B/L3C
+                                                                       según las listas L3A, L3B y L3C.
+                                                                                                                                                     )
+                                                                                                                                               Código-
+                                                                                                                                                          /in:Invoice/cac:InvoiceLine/cac:Item
+                                                                                                                                              Calificador
+BT-ES-24   ++++       1..1       Tipo de impuesto nacional             Identificador de la sujeción de la operación al IVA, IGIC y al IPSI.               /cac:AdditionalItemProperty/cbc:Val
+                                                                                                                                            (L3A/L3B/L3C
+                                                                                                                                                          ueQualifier
+                                                                                                                                                    )
+                                                                       Grupo de términos de negocio que proporcionan información sobre                     Su uso implica que la ruta
+                                                                       el desglose del IVA en diferentes categorías, tipos y razones de                   /in:Invoice/cac:TaxTotal/cac:TaxSub
+ BG-23      +         1..n                DESGLOSE DEL IVA
+                                                                       exención. También proporcionará información sobre el desglose del                  total/cac:TaxCategory/cac:TaxSche
+                                                                       recargo de equivalencia, en su caso.                                               me/cbc:ID tomará el valor "VAT"
+                                                                       Suma de todas las bases imponibles a las que son de aplicación un
+                                                                       mismo código de categoría de IVA.
+ BT-116     ++        1..1       Base imponible por categoría de IVA   En las operaciones acogidas al régimen especial de grupo de             Importe
+                                                                       entidades, nivel avanzado, se informará de la base imponible a
+                                                                       coste.
+
+                                                                       La cuota de IVA por categoría.
+                                 Cuota tributaria por categoría de
+ BT-117     ++        1..1                                                                                                                       Importe
+                                 IVA                                   En el caso del recargo de equivalencia, se informará de la cuota de
+                                                                       dicho recargo.
+
+
+                                                                       Identificación codificada de la categoría de IVA correspondiente a la
+                                 Código de cuota tributaria por
+ BT-118     ++        1..1                                             cuota tributaria. Se utilizarán los valores definidos en la UNTDID       Código (L4)
+                                 categoría de IVA
+                                                                       5305, incluidos en la lista L4.
+
+
+
+
+                                                                                                                                                                                          22
+Agencia Tributaria
+
+                                                                                                                                              Tipo
+                  Cardinalida
+   ID     Nivel                      Término de negocio (BT)                                     Descripción                                semántico      Ruta UBL
+                       d
+                                                                                                                                             de dato
+                                                                     Tipo de IVA, representado en forma de porcentaje, aplicable a la
+                                                                     categoría de IVA que corresponde.
+ BT-119    ++        1..1       Tipo de IVA por categoría                                                                                   Porcentaje
+                                                                     En el caso del recargo de equivalencia, se informará del tipo del
+                                                                     recargo de equivalencia aplicable.
+                                                                     Enunciado que explica la razón por la que un importe está exento
+ BT-120    ++        0..1       Razón de exención                                                                                             Texto
+                                                                     de IVA o por qué el IVA no se aplica.
+                                                                     Lista de códigos creada y mantenida por el Mecanismo "Conectar
+ BT-121    ++        0..1       Código de razón de exención          Europa" (CEF, Connecting Europe Facility). Lista CEF-VATEX. Solo        Código
+                                                                     podrán adoptar valores VATEX-EU o VATEX-ES.
+
+                                                                     Este grupo recoge los datos relativos a las condiciones de pago a
+ BG-33     +         0..n               Condiciones de pago
+                                                                     aplicar a la cantidad a pagar.
+
+                                 Descripción de las condiciones de   Descripción de las condiciones de pago a aplicar a la cantidad a
+ BT-20     ++        0..1                                                                                                                     Texto
+                                               pago                  pagar.
+
+                                                                     Un grupo de términos de negocio que ofrecen información acerca
+ BG-16     +         0..1            INSTRUCCIONES DE PAGO
+                                                                     del pago.
+
+
+                                                                     Los medios, expresados como un código, a través de los que el
+ BT-81     ++        1..1       Código de tipo de medios de pago     pago va a liquidarse o se ha liquidado. Deben utilizarse                Código
+                                                                     obligatoriamente los códigos de la lista UNTDID 4461.
+
+
+                                                                     Un grupo de términos de negocio utilizados para especificar pagos
+ BG-17     ++        0..n           TRANSFERENCIA BANCARIA
+                                                                     por transferencia.
+
+
+                                                                     Identificador único de la cuenta financiera de pago, puesta a
+                                                                     disposición por un proveedor de servicios de pago, a la que debería
+ BT-84    +++        1..1       Identificador de la cuenta de pago                                                                         Identificador
+                                                                     efectuarse el pago. Con carácter general, se tratará de un código
+                                                                     IBAN.
+
+
+
+
+                                                                                                                                                                      23
+Agencia Tributaria
+
+                                                                                                                                                Tipo
+                   Cardinalida
+   ID      Nivel                       Término de negocio (BT)                                    Descripción                                 semántico                  Ruta UBL
+                        d
+                                                                                                                                               de dato
+
+                                                                     Grupo de términos de negocio que proporcionan información
+                                                                     obligatoria relativa al código QR previsto en el artículo 6.5 del Real
+ BG-24      +         0..1                     QR FISCAL
+                                                                     Decreto 1619/2012, de 30 de noviembre, o en la normativa foral
+                                                                     que resulte de aplicación.
+
+                                 Referencia de documento
+ BT-122     ++        1..1                                           Valor obligatorio: usar "QR".                                            Código (L10)
+                                 justificativo - ID
+
+                                 Descripción de documento            Valor obligatorio: usar "VERIFACTU" o "TICKETBAI", según
+ BT-123     ++        0..1                                                                                                                       Texto
+                                 justificativo - Tipo de QR          corresponda conforme normativa aplicable.
+
+
+                                 Localización de documento externo - Se debe consignar la URL correspondiente al QR VERI*FACTU o                             /in:Invoice/cac:AdditionalDocument
+BT-ES-25    ++        1..1                                                                                                                       Texto
+                                 Descripción                         TICKETBAI, según corresponda conforme normativa aplicable.                              Reference/cbc:UUID
+
+                                                                     Grupo de términos de negocio que proporcionan información sobre
+                                                                     la autorización concedida al obligado a expedir factura, de acuerdo
+                                                                     con lo dispuesto en el Real Decreto 1619/2012, de 30 de
+                                                                     noviembre, o con el Real Decreto 1624/1992, de 29 de diciembre,
+ BG-24      +         0..n        AUTORIZACIÓN DE FACTURACIÓN
+                                                                     por el Departamento de Gestión Tributaria de la Agencia Tributaria
+                                                                     o por la Administración Tributaria Canaria; o, en su caso, por la
+                                                                     Diputación Foral correspondiente, según la normativa foral que
+                                                                     resulte de aplicación.
+                                 Referencia de documento
+ BT-122     ++        1..1                                           Valor obligatorio: usar "AUT".                                           Código (L10)
+                                 justificativo - ID
+
+                                 Descripción de documento
+ BT-123     ++        0..1       justificativo - Descripción         Texto descriptivo de la autorización concedida.                             Texto
+                                 autorización
+
+                                 Referencia de documento
+                                                                                                                                                             /in:Invoice/cac:AdditionalDocument
+BT-ES-26    ++        1..1       justificativo - Nº referencia       Número de referencia de la autorización concedida.                          Texto
+                                                                                                                                                             Reference/cbc:UUID
+                                 autorización
+
+
+
+                                                                                                                                                                                           24
+Agencia Tributaria
+
+                                                                                                                                               Tipo
+                   Cardinalida
+   ID      Nivel                       Término de negocio (BT)                                   Descripción                                 semántico                  Ruta UBL
+                        d
+                                                                                                                                              de dato
+
+                                                                   Este grupo recoge los datos relativos al tipo de factura rectificativa
+ BG-24      +         0..1        TIPO DE FACTURA RECTIFICATIVA
+                                                                   expedida.
+
+
+                                 Referencia de documento           Valor fijo que permite identificar el tipo de factura rectificativa:
+ BT-122     ++        1..1                                                                                                                  Código (L10)
+                                 justificativo - ID                usar "RECT:TIPO".
+
+                                 Descripción del tipo de factura
+ BT-123     ++        0..1                                         Se especificará el tipo de factura rectificativa.                           Texto
+                                 rectificativa
+
+                                 Código de tipo de factura         Las facturas rectificativas (código de tipo de factura 384 y 471)                        /in:Invoice/cac:AdditionalDocument
+BT-ES-27    ++        1..1                                                                                                                  Código (L2.A)
+                                 rectificativa                     adoptarán los valores definidos en la lista L2.A.                                        Reference/cbc:DocumentTypeCode
+
+
+                                      MODALIDAD DE FACTURA         Este grupo recoge los datos relativos a la modalidad de rectificación
+ BG-24      +         0..1
+                                         RECTIFICATIVA             utilizada.
+
+
+                                 Referencia de documento           Valor fijo que permite identificar la modalidad de factura
+ BT-122     ++        1..1                                                                                                                  Código (L10)
+                                 justificativo - ID                rectificativa: usar "RECT:MODALIDAD".
+
+                                 Descripción de la modalidad de    Descripción que especifica la modalidad de la rectificación
+ BT-123     ++        0..1                                                                                                                     Texto
+                                 factura rectificativa             empleada.
+
+                                 Código de modalidad de factura    Código que especifica la modalidad de rectificación empleada.                            /in:Invoice/cac:AdditionalDocument
+BT-ES-28    ++        1..1                                                                                                                  Código (L2.B)
+                                 rectificativa                     Adoptarán los valores definidos en la lista L2.B.                                        Reference/cbc:DocumentTypeCode
+
+
+
+
+                                                                                                                                                                                          25
+Agencia Tributaria
+
+                                                                                                                                                                  Tipo
+                           Cardinalida
+     ID        Nivel                              Término de negocio (BT)                                            Descripción                                semántico                    Ruta UBL
+                                d
+                                                                                                                                                                 de dato
+
+                                                                                     Este grupo recoge los importes rectificados respecto de la factura
+                                                                                     original, en los casos en los que se proceda a la rectificación por
+ BG-24              +          0..3               IMPORTES RECTIFICADOS              sustitución de la factura original, y se opte por la emisión de una
+                                                                                     única factura con los importes correctos, incluyendo aquí
+                                                                                     información sobre los importes rectificados.
+
+
+                                          Referencia de documento                    Valor fijo que permite identificar los importes rectificados: usar
+ BT-122             ++         1..1                                                                                                                            Código (L10)
+                                          justificativo - ID                         "RECT:IMPORTES".
+
+
+                                                                                     Importe de la factura rectificada. En función del código que se
+ BT-123             ++         1..1       Importe rectificado                        informe, se referirá a la base imponible, a la cuota de IVA o a la            Texto
+                                                                                     cuota del recargo de equivalencia.
+
+
+                                                                                     Código que especifica el importe rectificado. Adoptarán los valores                       /in:Invoice/cac:AdditionalDocument
+BT-ES-29            ++         1..1       Código de los importes rectificados                                                                                  Código (L2.C)
+                                                                                     definidos en la lista L2.C.                                                               Reference/cbc:DocumentTypeCode
+
+
+
+     FACTURA ELECTRÓNICA O COPIA FIEL– Mensaje de anulación                                        ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:ResponseCode: CANCELINVOICE
+
+
+
+          Cardinalid
+Nivel                      Término de negocio (BT)                     Descripción                   Tipo semántico de dato                                        Ruta UBL
+             ad
+
+                                                         Fecha en la que se produce la anulación
+ +           1..1        Fecha de la anulación.                                                              Fecha            ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:EffectiveDate
+                                                         de la factura.
+
+
+
+ +           1..n             FACTURA ANULADA            Datos de la factura que se anula.                                    ApplicationResponse/cac:DocumentResponse/cac:DocumentReference
+
+
+
+
+                                                                                                                                                                                                             26
+Agencia Tributaria
+
+
+  ++         1..1    Número de factura (ID)      Serie y número de la factura anulada.          Texto        ApplicationResponse/cac:DocumentResponse/cac:DocumentReference/cbc:ID
+
+
+
+
+                     Fecha de expedición de la   Fecha de expedición de la factura
+  ++         1..1                                                                               Fecha        ApplicationResponse/cac:DocumentResponse/cac:DocumentReference/cbc:IssueDate
+                     factura                     anulada.
+
+
+
+                                                 Grupo de términos de negocio que
+  ++         1..1       DATOS DEL VENDEDOR       proporcionan información sobre el                           ApplicationResponse/cac:DocumentResponse/cac:DocumentReference/cac:IssuerParty
+                                                 vendedor identificado en la factura.
+
+
+                                                 Número de identificación fiscal (NIF) del                   ApplicationResponse/cac:DocumentResponse/cac:DocumentReference/cac:IssuerParty/cac
+ +++         1..1    NIF del vendedor                                                        Identificador
+                                                 vendedor en la factura anulada.                             :PartyTaxScheme/cbc:CompanyID
+
+
+                     Nombre o razón social del   Nombre y apellidos o razón social del                       ApplicationResponse/cac:DocumentResponse/cac:DocumentReference/cac:IssuerParty/cac
+ +++         1..1                                                                               Texto
+                     vendedor                    vendedor.                                                   :PartyLegalEntity/cbc:RegistrationName
+
+
+
+
+CLAVES Y VALORES PERMITIDOS EN CAMPOS DE TIPO CÓDIGO:
+
+Se definen a continuación los valores permitidos en los campos con tipo semántico de dato de tipo código en los que se ha indicado expresamente que se definirán
+los valores en una lista (L). En los restantes campos de tipo código, en la columna descripción, se indica la forma de definición de los valores admitidos.
+
+L1 – Tipo de factura
+ VALORES DESCRIPCIÓN
+       380      Factura (art. 6, 7.2 y 7.3 del RD 1619/2012)
+       384      Factura rectificativa
+       388      Factura emitida en sustitución de facturas simplificadas
+       389      Factura emitida por el destinatario
+
+
+                                                                                                                                                                                              27
+Agencia Tributaria
+
+ VALORES DESCRIPCIÓN
+    471      Factura rectificativa emitida por el destinatario
+
+
+L2.A – Tipo de factura rectificativa
+          VALORES           DESCRIPCIÓN
+             R1             Factura Rectificativa (Error fundado en derecho y Art. 80 Uno Dos y Seis LIVA)
+             R2             Factura Rectificativa (Art. 80.3)
+             R3             Factura Rectificativa (Art. 80.4)
+             R4             Factura Rectificativa (Resto)
+
+
+L2.B – Modalidad de factura rectificativa
+          VALORES           DESCRIPCIÓN
+             I              Rectificativa por diferencias
+             S              Rectificativa por sustitución
+
+
+L2.C – Importes rectificados
+          VALORES          DESCRIPCIÓN
+           Base            Base imponible de la factura rectificada.
+           Cuota           Cuota repercutida de la factura rectificada.
+     CuotaRecargo          Cuota recargo de equivalencia de la factura rectificada.
+
+
+L3A – Clave de régimen-IVA
+ CALIFICADOR IVA
+
+
+
+
+                                                                                                             28
+Agencia Tributaria
+
+
+   VALORES       DESCRIPCIÓN DE LA CLAVE DE RÉGIMEN PARA DESGLOSES DONDE EL IMPUESTO DE APLICACIÓN ES EL IVA
+
+       01        Operación en régimen general y no incluidas en otras claves
+       02        Exportación
+
+       03        Operaciones a las que se aplique el régimen especial de bienes usados, objetos de arte, antigüedades y objetos de colección
+
+       04        Régimen especial del oro de inversión
+       05        Régimen especial de las agencias de viajes
+       06        Régimen especial grupo de entidades en IVA (Nivel Avanzado)
+       07        Régimen especial del criterio de caja
+                 Operaciones sujetas al IPSI / IGIC (Impuesto sobre la Producción, los Servicios y la Importación / Impuesto General
+       08
+                 Indirecto Canario)
+                 Facturación de las prestaciones de servicios de agencias de viaje que actúan como mediadoras en nombre y por cuenta
+       09
+                 ajena (D.A.4ª RD1619/2012)
+       11        Operaciones de arrendamiento de local de negocio
+
+       14        Factura con IVA pendiente de devengo en certificaciones de obra cuyo destinatario sea una Administración Pública
+
+       15        Factura con IVA pendiente de devengo en operaciones de tracto sucesivo
+
+
+L3B – Clave de régimen-IGIC
+     CALIFICADOR          IGIC
+
+
+                          DESCRIPCIÓN DE LA CLAVE DE RÉGIMEN PARA DESGLOSES DONDE EL IMPUESTO
+       VALORES
+                          DE APLICACIÓN ES EL IGIC
+            01            Operación en régimen general y no incluidas en otras claves
+            02            Exportación
+                          Operaciones a las que se aplique el régimen especial de bienes usados, objetos de arte,
+            03
+                          antigüedades y objetos de colección
+            04            Régimen especial del oro de inversión
+            05            Régimen especial de las agencias de viajes
+
+                                                                                                                                               29
+Agencia Tributaria
+
+                        DESCRIPCIÓN DE LA CLAVE DE RÉGIMEN PARA DESGLOSES DONDE EL IMPUESTO
+       VALORES
+                        DE APLICACIÓN ES EL IGIC
+           06           Régimen especial grupo de entidades en IGIC (Nivel Avanzado)
+           07           Régimen especial del criterio de caja
+                        Operaciones sujetas al IPSI / IVA (Impuesto sobre la Producción, los Servicios y la
+           08
+                        Importación / Impuesto sobre el Valor Añadido)
+                        Facturación de las prestaciones de servicios de agencias de viaje que actúan como mediadoras
+           09
+                        en nombre y por cuenta ajena (D.A.4ª RD1619/2012)
+           11           Operaciones de arrendamiento de local de negocio
+                        Factura con IGIC pendiente de devengo en certificaciones de obra cuyo destinatario sea una
+           14
+                        Administración Pública
+           15           Factura con IGIC pendiente de devengo en operaciones de tracto sucesivo
+           17           Régimen especial de comerciante minorista
+           18           Régimen especial del pequeño empresario o profesional
+           19           Operaciones interiores exentas por aplicación artículo 25 Ley 19/1994
+
+
+L3C – Clave de régimen-IPSI
+     CALIFICADOR        IPSI
+
+
+                        DESCRIPCIÓN DE LA CLAVE DE RÉGIMEN PARA DESGLOSES DONDE EL IMPUESTO DE APLICACIÓN
+       VALORES
+                        ES EL IPSI
+           01           Operación en régimen general y no incluidas en otras claves
+                        Operaciones sujetas al IGIC / IVA (Impuesto                   sobre   la   Producción,   los   Servicios   y   la
+           08
+                        Importación / Impuesto sobre el Valor Añadido)
+           11           Operaciones de arrendamiento de local de negocio
+           19           Operaciones interiores exentas
+           20           Régimen simplificado
+
+
+
+
+                                                                                                                                            30
+Agencia Tributaria
+
+L4 – Código de tipo de operación
+ VALORES DESCRIPCIÓN
+     S      Operaciones en régimen general
+     Z      Bienes con tipo impositivo 0%
+     E      Exento de IVA
+    AE      Inversión del sujeto pasivo
+     O      Operación no sujeta a IVA
+     G      Exportación.
+     L      Operación sujeta al IGIC
+     M      Operación sujeta al IPSI
+            Regímenes nacionales de IVA (régimen especial de grupo de entidades, nivel avanzado, y régimen especial del recargo de
+     N
+            equivalencia)
+     D      Régimen especial de agencias de viajes
+     F      Régimen especial de bienes usados, objetos de arte antigüedades, y objetos de colección
+
+
+L5 – Tipo de retención
+         Valores                                                           Descripción
+           01              Artículo 75.1.c) Inciso primero RIRPF – Rendimiento de actividades profesionales
+
+           02              Artículo 75.1.c) Inciso segundo RIRPF – Rendimiento de actividades agrícolas y ganaderas
+
+           03              Artículo 75.1.c) Inciso tercero RIRPF – Rendimiento de actividades forestales
+
+           04              Artículo 75.1.c) Inciso cuarto RIRPF – Rendimientos de actividades empresariales del artículo 95.6.2º RIRPF
+
+                           Artículo 75.1. d) Inciso segundo RIRPF – Ganancias patrimoniales de los aprovechamientos forestales de los
+           05
+                           vecinos en montes públicos
+
+           06              Artículo 75.2.a) RIRPF – Rendimientos de arrendamientos o subarrendamientos de locales urbanos
+
+
+
+
+                                                                                                                                         31
+Agencia Tributaria
+
+        Valores                                                           Descripción
+
+                        Artículo 75.2.b) RIRPF - Rendimientos procedentes de la propiedad intelectual, industrial, de la prestación de
+           07           asistencia técnica, del arrendamiento de bienes muebles, negocios o minas, del subarrendamiento sobre los
+                        bienes anteriores y los procedentes de la cesión del derecho a la explotación del derecho de imagen
+
+                        Artículo 60.1.c) RIS - Las contraprestaciones obtenidas como consecuencia de la atribución de cargos de
+           08
+                        administrador o consejero en otras sociedades
+                        Artículo 60.1.d) RIS - Las rentas procedentes de la cesión del derecho a la explotación de la imagen o del
+           09           consentimiento o autorización para su utilización, aun cuando constituyan ingresos derivados de explotaciones
+                        económicas
+
+                        Artículo 60.1.e) RIS - Las rentas procedentes del arrendamiento o subarrendamiento de inmuebles urbanos, aun
+           10
+                        cuando constituyan ingresos derivados de explotaciones económicas
+
+           11           Otros
+
+
+L6 – Situación del inmueble
+        Valores                                                           Descripción
+                        Inmueble con referencia catastral situado en cualquier punto del territorio español, excepto País Vasco y
+           01
+                        Navarra
+
+           02           Inmueble situado en la Comunidad Autónoma del País Vasco o en la Comunidad Foral de Navarra
+
+           03           Inmueble en cualquiera de las situaciones anteriores pero sin referencia catastral
+           04           Inmueble situado en el extranjero
+
+
+L7 – Tipo de cargo o minoración
+     CALIFICADOR        urn:aeat:names:specification:schema:add:
+
+
+        Valores                                                           Descripción
+         SUPL           Cargo en nombre de un tercero
+         MINO           Minoración en nombre de un tercero
+
+
+                                                                                                                                         32
+Agencia Tributaria
+
+        Valores                                                          Descripción
+         RETE            Retención
+        IEDMT            Impuesto especial sobre determinados medios de transporte
+        OTROS            Otros supuestos de tasas o impuestos no incluidos en el resto de claves
+
+
+L8 – Tipo de propiedad
+     CALIFICADOR          urn:aeat:names:specification:schema:lin:
+
+
+        Valores                                                             Descripción
+         RCAT            Referencia catastral
+         REGI            Clave de régimen
+         INFO            Regulación aplicable a la línea de la factura
+
+
+L9 – Impuestos y cargos a nivel de línea o documento
+       Valores                                                              Descripción
+         IEH             Impuesto especial sobre los hidrocarburos
+         IECE            Impuesto especial sobre la cerveza
+         IEPI            Impuesto especial sobre productos intermedios
+         IEA             Impuesto especial sobre el alcohol y bebidas derivadas
+         IET             Impuesto especial sobre las labores del tabaco
+         IELC            Impuesto sobre los líquidos para cigarrillos electrónicos y otros productos relacionados con el tabaco
+         IEE             Impuesto especial sobre la electricidad
+         IEC             Impuesto especial sobre el carbón
+         IEP             Impuesto especial sobre los envases de plástico no reutilizables (artículo 82.9.a) Ley 7/2022, de 8 de abril)
+         IEDE            Impuesto sobre el depósito de residuos en vertederos, la incineración y la coincineración de residuos
+       IMPTAS            Otros impuestos y tasas
+        RESTO            Otros cargos a nivel de línea o documento
+
+                                                                                                                                         33
+Agencia Tributaria
+
+L10 – Documentos justificativos adicionales
+   CALIFICADOR          urn:aeat:names:specification:schema:
+
+
+        Valores                                                Descripción
+          QR           QR fiscal
+         AUT           Autorización de facturación
+      RECT:TIPO        Tipo de factura rectificativa
+  RECT:MODALIDAD       Modalidad de factura rectificativa
+   RECT:IMPORTES       Importes rectificados
+
+
+
+
+                                                                             34
+

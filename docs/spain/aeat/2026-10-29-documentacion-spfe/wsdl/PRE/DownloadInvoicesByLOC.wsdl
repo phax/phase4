@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="DownloadInvoicesByLOCService"
+    targetNamespace="https://www.agenciatributaria.gob.es/spfe/ns/services/DownloadInvoicesByLOC/v1"
+    xmlns:tns="https://www.agenciatributaria.gob.es/spfe/ns/services/DownloadInvoicesByLOC/v1"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:eb3="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+
+    <wsdl:documentation>
+        SPFE (Solución Pública de Factura Electrónica) - servicio DownloadInvoicesByLOC - entorno PRE.
+
+        Mensajería ebMS 3.0 sobre SOAP 1.2:
+        - Los mensajes son SOAP 1.2: el sobre va como application/soap+xml, con el
+          parámetro action igual al soapAction de la operación.
+        - La cabecera eb3:Messaging viaja en el header SOAP; el body SOAP va vacío.
+        - Los errores se devuelven como SOAP Fault estándar de SOAP 1.2 (env:Code/env:Value
+          y env:Reason/env:Text), sin elemento env:Detail propio, en una respuesta
+          application/soap+xml con estado HTTP 400 o 500.
+        - Los documentos UBL de entrada y salida viajan como adjuntos MIME, referenciados
+          desde eb3:UserMessage/PayloadInfo/PartInfo mediante href="cid:...".
+        - El lenguaje WSDL 1.1, en el que está escrito este fichero, no permite declarar un
+          número variable de adjuntos, por lo que ninguno se liga a una wsdl:part: el mensaje
+          lleva un adjunto MIME por cada eb3:PartInfo de la cabecera ebMS (0..N), con el
+          Content-ID que indica su href (cid:...), elegido por el emisor del mensaje.
+
+        Acceso: dos puertos alternativos y equivalentes, cada uno con su propio dominio:
+        - DownloadInvoicesByLOCCertPort: acceso con certificado electrónico (no de sello).
+        - DownloadInvoicesByLOCSealPort: acceso con certificado de sello electrónico.
+    </wsdl:documentation>
+
+    <!-- ============================================================
+         TYPES
+         Solo se importa el esquema de mensajería ebMS 3.0 (ruta relativa
+         a este WSDL). Los documentos UBL no se tipan aquí: viajan como
+         adjuntos opacos y se validan en la capa de negocio.
+         ============================================================ -->
+    <wsdl:types>
+        <xsd:schema targetNamespace="https://www.agenciatributaria.gob.es/spfe/ns/services/DownloadInvoicesByLOC/v1" elementFormDefault="qualified">
+            <xsd:import
+                namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+                schemaLocation="xsd/ebms/ebms-header-3_0-200704.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+
+    <!-- ============================================================
+         MESSAGES
+         - ebmsHeader: cabecera eb3:Messaging (header SOAP)
+         Los adjuntos MIME (documentos UBL) no se declaran como partes:
+         se referencian desde eb3:UserMessage/PayloadInfo/PartInfo/@href.
+         ============================================================ -->
+    <wsdl:message name="DownloadInvoicesByLOCRequest">
+        <wsdl:part name="ebmsHeader" element="eb3:Messaging"/>
+    </wsdl:message>
+
+    <wsdl:message name="DownloadInvoicesByLOCResponse">
+        <wsdl:part name="ebmsHeader" element="eb3:Messaging"/>
+    </wsdl:message>
+
+    <!-- ============================================================
+         PORT TYPE
+         ============================================================ -->
+    <wsdl:portType name="DownloadInvoicesByLOCPortType">
+        <wsdl:operation name="DownloadInvoicesByLOC">
+            <wsdl:documentation>
+                Recibe un mensaje ebMS 3.0 con los documentos UBL adjuntos y devuelve un
+                mensaje ebMS 3.0 (señal Receipt y/o UserMessage de respuesta) con los
+                documentos UBL de respuesta adjuntos.
+            </wsdl:documentation>
+            <wsdl:input name="DownloadInvoicesByLOCInput" message="tns:DownloadInvoicesByLOCRequest"/>
+            <wsdl:output name="DownloadInvoicesByLOCOutput" message="tns:DownloadInvoicesByLOCResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <!-- ============================================================
+         BINDING: SOAP 1.2 con adjuntos MIME
+         - eb3:Messaging como soap12:header en petición y respuesta
+         - body SOAP vacío (patrón ebMS 3.0 / AS4)
+         - documentos UBL como adjuntos MIME (Content-ID = cid: de cada PartInfo),
+           en un mensaje multipart/related; type="application/soap+xml"
+         - no se usa mime:multipartRelated: ningún adjunto se liga a una wsdl:part
+         - faults: SOAP 1.2 estándar (env:Code, env:Reason)
+         ============================================================ -->
+    <wsdl:binding name="DownloadInvoicesByLOCSoapBinding" type="tns:DownloadInvoicesByLOCPortType">
+        <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="DownloadInvoicesByLOC">
+            <soap12:operation soapAction="https://www.agenciatributaria.gob.es/spfe/ns/services/DownloadInvoicesByLOC/v1/DownloadInvoicesByLOC"/>
+
+            <wsdl:input name="DownloadInvoicesByLOCInput">
+                <soap12:header message="tns:DownloadInvoicesByLOCRequest" part="ebmsHeader" use="literal"/>
+                <soap12:body parts="" use="literal"/>
+            </wsdl:input>
+
+            <wsdl:output name="DownloadInvoicesByLOCOutput">
+                <soap12:header message="tns:DownloadInvoicesByLOCResponse" part="ebmsHeader" use="literal"/>
+                <soap12:body parts="" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <!-- ============================================================
+         SERVICE
+         Un wsdl:port admite una única dirección (especificación WSDL 1.1,
+         sec. 2.6), por eso cada modo de acceso, con su dominio, es un
+         puerto distinto.
+         Los dos puertos son alternativas equivalentes del mismo servicio.
+         ============================================================ -->
+    <wsdl:service name="DownloadInvoicesByLOCService">
+        <wsdl:port name="DownloadInvoicesByLOCCertPort" binding="tns:DownloadInvoicesByLOCSoapBinding">
+            <wsdl:documentation>Acceso con certificado electrónico (no de sello).</wsdl:documentation>
+            <soap12:address location="https://prewww1.aeat.es/wlpl/SPFE-FACT/ws/DownloadInvoicesByLOCSOAP"/>
+        </wsdl:port>
+        <wsdl:port name="DownloadInvoicesByLOCSealPort" binding="tns:DownloadInvoicesByLOCSoapBinding">
+            <wsdl:documentation>Acceso con certificado de sello electrónico.</wsdl:documentation>
+            <soap12:address location="https://prewww10.aeat.es/wlpl/SPFE-FACT/ws/DownloadInvoicesByLOCSOAP"/>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

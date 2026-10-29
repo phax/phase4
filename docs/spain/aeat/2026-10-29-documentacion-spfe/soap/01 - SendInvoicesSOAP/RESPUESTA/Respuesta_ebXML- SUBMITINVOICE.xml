@@ -1,0 +1,39 @@
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+   <soapenv:Header>
+      <ns2:Messaging xmlns:ns2="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" 
+	  xmlns:ns1="http://www.w3.org/2003/05/soap-envelope" 
+	  xmlns:ns3="http://schemas.xmlsoap.org/soap/envelope/">
+         <ns2:UserMessage>
+            <ns2:MessageInfo>
+               <ns2:Timestamp>2026-10-05T09:33:09.255Z</ns2:Timestamp>
+			   <ns2:MessageId>uuid-response-123</ns2:MessageId>
+				<ns2:RefToMessageId>uuid-invoices-123</ns2:RefToMessageId>
+            </ns2:MessageInfo>
+            <ns2:PartyInfo>
+               <ns2:From>
+                  <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:iso6523:9920">Q2826000H</ns2:PartyId>
+                  <ns2:Role>ebms:initiator</ns2:Role>
+               </ns2:From>
+               <ns2:To>
+                  <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:iso6523:9920">xxxx</ns2:PartyId>
+                  <ns2:Role>ebms:responder</ns2:Role>
+               </ns2:To>
+            </ns2:PartyInfo>
+            <ns2:CollaborationInfo>
+               <ns2:Service>urn:cen.eu:en16931:submitinvoice</ns2:Service>
+               <ns2:Action>SUBMITINVOICE</ns2:Action>
+               <ns2:ConversationId>c73b7fdc-1ab0-4b1e-b295-ac9e4a35d764</ns2:ConversationId>
+            </ns2:CollaborationInfo>
+            <ns2:PayloadInfo>
+               <ns2:PartInfo href="cid:RespuestaAltaFacturas.xml">
+                  <ns2:PartProperties>
+                     <ns2:Property name="MimeType">application/xml</ns2:Property>
+                  </ns2:PartProperties>
+               </ns2:PartInfo>
+            </ns2:PayloadInfo>
+         </ns2:UserMessage>
+      </ns2:Messaging>
+   </soapenv:Header>
+   <soapenv:Body/>
+</soapenv:Envelope>
+

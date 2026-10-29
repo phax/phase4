@@ -1,0 +1,462 @@
+Agencia Tributaria
+
+                                                                    ANEXO II
+
+CONTENIDO Y ESTRUCTURA DE LOS CAMPOS DEL MENSAJE RELATIVO A LOS ESTADOS DE PAGO, RECHAZO, COBRO O IMPAGO
+DE LAS FACTURAS CONFORME AL MODELO UBL.
+
+
+La información del pago, rechazo, cobro o impago de las facturas que, en cumplimiento de lo dispuesto en la presente orden, sean transmitidas
+a la Agencia Estatal de Administración Tributaria deberán contener, en los términos establecidos en el artículo 12 del Real Decreto 238/2026, de
+25 de marzo, por el que se desarrolla el sistema de facturación electrónica obligatoria entre empresarios y profesionales y por el que se modifica
+el Reglamento por el que se regulan las obligaciones de facturación, aprobado por el Real Decreto 1619/2012, de 30 de noviembre, la información
+que se muestra a continuación.
+
+
+I.   CAMPOS DE REGISTRO Y ESPECIFICACIONES FUNCIONALES DE LA INFORMACIÓN DE LOS ESTADOS DE PAGO, RECHAZO O
+     COBRO DE LAS FACTURAS ELECTRÓNICAS A LA SOLUCIÓN PÚBLICA DE FACTURACIÓN ELECTRÓNICA.
+
+
+Cada elemento de información o grupo de elementos de información que constituye el modelo semántico de datos de los elementos principales
+de la comunicación de los estados de pago, cobro o impago, se define en las filas de la siguiente tabla, incluyendo cada columna la siguiente
+información:
+
+
+-    Nivel: indica el nivel en el que el elemento de información interviene en el modelo:
+
+
+     +: primer nivel del modelo;
+
+
+
+                                                                                                                                                1
+Agencia Tributaria
+
+    ++: segundo nivel del modelo. El elemento o grupo de elementos de información es parte de un grupo de elementos de información que
+    se definen en el primer nivel del modelo;
+
+
+    +++: tercer nivel del modelo. El elemento o grupo de elementos de información es parte de un grupo de elementos de información que se
+    definen en el segundo nivel del modelo;
+
+
+    ++++: cuarto nivel del modelo. El elemento o grupo de elementos de información es parte de un grupo de elementos de información que
+    se definen en el tercer nivel del modelo.
+
+
+-   Cardinalidad: se utiliza para indicar si un elemento o grupo de elementos de información es obligatorio o no (condicional), y si se puede
+    repetir. Pueden darse las siguientes cardinalidades:
+
+
+    1..1: elemento obligatorio y no repetitivo.
+
+
+    0..1: elemento condicional y no repetitivo.
+
+
+    -     Término de negocio: el nombre del elemento o grupo de elementos de información utilizado en el modelo de estado de pago o cobro.
+
+
+    -     Descripción: descripción del significado semántico del elemento de información.
+
+
+    -     Tipo semántico de dato: formato de dato que se aplica al elemento de información.
+
+
+
+                                                                                                                                           2
+Agencia Tributaria
+
+    -   Ruta UBL: expresión que identifica un elemento o atributo dentro de la estructura XML del documento de “Application Response” de
+        UBL, en su última versión aprobada.
+
+
+
+
+                                                                                                                                      3
+Agencia Tributaria
+
+1.       INFORMACIÓN SOBRE EL PAGO DE LA FACTURA ELECTRÓNICA.
+
+
+Se recoge a continuación el contenido y estructura de los campos de los mensajes de alta y baja de pago efectivo completo de la factura
+electrónica a la solución pública de facturación electrónica, por parte del destinatario de la misma.
+
+
+COMUNICACIÓN DE PAGOS POR EL DESTINATARIO - Mensaje de alta ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:ResponseCode: PAYMENT
+
+
+                         Término de negocio                                                       Tipo semántico
+ Nivel   Cardinalidad           (BT)                              Descripción                         de dato                           Ruta UBL
+                                               Fecha de expedición del pago o situación del                        ApplicationResponse/cac:DocumentResponse/cac:Re
+     +       1..1       Fecha de efecto        pago.                                                  Fecha        sponse/cbc:EffectiveDate
+                                               Fecha de vencimiento del plazo de pago,
+                                               calculada de acuerdo con lo dispuesto en el                         ApplicationResponse/cac:DocumentResponse/cac:Re
+                                               artículo 4 de la Ley 3/2004, de 29 de diciembre,                    sponse/cac:Status/cbc:ReferenceDate
+                        Fecha de vencimiento
+     +       1..1                              por la que se establecen medidas de lucha              Fecha        ApplicationResponse/cac:DocumentResponse/
+                        del plazo de pago
+                                               contra la morosidad en las operaciones                              cac:Response/cac:Status/cac:Condition/cbc:AttributeI
+                                               comerciales o en la normativa específica que                        D=DueDate
+                                               resulte de aplicación.
+
+
+
+
+                                                                                                                                                                     4
+Agencia Tributaria
+
+                        Término de negocio                                                           Tipo semántico
+Nivel   Cardinalidad           (BT)                                Descripción                           de dato                           Ruta UBL
+
+
+                                                                                                                      ApplicationResponse/cac:DocumentResponse/
+                       Fecha de recepción de     Campos opcionales, a informar si, de acuerdo                         cac:Response/cac:Status/cbc:ReferenceDate
+                       las mercancías o de       con el artículo 4 de la Ley 3/2004, de 29 de                         ApplicationResponse/cac:DocumentResponse
+ +          0..1       los servicios prestados   diciembre, por la que se establecen medidas de          Fecha        cac:Response//cac:Status/cac:Condition/cbc:AttributeI
+                                                 lucha contra la morosidad en las operaciones                         D=ShipmentDate
+                                                 comerciales, esta información resulta relevante.
+                                                 Si no se informan, de acuerdo con lo dispuesto
+                                                 en la D.A. 7ª del Real Decreto 238/2026, de 25
+                                                 de marzo, por el que se desarrolla el sistema de
+                                                 facturación electrónica obligatoria entre
+                                                 empresarios y profesionales y por el que se
+                                                 modifica el Reglamento por el que se regulan las                     ApplicationResponse/cac:DocumentResponse/
+                       Fecha de recepción de     obligaciones de facturación, aprobado por el                         cac:Response/cac:Status/cbc:ReferenceDate
+ +          0..1       la factura                Real Decreto 1619/2012, de 30 de noviembre,             Fecha        ApplicationResponse/cac:DocumentResponse/
+                                                 se entenderá como fecha de inicio del plazo de                       cac:Response/cac:Status/cac:Condition/cbc:AttributeI
+                                                 pago la fecha de expedición de la factura.                           D=ReceptionDate
+                                                 Factura que ha sido previamente rectificada (y la                    ApplicationResponse/cac:DocumentResponse/
+                                                 confirmación no necesariamente será por el                           cac:Response/cac:Status/cbc:StatusReason=Correcte
+ +          0..1       Factura rectificada       importe de la factura original)                        Indicador     dInvoice
+                                                                                                                      ApplicationResponse/cac:DocumentResponse/
+                                                 Factura sin pago asociado (factura rectificativa                     cac:Response/cac:Status/cbc:StatusReason=Negativ
+ +          0..1       Factura rectificativa     negativa)                                              Indicador     eAmountInvoice
+                       FACTURA                   Datos de la factura sobre la que se informa el
+ +          1..1       INFORMADA                 pago
+                                                 Serie y número que identifican la factura                            ApplicationResponse/cac:DocumentResponse/cac:Do
+ ++         1..1       Número de factura (ID)    informada.                                              Texto        cumentReference/cbc:ID
+                       Fecha de expedición                                                                            ApplicationResponse/cac:DocumentResponse/cac:Do
+ ++         1..1       de la factura.            Fecha de expedición de la factura informada.            Fecha        cumentReference/cbc:IssueDate
+                                                                                                                      ApplicationResponse/cac:DocumentResponse/cac:Do
+                                                 Número de identificación fiscal (NIF) del                            cumentReference/cac:IssuerParty/cac:PartyTaxSche
+ ++         1..1       NIF emisor                vendedor en la factura informada.                    Identificador   me/cbc:CompanyID
+
+
+
+
+                                                                                                                                                                         5
+Agencia Tributaria
+
+                        Término de negocio                                                          Tipo semántico
+Nivel   Cardinalidad           (BT)                               Descripción                           de dato                            Ruta UBL
+                                                                                                                      ApplicationResponse/cac:DocumentResponse/cac:Do
+                       Nombre / Razón social    Nombre o razón social del vendedor en la                              cumentReference/cac:IssuerParty/cac:PartyLegalEntit
+ ++         1..1       emisor                   factura informada.                                       Texto        y/cbc:RegistrationName
+
+
+
+
+ COMUNICACIÓN DE PAGOS POR EL DESTINATARIO - Mensaje de                  ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:ResponseCode:
+                        baja                                             CANCELPAYMENT
+
+
+                                                                                                    Tipo semántico
+Nivel Cardinalidad Término de negocio (BT)                       Descripción                            de dato                            Ruta UBL
+                                               Serie y número que identifican la factura                              ApplicationResponse/cac:DocumentResponse/cac:Docu
+ +        1..1     Número de factura (ID)      informada.                                                Texto        mentReference/cbc:ID
+                                                                                                                      ApplicationResponse/cac:DocumentResponse/cac:Docu
+ +        1..1     Fecha de emisión factura    Fecha de expedición de la factura informada.              Fecha        mentReference/cbc:IssueDate
+                                                                                                                      ApplicationResponse/cac:DocumentResponse/cac:Docu
+                                               Número de identificación fiscal (NIF) del vendedor                     mentReference/cac:IssuerParty/cac:PartyTaxScheme/cb
+ +        1..1     NIF emisor                  en la factura informada.                               Identificador   c:CompanyID
+                                                                                                                      ApplicationResponse/cac:DocumentResponse/cac:Docu
+                   Nombre / Razón social       Nombre o razón social del vendedor en la factura                       mentReference/cac:IssuerParty/cac:PartyLegalEntity/cb
+ ++       1..1     emisor                      informada.                                                Texto        c:RegistrationName
+
+
+
+
+                                                                                                                                                                       6
+Agencia Tributaria
+
+2.        INFORMACIÓN SOBRE EL RECHAZO DE LA FACTURA ELECTRÓNICA.
+
+
+Se recoge a continuación el contenido y estructura de los campos de los mensajes de alta y baja de rechazo de la factura electrónica a la solución
+pública de facturación electrónica, por parte del destinatario de la misma.
+
+
+     COMUNICACIÓN DE RECHAZO POR EL DESTINATARIO- Mensaje de                   ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:ResponseCode:
+                             alta                                              REJECTION
+
+
+                           Término de                                                Tipo semántico de
+ Nivel    Cardinalidad    negocio (BT)                 Descripción                          dato                                  Ruta UBL
+                         Fecha de                                                                        ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:
+     +        1..1       rechazo         Fecha de rechazo por el destinatario.             Fecha         EffectiveDate
+                                         Motivo por el que se rechaza la factura.
+                                         Admite dos valores posibles:
+                                                                                                         ApplicationResponse/cac:DocumentResponse/cac:Response/cac:
+                                         - Rechazo comercial.
+                                                                                                         Status/cbc:ConditionCode
+                         Motivo de       - Rechazo por ser un consumo particular
+     +        1..1       rechazo         o no estar afectado a la actividad.            Código (L1)
+                         FACTURA            Datos de la factura sobre la que se
+     +        1..1       INFORMADA                  informa el rechazo
+                         Número de       Serie y número que identifican la factura                       ApplicationResponse/cac:DocumentResponse/cac:DocumentRefe
+     ++       1..1       factura (ID)    informada.                                        Texto         rence/cbc:ID
+                         Fecha de
+                         emisión         Fecha de expedición de la factura                               ApplicationResponse/cac:DocumentResponse/cac:DocumentRefe
+     ++       1..1       factura         informada.                                        Fecha         rence/cbc:IssueDate
+                                         Número de identificación fiscal (NIF) del                       ApplicationResponse/cac:DocumentResponse/cac:DocumentRefe
+     ++       1..1       NIF emisor      vendedor en la factura informada.              Identificador    rence/cac:IssuerParty/cac:PartyTaxScheme/cbc:CompanyID
+                         Nombre /
+                         Razón social    Nombre o razón social del vendedor en                           ApplicationResponse/cac:DocumentResponse/cac:DocumentRefe
+     ++       1..1       emisor          la factura informada.                             Texto         rence/cac:IssuerParty/cac:PartyLegalEntity/cbc:RegistrationName
+
+
+
+
+                                                                                                                                                                      7
+Agencia Tributaria
+
+
+ COMUNICACIÓN DE RECHAZO POR EL DESTINATARIO - Mensaje                    ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:ResponseCode:
+                       de baja                                            CANCELREJECTION
+
+
+        Cardinalida      Término de                                                 Tipo semántico de
+Nivel       d           negocio (BT)                 Descripción                           dato                                    Ruta UBL
+                      Número de         Serie y número que identifican la factura                       ApplicationResponse/cac:DocumentResponse/cac:DocumentRef
+ +         1..1       factura (ID)      informada.                                        Texto         erence/cbc:ID
+                      Fecha de          Fecha de expedición de la factura                               ApplicationResponse/cac:DocumentResponse/cac:DocumentRef
+ +         1..1       emisión factura   informada.                                        Fecha         erence/cbc:IssueDate
+                                        Número de identificación fiscal (NIF) del                       ApplicationResponse/cac:DocumentResponse/cac:DocumentRef
+ +         1..1       NIF emisor        vendedor en la factura informada.              Identificador    erence/cac:IssuerParty/cac:PartyTaxScheme/cbc:CompanyID
+                                                                                                        ApplicationResponse/cac:DocumentResponse/cac:DocumentRef
+                      Nombre / Razón    Nombre o razón social del vendedor en                           erence/cac:IssuerParty/cac:PartyLegalEntity/cbc:RegistrationNa
+ ++        1..1       social emisor     la factura informada.                             Texto         me
+
+
+
+
+                                                                                                                                                                     8
+Agencia Tributaria
+
+3.       INFORMACIÓN SOBRE EL COBRO DE LA FACTURA ELECTRÓNICA.
+
+
+Se recoge a continuación el contenido y estructura de los campos de los mensajes de alta y baja de cobro de la factura electrónica a la solución
+pública de facturación electrónica, por parte del emisor de la misma.
+
+
+     COMUNICACIÓN DE COBRO POR EL EMISOR - Mensaje de alta              ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:ResponseCode: SETTLEMENT
+
+
+                                                                                                  Tipo
+                                                                                               semántico de
+ Nivel   Cardinalidad    Término de negocio (BT)                 Descripción                      dato                               Ruta UBL
+                                                                                                              ApplicationResponse/cac:DocumentResponse/cac:Respons
+     +       1..1       Fecha del cobro             Fecha de cobro por el emisor.                 Fecha       e/cbc:EffectiveDate
+                                                    Fecha de vencimiento del pago,
+                                                    calculada de acuerdo con lo dispuesto
+                                                                                                              ApplicationResponse/cac:DocumentResponse/
+                                                    en el artículo 4 de la Ley 3/2004, de 29
+                                                                                                              cac:Response/cac:Status/cbc:ReferenceDate
+                        Fecha de vencimiento del    de diciembre, por la que se establecen
+     +       0..1                                                                                 Fecha       ApplicationResponse/cac:DocumentResponse/
+                        pago                        medidas de lucha contra la morosidad
+                                                                                                              cac:Response/cac:Status/cac:Condition/cbc:AttributeID=Du
+                                                    en las operaciones comerciales o en la
+                                                                                                              eDate
+                                                    normativa específica que resulte de
+                                                    aplicación.
+                                                    Indicador de si el cobro se ha producido                  ApplicationResponse/cac:DocumentResponse/cac:Respon
+     +       0..1       Mecanismo de financiación   a través de un mecanismo de                  Indicador    se/cac:Status/cac:Condition/cbc:AttributeID=FinancingArran
+                                                    financiación concertado por el emisor.                    gement
+
+
+
+
+                                                                                                                                                                     9
+Agencia Tributaria
+
+                                                                                                   Tipo
+                                                                                               semántico de
+Nivel   Cardinalidad    Término de negocio (BT)                  Descripción                       dato                               Ruta UBL
+  +         0..1       Fecha de recepción de las                                                  Fecha        ApplicationResponse/cac:DocumentResponse/
+                       mercancías o de los                                                                     cac:Response/cac:Status/cbc:ReferenceDate
+                       servicios prestados                                                                     ApplicationResponse/cac:DocumentResponse/
+                                                   Campos opcionales, a informar si, de                        cac:Response/cac:Status/cac:Condition/cbc:AttributeID=Shi
+                                                   acuerdo con el artículo 4 de la Ley                         pmentDate
+                                                   3/2004, de 29 de diciembre, por la que
+                                                   se establecen medidas de lucha contra
+                                                   la morosidad en las operaciones
+                                                   comerciales, esta información resulta
+                                                   relevante.
+                                                   Si no se informan, de acuerdo con lo
+                                                   dispuesto en la D.A. 7ª del Real Decreto
+                                                   238/2026, de 25 de marzo, por el que se
+                                                   desarrolla el sistema de facturación
+                                                   electrónica obligatoria entre empresarios
+                                                   y profesionales y por el que se modifica
+                                                   el Reglamento por el que se regulan las
+                                                   obligaciones de facturación, aprobado
+                                                   por el Real Decreto 1619/2012, de 30 de                     ApplicationResponse/cac:DocumentResponse/
+ +          0..1       Fecha de recepción de la    noviembre, se entenderá como fecha de          Fecha        cac:Response/cac:Status/cbc:ReferenceDate
+                       factura                     inicio del plazo de pago la fecha de                        ApplicationResponse/cac:DocumentResponse/
+                                                   expedición de la factura.                                   cac:Response/cac:Status/cac:Condition/cbc:AttributeID=Re
+                                                                                                               ceptionDate
+                                                   Datos de la factura sobre la que se
+ +          1..1       FACTURA INFORMADA           informa el pago
+                                                   Serie y número que identifican la factura                   ApplicationResponse/cac:DocumentResponse/cac:Docume
+ ++         1..1       Número de factura (ID)      informada.                                     Texto        ntReference/cbc:ID
+                                                   Fecha de expedición de la factura                           ApplicationResponse/cac:DocumentResponse/cac:Docume
+ ++         1..1       Fecha de emisión factura    informada.                                     Fecha        ntReference/cbc:IssueDate
+                                                                                                               ApplicationResponse/cac:DocumentResponse/cac:Docume
+                                                   Número de identificación fiscal (NIF) del                   ntReference/cac:IssuerParty/cac:PartyTaxScheme/cbc:Com
+ ++         1..1       NIF emisor                  vendedor en la factura informada.           Identificador   panyID
+                                                                                                               ApplicationResponse/cac:DocumentResponse/cac:Docume
+                       Nombre / Razón social       Nombre o razón social del vendedor en                       ntReference/cac:IssuerParty/cac:PartyLegalEntity/cbc:Regis
+ ++         1..1       emisor                      la factura informada.                          Texto        trationName
+
+
+
+                                                                                                                                                                    10
+Agencia Tributaria
+
+
+COMUNICACIÓN DE COBRO POR EL EMISOR - Mensaje de baja ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:ResponseCode: CANCELSETTLEMENT
+
+
+                                                                                                 Tipo
+                                                                                              semántico de
+Nivel   Cardinalidad    Término de negocio (BT)                Descripción                       dato                                Ruta UBL
+                                                  Serie y número que identifican la factura                   ApplicationResponse/cac:DocumentResponse/cac:Docume
+ +          1..1       Número de factura (ID)     informada.                                     Texto        ntReference/cbc:ID
+                                                  Fecha de expedición de la factura                           ApplicationResponse/cac:DocumentResponse/cac:Docume
+ +          1..1       Fecha de emisión factura   informada.                                     Fecha        ntReference/cbc:IssueDate
+                                                                                                              ApplicationResponse/cac:DocumentResponse/cac:Docume
+                                                  Número de identificación fiscal (NIF) del                   ntReference/cac:IssuerParty/cac:PartyTaxScheme/cbc:Com
+ +          1..1       NIF emisor                 vendedor en la factura informada.           Identificador   panyID
+                                                                                                              ApplicationResponse/cac:DocumentResponse/cac:Docume
+                       Nombre / Razón social      Nombre o razón social del vendedor en                       ntReference/cac:IssuerParty/cac:PartyLegalEntity/cbc:Regis
+ ++         1..1       emisor                     la factura informada.                          Texto        trationName
+
+
+
+
+                                                                                                                                                                   11
+Agencia Tributaria
+
+4.         INFORMACIÓN SOBRE EL IMPAGO DE LA FACTURA ELECTRÓNICA.
+
+
+Se recoge a continuación el contenido y estructura de los campos de los mensajes de alta y baja de impago de la factura electrónica a la solución
+pública de facturación electrónica, por parte del emisor de la misma.
+
+
+         COMUNICACIÓN DE IMPAGO POR EL EMISOR - Mensaje de alta                  ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:ResponseCode: DEFAULT
+
+
+            Cardinalid                                                                                Tipo semántico
+ Nivel         ad        Término de negocio (BT)                     Descripción                          de dato                        Ruta UBL
+                                                    Fecha de vencimiento del pago, calculada de
+                                                    acuerdo con lo dispuesto en el artículo 4 de la
+                                                    Ley 3/2004, de 29 de diciembre, por la que se
+                                                    establecen medidas de lucha contra la
+                                                    morosidad en las operaciones comerciales o en
+                         Fecha de vencimiento del   la normativa específica que resulte de                             ApplicationResponse/cac:DocumentResponse/cac:R
+     +         1..1      pago                       aplicación.                                           Fecha        esponse/cbc:EffectiveDate
+
+
+
+
+                                                                                                                                                                  12
+Agencia Tributaria
+
+         Cardinalid                                                                                Tipo semántico
+ Nivel      ad        Término de negocio (BT)                     Descripción                          de dato                          Ruta UBL
+                                                                                                                    ApplicationResponse/cac:DocumentResponse/
+                      Fecha de recepción de las                                                                     cac:Response/cac:Status/cbc:ReferenceDate
+                      mercancías o de los                                                                           ApplicationResponse/cac:DocumentResponse/
+  +         0..1      servicios prestados       Campos opcionales, a informar si, de acuerdo           Fecha        cac:Response/cac:Status/cac:Condition/cbc:Attribute
+                                                con el artículo 4 de la Ley 3/2004, de 29 de                        ID=ShipmentDate
+                                                diciembre, por la que se establecen medidas de
+                                                lucha contra la morosidad en las operaciones
+                                                comerciales, esta información resulta relevante.
+                                                Si no se informan, de acuerdo con lo dispuesto
+                                                en la D.A. 7ª del Real Decreto 238/2026, de 25
+                                                de marzo, por el que se desarrolla el sistema
+                                                de facturación electrónica obligatoria entre
+                                                empresarios y profesionales y por el que se
+                                                modifica el Reglamento por el que se regulan
+                                                las obligaciones de facturación, aprobado por el                    ApplicationResponse/cac:DocumentResponse/
+                      Fecha de recepción de la Real Decreto 1619/2012, de 30 de noviembre,                          cac:Response/cac:Status/cbc:ReferenceDate
+  +         0..1      factura                   se entenderá como fecha de inicio del plazo de         Fecha        ApplicationResponse/cac:DocumentResponse/
+                                                pago la fecha de expedición de la factura.                          cac:Response/cac:Status/cac:Condition/cbc:Attribute
+                                                                                                                    ID=ReceptionDate
+                                                 Datos de la factura sobre la que se informa el
+  +         1..1      FACTURA INFORMADA          pago
+                                                 Serie y número que identifican la factura                          ApplicationResponse/cac:DocumentResponse/cac:D
+  ++        1..1      Número de factura (ID)     informada.                                            Texto        ocumentReference/cbc:ID
+                                                                                                                    ApplicationResponse/cac:DocumentResponse/cac:D
+  ++        1..1      Fecha de emisión factura   Fecha de expedición de la factura informada.          Fecha        ocumentReference/cbc:IssueDate
+                                                                                                                    ApplicationResponse/cac:DocumentResponse/cac:D
+                                                 Número de identificación fiscal (NIF) del                          ocumentReference/cac:IssuerParty/cac:PartyTaxSch
+  ++        1..1      NIF emisor                 vendedor en la factura informada.                  Identificador   eme/cbc:CompanyID
+                                                                                                                    ApplicationResponse/cac:DocumentResponse/cac:D
+                      Nombre / Razón social      Nombre o razón social del vendedor en la                           ocumentReference/cac:IssuerParty/cac:PartyLegalE
+  ++        1..1      emisor                     factura informada.                                    Texto        ntity/cbc:RegistrationName
+
+
+
+
+                                                                                                                                                                    13
+Agencia Tributaria
+
+COMUNICACIÓN DE IMPAGO POR EL EMISOR - Mensaje de baja ApplicationResponse/cac:DocumentResponse/cac:Response/cbc:ResponseCode: CANCELDEFAULT
+
+
+         Cardinalida    Término de negocio                                                     Tipo semántico
+ Nivel       d                 (BT)                             Descripción                        de dato                            Ruta UBL
+                                                Serie y número que identifican la factura                       ApplicationResponse/cac:DocumentResponse/cac:D
+  +         1..1       Número de factura (ID)   informada.                                         Texto        ocumentReference/cbc:ID
+                       Fecha de emisión                                                                         ApplicationResponse/cac:DocumentResponse/cac:D
+  +         1..1       factura                  Fecha de expedición de la factura informada.       Fecha        ocumentReference/cbc:IssueDate
+                                                                                                                ApplicationResponse/cac:DocumentResponse/cac:D
+                                                Número de identificación fiscal (NIF) del                       ocumentReference/cac:IssuerParty/cac:PartyTaxSch
+  +         1..1       NIF emisor               vendedor en la factura informada.               Identificador   eme/cbc:CompanyID
+                                                                                                                ApplicationResponse/cac:DocumentResponse/cac:D
+                       Nombre / Razón social    Nombre o razón social del vendedor en la                        ocumentReference/cac:IssuerParty/cac:PartyLegalE
+  ++        1..1       emisor                   factura informada.                                 Texto        ntity/cbc:RegistrationName
+
+
+
+
+                                                                                                                                                             14
+Agencia Tributaria
+
+II.    CLAVES Y VALORES PERMITIDOS EN CAMPOS DE TIPO CÓDIGO:
+
+
+Se definen a continuación los valores permitidos en los campos con tipo semántico de dato de tipo código en los que se ha indicado expresamente
+que se definirán los valores en una lista (L). En los restantes campos de tipo código, en la columna descripción, se indica la forma de definición de
+los valores admitidos.
+
+
+L1 – Motivos de rechazo
+
+
+
+  VALORES DESCRIPCIÓN
+      01   Rechazo comercial
+           Rechazo por ser un consumo particular o no estar afectado
+      02   a la actividad.
+
+
+
+
+                                                                                                                                                  15
+

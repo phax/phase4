@@ -1,0 +1,488 @@
+              Departamento de Informática Tributaria
+              Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                                  Versión: 0.1.2
+
+
+              Formatos de Entrada y Salida
+
+
+
+
+Autor: AEAT                   Fecha:            20/10/2026          Versión:      0.1.2
+
+
+
+
+Revisiones
+Edic. Rev.      Fecha         Descripción                                        A(*)     Páginas
+
+0      0.1.0    09/10/2026    Versión inicial BORRADOR
+
+0      0.1.1    16/10/2026    Se añade servicio a la lista 5.1.2.
+
+0      0.1.2    20/10/2026    Modificado formato método de envío – Sección 4.3
+
+
+
+
+(*) Acción:     A = Añadir;      R = Reemplazar
+
+
+
+
+                                                                               Página: 1/15
+             Departamento de Informática Tributaria
+             Subdirección General Aplicaciones
+
+
+        Solución Pública de Facturación          Versión: 0.1.2
+
+
+
+
+Índice
+
+1.     INTRODUCCIÓN                                                   3
+
+2.     CONTROL DE VERSIONES                                           4
+
+2.1.    Versión 0.1.0                                                 4
+
+
+3.     ESQUEMA GENERAL DE FUNCIONAMIENTO                              5
+
+4.     ESTÁNDARES Y REQUISITOS                                        6
+
+4.1.    Introducción                                                  6
+
+4.2.    Estándares utilizados                                         6
+
+4.3.    Medio de envío                                                7
+
+
+5.     DISEÑO                                                         8
+
+5.1.     Consideraciones generales                                    8
+   5.1.1.     Formato UBL                                             8
+   5.1.2.     Formato ebXML                                           9
+
+5.2.     Servicio de Remisión                                         12
+   5.2.1.     Ejemplo de ebXML de petición                            12
+   5.2.2.     Ejemplo de ebXML de respuesta                           13
+
+5.3.    Servicio de Anulación                                         14
+
+5.4.    Servicio de Consulta por Id                                   14
+
+5.5.    Servicio de Consulta por Filtro                               14
+
+5.6.    Servicio de Descarga por localizador                          14
+
+5.7.    Servicio de Descarga por ID                                   15
+
+5.8.    Servicio de acciones del Emisor                               15
+
+5.9.    Servicio de acciones del Destinatario                         15
+
+
+
+                                                       Página: 2/15
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                      Versión: 0.1.2
+
+
+1.    Introducción
+
+El presente documento tiene por objeto describir los formatos de entrada y salida
+utilizados en los intercambios de información con la Solución Pública de Facturación
+(SPFE), así como establecer las características técnicas generales de los mensajes
+intercambiados entre los sistemas de las plataformas y la Agencia Estatal de
+Administración Tributaria (AEAT).
+A tal efecto, se especifican los formatos empleados para representar los documentos
+de negocio, los mecanismos de transporte de los mensajes y la estructura general de
+las peticiones y respuestas asociadas a los distintos servicios de la SPFE.
+El documento se dirige a los equipos técnicos responsables del desarrollo e
+integración de los sistemas que interactúen con la SPFE, y constituye una referencia
+para la implementación de las interfaces de comunicación y el tratamiento de la
+información intercambiada.
+
+
+
+
+                                                                  Página: 3/15
+        Departamento de Informática Tributaria
+        Subdirección General Aplicaciones
+
+
+     Solución Pública de Facturación             Versión: 0.1.2
+
+
+2.   Control de versiones
+
+                                2.1. Versión 0.1.0
+     Creación del documento.
+
+
+
+
+                                                       Página: 4/15
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                      Versión: 0.1.2
+
+
+3.    Esquema general de funcionamiento
+
+Los sistemas realizarán la remisión de información por vía telemática, concretamente
+mediante Servicios Web SOAP basados en el intercambio de mensajes XML. Todos
+los mensajes enviados se responden de forma síncrona y los sistemas deberán
+procesar adecuadamente los mensajes de respuesta a los envíos realizados.
+
+
+
+
+                                                                  Página: 5/15
+           Departamento de Informática Tributaria
+           Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                         Versión: 0.1.2
+
+
+4.     Estándares y requisitos
+
+                                      4.1. Introducción
+El contenido de un mensaje es un fichero XML y codificación a utilizar debe ser UTF-8.
+Un documento XML debe cumplir las reglas descritas en los diferentes esquemas, los
+cuales proporcionan normas respecto a formatos, obligatoriedad, etc. pero, en
+cualquier caso, la coherencia de los datos debe garantizarse en origen por quienes
+intervengan en la preparación y remisión de los datos.
+La remisión a través del servicio web podrá ser efectuada por el obligado tributario, un
+apoderado suyo a este trámite o un colaborador social, que deberá disponer de un
+certificado electrónico cualificado reconocido. Todos los NIFs se tienen que validar
+contra la “Base de Datos Centralizada de la AEAT”.
+
+
+
+                                      4.2. Estándares utilizados
+El uso de servicios Web constituye la base de las buenas prácticas para desplegar
+servicios que posibiliten la interacción máquina-máquina, es decir, la automatización
+integral de un proceso en el que intervienen varios sistemas de información (el del
+ciudadano/empresa y el de la Agencia Tributaria).
+
+
+Se pretende utilizar los estándares de facto para el desarrollo de servicios Web.
+       •   [SOAP12-1] W3C, SOAP Version 1.2 Part 1: Messaging Framework
+           (Second Edition), W3C Recommendation, 27 April 2007.
+           URL oficial: https://www.w3.org/TR/soap12-part1/
+       •   RFC2392] IETF, Content-ID and Message-ID Uniform Resource Locators
+           (RFC 2392).
+           Define el esquema URI cid: utilizado para identificar partes MIME mediante
+           su Content-ID.
+       •   [SOAPATT] W3C, SOAP Messages with Attachments.
+           https://www.w3.org/TR/SOAP-attachments/
+       •   [RFC2387] IETF, The MIME Multipart/Related Content-type.
+           Define el contenedor multipart/related empleado para agrupar el mensaje
+           SOAP y sus adjuntos.
+       •   [WSDL11] W3C, Web Services Description Language (WSDL) 1.1, W3C
+           Note, 15 March 2001.
+           URL oficial: https://www.w3.org/TR/2001/NOTE-wsdl-20010315
+       •   [EBMS30] OASIS, OASIS ebXML Messaging Services Version 3.0: Part 1,
+           Core Features, OASIS Standard, 1 October 2007.
+           URL oficial: https://docs.oasis-open.org/ebxml-
+           msg/ebms/v3.0/core/ebms_core-3.0-spec.html
+
+                                                                     Página: 6/15
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                          Versión: 0.1.2
+
+      •   [AS4] OASIS, AS4 Profile of ebMS 3.0 Version 1.0.
+          URL oficial: https://docs.oasis-open.org/ebxml-
+          msg/ebms/v3.0/profiles/200707/as4-profile.html
+      •   [UBL25] OASIS, Universal Business Language Version 2.5.
+          URL oficial: https://docs.oasis-open.org/ubl/ubl-2.5/ubl-2.5.html
+
+
+                                     4.3. Medio de envío
+Entorno: Internet.
+Protocolo: HTTPS.
+Mensajes: Web Service con SOAP 1.2 modo Document
+Certificado: Las aplicaciones que envían información a los servicios web deberán
+autenticarse con certificado electrónico cualificado reconocido.
+Codificación: UTF-8. La entrada es un XML que se debe adecuar a la especificación
+del siguiente esquema de entrada XSD.
+
+
+
+
+                                                                     Página: 7/15
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                      Versión: 0.1.2
+
+
+5.    Diseño
+                                   5.1. Consideraciones generales
+5.1.1. Formato UBL
+
+
+Dentro de los documentos de negocio que propone UBL se han elegido los siguientes
+para SPFE en su versión 2.5:
+
+      •   InvoiceType (no CreditNote) para la emisión de facturas, de acuerdo al
+          Anexo I de la Orden Ministerial de Factura electrónica.
+      •   ApplicationResponse para el envio de anulaciones, acciones/estados,
+          consultas y descargas
+      •   DocumentStatus para las respuestas de los diferentes servicios excepto el
+          de descarga
+
+
+
+
+                                                                 Página: 8/15
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                          Versión: 0.1.2
+
+5.1.2. Formato ebXML
+
+
+La idea principal del formato ebXML es que sirve como mensaje de transporte de los
+disintos documentos UBL de negocio que hay que intercambiar
+
+   •   Símil: Correo electrónico en modo texto con mucho contenido vs correo
+       sencillo con información relevante en documentos adjuntos.
+
+   •   ebxml-msg es compatible con AS4 (usaríamos versión minimalista sin firma
+       criptográfica). Nos alinea más con Peppol y la operativa de las plataformas
+       privadas, mejorando la interoperabilidad a medio plazo en el contexto de
+       VIDA.
+
+   •   No requiere definir un sobre básico propio, que las empresas deben conocer
+       e integrar exclusivamente para trabajar con la SPFE. ebXML es un estándar
+       internacional de Oasis (como UBL)
+
+   •   Nos permite disponer de un encabezado o índice que admite parámetros a
+       nivel de mensaje y de factura. Requiere unos datos básicos, y a medio
+       plazo puede ser de utilidad. Ejemplo: factura pagada o factura C-VIES.
+
+   •   Las facturas son elementos independientes, sin vínculos con otras posibles
+       facturas en el mismo sobre. Un error en la sintaxis XML de una factura no
+       afecta a otras facturas ni exige preprocesamiento del lote de facturas.
+
+   •   IMPORTANTE. Un mismo “sobre” para todos los servicios de la SPFE:
+       remisión, estados, consulta(*), descarga (en este caso las facturas se incluyen
+       en el mensaje de respuesta).
+
+   •   Mejor control sobre el tamaño de las facturas.
+
+
+
+Los bloques/etiquetas fundamentales del formato ebXML y como se relacionan a nivel
+de petición/respuesta son los siguientes:
+
+       MessageInfo
+
+       Peticion: Contenido obligatorio, pero de libre disposición: sirve para trazar la
+       respuesta del sistema
+
+       Respuesta: La respuesta añade la referencia al mensaje que originó la petición
+
+       PartyInfo
+
+       Peticion: FROM: remitente (NIF del certificado), el propio obligado o el sistema
+       que actúa en su nombre · TO: NIF de la AEAT donde recibe la SPFE
+
+       Respuesta: En la respuesta se invierte la información de FROM y TO
+
+                                                                       Página: 9/15
+   Departamento de Informática Tributaria
+   Subdirección General Aplicaciones
+
+
+Solución Pública de Facturación                         Versión: 0.1.2
+
+CollaborationInfo
+
+Peticion: Declara el servicio (endpoint llamado) y la acción concreta; relación
+1..1 salvo en los cambios de estado
+
+Respuesta: Sin cambios
+
+PayloadInfo
+
+Peticion: Referencia a todas las facturas (MIME XML de tipo InvoiceType), sin
+repetidos; los documentos adjuntos no declarados se ignoran y no pueden
+superar el máximo
+
+Respuesta: Referencia al único XML de la respuesta: un DocumentStatus con
+el estado de cada factura (alta o error sintáctico/semántico)
+
+
+
+
+                                                             Página: 10/15
+           Departamento de Informática Tributaria
+           Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                         Versión: 0.1.2
+
+Ejemplo de una petición de remisión con ebXML (con referencia a una factura
+adjunta)
+
+
+
+
+La lista completa de "claves" de las operaciones sería la siguiente:
+
+       •   SUBMITINVOICE (servicio de remisión de facturas)
+       •   CANCELINVOICE (servicio de cancelación de facturas)
+       •   QUERYBYID (servicio de consultas por clave de facturas)
+       •   QUERYBYFILTER (servicio de consulta por filtro)
+       •   DOWNLOADBYID (descarga de facturas por clave de facturas)
+       •   DOWNLOADBYLOC (descargar de facturas por localizador)
+       •   ACCOUNTINGCUSTOMERPARTYACTION (remisión de acciones por
+           destinatario)
+       •   ACCOUNTINGSUPPLIERPARTYACTION (remisión de acciones por
+           emisor)
+
+La filosofía para enviar los documentos UBL mediante el mensaje ebXML es la de
+adjuntar dichos documentos a la petición HTTP de acuerdo con la técnica de SOAP
+con adjuntos MIME (multipart/related) referenciados mediante cid: y referenciarlos
+en la sección PayloadInfo/PartyInfo mediante el atributo href
+
+                                                                       Página: 11/15
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                        Versión: 0.1.2
+
+
+
+                                     5.2. Servicio de Remisión
+
+5.2.1. Ejemplo de ebXML de petición
+
+
+
+
+       Siempre tendrán toda la información en el header de la petición.
+       En “MesageInfo” es de contenido obligatorio, pero a libre disposición, servirá
+para poder trazar la respuesta que nos dará el sistema.
+       En “PartyInfo” declararemos:
+       FROM: Quién es el remitente (NIF del certificado) ya sea el propio obligado o el
+sistema que actúa en su nombre
+       TO: Quien recibirá el mensaje que será el NIF de la AEAT donde recibe la
+SPFE
+
+
+
+
+                                                                   Página: 12/15
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                       Versión: 0.1.2
+
+       En “CollaborationInfo” se declará el servicio que se corresponde con el
+endpoint que estamos llamando y la acción concreta que se está realizando.
+Normalmente es la acción es una relación 1..1 con el endpoint, salvo en el caso de las
+operaciones de cambios de estado.
+       Por último en “PayloadInfo” incluiremos la referencia a todas las facturas que
+viajarán con la petición declarando su tipo MIME como XML de tipo InvoiceType. No
+pueden estar repetidos. Los documentos adjuntos no pueden superar el máximo
+establecido. No se tendrán en cuenta los adjuntos cuya referencia no se haya
+declarado.
+
+5.2.2. Ejemplo de ebXML de respuesta
+
+
+
+
+      Se añade en el “MessageInfo” la referencia al mensaje que originó la petición
+      En los “PartyInfo” la información se invierte en el TO y en el FROM
+      En el “PayloadInfo” se incluye la referencia al único XML que viene en la
+respuesta que es un “DocumentStatus” el estado de cada uno de las facturas que se
+han dado de alta, y la que pueden haber dado error, sintáctico o semántico.
+
+
+
+
+                                                                  Página: 13/15
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                      Versión: 0.1.2
+
+      Ejemplo de respuesta con DocumentStatus
+
+
+
+
+        Todas las respuestas incluirán una cabecera general, donde se indica si la
+petición se ha ejecutado correctamente (200), parcialmente (406) o rechazo completo
+(400).
+
+
+
+
+       Además, contendrá un DocumentReference por cada factura dada de alta o
+con error, incluyendo su identificador único y también el localizador externo.
+
+
+                                   5.3. Servicio de Anulación
+      [PENDIENTE DE PUBLICACION]
+
+                                   5.4. Servicio de Consulta por Id
+      [PENDIENTE DE PUBLICACION]
+
+                                   5.5. Servicio de Consulta por Filtro
+      [PENDIENTE DE PUBLICACION]
+
+                                   5.6. Servicio de Descarga por
+                                        localizador
+      [PENDIENTE DE PUBLICACION]
+
+
+
+                                                                Página: 14/15
+   Departamento de Informática Tributaria
+   Subdirección General Aplicaciones
+
+
+Solución Pública de Facturación               Versión: 0.1.2
+
+                             5.7. Servicio de Descarga por ID
+[PENDIENTE DE PUBLICACION]
+
+                             5.8. Servicio de acciones del
+                                  Emisor
+[PENDIENTE DE PUBLICACION]
+
+                             5.9. Servicio de acciones del
+                                  Destinatario
+[PENDIENTE DE PUBLICACION]
+
+
+
+
+                                                  Página: 15/15
+

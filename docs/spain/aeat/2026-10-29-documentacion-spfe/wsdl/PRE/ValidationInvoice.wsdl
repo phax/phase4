@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ValidationInvoiceService"
+    targetNamespace="https://www.agenciatributaria.gob.es/spfe/ns/services/ValidationInvoice/v1"
+    xmlns:tns="https://www.agenciatributaria.gob.es/spfe/ns/services/ValidationInvoice/v1"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:ubl="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+    xmlns:ublds="urn:oasis:names:specification:ubl:schema:xsd:DocumentStatus-2">
+
+    <wsdl:documentation>
+        SPFE (Solución Pública de Factura Electrónica) - servicio ValidationInvoice - entorno PRE.
+
+        Servicio SOAP 1.2 document/literal (sin mensajería ebXML):
+        - Los mensajes son SOAP 1.2: el sobre va como application/soap+xml, con el
+          parámetro action igual al soapAction de la operación.
+        - El body de la petición es directamente una factura UBL: elemento ubl:Invoice,
+          de tipo InvoiceType.
+        - El body de la respuesta es un documento UBL DocumentStatus (elemento
+          ublds:DocumentStatus, de tipo DocumentStatusType) con los errores de validación
+          detectados.
+        - Los errores se devuelven como SOAP Fault estándar de SOAP 1.2 (env:Code/env:Value
+          y env:Reason/env:Text), sin elemento env:Detail propio, en una respuesta
+          application/soap+xml con estado HTTP 400 o 500.
+
+        Acceso: dos puertos alternativos y equivalentes, cada uno con su propio dominio:
+        - ValidationInvoiceCertPort: acceso con certificado electrónico (no de sello).
+        - ValidationInvoiceSealPort: acceso con certificado de sello electrónico.
+    </wsdl:documentation>
+
+    <!-- ============================================================
+         TYPES
+         Se importan los esquemas UBL de la factura (Invoice / InvoiceType)
+         y del estado de documento (DocumentStatus / DocumentStatusType),
+         con rutas relativas a este WSDL. Los esquemas UBL deben estar bajo
+         xsd/ con la estructura oficial de OASIS (maindoc/ y common/).
+         ============================================================ -->
+    <wsdl:types>
+        <xsd:schema targetNamespace="https://www.agenciatributaria.gob.es/spfe/ns/services/ValidationInvoice/v1" elementFormDefault="qualified">
+            <xsd:import
+                namespace="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+                schemaLocation="xsd/ubl-2.5/maindoc/UBL-Invoice-2.5.xsd"/>
+
+            <xsd:import
+                namespace="urn:oasis:names:specification:ubl:schema:xsd:DocumentStatus-2"
+                schemaLocation="xsd/ubl-2.5/maindoc/UBL-DocumentStatus-2.5.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+
+    <!-- ============================================================
+         MESSAGES
+         ============================================================ -->
+    <wsdl:message name="ValidationInvoiceRequest">
+        <wsdl:part name="invoice" element="ubl:Invoice"/>
+    </wsdl:message>
+
+    <wsdl:message name="ValidationInvoiceResponse">
+        <wsdl:part name="documentStatus" element="ublds:DocumentStatus"/>
+    </wsdl:message>
+
+    <!-- ============================================================
+         PORT TYPE
+         ============================================================ -->
+    <wsdl:portType name="ValidationInvoicePortType">
+        <wsdl:operation name="ValidationInvoice">
+            <wsdl:documentation>
+                Recibe una factura UBL (ubl:Invoice) y devuelve un UBL DocumentStatus
+                (ublds:DocumentStatus) con los errores de validación detectados.
+            </wsdl:documentation>
+            <wsdl:input name="ValidationInvoiceInput" message="tns:ValidationInvoiceRequest"/>
+            <wsdl:output name="ValidationInvoiceOutput" message="tns:ValidationInvoiceResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <!-- ============================================================
+         BINDING: SOAP 1.2, document/literal
+         - faults: SOAP 1.2 estándar (env:Code, env:Reason)
+         ============================================================ -->
+    <wsdl:binding name="ValidationInvoiceSoapBinding" type="tns:ValidationInvoicePortType">
+        <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="ValidationInvoice">
+            <soap12:operation soapAction="https://www.agenciatributaria.gob.es/spfe/ns/services/ValidationInvoice/v1/ValidationInvoice"/>
+            <wsdl:input name="ValidationInvoiceInput">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="ValidationInvoiceOutput">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <!-- ============================================================
+         SERVICE
+         Un wsdl:port admite una única dirección (especificación WSDL 1.1,
+         sec. 2.6), por eso cada modo de acceso, con su dominio, es un
+         puerto distinto.
+         Los dos puertos son alternativas equivalentes del mismo servicio.
+         ============================================================ -->
+    <wsdl:service name="ValidationInvoiceService">
+        <wsdl:port name="ValidationInvoiceCertPort" binding="tns:ValidationInvoiceSoapBinding">
+            <wsdl:documentation>Acceso con certificado electrónico (no de sello).</wsdl:documentation>
+            <soap12:address location="https://prewww1.aeat.es/wlpl/SPFE-FACT/ws/ValidationInvoiceSOAP"/>
+        </wsdl:port>
+        <wsdl:port name="ValidationInvoiceSealPort" binding="tns:ValidationInvoiceSoapBinding">
+            <wsdl:documentation>Acceso con certificado de sello electrónico.</wsdl:documentation>
+            <soap12:address location="https://prewww10.aeat.es/wlpl/SPFE-FACT/ws/ValidationInvoiceSOAP"/>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

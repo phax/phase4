@@ -1,0 +1,1006 @@
+              Departamento de Informática Tributaria
+              Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                                Versión: 0.1.3
+
+
+              Catálogo de Servicios de la SPFE
+
+
+
+
+Autor: AEAT                   Fecha:            16/10/2026      Versión:          0.1.3
+
+
+
+
+Revisiones
+Edic. Rev.      Fecha         Descripción                                        A(*)     Páginas
+
+0      0.1.0    09/10/2026    Versión inicial
+
+0      0.1.1    15/10/2026    Cambio menor en servicio de consulta y tamaño de
+                              factura en KB.
+0      0.1.2    16/10/2026    Se actualiza la ruta a estándar UBL 2.5 (OASIS)
+
+0      0.1.3    20/10/2026    Modificado formato método de envío – Sección 4.3
+
+
+
+
+(*) Acción:     A = Añadir;      R = Reemplazar
+
+
+
+
+                                                                             Página: 1/21
+             Departamento de Informática Tributaria
+             Subdirección General Aplicaciones
+
+
+        Solución Pública de Facturación                              Versión: 0.1.3
+
+
+
+
+Índice
+
+1.     INTRODUCCIÓN                                                                       4
+
+2.     CONTROL DE VERSIONES                                                               5
+
+2.1.    Versión 0.1.0                                                                      5
+
+
+3.     ESQUEMA GENERAL DE FUNCIONAMIENTO                                                  6
+
+4.     ESTÁNDARES Y REQUISITOS                                                            7
+
+4.1.    Introducción                                                                       7
+
+4.2.    Estándares utilizados                                                              7
+
+4.3.    Medio de envío                                                                     8
+
+
+5.     CONSIDERACIONES DE DISEÑO                                                          9
+
+5.1.    Comunicación de incidencias en el procesado de peticiones                          9
+
+
+6.     DISEÑO                                                                             10
+
+6.1.    Catálogo de servicios                                                             10
+
+6.2.     Detalle del servicio de Remisión de facturas electrónicas                        10
+   6.2.1.     Resumen técnico                                                             10
+   6.2.2.     Descripción funcional                                                       10
+   6.2.3.     Restricciones                                                               11
+
+6.3.     Detalle del servicio de Anulación de facturas                                    11
+   6.3.1.     Resumen técnico                                                             11
+   6.3.2.     Descripción funcional                                                       11
+   6.3.3.     Restricciones                                                               12
+
+6.4.     Detalle del servicio de Consulta por identificador                               12
+   6.4.1.     Resumen técnico                                                             12
+   6.4.2.     Descripción funcional                                                       12
+   6.4.3.     Restricciones                                                               13
+
+6.5.    Detalle del servicio de Consulta por filtro de fechas                             13
+
+                                                                           Página: 2/21
+              Departamento de Informática Tributaria
+              Subdirección General Aplicaciones
+
+
+           Solución Pública de Facturación                              Versión: 0.1.3
+
+  6.5.1.      Resumen técnico                                                                13
+  6.5.2.      Descripción funcional                                                          13
+  6.5.3.      Restricciones                                                                  14
+
+6.6.     Detalle del servicio de Descarga por identificador                                  14
+   6.6.1.     Resumen técnico                                                                14
+   6.6.2.     Descripción funcional                                                          14
+   6.6.3.     Restricciones                                                                  15
+
+6.7.     Detalle del servicio de Descarga por localizador                                    15
+   6.7.1.     Resumen técnico                                                                15
+   6.7.2.     Descripción funcional                                                          15
+
+6.8.     Detalle del servicio de Comunicación de estados destinatario                        16
+   6.8.1.     Resumen técnico                                                                16
+   6.8.2.     Descripción funcional                                                          16
+   6.8.3.     Restricciones                                                                  17
+
+6.9.     Detalle del servicio de Comunicación de estados emisor                              17
+   6.9.1.     Resumen técnico                                                                17
+   6.9.2.     Descripción funcional                                                          18
+
+6.10. Detalle del servicio de Validación de factura (sólo PRE)                               19
+   6.10.1. Resumen técnico                                                                   19
+   6.10.2. Descripción funcional                                                             19
+   6.10.3. Restricciones                                                                     20
+
+
+7. ANEXO I: DEFINICIÓN DE SERVICIOS Y ESQUEMAS (ENTORNO DE
+PREPRODUCCIÓN)                                                                               21
+
+7.1.    Definición de servicios                                                              21
+
+
+
+
+                                                                              Página: 3/21
+            Departamento de Informática Tributaria
+            Subdirección General Aplicaciones
+
+
+        Solución Pública de Facturación                               Versión: 0.1.3
+
+
+1.      Introducción
+El presente documento tiene por objeto describir el catálogo de servicios web de la Solución
+Pública de Facturación Electrónica (SPFE), así como las principales características técnicas y
+funcionales asociadas a cada uno de los servicios disponibles.
+
+
+La SPFE permite la interoperabilidad entre los sistemas de facturación de los emisores y
+destinatarios de facturas electrónicas y la solución pública, mediante servicios web basados en el
+intercambio de mensajes XML. El catálogo recoge las operaciones disponibles para la remisión,
+anulación, consulta y descarga de facturas electrónicas, así como para la comunicación de los
+diferentes estados asociados a las mismas.
+
+
+Para cada servicio se detallan su interfaz técnica, los mecanismos de autorización y representación
+aplicables, el formato de las peticiones y respuestas, su funcionamiento y las principales
+restricciones que deben tenerse en cuenta para su utilización.
+
+
+Asimismo, se incluyen las consideraciones generales relativas a los estándares, protocolos y
+mecanismos de comunicación utilizados por la SPFE, así como la definición de los servicios y
+esquemas correspondientes al entorno de preproducción.
+
+
+Este documento está dirigido principalmente a los desarrolladores y responsables técnicos de los
+sistemas que deban integrarse con la SPFE, y tiene como finalidad facilitar la correcta
+implementación de las comunicaciones con los servicios proporcionados por la Agencia Estatal de
+Administración Tributaria.
+
+
+
+
+                                                                              Página: 4/21
+        Departamento de Informática Tributaria
+        Subdirección General Aplicaciones
+
+
+     Solución Pública de Facturación        Versión: 0.1.3
+
+2.   Control de versiones
+
+     2.1.   Versión 0.1.0
+     Creación del documento.
+
+
+
+
+                                                  Página: 5/21
+           Departamento de Informática Tributaria
+           Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                            Versión: 0.1.3
+
+3.     Esquema general de funcionamiento
+
+Los sistemas realizarán la remisión de información por vía telemática, concretamente mediante
+Servicios Web SOAP basados en el intercambio de mensajes XML. Todos los mensajes enviados
+se responden de forma síncrona y los sistemas deberán procesar adecuadamente los mensajes de
+respuesta a los envíos realizados.
+
+
+
+
+                                                                         Página: 6/21
+            Departamento de Informática Tributaria
+            Subdirección General Aplicaciones
+
+
+        Solución Pública de Facturación                                  Versión: 0.1.3
+
+4.      Estándares y requisitos
+
+        4.1.     Introducción
+El contenido de un mensaje es un fichero XML y codificación a utilizar debe ser UTF-8.
+
+Un documento XML debe cumplir las reglas descritas en los diferentes esquemas, los cuales
+proporcionan normas respecto a formatos, obligatoriedad, etc. pero, en cualquier caso, la coherencia
+de los datos debe garantizarse en origen por quienes intervengan en la preparación y remisión de
+los datos.
+
+La remisión a través del servicio web podrá ser efectuada por el obligado tributario, un apoderado
+suyo a este trámite o un colaborador social, que deberá disponer de un certificado electrónico
+cualificado reconocido. Todos los NIFs se tienen que validar contra la “Base de Datos Centralizada
+de la AEAT”.
+
+
+
+        4.2.     Estándares utilizados
+El uso de servicios Web constituye la base de las buenas prácticas para desplegar servicios que
+posibiliten la interacción máquina-máquina, es decir, la automatización integral de un proceso en el
+que intervienen varios sistemas de información (el del ciudadano/empresa y el de la Agencia
+Tributaria).
+
+Se pretende utilizar los estándares de facto para el desarrollo de servicios Web.
+
+
+        •   [SOAP12-1] W3C, SOAP Version 1.2 Part 1: Messaging Framework (Second Edition),
+            W3C Recommendation, 27 April 2007.
+            URL oficial: https://www.w3.org/TR/soap12-part1/
+        •   RFC2392] IETF, Content-ID and Message-ID Uniform Resource Locators (RFC 2392).
+            Define el esquema URI cid: utilizado para identificar partes MIME mediante su Content-
+            ID.
+        •   [SOAPATT] W3C, SOAP Messages with Attachments.
+            https://www.w3.org/TR/SOAP-attachments/
+        •   [RFC2387] IETF, The MIME Multipart/Related Content-type.
+            Define el contenedor multipart/related empleado para agrupar el mensaje SOAP y sus
+            adjuntos.
+        •   [WSDL11] W3C, Web Services Description Language (WSDL) 1.1, W3C Note, 15
+            March 2001.
+            URL oficial: https://www.w3.org/TR/2001/NOTE-wsdl-20010315
+        •   [EBMS30] OASIS, OASIS ebXML Messaging Services Version 3.0: Part 1, Core
+            Features, OASIS Standard, 1 October 2007.
+            URL oficial: https://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms_core-3.0-
+            spec.html
+        •   [AS4] OASIS, AS4 Profile of ebMS 3.0 Version 1.0.
+            URL oficial: https://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/200707/as4-
+            profile.html
+        •   [UBL25] OASIS, Universal Business Language Version 2.5.
+            URL oficial: https://docs.oasis-open.org/ubl/os-UBL-2.5/
+
+
+
+
+                                                                                Página: 7/21
+            Departamento de Informática Tributaria
+            Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                               Versión: 0.1.3
+
+        4.3.    Medio de envío
+Entorno: Internet.
+Protocolo: HTTPS.
+Mensajes: Web Service con SOAP 1.2 modo Document.
+Certificado: Las aplicaciones que envían información a los servicios web deberán autenticarse con
+certificado electrónico cualificado reconocido.
+Codificación: UTF-8. La entrada es un XML que se debe adecuar a la especificación del siguiente
+esquema de entrada XSD.
+
+
+
+
+                                                                            Página: 8/21
+             Departamento de Informática Tributaria
+             Subdirección General Aplicaciones
+
+
+        Solución Pública de Facturación                                         Versión: 0.1.3
+
+5.      Consideraciones de diseño
+        5.1.      Comunicación de incidencias en el procesado de
+                  peticiones
+
+En caso de incidencias al procesar el XML, serán comunicadas tal como se describen en el
+protocolo SOAP V1.1, es decir utilizando el elemento “Fault”.
+
+A modo de resumen como respuesta a una remisión se pueden producir los siguientes
+casos:
+
+
+Resultado en el lado cliente                                 Acción
+
+Se recibe una respuesta con XML esperado. (Puede ser
+                                                             200 (OK). Mensaje procesado
+de admisión o rechazo de la remisión)
+
+Se recibe un respuesta con elemento “Fault” y “faultcode”
+                                                             Reenviar mensaje
+del tipo “soapenv:Server”
+
+                                                             El mensaje no está bien formado o contiene
+Se recibe una respuesta con elemento “Fault” y “faultcode”   información incorrecta. Compruebe el contenido
+del tipo “soapenv:Client”                                    del elemento “faultstring” para solucionar el
+                                                             problema antes de volver a enviar el mensaje.
+
+No progresa la transmisión o bien no se recibe un
+                                                             Reenviar mensaje
+documento XML que responde a lo esperado
+
+
+
+
+                                                                                      Página: 9/21
+             Departamento de Informática Tributaria
+             Subdirección General Aplicaciones
+
+
+        Solución Pública de Facturación                                Versión: 0.1.3
+
+6.       Diseño
+         6.1.     Catálogo de servicios
+
+
+Servicio web                                            Endpoint del servicio web
+
+Remisión de facturas electrónicas                       ws/SendInvoiceSOAP
+
+Anulación de facturas electrónicas                      ws/CancelInvoiceSOAP
+
+Consulta por identificador                              ws/GetInvoicesSOAP
+
+Consulta por filtro de fechas                           ws/GetRegisteredInvoiceSOAP
+
+Descarga por identificador                              ws/DownloadInvoicesByIDSOAP
+
+Descarga por localizador                                ws/DownloadInvoicesByLOCSOAP
+
+Comunicación de estados destinatario                    ws/CustomerInvoiceEventsSOAP
+
+Comunicación de estados emisor                          ws/SupplierInvoiceEventsSOAP
+
+Validación de factura (sólo PRE)                        ws/InvoiceValidationSOAP
+
+
+
+
+         6.2.     Detalle del servicio de Remisión de facturas electrónicas
+6.2.1. Resumen técnico
+
+          Endpoint: ws/SendInvoiceSOAP
+          Entrada: ebXML + N Multipart (InvoiceType)
+          Salida: ebXML + 1 Multipart (DocumentStatus)
+          Autorización: Apoderamiento y Colaborador Social
+          Valor campo ebXML Action: SUBMITINVOICE
+
+
+6.2.2. Descripción funcional
+
+         Permite incorporar facturas electrónicas a la SPFE mediante servicios web, procesando y
+         validando su contenido y comunicando el resultado de la operación. El envío facturas
+         electrónicas se realiza en remesas. En dichas remesas pueden existir facturas de distintos
+         emisores, evaluando la representación de forma individual.
+
+         El identificador único de factura en la SPFE está compuesto por los datos de negocio que
+         identifican de manera única a una factura:
+
+         NIF del emisor + Nº de serie-factura + Fecha de expedición.
+
+
+         Si las remesas de facturas electrónicas no cumplen las validaciones sintácticas a nivel de
+         formato XML, se devolverá un mensaje de tipo «SoapFault», en el que se especificará el
+
+                                                                             Página: 10/21
+              Departamento de Informática Tributaria
+              Subdirección General Aplicaciones
+
+
+       Solución Pública de Facturación                                   Versión: 0.1.3
+
+        error                                                                               concreto.
+
+        Si supera las validaciones a nivel de formato XML, se procederá a realizar las validaciones:
+            • Validación semántica europea EN 16931
+            • Validación semántica de reglas de negocio de la AEAT.
+
+        devolviéndose un mensaje de respuesta con el resultado de la validación y de su aceptación
+        o no por la AEAT. Se recomienda ver documento de Validaciones y errores en Portal de
+        Desarrolladores.
+
+
+6.2.3. Restricciones
+
+        •     Remesas: de 1 a 100 facturas.
+
+        •     No podrá existir en la SPFE varias facturas electrónicas con el mismo identificador,
+              siendo necesario anular la factura previamente, para poder reautilizar el identificador.
+
+        •     Se podrán remitir originales y copias indistintamente en una misma remesa, recibiendo
+              ambos el mismo tratamiento.
+
+        •     Máximo de tamaño de factura: 5120 KBytes de forma unitaria.
+
+        •     No se admiten adjuntos, no podrán existir binarios en nodos de tipo:
+
+                  cbc:EmbeddedDocumentBinaryObject
+                  cbc:EmbeddedDocument
+
+        Estarían permitidos los adjuntos como URL, por ejemplo, donde incluir un albarán o pedido
+de una ubicación de la plataforma o ERP:
+
+        <cac:Attachment>
+          <cac:ExternalReference>
+            <cbc:URI>http://www.suppliersite.eu/sheet001.html</cbc:URI>
+          </cac:ExternalReference>
+        </cac:Attachment>
+
+
+        6.3.      Detalle del servicio de Anulación de facturas
+6.3.1. Resumen técnico
+
+            Endpoint: ws/CancelInvoiceSOAP
+            Entrada: ebXML + 1 Multipart (ApplicationResponse)
+            Salida: ebXML + 1 Multipart (DocumentStatus)
+            Autorización: Apoderamiento y Colaborador Social
+            Valor campo ebXML Action: CANCELINVOICE
+
+
+6.3.2. Descripción funcional
+
+        Permite cancelar una factura electrónica previamente remitida a la SPFE, eliminándola de la
+        solución pública de facturación electrónica. La operación de cancelación se realizará
+
+
+                                                                               Página: 11/21
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                                   Versión: 0.1.3
+
+      mediante el envío de un documento ApplicationResponse que identifica la factura que se
+      desea cancelar.
+
+      La cancelación de una factura electrónica en la SPFE estará limitada a aquellos supuestos
+      en los que se trate de una operación incorrecta y no resulte exigible la emisión de una
+      factura rectificativa u otro mecanismo previsto en el Reglamento de Facturación.
+
+      A modo de ejemplo, podrá utilizarse esta operación cuando se haya expedido una factura
+      por error y no haya existido una operación o venta real que justifique su emisión.
+
+      El identificador de la factura objeto de cancelación estará compuesto por los datos de
+      negocio que identifican de manera única a una factura:
+
+      NIF del emisor + Nº de serie-factura + Fecha de expedición.
+
+      Una vez realizada la cancelación, la factura dejará de estar disponible como factura activa
+      en la SPFE.
+
+      Si la factura ha sido cancelada correctamente, podrá remitirse posteriormente una nueva
+      factura reutilizando el mismo identificador de la factura cancelada.
+
+      La operación se encuentra incluida en el Anexo I, junto con la operación de remisión de
+      facturas electrónicas.
+
+
+6.3.3. Restricciones
+
+
+      Solo podrán cancelarse facturas electrónicas previamente remitidas a la SPFE.
+
+      La petición de cancelación deberá contener un único documento ApplicationResponse.
+
+
+
+      6.4.    Detalle del servicio de Consulta por identificador
+6.4.1. Resumen técnico
+
+        Endpoint: ws/GetInvoicesSOAP
+        Entrada: ebXML + 1 Multipart (ApplicationResponse)
+        Salida: ebXML + 1 Multipart (DocumentStatus)
+        Autorización: Apoderamiento y Colaborador Social (*)
+        Valor campo ebXML Action: QUERYBYID
+      (*) Siempre que haya sido remitido por dicho colaborador social
+
+
+
+6.4.2. Descripción funcional
+
+      Permite consultar una factura electrónica concreta incorporada a la SPFE mediante su
+      identificador único.
+
+      Para realizar la consulta será necesario indicar si se actúa como emisor o destinatario de la
+      factura.
+
+
+                                                                            Página: 12/21
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                                  Versión: 0.1.3
+
+      El identificador de la factura está compuesto por los datos de negocio que identifican de
+      manera única a una factura:
+
+      NIF del emisor + Nº de serie-factura + Fecha de expedición.
+
+      La respuesta de la consulta incluirá los datos de la factura encontrada, así como los estados
+      finales que pueda tener por parte del emisor y/o destinatario.
+
+      La consulta podrá realizarse en nombre propio o mediante apoderamiento. Cuando se actúe
+      como emisor y el usuario que realiza la consulta sea el propio presentador de la factura,
+      también podrá utilizarse la colaboración social.
+
+
+6.4.3. Restricciones
+
+      La consulta se realizará sobre un máximo de 1.000 identificadores de factura.
+
+      Se deberá indicar el rol con el que se actúa: emisor o destinatario.
+
+      La utilización de la colaboración social únicamente estará permitida cuando se actúe como
+      emisor y el consultante sea el propio presentador de la factura.
+
+
+
+      6.5.    Detalle del servicio de Consulta por filtro de fechas
+6.5.1. Resumen técnico
+
+        Endpoint: ws/GetRegisteredInvoiceSOAP
+        Entrada: ebXML (con filtros a través del bloque/etiqueta MessageProperties)
+        Salida: ebXML + 1 Multipart (DocumentStatus)
+        Autorización: Apoderamiento y Colaborador Social (*)
+        Valor campo ebXML Action: QUERYBYFILTER
+      (*) Siempre que haya sido remitido por dicho colaborador social
+
+
+
+6.5.2. Descripción funcional
+
+
+      Permite consultar las facturas electrónicas incorporadas a la SPFE mediante un filtro
+      basado en rangos de fecha de presentación.
+
+      Para realizar la consulta será necesario indicar si se actúa como emisor o destinatario de
+      las facturas.
+
+      La respuesta de la consulta incluirá, para cada factura encontrada, los datos de la factura,
+      así como los estados finales que pueda tener por parte del emisor y/o destinatario.
+
+      La selección de las facturas se realizará atendiendo a su fecha de presentación en la SPFE.
+      La consulta podrá realizarse en nombre propio o mediante apoderamiento. Cuando se actúe
+      como emisor y el usuario que realiza la consulta sea el propio presentador de las facturas,
+      también podrá utilizarse la colaboración social.
+
+
+
+                                                                             Página: 13/21
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                                  Versión: 0.1.3
+
+6.5.3. Restricciones
+
+      El resultado de la consulta estará limitado a un máximo de 1.000 facturas.
+
+      En caso de que el número de facturas resultante supere dicho límite, se podrá utilizará un
+      mecanismo de paginación mediante clave (SECUENCE_ID), para obtener los siguientes
+      resultados hasta llegar al límite.
+
+      Se deberá indicar el rol con el que se actúa: emisor o destinatario.
+
+      La utilización de la colaboración social únicamente estará permitida cuando se actúe como
+      emisor y el consultante sea el propio presentador de las facturas.
+
+
+
+
+      6.6.    Detalle del servicio de Descarga por identificador
+6.6.1. Resumen técnico
+
+        Endpoint: ws/DownloadInvoicesByIDSOAP
+        Entrada: ebXML+1 Multipart (ApplicationResponse con N DocumentReference)
+        Salida: ebXML + N Multipart (InvoiceType)
+        Autorización: Apoderamiento y Colaborador Social (*)
+        Valor campo ebXML Action: DOWNLOADBYID
+      (*) Siempre que haya sido remitido por dicho colaborador social
+
+
+
+6.6.2. Descripción funcional
+
+      Permite descargar facturas electrónicas incorporadas a la SPFE mediante su identificador
+      único.
+
+      La petición recibida consiste en un mensaje ebXML que contiene un único
+      ApplicationResponse, dentro del cual podrán incluirse varias referencias a documentos
+      mediante elementos DocumentReference.
+      El servicio procesará las referencias recibidas y, como respuesta, devolverá un
+      InvoiceType por cada documento solicitado, conteniendo la correspondiente factura
+      electrónica.
+
+      Para realizar la descarga será necesario indicar si se actúa como emisor o destinatario de la
+      factura.
+
+      El identificador de la factura está compuesto por los datos de negocio que identifican de
+      manera única a una factura:
+
+      NIF del emisor + Nº de serie-factura + Fecha de expedición.
+
+      Se recomienda encarecidamente la utilización del mecanismo de descarga por localizador
+      frente a la descarga por identificador, especialmente para su utilización por plataformas, al
+      permitir identificar la factura mediante un localizador específico.
+
+
+
+
+                                                                             Página: 14/21
+              Departamento de Informática Tributaria
+              Subdirección General Aplicaciones
+
+
+          Solución Pública de Facturación                                  Versión: 0.1.3
+
+6.6.3. Restricciones
+
+          Las remesas de descarga estarán limitadas a un máximo de 100 facturas electrónicas.
+
+          Se deberá indicar el rol con el que se actúa: emisor o destinatario.
+
+          En caso de que alguna de las facturas solicitadas no pueda ser descargada, se devolverá
+          un mensaje de error en el que se identificarán las referencias de las facturas afectadas.
+
+          Cuando una factura no pueda descargarse por no disponer de un localizador, la respuesta
+          se declarará con error HTTP 400 y el atributo href correspondiente al localizador se
+          encontrará sin contenido.
+
+
+
+          6.7.    Detalle del servicio de Descarga por localizador
+6.7.1. Resumen técnico
+
+           Endpoint: ws/ ws/DownloadInvoicesByLOCSOAP
+           Entrada: ebXML + 1 Multipart (ApplicationResponse con N DocumentReference sólo con
+ el ID)
+         Salida: ebXML + N Multipart (InvoiceType)
+         Autorización: Comprobación del certificado de la plataforma con los NIUs del localizador.
+ Si negativo, comprobación vía apoderamiento.
+         Valor campo ebXML Action: DOWNLOADBYLOC
+
+
+6.7.2. Descripción funcional
+
+          Permite descargar facturas electrónicas incorporadas a la SPFE mediante su localizador.
+
+          La petición recibida consiste en un mensaje ebXML que contiene un único
+          ApplicationResponse, dentro del cual podrán incluirse varias referencias a documentos
+          mediante elementos DocumentReference.
+
+          El servicio procesará las referencias recibidas y, como respuesta, devolverá un
+          InvoiceType por cada documento solicitado, conteniendo la correspondiente factura
+          electrónica.
+
+          Para realizar la descarga será necesario indicar si se actúa como emisor o destinatario de la
+          factura.
+
+          La diferencia respecto de la descarga por identificador se encuentra exclusivamente en el
+          mecanismo utilizado para identificar la factura, utilizándose en este caso el localizador de la
+          factura.
+
+          Se recomienda encarecidamente la utilización de este mecanismo de descarga frente a la
+          descarga por identificador, especialmente para su utilización por plataformas, al facilitar la
+          identificación y recuperación de las facturas.
+
+
+
+
+                                                                                 Página: 15/21
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                                 Versión: 0.1.3
+
+      6.8.    Detalle del servicio de Comunicación de estados
+              destinatario
+6.8.1. Resumen técnico
+
+       Endpoint: ws/CustomerInvoiceEventsSOAP
+       Entrada: ebXML + 1 Multipart (ApplicationResponse)
+       Salida: ebXML + 1 Multipart (DocumentStatus)
+       Autorización: Apoderamiento y Colaborador Social
+       Valor campo ebXML Action: ACCOUNTINGCUSTOMERPARTYACTION
+
+
+6.8.2. Descripción funcional
+
+      Permite al destinatario comunicar y gestionar el estado de las facturas electrónicas desde el
+      punto de vista del pago o del rechazo comercial.
+
+      Todas las facturas que se incorporan a la SPFE se consideran inicialmente aceptadas. A
+      partir de ese momento, el destinatario podrá realizar acciones sobre la factura, siendo los
+      estados de pago y rechazo comercial mutuamente excluyentes.
+
+      Las acciones que pueden realizarse son:
+
+          •   Pago: permite comunicar el pago efectivo y completo de la factura, indicando la
+              fecha efectiva de pago y los indicadores o fechas asociadas que correspondan,
+              como la fecha de recepción de la mercancía, la fecha de entrega de los bienes o
+              servicios o el indicador de factura prepagada.
+
+              No se informará el importe pagado, ya que el sistema considera siempre que se
+              trata del pago total de la factura, no admitiéndose pagos parciales.
+
+          •   Cancelación del pago: permite anular una comunicación de pago realizada
+              previamente. Esta operación deberá utilizarse, por ejemplo, cuando se haya
+              comunicado incorrectamente la fecha efectiva de pago y sea necesario subsanar la
+              información.
+
+          •   Rechazo comercial: permite comunicar el rechazo de una factura por parte del
+              destinatario, indicando un motivo de rechazo tasado.
+
+          •   Cancelación del rechazo comercial: permite anular un rechazo comercial
+              comunicado previamente, devolviendo la factura al estado de «aceptada» desde el
+              punto de vista del destinatario.
+
+              Una vez cancelado un pago o un rechazo comercial, podrá volver a comunicarse
+              la acción que corresponda sobre la factura.
+
+      El pago y el rechazo comercial son estados excluyentes, por lo que una factura no podrá
+      estar simultáneamente pagada y rechazada.
+
+      El pago, o en su defecto el rechazo comercial, constituye el único estado de la factura que
+      debe ser informado obligatoriamente.
+
+
+
+                                                                            Página: 16/21
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                                Versión: 0.1.3
+
+      Las operaciones se identificarán mediante los siguientes códigos:
+
+  ResponseCode               Significado                         Cuándo
+
+                                                                 Cuando se realiza el      pago
+  PAYMENT                    Pago efectivo completo
+                                                                 completo de la factura.
+
+                                                                 Para anular una comunicación
+  CANCELPAYMENT              Cancelación del pago comunicado
+                                                                 PAYMENT anterior.
+
+                                                                 Cuando el destinatario rechaza
+  REJECTION                  Rechazo de la factura
+                                                                 la factura.
+
+                                                                 Para anular una comunicación
+  CANCELREJECTION            Cancelación del rechazo
+                                                                 REJECTION anterior.
+
+
+      La petición recibida será un mensaje ebXML que contiene un único ApplicationResponse,
+      en el que podrán incluirse las distintas comunicaciones de estado del destinatario.
+
+      Cada comunicación deberá incluir obligatoriamente la referencia a la factura asociada.
+
+
+6.8.3. Restricciones
+
+      En un mismo ApplicationResponse podrán incluirse comunicaciones de pago, cancelación
+      de pago, rechazo comercial y cancelación de rechazo comercial, hasta un máximo de
+      100 estados.
+
+      No podrán mezclarse en un mismo ApplicationResponse los estados correspondientes al
+      destinatario con los estados correspondientes al emisor.
+
+      No podrán realizarse acciones duplicadas sobre una misma factura.
+
+      No se admitirán pagos parciales. La comunicación PAYMENT implica siempre el pago
+      completo de la factura.
+
+      Para modificar una comunicación de pago ya realizada, será necesario efectuar
+      previamente su cancelación (CANCELPAYMENT).
+
+      Para modificar o anular un rechazo comercial ya comunicado, será necesario efectuar
+      previamente su cancelación (CANCELREJECTION).
+
+      El pago y el rechazo comercial son mutuamente excluyentes.
+
+      Todas las operaciones deberán incluir la referencia a la factura electrónica sobre la que se
+      realiza la acción.
+
+
+
+      6.9.    Detalle del servicio de Comunicación de estados emisor
+6.9.1. Resumen técnico
+
+       Endpoint: ws/SupplierInvoiceEventsSOAP
+       Entrada: ebXML + 1 Multipart (ApplicationResponse)
+       Salida: ebXML + 1 Multipart (DocumentStatus)
+
+                                                                           Página: 17/21
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                                 Versión: 0.1.3
+
+       Autorización: Apoderamiento y Colaborador Social
+       Valor campo ebXML Action: ACCOUNTINGSUPPLIERPARTYACTION
+
+
+6.9.2. Descripción funcional
+
+      Permite al emisor comunicar y gestionar el estado de las facturas electrónicas desde el
+      punto de vista del cobro o del impago.
+
+      Todas las facturas que se incorporan a la SPFE se consideran inicialmente aceptadas. A
+      partir de ese momento, tanto el emisor como el destinatario podrán realizar cambios sobre
+      la factura.
+
+      Desde el punto de vista del emisor, podrán realizarse las siguientes acciones:
+
+          •    Cobro: permite comunicar el cobro efectivo y completo de la factura, indicando la
+               fecha efectiva de cobro y los indicadores o fechas asociadas que correspondan,
+               como la fecha de recepción de la mercancía, la fecha de entrega de los bienes o
+               servicios o el indicador de mecanismo de financiación.
+
+               No se informará el importe cobrado, ya que se considera siempre que se trata del
+               cobro total de la factura, no admitiéndose cobros parciales.
+
+          •    Cancelación del cobro: permite anular una comunicación de cobro realizada
+               previamente. Esta operación deberá utilizarse, por ejemplo, cuando se haya
+               comunicado incorrectamente la fecha efectiva de cobro y sea necesario subsanar
+               la información.
+
+          •    Impago: permite comunicar que la factura ha resultado impagada, indicando la
+               fecha de vencimiento del pago y los indicadores o fechas asociadas que
+               correspondan.
+
+          •    Cancelación del impago: permite anular una comunicación de impago realizada
+               previamente.
+
+
+      Los estados de cobro e impago son mutuamente excluyentes, por lo que una factura no
+      podrá encontrarse simultáneamente en ambos estados.
+
+      Cuando sea necesario modificar una comunicación de cobro ya realizada, será necesario
+      efectuar previamente su cancelación (CANCELSETTLEMENT), devolviendo la factura al
+      estado de «aceptada» desde el punto de vista del emisor, para posteriormente realizar una
+      nueva comunicación de cobro con la información correcta.
+
+      El cobro y el impago son estados de información opcional de la factura.
+
+      Las operaciones se identificarán mediante los siguientes códigos:
+
+  ResponseCode               Significado                          Cuándo
+
+                                                                  Cuando    el     emisor    cobra
+  SETTLEMENT                 Cobro efectivo completo
+                                                                  íntegramente la factura.
+
+  CANCELSETTLEMENT           Cancelación del cobro efectivo       Para anular un SETTLEMENT
+
+
+                                                                            Página: 18/21
+            Departamento de Informática Tributaria
+            Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                                 Versión: 0.1.3
+
+  ResponseCode                Significado                         Cuándo
+
+                                                                  anterior.
+
+                                                                  Cuando la      factura   resulta
+  DEFAULT                     Impago
+                                                                  impagada.
+
+                                                                  Para anular     un   DEFAULT
+  CANCELDEFAULT               Cancelación del impago
+                                                                  anterior.
+
+
+      La petición recibida será un mensaje ebXML que contiene un único ApplicationResponse,
+      en el que podrán incluirse las distintas comunicaciones de estado del emisor.
+
+      Cada comunicación deberá incluir obligatoriamente la referencia a la factura asociada.
+
+
+
+      6.10. Detalle del servicio de Validación de factura (sólo PRE)
+6.10.1. Resumen técnico
+
+       Endpoint: ws/InvoiceValidationSOAP
+       Entrada: Directamente XML (InvoiceType)
+       Salida: Directamente XML (DocumentStatus)
+       Autorización: Apoderamiento y Colaborador Social
+       Valor campo ebXML Action: No aplica
+
+
+6.10.2. Descripción funcional
+
+      Permite validar una factura electrónica con carácter previo a su remisión a la SPFE,
+      comprobando que el documento cumple los requisitos establecidos para su incorporación a
+      la solución pública de facturación electrónica.
+
+      El servicio recibe directamente un documento XML de tipo InvoiceType y realiza, de forma
+      secuencial, las siguientes validaciones:
+
+            •   Validación sintáctica del documento XML, verificando que cumple la estructura y
+                formato establecidos.
+
+            •   Validación semántica conforme a la norma europea EN 16931, comprobando el
+                cumplimiento de las reglas semánticas aplicables a la factura electrónica.
+
+            •   Validación de las reglas de negocio de la SPFE, verificando el cumplimiento de las
+                condiciones y reglas específicas establecidas para la solución pública de
+                facturación electrónica.
+
+      Como resultado de las validaciones, el servicio devuelve directamente un documento XML
+      de tipo DocumentStatus, en el que se comunica el resultado de la validación y, en su caso,
+      los errores detectados.
+
+      La utilización de este servicio tiene carácter exclusivamente previo (PRE) y no supone la
+      incorporación, registro ni aceptación de la factura en la SPFE.
+
+
+
+                                                                              Página: 19/21
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                                   Versión: 0.1.3
+
+      Este servicio estará disponible únicamente en los entornos PRE y no estará disponible en
+      el entorno de producción. En consecuencia, no podrá utilizarse en producción para
+      validar facturas antes de su remisión a la SPFE.
+
+
+6.10.3. Restricciones
+
+      El servicio tiene carácter exclusivamente de validación previa (PRE) y no estará
+      disponible en el entorno de producción.
+
+      Solo podrá enviarse una única factura electrónica por petición.
+
+      La factura deberá enviarse directamente como documento XML de tipo InvoiceType, sin
+      estar embebida o adjunta en la petición.
+
+      La validación no implica la incorporación, registro ni aceptación de la factura en la
+      SPFE. Para ello será necesario realizar posteriormente la correspondiente operación de
+      remisión de factura electrónica.
+
+      El resultado satisfactorio de la validación previa no garantiza por sí mismo la aceptación de
+      la factura en el momento de su remisión, dado que las condiciones del servicio o el estado
+      de la información de la SPFE pueden haber variado entre ambas operaciones.
+
+
+
+
+                                                                            Página: 20/21
+          Departamento de Informática Tributaria
+          Subdirección General Aplicaciones
+
+
+      Solución Pública de Facturación                         Versión: 0.1.3
+
+7.     Anexo I: Definición de servicios y esquemas
+       (entorno de PREPRODUCCIÓN)
+
+       7.1.   Definición de servicios
+
+
+       La definición de los servicios (WSDL) se encuentra en la siguiente dirección:
+
+
+       https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/Fact
+uracion-electronica/wsdl_xsd.zip
+
+
+
+
+                                                                   Página: 21/21
+

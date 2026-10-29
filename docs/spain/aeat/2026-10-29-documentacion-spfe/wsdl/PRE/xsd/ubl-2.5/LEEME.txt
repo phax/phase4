@@ -1,0 +1,5 @@
+InvoiceValidation.wsdl importa los esquemas de UBL 2.5, que no se incluyen aqui.
+Copie en esta carpeta la distribucion de XSD de UBL 2.5 de OASIS (maindoc/ y common/).
+Ficheros que importa el WSDL:
+  xsd/ubl-2.5/maindoc/UBL-Invoice-2.5.xsd
+  xsd/ubl-2.5/maindoc/UBL-DocumentStatus-2.5.xsd

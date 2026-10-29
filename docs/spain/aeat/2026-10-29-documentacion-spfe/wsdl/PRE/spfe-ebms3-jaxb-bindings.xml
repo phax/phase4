@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPFE - Personalización JAXB para generar clientes de los servicios ebMS 3.0
+  (wsimport, jaxws-maven-plugin, CXF wsdl2java...).
+
+  Problema que resuelve:
+    ebms-header-3_0-200704.xsd (OASIS) declara en el attributeGroup eb3:headerExtension
+    los atributos S11:mustUnderstand y S12:mustUnderstand. JAXB/xjc nombra las propiedades
+    por el nombre local, ambos dan "mustUnderstand" y la generación aborta con:
+      Property "MustUnderstand" is already defined.
+    Aquí se renombran a s11MustUnderstand / s12MustUnderstand. Los servicios ebMS del SPFE
+    usan SOAP 1.2: la que hay que usar es setS12MustUnderstand(true).
+
+  Los componentes se localizan por espacio de nombres (SCD), no por ruta de fichero, así
+  que este mismo fichero sirve para PRE y PRO y para cualquier ubicación de los XSD.
+
+  Uso:  wsimport -extension -keep -b spfe-ebms3-jaxb-bindings.xml PRE/SendInvoice.wsdl
+        (-extension es necesario por el binding SOAP 1.2 de los WSDL)
+
+  Para toolchains javax (JDK 8, JAXB 2.x) cambie el espacio de nombres jaxb por
+  http://java.sun.com/xml/ns/jaxb y version="3.0" por version="2.1".
+-->
+<jaxb:bindings xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb" version="3.0"
+               xmlns:eb3="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+               xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:S12="http://www.w3.org/2003/05/soap-envelope">
+
+    <jaxb:bindings scd="/attributeGroup::eb3:headerExtension/@S11:mustUnderstand">
+        <jaxb:property name="S11MustUnderstand"/>
+    </jaxb:bindings>
+
+    <jaxb:bindings scd="/attributeGroup::eb3:headerExtension/@S12:mustUnderstand">
+        <jaxb:property name="S12MustUnderstand"/>
+    </jaxb:bindings>
+
+    <!-- Opcional: paquete Java de las clases ebMS (por defecto
+         org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704). Descomente y ajuste:
+    <jaxb:bindings scd="x-schema::eb3">
+        <jaxb:schemaBindings><jaxb:package name="com.miempresa.spfe.ebms3"/></jaxb:schemaBindings>
+    </jaxb:bindings>
+    -->
+</jaxb:bindings>
