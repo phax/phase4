@@ -17,6 +17,7 @@
 package com.helger.phase4.incoming.soap;
 
 import java.security.Provider;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -30,6 +31,7 @@ import com.helger.annotation.concurrent.NotThreadSafe;
 import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.equals.EqualsHelper;
+import com.helger.base.spi.ServiceLoaderHelper;
 import com.helger.collection.commons.CommonsLinkedHashMap;
 import com.helger.collection.commons.ICommonsOrderedMap;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -52,6 +54,11 @@ import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 @NotThreadSafe
 public class SoapHeaderElementProcessorRegistry
 {
+  private static final class SPIHolder
+  {
+    static final List <IAS4SoapHeaderElementProcessorRegistrarSPI> REGISTRARS = ServiceLoaderHelper.getAllSPIImplementations (IAS4SoapHeaderElementProcessorRegistrarSPI.class);
+  }
+
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (SoapHeaderElementProcessorRegistry.class);
   private final ICommonsOrderedMap <QName, ISoapHeaderElementProcessor> m_aMap = new CommonsLinkedHashMap <> ();
 
@@ -135,6 +142,11 @@ public class SoapHeaderElementProcessorRegistry
                                                                              aFallbackPModeProvider,
                                                                              aDecryptParameterModifier,
                                                                              aSigningParams));
+
+    // Last: let external modules register additional processors
+    for (final IAS4SoapHeaderElementProcessorRegistrarSPI aRegistrar : SPIHolder.REGISTRARS)
+      aRegistrar.registerSoapHeaderElementProcessors (ret);
+
     return ret;
   }
 }
