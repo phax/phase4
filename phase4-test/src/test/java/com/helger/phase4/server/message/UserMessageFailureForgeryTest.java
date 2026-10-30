@@ -131,14 +131,22 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Test
   public void testUserMessageWithInvalidMessageIDIsAcceptedIfNotEnforced () throws Exception
   {
-    // By default a pushed UserMessage on leg 1 with an invalid MessageId only leads to a warning
+    // If not enforced, a pushed UserMessage on leg 1 with an invalid MessageId only leads to a warning
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null)
                                       .getAsSoapDocument (aPayload);
     aDoc.getElementsByTagNameNS ("*", "MessageId").item (0).setTextContent (UUID.randomUUID ().toString ());
 
-    final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
-    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    SystemProperties.setPropertyValue (AS4Configuration.PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS, "false");
+    try
+    {
+      final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
+      assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    }
+    finally
+    {
+      SystemProperties.removePropertyValue (AS4Configuration.PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS);
+    }
   }
 
   @Test

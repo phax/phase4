@@ -138,7 +138,7 @@ public final class SoapHeaderElementProcessorExtractEbms3MessagingTest
   @Test
   public void testPushedLeg1InvalidMessageIDIsAcceptedIfNotEnforced () throws Exception
   {
-    SystemProperties.removePropertyValue (AS4Configuration.PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS);
+    SystemProperties.setPropertyValue (AS4Configuration.PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS, "false");
 
     for (final String sMessageID : new String [] { "   ", "abc", "<a@b>", "a b@c" })
     {

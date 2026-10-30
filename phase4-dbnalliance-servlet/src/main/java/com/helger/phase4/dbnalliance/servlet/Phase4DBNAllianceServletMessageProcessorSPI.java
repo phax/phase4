@@ -521,6 +521,22 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
       LOGGER.warn (sLogPrefix + "The revocation check of the received signing certificate is disabled.");
     }
 
+    // In DBNAlliance there must be exactly one payload. Check this first, so that additional
+    // attachments are not read.
+    final int nAttachmentCount = aIncomingAttachments == null ? 0 : aIncomingAttachments.size ();
+    if (nAttachmentCount != 1)
+    {
+      final String sDetails = "In DBNAlliance exactly one payload attachment is expected. This request has " +
+                              nAttachmentCount +
+                              " attachments";
+      LOGGER.error (sLogPrefix + sDetails);
+      aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                         .refToMessageInError (aIncomingState.getMessageID ())
+                                                         .errorDetail (sDetails)
+                                                         .build ());
+      return AS4MessageProcessorResult.createFailure ();
+    }
+
     // Read all attachments and copy them into local objects. That eventually
     // includes decompressing them.
     final ICommonsList <ReadAttachment> aReadAttachments = new CommonsArrayList <> ();
@@ -569,7 +585,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
         a.m_aXHE = new XHE10Marshaller ().setCollectErrors (aXHEErrors).read (a.m_aPayloadBytes);
 
         // Only fail if the first attachment is not an XHE. The check for
-        // exactly 1 attachment comes below
+        // exactly 1 attachment is done above
         if (nAttachmentIndex == 0 && a.m_aXHE == null)
         {
           if (aXHEErrors.isEmpty ())
@@ -618,20 +634,6 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
                         (a.m_eCompressionMode == null ? "" : " of compressed payload"));
         nAttachmentIndex++;
       }
-    }
-
-    if (aReadAttachments.size () <= 0)
-    {
-      // In DBNAlliance there must be exactly one payload
-      final String sDetails = "In DBNAlliance exactly one payload attachment is expected. This request has " +
-                              aReadAttachments.size () +
-                              " attachments";
-      LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                         .refToMessageInError (aIncomingState.getMessageID ())
-                                                         .errorDetail (sDetails)
-                                                         .build ());
-      return AS4MessageProcessorResult.createFailure ();
     }
 
     // The one and only
