@@ -25,6 +25,7 @@ import static org.junit.Assert.fail;
 
 import java.time.OffsetDateTime;
 
+import org.junit.Assume;
 import org.junit.Test;
 
 import com.helger.base.string.StringHelper;
@@ -32,6 +33,7 @@ import com.helger.collection.commons.CommonsHashSet;
 import com.helger.collection.commons.ICommonsSet;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
+import com.helger.phase4.config.AS4Configuration;
 
 /**
  * Test class for class {@link MessageHelperMethods}.
@@ -138,7 +140,9 @@ public final class MessageHelperMethodsTest
       try
       {
         MessageHelperMethods.setCustomMessageIDSuffix (s);
-        fail ("The message ID suffix '" + s + "' should be detected as invalid");
+        if (AS4Configuration.isEnforceRfc2822MessageIds ()) {
+          fail ("The message ID suffix '" + s + "' should be detected as invalid");
+        }
       }
       catch (final IllegalArgumentException ex)
       {
@@ -146,12 +150,15 @@ public final class MessageHelperMethodsTest
       }
 
     // At the end
-    assertNull (MessageHelperMethods.getCustomMessageIDSuffix ());
+    if (AS4Configuration.isEnforceRfc2822MessageIds ()) {
+      assertNull (MessageHelperMethods.getCustomMessageIDSuffix ());
+    }
   }
 
   @Test
   public void testIsValidMessageID ()
   {
+    Assume.assumeTrue(AS4Configuration.isEnforceRfc2822MessageIds());
     // Created IDs must always be valid
     assertTrue (MessageHelperMethods.isValidMessageID (MessageHelperMethods.createRandomMessageID ()));
     MessageHelperMethods.setCustomMessageIDSuffix ("super.Company12");
@@ -223,6 +230,8 @@ public final class MessageHelperMethodsTest
   @Test
   public void testCreateEbms3MessageInfo ()
   {
+    Assume.assumeTrue(AS4Configuration.isEnforceRfc2822MessageIds());
+
     final OffsetDateTime aNow = OffsetDateTime.now ();
     Ebms3MessageInfo aMI = MessageHelperMethods.createEbms3MessageInfo ("a@b", "c@d", aNow);
     assertEquals ("a@b", aMI.getMessageId ());

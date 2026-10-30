@@ -43,6 +43,7 @@ import com.helger.collection.commons.ICommonsSet;
 import com.helger.datetime.xml.XMLOffsetDateTime;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.IAS4Attachment;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3AgreementRef;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Description;
@@ -207,7 +208,8 @@ public final class MessageHelperMethods
    */
   public static boolean isValidMessageID (@Nullable final String sMessageID)
   {
-    return StringHelper.isNotEmpty (sMessageID) && RegExHelper.stringMatchesPattern (MESSAGE_ID_REGEX, sMessageID);
+    return StringHelper.isNotEmpty (sMessageID) &&
+            (!AS4Configuration.isEnforceRfc2822MessageIds() || RegExHelper.stringMatchesPattern (MESSAGE_ID_REGEX, sMessageID));
   }
 
   /**
