@@ -613,16 +613,24 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       return AS4MessageProcessorResult.createFailure ();
     }
 
+    // Undocumented, temporary property to disable rejecting on non-compliance
+    final boolean bRejectOnNonCompliance = AS4Configuration.getConfig ()
+                                                           .getAsBoolean ("phase4.peppol.inbound.reject-on-non-compliance",
+                                                                          true);
+
     // Since 4.2.6
     if (aIncomingState.getDecryptingCertificateReferenceType () != STRParser.REFERENCE_TYPE.DIRECT_REF)
     {
       final String sDetails = "The received Peppol message did not provide the decrypting certificate as a BinarySecurityToken.";
       LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.errorBuilder (aDisplayLocale)
-                                                                        .refToMessageInError (sMessageID)
-                                                                        .errorDetail (sDetails)
-                                                                        .build ());
-      return AS4MessageProcessorResult.createFailure ();
+      if (bRejectOnNonCompliance)
+      {
+        aProcessingErrorMessages.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.errorBuilder (aDisplayLocale)
+                                                                          .refToMessageInError (sMessageID)
+                                                                          .errorDetail (sDetails)
+                                                                          .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
     }
 
     if (aReceiverCheckData.isCheckAPSigningCertificateRevocation ())
@@ -661,6 +669,26 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     else
     {
       LOGGER.warn (sLogPrefix + "The revocation check of the received signing certificate is disabled.");
+    }
+
+    // The Peppol AS4 profile requires the SBDH in the first MIME attachment, and the Peppol Business
+    // Message Envelope specification requires every payload to be wrapped in an SBDH. Together that
+    // means exactly one payload. Check this first, so that additional attachments are not read.
+    final int nAttachmentCount = aIncomingAttachments == null ? 0 : aIncomingAttachments.size ();
+    if (nAttachmentCount > 1)
+    {
+      final String sDetails = "In Peppol exactly one payload attachment is expected. This request has " +
+                              nAttachmentCount +
+                              " attachments";
+      LOGGER.error (sLogPrefix + sDetails);
+      if (bRejectOnNonCompliance)
+      {
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sDetails)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
     }
 
     // Read all attachments and copy them into local objects. That eventually
@@ -710,8 +738,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         final ErrorList aSBDHErrors = new ErrorList ();
         a.m_aSBDH = new SBDMarshaller ().setCollectErrors (aSBDHErrors).read (a.m_aPayloadBytes);
 
-        // Only fail if the first attachment is not an SBDH. The check for
-        // exactly 1 attachment comes below
+        // Only fail if the first attachment is not an SBDH. More than one
+        // attachment only gets here if non-compliance is not rejected
         if (nAttachmentIndex == 0 && a.m_aSBDH == null)
         {
           if (aSBDHErrors.isEmpty ())
@@ -807,11 +835,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                                                          .build ());
       return AS4MessageProcessorResult.createFailure ();
     }
-
-    // Undocumented, temporary property to disable rejecting on non-compliance
-    final boolean bRejectOnNonCompliance = AS4Configuration.getConfig ()
-                                                           .getAsBoolean ("phase4.peppol.inbound.reject-on-non-compliance",
-                                                                          true);
 
     // Peppol seat ID check of the AS4 PartyIDs - may be disabled e.g. for Nemhandel
     final boolean bCheckSeatID = AS4Configuration.getConfig ()

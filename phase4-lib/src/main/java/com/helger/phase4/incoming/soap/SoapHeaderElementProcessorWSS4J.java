@@ -379,7 +379,7 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
       aIncomingState.setSigningCertificate (aSigningCert);
       aIncomingState.setSigningCertificateReferenceType (eSigningReferenceType);
       aIncomingState.setDecryptingCertificate (aDecryptingCert);
-      aIncomingState.setDecryptingCertificateReferenceType (eSigningReferenceType);
+      aIncomingState.setDecryptingCertificateReferenceType (eDecryptingReferenceType);
       aIncomingState.setDecryptedSoapDocument (aSOAPDoc);
 
       LOGGER.info ("phase4 --- attachment.storetemp:start");
@@ -400,7 +400,18 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
                         .build ()
                         .isFailure ())
         {
-          LOGGER.error ("Failed to write response attachment to temporary file '" + aTempFile.getAbsolutePath () + "'");
+          // This is also the path of a failed AEAD authentication tag check. The temporary file
+          // is incomplete and must not be used.
+          final String sDetails = "Failed to write attachment '" +
+                                  aResponseAttachment.getId () +
+                                  "' to temporary file '" +
+                                  aTempFile.getAbsolutePath () +
+                                  "'";
+          LOGGER.error (sDetails);
+          aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_FAILED_DECRYPTION.errorBuilder (aLocale)
+                                                                               .errorDetail (sDetails)
+                                                                               .build ());
+          return ESuccess.FAILURE;
         }
         aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple (() -> MarkableFileInputStream.create (aTempFile)));
       }

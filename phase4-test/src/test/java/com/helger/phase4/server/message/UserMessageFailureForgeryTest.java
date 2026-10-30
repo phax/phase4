@@ -35,6 +35,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.system.SystemProperties;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
@@ -320,6 +321,45 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final MimeBodyPart aMimeBodyPart = (MimeBodyPart) aMultipart.getBodyPart (1);
     aMimeBodyPart.setContent ("Crappy text".getBytes (StandardCharsets.ISO_8859_1),
                               CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
+
+    aMimeMsg.saveChanges ();
+    sendMimeMessageExpectError (HttpMimeMessageEntity.create (aMimeMsg),
+                                EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+  }
+
+  /**
+   * The ciphertext has a valid length and only its authentication tag does not match. The failure
+   * therefore only shows when the decrypted attachment is written to the temporary file, and this
+   * must reject the message.
+   *
+   * @throws Exception
+   *         on error
+   */
+  @Test
+  public void testUserMessageEncryptedMimeAttachmentAuthenticationTagMismatch () throws Exception
+  {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (AS4OutgoingAttachment.builder ()
+                                                                                         .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                         .mimeTypeXML ()
+                                                                                         .build (), s_aResMgr));
+
+    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptToMimeMessage (m_eSoapVersion,
+                                                                       MockMessages.createUserMessageNotSigned (m_eSoapVersion,
+                                                                                                                null,
+                                                                                                                aAttachments)
+                                                                                   .getAsSoapDocument (),
+                                                                       aAttachments,
+                                                                       m_aCryptoFactory,
+                                                                       true,
+                                                                       s_aResMgr,
+                                                                       m_aCryptParams);
+
+    final AS4SoapMimeMultipart aMultipart = (AS4SoapMimeMultipart) aMimeMsg.getContent ();
+    final MimeBodyPart aMimeBodyPart = (MimeBodyPart) aMultipart.getBodyPart (1);
+    final byte [] aCipherText = StreamHelper.getAllBytes (aMimeBodyPart.getInputStream ());
+    aCipherText[aCipherText.length - 1] ^= 1;
+    aMimeBodyPart.setContent (aCipherText, CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
 
     aMimeMsg.saveChanges ();
     sendMimeMessageExpectError (HttpMimeMessageEntity.create (aMimeMsg),

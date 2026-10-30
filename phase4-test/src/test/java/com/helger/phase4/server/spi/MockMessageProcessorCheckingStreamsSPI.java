@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import org.apache.wss4j.dom.str.STRParser;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -72,6 +73,17 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MockMessageProcessorCheckingStreamsSPI.class);
 
+  private static volatile STRParser.REFERENCE_TYPE s_eLastDecryptingReferenceType;
+
+  /**
+   * @return The decrypting certificate reference type of the last processed UserMessage. May be
+   *         <code>null</code>.
+   */
+  public static STRParser.@Nullable REFERENCE_TYPE getLastDecryptingReferenceType ()
+  {
+    return s_eLastDecryptingReferenceType;
+  }
+
   @NonNull
   public AS4MessageProcessorResult processAS4UserMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                           @NonNull final HttpHeaderMap aHttpHeaders,
@@ -82,6 +94,8 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4IncomingMessa
                                                           @NonNull final IAS4IncomingMessageState aState,
                                                           @NonNull final AS4ErrorList aEbmsErrorMessagesTarget)
   {
+    s_eLastDecryptingReferenceType = aState.getDecryptingCertificateReferenceType ();
+
     // Needed for AS4_TA13 because we want to force a decompression failure and
     // for that to happen the stream has to be read
     {
