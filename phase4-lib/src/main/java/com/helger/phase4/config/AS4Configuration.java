@@ -179,6 +179,15 @@ public final class AS4Configuration
   @ChangeNextMajorRelease ("Swap to true")
   public static final boolean DEFAULT_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE = false;
 
+  /**
+   * The boolean property that defines, if message IDs are validated against RFC2822.
+   *
+   * @since 4.8.4
+   */
+  public static final String PROPERTY_PHASE4_ENFORCE_RFC2822_MESSAGE_IDS = "phase4.incoming.enforcerfc2822messageids";
+  @ChangeNextMajorRelease ("Swap to true")
+  public static final boolean DEFAULT_PHASE4_ENFORCE_RFC2822_MESSAGE_IDS = false;
+
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Configuration.class);
 
   /**
@@ -613,5 +622,16 @@ public final class AS4Configuration
   {
     return getConfig ().getAsBoolean (PROPERTY_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE,
                                       DEFAULT_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE);
+  }
+
+  /**
+   * @return <code>true</code> if incoming message IDs are validated against RFC2822.
+   *         Defaults to {@value #DEFAULT_PHASE4_ENFORCE_RFC2822_MESSAGE_IDS}.
+   * @since 4.8.4
+   */
+  public static boolean isEnforceRfc2822MessageIds ()
+  {
+    return getConfig ().getAsBoolean (PROPERTY_PHASE4_ENFORCE_RFC2822_MESSAGE_IDS,
+                                      DEFAULT_PHASE4_ENFORCE_RFC2822_MESSAGE_IDS);
   }
 }
