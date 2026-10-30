@@ -158,4 +158,22 @@ public final class AS4ConfigurationTest
       SystemProperties.removePropertyValue (sKey);
     }
   }
+
+  @Test
+  public void testIncomingStrictMessageIDs ()
+  {
+    // Enabled by default
+    assertTrue (AS4Configuration.isIncomingStrictMessageIDs ());
+
+    final String sKey = AS4Configuration.PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS;
+    try
+    {
+      SystemProperties.setPropertyValue (sKey, "false");
+      assertFalse (AS4Configuration.isIncomingStrictMessageIDs ());
+    }
+    finally
+    {
+      SystemProperties.removePropertyValue (sKey);
+    }
+  }
 }

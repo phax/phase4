@@ -16,10 +16,12 @@
  */
 package com.helger.phase4.server.message;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.UUID;
 
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.wss4j.dom.message.WSSecSignature;
@@ -33,6 +35,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.helger.base.system.SystemProperties;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.io.resource.ClassPathResource;
@@ -41,6 +44,7 @@ import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IWSSecSignatureCustomizer;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
@@ -124,13 +128,34 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   }
 
   @Test
+  public void testUserMessageWithInvalidMessageIDIsAcceptedIfNotEnforced () throws Exception
+  {
+    // By default a pushed UserMessage on leg 1 with an invalid MessageId only leads to a warning
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null)
+                                      .getAsSoapDocument (aPayload);
+    aDoc.getElementsByTagNameNS ("*", "MessageId").item (0).setTextContent (UUID.randomUUID ().toString ());
+
+    final String sResponse = sendPlainMessageExpectSuccess (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+  }
+
+  @Test
   public void testUserMessageWithWhitespaceMessageIDShouldFail () throws Exception
   {
     // A pushed UserMessage on leg 1 with an invalid MessageId is rejected
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/UserMessageMessageIDWhitespace.xml"));
 
-    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                                 EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
+    SystemProperties.setPropertyValue (AS4Configuration.PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS, "true");
+    try
+    {
+      sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                   EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
+    }
+    finally
+    {
+      SystemProperties.removePropertyValue (AS4Configuration.PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS);
+    }
   }
 
   // Tinkering with the signature

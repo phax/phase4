@@ -25,6 +25,8 @@ import java.util.Locale;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -32,9 +34,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.base.state.ESuccess;
+import com.helger.base.system.SystemProperties;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestRule;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.AS4IncomingMessageState;
 import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
@@ -56,6 +60,18 @@ public final class SoapHeaderElementProcessorExtractEbms3MessagingTest
 
   @Rule
   public final TestRule m_aTestRule = new AS4TestRule ();
+
+  @Before
+  public void enableEnforcement ()
+  {
+    SystemProperties.setPropertyValue (AS4Configuration.PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS, "true");
+  }
+
+  @After
+  public void resetEnforcement ()
+  {
+    SystemProperties.removePropertyValue (AS4Configuration.PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS);
+  }
 
   @NonNull
   private static Document _readUserMessage (@NonNull final String sMessageID, @Nullable final String sRefToMessageID)
@@ -116,6 +132,20 @@ public final class SoapHeaderElementProcessorExtractEbms3MessagingTest
                                                 EAS4MessageMode.REQUEST,
                                                 sMessageID.trim ().isEmpty () ? sMessageID : sMessageID.trim ());
       assertTrue ("MessageID '" + sMessageID + "': " + aErrorList, _containsInvalidHeaderError (aErrorList));
+    }
+  }
+
+  @Test
+  public void testPushedLeg1InvalidMessageIDIsAcceptedIfNotEnforced () throws Exception
+  {
+    SystemProperties.removePropertyValue (AS4Configuration.PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS);
+
+    for (final String sMessageID : new String [] { "   ", "abc", "<a@b>", "a b@c" })
+    {
+      final AS4ErrorList aErrorList = _process (_readUserMessage (sMessageID, null),
+                                                EAS4MessageMode.REQUEST,
+                                                sMessageID);
+      assertFalse ("MessageID '" + sMessageID + "': " + aErrorList, _containsInvalidHeaderError (aErrorList));
     }
   }
 

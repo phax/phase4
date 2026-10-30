@@ -180,13 +180,15 @@ public final class AS4Configuration
   public static final boolean DEFAULT_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE = false;
 
   /**
-   * The boolean property that defines, if message IDs are validated against RFC2822.
+   * The boolean property that defines if a pushed incoming UserMessage on leg 1 with an
+   * <code>eb:MessageId</code> that is not a valid RFC 2822 <code>msg-id</code> is rejected with
+   * <code>EBMS:0009</code>. If disabled, only a warning is logged. All other incoming messages only
+   * lead to a warning anyway, and the message IDs of outgoing messages are always checked.
    *
    * @since 4.8.4
    */
-  public static final String PROPERTY_PHASE4_ENFORCE_RFC2822_MESSAGE_IDS = "phase4.incoming.enforcerfc2822messageids";
-  @ChangeNextMajorRelease ("Swap to true")
-  public static final boolean DEFAULT_PHASE4_ENFORCE_RFC2822_MESSAGE_IDS = false;
+  public static final String PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS = "phase4.incoming.strict.messageids";
+  public static final boolean DEFAULT_PHASE4_INCOMING_STRICT_MESSAGE_IDS = true;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Configuration.class);
 
@@ -363,8 +365,8 @@ public final class AS4Configuration
 
   /**
    * @return <code>true</code> if an incoming duplicate message should be answered with an ebMS
-   *         Error (<code>EBMS:4001</code>), <code>false</code> if it should be silently ignored
-   *         (no SPI invocation, normal Receipt). The configuration item is
+   *         Error (<code>EBMS:4001</code>), <code>false</code> if it should be silently ignored (no
+   *         SPI invocation, normal Receipt). The configuration item is
    *         <code>phase4.incoming.duplicate.returnerror</code>. Defaults to <code>true</code>.
    * @since 4.8.1
    */
@@ -625,13 +627,14 @@ public final class AS4Configuration
   }
 
   /**
-   * @return <code>true</code> if incoming message IDs are validated against RFC2822.
-   *         Defaults to {@value #DEFAULT_PHASE4_ENFORCE_RFC2822_MESSAGE_IDS}.
+   * @return <code>true</code> if a pushed incoming UserMessage on leg 1 with an invalid RFC 2822
+   *         <code>eb:MessageId</code> is rejected, <code>false</code> if only a warning is logged.
+   *         Defaults to {@value #DEFAULT_PHASE4_INCOMING_STRICT_MESSAGE_IDS}.
    * @since 4.8.4
    */
-  public static boolean isEnforceRfc2822MessageIds ()
+  public static boolean isIncomingStrictMessageIDs ()
   {
-    return getConfig ().getAsBoolean (PROPERTY_PHASE4_ENFORCE_RFC2822_MESSAGE_IDS,
-                                      DEFAULT_PHASE4_ENFORCE_RFC2822_MESSAGE_IDS);
+    return getConfig ().getAsBoolean (PROPERTY_PHASE4_INCOMING_STRICT_MESSAGE_IDS,
+                                      DEFAULT_PHASE4_INCOMING_STRICT_MESSAGE_IDS);
   }
 }

@@ -42,6 +42,7 @@ import com.helger.diagnostics.error.IError;
 import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
@@ -368,9 +369,12 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
         {
           final String sDetails = _getInvalidMessageIDDetails ("MessageId", sMessageID);
 
-          // Only a pushed UserMessage on leg 1 is rejected, because only there an Error can be
-          // returned without disrupting an ongoing message exchange
-          if (aIncomingState.getMessageMode () == EAS4MessageMode.REQUEST && _isUseLeg1 (aUserMessage))
+          // Only a pushed UserMessage on leg 1 can be rejected, because only there an Error can be
+          // returned without disrupting an ongoing message exchange. This is configurable, because
+          // not all senders in production environments adhere to the rules.
+          if (AS4Configuration.isIncomingStrictMessageIDs () &&
+              aIncomingState.getMessageMode () == EAS4MessageMode.REQUEST &&
+              _isUseLeg1 (aUserMessage))
           {
             LOGGER.error (sDetails);
             aProcessingErrorMessagesTarget.add (EEbmsError.EBMS_INVALID_HEADER.errorBuilder (aLocale)

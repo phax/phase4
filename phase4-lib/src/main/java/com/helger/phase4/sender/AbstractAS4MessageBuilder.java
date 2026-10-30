@@ -408,7 +408,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   /**
    * Set the optional AS4 reference to a previous message ID. If this field is not set, it will not
-   * be emitted in the message.
+   * be emitted in the message. As the referenced ID may stem from a received message, it is sent
+   * unchanged and a value that is not a valid RFC 2822 <code>msg-id</code> only leads to a warning.
    *
    * @param sRefToMessageID
    *        The optional AS4 reference to a previous message ID to be used. May be
@@ -884,14 +885,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
                           "' is not a valid RFC 2822 msg-id (expected 'id-left@id-right' without angle brackets)");
       return false;
     }
-    // m_sRefToMessageID is optional
-    if (StringHelper.isNotEmpty (m_sRefToMessageID) && !MessageHelperMethods.isValidMessageID (m_sRefToMessageID))
-    {
-      logHandler ().warn ("The field 'refToMessageID' value '" +
-                          m_sRefToMessageID +
-                          "' is not a valid RFC 2822 msg-id (expected 'id-left@id-right' without angle brackets)");
-      return false;
-    }
+    // m_sRefToMessageID is optional and may stem from a received message, so an invalid value only
+    // leads to a warning when the message is created
     // m_aSendingDateTime may be null
     if (m_eSoapVersion == null)
     {
