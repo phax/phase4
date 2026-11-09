@@ -72,9 +72,6 @@ public final class MainPhase4PeppolSenderLDI
           LOGGER.info ("Sending out AS4 message with message ID '" +
                        aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId () +
                        "'");
-          LOGGER.info ("Sending out AS4 message with conversation ID '" +
-                       aUserMsg.getEbms3UserMessage ().getCollaborationInfo ().getConversationId () +
-                       "'");
         }
       };
       final EAS4UserMessageSendResult eResult = Phase4PeppolSender.builder ()
