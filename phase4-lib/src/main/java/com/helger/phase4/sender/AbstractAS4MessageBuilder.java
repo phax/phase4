@@ -106,7 +106,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * Create a new builder, with the following fields already set:<br>
    * {@link #httpClientFactory(HttpClientFactory)}<br>
    * {@link #cryptoFactory(IAS4CryptoFactory)}<br>
-   * {@link #soapVersion(ESoapVersion)}
+   * {@link #soapVersion(ESoapVersion)}<br>
    * {@link #incomingAttachmentFactory(IAS4IncomingAttachmentFactory)}<br>
    */
   protected AbstractAS4MessageBuilder ()

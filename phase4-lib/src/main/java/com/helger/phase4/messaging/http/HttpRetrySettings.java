@@ -245,7 +245,9 @@ public class HttpRetrySettings
   /**
    * @return The maximum duration before a retry, that limits the increase via
    *         {@link #getRetryIncreaseFactor()}. A duration before the first retry that is longer than
-   *         this value is never shortened. Never <code>null</code>. Default is
+   *         this value is never shortened. The jitter (see {@link #getJitterFactor()}) is applied on
+   *         top of the limited duration, so the effective waiting time may exceed this value by up to
+   *         the jitter factor. Never <code>null</code>. Default is
    *         {@link #DEFAULT_MAX_DURATION_BEFORE_RETRY}.
    * @since 4.9.0
    */
@@ -257,7 +259,7 @@ public class HttpRetrySettings
 
   /**
    * Set the maximum duration before a retry, that limits the increase via
-   * {@link #getRetryIncreaseFactor()}.
+   * {@link #getRetryIncreaseFactor()}. The jitter is applied on top of the limited duration.
    *
    * @param aMaxDurationBeforeRetry
    *        The maximum duration to use. May not be <code>null</code>.

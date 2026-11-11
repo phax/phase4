@@ -48,7 +48,7 @@ import com.helger.httpclient.response.ExtendedHttpResponseException;
 import com.helger.phase4.model.soapfault.AS4SoapFaultException;
 
 /**
- * Decide whether a failed HTTP transmission may be retried. The guiding question is, whether the
+ * Decide whether a failed HTTP transmission may be retried. The guiding question is whether the
  * request could have reached the server.
  *
  * @author Philip Helger

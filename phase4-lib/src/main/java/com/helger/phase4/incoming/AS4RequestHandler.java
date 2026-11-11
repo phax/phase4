@@ -1130,7 +1130,7 @@ public class AS4RequestHandler implements AutoCloseable
                     aIncomingState.getMessageID () +
                     "' and AS4 response message ID '" +
                     sResponseMessageID +
-                    ": " +
+                    "': " +
                     aAllProcessors);
 
     for (final IAS4IncomingMessageProcessorSPI aProcessor : aAllProcessors)

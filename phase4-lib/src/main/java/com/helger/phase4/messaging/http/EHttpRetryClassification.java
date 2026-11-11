@@ -17,8 +17,8 @@
 package com.helger.phase4.messaging.http;
 
 /**
- * The classification of a failed HTTP transmission in respect to retrying it. The guiding question
- * is, whether the request could have reached the server.
+ * The classification of a failed HTTP transmission with respect to retrying it. The guiding question
+ * is whether the request could have reached the server.
  *
  * @author Philip Helger
  * @see HttpRetryClassifier
@@ -32,7 +32,7 @@ public enum EHttpRetryClassification
    */
   RETRY,
   /**
-   * The request may have reached the server. A retry is only feasible, if replaying the request is
+   * The request may have reached the server. A retry is only feasible if replaying the request is
    * safe, e.g. because the receiver detects duplicates.
    */
   RETRY_IF_REPLAY_SAFE,

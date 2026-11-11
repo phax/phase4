@@ -683,7 +683,7 @@ public class BasicHttpPoster implements IHttpPoster
               }
 
             LOGGER.warn (_getErrorText (sMessageID, sURL, ex));
-            LOGGER.info ("Now waiting " + aEffectiveDurationBeforeRetry.toMillis () + " ms, than retrying");
+            LOGGER.info ("Now waiting " + aEffectiveDurationBeforeRetry.toMillis () + " ms, then retrying");
 
             // Sleep and try again afterwards
             if (ThreadHelper.sleep (aEffectiveDurationBeforeRetry.toMillis ()).isFailure ())
