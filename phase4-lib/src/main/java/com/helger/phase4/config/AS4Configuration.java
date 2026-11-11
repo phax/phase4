@@ -90,6 +90,7 @@ public final class AS4Configuration
   public static final String PROPERTY_PHASE4_INCOMING_DUPLICATE_RETURNERROR = "phase4.incoming.duplicate.returnerror";
   public static final boolean DEFAULT_PHASE4_INCOMING_DUPLICATE_RETURNERROR = true;
 
+  @ChangeNextMajorRelease ("Remove the property and always accept all HTTP status codes")
   public static final String PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES = "phase4.http.response.accept.allstatuscodes";
   public static final boolean DEFAULT_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES = true;
 
