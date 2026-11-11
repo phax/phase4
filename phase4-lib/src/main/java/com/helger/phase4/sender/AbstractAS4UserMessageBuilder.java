@@ -1078,7 +1078,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
       if (aSoapFaultKeeper.isSet ())
       {
-        // A SOAP Fault with a permanent disposition was received and stopped the sending
+        // A SOAP Fault was received and stopped the sending
         return EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED;
       }
 

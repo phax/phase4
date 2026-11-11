@@ -278,8 +278,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
     }
     catch (final AS4SoapFaultException ex)
     {
-      // A SOAP Fault with a permanent disposition was received - a retry is not feasible
-      throw new Phase4Exception ("A permanent SOAP Fault was received", ex).setRetryFeasible (false);
+      // A SOAP Fault is an answer of the receiving backend - a retry is not feasible
+      throw new Phase4Exception ("A SOAP Fault was received", ex).setRetryFeasible (false);
     }
     catch (final AS4HttpUnauthorizedException ex)
     {
