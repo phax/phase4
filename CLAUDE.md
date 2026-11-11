@@ -81,6 +81,8 @@ Profiles register via Java ServiceLoader (`META-INF/services/com.helger.phase4.p
 ### HTTP Retries
 Outgoing HTTP retries happen only on the phase4 level, in `BasicHttpPoster.sendGenericMessageWithRetries`, configured by `HttpRetrySettings`. `HttpRetryClassifier` decides per exception and HTTP status code whether a retry is feasible (`EHttpRetryClassification`). A response handler can veto the retry of the current response via `HttpRetryVeto.vetoRetry ()` (used for received SOAP Faults with a permanent disposition; transient SOAP Faults are retried according to the HTTP status code). The automatic retries of Apache HttpClient are disabled via `HttpClientSettings.setDisableAutomaticRetries (true)` (ph-web) in all phase4 `*HttpClientSettings` classes and in `BasicHttpPoster.createDefaultHttpClientFactory ()` - keep it that way for new profiles, otherwise HttpClient silently retries 429/503 in addition.
 
+SMP lookups (`AS4EndpointDetailProvider*` in phase4-dynamic-discovery) happen once, outside the HTTP retry loop. Their retry feasibility (`Phase4SMPException.isRetryFeasible ()`, mapped to `EAS4UserMessageSendResult.TRANSPORT_ERROR` / `TRANSPORT_ERROR_NO_RETRY`) is decided by `SMPRetryClassifier`, which reuses `HttpRetryClassifier`. The HTTP level retries of the SMP lookup itself are configured in peppol-commons (`SMPHttpClientSettings`).
+
 ### JAXB Code Generation
 `phase4-lib` generates Java classes from EBMS/AS4 XSD schemas during `generate-sources` phase. Bindings in `src/main/jaxb/bindings.xjb`, schemas in `src/main/resources/external/schemas/`.
 

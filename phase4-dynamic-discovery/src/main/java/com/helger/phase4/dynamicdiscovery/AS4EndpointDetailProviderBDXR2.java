@@ -36,10 +36,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
-import com.helger.smpclient.exception.SMPClientBadRequestException;
-import com.helger.smpclient.exception.SMPClientBadResponseException;
 import com.helger.smpclient.exception.SMPClientException;
-import com.helger.smpclient.exception.SMPClientUnauthorizedException;
 import com.helger.xsds.bdxr.smp2.ac.EndpointType;
 
 /**
@@ -144,7 +141,7 @@ public class AS4EndpointDetailProviderBDXR2 implements IAS4EndpointDetailProvide
                                         aProcID.getURIEncoded () +
                                         ", " +
                                         m_aTP.getID () +
-                                        ")");
+                                        ")").setRetryFeasible (false);
 
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("Successfully resolved SMP endpoint (" +
@@ -159,10 +156,7 @@ public class AS4EndpointDetailProviderBDXR2 implements IAS4EndpointDetailProvide
       }
       catch (final SMPClientException ex)
       {
-        final boolean bRetryFeasible = ex instanceof SMPClientBadRequestException ||
-                                       ex instanceof SMPClientBadResponseException ||
-                                       ex instanceof SMPClientUnauthorizedException ||
-                                       ex.getClass ().equals (SMPClientException.class);
+        final boolean bRetryFeasible = SMPRetryClassifier.isRetryFeasible (ex);
         throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
                                       aReceiverID.getURIEncoded () +
                                       ", " +
