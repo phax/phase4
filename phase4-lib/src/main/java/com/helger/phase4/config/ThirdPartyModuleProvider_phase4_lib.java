@@ -33,11 +33,13 @@ import com.helger.base.version.Version;
 @IsSPIImplementation
 public final class ThirdPartyModuleProvider_phase4_lib implements IThirdPartyModuleProviderSPI
 {
-  private static final IThirdPartyModule WSS4J = new ThirdPartyModule ("Apache WSS4J",
-                                                                       "Apache",
-                                                                       ELicense.APACHE2,
-                                                                       new Version (4, 0, 2),
-                                                                       "https://ws.apache.org/wss4j/");
+  private static final IThirdPartyModule WSS4J = ThirdPartyModule.builder ()
+                                                                 .displayName ("Apache WSS4J")
+                                                                 .copyrightOwner ("Apache")
+                                                                 .license (ELicense.APACHE2)
+                                                                 .version (new Version (4, 0, 2))
+                                                                 .webSiteUrl ("https://ws.apache.org/wss4j/")
+                                                                 .build ();
 
   @Nullable
   public IThirdPartyModule [] getAllThirdPartyModules ()
