@@ -539,7 +539,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       // Remember the HTTP response data
       aStatusLineKeeper.set (new StatusLine (resp));
 
-      // Remember the response headers
+      // Remember the response headers - only the ones of the last try
+      aResponseHeaders.removeAll ();
       final Header [] aHeaders = resp.getHeaders ();
       if (aHeaders != null)
         for (final Header aHeader : aHeaders)
