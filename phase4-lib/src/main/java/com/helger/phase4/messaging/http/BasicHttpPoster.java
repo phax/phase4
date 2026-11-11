@@ -182,36 +182,6 @@ public class BasicHttpPoster implements IHttpPoster
    * @param aResponseHandler
    *        The Http response handler that should be used to convert the HTTP response to a domain
    *        object.
-   * @return The HTTP response. May be <code>null</code>.
-   * @throws IOException
-   *         In case of IO error
-   */
-  @Nullable
-  @Deprecated (forRemoval = true, since = "4.5.1")
-  public <T> T sendGenericMessage (@NonNull @Nonempty final String sURL,
-                                   @Nullable final HttpHeaderMap aCustomHttpHeaders,
-                                   @NonNull final HttpEntity aHttpEntity,
-                                   @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler) throws IOException
-  {
-    return sendGenericMessage (sURL, aCustomHttpHeaders, aHttpEntity, aResponseHandler, null);
-  }
-
-  /**
-   * Send an arbitrary HTTP POST message to the provided URL, using the contained HttpClientFactory
-   * as well as the customizer. Additionally the AS4 HTTP debugging is invoked in here.<br>
-   * This method does NOT retry
-   *
-   * @param <T>
-   *        Response data type
-   * @param sURL
-   *        The URL to send to. May neither be <code>null</code> nor empty.
-   * @param aCustomHttpHeaders
-   *        An optional http header map that should be applied. May be <code>null</code>.
-   * @param aHttpEntity
-   *        The HTTP entity to be send. May not be <code>null</code>.
-   * @param aResponseHandler
-   *        The Http response handler that should be used to convert the HTTP response to a domain
-   *        object.
    * @param aConnectionDetailsConsumer
    *        An optional consumer that is invoked with the details of the used connection after a
    *        successful request. May be <code>null</code>. The value passed in may be
@@ -462,33 +432,11 @@ public class BasicHttpPoster implements IHttpPoster
            ex.getMessage ();
   }
 
-  @Nullable
-  @Deprecated (forRemoval = true, since = "4.5.1")
-  public <T> T sendGenericMessageWithRetries (@NonNull final String sURL,
-                                              @Nullable final HttpHeaderMap aCustomHttpHeaders,
-                                              @NonNull final HttpEntity aHttpEntity,
-                                              @NonNull final String sMessageID,
-                                              @NonNull final HttpRetrySettings aRetrySettings,
-                                              @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
-                                              @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                              @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
-  {
-    return sendGenericMessageWithRetries (sURL,
-                                          aCustomHttpHeaders,
-                                          aHttpEntity,
-                                          sMessageID,
-                                          aRetrySettings,
-                                          aResponseHandler,
-                                          aOutgoingDumper,
-                                          aRetryCallback,
-                                          null);
-  }
-
   /**
-   * Same as
-   * {@link #sendGenericMessageWithRetries(String, HttpHeaderMap, HttpEntity, String, HttpRetrySettings, HttpClientResponseHandler, IAS4OutgoingDumper, IAS4RetryCallback)}
-   * but additionally surfaces the details of the connection of the (last) successful HTTP exchange
-   * to the provided consumer.<br>
+   * Send an arbitrary HTTP POST message to the provided URL, using the contained HttpClientFactory
+   * as well as the customizer. Additionally the AS4 HTTP debugging is invoked in here. Additionally
+   * the details of the connection of the (last) successful HTTP exchange are surfaced to the
+   * provided consumer.<br>
    * Since 4.9.0 only failures that are classified as retriable by {@link HttpRetryClassifier} are
    * retried. This includes HTTP responses with a retriable status code (e.g. 503), independent of
    * the configuration whether all HTTP status codes are accepted. On the last try such a response

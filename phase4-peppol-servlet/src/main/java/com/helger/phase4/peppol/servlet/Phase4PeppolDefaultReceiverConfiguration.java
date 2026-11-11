@@ -346,36 +346,6 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * @return <code>true</code> if the Country C1 element in the SBDH of received messages is
-   *         mandatory, and if such messages should be rejected, if that field is missing. By
-   *         default it is enabled.
-   * @since 2.7.1
-   * @deprecated This is deprecated, because the feature is required for years, so there is no need
-   *             anymore to disable this feature
-   */
-  @Deprecated (forRemoval = true, since = "4.2.4")
-  public static boolean isCheckSBDHForMandatoryCountryC1 ()
-  {
-    return true;
-  }
-
-  /**
-   * Set whether the check for the mandatory Country C1 element in SBDH of received message is
-   * mandatory or not. By default it is enabled.
-   *
-   * @param b
-   *        <code>true</code> to check, <code>false</code> to disable the check.
-   * @since 2.7.1
-   * @deprecated This is deprecated, because the feature is required for years, so there is no need
-   *             anymore to disable this feature
-   */
-  @Deprecated (forRemoval = true, since = "4.2.4")
-  public static void setCheckSBDHForMandatoryCountryC1 (final boolean b)
-  {
-    LOGGER.warn ("Calling setCheckSBDHForMandatoryCountryC1 has no effect - remove the call, as the option no longer exists");
-  }
-
-  /**
    * @return <code>true</code> if the signing certificate should be checked for revocation,
    *         <code>false</code> if not.
    * @since 2.7.1

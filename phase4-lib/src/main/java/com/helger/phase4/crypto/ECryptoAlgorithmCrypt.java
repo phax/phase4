@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 import javax.crypto.KeyGenerator;
 
 import org.apache.wss4j.common.WSS4JConstants;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -32,10 +31,6 @@ import com.helger.base.lang.EnumHelper;
 
 /**
  * Enumeration with all message encryption algorithms supported.
- * <p>
- * Direct use of this enum, except for the deprecated {@link #getOID()} method, does not require
- * Bouncy Castle. Reflection and AOT tools that eagerly resolve all method descriptors still require
- * it for binary compatibility with that method.
  *
  * @author Philip Helger
  */
@@ -76,10 +71,6 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   /** Default encrypt algorithm */
   public static final ECryptoAlgorithmCrypt ENCRYPTION_ALGORITHM_DEFAULT = AES_128_GCM;
 
-  /** @deprecated Use {@link #ENCRYPTION_ALGORITHM_DEFAULT} instead - typo in name */
-  @Deprecated (since = "4.4.0", forRemoval = true)
-  public static final ECryptoAlgorithmCrypt ENCRPYTION_ALGORITHM_DEFAULT = ENCRYPTION_ALGORITHM_DEFAULT;
-
   @NonNull
   private static KeyGenerator _createKeyGenerator (@NonNull @Nonempty final String sJCEAlgorithm,
                                                    @Nonnegative final int nInitKeySizeBits)
@@ -107,7 +98,6 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   private final String m_sAlgorithmURI;
   private final int m_nKeySizeBits;
   private final Supplier <KeyGenerator> m_aKeyGeneratorSupplier;
-  private volatile ASN1ObjectIdentifier m_aOID;
 
   ECryptoAlgorithmCrypt (@NonNull @Nonempty final String sID,
                          @NonNull @Nonempty final String sOID,
@@ -137,21 +127,6 @@ public enum ECryptoAlgorithmCrypt implements ICryptoAlgorithmCrypt
   public String getOIDString ()
   {
     return m_sOID;
-  }
-
-  @NonNull
-  @Deprecated (since = "4.6.1")
-  public ASN1ObjectIdentifier getOID ()
-  {
-    ASN1ObjectIdentifier ret = m_aOID;
-    if (ret == null)
-      synchronized (this)
-      {
-        ret = m_aOID;
-        if (ret == null)
-          m_aOID = ret = new ASN1ObjectIdentifier (m_sOID).intern ();
-      }
-    return ret;
   }
 
   /**

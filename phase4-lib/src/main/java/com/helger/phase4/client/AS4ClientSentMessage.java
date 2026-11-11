@@ -61,25 +61,6 @@ public class AS4ClientSentMessage <T>
    *        The HTTP response header. May not be <code>null</code>.
    * @param aResponseContent
    *        The response payload. May be <code>null</code>.
-   */
-  @Deprecated (forRemoval = true, since = "4.5.1")
-  public AS4ClientSentMessage (@NonNull final AS4ClientBuiltMessage aBuiltMsg,
-                               @Nullable final StatusLine aResponseStatusLine,
-                               @NonNull final HttpHeaderMap aResponseHeaders,
-                               @Nullable final T aResponseContent)
-  {
-    this (aBuiltMsg, null, aResponseStatusLine, aResponseHeaders, aResponseContent);
-  }
-
-  /**
-   * @param aBuiltMsg
-   *        The built message with headers, payload and message ID. May not be <code>null</code>.
-   * @param aResponseStatusLine
-   *        The HTTP response status line. May be <code>null</code>.
-   * @param aResponseHeaders
-   *        The HTTP response header. May not be <code>null</code>.
-   * @param aResponseContent
-   *        The response payload. May be <code>null</code>.
    * @param aConnectionDetails
    *        The details of the connection that was used - including the TLS layer with the remote
    *        TLS server certificates. May be <code>null</code>.

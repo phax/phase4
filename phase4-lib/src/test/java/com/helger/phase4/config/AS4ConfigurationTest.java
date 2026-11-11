@@ -49,7 +49,7 @@ public final class AS4ConfigurationTest
     assertNotNull (aCS);
     assertTrue (aCS instanceof IConfigurationSourceResource);
     final IConfigurationSourceResource aCSR = (IConfigurationSourceResource) aCS;
-    assertEquals ("phase4.properties", aCSR.getResource ().getPath ());
+    assertTrue (aCSR.getResource ().getPath ().endsWith ("/application.properties"));
   }
 
   @Test

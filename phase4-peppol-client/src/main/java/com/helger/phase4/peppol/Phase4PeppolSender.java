@@ -110,8 +110,6 @@ public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
   public static final IBDXLURLProvider URL_PROVIDER = PeppolNaptrURLProvider.INSTANCE;
-  @Deprecated (forRemoval = true, since = "4.3.0")
-  public static final String REGEX_SEAT_ID = PeppolIdentifierHelper.REGEX_SEAT_ID;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolSender.class);
 
@@ -252,63 +250,6 @@ public final class Phase4PeppolSender
     // We never need to clone the payload element here because it was evtl.
     // cloned before
     return new PeppolSBDHDataWriter ().setFavourSpeed (true).createStandardBusinessDocument (aData);
-  }
-
-  /**
-   * @param aSenderID
-   *        Sender participant ID. May not be <code>null</code>.
-   * @param aReceiverID
-   *        Receiver participant ID. May not be <code>null</code>.
-   * @param aDocTypeID
-   *        Document type ID. May not be <code>null</code>.
-   * @param aProcID
-   *        Process ID. May not be <code>null</code>.
-   * @param sCountryC1
-   *        Country code of C1. May be <code>null</code>.
-   * @param sInstanceIdentifier
-   *        SBDH instance identifier. May be <code>null</code> to create a random ID.
-   * @param sStandard
-   *        SBDH standard (e.g. the XML payload root element namespace URI). May be
-   *        <code>null</code> to use the default.
-   * @param sTypeVersion
-   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be <code>null</code> to use
-   *        the default.
-   * @param sType
-   *        SBDH type (e.g. the XML payload root element local name). May be <code>null</code> to
-   *        use the default.
-   * @param aPayloadElement
-   *        Payload element to be wrapped. May not be <code>null</code>.
-   * @return The domain object representation of the created SBDH or <code>null</code> if not all
-   *         parameters are present.
-   * @since 3.1.0
-   * @deprecated Use the version with MLS_TYPE and MLS_TO parameters instead
-   */
-  @Nullable
-  @Deprecated (forRemoval = true, since = "4.5.2")
-  public static StandardBusinessDocument createSBDH (@NonNull final IParticipantIdentifier aSenderID,
-                                                     @NonNull final IParticipantIdentifier aReceiverID,
-                                                     @NonNull final IDocumentTypeIdentifier aDocTypeID,
-                                                     @NonNull final IProcessIdentifier aProcID,
-                                                     @Nullable final String sCountryC1,
-                                                     @Nullable final String sInstanceIdentifier,
-                                                     @Nullable final String sStandard,
-                                                     @Nullable final String sTypeVersion,
-                                                     @Nullable final String sType,
-                                                     @NonNull final Element aPayloadElement)
-  {
-    return _createSBD (aSenderID,
-                       aReceiverID,
-                       aDocTypeID,
-                       aProcID,
-                       sCountryC1,
-                       sInstanceIdentifier,
-                       sStandard,
-                       sTypeVersion,
-                       sType,
-                       null,
-                       null,
-                       aPayloadElement,
-                       true);
   }
 
   /**

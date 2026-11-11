@@ -302,48 +302,6 @@ public final class AS4BidirectionalClientHelper
     return aClientSentMessage;
   }
 
-  @Deprecated (forRemoval = true, since = "4.6.0")
-  public static void sendAS4UserMessageAndReceiveAS4SignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
-                                                                   @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                                   @NonNull final IAS4PModeResolver aPModeResolver,
-                                                                   @NonNull final IAS4IncomingAttachmentFactory aIAF,
-                                                                   @NonNull final IAS4IncomingProfileSelector aIncomingProfileSelector,
-                                                                   @NonNull final AS4ClientUserMessage aClientUserMsg,
-                                                                   @NonNull final Locale aLocale,
-                                                                   @NonNull final String sURL,
-                                                                   @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
-                                                                   @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                                   @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                                   @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                                   @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                                   @Nullable final IAS4RetryCallback aRetryCallback,
-                                                                   @Nullable final IAS4RawResponseConsumer aRawResponseConsumer,
-                                                                   @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
-                                                                   @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler) throws IOException,
-                                                                                                                                                               Phase4Exception,
-                                                                                                                                                               WSSecurityException,
-                                                                                                                                                               MessagingException
-  {
-    sendAS4UserMessageAndReceiveAS4SignalMessage (aCryptoFactorySign,
-                                                  aCryptoFactoryCrypt,
-                                                  aPModeResolver,
-                                                  aIAF,
-                                                  aIncomingProfileSelector,
-                                                  aClientUserMsg,
-                                                  aLocale,
-                                                  sURL,
-                                                  aBuildMessageCallback,
-                                                  aOutgoingDumper,
-                                                  aIncomingDumper,
-                                                  aIncomingSecurityConfiguration,
-                                                  aIncomingReceiverConfiguration,
-                                                  aRetryCallback,
-                                                  aRawResponseConsumer,
-                                                  aSignalMsgConsumer,
-                                                  aSignalMsgValidationResultHandler,
-                                                  null);
-  }
-
   /**
    * Same as the other overload, but with an additional SOAP Fault consumer that is invoked if the
    * synchronous response is a plain SOAP Fault instead of an ebMS Signal Message. If a received
@@ -505,48 +463,6 @@ public final class AS4BidirectionalClientHelper
     LOGGER.info ("The synchronous AS4 response was classified as " + eResponseType);
   }
 
-  @Deprecated (forRemoval = true, since = "4.8.2")
-  public static void sendAS4PullRequestAndReceiveAS4UserMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
-                                                                 @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                                 @NonNull final IAS4PModeResolver aPModeResolver,
-                                                                 @NonNull final IAS4IncomingAttachmentFactory aIAF,
-                                                                 @NonNull final IAS4IncomingProfileSelector aIncomingProfileSelector,
-                                                                 @NonNull final AS4ClientPullRequestMessage aClientPullRequest,
-                                                                 @NonNull final Locale aLocale,
-                                                                 @NonNull final String sURL,
-                                                                 @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
-                                                                 @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                                 @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                                 @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                                 @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                                 @Nullable final IAS4RetryCallback aRetryCallback,
-                                                                 @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                                                 @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
-                                                                 @Nullable final IPMode aPMode) throws IOException,
-                                                                                                Phase4Exception,
-                                                                                                WSSecurityException,
-                                                                                                MessagingException
-  {
-    sendAS4PullRequestAndReceiveAS4UserMessage (aCryptoFactorySign,
-                                                aCryptoFactoryCrypt,
-                                                aPModeResolver,
-                                                aIAF,
-                                                aIncomingProfileSelector,
-                                                aClientPullRequest,
-                                                aLocale,
-                                                sURL,
-                                                aBuildMessageCallback,
-                                                aOutgoingDumper,
-                                                aIncomingDumper,
-                                                aIncomingSecurityConfiguration,
-                                                aIncomingReceiverConfiguration,
-                                                aRetryCallback,
-                                                aResponseConsumer,
-                                                aUserMsgConsumer,
-                                                aPMode,
-                                                null);
-  }
-
   /**
    * Same as the other overload, but with an additional SOAP Fault consumer that is invoked if the
    * response is a plain SOAP Fault instead of an ebMS message. If none is provided, the SOAP Fault
@@ -661,52 +577,6 @@ public final class AS4BidirectionalClientHelper
     }
     else
       LOGGER.info ("AS4 ResponseEntity is empty");
-  }
-
-  @Deprecated (forRemoval = true, since = "4.8.2")
-  public static void sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
-                                                                         @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
-                                                                         @NonNull final IAS4PModeResolver aPModeResolver,
-                                                                         @NonNull final IAS4IncomingAttachmentFactory aIAF,
-                                                                         @NonNull final IAS4IncomingProfileSelector aIncomingProfileSelector,
-                                                                         @NonNull final AS4ClientPullRequestMessage aClientPullRequest,
-                                                                         @NonNull final Locale aLocale,
-                                                                         @NonNull final String sURL,
-                                                                         @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
-                                                                         @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                                         @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                                         @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
-                                                                         @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                                         @Nullable final IAS4RetryCallback aRetryCallback,
-                                                                         @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                                                         @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
-                                                                         @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
-                                                                         @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler,
-                                                                         @Nullable final IPMode aPMode) throws IOException,
-                                                                                                        Phase4Exception,
-                                                                                                        WSSecurityException,
-                                                                                                        MessagingException
-  {
-    sendAS4PullRequestAndReceiveAS4UserOrSignalMessage (aCryptoFactorySign,
-                                                        aCryptoFactoryCrypt,
-                                                        aPModeResolver,
-                                                        aIAF,
-                                                        aIncomingProfileSelector,
-                                                        aClientPullRequest,
-                                                        aLocale,
-                                                        sURL,
-                                                        aBuildMessageCallback,
-                                                        aOutgoingDumper,
-                                                        aIncomingDumper,
-                                                        aIncomingSecurityConfiguration,
-                                                        aIncomingReceiverConfiguration,
-                                                        aRetryCallback,
-                                                        aResponseConsumer,
-                                                        aUserMsgConsumer,
-                                                        aSignalMsgConsumer,
-                                                        aSignalMsgValidationResultHandler,
-                                                        aPMode,
-                                                        null);
   }
 
   /**

@@ -352,23 +352,6 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    *        <code>null</code>.
    * @return this for chaining
    * @since 2.5.0
-   * @deprecated Use {@link #setRemoteTlsClientCerts(X509Certificate[])} instead
-   */
-  @Deprecated (forRemoval = true, since = "4.5.1")
-  @NonNull
-  public AS4IncomingMessageMetadata setRemoteTlsCerts (@Nullable final X509Certificate [] aRemoteTlsCerts)
-  {
-    return setRemoteTlsClientCerts (aRemoteTlsCerts);
-  }
-
-  /**
-   * Set the remote TLS certificates to be used.
-   *
-   * @param aRemoteTlsCerts
-   *        The TLS certificates the remote client presented during the handshake. May be
-   *        <code>null</code>.
-   * @return this for chaining
-   * @since 2.5.0
    */
   @NonNull
   public AS4IncomingMessageMetadata setRemoteTlsClientCerts (@Nullable final X509Certificate [] aRemoteTlsCerts)
