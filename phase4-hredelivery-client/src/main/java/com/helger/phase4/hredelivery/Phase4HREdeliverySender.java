@@ -41,7 +41,6 @@ import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.state.ESuccess;
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
-import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHData;
 import com.helger.hredelivery.commons.sbdh.HREDeliverySBDHDataWriter;
 import com.helger.hredelivery.commons.smp.EHREDeliveryTransportProfile;
@@ -72,8 +71,6 @@ import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
-import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.sbdh.CSBDH;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
@@ -269,40 +266,6 @@ public final class Phase4HREdeliverySender
   }
 
   /**
-   * @param aPayloadElement
-   *        The payload element to be validated. May not be <code>null</code>.
-   * @param aRegistry
-   *        The validation registry to be used. May be <code>null</code> to indicate to use the
-   *        default one.
-   * @param aVESID
-   *        The VESID to validate against. May be <code>null</code>.
-   * @param aValidationResultHandler
-   *        The validation result handler to be used. May be <code>null</code>.
-   * @throws Phase4Exception
-   *         If the validation result handler decides to do so....
-   */
-  private static void _validatePayload (@NonNull final Element aPayloadElement,
-                                        @Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aRegistry,
-                                        @Nullable final DVRCoordinate aVESID,
-                                        @Nullable final IPhase4HREdeliveryValidationResultHandler aValidationResultHandler) throws Phase4Exception
-  {
-    // Client side validation
-    if (aRegistry != null && aVESID != null && aValidationResultHandler != null)
-    {
-      // Custom registry
-      Phase4HREdeliveryValidation.validateOutgoingBusinessDocument (aPayloadElement,
-                                                                    aRegistry,
-                                                                    aVESID,
-                                                                    aValidationResultHandler);
-    }
-    else
-    {
-      if (aValidationResultHandler != null)
-        LOGGER.warn ("A ValidationResultHandler is present but VESID or VES Registry is missing - therefore no validation is performed");
-    }
-  }
-
-  /**
    * Check if the provided certificate is a valid HR eDelivery AP certificate.
    *
    * @param aCAChecker
@@ -378,9 +341,8 @@ public final class Phase4HREdeliverySender
   }
 
   /**
-   * @return Create a new Builder for AS4 messages if the SBDH payload is already present. This
-   *         builder is slightly more limited, because it doesn't offer validation, as it is
-   *         expected to be done before. Never <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the SBDH payload is already present. Never
+   *         <code>null</code>.
    * @see #builder() if you want phase4 to create the Standard Business Document
    */
   @NonNull
@@ -1013,8 +975,8 @@ public final class Phase4HREdeliverySender
    * The builder class for sending AS4 messages using HR eDelivery specifics. Use
    * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to trigger the main
    * transmission.<br>
-   * This builder class assumes, that only the payload (e.g. the Invoice) is present, and that both
-   * validation and SBDH creation happens inside.
+   * This builder class assumes, that only the payload (e.g. the Invoice) is present, and that the
+   * SBDH creation happens inside.
    *
    * @author Philip Helger
    */
@@ -1030,10 +992,6 @@ public final class Phase4HREdeliverySender
     private byte [] m_aPayloadBytes;
     private IHasInputStream m_aPayloadHasIS;
     private Consumer <? super StandardBusinessDocument> m_aSBDDocumentConsumer;
-
-    private IValidationExecutorSetRegistry <IValidationSourceXML> m_aVESRegistry;
-    private DVRCoordinate m_aVESID;
-    private IPhase4HREdeliveryValidationResultHandler m_aValidationResultHandler;
 
     /**
      * Create a new builder, with the defaults from
@@ -1179,64 +1137,6 @@ public final class Phase4HREdeliverySender
       return this;
     }
 
-    /**
-     * Set the client side validation to be used. If this method is not invoked, than it's the
-     * responsibility of the caller to validate the document prior to sending it. This method uses a
-     * default "do nothing validation result handler".
-     *
-     * @param aVESRegistry
-     *        The registry to use. May not be <code>null</code>.
-     * @param aVESID
-     *        The Validation Execution Set ID to validate against. May be <code>null</code>.
-     * @return this for chaining
-     * @see #validationConfiguration(IValidationExecutorSetRegistry,DVRCoordinate,
-     *      IPhase4HREdeliveryValidationResultHandler)
-     */
-    @NonNull
-    public HREDeliveryUserMessageBuilder validationConfiguration (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
-                                                                  @Nullable final DVRCoordinate aVESID)
-    {
-      final IPhase4HREdeliveryValidationResultHandler aHdl = aVESID == null ? null
-                                                                            : new Phase4HREdeliveryValidatonResultHandler ();
-      return validationConfiguration (aVESRegistry, aVESID, aHdl);
-    }
-
-    /**
-     * Set the client side validation to be used. If this method is not invoked, than it's the
-     * responsibility of the caller to validate the document prior to sending it. If the validation
-     * should happen internally, both the VESID AND the result handler must be set.
-     *
-     * @param aVESRegistry
-     *        The registry to use. May not be <code>null</code>.
-     * @param aVESID
-     *        The Validation Execution Set ID to validate against. May be <code>null</code>.
-     * @param aValidationResultHandler
-     *        The validation result handler for positive and negative response handling. May be
-     *        <code>null</code>.
-     * @return this for chaining
-     */
-    @NonNull
-    public HREDeliveryUserMessageBuilder validationConfiguration (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
-                                                                  @Nullable final DVRCoordinate aVESID,
-                                                                  @Nullable final IPhase4HREdeliveryValidationResultHandler aValidationResultHandler)
-    {
-      m_aVESRegistry = aVESRegistry;
-      m_aVESID = aVESID;
-      m_aValidationResultHandler = aValidationResultHandler;
-      return this;
-    }
-
-    /**
-     * Disable the validation for the outbound call.
-     *
-     * @return this for chaining
-     */
-    @NonNull
-    public HREDeliveryUserMessageBuilder disableValidation ()
-    {
-      return validationConfiguration (null, null);
-    }
-
     @Override
     protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
@@ -1285,9 +1185,6 @@ public final class Phase4HREdeliverySender
         throw new Phase4HREdeliveryException ("You cannot set a Standard Business Document as the payload for the regular builder." +
                                               " The SBD is created automatically inside of this builder." +
                                               " Use Phase4HREDeliverySender.sbdhBuilder() if you have a pre-build SBD.").setRetryFeasible (false);
-
-      // Optional payload validation
-      _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
 
       // Perform SMP lookup
       if (super.finishFields (aResHelper).isFailure ())
@@ -1351,8 +1248,7 @@ public final class Phase4HREdeliverySender
    * A builder class for sending AS4 messages using HR eDelivery specifics. Use
    * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to trigger the main
    * transmission.<br>
-   * This builder class assumes, that the SBDH was created outside, therefore no validation can
-   * occur.
+   * This builder class assumes, that the SBDH was created outside.
    *
    * @author Philip Helger
    */

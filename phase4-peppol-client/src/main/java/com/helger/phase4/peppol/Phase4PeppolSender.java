@@ -44,7 +44,6 @@ import com.helger.base.state.ESuccess;
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
 import com.helger.cache.regex.RegExHelper;
-import com.helger.diver.api.coord.DVRCoordinate;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
 import com.helger.peppol.reporting.api.PeppolReportingHelper;
@@ -86,8 +85,6 @@ import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
-import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.sbdh.CSBDH;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
@@ -378,55 +375,6 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * @param aPayloadElement
-   *        The payload element to be validated. May not be <code>null</code>.
-   * @param aRegistry
-   *        The validation registry to be used. May be <code>null</code> to indicate to use the
-   *        default one.
-   * @param aVESID
-   *        The VESID to validate against. May be <code>null</code>.
-   * @param aValidationResultHandler
-   *        The validation result handler to be used. May be <code>null</code>.
-   * @throws Phase4Exception
-   *         If the validation result handler decides to do so....
-   */
-  @SuppressWarnings ("removal")
-  @Deprecated (forRemoval = true, since = "4.4.3")
-  private static void _validatePayload (@NonNull final Element aPayloadElement,
-                                        @Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aRegistry,
-                                        @Nullable final DVRCoordinate aVESID,
-                                        @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4Exception
-  {
-    // Client side validation
-    if (aVESID != null)
-    {
-      if (aValidationResultHandler != null)
-      {
-        if (aRegistry == null)
-        {
-          // Default registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aVESID, aValidationResultHandler);
-        }
-        else
-        {
-          // Custom registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement,
-                                                                   aRegistry,
-                                                                   aVESID,
-                                                                   aValidationResultHandler);
-        }
-      }
-      else
-        LOGGER.warn ("A VES ID is present but no ValidationResultHandler - therefore no validation is performed");
-    }
-    else
-    {
-      if (aValidationResultHandler != null)
-        LOGGER.warn ("A ValidationResultHandler is present but no VESID - therefore no validation is performed");
-    }
-  }
-
-  /**
    * Check if the provided certificate is a valid Peppol AP certificate.
    *
    * @param aCAChecker
@@ -504,10 +452,8 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * @return Create a new Builder for AS4 messages if the SBDH payload is already present. This
-   *         builder is slightly more limited, because it doesn't offer validation, as it is
-   *         expected to be done before. Use this builder e.g. for the Peppol Testbed messages.
-   *         Never <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the SBDH payload is already present. Use
+   *         this builder e.g. for the Peppol Testbed messages. Never <code>null</code>.
    * @see #builder() if you want phase4 to create the Standard Business Document
    * @since 0.9.6
    */
@@ -1288,8 +1234,8 @@ public final class Phase4PeppolSender
   /**
    * The builder class for sending AS4 messages using Peppol specifics. Use {@link #sendMessage()}
    * or {@link #sendMessageAndCheckForReceipt()} to trigger the main transmission.<br>
-   * This builder class assumes, that only the payload (e.g. the Invoice) is present, and that both
-   * validation and SBDH creation happens inside.
+   * This builder class assumes, that only the payload (e.g. the Invoice) is present, and that the
+   * SBDH creation happens inside.
    *
    * @author Philip Helger
    * @since 0.9.4
@@ -1307,11 +1253,6 @@ public final class Phase4PeppolSender
     private byte [] m_aPayloadBytes;
     private IHasInputStream m_aPayloadHasIS;
     private Consumer <? super StandardBusinessDocument> m_aSBDDocumentConsumer;
-
-    private IValidationExecutorSetRegistry <IValidationSourceXML> m_aVESRegistry;
-    private DVRCoordinate m_aVESID;
-    @SuppressWarnings ("removal")
-    private IPhase4PeppolValidationResultHandler m_aValidationResultHandler;
 
     /**
      * Create a new builder, with the defaults from
@@ -1551,86 +1492,6 @@ public final class Phase4PeppolSender
       return this;
     }
 
-    /**
-     * Set a custom validation registry to use in VESID lookup. This may be needed if other Peppol
-     * formats like XRechnung or SimplerInvoicing should be send through this client. The same
-     * registry instance should be used for all sending operations to ensure that validation
-     * artefact caching works best.
-     *
-     * @param aVESRegistry
-     *        The registry to use. May be <code>null</code> to indicate that the default registry
-     *        (official Peppol artefacts only) should be used.
-     * @return this for chaining
-     * @since 0.10.1
-     */
-    @NonNull
-    @Deprecated (forRemoval = true, since = "4.4.3")
-    public PeppolUserMessageBuilder validationRegistry (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry)
-    {
-      m_aVESRegistry = aVESRegistry;
-      return this;
-    }
-
-    /**
-     * Set the client side validation to be used. If this method is not invoked, than it's the
-     * responsibility of the caller to validate the document prior to sending it. This method uses a
-     * default "do nothing validation result handler".
-     *
-     * @param aVESID
-     *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>. May be
-     *        <code>null</code>.
-     * @return this for chaining
-     * @see #validationConfiguration(DVRCoordinate, IPhase4PeppolValidationResultHandler)
-     */
-    @SuppressWarnings ({ "removal", "javadoc" })
-    @NonNull
-    @Deprecated (forRemoval = true, since = "4.4.3")
-    public PeppolUserMessageBuilder validationConfiguration (@Nullable final DVRCoordinate aVESID)
-    {
-      final IPhase4PeppolValidationResultHandler aHdl = aVESID == null ? null
-                                                                       : new Phase4PeppolValidatonResultHandler ();
-      return validationConfiguration (aVESID, aHdl);
-    }
-
-    /**
-     * Set the client side validation to be used. If this method is not invoked, than it's the
-     * responsibility of the caller to validate the document prior to sending it. If the validation
-     * should happen internally, both the VESID AND the result handler must be set.
-     *
-     * @param aVESID
-     *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>. May be
-     *        <code>null</code>.
-     * @param aValidationResultHandler
-     *        The validation result handler for positive and negative response handling. May be
-     *        <code>null</code>.
-     * @return this for chaining
-     */
-    @SuppressWarnings ("removal")
-    @NonNull
-    @Deprecated (forRemoval = true, since = "4.4.3")
-    public PeppolUserMessageBuilder validationConfiguration (@Nullable final DVRCoordinate aVESID,
-                                                             @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler)
-    {
-      m_aVESID = aVESID;
-      m_aValidationResultHandler = aValidationResultHandler;
-      return this;
-    }
-
-    /**
-     * Disable the validation for the outbound call.
-     *
-     * @return this for chaining
-     * @since 2.1.1
-     */
-    @NonNull
-    @Deprecated (forRemoval = true, since = "4.4.3")
-    public PeppolUserMessageBuilder disableValidation ()
-    {
-      return validationConfiguration (null, null);
-    }
-
     @Override
     protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
@@ -1688,9 +1549,6 @@ public final class Phase4PeppolSender
       // Consistency check
       if (CSBDH.SBDH_NS.equals (aPayloadElement.getNamespaceURI ()))
         throw new Phase4PeppolException ("You cannot set a Standard Business Document as the payload for the regular builder. The SBD is created automatically inside of this builder. Use Phase4PeppolSender.sbdhBuilder() if you have a pre-build SBD.").setRetryFeasible (false);
-
-      // Optional payload validation
-      _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
 
       // Perform SMP lookup
       if (super.finishFields (aResHelper).isFailure ())
@@ -1769,8 +1627,7 @@ public final class Phase4PeppolSender
   /**
    * A builder class for sending AS4 messages using Peppol specifics. Use {@link #sendMessage()} or
    * {@link #sendMessageAndCheckForReceipt()} to trigger the main transmission.<br>
-   * This builder class assumes, that the SBDH was created outside, therefore no validation can
-   * occur.
+   * This builder class assumes, that the SBDH was created outside.
    *
    * @author Philip Helger
    * @since 0.9.6
