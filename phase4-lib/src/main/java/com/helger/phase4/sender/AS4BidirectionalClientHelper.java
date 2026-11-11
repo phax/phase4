@@ -63,6 +63,7 @@ import com.helger.phase4.incoming.soap.CAS4Soap;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.GenericAS4HttpResponseHandler;
 import com.helger.phase4.messaging.http.GenericAS4HttpResponseHandler.HttpResponseData;
+import com.helger.phase4.messaging.http.HttpRetryVeto;
 import com.helger.phase4.model.EAS4ResponseType;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
@@ -172,7 +173,8 @@ public final class AS4BidirectionalClientHelper
   /**
    * Send the message of the provided client and detect SOAP Faults in the response, independent of
    * the HTTP status code (except for 405 and 415). If a SOAP Fault with a permanent disposition is
-   * received, all HTTP level retries are stopped and an {@link AS4SoapFaultException} is thrown.
+   * received, all HTTP level retries are stopped. A SOAP Fault with a transient disposition is
+   * retried according to the HTTP status code of the response, like any other HTTP response.
    */
   @NonNull
   private static AS4ClientSentMessage <byte []> _sendWithSoapFaultDetection (@NonNull final AbstractAS4Client <?> aClient,
@@ -191,6 +193,9 @@ public final class AS4BidirectionalClientHelper
     final HttpClientResponseHandler <byte []> aHttpResponseHdl = aHttpResponse -> {
       // Remember source response object
       aWrappedHttpResponse.set (aHttpResponse);
+
+      // Forget a SOAP Fault of a previous try
+      aSoapFaultKeeper.set (null);
 
       // SOAP 1.2 Part 2, Table 17: 405 and 415 are always transport failures, even if the body
       // contains a SOAP envelope
@@ -218,7 +223,8 @@ public final class AS4BidirectionalClientHelper
           {
             aSoapFaultKeeper.set (aSoapFault);
 
-            // Only throw exception for permanent errors
+            // Only throw exception for permanent errors - transient errors are retried according to
+            // the HTTP status code
             if (aSoapFault.getDisposition ().isPermanent ())
               throw new AS4SoapFaultException (aSoapFault);
           }
@@ -232,7 +238,14 @@ public final class AS4BidirectionalClientHelper
       {
         final AS4SoapFault aSoapFault = _findSoapFault (aResponsePayload, null);
         if (aSoapFault != null)
+        {
           aSoapFaultKeeper.set (aSoapFault);
+
+          // A permanent SOAP Fault is never retried, even if the HTTP status code allows for it.
+          // Transient errors are retried according to the HTTP status code
+          if (aSoapFault.getDisposition ().isPermanent ())
+            HttpRetryVeto.vetoRetry ();
+        }
       }
       return aResponsePayload;
     };
@@ -270,8 +283,8 @@ public final class AS4BidirectionalClientHelper
     }
     catch (final IOException ex)
     {
-      // If a SOAP Fault with a transient disposition was detected on the way (only possible if
-      // "accept all status codes" is disabled), surface it nevertheless
+      // If a SOAP Fault with a transient disposition was detected on the way (e.g. because the
+      // retries were exhausted), surface it nevertheless
       final AS4SoapFault aSoapFault = aSoapFaultKeeper.get ();
       if (aSoapFault != null)
       {
@@ -334,8 +347,8 @@ public final class AS4BidirectionalClientHelper
   /**
    * Same as the other overload, but with an additional SOAP Fault consumer that is invoked if the
    * synchronous response is a plain SOAP Fault instead of an ebMS Signal Message. If a received
-   * SOAP Fault has a permanent disposition, all HTTP level retries are stopped and an
-   * {@link AS4SoapFaultException} is thrown.
+   * SOAP Fault has a permanent disposition, all HTTP level retries are stopped. A SOAP Fault with a
+   * transient disposition is retried according to the HTTP status code of the response.
    *
    * @since 4.6.0
    */

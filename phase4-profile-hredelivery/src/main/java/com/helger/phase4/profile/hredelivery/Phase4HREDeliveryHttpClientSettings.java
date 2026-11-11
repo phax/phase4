@@ -51,5 +51,6 @@ public class Phase4HREDeliveryHttpClientSettings extends HttpClientSettings
 
     // Explicitly disable retry here - done on the phase4-level
     setRetryCount (0);
+    setDisableAutomaticRetries (true);
   }
 }

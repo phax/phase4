@@ -18,16 +18,21 @@ package com.helger.phase4.messaging.http;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Consumer;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.HttpEntityWrapper;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -46,7 +51,9 @@ import com.helger.http.CHttp;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
+import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.IHttpClientProvider;
+import com.helger.httpclient.response.ExtendedHttpResponseException;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
@@ -64,13 +71,15 @@ import com.helger.phase4.util.MultiOutputStream;
 public class BasicHttpPoster implements IHttpPoster
 {
   /**
-   * @return The default {@link HttpClientFactory} to be used. Never <code>null</code>.
+   * @return The default {@link HttpClientFactory} to be used. Never <code>null</code>. Since 4.9.0
+   *         all automatic retries of Apache HttpClient are disabled, because retries are handled on
+   *         the phase4-level.
    * @since 0.8.3
    */
   @NonNull
   public static HttpClientFactory createDefaultHttpClientFactory ()
   {
-    return new HttpClientFactory ();
+    return new HttpClientFactory (new HttpClientSettings ().setDisableAutomaticRetries (true));
   }
 
   public static final boolean DEFAULT_QUOTE_HTTP_HEADERS = false;
@@ -380,6 +389,79 @@ public class BasicHttpPoster implements IHttpPoster
     };
   }
 
+  /**
+   * Wrap the provided response handler, so that an HTTP response with a status code that may be
+   * retried is turned into an {@link ExtendedHttpResponseException}. The original handler is
+   * invoked first, so that e.g. a received SOAP Fault can veto the retry via
+   * {@link HttpRetryVeto}. If the server asks to retry later than allowed, the response is handled
+   * as usual.
+   */
+  @NonNull
+  private static <T> HttpClientResponseHandler <T> _createRetryStatusCheckingResponseHandler (@NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
+                                                                                              @NonNull final HttpRetrySettings aRetrySettings,
+                                                                                              final boolean bCheckStatusCode)
+  {
+    return aHttpResponse -> {
+      HttpRetryVeto.clear ();
+      try
+      {
+        final T ret = aResponseHandler.handleResponse (aHttpResponse);
+        if (!bCheckStatusCode ||
+            !HttpRetryClassifier.classifyStatusCode (aHttpResponse.getCode ())
+                                .isRetryFeasible (aRetrySettings.isReplaySafe ()))
+          return ret;
+
+        if (HttpRetryVeto.isVetoed ())
+        {
+          LOGGER.info ("The response handler vetoed the retry of the HTTP response with status code " +
+                       aHttpResponse.getCode () +
+                       " - not retrying");
+          return ret;
+        }
+
+        final Header aRetryAfterHeader = aHttpResponse.getFirstHeader (HttpHeaders.RETRY_AFTER);
+        final Duration aRetryAfter = aRetryAfterHeader == null ? null
+                                                               : HttpRetryClassifier.getRetryAfterDuration (aRetryAfterHeader.getValue (),
+                                                                                                            Instant.now ());
+        if (aRetryAfter != null && aRetryAfter.compareTo (aRetrySettings.getMaxRetryAfter ()) > 0)
+        {
+          LOGGER.info ("The server asked to retry after " +
+                       aRetryAfter.toMillis () +
+                       " ms, which exceeds the maximum of " +
+                       aRetrySettings.getMaxRetryAfter ().toMillis () +
+                       " ms - not retrying");
+          return ret;
+        }
+
+        // The response body was already consumed by the original handler
+        throw new ExtendedHttpResponseException (new StatusLine (aHttpResponse),
+                                                 aHttpResponse,
+                                                 null,
+                                                 StandardCharsets.ISO_8859_1);
+      }
+      finally
+      {
+        // Never leave a veto behind for a later request in the same thread
+        HttpRetryVeto.clear ();
+      }
+    };
+  }
+
+  @NonNull
+  private static String _getErrorText (@NonNull final String sMessageID,
+                                       @NonNull final String sURL,
+                                       @NonNull final IOException ex)
+  {
+    return "Error sending message '" +
+           sMessageID +
+           "' to '" +
+           sURL +
+           "': " +
+           ex.getClass ().getSimpleName () +
+           " - " +
+           ex.getMessage ();
+  }
+
   @Nullable
   @Deprecated (forRemoval = true, since = "4.5.1")
   public <T> T sendGenericMessageWithRetries (@NonNull final String sURL,
@@ -406,7 +488,11 @@ public class BasicHttpPoster implements IHttpPoster
    * Same as
    * {@link #sendGenericMessageWithRetries(String, HttpHeaderMap, HttpEntity, String, HttpRetrySettings, HttpClientResponseHandler, IAS4OutgoingDumper, IAS4RetryCallback)}
    * but additionally surfaces the details of the connection of the (last) successful HTTP exchange
-   * to the provided consumer.
+   * to the provided consumer.<br>
+   * Since 4.9.0 only failures that are classified as retriable by {@link HttpRetryClassifier} are
+   * retried. This includes HTTP responses with a retriable status code (e.g. 503), independent of
+   * the configuration whether all HTTP status codes are accepted. On the last try such a response
+   * is handled as usual.
    *
    * @param <T>
    *        Response data type
@@ -467,12 +553,16 @@ public class BasicHttpPoster implements IHttpPoster
 
         final int nMaxRetries = aRetrySettings.getMaxRetries ();
         final int nMaxTries = 1 + nMaxRetries;
+        final boolean bReplaySafe = aRetrySettings.isReplaySafe ();
+        final Duration aMaxDurationBeforeRetry = aRetrySettings.getMaxDurationBeforeRetry ();
         Duration aDurationBeforeRetry = aRetrySettings.getDurationBeforeRetry ();
+        int nUnknownHostRetries = 0;
         for (int nTry = 0; nTry < nMaxTries; nTry++)
         {
           if (nTry > 0)
             LOGGER.info ("Retry #" + nTry + "/" + nMaxRetries + " for sending message with ID '" + sMessageID + "'");
 
+          final boolean bLastTry = nTry == nMaxTries - 1;
           try
           {
             // Create a new one every time (for new filename, new timestamp,
@@ -484,11 +574,16 @@ public class BasicHttpPoster implements IHttpPoster
                                                                        nTry,
                                                                        aDumpOSHolder);
 
+            // On the last try, a response with a retriable status code is handled as usual
+            final HttpClientResponseHandler <? extends T> aRealResponseHandler = _createRetryStatusCheckingResponseHandler (aResponseHandler,
+                                                                                                                             aRetrySettings,
+                                                                                                                             !bLastTry);
+
             // Dump only for the first try - the remaining tries
             return sendGenericMessage (sURL,
                                        aCustomHttpHeaders,
                                        aDumpingEntity,
-                                       aResponseHandler,
+                                       aRealResponseHandler,
                                        aConnectionDetailsConsumer);
           }
           catch (final AS4SoapFaultException ex)
@@ -508,45 +603,95 @@ public class BasicHttpPoster implements IHttpPoster
           catch (final IOException ex)
           {
             // Last try? -> propagate exception
-            if (nTry == nMaxTries - 1)
+            if (bLastTry)
               throw ex;
 
-            // After the first retry, increase the waiting time
-            if (nTry > 1)
-              aDurationBeforeRetry = HttpRetrySettings.getIncreased (aDurationBeforeRetry,
-                                                                     aRetrySettings.getRetryIncreaseFactor ());
+            // Check if the error may be retried at all
+            final EHttpRetryClassification eClassification = HttpRetryClassifier.classifyException (ex);
+            if (!eClassification.isRetryFeasible (bReplaySafe))
+            {
+              LOGGER.warn (_getErrorText (sMessageID, sURL, ex));
+              LOGGER.info ("The error is classified as " +
+                           eClassification +
+                           " (replay safe: " +
+                           bReplaySafe +
+                           ") - stopping all retries");
+              throw ex;
+            }
+
+            // An unknown host is often a configuration error rather than a transient one
+            if (ex instanceof UnknownHostException)
+            {
+              nUnknownHostRetries++;
+              if (nUnknownHostRetries > aRetrySettings.getMaxRetriesUnknownHost ())
+              {
+                LOGGER.warn (_getErrorText (sMessageID, sURL, ex));
+                LOGGER.info ("The maximum number of " +
+                             aRetrySettings.getMaxRetriesUnknownHost () +
+                             " retries for an unknown host was reached - stopping all retries");
+                throw ex;
+              }
+            }
+
+            // After the first retry, increase the waiting time, but not above the maximum (unless
+            // the initial duration is already longer)
+            if (nTry > 0)
+            {
+              final Duration aIncreased = HttpRetrySettings.getIncreased (aDurationBeforeRetry,
+                                                                          aRetrySettings.getRetryIncreaseFactor ());
+              final Duration aUpperLimit = aRetrySettings.getDurationBeforeRetry ()
+                                                         .compareTo (aMaxDurationBeforeRetry) > 0 ? aRetrySettings.getDurationBeforeRetry ()
+                                                                                                  : aMaxDurationBeforeRetry;
+              aDurationBeforeRetry = aIncreased.compareTo (aUpperLimit) > 0 ? aUpperLimit : aIncreased;
+            }
+            Duration aEffectiveDurationBeforeRetry = HttpRetrySettings.getWithJitter (aDurationBeforeRetry,
+                                                                                      aRetrySettings.getJitterFactor ());
+
+            // Honour the "Retry-After" response header, if present
+            final Duration aRetryAfter = HttpRetryClassifier.getRetryAfterDuration (ex, Instant.now ());
+            if (aRetryAfter != null)
+            {
+              if (aRetryAfter.compareTo (aRetrySettings.getMaxRetryAfter ()) > 0)
+              {
+                LOGGER.warn (_getErrorText (sMessageID, sURL, ex));
+                LOGGER.info ("The server asked to retry after " +
+                             aRetryAfter.toMillis () +
+                             " ms, which exceeds the maximum of " +
+                             aRetrySettings.getMaxRetryAfter ().toMillis () +
+                             " ms - stopping all retries");
+                throw ex;
+              }
+              if (aRetryAfter.compareTo (aEffectiveDurationBeforeRetry) > 0)
+                aEffectiveDurationBeforeRetry = aRetryAfter;
+            }
 
             if (aRetryCallback != null)
-              if (aRetryCallback.onBeforeRetry (sMessageID, sURL, nTry, nMaxTries, aDurationBeforeRetry.toMillis (), ex)
+              if (aRetryCallback.onBeforeRetry (sMessageID,
+                                                sURL,
+                                                nTry,
+                                                nMaxTries,
+                                                aEffectiveDurationBeforeRetry.toMillis (),
+                                                ex)
                                 .isBreak ())
               {
                 // Explicitly interrupt retry
-                LOGGER.warn ("Error sending message '" +
-                             sMessageID +
-                             "' to '" +
-                             sURL +
-                             ": " +
-                             ex.getClass ().getSimpleName () +
-                             " - " +
-                             ex.getMessage ());
+                LOGGER.warn (_getErrorText (sMessageID, sURL, ex));
                 LOGGER.info ("Retrying was explicitly stopped by the RetryCallback");
 
                 // Propagate Exception as if it would be the last retry
                 throw ex;
               }
 
-            LOGGER.warn ("Error sending message '" +
-                         sMessageID +
-                         "' to '" +
-                         sURL +
-                         "': " +
-                         ex.getClass ().getSimpleName () +
-                         " - " +
-                         ex.getMessage ());
-            LOGGER.info ("Now waiting " + aDurationBeforeRetry.toMillis () + " ms, than retrying");
+            LOGGER.warn (_getErrorText (sMessageID, sURL, ex));
+            LOGGER.info ("Now waiting " + aEffectiveDurationBeforeRetry.toMillis () + " ms, than retrying");
 
             // Sleep and try again afterwards
-            ThreadHelper.sleep (aDurationBeforeRetry.toMillis ());
+            if (ThreadHelper.sleep (aEffectiveDurationBeforeRetry.toMillis ()).isFailure ())
+            {
+              // A real thread interrupt means "stop"
+              LOGGER.warn ("Waiting before the retry was interrupted - stopping all retries");
+              throw ex;
+            }
           }
           finally
           {
@@ -578,6 +723,9 @@ public class BasicHttpPoster implements IHttpPoster
         {
           // Close the dump output stream (if any)
           StreamHelper.close (aDumpOSHolder.get ());
+
+          // A veto is irrelevant without retries
+          HttpRetryVeto.clear ();
         }
       }
     }

@@ -33,5 +33,8 @@ public class Phase4PeppolCRLHttpClientSettings extends Phase4PeppolHttpClientSet
   {
     setConnectTimeout (DEFAULT_CRL_CONNECT_TIMEOUT);
     setResponseTimeout (DEFAULT_CRL_RESPONSE_TIMEOUT);
+
+    // CRL downloads are not retried on the phase4-level
+    setDisableAutomaticRetries (false);
   }
 }

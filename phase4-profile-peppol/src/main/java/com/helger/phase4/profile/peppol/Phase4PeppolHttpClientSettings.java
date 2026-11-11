@@ -90,6 +90,9 @@ public class Phase4PeppolHttpClientSettings extends HttpClientSettings
     // Set an explicit user agent
     setUserAgent (CAS4.LIB_NAME + "/" + CAS4Version.BUILD_VERSION + " " + CAS4.LIB_URL);
 
+    // Explicitly disable retry here - done on the phase4-level
+    setDisableAutomaticRetries (true);
+
     // Emit the AP TLS defaults note once per JVM so users of pre-4.5.0 code see what changed
     if (DEFAULTS_LOGGED.compareAndSet (false, true))
     {

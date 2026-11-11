@@ -48,6 +48,7 @@ import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.incoming.AS4IncomingProfileSelectorConstant;
 import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.messaging.http.BasicHttpPoster;
 import com.helger.phase4.messaging.http.HttpRetrySettings;
 import com.helger.phase4.messaging.http.IHttpPoster;
 import com.helger.phase4.model.ESoapVersion;
@@ -113,7 +114,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     // Set default values
     try
     {
-      httpClientFactory (new HttpClientFactory ());
+      // Retries are handled on the phase4-level
+      httpClientFactory (BasicHttpPoster.createDefaultHttpClientFactory ());
       // By default set the same for sign and crypt
       cryptoFactory (AS4CryptoFactoryConfiguration.getDefaultInstanceOrNull ());
       soapVersion (ESoapVersion.SOAP_12);

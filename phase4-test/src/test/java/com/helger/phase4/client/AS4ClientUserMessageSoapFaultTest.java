@@ -250,26 +250,80 @@ public final class AS4ClientUserMessageSoapFaultTest
   public void testSoap12TransientFaultWithHttp500 ()
   {
     final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+    final AtomicInteger aRetryCount = new AtomicInteger (0);
 
     assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED,
                   _send (_buildURL (SOAP12_FAULT_RECEIVER, 500, ESoapVersion.SOAP_12.getMimeType ()),
                          aFaultKeeper,
-                         new AtomicInteger (0)));
+                         aRetryCount));
     assertNotNull (aFaultKeeper.get ());
     assertSame (EAS4FaultDisposition.TRANSIENT, aFaultKeeper.get ().getDisposition ());
+    // A transient SOAP Fault is retried according to the HTTP status code
+    assertEquals (2, aRetryCount.intValue ());
   }
 
   @Test
   public void testSoap12TransientFaultWithHttp503 ()
   {
     final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+    final AtomicInteger aRetryCount = new AtomicInteger (0);
 
     assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED,
                   _send (_buildURL (SOAP12_FAULT_RECEIVER, 503, ESoapVersion.SOAP_12.getMimeType ()),
                          aFaultKeeper,
-                         new AtomicInteger (0)));
+                         aRetryCount));
     assertNotNull (aFaultKeeper.get ());
     assertSame (EAS4FaultDisposition.TRANSIENT, aFaultKeeper.get ().getDisposition ());
+    // A transient SOAP Fault is retried according to the HTTP status code
+    assertEquals (2, aRetryCount.intValue ());
+  }
+
+  @Test
+  public void testSoap12TransientFaultWithHttp500NotReplaySafe ()
+  {
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+    final AtomicInteger aRetryCount = new AtomicInteger (0);
+
+    final EAS4UserMessageSendResult eResult = _createBuilder ().endpointURL (_buildURL (SOAP12_FAULT_RECEIVER,
+                                                                                        500,
+                                                                                        ESoapVersion.SOAP_12.getMimeType ()))
+                                                               .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (2)
+                                                                                                           .setDurationBeforeRetry (Duration.ofMillis (50))
+                                                                                                           .setReplaySafe (false))
+                                                               .retryCallback ( (sMessageID,
+                                                                                 sRetryURL,
+                                                                                 nTry,
+                                                                                 nMaxTries,
+                                                                                 nRetryIntervalMS,
+                                                                                 ex) -> {
+                                                                 aRetryCount.incrementAndGet ();
+                                                                 return EContinue.CONTINUE;
+                                                               })
+                                                               .soapFaultConsumer ( (sSentMessageID,
+                                                                                     aSoapFault,
+                                                                                     aClientSentMessage) -> aFaultKeeper.set (aSoapFault))
+                                                               .sendMessageAndCheckForReceipt ();
+    assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED, eResult);
+    assertNotNull (aFaultKeeper.get ());
+    assertSame (EAS4FaultDisposition.TRANSIENT, aFaultKeeper.get ().getDisposition ());
+    // HTTP 500 is only retried if replaying is safe
+    assertEquals (0, aRetryCount.intValue ());
+  }
+
+  @Test
+  public void testSoap12TransientFaultWithHttp400 ()
+  {
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+    final AtomicInteger aRetryCount = new AtomicInteger (0);
+
+    assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED,
+                  _send (_buildURL (SOAP12_FAULT_RECEIVER, 400, ESoapVersion.SOAP_12.getMimeType ()),
+                         aFaultKeeper,
+                         aRetryCount));
+    assertNotNull (aFaultKeeper.get ());
+    assertSame (EAS4FaultDisposition.TRANSIENT, aFaultKeeper.get ().getDisposition ());
+    // HTTP 400 is never retried
+    assertEquals (0, aRetryCount.intValue ());
   }
 
   @Test
@@ -292,13 +346,16 @@ public final class AS4ClientUserMessageSoapFaultTest
   public void testSoap12DataEncodingUnknownFaultIsPermanent ()
   {
     final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+    final AtomicInteger aRetryCount = new AtomicInteger (0);
 
     assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED,
                   _send (_buildURL (SOAP12_FAULT_DATA_ENCODING_UNKNOWN, 500, ESoapVersion.SOAP_12.getMimeType ()),
                          aFaultKeeper,
-                         new AtomicInteger (0)));
+                         aRetryCount));
     assertNotNull (aFaultKeeper.get ());
     assertSame (EAS4FaultDisposition.PERMANENT, aFaultKeeper.get ().getDisposition ());
+    // A permanent SOAP Fault is never retried, even if the HTTP status code allows for it
+    assertEquals (0, aRetryCount.intValue ());
   }
 
   @Test

@@ -77,6 +77,9 @@ public class Phase4EuCtpHttpClientSettings extends HttpClientSettings
 
     // Set an explicit user agent
     setUserAgent (CAS4.LIB_NAME + "/" + CAS4Version.BUILD_VERSION + " " + CAS4.LIB_URL);
+
+    // Explicitly disable retry here - done on the phase4-level
+    setDisableAutomaticRetries (true);
   }
 
   @NonNull

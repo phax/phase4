@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-phase4 is an embeddable, lightweight Java library to send and receive AS4 (Applicability Statement 4) messages. It implements the EBMS 3.0 / AS4 messaging standard with support for multiple network profiles (Peppol, BDEW, CEF, ENTSOG, etc.). Version 4.4.2-SNAPSHOT, Java 17+.
+phase4 is an embeddable, lightweight Java library to send and receive AS4 (Applicability Statement 4) messages. It implements the EBMS 3.0 / AS4 messaging standard with support for multiple network profiles (Peppol, BDEW, CEF, ENTSOG, etc.). Version 4.9.0-SNAPSHOT, Java 17+.
 
 ## Build Commands
 
@@ -77,6 +77,9 @@ Profiles register via Java ServiceLoader (`META-INF/services/com.helger.phase4.p
 ### Message Flow
 - **Sending**: Profile-specific sender (e.g., `Phase4PeppolSender`) -> `AbstractAS4UserMessageBuilder` -> `AbstractAS4Client` -> HTTP POST with SOAP+attachments
 - **Receiving**: `AS4Servlet` -> `AS4XServletHandler` -> `AS4RequestHandler` (parses SOAP, validates security, invokes `IAS4IncomingMessageProcessorSPI` implementations)
+
+### HTTP Retries
+Outgoing HTTP retries happen only on the phase4 level, in `BasicHttpPoster.sendGenericMessageWithRetries`, configured by `HttpRetrySettings`. `HttpRetryClassifier` decides per exception and HTTP status code whether a retry is feasible (`EHttpRetryClassification`). A response handler can veto the retry of the current response via `HttpRetryVeto.vetoRetry ()` (used for received SOAP Faults with a permanent disposition; transient SOAP Faults are retried according to the HTTP status code). The automatic retries of Apache HttpClient are disabled via `HttpClientSettings.setDisableAutomaticRetries (true)` (ph-web) in all phase4 `*HttpClientSettings` classes and in `BasicHttpPoster.createDefaultHttpClientFactory ()` - keep it that way for new profiles, otherwise HttpClient silently retries 429/503 in addition.
 
 ### JAXB Code Generation
 `phase4-lib` generates Java classes from EBMS/AS4 XSD schemas during `generate-sources` phase. Bindings in `src/main/jaxb/bindings.xjb`, schemas in `src/main/resources/external/schemas/`.
