@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger.phase4</groupId>
     <artifactId>phase4-parent-pom</artifactId>
-    <version>4.9.1-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>phase4-hredelivery-client</artifactId>
   <packaging>jar</packaging>
@@ -67,11 +67,6 @@
       <artifactId>hredelivery-commons</artifactId>
       <version>${peppol-commons.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.helger.phive</groupId>
-      <artifactId>phive-xml</artifactId>
-      <version>${phive.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>jakarta.servlet</groupId>
@@ -87,12 +82,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.phive.rules</groupId>
-      <artifactId>phive-rules-peppol</artifactId>
-      <version>${phive-rules.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
