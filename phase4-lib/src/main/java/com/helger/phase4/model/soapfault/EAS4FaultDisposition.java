@@ -24,7 +24,9 @@ import com.helger.base.id.IHasID;
 import com.helger.base.lang.EnumHelper;
 
 /**
- * Defines the retry disposition of a received SOAP Fault.
+ * Defines the retry disposition of a received SOAP Fault. Since 4.9.0 a SOAP Fault is never retried
+ * on the HTTP level, independent of its disposition. The disposition only tells the caller, whether
+ * sending the message again at a later point in time may help.
  *
  * @author Philip Helger
  * @since 4.6.0

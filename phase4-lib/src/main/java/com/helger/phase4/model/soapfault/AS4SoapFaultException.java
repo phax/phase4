@@ -25,9 +25,10 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 
 /**
- * Exception that indicates that a SOAP Fault with a {@link EAS4FaultDisposition#PERMANENT}
- * disposition was received as the synchronous response. It is derived from {@link IOException} so
- * that it passes through the HTTP retry handling, where it explicitly stops all further retries.
+ * Exception that indicates that a SOAP Fault was received as the synchronous response. Since 4.9.0
+ * this is independent of the {@link EAS4FaultDisposition} of the fault, because a SOAP Fault is an
+ * answer of the receiving backend. It is derived from {@link IOException} so that it passes through
+ * the HTTP retry handling, where it explicitly stops all further retries.
  * <br>
  * Note: this exception deliberately does NOT extend {@link com.helger.phase4.util.Phase4Exception},
  * even though that would be the more natural base class. It is thrown from within an Apache
