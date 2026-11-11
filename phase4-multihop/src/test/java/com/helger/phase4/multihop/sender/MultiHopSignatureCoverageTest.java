@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.ZoneOffset;
 
-import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.junit.ClassRule;
@@ -48,8 +48,8 @@ import com.helger.xml.XMLHelper;
  * Measures whether the <code>nextmsh</code> role attribute that R1 puts on
  * <code>eb:Messaging</code> is actually covered by the XML signature.
  * <p>
- * This settles an open question of the design phase. WSS4J 4.0.1 ignores the "Content" /
- * "Element" modifier of a {@code WSEncryptionPart} for <b>signature</b> parts - see
+ * This settles an open question of the design phase. WSS4J 4.0.1 ignores the "Content" / "Element"
+ * modifier of a {@code WSEncryptionPart} for <b>signature</b> parts - see
  * {@code WSSecSignatureBase.addReferencesToSign}, which always creates
  * {@code newReference("#" + id, digest, [exclusive c14n])}. A same document reference with
  * exclusive canonicalization covers the element node <b>including all of its attributes</b>.
@@ -91,13 +91,13 @@ public final class MultiHopSignatureCoverageTest
   private static String _getMessagingDigestValue (@NonNull final Document aSignedDoc,
                                                   @NonNull final String sMessagingID)
   {
-    final NodeList aRefs = aSignedDoc.getElementsByTagNameNS (WSConstants.SIG_NS, "Reference");
+    final NodeList aRefs = aSignedDoc.getElementsByTagNameNS (WSS4JConstants.SIG_NS, "Reference");
     for (int i = 0; i < aRefs.getLength (); ++i)
     {
       final Element aRef = (Element) aRefs.item (i);
       if (("#" + sMessagingID).equals (aRef.getAttribute ("URI")))
       {
-        final Element aDigest = XMLHelper.getFirstChildElementOfName (aRef, WSConstants.SIG_NS, "DigestValue");
+        final Element aDigest = XMLHelper.getFirstChildElementOfName (aRef, WSS4JConstants.SIG_NS, "DigestValue");
         return aDigest == null ? null : aDigest.getTextContent ();
       }
     }
@@ -105,8 +105,8 @@ public final class MultiHopSignatureCoverageTest
   }
 
   @NonNull
-  private static Document _sign (@NonNull final AS4UserMessage aMsg,
-                                 @NonNull final AS4ResourceHelper aResHelper) throws Exception
+  private static Document _sign (@NonNull final AS4UserMessage aMsg, @NonNull final AS4ResourceHelper aResHelper)
+                                                                                                                  throws Exception
   {
     return AS4Signer.createSignedMessage (AS4CryptoFactoryConfiguration.getDefaultInstance (),
                                           aMsg.getAsSoapDocument (null),

@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -577,7 +576,8 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    */
   @NonNull
   public static WSS4JAttachment createIncomingFileAttachment (@NonNull final AS4IncomingMimePart aMimePart,
-                                                              @NonNull final AS4ResourceHelper aResHelper) throws MessagingException, IOException
+                                                              @NonNull final AS4ResourceHelper aResHelper) throws MessagingException,
+                                                                                                           IOException
   {
     ValueEnforcer.notNull (aMimePart, "MimePart");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
@@ -611,8 +611,8 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
       // Retain only an array of the exact content size, so that the attachment
       // does not hold on to the full read buffer (see issue #382)
-      final byte [] aInMemoryData = nInMemoryLen == aReadBuffer.length ? aReadBuffer
-                                                                       : Arrays.copyOf (aReadBuffer, nInMemoryLen);
+      final byte [] aInMemoryData = nInMemoryLen == aReadBuffer.length ? aReadBuffer : Arrays.copyOf (aReadBuffer,
+                                                                                                      nInMemoryLen);
       ret.setSourceStreamProvider (HasInputStream.create (aInMemoryData));
     }
     else

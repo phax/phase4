@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 
-import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.jspecify.annotations.NonNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -57,11 +57,11 @@ import com.helger.xml.serialize.read.DOMReader;
 /**
  * End-to-end scenarios of the AS4 Multi-Hop endpoint support.
  * <p>
- * <b>Scope note.</b> The endpoints are driven through {@code AS4RequestHandler} rather than
- * through an HTTP servlet container. Multi-hop changes nothing about the HTTP layer, and the
- * servlet path is already covered by the phase4-test suite. What is exercised here is the part
- * multi-hop actually changes: the role attribute, the three routing headers, the signature
- * coverage across a byte transparent intermediary, and the asynchronous receipt path.
+ * <b>Scope note.</b> The endpoints are driven through {@code AS4RequestHandler} rather than through
+ * an HTTP servlet container. Multi-hop changes nothing about the HTTP layer, and the servlet path
+ * is already covered by the phase4-test suite. What is exercised here is the part multi-hop
+ * actually changes: the role attribute, the three routing headers, the signature coverage across a
+ * byte transparent intermediary, and the asynchronous receipt path.
  * </p>
  *
  * @author Philip Helger
@@ -87,8 +87,8 @@ public final class MultiHopIntegrationTest
   public static void loadKeyStore () throws Exception
   {
     s_aKeyStore = KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.PKCS12,
-                                                      "keys/mh-test.p12",
-                                                      "mh-test".toCharArray ());
+                                                     "keys/mh-test.p12",
+                                                     "mh-test".toCharArray ());
     assertNotNull ("Failed to load the test key store", s_aKeyStore);
   }
 
@@ -118,9 +118,9 @@ public final class MultiHopIntegrationTest
     final Ebms3UserMessage ret = new Ebms3UserMessage ();
     ret.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
     ret.setPartyInfo (MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
-                                                                  sFrom,
-                                                                  CAS4.DEFAULT_RESPONDER_URL,
-                                                                  sTo));
+                                                                 sFrom,
+                                                                 CAS4.DEFAULT_RESPONDER_URL,
+                                                                 sTo));
     ret.setCollaborationInfo (MessageHelperMethods.createEbms3CollaborationInfo (PMODE_ID,
                                                                                  "urn:as4:agreement",
                                                                                  null,
@@ -156,13 +156,13 @@ public final class MultiHopIntegrationTest
                                                     PMODE_ID + CAS4MultiHop.PMODE_SUFFIX_RESP);
 
       final Document aSigned = AS4Signer.createSignedMessage (aSender.getCryptoFactory (),
-                                                               aMsg.getAsSoapDocument (null),
-                                                               ESoapVersion.SOAP_12,
-                                                               aMsg.getMessagingID (),
-                                                               null,
-                                                               aResHelper,
-                                                               false,
-                                                               AS4SigningParams.createDefault ());
+                                                              aMsg.getAsSoapDocument (null),
+                                                              ESoapVersion.SOAP_12,
+                                                              aMsg.getMessagingID (),
+                                                              null,
+                                                              aResHelper,
+                                                              false,
+                                                              AS4SigningParams.createDefault ());
 
       // Canonicalization aware serialization - anything else breaks the signature
       return AS4XMLHelper.serializeXML (aSigned).getBytes (StandardCharsets.UTF_8);
@@ -188,7 +188,7 @@ public final class MultiHopIntegrationTest
 
     // It is signed
     assertTrue ("The routed signal is not signed",
-                aDoc.getElementsByTagNameNS (WSConstants.SIG_NS, "Signature").getLength () > 0);
+                aDoc.getElementsByTagNameNS (WSS4JConstants.SIG_NS, "Signature").getLength () > 0);
 
     // R4 - all three headers
     assertEquals (CAS4MultiHop.ICLOUD_URI, _getFirst (aDoc, CAS4MultiHop.WSA_NS, "To").getTextContent ());
@@ -197,7 +197,7 @@ public final class MultiHopIntegrationTest
     final Element aRI = _getFirst (aDoc, CAS4MultiHop.EBINT_NS, "RoutingInput");
 
     // R9 - all three are covered by the signature
-    final NodeList aRefs = aDoc.getElementsByTagNameNS (WSConstants.SIG_NS, "Reference");
+    final NodeList aRefs = aDoc.getElementsByTagNameNS (WSS4JConstants.SIG_NS, "Reference");
     final var aRefURIs = new CommonsArrayList <String> ();
     for (int i = 0; i < aRefs.getLength (); ++i)
       aRefURIs.add (((Element) aRefs.item (i)).getAttribute ("URI"));
@@ -220,8 +220,8 @@ public final class MultiHopIntegrationTest
 
   /**
    * S1 "First-and-last-push" (ebMS3 Part 2 section 2.4.7.1 case 1).<br>
-   * A sends through the I-Cloud, B answers synchronously, and the intermediary streams the
-   * response back. The Receipt must be signed by B and carry the three routing headers.
+   * A sends through the I-Cloud, B answers synchronously, and the intermediary streams the response
+   * back. The Receipt must be signed by B and carry the three routing headers.
    */
   @Test
   public void testS1FirstAndLastPush () throws Exception
@@ -244,8 +244,8 @@ public final class MultiHopIntegrationTest
 
   /**
    * S2 - the same, but the routed Receipt is delivered back to A asynchronously instead of being
-   * streamed through. A must accept it via the servlet path, which is only possible because of
-   * the C3 core extension point.
+   * streamed through. A must accept it via the servlet path, which is only possible because of the
+   * C3 core extension point.
    */
   @Test
   public void testS2AsyncReceiptDelivery () throws Exception
@@ -269,8 +269,8 @@ public final class MultiHopIntegrationTest
   }
 
   /**
-   * S2b - the routed Receipt can also be queued on its MPC for later pulling, which is what
-   * happens when the receiving endpoint is not addressable (R13 / D12 groundwork).
+   * S2b - the routed Receipt can also be queued on its MPC for later pulling, which is what happens
+   * when the receiving endpoint is not addressable (R13 / D12 groundwork).
    */
   @Test
   public void testS2bReceiptCanBeQueuedForPull () throws Exception
@@ -292,19 +292,19 @@ public final class MultiHopIntegrationTest
   }
 
   /**
-   * S5 - regression. Without the nextmsh role the exchange behaves exactly as a plain phase4:
-   * the Receipt carries none of the multi-hop headers.
+   * S5 - regression. Without the nextmsh role the exchange behaves exactly as a plain phase4: the
+   * Receipt carries none of the multi-hop headers.
    */
   @Test
   public void testS5NoMultiHopIsUnchanged () throws Exception
   {
     // Endpoints without the multi-hop customizer, i.e. a phase4 without this module
     final MultiHopTestEndpoint aPlainB = new MultiHopTestEndpoint ("plain-B",
-                                                                    s_aKeyStore,
-                                                                    "mh-b",
-                                                                    "mh-test",
-                                                                    m_aConfig,
-                                                                    false);
+                                                                   s_aKeyStore,
+                                                                   "mh-b",
+                                                                   "mh-test",
+                                                                   m_aConfig,
+                                                                   false);
 
     final byte [] aRequest = _buildMultiHopUserMessage (m_aEndpointA, PARTY_A, PARTY_B, false);
     final MultiHopTestEndpoint.Response aResponse = aPlainB.receive (aRequest, SOAP_CONTENT_TYPE);
@@ -323,8 +323,8 @@ public final class MultiHopIntegrationTest
 
   /**
    * S5b - even with the multi-hop customizer installed, a message that did NOT arrive with the
-   * nextmsh role gets an unchanged response (R5). This is the invariant that keeps the module
-   * safe to deploy.
+   * nextmsh role gets an unchanged response (R5). This is the invariant that keeps the module safe
+   * to deploy.
    */
   @Test
   public void testS5bCustomizerInstalledButNoRole () throws Exception

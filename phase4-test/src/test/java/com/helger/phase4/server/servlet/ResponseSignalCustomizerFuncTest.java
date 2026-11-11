@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.wss4j.common.WSEncryptionPart;
-import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
 import org.jspecify.annotations.NonNull;
@@ -105,7 +105,6 @@ public final class ResponseSignalCustomizerFuncTest extends AbstractAS4TestSetUp
   private static final class MockResponse implements IAS4ResponseAbstraction
   {
     private byte [] m_aBytes;
-    private int m_nStatus = -1;
 
     public void setContent (final byte @NonNull [] aBytes, @NonNull final Charset aCharset)
     {
@@ -121,9 +120,7 @@ public final class ResponseSignalCustomizerFuncTest extends AbstractAS4TestSetUp
     {}
 
     public void setStatus (final int nStatusCode)
-    {
-      m_nStatus = nStatusCode;
-    }
+    {}
 
     @Nullable
     Document getAsDocument ()
@@ -230,7 +227,7 @@ public final class ResponseSignalCustomizerFuncTest extends AbstractAS4TestSetUp
   private static ICommonsList <String> _getAllSignedReferenceURIs (@NonNull final Document aDoc)
   {
     final ICommonsList <String> ret = new CommonsArrayList <> ();
-    final NodeList aRefs = aDoc.getElementsByTagNameNS (WSConstants.SIG_NS, "Reference");
+    final NodeList aRefs = aDoc.getElementsByTagNameNS (WSS4JConstants.SIG_NS, "Reference");
     for (int i = 0; i < aRefs.getLength (); ++i)
       ret.add (((Element) aRefs.item (i)).getAttribute ("URI"));
     return ret;
@@ -297,7 +294,6 @@ public final class ResponseSignalCustomizerFuncTest extends AbstractAS4TestSetUp
 
     final Document aResponseDoc = aResponse.getAsDocument ();
     assertNotNull ("No response received", aResponseDoc);
-    assertNotNull ("The customizer added header is not present in the Error response",
-                   _findTestHeader (aResponseDoc));
+    assertNotNull ("The customizer added header is not present in the Error response", _findTestHeader (aResponseDoc));
   }
 }

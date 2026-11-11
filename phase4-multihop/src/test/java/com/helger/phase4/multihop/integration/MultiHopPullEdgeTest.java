@@ -25,7 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 
-import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.jspecify.annotations.NonNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -89,8 +89,8 @@ public final class MultiHopPullEdgeTest
   public static void loadKeyStore () throws Exception
   {
     s_aKeyStore = KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.PKCS12,
-                                                      "keys/mh-test.p12",
-                                                      "mh-test".toCharArray ());
+                                                     "keys/mh-test.p12",
+                                                     "mh-test".toCharArray ());
     assertNotNull (s_aKeyStore);
   }
 
@@ -115,9 +115,9 @@ public final class MultiHopPullEdgeTest
     final Ebms3UserMessage ret = new Ebms3UserMessage ();
     ret.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
     ret.setPartyInfo (MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
-                                                                  PARTY_A,
-                                                                  CAS4.DEFAULT_RESPONDER_URL,
-                                                                  PARTY_B));
+                                                                 PARTY_A,
+                                                                 CAS4.DEFAULT_RESPONDER_URL,
+                                                                 PARTY_B));
     ret.setCollaborationInfo (MessageHelperMethods.createEbms3CollaborationInfo (PMODE_ID,
                                                                                  "urn:as4:agreement",
                                                                                  null,
@@ -140,8 +140,8 @@ public final class MultiHopPullEdgeTest
   }
 
   /**
-   * R2 - a Pull Request never carries the nextmsh role or a RoutingInput, even when the endpoint
-   * is fully multi-hop enabled.
+   * R2 - a Pull Request never carries the nextmsh role or a RoutingInput, even when the endpoint is
+   * fully multi-hop enabled.
    */
   @Test
   public void testPullRequestIsPlain () throws Exception
@@ -185,18 +185,17 @@ public final class MultiHopPullEdgeTest
                                                     PMODE_ID + CAS4MultiHop.PMODE_SUFFIX_RESP);
 
       final byte [] aUserMsgBytes = AS4XMLHelper.serializeXML (AS4Signer.createSignedMessage (m_aCryptoA,
-                                                                                               aUserMsg.getAsSoapDocument (null),
-                                                                                               ESoapVersion.SOAP_12,
-                                                                                               aUserMsg.getMessagingID (),
-                                                                                               null,
-                                                                                               aResHelper,
-                                                                                               false,
-                                                                                               AS4SigningParams.createDefault ()))
+                                                                                              aUserMsg.getAsSoapDocument (null),
+                                                                                              ESoapVersion.SOAP_12,
+                                                                                              aUserMsg.getMessagingID (),
+                                                                                              null,
+                                                                                              aResHelper,
+                                                                                              false,
+                                                                                              AS4SigningParams.createDefault ()))
                                                 .getBytes (StandardCharsets.UTF_8);
 
       // (2) B pulls it - the I-Cloud hands out the identical bytes
-      m_aICloud.getQueue (CAS4.DEFAULT_MPC_ID)
-               .add (new TestForwardingIntermediary.StoredMessage (aUserMsgBytes, CT));
+      m_aICloud.getQueue (CAS4.DEFAULT_MPC_ID).add (new TestForwardingIntermediary.StoredMessage (aUserMsgBytes, CT));
       final TestForwardingIntermediary.StoredMessage aPulledUserMsg = m_aICloud.pull (CAS4.DEFAULT_MPC_ID);
       assertNotNull ("B could not pull the User Message", aPulledUserMsg);
       assertArrayEquals ("Pulling changed the bytes", aUserMsgBytes, aPulledUserMsg.getBytes ());
@@ -223,7 +222,7 @@ public final class MultiHopPullEdgeTest
 
       // R9 - and they are covered by the signature
       final var aRefURIs = new CommonsArrayList <String> ();
-      final NodeList aRefs = aReceiptDoc.getElementsByTagNameNS (WSConstants.SIG_NS, "Reference");
+      final NodeList aRefs = aReceiptDoc.getElementsByTagNameNS (WSS4JConstants.SIG_NS, "Reference");
       for (int i = 0; i < aRefs.getLength (); ++i)
         aRefURIs.add (((Element) aRefs.item (i)).getAttribute ("URI"));
 
@@ -247,10 +246,10 @@ public final class MultiHopPullEdgeTest
       assertArrayEquals ("Pulling changed the Receipt bytes", aReceiptBytes, aPulledReceipt.getBytes ());
 
       // The routing input of the pulled Receipt addresses A again (R6)
-      final var aParsed = new MultiHopRoutingInputMarshaller ().read ((Element) DOMReader.readXMLDOM (aPulledReceipt.getBytes ())
-                                                                                          .getElementsByTagNameNS (CAS4MultiHop.EBINT_NS,
-                                                                                                                   "RoutingInput")
-                                                                                          .item (0));
+      final var aParsed = new MultiHopRoutingInputMarshaller ().read (DOMReader.readXMLDOM (aPulledReceipt.getBytes ())
+                                                                               .getElementsByTagNameNS (CAS4MultiHop.EBINT_NS,
+                                                                                                        "RoutingInput")
+                                                                               .item (0));
       assertNotNull (aParsed);
       assertEquals (PARTY_A, aParsed.getUserMessage ().getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ());
       assertEquals (PARTY_B, aParsed.getUserMessage ().getPartyInfo ().getFrom ().getPartyIdAtIndex (0).getValue ());
