@@ -32,12 +32,18 @@ import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
 import com.helger.base.array.ArrayHelper;
+import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.state.ETriState;
+import com.helger.base.string.StringHelper;
 import com.helger.base.wrapper.Wrapper;
 import com.helger.http.CHttp;
+import com.helger.http.CHttpHeader;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.httpclient.response.ExtendedHttpResponseException;
+import com.helger.mime.IMimeType;
+import com.helger.mime.parse.MimeTypeParser;
+import com.helger.phase4.attachment.AS4IncomingMimePart;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
@@ -46,6 +52,7 @@ import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.AbstractAS4Client;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
@@ -54,6 +61,7 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.incoming.AS4IncomingHandler;
 import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
+import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
@@ -70,6 +78,9 @@ import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.model.soapfault.AS4SoapFault;
 import com.helger.phase4.model.soapfault.AS4SoapFaultException;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.web.multipart.MultipartProgressNotifier;
+import com.helger.web.multipart.MultipartStream;
+import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
 import com.helger.xml.sax.DoNothingSAXErrorHandler;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.read.DOMReaderSettings;
@@ -88,25 +99,70 @@ public final class AS4BidirectionalClientHelper
   private AS4BidirectionalClientHelper ()
   {}
 
+  @Nullable
+  private static String _getContentType (@NonNull final HttpResponse aHttpResponse)
+  {
+    final Header aHeader = aHttpResponse.getFirstHeader (CHttpHeader.CONTENT_TYPE);
+    return aHeader == null ? null : aHeader.getValue ();
+  }
+
   /**
    * Try to interpret the provided response payload as a SOAP Fault. Any XML parsing errors are
-   * collected silently, because non-XML response payloads are a valid case here.
+   * collected silently, because non-XML response payloads are a valid case here. If the response
+   * is a MIME message, only the first MIME part (the SOAP document) is checked.
    *
    * @param aResponsePayload
    *        The response payload to check. May be <code>null</code>.
    * @param sRawXML
    *        The raw XML string for dumping. May be <code>null</code> in which case the parsed
-   *        document is serialized on demand.
+   *        document is serialized on demand. Ignored for MIME messages.
+   * @param sContentType
+   *        The Content-Type of the response. May be <code>null</code>.
    * @return <code>null</code> if the response payload is not a SOAP Fault.
    */
   @Nullable
-  private static AS4SoapFault _findSoapFault (final byte @Nullable [] aResponsePayload, @Nullable final String sRawXML)
+  static AS4SoapFault _findSoapFault (final byte @Nullable [] aResponsePayload,
+                                      @Nullable final String sRawXML,
+                                      @Nullable final String sContentType)
   {
     if (ArrayHelper.isEmpty (aResponsePayload))
       return null;
 
-    final Document aSoapDocument = DOMReader.readXMLDOM (aResponsePayload,
-                                                         new DOMReaderSettings ().setErrorHandler (new DoNothingSAXErrorHandler ()));
+    final DOMReaderSettings aDRS = new DOMReaderSettings ().setErrorHandler (new DoNothingSAXErrorHandler ());
+
+    final IMimeType aContentType = MimeTypeParser.safeParseMimeType (sContentType);
+    if (aContentType != null &&
+        aContentType.getCopyWithoutParameters ().equals (AS4RequestHandler.MT_MULTIPART_RELATED))
+    {
+      // MIME message - the SOAP document is in the first MIME part
+      final String sBoundary = aContentType.getParameterValueWithName ("boundary");
+      if (StringHelper.isEmpty (sBoundary))
+        return null;
+
+      Document aSoapDocument = null;
+      try (final NonBlockingByteArrayInputStream aIS = new NonBlockingByteArrayInputStream (aResponsePayload))
+      {
+        final MultipartStream aMulti = new MultipartStream (aIS,
+                                                            sBoundary.getBytes (StandardCharsets.ISO_8859_1),
+                                                            null);
+        if (aMulti.skipPreamble ())
+          try (final MultipartItemInputStream aBodyPartIS = aMulti.createInputStream ())
+          {
+            final AS4IncomingMimePart aMimePart = AS4IncomingMimePart.parse (aBodyPartIS,
+                                                                             AS4Configuration.getIncomingMimeMaxPartHeaderSizeBytes ());
+            aSoapDocument = DOMReader.readXMLDOM (aMimePart.getDecodedContentStream (), aDRS);
+          }
+      }
+      catch (final IOException | MessagingException ex)
+      {
+        LOGGER.debug ("Failed to read the first MIME part of the response", ex);
+        return null;
+      }
+      // The raw payload contains the whole MIME message, so serialize the SOAP document
+      return AS4SoapFault.createOrNull (aSoapDocument);
+    }
+
+    final Document aSoapDocument = DOMReader.readXMLDOM (aResponsePayload, aDRS);
     return AS4SoapFault.createOrNull (aSoapDocument, sRawXML);
   }
 
@@ -218,7 +274,9 @@ public final class AS4BidirectionalClientHelper
         // Check if the response body contains a SOAP Fault, to eventually stop pointless retries
         if (bMayBeSoapFault)
         {
-          final AS4SoapFault aSoapFault = _findSoapFault (ex.directGetResponseBody (), ex.getResponseBodyAsString ());
+          final AS4SoapFault aSoapFault = _findSoapFault (ex.directGetResponseBody (),
+                                                          ex.getResponseBodyAsString (),
+                                                          _getContentType (aHttpResponse));
           if (aSoapFault != null)
           {
             aSoapFaultKeeper.set (aSoapFault);
@@ -236,7 +294,7 @@ public final class AS4BidirectionalClientHelper
       // may return a fault with HTTP 200
       if (bMayBeSoapFault)
       {
-        final AS4SoapFault aSoapFault = _findSoapFault (aResponsePayload, null);
+        final AS4SoapFault aSoapFault = _findSoapFault (aResponsePayload, null, _getContentType (aHttpResponse));
         if (aSoapFault != null)
         {
           aSoapFaultKeeper.set (aSoapFault);
