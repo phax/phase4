@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNull;
 
 import java.nio.charset.StandardCharsets;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 
 import com.helger.phase4.model.soapfault.AS4SoapFault;
@@ -38,9 +39,9 @@ public final class AS4BidirectionalClientHelperTest
                                              "<S12:Reason><S12:Text xml:lang=\"en\">Something failed</S12:Text></S12:Reason>" +
                                              "</S12:Fault></S12:Body></S12:Envelope>";
 
-  private static byte [] _bytes (final String s)
+  private static byte [] _bytes (@NonNull final String sText)
   {
-    return s.getBytes (StandardCharsets.UTF_8);
+    return sText.getBytes (StandardCharsets.UTF_8);
   }
 
   @Test

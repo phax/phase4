@@ -31,6 +31,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
+import com.helger.annotation.style.VisibleForTesting;
 import com.helger.base.array.ArrayHelper;
 import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
 import com.helger.base.io.stream.StreamHelper;
@@ -121,6 +122,7 @@ public final class AS4BidirectionalClientHelper
    * @return <code>null</code> if the response payload is not a SOAP Fault.
    */
   @Nullable
+  @VisibleForTesting
   static AS4SoapFault _findSoapFault (final byte @Nullable [] aResponsePayload,
                                       @Nullable final String sRawXML,
                                       @Nullable final String sContentType)
@@ -129,6 +131,8 @@ public final class AS4BidirectionalClientHelper
       return null;
 
     final DOMReaderSettings aDRS = new DOMReaderSettings ().setErrorHandler (new DoNothingSAXErrorHandler ());
+    // Don't log the parsing exception of non-XML payloads as an error
+    aDRS.exceptionCallbacks ().removeAll ();
 
     final IMimeType aContentType = MimeTypeParser.safeParseMimeType (sContentType);
     if (aContentType != null &&
@@ -144,7 +148,7 @@ public final class AS4BidirectionalClientHelper
       {
         final MultipartStream aMulti = new MultipartStream (aIS,
                                                             sBoundary.getBytes (StandardCharsets.ISO_8859_1),
-                                                            null);
+                                                            (MultipartProgressNotifier) null);
         if (aMulti.skipPreamble ())
           try (final MultipartItemInputStream aBodyPartIS = aMulti.createInputStream ())
           {
@@ -155,7 +159,8 @@ public final class AS4BidirectionalClientHelper
       }
       catch (final IOException | MessagingException ex)
       {
-        LOGGER.debug ("Failed to read the first MIME part of the response", ex);
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Failed to read the first MIME part of the response", ex);
         return null;
       }
       // The raw payload contains the whole MIME message, so serialize the SOAP document
