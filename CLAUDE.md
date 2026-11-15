@@ -49,6 +49,7 @@ Profiles: `peppol`, `bdew`, `cef`, `edelivery2`, `dbnalliance`, `entsog`, `euctp
 - **phase4-test-webapp**, **phase4-server-webapp**, **phase4-peppol-webapp** - Deployable WARs for testing/production.
 
 ### Other
+- **phase4-bom** - Bill of Materials with all phase4 library artefacts (no test or webapp modules). Add new library modules there too.
 - **phase4-test** - Shared test utilities and resources.
 - **phase4-dynamic-discovery** - SMP-based dynamic discovery support.
 

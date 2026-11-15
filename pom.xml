@@ -79,58 +79,58 @@
     <xmlsec.version>4.0.4</xmlsec.version>
     <wss4j.version>4.0.2</wss4j.version>
 
-    <ph-commons.version>12.6.0</ph-commons.version>
-    <ph-xsds.version>4.1.1</ph-xsds.version>
+    <ph-commons.version>12.7.1</ph-commons.version>
+    <ph-xsds.version>4.1.2</ph-xsds.version>
     <ph-ubl.version>10.2.0</ph-ubl.version>
-    <ph-web.version>11.5.0</ph-web.version>
-    <phive.version>12.2.0</phive.version>
-    <phive-rules.version>4.6.4</phive-rules.version>
-    <peppol-commons.version>13.2.2</peppol-commons.version>
-    <peppol-reporting.version>4.4.1</peppol-reporting.version>
-    <peppol-ap-support.version>2.4.1</peppol-ap-support.version>
+    <ph-web.version>11.5.1</ph-web.version>
+    <phive.version>12.3.0</phive.version>
+    <phive-rules.version>4.7.0</phive-rules.version>
+    <peppol-commons.version>13.2.3</peppol-commons.version>
+    <peppol-reporting.version>4.4.2</peppol-reporting.version>
+    <peppol-ap-support.version>2.4.2</peppol-ap-support.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.helger.commons</groupId>
-        <artifactId>ph-commons-parent-pom</artifactId>
+        <artifactId>ph-commons-bom</artifactId>
         <version>${ph-commons.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.xsd</groupId>
-        <artifactId>ph-xsds-parent-pom</artifactId>
+        <artifactId>ph-xsds-bom</artifactId>
         <version>${ph-xsds.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.schedule</groupId>
-        <artifactId>ph-schedule-parent-pom</artifactId>
-        <version>6.2.1</version>
+        <artifactId>ph-schedule-bom</artifactId>
+        <version>6.2.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.masterdata</groupId>
-        <artifactId>ph-masterdata-parent-pom</artifactId>
-        <version>8.2.1</version>
+        <artifactId>ph-masterdata-bom</artifactId>
+        <version>8.2.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.web</groupId>
-        <artifactId>ph-web-parent-pom</artifactId>
+        <artifactId>ph-web-bom</artifactId>
         <version>${ph-web.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.photon</groupId>
-        <artifactId>ph-oton-parent-pom</artifactId>
-        <version>10.8.0</version>
+        <artifactId>ph-oton-bom</artifactId>
+        <version>10.8.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -141,11 +141,35 @@
       </dependency>
       
       <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-bom</artifactId>
+        <version>4.0.9</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-bom</artifactId>
+        <version>${log4j.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit4.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${jakarta.servlet-api.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.eclipse.angus</groupId>
         <artifactId>angus-mail</artifactId>
         <version>2.0.5</version>
       </dependency>
-
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
@@ -200,26 +224,6 @@
             <artifactId>jasypt</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-api</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-core</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-slf4j2-impl</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-web</artifactId>
-        <version>${log4j.version}</version>
       </dependency>
 
       <dependency>
@@ -367,6 +371,7 @@
   </dependencyManagement>
 
   <modules>
+    <module>phase4-bom</module>
     <module>phase4-lib</module>
     <!-- all profiles -->
     <module>phase4-profile-bdew</module>
