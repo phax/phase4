@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-phase4 is an embeddable, lightweight Java library to send and receive AS4 (Applicability Statement 4) messages. It implements the EBMS 3.0 / AS4 messaging standard with support for multiple network profiles (Peppol, BDEW, CEF, ENTSOG, etc.). Version 4.9.1-SNAPSHOT, Java 17+.
+phase4 is an embeddable, lightweight Java library to send and receive AS4 (Applicability Statement 4) messages. It implements the EBMS 3.0 / AS4 messaging standard with support for multiple network profiles (Peppol, BDEW, CEF, ENTSOG, etc.). Version 4.9.2-SNAPSHOT, Java 17+.
 
 ## Build Commands
 
@@ -89,4 +89,4 @@ SMP lookups (`AS4EndpointDetailProvider*` in phase4-dynamic-discovery) happen on
 
 ## Dependencies
 
-Core libraries from the ph-* ecosystem: `ph-commons`, `ph-web`, `ph-oton` (Photon web framework), `ph-xsds-*`. Crypto via WSS4J 4.0.1 and XMLSec 4.0.4. Peppol modules use `peppol-commons` and `peppol-reporting`.
+Core libraries from the ph-* ecosystem: `ph-commons`, `ph-web`, `ph-oton` (Photon web framework), `ph-xsds-*`. Crypto via WSS4J 4.0.3 and XMLSec 4.0.4. Peppol modules use `peppol-commons` and `peppol-reporting`.

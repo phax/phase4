@@ -29,18 +29,17 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.string.StringHelper;
 import com.helger.base.timing.StopWatch;
 import com.helger.base.wrapper.Wrapper;
-import com.helger.collection.commons.CommonsArrayList;
-import com.helger.collection.commons.ICommonsList;
 import com.helger.datetime.helper.PDTFactory;
 import com.helger.peppol.reporting.api.CPeppolReporting;
 import com.helger.peppol.reporting.api.PeppolReportingHelper;
-import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.reporting.eusr.EndUserStatisticsReport;
+import com.helger.peppol.reporting.eusr.model.EUSRReportingItemAccumulator;
 import com.helger.peppol.reporting.jaxb.eusr.v110.EndUserStatisticsReportType;
 import com.helger.peppol.reporting.jaxb.tsr.v101.TransactionStatisticsReportType;
 import com.helger.peppol.reporting.tsr.TransactionStatisticsReport;
+import com.helger.peppol.reporting.tsr.model.TSRReportingItemAccumulator;
 import com.helger.peppol.reportingsupport.EPeppolReportType;
 import com.helger.peppol.reportingsupport.IPeppolReportSenderCallback;
 import com.helger.peppol.reportingsupport.IPeppolReportStorage;
@@ -89,19 +88,19 @@ public final class AppReportingHelper
   {
     LOGGER.info ("Trying to create Peppol Reporting TSR for " + aYearMonth);
 
-    // Now get all items from data storage and store them in a list (we start
-    // with an initial size of 1K to avoid too many copy operations)
-    final ICommonsList <PeppolReportingItem> aReportingItems = new CommonsArrayList <> (1024);
+    // Aggregate all items from data storage while reading them, without keeping
+    // them in memory
+    final TSRReportingItemAccumulator aAccumulator = new TSRReportingItemAccumulator ();
     if (PeppolReportingBackend.withBackendDo (APConfig.getConfig (),
                                               aBackend -> aBackend.forEachReportingItem (aYearMonth,
-                                                                                         aReportingItems::add))
+                                                                                         aAccumulator::accept))
                               .isSuccess ())
     {
-      // Create report with the read transactions
+      // Create report with the aggregated transactions
       return TransactionStatisticsReport.builder ()
                                         .monthOf (aYearMonth)
                                         .reportingServiceProviderID (APConfig.getMyPeppolSeatID ())
-                                        .reportingItemList (aReportingItems)
+                                        .reportingItemAccumulator (aAccumulator)
                                         .build ();
     }
     return null;
@@ -112,19 +111,19 @@ public final class AppReportingHelper
   {
     LOGGER.info ("Trying to create Peppol Reporting EUSR for " + aYearMonth);
 
-    // Now get all items from data storage and store them in a list (we start
-    // with an initial size of 1K to avoid too many copy operations)
-    final ICommonsList <PeppolReportingItem> aReportingItems = new CommonsArrayList <> (1024);
+    // Aggregate all items from data storage while reading them, without keeping
+    // them in memory
+    final EUSRReportingItemAccumulator aAccumulator = new EUSRReportingItemAccumulator ();
     if (PeppolReportingBackend.withBackendDo (APConfig.getConfig (),
                                               aBackend -> aBackend.forEachReportingItem (aYearMonth,
-                                                                                         aReportingItems::add))
+                                                                                         aAccumulator::accept))
                               .isSuccess ())
     {
-      // Create report with the read transactions
+      // Create report with the aggregated transactions
       return EndUserStatisticsReport.builder ()
                                     .monthOf (aYearMonth)
                                     .reportingServiceProviderID (APConfig.getMyPeppolSeatID ())
-                                    .reportingItemList (aReportingItems)
+                                    .reportingItemAccumulator (aAccumulator)
                                     .build ();
     }
     return null;

@@ -24,13 +24,11 @@ import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.string.StringParser;
-import com.helger.collection.commons.CommonsArrayList;
-import com.helger.collection.commons.ICommonsList;
 import com.helger.mime.CMimeType;
-import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.reporting.eusr.EndUserStatisticsReport;
+import com.helger.peppol.reporting.eusr.model.EUSRReportingItemAccumulator;
 import com.helger.peppol.reporting.jaxb.eusr.EndUserStatisticsReport110Marshaller;
 import com.helger.peppol.reporting.jaxb.eusr.v110.EndUserStatisticsReportType;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -68,19 +66,19 @@ public final class APIGetCreateEUSR extends AbstractVerifyingAPIExecutor
 
     try
     {
-      // Now get all items from data storage and store them in a list (we start
-      // with an initial size of 1K to avoid too many copy operations)
-      final ICommonsList <PeppolReportingItem> aReportingItems = new CommonsArrayList <> (1024);
+      // Aggregate all items from data storage while reading them, without keeping
+      // them in memory
+      final EUSRReportingItemAccumulator aAccumulator = new EUSRReportingItemAccumulator ();
       if (PeppolReportingBackend.withBackendDo (APConfig.getConfig (),
                                                 aBackend -> aBackend.forEachReportingItem (aYearMonth,
-                                                                                           aReportingItems::add))
+                                                                                           aAccumulator::accept))
                                 .isSuccess ())
       {
-        // Create report with the read transactions
+        // Create report with the aggregated transactions
         final EndUserStatisticsReportType aReport = EndUserStatisticsReport.builder ()
                                                                            .monthOf (aYearMonth)
                                                                            .reportingServiceProviderID (APConfig.getMyPeppolSeatID ())
-                                                                           .reportingItemList (aReportingItems)
+                                                                           .reportingItemAccumulator (aAccumulator)
                                                                            .build ();
         final byte [] aXML = new EndUserStatisticsReport110Marshaller ().getAsBytes (aReport);
         aUnifiedResponse.setContent (aXML)
