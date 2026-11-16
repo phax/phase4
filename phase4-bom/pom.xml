@@ -40,12 +40,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <scm>
-    <connection>scm:git:https://github.com/phax/phase4.git</connection>
-    <developerConnection>scm:git:https://github.com/phax/phase4.git</developerConnection>
-    <url>https://github.com/phax/phase4</url>
-    <tag>phase4-parent-pom-4.8.3</tag>
-  </scm>
   <organization>
     <name>Philip Helger</name>
     <url>https://www.helger.com</url>
