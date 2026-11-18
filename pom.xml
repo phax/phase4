@@ -85,7 +85,7 @@
     <ph-web.version>11.5.1</ph-web.version>
     <phive.version>12.3.0</phive.version>
     <phive-rules.version>4.7.1</phive-rules.version>
-    <peppol-commons.version>13.2.3</peppol-commons.version>
+    <peppol-commons.version>13.3.0</peppol-commons.version>
     <peppol-reporting.version>4.5.0</peppol-reporting.version>
     <peppol-ap-support.version>2.4.2</peppol-ap-support.version>
   </properties>
