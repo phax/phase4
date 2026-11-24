@@ -83,7 +83,7 @@
     <ph-xsds.version>4.1.2</ph-xsds.version>
     <ph-ubl.version>10.2.0</ph-ubl.version>
     <ph-web.version>11.5.1</ph-web.version>
-    <phive.version>12.3.0</phive.version>
+    <phive.version>12.3.2</phive.version>
     <phive-rules.version>4.7.2</phive-rules.version>
     <peppol-commons.version>13.3.0</peppol-commons.version>
     <peppol-reporting.version>4.5.0</peppol-reporting.version>
