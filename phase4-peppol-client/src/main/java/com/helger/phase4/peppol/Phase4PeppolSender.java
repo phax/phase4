@@ -44,10 +44,13 @@ import com.helger.base.state.ESuccess;
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
 import com.helger.cache.regex.RegExHelper;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
 import com.helger.peppol.reporting.api.PeppolReportingHelper;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
+import com.helger.peppol.reporting.api.PeppolReportingItemWithID;
+import com.helger.peppol.reporting.api.backend.IPeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.sbdh.CPeppolSBDH;
@@ -71,13 +74,18 @@ import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifierParts;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.EAS4CompressionMode;
+import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.MessageProperty;
+import com.helger.phase4.model.message.AS4UserMessage;
+import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolPMode;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
@@ -393,8 +401,8 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * @return Create a new Builder for AS4 messages if the SBDH payload is already present. Use
-   *         this builder e.g. for the Peppol Testbed messages. Never <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the SBDH payload is already present. Use this
+   *         builder e.g. for the Peppol Testbed messages. Never <code>null</code>.
    * @see #builder() if you want phase4 to create the Standard Business Document
    * @since 0.9.6
    */
@@ -444,9 +452,11 @@ public final class Phase4PeppolSender
     private ERevocationCheckMode m_eAPRevocationCheckMode;
     private boolean m_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
     private boolean m_bPerformSeatIDCheck = DEFAULT_PERFORM_SEATID_CHECK;
+    private IPeppolReportingBackend m_aPeppolReportingBackend;
 
-    // Status var
+    // Status vars
     private OffsetDateTime m_aEffectiveSendingDT;
+    private String m_sEffectiveMessageID;
 
     /**
      * Create a new builder, with the defaults from
@@ -890,6 +900,39 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * @return The Peppol Reporting backend to be used by
+     *         {@link #createAndStorePeppolReportingItemAfterSending(String)}. May be
+     *         <code>null</code>.
+     * @since 5.0.0
+     */
+    @Nullable
+    public final IPeppolReportingBackend peppolReportingBackend ()
+    {
+      return m_aPeppolReportingBackend;
+    }
+
+    /**
+     * Set the Peppol Reporting backend to be used by
+     * {@link #createAndStorePeppolReportingItemAfterSending(String)}. The backend should be created
+     * once per application (e.g. via
+     * {@link PeppolReportingBackend#createBackend(com.helger.config.IConfig)}) and closed by the
+     * caller when the application shuts down. This builder never closes the provided backend. If no
+     * backend is set, a new backend is created and closed for each stored reporting item, which is
+     * inefficient.
+     *
+     * @param aPeppolReportingBackend
+     *        The backend to use. May be <code>null</code>.
+     * @return this for chaining
+     * @since 5.0.0
+     */
+    @NonNull
+    public final IMPLTYPE peppolReportingBackend (@Nullable final IPeppolReportingBackend aPeppolReportingBackend)
+    {
+      m_aPeppolReportingBackend = aPeppolReportingBackend;
+      return thisAsT ();
+    }
+
+    /**
      * The effective sending date time of the message. That is set only if message sending takes
      * place.
      *
@@ -1086,6 +1129,58 @@ public final class Phase4PeppolSender
         if (aExistingSendingDTConsumer != null)
           aExistingSendingDTConsumer.onEffectiveSendingDateTime (aSendingDT);
       });
+
+      // Explicitly remember the old callback, to get the effective AS4 message ID
+      final IAS4ClientBuildMessageCallback aExistingBuildMessageCallback = m_aBuildMessageCallback;
+      buildMessageCallback (new IAS4ClientBuildMessageCallback ()
+      {
+        @Override
+        public void onAS4Message (@NonNull final AbstractAS4Message <?> aMsg)
+        {
+          // Store in this instance
+          if (aMsg instanceof final AS4UserMessage aUserMsg)
+            m_sEffectiveMessageID = aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
+
+          // Call the original handler
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onAS4Message (aMsg);
+        }
+
+        @Override
+        public void onBuiltAttachments (@NonNull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments)
+        {
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onBuiltAttachments (aAttachments);
+        }
+
+        @Override
+        public void onSoapDocument (@NonNull final Document aDoc)
+        {
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onSoapDocument (aDoc);
+        }
+
+        @Override
+        public void onSignedSoapDocument (@NonNull final Document aDoc)
+        {
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onSignedSoapDocument (aDoc);
+        }
+
+        @Override
+        public void onEncryptedSoapDocument (@NonNull final Document aDoc)
+        {
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onEncryptedSoapDocument (aDoc);
+        }
+
+        @Override
+        public void onEncryptedMimeMessage (@NonNull final AS4MimeMessage aMimeMsg)
+        {
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onEncryptedMimeMessage (aMimeMsg);
+        }
+      });
     }
 
     /**
@@ -1127,8 +1222,23 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * @return The effective AS4 message ID of the sent message. Only available after sending. May
+     *         be <code>null</code>.
+     * @since 5.0.0
+     */
+    @Nullable
+    public final String getEffectiveMessageID ()
+    {
+      return m_sEffectiveMessageID;
+    }
+
+    /**
      * This is a shortcut for creating and storing a Peppol reporting item in a shot. See the
-     * creation method for the extended documentation.
+     * creation method for the extended documentation. The effective AS4 message ID is used as the
+     * reporting item ID (truncated to {@link PeppolReportingItemWithID#MAX_LEN_ITEM_ID}
+     * characters). The backend set via {@link #peppolReportingBackend(IPeppolReportingBackend)} is
+     * used. If none is set, a new backend is created from the phase4 configuration and closed
+     * afterwards.
      *
      * @param sEndUserID
      *        The local end user ID, required to group all reporting items. May neither be
@@ -1136,14 +1246,11 @@ public final class Phase4PeppolSender
      * @throws Phase4Exception
      *         in case something goes wrong
      * @see #createPeppolReportingItemAfterSending(String)
+     * @see #peppolReportingBackend(IPeppolReportingBackend)
      * @since 2.2.2
      */
     public final void createAndStorePeppolReportingItemAfterSending (@NonNull @Nonempty final String sEndUserID) throws Phase4Exception
     {
-      // Consistency check
-      if (PeppolReportingBackend.getBackendService () == null)
-        throw new Phase4PeppolException ("No Peppol Reporting Backend is available. Cannot store Reporting Items").setRetryFeasible (false);
-
       // Filter out document types on Reporting
       if (PeppolReportingHelper.isDocumentTypeEligableForReporting (m_aDocTypeID))
       {
@@ -1153,10 +1260,26 @@ public final class Phase4PeppolSender
 
           // Create reporting item
           final PeppolReportingItem aReportingItem = createPeppolReportingItemAfterSending (sEndUserID);
+          if (StringHelper.isEmpty (m_sEffectiveMessageID))
+            throw new Phase4PeppolException ("The effective AS4 message ID is not available. Cannot store Peppol Reporting Item").setRetryFeasible (false);
+
+          // Maximum length
+          final String sItemID = m_sEffectiveMessageID.length () > PeppolReportingItemWithID.MAX_LEN_ITEM_ID
+                                                                                                             ? m_sEffectiveMessageID.substring (0,
+                                                                                                                                                PeppolReportingItemWithID.MAX_LEN_ITEM_ID)
+                                                                                                             : m_sEffectiveMessageID;
 
           // Store it in configured backend
-          PeppolReportingBackend.withBackendDo (AS4Configuration.getConfig (),
-                                                aBackend -> aBackend.storeReportingItem (aReportingItem));
+          if (m_aPeppolReportingBackend != null)
+            m_aPeppolReportingBackend.storeReportingItem (sItemID, aReportingItem);
+          else
+          {
+            LOGGER.warn ("No Peppol Reporting backend was provided via 'peppolReportingBackend' - creating a temporary one. Provide a long-living backend for better performance.");
+            try (final IPeppolReportingBackend aBackend = PeppolReportingBackend.createBackend (AS4Configuration.getConfig ()))
+            {
+              aBackend.storeReportingItem (sItemID, aReportingItem);
+            }
+          }
         }
         catch (final PeppolReportingBackendException ex)
         {

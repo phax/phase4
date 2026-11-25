@@ -32,7 +32,7 @@ import com.helger.base.wrapper.Wrapper;
 import com.helger.datetime.helper.PDTFactory;
 import com.helger.peppol.reporting.api.CPeppolReporting;
 import com.helger.peppol.reporting.api.PeppolReportingHelper;
-import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
+import com.helger.peppol.reporting.api.backend.IPeppolReportingItemReader;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.reporting.eusr.EndUserStatisticsReport;
 import com.helger.peppol.reporting.eusr.model.EUSRReportingItemAccumulator;
@@ -90,12 +90,12 @@ public final class AppReportingHelper
 
     // Aggregate all items from data storage while reading them, without keeping
     // them in memory
-    final TSRReportingItemAccumulator aAccumulator = new TSRReportingItemAccumulator ();
-    if (PeppolReportingBackend.withBackendDo (APConfig.getConfig (),
-                                              aBackend -> aBackend.forEachReportingItem (aYearMonth,
-                                                                                         aAccumulator::accept))
-                              .isSuccess ())
+    final IPeppolReportingItemReader aReader = AppReportingBackend.getItemReader ();
+    if (aReader != null)
     {
+      final TSRReportingItemAccumulator aAccumulator = new TSRReportingItemAccumulator ();
+      aReader.forEachReportingItem (aYearMonth, aAccumulator::accept);
+
       // Create report with the aggregated transactions
       return TransactionStatisticsReport.builder ()
                                         .monthOf (aYearMonth)
@@ -113,12 +113,12 @@ public final class AppReportingHelper
 
     // Aggregate all items from data storage while reading them, without keeping
     // them in memory
-    final EUSRReportingItemAccumulator aAccumulator = new EUSRReportingItemAccumulator ();
-    if (PeppolReportingBackend.withBackendDo (APConfig.getConfig (),
-                                              aBackend -> aBackend.forEachReportingItem (aYearMonth,
-                                                                                         aAccumulator::accept))
-                              .isSuccess ())
+    final IPeppolReportingItemReader aReader = AppReportingBackend.getItemReader ();
+    if (aReader != null)
     {
+      final EUSRReportingItemAccumulator aAccumulator = new EUSRReportingItemAccumulator ();
+      aReader.forEachReportingItem (aYearMonth, aAccumulator::accept);
+
       // Create report with the aggregated transactions
       return EndUserStatisticsReport.builder ()
                                     .monthOf (aYearMonth)

@@ -40,6 +40,7 @@ import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageBuilder;
 import com.helger.phase4.peppol.Phase4PeppolSender.PeppolUserMessageSBDHBuilder;
 import com.helger.phase4.peppol.Phase4PeppolSendingReport;
 import com.helger.phase4.peppol.server.APConfig;
+import com.helger.phase4.peppol.server.reporting.AppReportingBackend;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
 import com.helger.phase4.sender.EAS4UserMessageSendResult;
 import com.helger.phase4.util.Phase4Exception;
@@ -189,6 +190,7 @@ public final class PeppolSender
                                                                     aSendingReport.setC3CertCheckResult (eCertCheckResult);
                                                                   })
                                                                   .sendingDateTimeConsumer (aSendingReport::setAS4SendingDT)
+                                                                  .peppolReportingBackend (AppReportingBackend.getBackend ())
                                                                   .buildMessageCallback (new IAS4ClientBuildMessageCallback ()
                                                                   {
                                                                     public void onAS4Message (@NonNull final AbstractAS4Message <?> aMsg)
@@ -313,6 +315,8 @@ public final class PeppolSender
                                                                         aSendingReport.setC3CertCheckResult (eCertCheckResult);
                                                                       })
                                                                       .sendingDateTimeConsumer (aSendingReport::setAS4SendingDT)
+                                                                      .peppolReportingBackend (AppReportingBackend.getBackend ())
+                                                                  .peppolReportingBackend (AppReportingBackend.getBackend ())
                                                                       .buildMessageCallback (new IAS4ClientBuildMessageCallback ()
                                                                       {
                                                                         public void onAS4Message (@NonNull final AbstractAS4Message <?> aMsg)

@@ -34,14 +34,14 @@ import com.helger.http.CHttp;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.io.file.SimpleFileIO;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
-import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
+import com.helger.peppol.reporting.api.PeppolReportingItemWithID;
+import com.helger.peppol.reporting.api.backend.IPeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.sbdh.PeppolSBDHData;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.peppol.pidscheme.EPredefinedParticipantIdentifierScheme;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.AS4ErrorList;
@@ -51,6 +51,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.peppol.server.APConfig;
+import com.helger.phase4.peppol.server.reporting.AppReportingBackend;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletMessageProcessorSPI;
@@ -180,8 +181,18 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
                                                                                                                                          sC3ID,
                                                                                                                                          sC4CountryCode,
                                                                                                                                          sEndUserID);
-          PeppolReportingBackend.withBackendDo (AS4Configuration.getConfig (),
-                                                aBackend -> aBackend.storeReportingItem (aReportingItem));
+          final IPeppolReportingBackend aBackend = AppReportingBackend.getBackend ();
+          if (aBackend != null)
+          {
+            // Use the AS4 message ID as the reporting item ID
+            final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
+            final String sItemID = sMessageID.length () > PeppolReportingItemWithID.MAX_LEN_ITEM_ID ? sMessageID.substring (0,
+                                                                                                                             PeppolReportingItemWithID.MAX_LEN_ITEM_ID)
+                                                                                                    : sMessageID;
+            aBackend.storeReportingItem (sItemID, aReportingItem);
+          }
+          else
+            LOGGER.warn ("No Peppol Reporting backend is available. Cannot store Peppol Reporting Item");
         }
         catch (final PeppolReportingBackendException ex)
         {

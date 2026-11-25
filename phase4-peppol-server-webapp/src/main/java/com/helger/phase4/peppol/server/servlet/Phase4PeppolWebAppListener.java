@@ -41,8 +41,6 @@ import com.helger.httpclient.HttpDebugger;
 import com.helger.io.file.SimpleFileIO;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.mime.CMimeType;
-import com.helger.peppol.reporting.api.backend.IPeppolReportingBackendSPI;
-import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.security.PeppolTrustedCA;
 import com.helger.peppol.servicedomain.EPeppolNetwork;
 import com.helger.phase4.CAS4;
@@ -59,6 +57,7 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.api.Phase4API;
+import com.helger.phase4.peppol.server.reporting.AppReportingBackend;
 import com.helger.phase4.peppol.server.reporting.DoPeppolReportingJob;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.Phase4PeppolDefaultReceiverConfiguration;
@@ -357,10 +356,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       LOGGER.warn (CAS4.LIB_NAME + " Peppol receiver checks are disabled");
     }
 
-    // Initialize the Reporting Backend only once
-    final IPeppolReportingBackendSPI aPRBS = PeppolReportingBackend.getBackendService ();
-    if (aPRBS != null && aPRBS.initBackend (APConfig.getConfig ()).isFailure ())
-      throw new InitializationException ("Failed to init Peppol Reporting Backend Service");
+    // Create the Reporting Backend only once
+    AppReportingBackend.initBackend (APConfig.getConfig ());
   }
 
   @Override
@@ -385,10 +382,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
   @Override
   protected void beforeContextDestroyed (@NonNull final ServletContext aSC)
   {
-    // Shutdown the Peppol Reporting Backend service, if it was initialized
-    final IPeppolReportingBackendSPI aPRBS = PeppolReportingBackend.getBackendService ();
-    if (aPRBS != null && aPRBS.isInitialized ())
-      aPRBS.shutdownBackend ();
+    // Close the Peppol Reporting Backend, if it was created
+    AppReportingBackend.shutdownBackend ();
 
     AS4ServerInitializer.shutdownAS4Server ();
 

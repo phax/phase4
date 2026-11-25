@@ -84,6 +84,9 @@ Outgoing HTTP retries happen only on the phase4 level, in `BasicHttpPoster.sendG
 
 SMP lookups (`AS4EndpointDetailProvider*` in phase4-dynamic-discovery) happen once, outside the HTTP retry loop. Their retry feasibility (`Phase4SMPException.isRetryFeasible ()`, mapped to `EAS4UserMessageSendResult.TRANSPORT_ERROR` / `TRANSPORT_ERROR_NO_RETRY`) is decided by `SMPRetryClassifier`, which reuses `HttpRetryClassifier`. The HTTP level retries of the SMP lookup itself are configured in peppol-commons (`SMPHttpClientSettings`).
 
+### Peppol Reporting
+peppol-reporting v5: an `IPeppolReportingBackend` is created via `PeppolReportingBackend.createBackend (IConfig)` and must be closed. Never use the deprecated `withBackendDo` / `getBackendService`. `Phase4PeppolSender` takes a long-living backend via the builder method `peppolReportingBackend (...)` (it never closes it); without one, `createAndStorePeppolReportingItemAfterSending` creates and closes a temporary backend per item and logs a warning. The item ID is the AS4 message ID, truncated to `PeppolReportingItemWithID.MAX_LEN_ITEM_ID`. `phase4-peppol-server-webapp` holds its single backend in `AppReportingBackend` (created in `Phase4PeppolWebAppListener`, closed on context destruction); reading goes via `IPeppolReportingItemReader`.
+
 ### JAXB Code Generation
 `phase4-lib` generates Java classes from EBMS/AS4 XSD schemas during `generate-sources` phase. Bindings in `src/main/jaxb/bindings.xjb`, schemas in `src/main/resources/external/schemas/`.
 

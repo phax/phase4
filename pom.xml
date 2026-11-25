@@ -68,6 +68,7 @@
   </developers>
 
   <properties>
+    <java.version>21</java.version>
     <jaxb-plugin.group>org.jvnet.jaxb</jaxb-plugin.group>
     <jaxb-plugin.artifact>jaxb-maven-plugin</jaxb-plugin.artifact>
     <jaxb-plugin.version>4.0.16</jaxb-plugin.version>
@@ -84,8 +85,8 @@
     <ph-ubl.version>10.2.0</ph-ubl.version>
     <ph-web.version>11.5.1</ph-web.version>
     <peppol-commons.version>13.3.0</peppol-commons.version>
-    <peppol-reporting.version>4.5.0</peppol-reporting.version>
-    <peppol-ap-support.version>2.4.2</peppol-ap-support.version>
+    <peppol-reporting.version>5.0.0-SNAPSHOT</peppol-reporting.version>
+    <peppol-ap-support.version>2.5.0-SNAPSHOT</peppol-ap-support.version>
   </properties>
 
   <dependencyManagement>
