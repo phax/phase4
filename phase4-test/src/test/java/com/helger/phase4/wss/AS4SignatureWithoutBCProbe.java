@@ -77,7 +77,7 @@ public final class AS4SignatureWithoutBCProbe
       if (aSignResults == null || aSignResults.size () != 1)
         throw new IllegalStateException ("Expected exactly one verified signature result");
 
-      final STRParser.REFERENCE_TYPE eReferenceType = (STRParser.REFERENCE_TYPE) aSignResults.get (0)
+      final STRParser.REFERENCE_TYPE eReferenceType = (STRParser.REFERENCE_TYPE) aSignResults.getFirst ()
                                                                                              .get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);
       return eReferenceType.name ();
     }

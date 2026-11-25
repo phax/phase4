@@ -440,7 +440,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final AS4UserMessage aMsg = createTestUserMessageSoapNotSigned (m_aPayload, aAttachments);
     // Damaged payload: txt file
-    aAttachments.get (0).setSourceStreamProvider (new ClassPathResource ("attachment/CompressedPayload.txt"));
+    aAttachments.getFirst ().setSourceStreamProvider (new ClassPathResource ("attachment/CompressedPayload.txt"));
 
     final AS4MimeMessage aMimeMsg = AS4MimeMessageHelper.generateMimeMessage (m_eSoapVersion,
                                                                               aMsg.getAsSoapDocument (m_aPayload),

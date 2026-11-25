@@ -450,8 +450,8 @@ public class SoapHeaderElementProcessorExtractEbms3Messaging implements ISoapHea
 
       // Setting Initiator and Responder id, Required values or else xsd will
       // throw an error
-      sInitiatorID = aFromPartyIdList.get (0).getValue ();
-      sResponderID = aToPartyIdList.get (0).getValue ();
+      sInitiatorID = aFromPartyIdList.getFirst ().getValue ();
+      sResponderID = aToPartyIdList.getFirst ().getValue ();
 
       final Ebms3CollaborationInfo aCollaborationInfo = aUserMessage.getCollaborationInfo ();
       if (aCollaborationInfo != null)

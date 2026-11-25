@@ -252,14 +252,13 @@ public final class Phase4DBNAllianceWebAppListener extends WebAppListener
           final KeyStore.Entry aEntry = aKS.getEntry (sAlias,
                                                       new KeyStore.PasswordProtection (aCF.getKeyStoreDescriptor ()
                                                                                           .getKeyPassword ()));
-          if (aEntry instanceof KeyStore.PrivateKeyEntry)
-            sType = "private-key";
-          else
-            if (aEntry instanceof KeyStore.SecretKeyEntry)
-              sType = "secret-key";
-            else
-              if (aEntry instanceof KeyStore.TrustedCertificateEntry)
-                sType = "trusted-certificate";
+          sType = switch (aEntry)
+          {
+            case final KeyStore.PrivateKeyEntry aPrivateKeyEntry -> "private-key";
+            case final KeyStore.SecretKeyEntry aSecretKeyEntry -> "secret-key";
+            case final KeyStore.TrustedCertificateEntry aTrustedCertEntry -> "trusted-certificate";
+            case null, default -> "unknown";
+          };
         }
         catch (final Exception ex)
         {

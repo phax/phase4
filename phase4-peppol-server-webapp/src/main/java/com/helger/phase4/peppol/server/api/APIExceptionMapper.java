@@ -63,32 +63,37 @@ public class APIExceptionMapper extends AbstractAPIExceptionMapper
                                             @NonNull final Throwable aThrowable)
   {
     // From specific to general
-    if (aThrowable instanceof final HttpResponseException aEx)
+    switch (aThrowable)
     {
-      _logRestException ("HttpResponse exception", aThrowable);
-      _setSimpleTextResponse (aUnifiedResponse, aEx.getStatusCode (), aEx.getReasonPhrase ());
-      return EHandled.HANDLED;
+      case final HttpResponseException aEx ->
+      {
+        _logRestException ("HttpResponse exception", aEx);
+        _setSimpleTextResponse (aUnifiedResponse, aEx.getStatusCode (), aEx.getReasonPhrase ());
+        return EHandled.HANDLED;
+      }
+      case final APIParamException aEx ->
+      {
+        _logRestException ("Parameter exception", aEx);
+        _setSimpleTextResponse (aUnifiedResponse,
+                                HttpServletResponse.SC_BAD_REQUEST,
+                                GlobalDebug.isDebugMode () ? getResponseEntityWithStackTrace (aEx)
+                                                           : getResponseEntityWithoutStackTrace (aEx));
+        return EHandled.HANDLED;
+      }
+      case final RuntimeException aEx ->
+      {
+        _logRestException ("Runtime exception - " + aEx.getClass ().getName (), aEx);
+        _setSimpleTextResponse (aUnifiedResponse,
+                                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                                GlobalDebug.isDebugMode () ? getResponseEntityWithStackTrace (aEx)
+                                                           : getResponseEntityWithoutStackTrace (aEx));
+        return EHandled.HANDLED;
+      }
+      default ->
+      {
+        // We don't know that exception
+        return EHandled.UNHANDLED;
+      }
     }
-    if (aThrowable instanceof APIParamException)
-    {
-      _logRestException ("Parameter exception", aThrowable);
-      _setSimpleTextResponse (aUnifiedResponse,
-                              HttpServletResponse.SC_BAD_REQUEST,
-                              GlobalDebug.isDebugMode () ? getResponseEntityWithStackTrace (aThrowable)
-                                                         : getResponseEntityWithoutStackTrace (aThrowable));
-      return EHandled.HANDLED;
-    }
-    if (aThrowable instanceof RuntimeException)
-    {
-      _logRestException ("Runtime exception - " + aThrowable.getClass ().getName (), aThrowable);
-      _setSimpleTextResponse (aUnifiedResponse,
-                              HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                              GlobalDebug.isDebugMode () ? getResponseEntityWithStackTrace (aThrowable)
-                                                         : getResponseEntityWithoutStackTrace (aThrowable));
-      return EHandled.HANDLED;
-    }
-
-    // We don't know that exception
-    return EHandled.UNHANDLED;
   }
 }

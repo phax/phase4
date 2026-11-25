@@ -85,16 +85,16 @@ public class DataContentHandlerSoap12 extends text_plain
       final Transformer aTransformer = XMLTransformerFactory.newTransformer (aFactory);
 
       final StreamResult aStreamResult = new StreamResult (aOS);
-      if (aObj instanceof DataSource)
+      if (aObj instanceof final DataSource aDataSource)
       {
         // Streaming transform applies only to
         // javax.xml.transform.StreamSource
-        aTransformer.transform (new StreamSource (((DataSource) aObj).getInputStream ()), aStreamResult);
+        aTransformer.transform (new StreamSource (aDataSource.getInputStream ()), aStreamResult);
       }
       else
-        if (aObj instanceof Source)
+        if (aObj instanceof final Source aSource)
         {
-          aTransformer.transform ((Source) aObj, aStreamResult);
+          aTransformer.transform (aSource, aStreamResult);
         }
         else
         {

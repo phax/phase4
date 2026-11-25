@@ -493,9 +493,9 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
       // Decryption or Signature check failed
       String sDetails = "Error processing the WSSecurity Header";
-      if (ex instanceof WSSecurityException)
+      if (ex instanceof final WSSecurityException aWSSecEx)
       {
-        sDetails += " (WS Security error: " + ((WSSecurityException) ex).getErrorCode () + ")";
+        sDetails += " (WS Security error: " + aWSSecEx.getErrorCode () + ")";
       }
 
       LOGGER.error (sDetails, ex);

@@ -61,23 +61,19 @@ public final class SMPRetryClassifier
    */
   public static boolean isRetryFeasible (@NonNull final SMPClientException ex)
   {
-    // The SMP could not be contacted at all
-    if (ex instanceof SMPClientSMPUnavailableException)
-      return true;
-
-    // An HTTP response was received - decide on the status code
-    if (ex instanceof final SMPClientHttpException aHttpEx)
-      return HttpRetryClassifier.classifyStatusCode (aHttpEx.getResponseStatusCode ()).isRetryFeasible (true);
-
-    // Invalid signature, malformed or empty response, missing trust store
-    if (ex instanceof SMPClientBadResponseException)
-      return false;
-
-    // Decide on the technical cause, if present
-    if (ex.getCause () instanceof final IOException aIOEx)
-      return HttpRetryClassifier.classifyException (aIOEx).isRetryFeasible (true);
-
-    // E.g. identifier mismatch or certificate mismatch
-    return false;
+    return switch (ex)
+    {
+      // The SMP could not be contacted at all
+      case final SMPClientSMPUnavailableException aUnavailableEx -> true;
+      // An HTTP response was received - decide on the status code
+      case final SMPClientHttpException aHttpEx -> HttpRetryClassifier.classifyStatusCode (aHttpEx.getResponseStatusCode ())
+                                                                       .isRetryFeasible (true);
+      // Invalid signature, malformed or empty response, missing trust store
+      case final SMPClientBadResponseException aBadResponseEx -> false;
+      // Decide on the technical cause, if present. Otherwise e.g. identifier mismatch or
+      // certificate mismatch
+      default -> ex.getCause () instanceof final IOException aIOEx &&
+                 HttpRetryClassifier.classifyException (aIOEx).isRetryFeasible (true);
+    };
   }
 }
