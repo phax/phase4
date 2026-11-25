@@ -24,15 +24,13 @@ import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
 import com.helger.base.string.StringParser;
-import com.helger.collection.commons.CommonsArrayList;
-import com.helger.collection.commons.ICommonsList;
 import com.helger.mime.CMimeType;
-import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.reporting.jaxb.tsr.TransactionStatisticsReport101Marshaller;
 import com.helger.peppol.reporting.jaxb.tsr.v101.TransactionStatisticsReportType;
 import com.helger.peppol.reporting.tsr.TransactionStatisticsReport;
+import com.helger.peppol.reporting.tsr.model.TSRReportingItemAccumulator;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.reporting.AppReportingHelper;
@@ -68,19 +66,19 @@ public final class APIGetCreateTSR extends AbstractVerifyingAPIExecutor
 
     try
     {
-      // Now get all items from data storage and store them in a list (we start
-      // with an initial size of 1K to avoid too many copy operations)
-      final ICommonsList <PeppolReportingItem> aReportingItems = new CommonsArrayList <> (1024);
+      // Aggregate all items from data storage while reading them, without keeping
+      // them in memory
+      final TSRReportingItemAccumulator aAccumulator = new TSRReportingItemAccumulator ();
       if (PeppolReportingBackend.withBackendDo (APConfig.getConfig (),
                                                 aBackend -> aBackend.forEachReportingItem (aYearMonth,
-                                                                                           aReportingItems::add))
+                                                                                           aAccumulator::accept))
                                 .isSuccess ())
       {
-        // Create report with the read transactions
+        // Create report with the aggregated transactions
         final TransactionStatisticsReportType aReport = TransactionStatisticsReport.builder ()
                                                                                    .monthOf (aYearMonth)
                                                                                    .reportingServiceProviderID (APConfig.getMyPeppolSeatID ())
-                                                                                   .reportingItemList (aReportingItems)
+                                                                                   .reportingItemAccumulator (aAccumulator)
                                                                                    .build ();
         final byte [] aXML = new TransactionStatisticsReport101Marshaller ().getAsBytes (aReport);
         aUnifiedResponse.setContent (aXML)

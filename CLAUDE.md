@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-phase4 is an embeddable, lightweight Java library to send and receive AS4 (Applicability Statement 4) messages. It implements the EBMS 3.0 / AS4 messaging standard with support for multiple network profiles (Peppol, BDEW, CEF, ENTSOG, etc.). Version 5.0.0-SNAPSHOT, Java 17+.
+phase4 is an embeddable, lightweight Java library to send and receive AS4 (Applicability Statement 4) messages. It implements the EBMS 3.0 / AS4 messaging standard with support for multiple network profiles (Peppol, BDEW, CEF, ENTSOG, etc.). Version 5.0.0-SNAPSHOT, Java 21+.
 
 ## Build Commands
 
@@ -49,6 +49,7 @@ Profiles: `peppol`, `bdew`, `cef`, `edelivery2`, `dbnalliance`, `entsog`, `euctp
 - **phase4-test-webapp**, **phase4-server-webapp**, **phase4-peppol-webapp** - Deployable WARs for testing/production.
 
 ### Other
+- **phase4-bom** - Bill of Materials with all phase4 library artefacts (no test or webapp modules). Add new library modules there too.
 - **phase4-test** - Shared test utilities and resources.
 - **phase4-dynamic-discovery** - SMP-based dynamic discovery support.
 
@@ -88,4 +89,4 @@ SMP lookups (`AS4EndpointDetailProvider*` in phase4-dynamic-discovery) happen on
 
 ## Dependencies
 
-Core libraries from the ph-* ecosystem: `ph-commons`, `ph-web`, `ph-oton` (Photon web framework), `ph-xsds-*`. Crypto via WSS4J 4.0.1 and XMLSec 4.0.4. Peppol modules use `peppol-commons` and `peppol-reporting`.
+Core libraries from the ph-* ecosystem: `ph-commons`, `ph-web`, `ph-oton` (Photon web framework), `ph-xsds-*`. Crypto via WSS4J 4.0.3 and XMLSec 4.0.4. Peppol modules use `peppol-commons` and `peppol-reporting`.

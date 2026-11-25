@@ -42,7 +42,7 @@
   <properties>
     <!-- Don't publish this WAR module to Maven Central -->
     <skipPublishing>true</skipPublishing>
-    <littleproxy.version>2.9.1</littleproxy.version>
+    <littleproxy.version>2.10.0</littleproxy.version>
   </properties>
 
   <dependencies>
