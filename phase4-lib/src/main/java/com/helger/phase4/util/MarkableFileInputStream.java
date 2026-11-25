@@ -239,14 +239,12 @@ public class MarkableFileInputStream extends InputStream
    * The read limit parameter is ignored: as {@link #reset()} only re-positions the underlying
    * {@link RandomAccessFile}, the mark can never be invalidated, no matter how many bytes are read.
    */
-  @SuppressWarnings ("sync-override")
   @Override
   public void mark (final int nReadLimit)
   {
     m_nMarkPos = _getLogicalPos ();
   }
 
-  @SuppressWarnings ("sync-override")
   @Override
   public void reset () throws IOException
   {
