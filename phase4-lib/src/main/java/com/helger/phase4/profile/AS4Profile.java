@@ -44,6 +44,47 @@ public class AS4Profile implements IAS4Profile
   private final IPModeIDProvider m_aPModeIDProvider;
   private final boolean m_bDeprecated;
   private final boolean m_bInvokeSPIForPingMessage;
+  private final EAS4ProfileSecurityRequirement m_eIncomingSignatureRequirement;
+  private final EAS4ProfileSecurityRequirement m_eIncomingEncryptionRequirement;
+
+  /**
+   * Constructor without security requirements for incoming UserMessages.
+   *
+   * @param sID
+   *        Profile ID. May neither be <code>null</code> nor empty.
+   * @param sDisplayName
+   *        Profile display name. May neither be <code>null</code> nor empty.
+   * @param aProfileValidatorProvider
+   *        Profile validator supplier. May not be <code>null</code>. The supplier may supply
+   *        <code>null</code> values.
+   * @param aDefaultPModeProvider
+   *        Default PMode supplier. May not be <code>null</code>.
+   * @param aPModeIDProvider
+   *        PMode ID provider. May not be <code>null</code>.
+   * @param bDeprecated
+   *        <code>true</code> if the profile is deprecated, <code>false</code> if not.
+   * @param bInvokeSPIForPingMessage
+   *        <code>true</code> to invoke the custom SPI handler for received
+   */
+  @Deprecated (forRemoval = true, since = "5.0.0")
+  public AS4Profile (@NonNull @Nonempty final String sID,
+                     @NonNull @Nonempty final String sDisplayName,
+                     @NonNull final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
+                     @NonNull final IAS4ProfilePModeProvider aDefaultPModeProvider,
+                     @NonNull final IPModeIDProvider aPModeIDProvider,
+                     final boolean bDeprecated,
+                     final boolean bInvokeSPIForPingMessage)
+  {
+    this (sID,
+          sDisplayName,
+          aProfileValidatorProvider,
+          aDefaultPModeProvider,
+          aPModeIDProvider,
+          bDeprecated,
+          bInvokeSPIForPingMessage,
+          EAS4ProfileSecurityRequirement.UNSPECIFIED,
+          EAS4ProfileSecurityRequirement.UNSPECIFIED);
+  }
 
   /**
    * Constructor
@@ -63,6 +104,13 @@ public class AS4Profile implements IAS4Profile
    *        <code>true</code> if the profile is deprecated, <code>false</code> if not.
    * @param bInvokeSPIForPingMessage
    *        <code>true</code> to invoke the custom SPI handler for received
+   * @param eIncomingSignatureRequirement
+   *        The requirement regarding the signature of incoming UserMessages. May not be
+   *        <code>null</code>.
+   * @param eIncomingEncryptionRequirement
+   *        The requirement regarding the encryption of incoming UserMessages. May not be
+   *        <code>null</code>.
+   * @since 5.0.0
    */
   public AS4Profile (@NonNull @Nonempty final String sID,
                      @NonNull @Nonempty final String sDisplayName,
@@ -70,13 +118,17 @@ public class AS4Profile implements IAS4Profile
                      @NonNull final IAS4ProfilePModeProvider aDefaultPModeProvider,
                      @NonNull final IPModeIDProvider aPModeIDProvider,
                      final boolean bDeprecated,
-                     final boolean bInvokeSPIForPingMessage)
+                     final boolean bInvokeSPIForPingMessage,
+                     @NonNull final EAS4ProfileSecurityRequirement eIncomingSignatureRequirement,
+                     @NonNull final EAS4ProfileSecurityRequirement eIncomingEncryptionRequirement)
   {
     ValueEnforcer.notEmpty (sID, "ID");
     ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
     ValueEnforcer.notNull (aProfileValidatorProvider, "ProfileValidatorProvider");
     ValueEnforcer.notNull (aDefaultPModeProvider, "aDefaultPModeProvider");
     ValueEnforcer.notNull (aPModeIDProvider, "PModeIDProvider");
+    ValueEnforcer.notNull (eIncomingSignatureRequirement, "IncomingSignatureRequirement");
+    ValueEnforcer.notNull (eIncomingEncryptionRequirement, "IncomingEncryptionRequirement");
 
     m_sID = sID;
     m_sDisplayName = sDisplayName;
@@ -85,6 +137,8 @@ public class AS4Profile implements IAS4Profile
     m_aPModeIDProvider = aPModeIDProvider;
     m_bDeprecated = bDeprecated;
     m_bInvokeSPIForPingMessage = bInvokeSPIForPingMessage;
+    m_eIncomingSignatureRequirement = eIncomingSignatureRequirement;
+    m_eIncomingEncryptionRequirement = eIncomingEncryptionRequirement;
   }
 
   @NonNull
@@ -132,6 +186,20 @@ public class AS4Profile implements IAS4Profile
   }
 
   @Override
+  @NonNull
+  public EAS4ProfileSecurityRequirement getIncomingSignatureRequirement ()
+  {
+    return m_eIncomingSignatureRequirement;
+  }
+
+  @Override
+  @NonNull
+  public EAS4ProfileSecurityRequirement getIncomingEncryptionRequirement ()
+  {
+    return m_eIncomingEncryptionRequirement;
+  }
+
+  @Override
   public boolean equals (final Object o)
   {
     if (o == this)
@@ -158,6 +226,8 @@ public class AS4Profile implements IAS4Profile
                                        .append ("PModeIDProvider", m_aPModeIDProvider)
                                        .append ("Deprecated", m_bDeprecated)
                                        .append ("InvokeSPIForPingMessage", m_bInvokeSPIForPingMessage)
+                                       .append ("IncomingSignatureRequirement", m_eIncomingSignatureRequirement)
+                                       .append ("IncomingEncryptionRequirement", m_eIncomingEncryptionRequirement)
                                        .getToString ();
   }
 }

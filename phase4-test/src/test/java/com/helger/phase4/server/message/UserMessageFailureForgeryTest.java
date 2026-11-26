@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.server.message;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -167,6 +168,21 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     }
   }
 
+  @Test
+  public void testUserMessageWithoutTimestampShouldFail () throws Exception
+  {
+    // The Timestamp is mandatory in the ebMS 3 header XSD
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null)
+                                      .getAsSoapDocument (aPayload);
+    final Node aTimestamp = aDoc.getElementsByTagNameNS (CAS4.EBMS_NS, "Timestamp").item (0);
+    assertNotNull (aTimestamp);
+    aTimestamp.getParentNode ().removeChild (aTimestamp);
+
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
+  }
+
   // Tinkering with the signature
 
   @Test
@@ -284,6 +300,46 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                               {
                                                                 aWSSecSignature.getParts ()
                                                                                .removeIf (x -> x.getName () == null);
+                                                              }
+                                                            });
+
+    final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
+                                                         aMsg.getAsSoapDocument (aPayload),
+                                                         m_eSoapVersion,
+                                                         aMsg.getMessagingID (),
+                                                         null,
+                                                         s_aResMgr,
+                                                         false,
+                                                         aSigningParams);
+
+    sendPlainMessageExpectError (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                 EEbmsError.EBMS_POLICY_NONCOMPLIANCE.getErrorCode ());
+  }
+
+  /**
+   * The signature must cover the SOAP Body element. A cryptographically perfectly valid signature
+   * that simply omits the SOAP Body must be rejected. See issue #318.
+   *
+   * @throws Exception
+   *         on error
+   */
+  @Test
+  public void testSoapBodyNotCoveredBySignatureShouldFail () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+
+    final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null);
+
+    // Remove the name based SOAP Body part from the list of signed parts, so
+    // that the signature only covers the ebMS Messaging element
+    final AS4SigningParams aSigningParams = AS4SigningParams.createDefault ()
+                                                            .setWSSecSignatureCustomizer (new IWSSecSignatureCustomizer ()
+                                                            {
+                                                              @Override
+                                                              public void customize (@NonNull final WSSecSignature aWSSecSignature)
+                                                              {
+                                                                aWSSecSignature.getParts ()
+                                                                               .removeIf (x -> "Body".equals (x.getName ()));
                                                               }
                                                             });
 

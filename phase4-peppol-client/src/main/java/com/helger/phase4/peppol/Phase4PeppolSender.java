@@ -44,11 +44,13 @@ import com.helger.base.state.ESuccess;
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
 import com.helger.cache.regex.RegExHelper;
-import com.helger.diver.api.coord.DVRCoordinate;
+import com.helger.collection.commons.ICommonsList;
 import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
 import com.helger.peppol.reporting.api.PeppolReportingHelper;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
+import com.helger.peppol.reporting.api.PeppolReportingItemWithID;
+import com.helger.peppol.reporting.api.backend.IPeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.sbdh.CPeppolSBDH;
@@ -72,13 +74,18 @@ import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifierParts;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.attachment.EAS4CompressionMode;
+import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
 import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
 import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.MessageProperty;
+import com.helger.phase4.model.message.AS4UserMessage;
+import com.helger.phase4.model.message.AbstractAS4Message;
 import com.helger.phase4.profile.peppol.AS4PeppolProfileRegistarSPI;
 import com.helger.phase4.profile.peppol.PeppolPMode;
 import com.helger.phase4.profile.peppol.Phase4PeppolHttpClientSettings;
@@ -86,8 +93,6 @@ import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.sender.IAS4SendingDateTimeConsumer;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
-import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
-import com.helger.phive.xml.source.IValidationSourceXML;
 import com.helger.sbdh.CSBDH;
 import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateHelper;
@@ -113,8 +118,6 @@ public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
   public static final IBDXLURLProvider URL_PROVIDER = PeppolNaptrURLProvider.INSTANCE;
-  @Deprecated (forRemoval = true, since = "4.3.0")
-  public static final String REGEX_SEAT_ID = PeppolIdentifierHelper.REGEX_SEAT_ID;
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolSender.class);
 
@@ -279,63 +282,6 @@ public final class Phase4PeppolSender
    * @param sType
    *        SBDH type (e.g. the XML payload root element local name). May be <code>null</code> to
    *        use the default.
-   * @param aPayloadElement
-   *        Payload element to be wrapped. May not be <code>null</code>.
-   * @return The domain object representation of the created SBDH or <code>null</code> if not all
-   *         parameters are present.
-   * @since 3.1.0
-   * @deprecated Use the version with MLS_TYPE and MLS_TO parameters instead
-   */
-  @Nullable
-  @Deprecated (forRemoval = true, since = "4.5.2")
-  public static StandardBusinessDocument createSBDH (@NonNull final IParticipantIdentifier aSenderID,
-                                                     @NonNull final IParticipantIdentifier aReceiverID,
-                                                     @NonNull final IDocumentTypeIdentifier aDocTypeID,
-                                                     @NonNull final IProcessIdentifier aProcID,
-                                                     @Nullable final String sCountryC1,
-                                                     @Nullable final String sInstanceIdentifier,
-                                                     @Nullable final String sStandard,
-                                                     @Nullable final String sTypeVersion,
-                                                     @Nullable final String sType,
-                                                     @NonNull final Element aPayloadElement)
-  {
-    return _createSBD (aSenderID,
-                       aReceiverID,
-                       aDocTypeID,
-                       aProcID,
-                       sCountryC1,
-                       sInstanceIdentifier,
-                       sStandard,
-                       sTypeVersion,
-                       sType,
-                       null,
-                       null,
-                       aPayloadElement,
-                       true);
-  }
-
-  /**
-   * @param aSenderID
-   *        Sender participant ID. May not be <code>null</code>.
-   * @param aReceiverID
-   *        Receiver participant ID. May not be <code>null</code>.
-   * @param aDocTypeID
-   *        Document type ID. May not be <code>null</code>.
-   * @param aProcID
-   *        Process ID. May not be <code>null</code>.
-   * @param sCountryC1
-   *        Country code of C1. May be <code>null</code>.
-   * @param sInstanceIdentifier
-   *        SBDH instance identifier. May be <code>null</code> to create a random ID.
-   * @param sStandard
-   *        SBDH standard (e.g. the XML payload root element namespace URI). May be
-   *        <code>null</code> to use the default.
-   * @param sTypeVersion
-   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be <code>null</code> to use
-   *        the default.
-   * @param sType
-   *        SBDH type (e.g. the XML payload root element local name). May be <code>null</code> to
-   *        use the default.
    * @param aMLSTo
    *        The optional <code>MLS_TO</code> value of the Peppol SBDH providing the MLS receiver.
    *        May be <code>null</code>.
@@ -375,55 +321,6 @@ public final class Phase4PeppolSender
                        eMLSType,
                        aPayloadElement,
                        true);
-  }
-
-  /**
-   * @param aPayloadElement
-   *        The payload element to be validated. May not be <code>null</code>.
-   * @param aRegistry
-   *        The validation registry to be used. May be <code>null</code> to indicate to use the
-   *        default one.
-   * @param aVESID
-   *        The VESID to validate against. May be <code>null</code>.
-   * @param aValidationResultHandler
-   *        The validation result handler to be used. May be <code>null</code>.
-   * @throws Phase4Exception
-   *         If the validation result handler decides to do so....
-   */
-  @SuppressWarnings ("removal")
-  @Deprecated (forRemoval = true, since = "4.4.3")
-  private static void _validatePayload (@NonNull final Element aPayloadElement,
-                                        @Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aRegistry,
-                                        @Nullable final DVRCoordinate aVESID,
-                                        @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler) throws Phase4Exception
-  {
-    // Client side validation
-    if (aVESID != null)
-    {
-      if (aValidationResultHandler != null)
-      {
-        if (aRegistry == null)
-        {
-          // Default registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aVESID, aValidationResultHandler);
-        }
-        else
-        {
-          // Custom registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement,
-                                                                   aRegistry,
-                                                                   aVESID,
-                                                                   aValidationResultHandler);
-        }
-      }
-      else
-        LOGGER.warn ("A VES ID is present but no ValidationResultHandler - therefore no validation is performed");
-    }
-    else
-    {
-      if (aValidationResultHandler != null)
-        LOGGER.warn ("A ValidationResultHandler is present but no VESID - therefore no validation is performed");
-    }
   }
 
   /**
@@ -504,10 +401,8 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * @return Create a new Builder for AS4 messages if the SBDH payload is already present. This
-   *         builder is slightly more limited, because it doesn't offer validation, as it is
-   *         expected to be done before. Use this builder e.g. for the Peppol Testbed messages.
-   *         Never <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the SBDH payload is already present. Use this
+   *         builder e.g. for the Peppol Testbed messages. Never <code>null</code>.
    * @see #builder() if you want phase4 to create the Standard Business Document
    * @since 0.9.6
    */
@@ -557,9 +452,11 @@ public final class Phase4PeppolSender
     private ERevocationCheckMode m_eAPRevocationCheckMode;
     private boolean m_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
     private boolean m_bPerformSeatIDCheck = DEFAULT_PERFORM_SEATID_CHECK;
+    private IPeppolReportingBackend m_aPeppolReportingBackend;
 
-    // Status var
+    // Status vars
     private OffsetDateTime m_aEffectiveSendingDT;
+    private String m_sEffectiveMessageID;
 
     /**
      * Create a new builder, with the defaults from
@@ -1003,6 +900,39 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * @return The Peppol Reporting backend to be used by
+     *         {@link #createAndStorePeppolReportingItemAfterSending(String)}. May be
+     *         <code>null</code>.
+     * @since 5.0.0
+     */
+    @Nullable
+    public final IPeppolReportingBackend peppolReportingBackend ()
+    {
+      return m_aPeppolReportingBackend;
+    }
+
+    /**
+     * Set the Peppol Reporting backend to be used by
+     * {@link #createAndStorePeppolReportingItemAfterSending(String)}. The backend should be created
+     * once per application (e.g. via
+     * {@link PeppolReportingBackend#createBackend(com.helger.config.IConfig)}) and closed by the
+     * caller when the application shuts down. This builder never closes the provided backend. If no
+     * backend is set, a new backend is created and closed for each stored reporting item, which is
+     * inefficient.
+     *
+     * @param aPeppolReportingBackend
+     *        The backend to use. May be <code>null</code>.
+     * @return this for chaining
+     * @since 5.0.0
+     */
+    @NonNull
+    public final IMPLTYPE peppolReportingBackend (@Nullable final IPeppolReportingBackend aPeppolReportingBackend)
+    {
+      m_aPeppolReportingBackend = aPeppolReportingBackend;
+      return thisAsT ();
+    }
+
+    /**
      * The effective sending date time of the message. That is set only if message sending takes
      * place.
      *
@@ -1179,11 +1109,11 @@ public final class Phase4PeppolSender
     {
       // Add mandatory properties
       addMessageProperty (MessageProperty.builder ()
-                                         .name (CAS4.ORIGINAL_SENDER)
+                                         .name (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER)
                                          .type (m_aSenderID.getScheme ())
                                          .value (m_aSenderID.getValue ()));
       addMessageProperty (MessageProperty.builder ()
-                                         .name (CAS4.FINAL_RECIPIENT)
+                                         .name (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT)
                                          .type (m_aReceiverID.getScheme ())
                                          .value (m_aReceiverID.getValue ()));
 
@@ -1198,6 +1128,58 @@ public final class Phase4PeppolSender
         // Call the original handler
         if (aExistingSendingDTConsumer != null)
           aExistingSendingDTConsumer.onEffectiveSendingDateTime (aSendingDT);
+      });
+
+      // Explicitly remember the old callback, to get the effective AS4 message ID
+      final IAS4ClientBuildMessageCallback aExistingBuildMessageCallback = m_aBuildMessageCallback;
+      buildMessageCallback (new IAS4ClientBuildMessageCallback ()
+      {
+        @Override
+        public void onAS4Message (@NonNull final AbstractAS4Message <?> aMsg)
+        {
+          // Store in this instance
+          if (aMsg instanceof final AS4UserMessage aUserMsg)
+            m_sEffectiveMessageID = aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
+
+          // Call the original handler
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onAS4Message (aMsg);
+        }
+
+        @Override
+        public void onBuiltAttachments (@NonNull @Nonempty final ICommonsList <WSS4JAttachment> aAttachments)
+        {
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onBuiltAttachments (aAttachments);
+        }
+
+        @Override
+        public void onSoapDocument (@NonNull final Document aDoc)
+        {
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onSoapDocument (aDoc);
+        }
+
+        @Override
+        public void onSignedSoapDocument (@NonNull final Document aDoc)
+        {
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onSignedSoapDocument (aDoc);
+        }
+
+        @Override
+        public void onEncryptedSoapDocument (@NonNull final Document aDoc)
+        {
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onEncryptedSoapDocument (aDoc);
+        }
+
+        @Override
+        public void onEncryptedMimeMessage (@NonNull final AS4MimeMessage aMimeMsg)
+        {
+          if (aExistingBuildMessageCallback != null)
+            aExistingBuildMessageCallback.onEncryptedMimeMessage (aMimeMsg);
+        }
       });
     }
 
@@ -1240,8 +1222,23 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * @return The effective AS4 message ID of the sent message. Only available after sending. May
+     *         be <code>null</code>.
+     * @since 5.0.0
+     */
+    @Nullable
+    public final String getEffectiveMessageID ()
+    {
+      return m_sEffectiveMessageID;
+    }
+
+    /**
      * This is a shortcut for creating and storing a Peppol reporting item in a shot. See the
-     * creation method for the extended documentation.
+     * creation method for the extended documentation. The effective AS4 message ID is used as the
+     * reporting item ID (truncated to {@link PeppolReportingItemWithID#MAX_LEN_ITEM_ID}
+     * characters). The backend set via {@link #peppolReportingBackend(IPeppolReportingBackend)} is
+     * used. If none is set, a new backend is created from the phase4 configuration and closed
+     * afterwards.
      *
      * @param sEndUserID
      *        The local end user ID, required to group all reporting items. May neither be
@@ -1249,14 +1246,11 @@ public final class Phase4PeppolSender
      * @throws Phase4Exception
      *         in case something goes wrong
      * @see #createPeppolReportingItemAfterSending(String)
+     * @see #peppolReportingBackend(IPeppolReportingBackend)
      * @since 2.2.2
      */
     public final void createAndStorePeppolReportingItemAfterSending (@NonNull @Nonempty final String sEndUserID) throws Phase4Exception
     {
-      // Consistency check
-      if (PeppolReportingBackend.getBackendService () == null)
-        throw new Phase4PeppolException ("No Peppol Reporting Backend is available. Cannot store Reporting Items").setRetryFeasible (false);
-
       // Filter out document types on Reporting
       if (PeppolReportingHelper.isDocumentTypeEligableForReporting (m_aDocTypeID))
       {
@@ -1266,10 +1260,26 @@ public final class Phase4PeppolSender
 
           // Create reporting item
           final PeppolReportingItem aReportingItem = createPeppolReportingItemAfterSending (sEndUserID);
+          if (StringHelper.isEmpty (m_sEffectiveMessageID))
+            throw new Phase4PeppolException ("The effective AS4 message ID is not available. Cannot store Peppol Reporting Item").setRetryFeasible (false);
+
+          // Maximum length
+          final String sItemID = m_sEffectiveMessageID.length () > PeppolReportingItemWithID.MAX_LEN_ITEM_ID
+                                                                                                             ? m_sEffectiveMessageID.substring (0,
+                                                                                                                                                PeppolReportingItemWithID.MAX_LEN_ITEM_ID)
+                                                                                                             : m_sEffectiveMessageID;
 
           // Store it in configured backend
-          PeppolReportingBackend.withBackendDo (AS4Configuration.getConfig (),
-                                                aBackend -> aBackend.storeReportingItem (aReportingItem));
+          if (m_aPeppolReportingBackend != null)
+            m_aPeppolReportingBackend.storeReportingItem (sItemID, aReportingItem);
+          else
+          {
+            LOGGER.warn ("No Peppol Reporting backend was provided via 'peppolReportingBackend' - creating a temporary one. Provide a long-living backend for better performance.");
+            try (final IPeppolReportingBackend aBackend = PeppolReportingBackend.createBackend (AS4Configuration.getConfig ()))
+            {
+              aBackend.storeReportingItem (sItemID, aReportingItem);
+            }
+          }
         }
         catch (final PeppolReportingBackendException ex)
         {
@@ -1288,8 +1298,8 @@ public final class Phase4PeppolSender
   /**
    * The builder class for sending AS4 messages using Peppol specifics. Use {@link #sendMessage()}
    * or {@link #sendMessageAndCheckForReceipt()} to trigger the main transmission.<br>
-   * This builder class assumes, that only the payload (e.g. the Invoice) is present, and that both
-   * validation and SBDH creation happens inside.
+   * This builder class assumes, that only the payload (e.g. the Invoice) is present, and that the
+   * SBDH creation happens inside.
    *
    * @author Philip Helger
    * @since 0.9.4
@@ -1307,11 +1317,6 @@ public final class Phase4PeppolSender
     private byte [] m_aPayloadBytes;
     private IHasInputStream m_aPayloadHasIS;
     private Consumer <? super StandardBusinessDocument> m_aSBDDocumentConsumer;
-
-    private IValidationExecutorSetRegistry <IValidationSourceXML> m_aVESRegistry;
-    private DVRCoordinate m_aVESID;
-    @SuppressWarnings ("removal")
-    private IPhase4PeppolValidationResultHandler m_aValidationResultHandler;
 
     /**
      * Create a new builder, with the defaults from
@@ -1551,86 +1556,6 @@ public final class Phase4PeppolSender
       return this;
     }
 
-    /**
-     * Set a custom validation registry to use in VESID lookup. This may be needed if other Peppol
-     * formats like XRechnung or SimplerInvoicing should be send through this client. The same
-     * registry instance should be used for all sending operations to ensure that validation
-     * artefact caching works best.
-     *
-     * @param aVESRegistry
-     *        The registry to use. May be <code>null</code> to indicate that the default registry
-     *        (official Peppol artefacts only) should be used.
-     * @return this for chaining
-     * @since 0.10.1
-     */
-    @NonNull
-    @Deprecated (forRemoval = true, since = "4.4.3")
-    public PeppolUserMessageBuilder validationRegistry (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry)
-    {
-      m_aVESRegistry = aVESRegistry;
-      return this;
-    }
-
-    /**
-     * Set the client side validation to be used. If this method is not invoked, than it's the
-     * responsibility of the caller to validate the document prior to sending it. This method uses a
-     * default "do nothing validation result handler".
-     *
-     * @param aVESID
-     *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>. May be
-     *        <code>null</code>.
-     * @return this for chaining
-     * @see #validationConfiguration(DVRCoordinate, IPhase4PeppolValidationResultHandler)
-     */
-    @SuppressWarnings ({ "removal", "javadoc" })
-    @NonNull
-    @Deprecated (forRemoval = true, since = "4.4.3")
-    public PeppolUserMessageBuilder validationConfiguration (@Nullable final DVRCoordinate aVESID)
-    {
-      final IPhase4PeppolValidationResultHandler aHdl = aVESID == null ? null
-                                                                       : new Phase4PeppolValidatonResultHandler ();
-      return validationConfiguration (aVESID, aHdl);
-    }
-
-    /**
-     * Set the client side validation to be used. If this method is not invoked, than it's the
-     * responsibility of the caller to validate the document prior to sending it. If the validation
-     * should happen internally, both the VESID AND the result handler must be set.
-     *
-     * @param aVESID
-     *        The Validation Execution Set ID as in
-     *        <code>PeppolValidation2024_11.VID_OPENPEPPOL_INVOICE_UBL_V3</code>. May be
-     *        <code>null</code>.
-     * @param aValidationResultHandler
-     *        The validation result handler for positive and negative response handling. May be
-     *        <code>null</code>.
-     * @return this for chaining
-     */
-    @SuppressWarnings ("removal")
-    @NonNull
-    @Deprecated (forRemoval = true, since = "4.4.3")
-    public PeppolUserMessageBuilder validationConfiguration (@Nullable final DVRCoordinate aVESID,
-                                                             @Nullable final IPhase4PeppolValidationResultHandler aValidationResultHandler)
-    {
-      m_aVESID = aVESID;
-      m_aValidationResultHandler = aValidationResultHandler;
-      return this;
-    }
-
-    /**
-     * Disable the validation for the outbound call.
-     *
-     * @return this for chaining
-     * @since 2.1.1
-     */
-    @NonNull
-    @Deprecated (forRemoval = true, since = "4.4.3")
-    public PeppolUserMessageBuilder disableValidation ()
-    {
-      return validationConfiguration (null, null);
-    }
-
     @Override
     protected ESuccess finishFields (@NonNull final AS4ResourceHelper aResHelper) throws Phase4Exception
     {
@@ -1688,9 +1613,6 @@ public final class Phase4PeppolSender
       // Consistency check
       if (CSBDH.SBDH_NS.equals (aPayloadElement.getNamespaceURI ()))
         throw new Phase4PeppolException ("You cannot set a Standard Business Document as the payload for the regular builder. The SBD is created automatically inside of this builder. Use Phase4PeppolSender.sbdhBuilder() if you have a pre-build SBD.").setRetryFeasible (false);
-
-      // Optional payload validation
-      _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
 
       // Perform SMP lookup
       if (super.finishFields (aResHelper).isFailure ())
@@ -1769,8 +1691,7 @@ public final class Phase4PeppolSender
   /**
    * A builder class for sending AS4 messages using Peppol specifics. Use {@link #sendMessage()} or
    * {@link #sendMessageAndCheckForReceipt()} to trigger the main transmission.<br>
-   * This builder class assumes, that the SBDH was created outside, therefore no validation can
-   * occur.
+   * This builder class assumes, that the SBDH was created outside.
    *
    * @author Philip Helger
    * @since 0.9.6

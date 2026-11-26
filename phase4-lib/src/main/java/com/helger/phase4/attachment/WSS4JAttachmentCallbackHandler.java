@@ -118,10 +118,8 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   {
     for (final Callback aCallback : aCallbacks)
     {
-      if (aCallback instanceof AttachmentRequestCallback)
+      if (aCallback instanceof final AttachmentRequestCallback aAttachmentRequestCallback)
       {
-        final AttachmentRequestCallback aAttachmentRequestCallback = (AttachmentRequestCallback) aCallback;
-
         // Get attachment ID
         final String sAttachmentID = aAttachmentRequestCallback.getAttachmentId ();
         if (LOGGER.isDebugEnabled ())
@@ -139,10 +137,8 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
         aAttachmentRequestCallback.setAttachments (aAttachments);
       }
       else
-        if (aCallback instanceof AttachmentResultCallback)
+        if (aCallback instanceof final AttachmentResultCallback aAttachmentResultCallback)
         {
-          final AttachmentResultCallback aAttachmentResultCallback = (AttachmentResultCallback) aCallback;
-
           // Attachment ID
           final String sAttachmentID = aAttachmentResultCallback.getAttachmentId ();
           if (LOGGER.isDebugEnabled ())

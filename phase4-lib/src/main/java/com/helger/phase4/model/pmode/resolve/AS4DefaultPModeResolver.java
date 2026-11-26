@@ -74,38 +74,6 @@ public class AS4DefaultPModeResolver implements IAS4PModeResolver
   }
 
   /**
-   * Create a default PMode template for the provided parameters.
-   *
-   * @param sInitiatorID
-   *        Initiator ID
-   * @param sResponderID
-   *        Responder ID
-   * @param sAddress
-   *        Address string
-   * @return <code>null</code> if no AS4 profile is present.
-   * @deprecated Since 4.6.1 - override
-   *             {@link #createDefaultPMode(String, String, String, String, String)} instead. This
-   *             method is no longer called by
-   *             {@link #findPMode(String, String, String, String, String, String, String)}.
-   */
-  @Nullable
-  @OverrideOnDemand
-  @Deprecated (since = "4.6.1", forRemoval = true)
-  protected IPMode createDefaultPMode (@NonNull @Nonempty final String sInitiatorID,
-                                       @NonNull @Nonempty final String sResponderID,
-                                       @Nullable final String sAddress)
-  {
-    if (m_aAS4Profile != null)
-    {
-      // Create a default PMode template
-      return m_aAS4Profile.createPModeTemplate (sInitiatorID, sResponderID, sAddress);
-    }
-
-    // Nothing to create
-    return null;
-  }
-
-  /**
    * Create a default PMode template for the provided parameters, including the Service and the
    * Action of the message the PMode is created for. Without these two values, a synthesized PMode
    * template can never satisfy a profile validator that checks

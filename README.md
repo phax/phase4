@@ -35,6 +35,7 @@ The full documentation is in the **[Wiki](https://github.com/phax/phase4/wiki)**
   * [Profile HR eDelivery](https://github.com/phax/phase4/wiki/Profile-HR-eDelivery)
   * [Profile Peppol](https://github.com/phax/phase4/wiki/Profile-Peppol)
 * [Multi Profile Handling](https://github.com/phax/phase4/wiki/Multi-Profile-Handling)
+* [Multi-Hop](https://github.com/phax/phase4/wiki/Multi-Hop)
 * [Testing](https://github.com/phax/phase4/wiki/Testing)
 * [Development](https://github.com/phax/phase4/wiki/Development)
 * [Known Users](https://github.com/phax/phase4/wiki/Known-Users)

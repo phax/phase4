@@ -23,6 +23,7 @@ import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
+import com.helger.phase4.profile.EAS4ProfileSecurityRequirement;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
 import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
@@ -84,7 +85,9 @@ public final class AS4EDelivery2ProfileRegistarSPI implements IAS4ProfileRegistr
                                                 aEdDSAPModeProvider,
                                                 PMODE_ID_PROVIDER,
                                                 false,
-                                                false));
+                                                false,
+                                                EAS4ProfileSecurityRequirement.UNSPECIFIED,
+                                                EAS4ProfileSecurityRequirement.UNSPECIFIED));
 
     // Register EdDSA two corner profile
     if (LOGGER.isDebugEnabled ())
@@ -96,7 +99,9 @@ public final class AS4EDelivery2ProfileRegistarSPI implements IAS4ProfileRegistr
                                                 aEdDSAPModeProvider,
                                                 PMODE_ID_PROVIDER,
                                                 false,
-                                                false));
+                                                false,
+                                                EAS4ProfileSecurityRequirement.UNSPECIFIED,
+                                                EAS4ProfileSecurityRequirement.UNSPECIFIED));
 
     // Register ECDSA four corner profile
     if (LOGGER.isDebugEnabled ())
@@ -108,7 +113,9 @@ public final class AS4EDelivery2ProfileRegistarSPI implements IAS4ProfileRegistr
                                                 aECDSAPModeProvider,
                                                 PMODE_ID_PROVIDER,
                                                 false,
-                                                false));
+                                                false,
+                                                EAS4ProfileSecurityRequirement.UNSPECIFIED,
+                                                EAS4ProfileSecurityRequirement.UNSPECIFIED));
 
     // Register ECDSA two corner profile
     if (LOGGER.isDebugEnabled ())
@@ -120,6 +127,8 @@ public final class AS4EDelivery2ProfileRegistarSPI implements IAS4ProfileRegistr
                                                 aECDSAPModeProvider,
                                                 PMODE_ID_PROVIDER,
                                                 false,
-                                                false));
+                                                false,
+                                                EAS4ProfileSecurityRequirement.UNSPECIFIED,
+                                                EAS4ProfileSecurityRequirement.UNSPECIFIED));
   }
 }

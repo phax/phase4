@@ -241,38 +241,10 @@ public interface IAS4IncomingMessageMetadata
    *
    * @return A list containing a chain of X509Certificate objects. Maybe <code>null</code>.
    * @since 2.5.0
-   * @deprecated Use {@link #remoteTlsClientCerts()} instead
-   */
-  @Nullable
-  @ReturnsMutableObject
-  @Deprecated (forRemoval = true, since = "4.5.1")
-  default ICommonsList <X509Certificate> remoteTlsCerts ()
-  {
-    return remoteTlsClientCerts ();
-  }
-
-  /**
-   * Returns the TLS certificates presented by the remote client to authenticate itself.
-   *
-   * @return A list containing a chain of X509Certificate objects. Maybe <code>null</code>.
-   * @since 2.5.0
    */
   @Nullable
   @ReturnsMutableObject
   ICommonsList <X509Certificate> remoteTlsClientCerts ();
-
-  /**
-   * @return <code>true</code> if the remote TLS certificate chain with at least a single
-   *         certificate is present, <code>false</code> if not.
-   * @see #remoteTlsClientCerts()
-   * @since 2.5.0
-   * @deprecated Use {@link #hasRemoteTlsClientCerts()} instead
-   */
-  @Deprecated (forRemoval = true, since = "4.5.1")
-  default boolean hasRemoteTlsCerts ()
-  {
-    return hasRemoteTlsClientCerts ();
-  }
 
   /**
    * @return <code>true</code> if the remote TLS certificate chain with at least a single

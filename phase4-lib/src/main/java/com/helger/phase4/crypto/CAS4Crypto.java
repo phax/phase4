@@ -17,7 +17,6 @@
 package com.helger.phase4.crypto;
 
 import com.helger.annotation.concurrent.Immutable;
-import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.security.keystore.EKeyStoreType;
 
 /**
@@ -28,10 +27,8 @@ import com.helger.security.keystore.EKeyStoreType;
 @Immutable
 public final class CAS4Crypto
 {
-  @ChangeNextMajorRelease ("Change to PKCS12")
-  public static final EKeyStoreType DEFAULT_KEY_STORE_TYPE = EKeyStoreType.JKS;
-  @ChangeNextMajorRelease ("Change to PKCS12")
-  public static final EKeyStoreType DEFAULT_TRUST_STORE_TYPE = EKeyStoreType.JKS;
+  public static final EKeyStoreType DEFAULT_KEY_STORE_TYPE = EKeyStoreType.PKCS12;
+  public static final EKeyStoreType DEFAULT_TRUST_STORE_TYPE = EKeyStoreType.PKCS12;
   public static final String DEFAULT_CONFIG_PREFIX = "org.apache.wss4j.crypto.merlin.";
 
   private CAS4Crypto ()

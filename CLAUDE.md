@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-phase4 is an embeddable, lightweight Java library to send and receive AS4 (Applicability Statement 4) messages. It implements the EBMS 3.0 / AS4 messaging standard with support for multiple network profiles (Peppol, BDEW, CEF, ENTSOG, etc.). Version 4.9.2-SNAPSHOT, Java 17+.
+phase4 is an embeddable, lightweight Java library to send and receive AS4 (Applicability Statement 4) messages. It implements the EBMS 3.0 / AS4 messaging standard with support for multiple network profiles (Peppol, BDEW, CEF, ENTSOG, etc.). Version 5.0.0-SNAPSHOT, Java 21+.
 
 ## Build Commands
 
@@ -83,6 +83,9 @@ Profiles register via Java ServiceLoader (`META-INF/services/com.helger.phase4.p
 Outgoing HTTP retries happen only on the phase4 level, in `BasicHttpPoster.sendGenericMessageWithRetries`, configured by `HttpRetrySettings`. `HttpRetryClassifier` decides per exception and HTTP status code whether a retry is feasible (`EHttpRetryClassification`). A response handler can veto the retry of the current response via `HttpRetryVeto.vetoRetry ()` (used for received SOAP Faults with a permanent disposition; transient SOAP Faults are retried according to the HTTP status code). The automatic retries of Apache HttpClient are disabled via `HttpClientSettings.setDisableAutomaticRetries (true)` (ph-web) in all phase4 `*HttpClientSettings` classes and in `BasicHttpPoster.createDefaultHttpClientFactory ()` - keep it that way for new profiles, otherwise HttpClient silently retries 429/503 in addition. The only exception is `Phase4PeppolCRLHttpClientSettings`, which re-enables them, because CRL downloads are not retried on the phase4 level.
 
 SMP lookups (`AS4EndpointDetailProvider*` in phase4-dynamic-discovery) happen once, outside the HTTP retry loop. Their retry feasibility (`Phase4SMPException.isRetryFeasible ()`, mapped to `EAS4UserMessageSendResult.TRANSPORT_ERROR` / `TRANSPORT_ERROR_NO_RETRY`) is decided by `SMPRetryClassifier`, which reuses `HttpRetryClassifier`. The HTTP level retries of the SMP lookup itself are configured in peppol-commons (`SMPHttpClientSettings`).
+
+### Peppol Reporting
+peppol-reporting v5: an `IPeppolReportingBackend` is created via `PeppolReportingBackend.createBackend (IConfig)` and must be closed. Never use the deprecated `withBackendDo` / `getBackendService`. `Phase4PeppolSender` takes a long-living backend via the builder method `peppolReportingBackend (...)` (it never closes it); without one, `createAndStorePeppolReportingItemAfterSending` creates and closes a temporary backend per item and logs a warning. The item ID is the AS4 message ID, truncated to `PeppolReportingItemWithID.MAX_LEN_ITEM_ID`. `phase4-peppol-server-webapp` holds its single backend in `AppReportingBackend` (created in `Phase4PeppolWebAppListener`, closed on context destruction); reading goes via `IPeppolReportingItemReader`.
 
 ### JAXB Code Generation
 `phase4-lib` generates Java classes from EBMS/AS4 XSD schemas during `generate-sources` phase. Bindings in `src/main/jaxb/bindings.xjb`, schemas in `src/main/resources/external/schemas/`.

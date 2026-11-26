@@ -40,7 +40,7 @@ import org.w3c.dom.Node;
 
 import com.helger.annotation.WillClose;
 import com.helger.annotation.WillNotClose;
-import com.helger.annotation.misc.ChangeNextMajorRelease;
+import com.helger.annotation.style.VisibleForTesting;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
@@ -100,6 +100,7 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
+import com.helger.phase4.profile.EAS4ProfileSecurityRequirement;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.profile.IAS4ProfileValidator.EAS4ProfileValidationMode;
@@ -810,6 +811,49 @@ public final class AS4IncomingHandler
    * @param aEbmsErrorMessagesTarget
    *        The error list to fill in case the security requirements are not met.
    */
+  /**
+   * Check the security of an incoming UserMessage against the requirements of the AS4 profile. This
+   * check is always performed and cannot be disabled via configuration.
+   *
+   * @param aIncomingState
+   *        The incoming message state. May not be <code>null</code>.
+   * @param aProfile
+   *        The AS4 profile to check against. May not be <code>null</code>.
+   * @param aEbmsErrorMessagesTarget
+   *        The error list to add errors to. May not be <code>null</code>.
+   */
+  @VisibleForTesting
+  static void _checkSecurityAgainstProfile (@NonNull final IAS4IncomingMessageState aIncomingState,
+                                            @NonNull final IAS4Profile aProfile,
+                                            @NonNull final AS4ErrorList aEbmsErrorMessagesTarget)
+  {
+    final String sProfile = "the AS4 profile '" + aProfile.getID () + "'";
+    final ICommonsList <String> aViolations = new CommonsArrayList <> ();
+    final EAS4ProfileSecurityRequirement eSign = aProfile.getIncomingSignatureRequirement ();
+    if (eSign.isRequired () && !aIncomingState.isSoapSignatureChecked ())
+      aViolations.add ("is not signed, but " + sProfile + " requires it");
+    else
+      if (eSign.isForbidden () && aIncomingState.isSoapSignatureChecked ())
+        aViolations.add ("is signed, but " + sProfile + " forbids it");
+
+    final EAS4ProfileSecurityRequirement eCrypt = aProfile.getIncomingEncryptionRequirement ();
+    if (eCrypt.isRequired () && !aIncomingState.isSoapDecrypted ())
+      aViolations.add ("is not encrypted, but " + sProfile + " requires it");
+    else
+      if (eCrypt.isForbidden () && aIncomingState.isSoapDecrypted ())
+        aViolations.add ("is encrypted, but " + sProfile + " forbids it");
+
+    for (final String sViolation : aViolations)
+    {
+      final String sDetails = "The incoming UserMessage " + sViolation;
+      LOGGER.error (sDetails + ". Rejecting the message.");
+      aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.errorBuilder (aIncomingState.getLocale ())
+                                                                        .refToMessageInError (aIncomingState.getMessageID ())
+                                                                        .errorDetail (sDetails)
+                                                                        .build ());
+    }
+  }
+
   private static void _checkSecurityAgainstPModeLeg (@NonNull final IAS4IncomingMessageState aIncomingState,
                                                      @NonNull final PModeLeg aEffectiveLeg,
                                                      @NonNull final AS4ErrorList aEbmsErrorMessagesTarget)
@@ -976,8 +1020,7 @@ public final class AS4IncomingHandler
   }
 
   @NonNull
-  @ChangeNextMajorRelease ("Rename to processIncomingEbmsMessage")
-  public static IAS4IncomingMessageState processEbmsMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper,
+    public static IAS4IncomingMessageState processIncomingEbmsMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                                              @NonNull final Locale aLocale,
                                                              @NonNull final SoapHeaderElementProcessorRegistry aRegistry,
                                                              @NonNull final HttpHeaderMap aHttpHeaders,
@@ -1097,6 +1140,14 @@ public final class AS4IncomingHandler
         // Only check leg if the message is a usermessage
         if (aEffectiveLeg == null)
           throw new Phase4IncomingException ("No AS4 P-Mode leg could be determined!").setRetryFeasible (false);
+
+        // Make sure the message was secured as the AS4 profile requires it. This cannot be disabled
+        if (aProfile != null)
+        {
+          _checkSecurityAgainstProfile (aIncomingState, aProfile, aEbmsErrorMessagesTarget);
+          if (aEbmsErrorMessagesTarget.isNotEmpty ())
+            return aIncomingState;
+        }
 
         // Make sure the message was secured as the PMode leg requires it (see issue #404)
         if (AS4Configuration.isIncomingSecurityEnforcePMode ())
@@ -1271,7 +1322,7 @@ public final class AS4IncomingHandler
                                                                                                              aIncomingReceiverConfiguration);
 
       // Parse AS4, verify signature etc
-      final IAS4IncomingMessageState aIncomingState = processEbmsMessage (aResHelper,
+      final IAS4IncomingMessageState aIncomingState = processIncomingEbmsMessage (aResHelper,
                                                                           aLocale,
                                                                           aRegistry,
                                                                           aHttpHeaders,
@@ -1329,8 +1380,7 @@ public final class AS4IncomingHandler
 
   // Parse an AS4 SignalMessage
   @Nullable
-  @ChangeNextMajorRelease ("Rename to parseIncomingSignalMessage")
-  public static Ebms3SignalMessage parseSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+    public static Ebms3SignalMessage parseIncomingSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                        @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                        @NonNull final IAS4PModeResolver aPModeResolver,
                                                        @NonNull final IAS4IncomingAttachmentFactory aIAF,
@@ -1344,7 +1394,7 @@ public final class AS4IncomingHandler
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                        @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                        @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                       @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
+                                                       @Nullable final IAS4IncomingSignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
     final IAS4IncomingMessageState aIncomingState = _parseIncomingMessage (aCryptoFactorySign,
                                                                            aCryptoFactoryCrypt,
@@ -1385,8 +1435,7 @@ public final class AS4IncomingHandler
 
   // Parse an AS4 UserMessage
   @Nullable
-  @ChangeNextMajorRelease ("Rename to parseIncomingUserMessage")
-  public static Ebms3UserMessage parseUserMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+    public static Ebms3UserMessage parseIncomingUserMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                    @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                    @NonNull final IAS4PModeResolver aPModeResolver,
                                                    @NonNull final IAS4IncomingAttachmentFactory aIAF,
@@ -1400,7 +1449,7 @@ public final class AS4IncomingHandler
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                    @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                   @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws Phase4Exception
+                                                   @Nullable final IAS4IncomingUserMessageConsumer aUserMsgConsumer) throws Phase4Exception
   {
     final IAS4IncomingMessageState aIncomingState = _parseIncomingMessage (aCryptoFactorySign,
                                                                            aCryptoFactoryCrypt,
@@ -1441,8 +1490,7 @@ public final class AS4IncomingHandler
 
   // Parse as an AS4 UserMessage or an AS4 SignalMessage
   @NonNull
-  @ChangeNextMajorRelease ("Rename to parseIncomingUserOrSignalMessage")
-  public static ESuccess parseUserOrSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+    public static ESuccess parseIncomingUserOrSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                    @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                    @NonNull final IAS4PModeResolver aPModeResolver,
                                                    @NonNull final IAS4IncomingAttachmentFactory aIAF,
@@ -1456,8 +1504,8 @@ public final class AS4IncomingHandler
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                    @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                   @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
-                                                   @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
+                                                   @Nullable final IAS4IncomingUserMessageConsumer aUserMsgConsumer,
+                                                   @Nullable final IAS4IncomingSignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
     final IAS4IncomingMessageState aIncomingState = _parseIncomingMessage (aCryptoFactorySign,
                                                                            aCryptoFactoryCrypt,

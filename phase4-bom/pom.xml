@@ -27,7 +27,7 @@
   </parent>
   <groupId>com.helger.phase4</groupId>
   <artifactId>phase4-bom</artifactId>
-  <version>4.9.3-SNAPSHOT</version>
+  <version>5.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phase4-bom</name>
   <description>Bill of Materials for all phase4 artifacts</description>
@@ -112,6 +112,11 @@
       <dependency>
         <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-dynamic-discovery</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-multihop</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

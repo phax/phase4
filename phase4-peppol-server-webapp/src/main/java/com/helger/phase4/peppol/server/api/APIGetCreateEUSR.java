@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import com.helger.annotation.Nonempty;
 import com.helger.base.string.StringParser;
 import com.helger.mime.CMimeType;
-import com.helger.peppol.reporting.api.backend.PeppolReportingBackend;
+import com.helger.peppol.reporting.api.backend.IPeppolReportingItemReader;
 import com.helger.peppol.reporting.api.backend.PeppolReportingBackendException;
 import com.helger.peppol.reporting.eusr.EndUserStatisticsReport;
 import com.helger.peppol.reporting.eusr.model.EUSRReportingItemAccumulator;
@@ -33,6 +33,7 @@ import com.helger.peppol.reporting.jaxb.eusr.EndUserStatisticsReport110Marshalle
 import com.helger.peppol.reporting.jaxb.eusr.v110.EndUserStatisticsReportType;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.peppol.server.APConfig;
+import com.helger.phase4.peppol.server.reporting.AppReportingBackend;
 import com.helger.phase4.peppol.server.reporting.AppReportingHelper;
 import com.helger.photon.api.IAPIDescriptor;
 import com.helger.servlet.response.UnifiedResponse;
@@ -68,12 +69,12 @@ public final class APIGetCreateEUSR extends AbstractVerifyingAPIExecutor
     {
       // Aggregate all items from data storage while reading them, without keeping
       // them in memory
-      final EUSRReportingItemAccumulator aAccumulator = new EUSRReportingItemAccumulator ();
-      if (PeppolReportingBackend.withBackendDo (APConfig.getConfig (),
-                                                aBackend -> aBackend.forEachReportingItem (aYearMonth,
-                                                                                           aAccumulator::accept))
-                                .isSuccess ())
+      final IPeppolReportingItemReader aReader = AppReportingBackend.getItemReader ();
+      if (aReader != null)
       {
+        final EUSRReportingItemAccumulator aAccumulator = new EUSRReportingItemAccumulator ();
+        aReader.forEachReportingItem (aYearMonth, aAccumulator::accept);
+
         // Create report with the aggregated transactions
         final EndUserStatisticsReportType aReport = EndUserStatisticsReport.builder ()
                                                                            .monthOf (aYearMonth)
@@ -87,7 +88,7 @@ public final class APIGetCreateEUSR extends AbstractVerifyingAPIExecutor
                         .disableCaching ();
       }
       else
-        throw new IllegalStateException ("Failed to read Peppol Reporting backend data");
+        throw new IllegalStateException ("No Peppol Reporting backend that can read reporting items is available");
     }
     catch (final PeppolReportingBackendException ex)
     {

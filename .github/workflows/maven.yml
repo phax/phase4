@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ 17, 21, 25 ]
+        java: [ 21, 25 ]
     name: Java ${{ matrix.java }} build
 
     steps:
@@ -66,11 +66,11 @@ jobs:
 
     - name: Publish to the Maven Central Repository
       run: mvn --batch-mode --update-snapshots -P release-snapshot deploy
-      if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && matrix.java == 17
+      if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && matrix.java == 21
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
     - name: Maven Build
       run: mvn --batch-mode --update-snapshots install
-      if: github.event_name != 'push' || github.ref != format('refs/heads/{0}', github.event.repository.default_branch) || matrix.java != 17
+      if: github.event_name != 'push' || github.ref != format('refs/heads/{0}', github.event.repository.default_branch) || matrix.java != 21

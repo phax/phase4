@@ -60,7 +60,7 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.client.IAS4OnRetryCallback;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -383,12 +383,13 @@ public class AS4RequestHandler implements AutoCloseable
   private Locale m_aLocale = Locale.US;
   private IAS4IncomingDumper m_aIncomingDumper;
   private IAS4OutgoingDumper m_aOutgoingDumper;
-  private IAS4RetryCallback m_aRetryCallback;
+  private IAS4OnRetryCallback m_aRetryCallback;
   private IAS4SoapProcessingFinalizedCallback m_aSoapProcessingFinalizedCB;
 
   /** By default get all message processors from the global SPI registry */
   private Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> m_aProcessorSupplier = AS4IncomingMessageProcessorManager::getAllProcessors;
   private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
+  private IAS4ResponseSignalCustomizer m_aResponseSignalCustomizer;
 
   public AS4RequestHandler (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
@@ -697,7 +698,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @since v0.9.14
    */
   @Nullable
-  public final IAS4RetryCallback getRetryCallback ()
+  public final IAS4OnRetryCallback getRetryCallback ()
   {
     return m_aRetryCallback;
   }
@@ -711,7 +712,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @since v0.9.14
    */
   @NonNull
-  public final AS4RequestHandler setRetryCallback (@Nullable final IAS4RetryCallback aRetryCallback)
+  public final AS4RequestHandler setRetryCallback (@Nullable final IAS4OnRetryCallback aRetryCallback)
   {
     m_aRetryCallback = aRetryCallback;
     return this;
@@ -812,6 +813,34 @@ public class AS4RequestHandler implements AutoCloseable
   public final AS4RequestHandler setErrorConsumer (@Nullable final IAS4RequestHandlerErrorConsumer aErrorConsumer)
   {
     m_aErrorConsumer = aErrorConsumer;
+    return this;
+  }
+
+  /**
+   * @return An optional response signal customizer. <code>null</code> by default.
+   * @since 5.0.0
+   */
+  @Nullable
+  public final IAS4ResponseSignalCustomizer getResponseSignalCustomizer ()
+  {
+    return m_aResponseSignalCustomizer;
+  }
+
+  /**
+   * Set an optional customizer that is invoked for every outgoing Receipt and Error signal message,
+   * after the SOAP document was created but before it is signed. This allows to add additional SOAP
+   * header elements to the response and to have them covered by the signature.<br>
+   * Note: this is NOT invoked for response User Messages.
+   *
+   * @param aResponseSignalCustomizer
+   *        The customizer to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 5.0.0
+   */
+  @NonNull
+  public final AS4RequestHandler setResponseSignalCustomizer (@Nullable final IAS4ResponseSignalCustomizer aResponseSignalCustomizer)
+  {
+    m_aResponseSignalCustomizer = aResponseSignalCustomizer;
     return this;
   }
 
@@ -1201,17 +1230,17 @@ public class AS4RequestHandler implements AutoCloseable
       Ebms3Property aOriginalSender = null;
       for (final Ebms3Property aProp : aUserMessage.getMessageProperties ().getProperty ())
       {
-        if (aProp.getName ().equals (CAS4.ORIGINAL_SENDER))
+        if (aProp.getName ().equals (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER))
           aOriginalSender = aProp;
         else
-          if (aProp.getName ().equals (CAS4.FINAL_RECIPIENT))
+          if (aProp.getName ().equals (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT))
             aFinalRecipient = aProp;
       }
 
       if (aOriginalSender != null && aFinalRecipient != null)
       {
-        aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
-        aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
+        aFinalRecipient.setName (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER);
+        aOriginalSender.setName (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT);
 
         aEbms3MessageProperties.addProperty (aFinalRecipient.clone ());
         aEbms3MessageProperties.addProperty (aOriginalSender.clone ());
@@ -1387,6 +1416,15 @@ public class AS4RequestHandler implements AutoCloseable
     final Document aResponseDoc = aReceiptMessage.getAsSoapDocument ();
     final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
                                                                      .setFromPMode (aEffectiveLeg.getSecurity ());
+
+    // Call optional customizer before signing
+    if (m_aResponseSignalCustomizer != null)
+      m_aResponseSignalCustomizer.customizeResponseSignal (aIncomingState,
+                                                           EAS4MessageType.RECEIPT,
+                                                           eResponseSoapVersion,
+                                                           aResponseDoc,
+                                                           aSigningParams.isSigningEnabled () ? aSigningParams : null);
+
     final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
                                                        aSigningParams,
                                                        aResponseDoc,
@@ -1457,7 +1495,27 @@ public class AS4RequestHandler implements AutoCloseable
       eResponseSoapVersion = eSoapVersion;
 
     Document aResponseDoc = aErrorMsg.getAsSoapDocument ();
+
+    // Determine the signing parameters upfront, so that the customizer below may modify them.
+    // They are non-null exactly if a PMode Leg is present.
+    final AS4SigningParams aSigningParams;
     if (aEffectiveLeg != null)
+      aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
+                                                .setFromPMode (aEffectiveLeg.getSecurity ());
+    else
+      aSigningParams = null;
+
+    // Call optional customizer before signing
+    if (m_aResponseSignalCustomizer != null)
+      m_aResponseSignalCustomizer.customizeResponseSignal (aIncomingState,
+                                                           EAS4MessageType.ERROR_MESSAGE,
+                                                           eResponseSoapVersion,
+                                                           aResponseDoc,
+                                                           aSigningParams != null &&
+                                                                              aSigningParams.isSigningEnabled () ? aSigningParams
+                                                                                                                 : null);
+
+    if (aSigningParams != null)
     {
       // Sign the Error if possible
       if (LOGGER.isDebugEnabled ())
@@ -1465,8 +1523,6 @@ public class AS4RequestHandler implements AutoCloseable
 
       try
       {
-        final AS4SigningParams aSigningParams = m_aIncomingSecurityConfig.getSigningParamsCloneOrNew ()
-                                                                         .setFromPMode (aEffectiveLeg.getSecurity ());
         final Document aSignedDoc = _signResponseIfNeeded (null,
                                                            aSigningParams,
                                                            aResponseDoc,
@@ -1687,7 +1743,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                                            m_aIncomingReceiverConfig);
 
     // Decompose the SOAP message
-    final IAS4IncomingMessageState aIncomingState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
+    final IAS4IncomingMessageState aIncomingState = AS4IncomingHandler.processIncomingEbmsMessage (m_aResHelper,
                                                                                            m_aLocale,
                                                                                            aRegistry,
                                                                                            aHttpHeaders,

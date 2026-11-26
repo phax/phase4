@@ -26,7 +26,7 @@
   </parent>
   <groupId>com.helger.phase4</groupId>
   <artifactId>phase4-parent-pom</artifactId>
-  <version>4.9.3-SNAPSHOT</version>
+  <version>5.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phase4-parent-pom</name>
   <description>Base POM to build the phase4 projects</description>
@@ -68,6 +68,7 @@
   </developers>
 
   <properties>
+    <java.version>21</java.version>
     <jaxb-plugin.group>org.jvnet.jaxb</jaxb-plugin.group>
     <jaxb-plugin.artifact>jaxb-maven-plugin</jaxb-plugin.artifact>
     <jaxb-plugin.version>4.0.16</jaxb-plugin.version>
@@ -83,11 +84,9 @@
     <ph-xsds.version>4.1.2</ph-xsds.version>
     <ph-ubl.version>10.2.0</ph-ubl.version>
     <ph-web.version>11.5.1</ph-web.version>
-    <phive.version>12.3.2</phive.version>
-    <phive-rules.version>4.7.3</phive-rules.version>
     <peppol-commons.version>13.3.0</peppol-commons.version>
-    <peppol-reporting.version>4.5.0</peppol-reporting.version>
-    <peppol-ap-support.version>2.4.2</peppol-ap-support.version>
+    <peppol-reporting.version>5.0.0-SNAPSHOT</peppol-reporting.version>
+    <peppol-ap-support.version>2.5.0-SNAPSHOT</peppol-ap-support.version>
   </properties>
 
   <dependencyManagement>
@@ -234,6 +233,11 @@
       <dependency>
         <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-dynamic-discovery</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-multihop</artifactId>
         <version>${project.version}</version>
       </dependency>
       
@@ -388,6 +392,7 @@
     <module>phase4-test</module>
     <module>phase4-server-webapp</module>
     <module>phase4-dynamic-discovery</module>
+    <module>phase4-multihop</module>
     
     <!-- profile specific stuff -->
     <module>phase4-bdew-client</module>

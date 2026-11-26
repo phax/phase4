@@ -340,8 +340,8 @@ public final class Phase4EudamedSender
     protected void customizeBeforeSending () throws Phase4Exception
     {
       // Add mandatory properties
-      addMessageProperty (MessageProperty.builder ().name (CAS4.ORIGINAL_SENDER).value (m_sSenderID));
-      addMessageProperty (MessageProperty.builder ().name (CAS4.FINAL_RECIPIENT).value (m_sReceiverID));
+      addMessageProperty (MessageProperty.builder ().name (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER).value (m_sSenderID));
+      addMessageProperty (MessageProperty.builder ().name (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT).value (m_sReceiverID));
     }
   }
 

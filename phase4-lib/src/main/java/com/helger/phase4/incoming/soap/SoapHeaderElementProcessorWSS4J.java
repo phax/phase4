@@ -198,6 +198,8 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
       // Enable CRL checking
       // Only works if Merlin.setCRLCertStore is also called
+      // Revocation must be checked explicitly on application level afterwards (incl. proxy support
+      // etc.)
       if (false)
         aRequestData.setEnableRevocation (true);
 
@@ -493,9 +495,9 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
       // Decryption or Signature check failed
       String sDetails = "Error processing the WSSecurity Header";
-      if (ex instanceof WSSecurityException)
+      if (ex instanceof final WSSecurityException aWSSecEx)
       {
-        sDetails += " (WS Security error: " + ((WSSecurityException) ex).getErrorCode () + ")";
+        sDetails += " (WS Security error: " + aWSSecEx.getErrorCode () + ")";
       }
 
       LOGGER.error (sDetails, ex);

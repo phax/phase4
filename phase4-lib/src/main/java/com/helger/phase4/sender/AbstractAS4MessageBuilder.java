@@ -37,7 +37,7 @@ import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.client.IAS4OnRetryCallback;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryConfiguration;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -99,7 +99,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected IAS4OutgoingDumper m_aOutgoingDumper;
   protected IAS4IncomingDumper m_aIncomingDumper;
   protected IAS4DecryptParameterModifier m_aDecryptParameterModifier;
-  protected IAS4RetryCallback m_aRetryCallback;
+  protected IAS4OnRetryCallback m_aRetryCallback;
   protected IAS4RawResponseConsumer m_aResponseConsumer;
 
   /**
@@ -787,7 +787,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @since 3.0.0
    */
   @Nullable
-  public final IAS4RetryCallback retryCallback ()
+  public final IAS4OnRetryCallback retryCallback ()
   {
     return m_aRetryCallback;
   }
@@ -801,7 +801,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    */
   @NonNull
-  public final IMPLTYPE retryCallback (@Nullable final IAS4RetryCallback aRetryCallback)
+  public final IMPLTYPE retryCallback (@Nullable final IAS4OnRetryCallback aRetryCallback)
   {
     m_aRetryCallback = aRetryCallback;
     return thisAsT ();

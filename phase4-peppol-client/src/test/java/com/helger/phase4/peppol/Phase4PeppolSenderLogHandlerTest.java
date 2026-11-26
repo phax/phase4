@@ -45,6 +45,6 @@ public final class Phase4PeppolSenderLogHandlerTest
     // Nothing is set, so the handler must receive the name of a missing field
     assertFalse (aBuilder.isEveryRequiredFieldSet ());
     assertFalse (aMessages.isEmpty ());
-    assertTrue (aMessages.get (0).contains ("is not set"));
+    assertTrue (aMessages.getFirst ().contains ("is not set"));
   }
 }

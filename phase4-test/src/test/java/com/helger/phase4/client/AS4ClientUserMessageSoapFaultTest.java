@@ -45,9 +45,7 @@ import com.helger.mime.CMimeType;
 import com.helger.mime.IMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.phase4.attachment.AS4OutgoingAttachment;
-import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.mgr.AS4ProfileSelector;
@@ -64,8 +62,6 @@ import com.helger.phase4.server.AS4JettyRunner;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.test.profile.AS4TestProfileRegistarSPI;
 import com.helger.phase4.util.AS4ResourceHelper;
-import com.helger.typeconvert.collection.IStringMap;
-import com.helger.typeconvert.collection.StringMap;
 import com.helger.url.URLBuilder;
 import com.helger.xservlet.requesttrack.RequestTrackerSettings;
 
@@ -361,24 +357,16 @@ public final class AS4ClientUserMessageSoapFaultTest
   @Test
   public void testHttp401IsHardFailureWithoutRetry ()
   {
-    for (final boolean bAcceptAll : new boolean [] { true, false })
-    {
-      final IStringMap aSettings = new StringMap ();
-      aSettings.putIn (AS4Configuration.PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES, bAcceptAll);
-      try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.create (aSettings))
-      {
-        final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
-        final AtomicInteger aRetryCount = new AtomicInteger (0);
+    final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
+    final AtomicInteger aRetryCount = new AtomicInteger (0);
 
-        // Even a SOAP Fault body must not be processed
-        assertEquals (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY,
-                      _send (_buildURL (SOAP12_FAULT_SENDER, 401, ESoapVersion.SOAP_12.getMimeType ()),
-                             aFaultKeeper,
-                             aRetryCount));
-        assertNull (aFaultKeeper.get ());
-        assertEquals (0, aRetryCount.intValue ());
-      }
-    }
+    // Even a SOAP Fault body must not be processed
+    assertEquals (EAS4UserMessageSendResult.TRANSPORT_ERROR_NO_RETRY,
+                  _send (_buildURL (SOAP12_FAULT_SENDER, 401, ESoapVersion.SOAP_12.getMimeType ()),
+                         aFaultKeeper,
+                         aRetryCount));
+    assertNull (aFaultKeeper.get ());
+    assertEquals (0, aRetryCount.intValue ());
   }
 
   @Test
@@ -565,85 +553,5 @@ public final class AS4ClientUserMessageSoapFaultTest
                                                                .sendMessageAndCheckForReceipt ();
     assertEquals (EAS4UserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED, eResult);
     assertNull (aFaultKeeper.get ());
-  }
-
-  @Test
-  public void testPermanentFaultStopsRetriesInLegacyMode ()
-  {
-    // If "accept all status codes" is disabled, a non-2xx response leads to an IOException that is
-    // normally retried. A permanent SOAP Fault must stop all retries immediately.
-    final IStringMap aSettings = new StringMap ();
-    aSettings.putIn (AS4Configuration.PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES, false);
-    try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.create (aSettings))
-    {
-      final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
-      final AtomicInteger aRetryCount = new AtomicInteger (0);
-
-      final EAS4UserMessageSendResult eResult = _createBuilder ().endpointURL (_buildURL (SOAP12_FAULT_SENDER,
-                                                                                          500,
-                                                                                          ESoapVersion.SOAP_12.getMimeType ()))
-                                                                 .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (2)
-                                                                                                             .setDurationBeforeRetry (Duration.ofMillis (50)))
-                                                                 .retryCallback ((sMessageID,
-                                                                                  sURL,
-                                                                                  nTry,
-                                                                                  nMaxTries,
-                                                                                  nRetryIntervalMS,
-                                                                                  ex) -> {
-                                                                   aRetryCount.incrementAndGet ();
-                                                                   return EContinue.CONTINUE;
-                                                                 })
-                                                                 .soapFaultConsumer ((sSentMessageID,
-                                                                                      aSoapFault,
-                                                                                      aClientSentMessage) -> aFaultKeeper.set (aSoapFault))
-                                                                 .sendMessageAndCheckForReceipt ();
-      assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED, eResult);
-
-      final AS4SoapFault aSoapFault = aFaultKeeper.get ();
-      assertNotNull (aSoapFault);
-      assertSame (EAS4FaultDisposition.PERMANENT, aSoapFault.getDisposition ());
-      // The permanent fault must have stopped all retries
-      assertEquals (0, aRetryCount.intValue ());
-    }
-  }
-
-  @Test
-  public void testTransientFaultRetriesInLegacyMode ()
-  {
-    // If "accept all status codes" is disabled, a transient SOAP Fault must keep the normal retry
-    // behaviour, but must still be surfaced after all retries are exhausted
-    final IStringMap aSettings = new StringMap ();
-    aSettings.putIn (AS4Configuration.PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES, false);
-    try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.create (aSettings))
-    {
-      final Wrapper <AS4SoapFault> aFaultKeeper = new Wrapper <> ();
-      final AtomicInteger aRetryCount = new AtomicInteger (0);
-
-      final EAS4UserMessageSendResult eResult = _createBuilder ().endpointURL (_buildURL (SOAP12_FAULT_RECEIVER,
-                                                                                          500,
-                                                                                          ESoapVersion.SOAP_12.getMimeType ()))
-                                                                 .httpRetrySettings (new HttpRetrySettings ().setMaxRetries (2)
-                                                                                                             .setDurationBeforeRetry (Duration.ofMillis (50)))
-                                                                 .retryCallback ((sMessageID,
-                                                                                  sURL,
-                                                                                  nTry,
-                                                                                  nMaxTries,
-                                                                                  nRetryIntervalMS,
-                                                                                  ex) -> {
-                                                                   aRetryCount.incrementAndGet ();
-                                                                   return EContinue.CONTINUE;
-                                                                 })
-                                                                 .soapFaultConsumer ((sSentMessageID,
-                                                                                      aSoapFault,
-                                                                                      aClientSentMessage) -> aFaultKeeper.set (aSoapFault))
-                                                                 .sendMessageAndCheckForReceipt ();
-      assertEquals (EAS4UserMessageSendResult.SOAP_FAULT_RECEIVED, eResult);
-
-      final AS4SoapFault aSoapFault = aFaultKeeper.get ();
-      assertNotNull (aSoapFault);
-      assertSame (EAS4FaultDisposition.TRANSIENT, aSoapFault.getDisposition ());
-      // The transient fault must have used all configured retries
-      assertEquals (2, aRetryCount.intValue ());
-    }
   }
 }

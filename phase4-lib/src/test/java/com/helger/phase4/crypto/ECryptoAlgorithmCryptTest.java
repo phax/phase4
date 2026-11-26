@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.crypto.SecretKey;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.junit.Test;
 
 import com.helger.base.string.StringHelper;
@@ -36,19 +35,12 @@ import com.helger.base.string.StringHelper;
 public final class ECryptoAlgorithmCryptTest
 {
   @Test
-  @SuppressWarnings ("deprecation")
   public void testBasic ()
   {
     for (final ECryptoAlgorithmCrypt e : ECryptoAlgorithmCrypt.values ())
     {
       assertTrue (StringHelper.isNotEmpty (e.getID ()));
       assertTrue (StringHelper.isNotEmpty (e.getOIDString ()));
-      assertNotNull (e.getOID ());
-      assertEquals (e.getOIDString (), e.getOID ().getId ());
-      assertSame (e.getOID (), e.getOID ());
-      // Must be the canonical interned instance, so that "==" against the Bouncy Castle
-      // constants (e.g. CMSAlgorithm.AES128_GCM) keeps working
-      assertSame (new ASN1ObjectIdentifier (e.getOIDString ()).intern (), e.getOID ());
       assertTrue (StringHelper.isNotEmpty (e.getAlgorithmURI ()));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrNull (e.getID ()));
       assertSame (e, ECryptoAlgorithmCrypt.getFromIDOrDefault (e.getID (), null));

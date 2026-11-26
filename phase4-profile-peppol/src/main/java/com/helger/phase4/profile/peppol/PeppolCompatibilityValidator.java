@@ -409,9 +409,9 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
         final Ebms3MessageProperties aMessageProperties = aUserMsg.getMessageProperties ();
         if (aMessageProperties == null)
           aErrorList.add (_createError ("MessageProperties is missing but '" +
-                                        CAS4.ORIGINAL_SENDER +
+                                        CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER +
                                         "' and '" +
-                                        CAS4.FINAL_RECIPIENT +
+                                        CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT +
                                         "' properties are required"));
         else
         {
@@ -425,20 +425,20 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
 
             for (final Ebms3Property sProperty : aProps)
             {
-              if (sProperty.getName ().equals (CAS4.ORIGINAL_SENDER))
+              if (sProperty.getName ().equals (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER))
                 sOriginalSenderC1 = sProperty.getValue ();
               else
-                if (sProperty.getName ().equals (CAS4.FINAL_RECIPIENT))
+                if (sProperty.getName ().equals (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT))
                   sFinalRecipientC4 = sProperty.getValue ();
             }
 
             if (StringHelper.isEmpty (sOriginalSenderC1))
               aErrorList.add (_createError ("MessageProperties/Property '" +
-                                            CAS4.ORIGINAL_SENDER +
+                                            CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER +
                                             "' property is empty or not existant but mandatory"));
             if (StringHelper.isEmpty (sFinalRecipientC4))
               aErrorList.add (_createError ("MessageProperties/Property '" +
-                                            CAS4.FINAL_RECIPIENT +
+                                            CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT +
                                             "' property is empty or not existant but mandatory"));
           }
         }

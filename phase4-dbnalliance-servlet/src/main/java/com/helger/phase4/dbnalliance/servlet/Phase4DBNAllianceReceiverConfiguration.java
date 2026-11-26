@@ -30,6 +30,7 @@ import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
+import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 
 /**
@@ -45,11 +46,11 @@ public final class Phase4DBNAllianceReceiverConfiguration
   private final IBDXR2ServiceMetadataProvider m_aSMPClient;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
-  private final IIdentifierFactory m_aXHEIdentifierFactory;
+  private final IIdentifierFactory m_aIdentifierFactory;
   private final boolean m_bPerformXHEValueChecks;
-  private final boolean m_bCheckSigningCertificateRevocation;
   private final TrustedCAChecker m_aAPCAChecker;
   private final boolean m_bAPRevocationSoftFail;
+  private final ERevocationCheckMode m_eAPRevocationCheckMode;
 
   /**
    * Constructor
@@ -65,12 +66,10 @@ public final class Phase4DBNAllianceReceiverConfiguration
    * @param aAPCertificate
    *        The AP certificate to be used for compatibility. May not be <code>null</code> if
    *        receiver checks are enabled.
-   * @param aXHEIdentifierFactory
-   *        The identifier factory to be used for XHE parsing. May not be <code>null</code>.
+   * @param aIdentifierFactory
+   *        The identifier factory to be used for parsing identifiers, e.g. from the XHE. May not be <code>null</code>.
    * @param bPerformXHEValueChecks
    *        <code>true</code> if XHE value checks should be performed.
-   * @param bCheckSigningCertificateRevocation
-   *        <code>true</code> if signing certificate revocation checks should be performed.
    * @param aAPCAChecker
    *        The DBNAlliance AP CA checker. May not be <code>null</code>.
    * @param bAPRevocationSoftFail
@@ -79,17 +78,23 @@ public final class Phase4DBNAllianceReceiverConfiguration
    *        from the AP CA checker as valid, <code>false</code> to treat it as invalid. Defaults to
    *        {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}. Applies to the inbound
    *        signing certificate check.
-   * @since 4.5.0
+   * @param eAPRevocationCheckMode
+   *        Override for the revocation check mode of the inbound signing certificate check.
+   *        <code>null</code> (the default) means "use the JVM-wide default from
+   *        {@link CertificateRevocationCheckerDefaults}". Use {@link ERevocationCheckMode#NONE} to
+   *        disable the revocation check. The validity and the trust chain of the certificate are
+   *        always checked.
+   * @since 5.0.0
    */
   public Phase4DBNAllianceReceiverConfiguration (final boolean bReceiverCheckEnabled,
                                                  @Nullable final IBDXR2ServiceMetadataProvider aSMPClient,
                                                  @Nullable final String sAS4EndpointURL,
                                                  @Nullable final X509Certificate aAPCertificate,
-                                                 @NonNull final IIdentifierFactory aXHEIdentifierFactory,
+                                                 @NonNull final IIdentifierFactory aIdentifierFactory,
                                                  final boolean bPerformXHEValueChecks,
-                                                 final boolean bCheckSigningCertificateRevocation,
                                                  @NonNull final TrustedCAChecker aAPCAChecker,
-                                                 final boolean bAPRevocationSoftFail)
+                                                 final boolean bAPRevocationSoftFail,
+                                                 @Nullable final ERevocationCheckMode eAPRevocationCheckMode)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -97,16 +102,16 @@ public final class Phase4DBNAllianceReceiverConfiguration
       ValueEnforcer.notEmpty (sAS4EndpointURL, "AS4EndpointURL");
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aAPCertificate, "APCertificate");
-    ValueEnforcer.notNull (aXHEIdentifierFactory, "XHEIdentifierFactory");
+    ValueEnforcer.notNull (aIdentifierFactory, "IdentifierFactory");
     m_bReceiverCheckEnabled = bReceiverCheckEnabled;
     m_aSMPClient = aSMPClient;
     m_sAS4EndpointURL = sAS4EndpointURL;
     m_aAPCertificate = aAPCertificate;
-    m_aXHEIdentifierFactory = aXHEIdentifierFactory;
+    m_aIdentifierFactory = aIdentifierFactory;
     m_bPerformXHEValueChecks = bPerformXHEValueChecks;
-    m_bCheckSigningCertificateRevocation = bCheckSigningCertificateRevocation;
     m_aAPCAChecker = aAPCAChecker;
     m_bAPRevocationSoftFail = bAPRevocationSoftFail;
+    m_eAPRevocationCheckMode = eAPRevocationCheckMode;
   }
 
   public boolean isReceiverCheckEnabled ()
@@ -149,22 +154,17 @@ public final class Phase4DBNAllianceReceiverConfiguration
   }
 
   /**
-   * @return The identifier factory to be used for XHE parsing.
+   * @return The identifier factory to be used for parsing identifiers, e.g. from the XHE.
    */
   @NonNull
-  public IIdentifierFactory getXHEIdentifierFactory ()
+  public IIdentifierFactory getIdentifierFactory ()
   {
-    return m_aXHEIdentifierFactory;
+    return m_aIdentifierFactory;
   }
 
   public boolean isPerformXHEValueChecks ()
   {
     return m_bPerformXHEValueChecks;
-  }
-
-  public boolean isCheckSigningCertificateRevocation ()
-  {
-    return m_bCheckSigningCertificateRevocation;
   }
 
   /**
@@ -188,6 +188,18 @@ public final class Phase4DBNAllianceReceiverConfiguration
     return m_bAPRevocationSoftFail;
   }
 
+  /**
+   * @return The revocation check mode override applied during the inbound signing certificate
+   *         check. <code>null</code> means "use the JVM-wide default from
+   *         {@link CertificateRevocationCheckerDefaults}".
+   * @since 5.0.0
+   */
+  @Nullable
+  public ERevocationCheckMode getAPRevocationCheckMode ()
+  {
+    return m_eAPRevocationCheckMode;
+  }
+
   @Override
   public String toString ()
   {
@@ -195,12 +207,11 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                        .append ("SMPClient", m_aSMPClient)
                                        .append ("AS4EndpointURL", m_sAS4EndpointURL)
                                        .append ("APCertificate", m_aAPCertificate)
-                                       .append ("XHEIdentifierFactory", m_aXHEIdentifierFactory)
+                                       .append ("IdentifierFactory", m_aIdentifierFactory)
                                        .append ("PerformXHEValueChecks", m_bPerformXHEValueChecks)
-                                       .append ("CheckSigningCertificateRevocation",
-                                                m_bCheckSigningCertificateRevocation)
                                        .append ("APCAChecker", m_aAPCAChecker)
                                        .append ("APRevocationSoftFail", m_bAPRevocationSoftFail)
+                                       .append ("APRevocationCheckMode", m_eAPRevocationCheckMode)
                                        .getToString ();
   }
 
@@ -239,11 +250,11 @@ public final class Phase4DBNAllianceReceiverConfiguration
     private IBDXR2ServiceMetadataProvider m_aSMPClient;
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
-    private IIdentifierFactory m_aXHEIdentifierFactory;
+    private IIdentifierFactory m_aIdentifierFactory;
     private boolean m_bPerformXHEValueChecks;
-    private boolean m_bCheckSigningCertificateRevocation;
     private TrustedCAChecker m_aAPCAChecker;
     private boolean m_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
+    private ERevocationCheckMode m_eAPRevocationCheckMode;
 
     public Phase4DBNAllianceReceiverConfigurationBuilder ()
     {}
@@ -254,11 +265,11 @@ public final class Phase4DBNAllianceReceiverConfiguration
       receiverCheckEnabled (aSrc.isReceiverCheckEnabled ()).serviceMetadataProvider (aSrc.getSMPClient ())
                                                            .as4EndpointUrl (aSrc.getAS4EndpointURL ())
                                                            .apCertificate (aSrc.getAPCertificate ())
-                                                           .xheIdentifierFactory (aSrc.getXHEIdentifierFactory ())
+                                                           .identifierFactory (aSrc.getIdentifierFactory ())
                                                            .performXHEValueChecks (aSrc.isPerformXHEValueChecks ())
-                                                           .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ())
                                                            .apCAChecker (aSrc.getAPCAChecker ())
-                                                           .apRevocationSoftFail (aSrc.isAPRevocationSoftFail ());
+                                                           .apRevocationSoftFail (aSrc.isAPRevocationSoftFail ())
+                                                           .apRevocationCheckMode (aSrc.getAPRevocationCheckMode ());
     }
 
     @NonNull
@@ -290,15 +301,15 @@ public final class Phase4DBNAllianceReceiverConfiguration
     }
 
     @NonNull
-    public Phase4DBNAllianceReceiverConfigurationBuilder xheIdentifierFactorySimple ()
+    public Phase4DBNAllianceReceiverConfigurationBuilder identifierFactorySimple ()
     {
-      return xheIdentifierFactory (SimpleIdentifierFactory.INSTANCE);
+      return identifierFactory (SimpleIdentifierFactory.INSTANCE);
     }
 
     @NonNull
-    public Phase4DBNAllianceReceiverConfigurationBuilder xheIdentifierFactory (@Nullable final IIdentifierFactory a)
+    public Phase4DBNAllianceReceiverConfigurationBuilder identifierFactory (@Nullable final IIdentifierFactory a)
     {
-      m_aXHEIdentifierFactory = a;
+      m_aIdentifierFactory = a;
       return this;
     }
 
@@ -306,13 +317,6 @@ public final class Phase4DBNAllianceReceiverConfiguration
     public Phase4DBNAllianceReceiverConfigurationBuilder performXHEValueChecks (final boolean b)
     {
       m_bPerformXHEValueChecks = b;
-      return this;
-    }
-
-    @NonNull
-    public Phase4DBNAllianceReceiverConfigurationBuilder checkSigningCertificateRevocation (final boolean b)
-    {
-      m_bCheckSigningCertificateRevocation = b;
       return this;
     }
 
@@ -343,6 +347,24 @@ public final class Phase4DBNAllianceReceiverConfiguration
       return this;
     }
 
+    /**
+     * Override the revocation check mode for the inbound signing certificate check on a per-receive
+     * basis.
+     *
+     * @param e
+     *        The revocation check mode to use. <code>null</code> (the default) means "use the
+     *        JVM-wide default from {@link CertificateRevocationCheckerDefaults}". Use
+     *        {@link ERevocationCheckMode#NONE} to disable the revocation check.
+     * @return this for chaining
+     * @since 5.0.0
+     */
+    @NonNull
+    public Phase4DBNAllianceReceiverConfigurationBuilder apRevocationCheckMode (@Nullable final ERevocationCheckMode e)
+    {
+      m_eAPRevocationCheckMode = e;
+      return this;
+    }
+
     @NonNull
     public Phase4DBNAllianceReceiverConfiguration build ()
     {
@@ -355,8 +377,8 @@ public final class Phase4DBNAllianceReceiverConfiguration
         if (m_aAPCertificate == null)
           throw new IllegalStateException ("Our AS4 AP certificate must be provided");
       }
-      if (m_aXHEIdentifierFactory == null)
-        throw new IllegalStateException ("The XHE Identifier Factory must be provided");
+      if (m_aIdentifierFactory == null)
+        throw new IllegalStateException ("The Identifier Factory must be provided");
       if (m_aAPCAChecker == null)
         throw new IllegalStateException ("The DBNAlliance AP CA checker must be provided");
 
@@ -364,11 +386,11 @@ public final class Phase4DBNAllianceReceiverConfiguration
                                                          m_aSMPClient,
                                                          m_sAS4EndpointURL,
                                                          m_aAPCertificate,
-                                                         m_aXHEIdentifierFactory,
+                                                         m_aIdentifierFactory,
                                                          m_bPerformXHEValueChecks,
-                                                         m_bCheckSigningCertificateRevocation,
                                                          m_aAPCAChecker,
-                                                         m_bAPRevocationSoftFail);
+                                                         m_bAPRevocationSoftFail,
+                                                         m_eAPRevocationCheckMode);
     }
   }
 }

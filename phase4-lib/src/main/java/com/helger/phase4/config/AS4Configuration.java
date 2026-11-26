@@ -17,7 +17,6 @@
 package com.helger.phase4.config;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 import org.jspecify.annotations.NonNull;
@@ -26,7 +25,6 @@ import org.slf4j.Logger;
 
 import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.concurrent.GuardedBy;
-import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.CGlobal;
 import com.helger.base.concurrent.SimpleReadWriteLock;
 import com.helger.base.debug.GlobalDebug;
@@ -37,11 +35,7 @@ import com.helger.config.ConfigFactory;
 import com.helger.config.IConfig;
 import com.helger.config.fallback.ConfigWithFallback;
 import com.helger.config.fallback.IConfigWithFallback;
-import com.helger.config.source.EConfigSourceType;
 import com.helger.config.source.MultiConfigurationValueProvider;
-import com.helger.config.source.resource.properties.ConfigurationSourceProperties;
-import com.helger.io.resource.IReadableResource;
-import com.helger.io.resourceprovider.ReadableResourceProviderChain;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
@@ -76,9 +70,7 @@ public final class AS4Configuration
    * {@link #PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL} with the unit-less form instead.
    */
   public static final String PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = "phase4.incoming.duplicatedisposal.minutes";
-  @Deprecated (forRemoval = true, since = "4.5.0")
-  public static final long DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = 10;
-  public static final Duration DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_DURATION = Duration.ofMinutes (DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
+  public static final Duration DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_DURATION = Duration.ofMinutes (10);
 
   /**
    * The boolean property to define whether an incoming duplicate message is answered with an ebMS
@@ -89,10 +81,6 @@ public final class AS4Configuration
    */
   public static final String PROPERTY_PHASE4_INCOMING_DUPLICATE_RETURNERROR = "phase4.incoming.duplicate.returnerror";
   public static final boolean DEFAULT_PHASE4_INCOMING_DUPLICATE_RETURNERROR = true;
-
-  @ChangeNextMajorRelease ("Remove the property and always accept all HTTP status codes")
-  public static final String PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES = "phase4.http.response.accept.allstatuscodes";
-  public static final boolean DEFAULT_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES = true;
 
   /**
    * The int property for the maximum size of the header section of a single MIME part of an
@@ -177,8 +165,7 @@ public final class AS4Configuration
    * @since 4.8.0
    */
   public static final String PROPERTY_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE = "phase4.incoming.security.enforcepmode";
-  @ChangeNextMajorRelease ("Swap to true")
-  public static final boolean DEFAULT_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE = false;
+  public static final boolean DEFAULT_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE = true;
 
   /**
    * The boolean property that defines if a pushed incoming UserMessage on leg 1 with an
@@ -193,57 +180,7 @@ public final class AS4Configuration
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (AS4Configuration.class);
 
-  /**
-   * The configuration value provider created in here uses the default lookup scheme defined by
-   * {@link ConfigFactory#createDefaultValueProvider()} but adds support for AS4 specific files. For
-   * a sustainable solution use one of the following files that have higher precedence than
-   * <code>application.properties</code>:
-   * <ul>
-   * <li>private-phase4.properties - priority 204</li>
-   * <li>phase4.properties - priority 203</li>
-   * </ul>
-   * <p>
-   * This is deprecated since v4.0.1 because it creates confusion with other objects that also rely
-   * on a centralized configuration. Put all your properties in <code>application.properties</code>
-   * or <code>private-application.properties</code> instead.
-   * </p>
-   *
-   * @return The configuration value provider for phase4 that contains backward compatibility
-   *         support.
-   * @deprecated Use {@link ConfigFactory#createDefaultValueProvider()} instead
-   */
-  @NonNull
-  @Deprecated (forRemoval = true, since = "4.0.1")
-  public static MultiConfigurationValueProvider createPhase4ValueProvider ()
-  {
-    // Start with default setup
-    final MultiConfigurationValueProvider ret = ConfigFactory.createDefaultValueProvider ();
-
-    final int nResourceDefaultPrio = EConfigSourceType.RESOURCE.getDefaultPriority ();
-    final ReadableResourceProviderChain aResourceProvider = ConfigFactory.createDefaultResourceProviderChain ();
-
-    // Phase4 files
-    IReadableResource aRes = aResourceProvider.getReadableResourceIf ("private-phase4.properties",
-                                                                      IReadableResource::exists);
-    if (aRes != null)
-    {
-      LOGGER.warn ("Using the phase4 specific configuration file 'private-phase4.properties' is deprecated. Please use 'private-application.properties' instead! Support for this file will be removed in the next major release.");
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
-                                  nResourceDefaultPrio + 4);
-    }
-
-    aRes = aResourceProvider.getReadableResourceIf ("phase4.properties", IReadableResource::exists);
-    if (aRes != null)
-    {
-      LOGGER.warn ("Using the phase4 specific configuration file 'phase4.properties' is deprecated. Please use 'application.properties' instead! Support for this file will be removed in the next major release.");
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
-                                  nResourceDefaultPrio + 3);
-    }
-
-    return ret;
-  }
-
-  private static final MultiConfigurationValueProvider VP = createPhase4ValueProvider ();
+  private static final MultiConfigurationValueProvider VP = ConfigFactory.createDefaultValueProvider ();
   private static final IConfigWithFallback DEFAULT_INSTANCE = new ConfigWithFallback (VP);
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   @GuardedBy ("RW_LOCK")
@@ -394,9 +331,7 @@ public final class AS4Configuration
    *         Taken from the configuration item {@value #PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL}
    *         (using the unit-less form like <code>10m</code> or <code>1h 30m</code>) with fallback
    *         to the legacy item {@value #PROPERTY_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES} (a
-   *         plain number of minutes). By default this is
-   *         {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES} minutes. Never
-   *         <code>null</code>.
+   *         plain number of minutes). By default this is 10 minutes. Never <code>null</code>.
    * @since 4.5.0
    */
   @NonNull
@@ -422,18 +357,6 @@ public final class AS4Configuration
     }
 
     return DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_DURATION;
-  }
-
-  /**
-   * @return the number of minutes, the message IDs of incoming messages are stored for duplication
-   *         check. By default this is {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES}
-   *         minutes.
-   * @deprecated Use {@link #getIncomingDuplicateDisposal()} instead.
-   */
-  @Deprecated (forRemoval = true, since = "4.5.0")
-  public static long getIncomingDuplicateDisposalMinutes ()
-  {
-    return getIncomingDuplicateDisposal ().toMinutes ();
   }
 
   /**
@@ -492,21 +415,6 @@ public final class AS4Configuration
   public static boolean isCompatibilityModeDomibus ()
   {
     return getConfig ().getAsBoolean ("phase4.compatibility.domibus", false);
-  }
-
-  /**
-   * Check if all HTTP response status codes should be handled by phase4. Up to and including phase4
-   * 4.1.0 only HTTP status codes &lt; 300 were accepted. By setting this configuration property to
-   * <code>false</code> this behaviour is recreated.
-   *
-   * @return <code>true</code> if all HTTP status codes should be accepted, <code>false</code> if
-   *         not.
-   * @since 4.1.1
-   */
-  public static boolean isHttpResponseAcceptAllStatusCodes ()
-  {
-    return getConfig ().getAsBoolean (PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES,
-                                      DEFAULT_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES);
   }
 
   /**

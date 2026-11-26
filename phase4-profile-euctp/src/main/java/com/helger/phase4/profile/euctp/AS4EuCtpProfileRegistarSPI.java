@@ -23,6 +23,7 @@ import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
+import com.helger.phase4.profile.EAS4ProfileSecurityRequirement;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
 import com.helger.phase4.profile.IAS4ProfileRegistrar;
 import com.helger.phase4.profile.IAS4ProfileRegistrarSPI;
@@ -62,7 +63,9 @@ public final class AS4EuCtpProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                     aPushPModeProvider,
                                                     PMODE_ID_PROVIDER,
                                                     false,
-                                                    false);
+                                                    false,
+                                                    EAS4ProfileSecurityRequirement.UNSPECIFIED,
+                                                    EAS4ProfileSecurityRequirement.UNSPECIFIED);
     aRegistrar.registerProfile (aPushProfile);
 
     // pull
@@ -80,7 +83,9 @@ public final class AS4EuCtpProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                     aPullPModeProvider,
                                                     PMODE_ID_PROVIDER,
                                                     false,
-                                                    false);
+                                                    false,
+                                                    EAS4ProfileSecurityRequirement.UNSPECIFIED,
+                                                    EAS4ProfileSecurityRequirement.UNSPECIFIED);
     aRegistrar.registerProfile (aPullProfile);
   }
 }

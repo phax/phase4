@@ -48,14 +48,13 @@ public final class AS4BidirectionalClientHelperTest
   public void testFindSoapFaultPlain ()
   {
     final AS4SoapFault aFault = AS4BidirectionalClientHelper._findSoapFault (_bytes (SOAP12_FAULT),
-                                                                             SOAP12_FAULT,
                                                                              "application/soap+xml;charset=UTF-8");
     assertNotNull (aFault);
     assertEquals ("Something failed", aFault.getFaultReason ());
-    assertEquals (SOAP12_FAULT, aFault.getRawXML ());
+    assertNotNull (aFault.getRawXML ());
 
     // No Content-Type
-    assertNotNull (AS4BidirectionalClientHelper._findSoapFault (_bytes (SOAP12_FAULT), SOAP12_FAULT, null));
+    assertNotNull (AS4BidirectionalClientHelper._findSoapFault (_bytes (SOAP12_FAULT), null));
   }
 
   @Test
@@ -73,7 +72,6 @@ public final class AS4BidirectionalClientHelperTest
                               "not XML\r\n" +
                               "------=_Part_0_123.456--\r\n";
     final AS4SoapFault aFault = AS4BidirectionalClientHelper._findSoapFault (_bytes (sMultipart),
-                                                                             sMultipart,
                                                                              "multipart/related; boundary=\"----=_Part_0_123.456\"; type=\"application/soap+xml\"");
     assertNotNull (aFault);
     assertEquals ("Something failed", aFault.getFaultReason ());
@@ -92,7 +90,6 @@ public final class AS4BidirectionalClientHelperTest
                               SOAP12_FAULT +
                               "\r\n--MIMEBoundary_abc--\r\n";
     final AS4SoapFault aFault = AS4BidirectionalClientHelper._findSoapFault (_bytes (sMultipart),
-                                                                             sMultipart,
                                                                              "multipart/related; boundary=\"MIMEBoundary_abc\"; type=\"application/soap+xml\"");
     assertNotNull (aFault);
     assertEquals ("Something failed", aFault.getFaultReason ());
@@ -102,20 +99,20 @@ public final class AS4BidirectionalClientHelperTest
   @Test
   public void testFindSoapFaultNoFault ()
   {
-    assertNull (AS4BidirectionalClientHelper._findSoapFault (null, null, null));
-    assertNull (AS4BidirectionalClientHelper._findSoapFault (new byte [0], null, null));
-    assertNull (AS4BidirectionalClientHelper._findSoapFault (_bytes ("not XML"), null, null));
+    assertNull (AS4BidirectionalClientHelper._findSoapFault (null, null));
+    assertNull (AS4BidirectionalClientHelper._findSoapFault (new byte [0], null));
+    assertNull (AS4BidirectionalClientHelper._findSoapFault (_bytes ("not XML"), null));
 
     final String sCT = "multipart/related; boundary=b";
     // Broken MIME message
-    assertNull (AS4BidirectionalClientHelper._findSoapFault (_bytes ("--b\r\nbroken"), null, sCT));
+    assertNull (AS4BidirectionalClientHelper._findSoapFault (_bytes ("--b\r\nbroken"), sCT));
     // Missing boundary
-    assertNull (AS4BidirectionalClientHelper._findSoapFault (_bytes (SOAP12_FAULT), null, "multipart/related"));
+    assertNull (AS4BidirectionalClientHelper._findSoapFault (_bytes (SOAP12_FAULT), "multipart/related"));
 
     // Multipart without a SOAP Fault in the first part
     final String sMultipart = "--b\r\nContent-Type: application/soap+xml\r\n\r\n" +
                               "<S12:Envelope xmlns:S12=\"http://www.w3.org/2003/05/soap-envelope\"><S12:Body/></S12:Envelope>" +
                               "\r\n--b--\r\n";
-    assertNull (AS4BidirectionalClientHelper._findSoapFault (_bytes (sMultipart), sMultipart, sCT));
+    assertNull (AS4BidirectionalClientHelper._findSoapFault (_bytes (sMultipart), sCT));
   }
 }

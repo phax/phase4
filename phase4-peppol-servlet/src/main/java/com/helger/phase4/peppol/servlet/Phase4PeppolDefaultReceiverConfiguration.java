@@ -23,7 +23,6 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.helger.annotation.concurrent.NotThreadSafe;
-import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
@@ -56,8 +55,7 @@ import com.helger.smpclient.url.dns.PeppolNaptrURLProvider;
 public final class Phase4PeppolDefaultReceiverConfiguration
 {
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
-  public static final IIdentifierFactory DEFAULT_SBDH_IDENTIFIER_FACTORY = PeppolIdentifierFactory.INSTANCE;
-  public static final boolean DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION = true;
+  public static final IIdentifierFactory DEFAULT_IDENTIFIER_FACTORY = PeppolIdentifierFactory.INSTANCE;
   public static final TrustedCAChecker DEFAULT_PEPPOL_AP_CA_CHECKER = PeppolTrustedCA.peppolAllAP ();
 
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (Phase4PeppolDefaultReceiverConfiguration.class);
@@ -70,9 +68,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   private static boolean s_bSMPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
-  private static IIdentifierFactory s_aSBDHIdentifierFactory = DEFAULT_SBDH_IDENTIFIER_FACTORY;
+  private static IIdentifierFactory s_aIdentifierFactory = DEFAULT_IDENTIFIER_FACTORY;
   private static boolean s_bPerformSBDHValueChecks = AbstractSBDHDataReader.DEFAULT_PERFORM_VALUE_CHECKS;
-  private static boolean s_bCheckSigningCertificateRevocation = DEFAULT_CHECK_SIGNING_CERTIFICATE_REVOCATION;
   private static TrustedCAChecker s_aAPCAChecker = DEFAULT_PEPPOL_AP_CA_CHECKER;
   private static boolean s_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
   private static ETriState s_eAPCacheRevocationCheckResult = ETriState.UNDEFINED;
@@ -294,28 +291,26 @@ public final class Phase4PeppolDefaultReceiverConfiguration
   }
 
   /**
-   * @return The default identifier factory used to parse SBDH data. Never <code>null</code>.
+   * @return The default identifier factory used to parse identifiers, e.g. from the SBDH. Never <code>null</code>.
    * @since 3.0.1
    */
   @NonNull
-  @ChangeNextMajorRelease ("Remove the 'SBDH' from the name - it's used outside as well")
-  public static IIdentifierFactory getSBDHIdentifierFactory ()
+  public static IIdentifierFactory getIdentifierFactory ()
   {
-    return s_aSBDHIdentifierFactory;
+    return s_aIdentifierFactory;
   }
 
   /**
-   * Set the default identifier factory used to parse SBDH data.
+   * Set the default identifier factory used to parse identifiers, e.g. from the SBDH.
    *
    * @param a
    *        The identifier factory to use. May not be <code>null</code>.
    * @since 3.0.1
    */
-  @ChangeNextMajorRelease ("Remove the 'SBDH' from the name - it's used outside as well")
-  public static void setSBDHIdentifierFactory (@NonNull final IIdentifierFactory a)
+  public static void setIdentifierFactory (@NonNull final IIdentifierFactory a)
   {
-    ValueEnforcer.notNull (a, "SBDHIdentifierFactory");
-    s_aSBDHIdentifierFactory = a;
+    ValueEnforcer.notNull (a, "IdentifierFactory");
+    s_aIdentifierFactory = a;
   }
 
   /**
@@ -342,65 +337,6 @@ public final class Phase4PeppolDefaultReceiverConfiguration
     if (bChange)
     {
       LOGGER.info (CAS4.LIB_NAME + " Peppol SBDH value checks are now " + (b ? "enabled" : "disabled"));
-    }
-  }
-
-  /**
-   * @return <code>true</code> if the Country C1 element in the SBDH of received messages is
-   *         mandatory, and if such messages should be rejected, if that field is missing. By
-   *         default it is enabled.
-   * @since 2.7.1
-   * @deprecated This is deprecated, because the feature is required for years, so there is no need
-   *             anymore to disable this feature
-   */
-  @Deprecated (forRemoval = true, since = "4.2.4")
-  public static boolean isCheckSBDHForMandatoryCountryC1 ()
-  {
-    return true;
-  }
-
-  /**
-   * Set whether the check for the mandatory Country C1 element in SBDH of received message is
-   * mandatory or not. By default it is enabled.
-   *
-   * @param b
-   *        <code>true</code> to check, <code>false</code> to disable the check.
-   * @since 2.7.1
-   * @deprecated This is deprecated, because the feature is required for years, so there is no need
-   *             anymore to disable this feature
-   */
-  @Deprecated (forRemoval = true, since = "4.2.4")
-  public static void setCheckSBDHForMandatoryCountryC1 (final boolean b)
-  {
-    LOGGER.warn ("Calling setCheckSBDHForMandatoryCountryC1 has no effect - remove the call, as the option no longer exists");
-  }
-
-  /**
-   * @return <code>true</code> if the signing certificate should be checked for revocation,
-   *         <code>false</code> if not.
-   * @since 2.7.1
-   */
-  public static boolean isCheckSigningCertificateRevocation ()
-  {
-    return s_bCheckSigningCertificateRevocation;
-  }
-
-  /**
-   * Set whether the signing certificate should be checked for revocation or not.
-   *
-   * @param b
-   *        <code>true</code> to check, <code>false</code> to disable the check (not recommended).
-   * @since 2.7.1
-   */
-  public static void setCheckSigningCertificateRevocation (final boolean b)
-  {
-    final boolean bChange = b != s_bCheckSigningCertificateRevocation;
-    s_bCheckSigningCertificateRevocation = b;
-    if (bChange)
-    {
-      LOGGER.info (CAS4.LIB_NAME +
-                   " Peppol signing certificate revocation check is now " +
-                   (b ? "enabled" : "disabled"));
     }
   }
 
@@ -515,7 +451,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
    *
    * @param e
    *        The revocation check mode to use. <code>null</code> (the default) means "use the
-   *        JVM-wide default from {@link CertificateRevocationCheckerDefaults}".
+   *        JVM-wide default from {@link CertificateRevocationCheckerDefaults}". Use
+   *        {@link ERevocationCheckMode#NONE} to disable the revocation check (not recommended).
    * @since 4.5.0
    */
   public static void setAPRevocationCheckMode (@Nullable final ERevocationCheckMode e)
@@ -558,9 +495,8 @@ public final class Phase4PeppolDefaultReceiverConfiguration
                                             .smpRevocationSoftFail (isSMPRevocationSoftFail ())
                                             .as4EndpointUrl (sAS4EndpointURL)
                                             .apCertificate (aAPCertificate)
-                                            .sbdhIdentifierFactory (getSBDHIdentifierFactory ())
+                                            .identifierFactory (getIdentifierFactory ())
                                             .performSBDHValueChecks (isPerformSBDHValueChecks ())
-                                            .checkAPSigningCertificateRevocation (isCheckSigningCertificateRevocation ())
                                             .apCAChecker (getAPCAChecker ())
                                             .apRevocationSoftFail (isAPRevocationSoftFail ())
                                             .apCacheRevocationCheckResult (getAPCacheRevocationCheckResult ())

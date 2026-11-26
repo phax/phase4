@@ -107,7 +107,7 @@ public final class SignatureTest
     final List <WSSecurityEngineResult> aSignActionResults = aResults.getActionResults ()
                                                                      .get (Integer.valueOf (WSConstants.SIGN));
     assertEquals (1, aSignActionResults.size ());
-    final WSSecurityEngineResult aActionResult = aSignActionResults.get (0);
+    final WSSecurityEngineResult aActionResult = aSignActionResults.getFirst ();
     assertNotNull (aActionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
     assertNotNull (aActionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
     final STRParser.REFERENCE_TYPE eReferenceType = (STRParser.REFERENCE_TYPE) aActionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);

@@ -55,7 +55,6 @@ import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PModeReceptionAwareness;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.model.soapfault.AS4SoapFaultException;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import jakarta.mail.MessagingException;
@@ -500,7 +499,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                                     @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                                                     @Nullable final IAS4ClientBuildMessageCallback aCallback,
                                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws IOException, WSSecurityException, MessagingException
+                                                                    @Nullable final IAS4OnRetryCallback aRetryCallback) throws IOException, WSSecurityException, MessagingException
   {
     ValueEnforcer.notNull (sURL, "URL");
     ValueEnforcer.notNull (aResponseHandler, "ResponseHandler");
@@ -553,24 +552,15 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     // Capture the details of the connection of the (last) successful HTTP
     // exchange so they can be surfaced via AS4ClientSentMessage
     final Wrapper <AS4ConnectionDetails> aConnectionDetailsHolder = new Wrapper <> ();
-    final T aResponseContent;
-    try
-    {
-      aResponseContent = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
-                                                                      aBuiltHttpHeaders,
-                                                                      aBuiltEntity,
-                                                                      sMessageID,
-                                                                      m_aHttpRetrySettings,
-                                                                      aRealResponseHandler,
-                                                                      aOutgoingDumper,
-                                                                      aRetryCallback,
-                                                                      aConnectionDetailsHolder::set);
-    }
-    catch (final AS4SoapFaultException ex)
-    {
-      // Attach the AS4 Message ID of the sent message for downstream evaluation
-      throw ex.setSentMessageID (sMessageID);
-    }
+    final T aResponseContent = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
+                                                                            aBuiltHttpHeaders,
+                                                                            aBuiltEntity,
+                                                                            sMessageID,
+                                                                            m_aHttpRetrySettings,
+                                                                            aRealResponseHandler,
+                                                                            aOutgoingDumper,
+                                                                            aRetryCallback,
+                                                                            aConnectionDetailsHolder::set);
     final AS4ClientSentMessage <T> ret = new AS4ClientSentMessage <> (aBuiltMsg,
                                                                       aConnectionDetailsHolder.get (),
                                                                       aStatusLineKeeper.get (),

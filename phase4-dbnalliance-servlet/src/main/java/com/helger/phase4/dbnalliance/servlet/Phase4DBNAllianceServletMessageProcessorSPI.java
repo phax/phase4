@@ -43,6 +43,7 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.spi.ServiceLoaderHelper;
+import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
 import com.helger.collection.CollectionFind;
 import com.helger.collection.commons.CommonsArrayList;
@@ -79,6 +80,8 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
+import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
+import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.xhe.v10.XHE10Marshaller;
@@ -462,63 +465,47 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
         LOGGER.debug (sLogPrefix + "  SOAP Body Payload = " + XMLWriter.getNodeAsString (aPayload));
     }
 
-    // Check preconditions
-    if (!aIncomingState.isSoapDecrypted ())
-    {
-      final String sDetails = "The received DBNAlliance message seems not to be encrypted (properly).";
-      LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_DECRYPTION.errorBuilder (aDisplayLocale)
-                                                                     .refToMessageInError (sMessageID)
-                                                                     .errorDetail (sDetails)
-                                                                     .build ());
-      return AS4MessageProcessorResult.createFailure ();
-    }
+    // The signature and encryption requirements of the AS4 profile were already checked in
+    // AS4IncomingHandler
 
-    if (!aIncomingState.isSoapSignatureChecked ())
-    {
-      final String sDetails = "The received DBNAlliance message seems not to be signed (properly).";
-      LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aDisplayLocale)
-                                                                         .refToMessageInError (sMessageID)
-                                                                         .errorDetail (sDetails)
-                                                                         .build ());
-      return AS4MessageProcessorResult.createFailure ();
-    }
-
-    if (aReceiverCheckData.isCheckSigningCertificateRevocation ())
-    {
-      final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-      final X509Certificate aSenderSigningCert = aIncomingState.getSigningCertificate ();
-      // Check if signing AP certificate is revoked
-      // * Use global caching setting
-      // * Use global certificate check mode
-      final ECertificateCheckResult eCertCheckResult = aReceiverCheckData.getAPCAChecker ()
-                                                                         .checkCertificate (aSenderSigningCert, aNow);
-      if (eCertCheckResult.isInvalid ())
-      {
-        if (!aReceiverCheckData.isAPRevocationSoftFail () ||
-            (eCertCheckResult != ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN))
-        {
-          final String sDetails = "The received DBNAlliance message is signed with a DBNAlliance AP certificate invalid at " +
-                                  aNow +
-                                  ". Rejecting incoming message. Reason: " +
-                                  eCertCheckResult.getReason ();
-          LOGGER.error (sLogPrefix + sDetails);
-          aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aDisplayLocale)
-                                                                             .refToMessageInError (sMessageID)
-                                                                             .errorDetail (sDetails)
-                                                                             .build ());
-          return AS4MessageProcessorResult.createFailure ();
-        }
-        LOGGER.warn (sLogPrefix +
-                     "The revocation status of the inbound DBNAlliance AP signing certificate could not be determined (at " +
-                     aNow +
-                     "); accepting the message because revocation soft-fail is enabled.");
-      }
-    }
-    else
-    {
+    // The validity and the trust chain of the signing AP certificate are always checked. The
+    // revocation check can be disabled via ERevocationCheckMode.NONE
+    final ERevocationCheckMode eAPRevocationCheckMode = aReceiverCheckData.getAPRevocationCheckMode ();
+    final ERevocationCheckMode eEffectiveAPRevocationCheckMode = eAPRevocationCheckMode != null ? eAPRevocationCheckMode
+                                                                                                : CertificateRevocationCheckerDefaults.getRevocationCheckMode ();
+    if (eEffectiveAPRevocationCheckMode.isNone ())
       LOGGER.warn (sLogPrefix + "The revocation check of the received signing certificate is disabled.");
+
+    final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
+    final X509Certificate aSenderSigningCert = aIncomingState.getSigningCertificate ();
+    // Check if signing AP certificate is revoked
+    // * Use global caching setting
+    // * Use the configured revocation check mode (falling back to the JVM-wide default)
+    final ECertificateCheckResult eCertCheckResult = aReceiverCheckData.getAPCAChecker ()
+                                                                       .checkCertificate (aSenderSigningCert,
+                                                                                          aNow,
+                                                                                          ETriState.UNDEFINED,
+                                                                                          eAPRevocationCheckMode);
+    if (eCertCheckResult.isInvalid ())
+    {
+      if (!aReceiverCheckData.isAPRevocationSoftFail () ||
+          (eCertCheckResult != ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN))
+      {
+        final String sDetails = "The received DBNAlliance message is signed with a DBNAlliance AP certificate invalid at " +
+                                aNow +
+                                ". Rejecting incoming message. Reason: " +
+                                eCertCheckResult.getReason ();
+        LOGGER.error (sLogPrefix + sDetails);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aDisplayLocale)
+                                                                           .refToMessageInError (sMessageID)
+                                                                           .errorDetail (sDetails)
+                                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+      LOGGER.warn (sLogPrefix +
+                   "The revocation status of the inbound DBNAlliance AP signing certificate could not be determined (at " +
+                   aNow +
+                   "); accepting the message because revocation soft-fail is enabled.");
     }
 
     // In DBNAlliance there must be exactly one payload. Check this first, so that additional
@@ -638,7 +625,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
 
     // The one and only
     final ReadAttachment aReadAttachment = aReadAttachments.getFirstOrNull ();
-    final IIdentifierFactory aIdentifierFactory = aReceiverCheckData.getXHEIdentifierFactory ();
+    final IIdentifierFactory aIdentifierFactory = aReceiverCheckData.getIdentifierFactory ();
 
     // Extract DBNAlliance values from XHE
     final DBNAllianceXHEData aDBNAllianceXHE;
