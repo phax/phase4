@@ -31,7 +31,7 @@ committed with `f591a1bea` - it is part of v4.6.0.
   `Phase4PeppolServletMessageProcessorSPI:468` only logs a warning and substitutes the current date
   time, if neither the AS4 `MessageInfo/Timestamp` nor the SBDH `CreationDateTime` is present.
   Add an optional flag to reject such a message instead.
-- [ ] **B5 - Security documentation.** This was the second explicit request of the reporter and is
+- [x] **B5 - Security documentation.** Done for v5.0.0: `SECURITY.md` and the Wiki page "Security Hardening". This was the second explicit request of the reporter and is
   still open.
     - `SECURITY.md` in the repository root: supported versions and a private disclosure channel.
     - A new Wiki page "Security Hardening" covering truststore setup, revocation configuration, all
