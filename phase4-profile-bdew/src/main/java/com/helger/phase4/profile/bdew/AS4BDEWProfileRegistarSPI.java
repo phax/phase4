@@ -76,8 +76,8 @@ public final class AS4BDEWProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                 PMODE_ID_PROVIDER,
                                                 false,
                                                 true,
-                                                EAS4ProfileSecurityRequirement.UNSPECIFIED,
-                                                EAS4ProfileSecurityRequirement.UNSPECIFIED);
+                                                EAS4ProfileSecurityRequirement.REQUIRED,
+                                                EAS4ProfileSecurityRequirement.REQUIRED);
     aRegistrar.registerProfile (aProfile);
   }
 
