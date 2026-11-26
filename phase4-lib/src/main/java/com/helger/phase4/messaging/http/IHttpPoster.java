@@ -29,7 +29,7 @@ import com.helger.annotation.Nonempty;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.IHttpClientProvider;
-import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.client.IAS4OnRetryCallback;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 
 /**
@@ -169,6 +169,6 @@ public interface IHttpPoster
                                        @NonNull HttpRetrySettings aRetrySettings,
                                        @NonNull HttpClientResponseHandler <? extends T> aResponseHandler,
                                        @Nullable IAS4OutgoingDumper aOutgoingDumper,
-                                       @Nullable IAS4RetryCallback aRetryCallback,
+                                       @Nullable IAS4OnRetryCallback aRetryCallback,
                                        @Nullable Consumer <? super AS4ConnectionDetails> aConnectionDetailsConsumer) throws IOException;
 }

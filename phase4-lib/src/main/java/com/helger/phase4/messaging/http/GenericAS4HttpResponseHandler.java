@@ -27,8 +27,6 @@ import org.jspecify.annotations.NonNull;
 
 import com.helger.annotation.Nonnegative;
 import com.helger.http.CHttp;
-import com.helger.httpclient.response.ExtendedHttpResponseException;
-import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.messaging.http.GenericAS4HttpResponseHandler.HttpResponseData;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroReader;
@@ -57,7 +55,7 @@ public class GenericAS4HttpResponseHandler implements HttpClientResponseHandler 
   {}
 
   @NonNull
-  public HttpResponseData handleResponse (@NonNull final ClassicHttpResponse aHttpResponse) throws ExtendedHttpResponseException, IOException
+  public HttpResponseData handleResponse (@NonNull final ClassicHttpResponse aHttpResponse) throws IOException
   {
     final StatusLine aStatusLine = new StatusLine (aHttpResponse);
     final HttpEntity aEntity = aHttpResponse.getEntity ();
@@ -66,20 +64,7 @@ public class GenericAS4HttpResponseHandler implements HttpClientResponseHandler 
     if (aStatusLine.getStatusCode () == CHttp.HTTP_UNAUTHORIZED)
       throw new AS4HttpUnauthorizedException (aStatusLine.toString ());
 
-    if (AS4Configuration.isHttpResponseAcceptAllStatusCodes ())
-    {
-      // continue - new way since 4.1.1
-    }
-    else
-    {
-      // Only continue if status code is 2xx (default in phase4 <= 4.1.0)
-      if (aStatusLine.getStatusCode () >= CHttp.HTTP_MULTIPLE_CHOICES)
-      {
-        // Consume entity and throw
-        throw ExtendedHttpResponseException.create (aStatusLine, aHttpResponse, aEntity);
-      }
-    }
-
+    // All other HTTP status codes are passed through
     return new HttpResponseData (aStatusLine, aEntity);
   }
 

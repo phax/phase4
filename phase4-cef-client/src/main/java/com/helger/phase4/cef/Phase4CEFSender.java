@@ -404,21 +404,21 @@ public final class Phase4CEFSender
       if (m_bUseOriginalSenderFinalRecipientTypeAttr)
       {
         addMessageProperty (MessageProperty.builder ()
-                                           .name (CAS4.ORIGINAL_SENDER)
+                                           .name (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER)
                                            .type (m_aSenderID.getScheme ())
                                            .value (m_aSenderID.getValue ()));
         addMessageProperty (MessageProperty.builder ()
-                                           .name (CAS4.FINAL_RECIPIENT)
+                                           .name (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT)
                                            .type (m_aReceiverID.getScheme ())
                                            .value (m_aReceiverID.getValue ()));
       }
       else
       {
         addMessageProperty (MessageProperty.builder ()
-                                           .name (CAS4.ORIGINAL_SENDER)
+                                           .name (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER)
                                            .value (m_aSenderID.getURIEncoded ()));
         addMessageProperty (MessageProperty.builder ()
-                                           .name (CAS4.FINAL_RECIPIENT)
+                                           .name (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT)
                                            .value (m_aReceiverID.getURIEncoded ()));
       }
     }

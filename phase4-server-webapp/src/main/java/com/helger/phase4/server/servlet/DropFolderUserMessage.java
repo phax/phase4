@@ -48,7 +48,7 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.client.IAS4OnRetryCallback;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
@@ -141,17 +141,17 @@ public final class DropFolderUserMessage
           aClient.setToRole (CAS4.DEFAULT_ROLE);
           aClient.setToPartyID (CertificateHelper.getSubjectCN (aTheirCert));
           aClient.ebms3Properties ()
-                 .setAll (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER,
+                 .setAll (MessageHelperMethods.createEbms3Property (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER,
                                                                     aSBDH.getSenderScheme (),
                                                                     aSBDH.getSenderValue ()),
-                          MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
+                          MessageHelperMethods.createEbms3Property (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT,
                                                                     aSBDH.getReceiverScheme (),
                                                                     aSBDH.getReceiverValue ()));
           aClient.setPayload (new SBDMarshaller ().getAsElement (aSBD));
 
           final IAS4ClientBuildMessageCallback aCallback = null;
           final IAS4OutgoingDumper aOutgoingDumper = null;
-          final IAS4RetryCallback aRetryCallback = null;
+          final IAS4OnRetryCallback aRetryCallback = null;
           final AS4ClientSentMessage <byte []> aClientSentMessage = aClient.sendMessageWithRetries (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
                                                                                                     GenericAS4HttpResponseHandler.getHandlerByteArray (),
                                                                                                     aCallback,

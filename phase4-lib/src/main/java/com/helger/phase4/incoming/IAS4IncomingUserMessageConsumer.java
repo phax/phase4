@@ -18,7 +18,6 @@ package com.helger.phase4.incoming;
 
 import org.jspecify.annotations.NonNull;
 
-import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.util.Phase4Exception;
 
@@ -29,8 +28,7 @@ import com.helger.phase4.util.Phase4Exception;
  * @since 0.12.0
  */
 @FunctionalInterface
-@ChangeNextMajorRelease ("Rename to IAS4IncomingUserMessageConsumer")
-public interface IAS4UserMessageConsumer
+public interface IAS4IncomingUserMessageConsumer
 {
   /**
    * Handling an EBMS 3 User Message. Make sure to copy all attachments you are interested in,

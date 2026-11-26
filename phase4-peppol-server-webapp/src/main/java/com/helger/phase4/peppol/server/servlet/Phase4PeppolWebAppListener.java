@@ -209,10 +209,11 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
   private static void _initPeppolAS4 ()
   {
-    // Our server should check all signing certificates of incoming messages if
-    // they are revoked or not
-    // (this is the default setting, but added it here for easy modification)
-    Phase4PeppolDefaultReceiverConfiguration.setCheckSigningCertificateRevocation (true);
+    // Our server checks all signing certificates of incoming messages if they are revoked or not,
+    // using the JVM-wide default revocation check mode
+    // (this is the default setting, but added it here for easy modification - use
+    // ERevocationCheckMode.NONE to disable the revocation check, which is not recommended)
+    Phase4PeppolDefaultReceiverConfiguration.setAPRevocationCheckMode (null);
 
     // Make sure the download of CRL is using Apache HttpClient and that the
     // provided settings are used.

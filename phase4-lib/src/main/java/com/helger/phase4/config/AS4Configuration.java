@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 
 import com.helger.annotation.CheckForSigned;
 import com.helger.annotation.concurrent.GuardedBy;
-import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.CGlobal;
 import com.helger.base.concurrent.SimpleReadWriteLock;
 import com.helger.base.debug.GlobalDebug;
@@ -82,10 +81,6 @@ public final class AS4Configuration
    */
   public static final String PROPERTY_PHASE4_INCOMING_DUPLICATE_RETURNERROR = "phase4.incoming.duplicate.returnerror";
   public static final boolean DEFAULT_PHASE4_INCOMING_DUPLICATE_RETURNERROR = true;
-
-  @ChangeNextMajorRelease ("Remove the property and always accept all HTTP status codes")
-  public static final String PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES = "phase4.http.response.accept.allstatuscodes";
-  public static final boolean DEFAULT_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES = true;
 
   /**
    * The int property for the maximum size of the header section of a single MIME part of an
@@ -170,8 +165,7 @@ public final class AS4Configuration
    * @since 4.8.0
    */
   public static final String PROPERTY_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE = "phase4.incoming.security.enforcepmode";
-  @ChangeNextMajorRelease ("Swap to true")
-  public static final boolean DEFAULT_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE = false;
+  public static final boolean DEFAULT_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE = true;
 
   /**
    * The boolean property that defines if a pushed incoming UserMessage on leg 1 with an
@@ -421,21 +415,6 @@ public final class AS4Configuration
   public static boolean isCompatibilityModeDomibus ()
   {
     return getConfig ().getAsBoolean ("phase4.compatibility.domibus", false);
-  }
-
-  /**
-   * Check if all HTTP response status codes should be handled by phase4. Up to and including phase4
-   * 4.1.0 only HTTP status codes &lt; 300 were accepted. By setting this configuration property to
-   * <code>false</code> this behaviour is recreated.
-   *
-   * @return <code>true</code> if all HTTP status codes should be accepted, <code>false</code> if
-   *         not.
-   * @since 4.1.1
-   */
-  public static boolean isHttpResponseAcceptAllStatusCodes ()
-  {
-    return getConfig ().getAsBoolean (PROPERTY_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES,
-                                      DEFAULT_PHASE4_HTTP_RESPONSE_ACCEPT_ALL_STATUS_CODES);
   }
 
   /**

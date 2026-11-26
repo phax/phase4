@@ -54,7 +54,7 @@ import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.httpclient.IHttpClientProvider;
 import com.helger.httpclient.response.ExtendedHttpResponseException;
-import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.client.IAS4OnRetryCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -481,7 +481,7 @@ public class BasicHttpPoster implements IHttpPoster
                                               @NonNull final HttpRetrySettings aRetrySettings,
                                               @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                               @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                              @Nullable final IAS4RetryCallback aRetryCallback,
+                                              @Nullable final IAS4OnRetryCallback aRetryCallback,
                                               @Nullable final Consumer <? super AS4ConnectionDetails> aConnectionDetailsConsumer) throws IOException
   {
     // Parameter or global one - may still be null

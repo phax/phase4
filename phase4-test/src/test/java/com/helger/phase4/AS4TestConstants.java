@@ -72,7 +72,7 @@ public final class AS4TestConstants
   @ReturnsMutableCopy
   public static ICommonsList <Ebms3Property> getEBMSProperties ()
   {
-    return new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, "C1-test"),
-                                    MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, "C4-test"));
+    return new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER, "C1-test"),
+                                    MessageHelperMethods.createEbms3Property (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT, "C4-test"));
   }
 }

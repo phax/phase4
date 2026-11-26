@@ -105,10 +105,10 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                                                       TO_PARTY_ID);
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER,
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER,
                                                                                                                              null,
                                                                                                                              "C1"),
-                                                                                   MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
+                                                                                   MessageHelperMethods.createEbms3Property (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT,
                                                                                                                              null,
                                                                                                                              "C4"));
     aEbms3Properties.add (MessageHelperMethods.createEbms3Property ("trackingidentifier", "tracker"));

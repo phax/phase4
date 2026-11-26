@@ -31,6 +31,7 @@ import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
+import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
 
 /**
@@ -47,11 +48,11 @@ public final class Phase4HREDeliveryReceiverConfiguration
   private final IBDXRExtendedServiceMetadataProvider m_aSMPClient;
   private final String m_sAS4EndpointURL;
   private final X509Certificate m_aAPCertificate;
-  private final IIdentifierFactory m_aSBDHIdentifierFactory;
+  private final IIdentifierFactory m_aIdentifierFactory;
   private final boolean m_bPerformSBDHValueChecks;
-  private final boolean m_bCheckSigningCertificateRevocation;
   private final TrustedCAChecker m_aAPCAChecker;
   private final boolean m_bAPRevocationSoftFail;
+  private final ERevocationCheckMode m_eAPRevocationCheckMode;
 
   /**
    * Constructor
@@ -67,12 +68,10 @@ public final class Phase4HREDeliveryReceiverConfiguration
    * @param aAPCertificate
    *        The AP certificate to be used for compatibility. May not be <code>null</code> if
    *        receiver checks are enabled.
-   * @param aSBDHIdentifierFactory
-   *        The identifier factory to be used for SBDH parsing. May not be <code>null</code>.
+   * @param aIdentifierFactory
+   *        The identifier factory to be used for parsing identifiers, e.g. from the SBDH. May not be <code>null</code>.
    * @param bPerformSBDHValueChecks
    *        <code>true</code> if SBDH value checks should be performed.
-   * @param bCheckSigningCertificateRevocation
-   *        <code>true</code> if signing certificate revocation checks should be performed.
    * @param aAPCAChecker
    *        The HR eDelivery AP CA checker. May not be <code>null</code>.
    * @param bAPRevocationSoftFail
@@ -81,17 +80,23 @@ public final class Phase4HREDeliveryReceiverConfiguration
    *        from the AP CA checker as valid, <code>false</code> to treat it as invalid. Defaults to
    *        {@link CertificateRevocationCheckerDefaults#isAllowSoftFail()}. Applies to the inbound
    *        signing certificate check.
-   * @since 4.5.0
+   * @param eAPRevocationCheckMode
+   *        Override for the revocation check mode of the inbound signing certificate check.
+   *        <code>null</code> (the default) means "use the JVM-wide default from
+   *        {@link CertificateRevocationCheckerDefaults}". Use {@link ERevocationCheckMode#NONE} to
+   *        disable the revocation check. The validity and the trust chain of the certificate are
+   *        always checked.
+   * @since 5.0.0
    */
   public Phase4HREDeliveryReceiverConfiguration (final boolean bReceiverCheckEnabled,
                                                  @Nullable final IBDXRExtendedServiceMetadataProvider aSMPClient,
                                                  @Nullable final String sAS4EndpointURL,
                                                  @Nullable final X509Certificate aAPCertificate,
-                                                 @NonNull final IIdentifierFactory aSBDHIdentifierFactory,
+                                                 @NonNull final IIdentifierFactory aIdentifierFactory,
                                                  final boolean bPerformSBDHValueChecks,
-                                                 final boolean bCheckSigningCertificateRevocation,
                                                  @NonNull final TrustedCAChecker aAPCAChecker,
-                                                 final boolean bAPRevocationSoftFail)
+                                                 final boolean bAPRevocationSoftFail,
+                                                 @Nullable final ERevocationCheckMode eAPRevocationCheckMode)
   {
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -99,16 +104,16 @@ public final class Phase4HREDeliveryReceiverConfiguration
       ValueEnforcer.notEmpty (sAS4EndpointURL, "AS4EndpointURL");
     if (bReceiverCheckEnabled)
       ValueEnforcer.notNull (aAPCertificate, "APCertificate");
-    ValueEnforcer.notNull (aSBDHIdentifierFactory, "SBDHIdentifierFactory");
+    ValueEnforcer.notNull (aIdentifierFactory, "IdentifierFactory");
     m_bReceiverCheckEnabled = bReceiverCheckEnabled;
     m_aSMPClient = aSMPClient;
     m_sAS4EndpointURL = sAS4EndpointURL;
     m_aAPCertificate = aAPCertificate;
-    m_aSBDHIdentifierFactory = aSBDHIdentifierFactory;
+    m_aIdentifierFactory = aIdentifierFactory;
     m_bPerformSBDHValueChecks = bPerformSBDHValueChecks;
-    m_bCheckSigningCertificateRevocation = bCheckSigningCertificateRevocation;
     m_aAPCAChecker = aAPCAChecker;
     m_bAPRevocationSoftFail = bAPRevocationSoftFail;
+    m_eAPRevocationCheckMode = eAPRevocationCheckMode;
   }
 
   public boolean isReceiverCheckEnabled ()
@@ -151,22 +156,17 @@ public final class Phase4HREDeliveryReceiverConfiguration
   }
 
   /**
-   * @return The identifier factory to be used for SBDH parsing.
+   * @return The identifier factory to be used for parsing identifiers, e.g. from the SBDH.
    */
   @NonNull
-  public IIdentifierFactory getSBDHIdentifierFactory ()
+  public IIdentifierFactory getIdentifierFactory ()
   {
-    return m_aSBDHIdentifierFactory;
+    return m_aIdentifierFactory;
   }
 
   public boolean isPerformSBDHValueChecks ()
   {
     return m_bPerformSBDHValueChecks;
-  }
-
-  public boolean isCheckSigningCertificateRevocation ()
-  {
-    return m_bCheckSigningCertificateRevocation;
   }
 
   /**
@@ -190,6 +190,18 @@ public final class Phase4HREDeliveryReceiverConfiguration
     return m_bAPRevocationSoftFail;
   }
 
+  /**
+   * @return The revocation check mode override applied during the inbound signing certificate
+   *         check. <code>null</code> means "use the JVM-wide default from
+   *         {@link CertificateRevocationCheckerDefaults}".
+   * @since 5.0.0
+   */
+  @Nullable
+  public ERevocationCheckMode getAPRevocationCheckMode ()
+  {
+    return m_eAPRevocationCheckMode;
+  }
+
   @Override
   public String toString ()
   {
@@ -197,12 +209,11 @@ public final class Phase4HREDeliveryReceiverConfiguration
                                        .append ("SMPClient", m_aSMPClient)
                                        .append ("AS4EndpointURL", m_sAS4EndpointURL)
                                        .append ("APCertificate", m_aAPCertificate)
-                                       .append ("SBDHIdentifierFactory", m_aSBDHIdentifierFactory)
+                                       .append ("IdentifierFactory", m_aIdentifierFactory)
                                        .append ("PerformSBDHValueChecks", m_bPerformSBDHValueChecks)
-                                       .append ("CheckSigningCertificateRevocation",
-                                                m_bCheckSigningCertificateRevocation)
                                        .append ("APCAChecker", m_aAPCAChecker)
                                        .append ("APRevocationSoftFail", m_bAPRevocationSoftFail)
+                                       .append ("APRevocationCheckMode", m_eAPRevocationCheckMode)
                                        .getToString ();
   }
 
@@ -241,11 +252,11 @@ public final class Phase4HREDeliveryReceiverConfiguration
     private IBDXRExtendedServiceMetadataProvider m_aSMPClient;
     private String m_sAS4EndpointURL;
     private X509Certificate m_aAPCertificate;
-    private IIdentifierFactory m_aSBDHIdentifierFactory;
+    private IIdentifierFactory m_aIdentifierFactory;
     private boolean m_bPerformSBDHValueChecks;
-    private boolean m_bCheckSigningCertificateRevocation;
     private TrustedCAChecker m_aAPCAChecker;
     private boolean m_bAPRevocationSoftFail = CertificateRevocationCheckerDefaults.isAllowSoftFail ();
+    private ERevocationCheckMode m_eAPRevocationCheckMode;
 
     public Phase4HREDeliveryReceiverConfigurationBuilder ()
     {}
@@ -256,11 +267,11 @@ public final class Phase4HREDeliveryReceiverConfiguration
       receiverCheckEnabled (aSrc.isReceiverCheckEnabled ()).serviceMetadataProvider (aSrc.getSMPClient ())
                                                            .as4EndpointUrl (aSrc.getAS4EndpointURL ())
                                                            .apCertificate (aSrc.getAPCertificate ())
-                                                           .sbdhIdentifierFactory (aSrc.getSBDHIdentifierFactory ())
+                                                           .identifierFactory (aSrc.getIdentifierFactory ())
                                                            .performSBDHValueChecks (aSrc.isPerformSBDHValueChecks ())
-                                                           .checkSigningCertificateRevocation (aSrc.isCheckSigningCertificateRevocation ())
                                                            .apCAChecker (aSrc.getAPCAChecker ())
-                                                           .apRevocationSoftFail (aSrc.isAPRevocationSoftFail ());
+                                                           .apRevocationSoftFail (aSrc.isAPRevocationSoftFail ())
+                                                           .apRevocationCheckMode (aSrc.getAPRevocationCheckMode ());
     }
 
     @NonNull
@@ -292,21 +303,21 @@ public final class Phase4HREDeliveryReceiverConfiguration
     }
 
     @NonNull
-    public Phase4HREDeliveryReceiverConfigurationBuilder sbdhIdentifierFactorySimple ()
+    public Phase4HREDeliveryReceiverConfigurationBuilder identifierFactorySimple ()
     {
-      return sbdhIdentifierFactory (SimpleIdentifierFactory.INSTANCE);
+      return identifierFactory (SimpleIdentifierFactory.INSTANCE);
     }
 
     @NonNull
-    public Phase4HREDeliveryReceiverConfigurationBuilder sbdhIdentifierFactoryPeppol ()
+    public Phase4HREDeliveryReceiverConfigurationBuilder identifierFactoryPeppol ()
     {
-      return sbdhIdentifierFactory (PeppolIdentifierFactory.INSTANCE);
+      return identifierFactory (PeppolIdentifierFactory.INSTANCE);
     }
 
     @NonNull
-    public Phase4HREDeliveryReceiverConfigurationBuilder sbdhIdentifierFactory (@Nullable final IIdentifierFactory a)
+    public Phase4HREDeliveryReceiverConfigurationBuilder identifierFactory (@Nullable final IIdentifierFactory a)
     {
-      m_aSBDHIdentifierFactory = a;
+      m_aIdentifierFactory = a;
       return this;
     }
 
@@ -314,13 +325,6 @@ public final class Phase4HREDeliveryReceiverConfiguration
     public Phase4HREDeliveryReceiverConfigurationBuilder performSBDHValueChecks (final boolean b)
     {
       m_bPerformSBDHValueChecks = b;
-      return this;
-    }
-
-    @NonNull
-    public Phase4HREDeliveryReceiverConfigurationBuilder checkSigningCertificateRevocation (final boolean b)
-    {
-      m_bCheckSigningCertificateRevocation = b;
       return this;
     }
 
@@ -351,6 +355,24 @@ public final class Phase4HREDeliveryReceiverConfiguration
       return this;
     }
 
+    /**
+     * Override the revocation check mode for the inbound signing certificate check on a per-receive
+     * basis.
+     *
+     * @param e
+     *        The revocation check mode to use. <code>null</code> (the default) means "use the
+     *        JVM-wide default from {@link CertificateRevocationCheckerDefaults}". Use
+     *        {@link ERevocationCheckMode#NONE} to disable the revocation check.
+     * @return this for chaining
+     * @since 5.0.0
+     */
+    @NonNull
+    public Phase4HREDeliveryReceiverConfigurationBuilder apRevocationCheckMode (@Nullable final ERevocationCheckMode e)
+    {
+      m_eAPRevocationCheckMode = e;
+      return this;
+    }
+
     @NonNull
     public Phase4HREDeliveryReceiverConfiguration build ()
     {
@@ -363,8 +385,8 @@ public final class Phase4HREDeliveryReceiverConfiguration
         if (m_aAPCertificate == null)
           throw new IllegalStateException ("Our AS4 AP certificate must be provided");
       }
-      if (m_aSBDHIdentifierFactory == null)
-        throw new IllegalStateException ("The SBDH Identifier Factory must be provided");
+      if (m_aIdentifierFactory == null)
+        throw new IllegalStateException ("The Identifier Factory must be provided");
       if (m_aAPCAChecker == null)
         throw new IllegalStateException ("The HR eDelivery AP CA checker must be provided");
 
@@ -372,11 +394,11 @@ public final class Phase4HREDeliveryReceiverConfiguration
                                                          m_aSMPClient,
                                                          m_sAS4EndpointURL,
                                                          m_aAPCertificate,
-                                                         m_aSBDHIdentifierFactory,
+                                                         m_aIdentifierFactory,
                                                          m_bPerformSBDHValueChecks,
-                                                         m_bCheckSigningCertificateRevocation,
                                                          m_aAPCAChecker,
-                                                         m_bAPRevocationSoftFail);
+                                                         m_bAPRevocationSoftFail,
+                                                         m_eAPRevocationCheckMode);
     }
   }
 }

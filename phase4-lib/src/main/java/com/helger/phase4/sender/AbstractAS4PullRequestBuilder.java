@@ -27,8 +27,8 @@ import com.helger.base.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.incoming.AS4IncomingReceiverConfiguration;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
-import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
-import com.helger.phase4.incoming.IAS4UserMessageConsumer;
+import com.helger.phase4.incoming.IAS4IncomingSignalMessageConsumer;
+import com.helger.phase4.incoming.IAS4IncomingUserMessageConsumer;
 import com.helger.phase4.incoming.crypto.AS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -57,8 +57,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
 
   protected String m_sMPC;
   protected String m_sEndpointURL;
-  protected IAS4UserMessageConsumer m_aUserMsgConsumer;
-  protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
+  protected IAS4IncomingUserMessageConsumer m_aUserMsgConsumer;
+  protected IAS4IncomingSignalMessageConsumer m_aSignalMsgConsumer;
   protected IAS4SoapFaultConsumer m_aSoapFaultConsumer;
   protected IAS4SignalMessageValidationResultHandler m_aSignalMsgValidationResultHdl;
 
@@ -198,7 +198,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    * @since 3.0.0
    */
   @Nullable
-  public final IAS4UserMessageConsumer userMsgConsumer ()
+  public final IAS4IncomingUserMessageConsumer userMsgConsumer ()
   {
     return m_aUserMsgConsumer;
   }
@@ -212,7 +212,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    */
   @NonNull
-  public final IMPLTYPE userMsgConsumer (@Nullable final IAS4UserMessageConsumer aUserMsgConsumer)
+  public final IMPLTYPE userMsgConsumer (@Nullable final IAS4IncomingUserMessageConsumer aUserMsgConsumer)
   {
     m_aUserMsgConsumer = aUserMsgConsumer;
     return thisAsT ();
@@ -223,7 +223,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    * @since 3.0.0
    */
   @Nullable
-  public final IAS4SignalMessageConsumer signalMsgConsumer ()
+  public final IAS4IncomingSignalMessageConsumer signalMsgConsumer ()
   {
     return m_aSignalMsgConsumer;
   }
@@ -238,7 +238,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    */
   @NonNull
-  public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
+  public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4IncomingSignalMessageConsumer aSignalMsgConsumer)
   {
     m_aSignalMsgConsumer = aSignalMsgConsumer;
     return thisAsT ();

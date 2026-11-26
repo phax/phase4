@@ -97,6 +97,8 @@ import com.helger.sbdh.SBDMarshaller;
 import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.certificate.ECertificateCheckResult;
+import com.helger.security.revocation.CertificateRevocationCheckerDefaults;
+import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.smpclient.url.SMPDNSResolutionException;
@@ -543,7 +545,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     final String sConversationID = aUserMessage.getCollaborationInfo ().getConversationId ();
     final Locale aDisplayLocale = aIncomingState.getLocale ();
     final String sLogPrefix = "[" + sMessageID + "] ";
-    final IIdentifierFactory aIdentifierFactory = Phase4PeppolDefaultReceiverConfiguration.getSBDHIdentifierFactory ();
+    final IIdentifierFactory aIdentifierFactory = Phase4PeppolDefaultReceiverConfiguration.getIdentifierFactory ();
 
     // Start consistency checks if the receiver is supported or not
     final Phase4PeppolReceiverConfiguration aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
@@ -633,42 +635,43 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       }
     }
 
-    if (aReceiverCheckData.isCheckAPSigningCertificateRevocation ())
-    {
-      final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
-      final X509Certificate aSenderSigningCert = aIncomingState.getSigningCertificate ();
-      // Check if signing AP certificate is revoked, honoring per-receive overrides for caching
-      // and revocation check mode (falling back to the JVM-wide defaults if not configured).
-      final ECertificateCheckResult eCertCheckResult = aReceiverCheckData.getAPCAChecker ()
-                                                                         .checkCertificate (aSenderSigningCert,
-                                                                                            aNow,
-                                                                                            aReceiverCheckData.getAPCacheRevocationCheckResult (),
-                                                                                            aReceiverCheckData.getAPRevocationCheckMode ());
-      if (eCertCheckResult.isInvalid ())
-      {
-        if (!aReceiverCheckData.isAPRevocationSoftFail () ||
-            (eCertCheckResult != ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN))
-        {
-          final String sDetails = "The received Peppol message is signed with a Peppol AP certificate invalid at " +
-                                  aNow +
-                                  ". Rejecting incoming message. Reason: " +
-                                  eCertCheckResult.getReason ();
-          LOGGER.error (sLogPrefix + sDetails);
-          aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aDisplayLocale)
-                                                                             .refToMessageInError (sMessageID)
-                                                                             .errorDetail (sDetails)
-                                                                             .build ());
-          return AS4MessageProcessorResult.createFailure ();
-        }
-        LOGGER.warn (sLogPrefix +
-                     "The revocation status of the inbound Peppol AP signing certificate could not be determined (at " +
-                     aNow +
-                     "); accepting the message because revocation soft-fail is enabled.");
-      }
-    }
-    else
-    {
+    // The validity and the trust chain of the signing AP certificate are always checked. The
+    // revocation check can be disabled via ERevocationCheckMode.NONE
+    final ERevocationCheckMode eAPRevocationCheckMode = aReceiverCheckData.getAPRevocationCheckMode ();
+    final ERevocationCheckMode eEffectiveAPRevocationCheckMode = eAPRevocationCheckMode != null ? eAPRevocationCheckMode
+                                                                                                : CertificateRevocationCheckerDefaults.getRevocationCheckMode ();
+    if (eEffectiveAPRevocationCheckMode.isNone ())
       LOGGER.warn (sLogPrefix + "The revocation check of the received signing certificate is disabled.");
+
+    final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
+    final X509Certificate aSenderSigningCert = aIncomingState.getSigningCertificate ();
+    // Check if signing AP certificate is revoked, honoring per-receive overrides for caching
+    // and revocation check mode (falling back to the JVM-wide defaults if not configured).
+    final ECertificateCheckResult eCertCheckResult = aReceiverCheckData.getAPCAChecker ()
+                                                                       .checkCertificate (aSenderSigningCert,
+                                                                                          aNow,
+                                                                                          aReceiverCheckData.getAPCacheRevocationCheckResult (),
+                                                                                          aReceiverCheckData.getAPRevocationCheckMode ());
+    if (eCertCheckResult.isInvalid ())
+    {
+      if (!aReceiverCheckData.isAPRevocationSoftFail () ||
+          (eCertCheckResult != ECertificateCheckResult.REVOCATION_STATUS_UNKNOWN))
+      {
+        final String sDetails = "The received Peppol message is signed with a Peppol AP certificate invalid at " +
+                                aNow +
+                                ". Rejecting incoming message. Reason: " +
+                                eCertCheckResult.getReason ();
+        LOGGER.error (sLogPrefix + sDetails);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aDisplayLocale)
+                                                                           .refToMessageInError (sMessageID)
+                                                                           .errorDetail (sDetails)
+                                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
+      }
+      LOGGER.warn (sLogPrefix +
+                   "The revocation status of the inbound Peppol AP signing certificate could not be determined (at " +
+                   aNow +
+                   "); accepting the message because revocation soft-fail is enabled.");
     }
 
     // The Peppol AS4 profile requires the SBDH in the first MIME attachment, and the Peppol Business
@@ -847,10 +850,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       final Ebms3Property aOriginalSender = aUserMessage.getMessageProperties () == null ? null
                                                                                          : CollectionFind.findFirst (aUserMessage.getMessageProperties ()
                                                                                                                                  .getProperty (),
-                                                                                                                     x -> CAS4.ORIGINAL_SENDER.equals (x.getName ()));
+                                                                                                                     x -> CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER.equals (x.getName ()));
       if (aOriginalSender == null)
       {
-        final String sMsg = "The AS4 '" + CAS4.ORIGINAL_SENDER + "' Message Propery is missing";
+        final String sMsg = "The AS4 '" + CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER + "' Message Propery is missing";
         LOGGER.error (sLogPrefix + sMsg);
         if (bRejectOnNonCompliance)
         {
@@ -864,7 +867,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
 
       if (aOriginalSender.getType () == null)
       {
-        final String sMsg = "The AS4 '" + CAS4.ORIGINAL_SENDER + "' Message Propery is missing the 'type' attribute";
+        final String sMsg = "The AS4 '" + CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER + "' Message Propery is missing the 'type' attribute";
         LOGGER.error (sLogPrefix + sMsg);
         if (bRejectOnNonCompliance)
         {
@@ -883,7 +886,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       if (aAS4C1PID == null || !aAS4C1PID.hasSameContent (aPeppolSBDH.getSenderAsIdentifier ()))
       {
         final String sMsg = "The AS4 '" +
-                            CAS4.ORIGINAL_SENDER +
+                            CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER +
                             "' (" +
                             (aAS4C1PID == null ? "not compliant to the Peppol rules - " +
                                                  aOriginalSender.getType () +
@@ -911,10 +914,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       final Ebms3Property aFinalRecipient = aUserMessage.getMessageProperties () == null ? null
                                                                                          : CollectionFind.findFirst (aUserMessage.getMessageProperties ()
                                                                                                                                  .getProperty (),
-                                                                                                                     x -> CAS4.FINAL_RECIPIENT.equals (x.getName ()));
+                                                                                                                     x -> CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT.equals (x.getName ()));
       if (aFinalRecipient == null)
       {
-        final String sMsg = "The AS4 '" + CAS4.FINAL_RECIPIENT + "' Message Propery is missing";
+        final String sMsg = "The AS4 '" + CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT + "' Message Propery is missing";
         LOGGER.error (sLogPrefix + sMsg);
         if (bRejectOnNonCompliance)
         {
@@ -928,7 +931,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
 
       if (aFinalRecipient.getType () == null)
       {
-        final String sMsg = "The AS4 '" + CAS4.FINAL_RECIPIENT + "' Message Propery is missing the 'type' attribute";
+        final String sMsg = "The AS4 '" + CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT + "' Message Propery is missing the 'type' attribute";
         LOGGER.error (sLogPrefix + sMsg);
         if (bRejectOnNonCompliance)
         {
@@ -947,7 +950,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       if (aAS4C4PID == null || !aAS4C4PID.hasSameContent (aPeppolSBDH.getReceiverAsIdentifier ()))
       {
         final String sMsg = "The AS4 '" +
-                            CAS4.FINAL_RECIPIENT +
+                            CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT +
                             "' (" +
                             (aAS4C4PID == null ? "not compliant to the Peppol rules - " +
                                                  aFinalRecipient.getType () +

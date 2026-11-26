@@ -144,14 +144,14 @@ public final class AS4ConfigurationTest
   @Test
   public void testIncomingSecurityEnforcePMode ()
   {
-    // Disabled by default for backwards compatibility
-    assertFalse (AS4Configuration.isIncomingSecurityEnforcePMode ());
+    // Enabled by default since v5
+    assertTrue (AS4Configuration.isIncomingSecurityEnforcePMode ());
 
     final String sKey = AS4Configuration.PROPERTY_PHASE4_INCOMING_SECURITY_ENFORCE_PMODE;
     try
     {
-      SystemProperties.setPropertyValue (sKey, "true");
-      assertTrue (AS4Configuration.isIncomingSecurityEnforcePMode ());
+      SystemProperties.setPropertyValue (sKey, "false");
+      assertFalse (AS4Configuration.isIncomingSecurityEnforcePMode ());
     }
     finally
     {

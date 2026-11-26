@@ -36,7 +36,7 @@ import com.helger.phase4.attachment.AS4OutgoingAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
-import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
+import com.helger.phase4.incoming.IAS4IncomingSignalMessageConsumer;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.message.MessageHelperMethods;
@@ -85,7 +85,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   protected final ICommonsList <AS4OutgoingAttachment> m_aAttachments = new CommonsArrayList <> ();
   protected boolean m_bForceMimeMessage = AS4ClientUserMessage.DEFAULT_FORCE_MIME_MESSAGE;
 
-  protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
+  protected IAS4IncomingSignalMessageConsumer m_aSignalMsgConsumer;
   protected IAS4SignalMessageValidationResultHandler m_aSignalMsgValidationResultHdl;
   protected IAS4SoapFaultConsumer m_aSoapFaultConsumer;
 
@@ -712,7 +712,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @since 3.0.0
    */
   @Nullable
-  public final IAS4SignalMessageConsumer signalMsgConsumer ()
+  public final IAS4IncomingSignalMessageConsumer signalMsgConsumer ()
   {
     return m_aSignalMsgConsumer;
   }
@@ -727,7 +727,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return this for chaining
    */
   @NonNull
-  public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
+  public final IMPLTYPE signalMsgConsumer (@Nullable final IAS4IncomingSignalMessageConsumer aSignalMsgConsumer)
   {
     m_aSignalMsgConsumer = aSignalMsgConsumer;
     return thisAsT ();
@@ -974,11 +974,11 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   @NonNull
   public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer)
   {
-    final IAS4SignalMessageConsumer aOriginalSignalMsgConsumer = m_aSignalMsgConsumer;
+    final IAS4IncomingSignalMessageConsumer aOriginalSignalMsgConsumer = m_aSignalMsgConsumer;
     final IAS4SoapFaultConsumer aOriginalSoapFaultConsumer = m_aSoapFaultConsumer;
     // Store the received data
     final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
-    final IAS4SignalMessageConsumer aInternalSignalMsgConsumer = (aSignalMsg,
+    final IAS4IncomingSignalMessageConsumer aInternalSignalMsgConsumer = (aSignalMsg,
                                                                   aIncomingMessageMetadata,
                                                                   aIncomingState) -> {
       aSignalMsgKeeper.set (aSignalMsg);

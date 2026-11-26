@@ -40,7 +40,7 @@ public final class HttpRetryVeto
   /**
    * Veto the retry of the HTTP response that is currently handled. Must be called from within an
    * HTTP response handler passed to
-   * {@link IHttpPoster#sendGenericMessageWithRetries(String, com.helger.http.header.HttpHeaderMap, org.apache.hc.core5.http.HttpEntity, String, HttpRetrySettings, org.apache.hc.core5.http.io.HttpClientResponseHandler, com.helger.phase4.dump.IAS4OutgoingDumper, com.helger.phase4.client.IAS4RetryCallback, java.util.function.Consumer)}.
+   * {@link IHttpPoster#sendGenericMessageWithRetries(String, com.helger.http.header.HttpHeaderMap, org.apache.hc.core5.http.HttpEntity, String, HttpRetrySettings, org.apache.hc.core5.http.io.HttpClientResponseHandler, com.helger.phase4.dump.IAS4OutgoingDumper, com.helger.phase4.client.IAS4OnRetryCallback, java.util.function.Consumer)}.
    */
   public static void vetoRetry ()
   {

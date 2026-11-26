@@ -41,7 +41,6 @@ import com.helger.base.wrapper.Wrapper;
 import com.helger.http.CHttp;
 import com.helger.http.CHttpHeader;
 import com.helger.http.header.HttpHeaderMap;
-import com.helger.httpclient.response.ExtendedHttpResponseException;
 import com.helger.mime.IMimeType;
 import com.helger.mime.parse.MimeTypeParser;
 import com.helger.phase4.attachment.AS4IncomingMimePart;
@@ -52,7 +51,7 @@ import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.AbstractAS4Client;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.client.IAS4OnRetryCallback;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
@@ -65,8 +64,8 @@ import com.helger.phase4.incoming.AS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.AS4RequestHandler;
 import com.helger.phase4.incoming.IAS4IncomingProfileSelector;
 import com.helger.phase4.incoming.IAS4IncomingReceiverConfiguration;
-import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
-import com.helger.phase4.incoming.IAS4UserMessageConsumer;
+import com.helger.phase4.incoming.IAS4IncomingSignalMessageConsumer;
+import com.helger.phase4.incoming.IAS4IncomingUserMessageConsumer;
 import com.helger.phase4.incoming.crypto.IAS4IncomingSecurityConfiguration;
 import com.helger.phase4.incoming.soap.CAS4Soap;
 import com.helger.phase4.logging.Phase4LoggerFactory;
@@ -243,7 +242,7 @@ public final class AS4BidirectionalClientHelper
                                                                              @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                                                              @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                                              @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                                                             @Nullable final IAS4RetryCallback aRetryCallback,
+                                                                             @Nullable final IAS4OnRetryCallback aRetryCallback,
                                                                              @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer,
                                                                              @NonNull final Wrapper <HttpResponse> aWrappedHttpResponse,
                                                                              @NonNull final Wrapper <AS4SoapFault> aSoapFaultKeeper) throws IOException,
@@ -264,36 +263,11 @@ public final class AS4BidirectionalClientHelper
       final boolean bMayBeSoapFault = nResponseStatusCode != CAS4Soap.HTTP_STATUS_CODE_METHOD_NOT_ALLOWED &&
                                       nResponseStatusCode != CAS4Soap.HTTP_STATUS_CODE_UNSUPPORTED_MEDIA_TYPE;
 
-      final byte [] aResponsePayload;
-      try
-      {
-        // Accepts all response codes, if enabled in the configuration
-        final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
+      // Accepts all response codes
+      final HttpResponseData aResponseData = GenericAS4HttpResponseHandler.INSTANCE.handleResponse (aHttpResponse);
 
-        // Read response payload
-        aResponsePayload = EntityUtils.toByteArray (aResponseData.entity ());
-      }
-      catch (final ExtendedHttpResponseException ex)
-      {
-        // Only thrown for non-success status codes, if "accept all status codes" is disabled.
-        // Check if the response body contains a SOAP Fault, to eventually stop pointless retries
-        if (bMayBeSoapFault)
-        {
-          final AS4SoapFault aSoapFault = _findSoapFault (ex.directGetResponseBody (),
-                                                          ex.getResponseBodyAsString (),
-                                                          _getContentType (aHttpResponse));
-          if (aSoapFault != null)
-          {
-            aSoapFaultKeeper.set (aSoapFault);
-
-            // Only throw exception for permanent errors - transient errors are retried according to
-            // the HTTP status code
-            if (aSoapFault.getDisposition ().isPermanent ())
-              throw new AS4SoapFaultException (aSoapFault);
-          }
-        }
-        throw ex;
-      }
+      // Read response payload
+      final byte [] aResponsePayload = EntityUtils.toByteArray (aResponseData.entity ());
 
       // Check for a SOAP Fault independent of the HTTP status code, because non-conforming peers
       // may return a fault with HTTP 200
@@ -386,9 +360,9 @@ public final class AS4BidirectionalClientHelper
                                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                                    @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                                    @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                                   @Nullable final IAS4RetryCallback aRetryCallback,
+                                                                   @Nullable final IAS4OnRetryCallback aRetryCallback,
                                                                    @Nullable final IAS4RawResponseConsumer aRawResponseConsumer,
-                                                                   @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
+                                                                   @Nullable final IAS4IncomingSignalMessageConsumer aSignalMsgConsumer,
                                                                    @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler,
                                                                    @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer) throws IOException,
                                                                                                                              Phase4Exception,
@@ -485,13 +459,13 @@ public final class AS4BidirectionalClientHelper
       else
       {
         // Validate the DSSig references between sent and received msg
-        final IAS4SignalMessageConsumer aRealSignalMsgConsumer = new ValidatingAS4SignalMsgConsumer (aClientSentMessage,
+        final IAS4IncomingSignalMessageConsumer aRealSignalMsgConsumer = new ValidatingAS4SignalMsgConsumer (aClientSentMessage,
                                                                                                      aSignalMsgConsumer,
                                                                                                      aSignalMsgValidationResultHandler);
 
         // Read response as EBMS3 Signal Message
         // Read it in any case to ensure signature validation etc. happens
-        final Ebms3SignalMessage aSignalMsg = AS4IncomingHandler.parseSignalMessage (aCryptoFactorySign,
+        final Ebms3SignalMessage aSignalMsg = AS4IncomingHandler.parseIncomingSignalMessage (aCryptoFactorySign,
                                                                                      aCryptoFactoryCrypt,
                                                                                      aPModeResolver,
                                                                                      aIAF,
@@ -546,9 +520,9 @@ public final class AS4BidirectionalClientHelper
                                                                  @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                                  @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                                  @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                                 @Nullable final IAS4RetryCallback aRetryCallback,
+                                                                 @Nullable final IAS4OnRetryCallback aRetryCallback,
                                                                  @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                                                 @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
+                                                                 @Nullable final IAS4IncomingUserMessageConsumer aUserMsgConsumer,
                                                                  @Nullable final IPMode aPMode,
                                                                  @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer) throws IOException,
                                                                                                                            Phase4Exception,
@@ -622,7 +596,7 @@ public final class AS4BidirectionalClientHelper
 
       // Read response as EBMS3 User Message or Signal Message
       // Read it in any case to ensure signature validation etc. happens
-      AS4IncomingHandler.parseUserMessage (aCryptoFactorySign,
+      AS4IncomingHandler.parseIncomingUserMessage (aCryptoFactorySign,
                                            aCryptoFactoryCrypt,
                                            aPModeResolver,
                                            aIAF,
@@ -662,10 +636,10 @@ public final class AS4BidirectionalClientHelper
                                                                          @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                                          @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                                          @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                                         @Nullable final IAS4RetryCallback aRetryCallback,
+                                                                         @Nullable final IAS4OnRetryCallback aRetryCallback,
                                                                          @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                                                         @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
-                                                                         @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer,
+                                                                         @Nullable final IAS4IncomingUserMessageConsumer aUserMsgConsumer,
+                                                                         @Nullable final IAS4IncomingSignalMessageConsumer aSignalMsgConsumer,
                                                                          @Nullable final IAS4SignalMessageValidationResultHandler aSignalMsgValidationResultHandler,
                                                                          @Nullable final IPMode aPMode,
                                                                          @Nullable final IAS4SoapFaultConsumer aSoapFaultConsumer) throws IOException,
@@ -739,13 +713,13 @@ public final class AS4BidirectionalClientHelper
       }
 
       // Validate the DSSig references between sent and received msg
-      final IAS4SignalMessageConsumer aRealSignalMsgConsumer = new ValidatingAS4SignalMsgConsumer (aClientSentMessage,
+      final IAS4IncomingSignalMessageConsumer aRealSignalMsgConsumer = new ValidatingAS4SignalMsgConsumer (aClientSentMessage,
                                                                                                    aSignalMsgConsumer,
                                                                                                    aSignalMsgValidationResultHandler);
 
       // Read response as EBMS3 User Message or Signal Message
       // Read it in any case to ensure signature validation etc. happens
-      AS4IncomingHandler.parseUserOrSignalMessage (aCryptoFactorySign,
+      AS4IncomingHandler.parseIncomingUserOrSignalMessage (aCryptoFactorySign,
                                                    aCryptoFactoryCrypt,
                                                    aPModeResolver,
                                                    aIAF,

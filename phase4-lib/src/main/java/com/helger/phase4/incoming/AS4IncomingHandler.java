@@ -40,7 +40,6 @@ import org.w3c.dom.Node;
 
 import com.helger.annotation.WillClose;
 import com.helger.annotation.WillNotClose;
-import com.helger.annotation.misc.ChangeNextMajorRelease;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
@@ -976,8 +975,7 @@ public final class AS4IncomingHandler
   }
 
   @NonNull
-  @ChangeNextMajorRelease ("Rename to processIncomingEbmsMessage")
-  public static IAS4IncomingMessageState processEbmsMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper,
+    public static IAS4IncomingMessageState processIncomingEbmsMessage (@NonNull @WillNotClose final AS4ResourceHelper aResHelper,
                                                              @NonNull final Locale aLocale,
                                                              @NonNull final SoapHeaderElementProcessorRegistry aRegistry,
                                                              @NonNull final HttpHeaderMap aHttpHeaders,
@@ -1271,7 +1269,7 @@ public final class AS4IncomingHandler
                                                                                                              aIncomingReceiverConfiguration);
 
       // Parse AS4, verify signature etc
-      final IAS4IncomingMessageState aIncomingState = processEbmsMessage (aResHelper,
+      final IAS4IncomingMessageState aIncomingState = processIncomingEbmsMessage (aResHelper,
                                                                           aLocale,
                                                                           aRegistry,
                                                                           aHttpHeaders,
@@ -1329,8 +1327,7 @@ public final class AS4IncomingHandler
 
   // Parse an AS4 SignalMessage
   @Nullable
-  @ChangeNextMajorRelease ("Rename to parseIncomingSignalMessage")
-  public static Ebms3SignalMessage parseSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+    public static Ebms3SignalMessage parseIncomingSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                        @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                        @NonNull final IAS4PModeResolver aPModeResolver,
                                                        @NonNull final IAS4IncomingAttachmentFactory aIAF,
@@ -1344,7 +1341,7 @@ public final class AS4IncomingHandler
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                        @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                        @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                       @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
+                                                       @Nullable final IAS4IncomingSignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
     final IAS4IncomingMessageState aIncomingState = _parseIncomingMessage (aCryptoFactorySign,
                                                                            aCryptoFactoryCrypt,
@@ -1385,8 +1382,7 @@ public final class AS4IncomingHandler
 
   // Parse an AS4 UserMessage
   @Nullable
-  @ChangeNextMajorRelease ("Rename to parseIncomingUserMessage")
-  public static Ebms3UserMessage parseUserMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+    public static Ebms3UserMessage parseIncomingUserMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                    @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                    @NonNull final IAS4PModeResolver aPModeResolver,
                                                    @NonNull final IAS4IncomingAttachmentFactory aIAF,
@@ -1400,7 +1396,7 @@ public final class AS4IncomingHandler
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                    @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                   @Nullable final IAS4UserMessageConsumer aUserMsgConsumer) throws Phase4Exception
+                                                   @Nullable final IAS4IncomingUserMessageConsumer aUserMsgConsumer) throws Phase4Exception
   {
     final IAS4IncomingMessageState aIncomingState = _parseIncomingMessage (aCryptoFactorySign,
                                                                            aCryptoFactoryCrypt,
@@ -1441,8 +1437,7 @@ public final class AS4IncomingHandler
 
   // Parse as an AS4 UserMessage or an AS4 SignalMessage
   @NonNull
-  @ChangeNextMajorRelease ("Rename to parseIncomingUserOrSignalMessage")
-  public static ESuccess parseUserOrSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
+    public static ESuccess parseIncomingUserOrSignalMessage (@NonNull final IAS4CryptoFactory aCryptoFactorySign,
                                                    @NonNull final IAS4CryptoFactory aCryptoFactoryCrypt,
                                                    @NonNull final IAS4PModeResolver aPModeResolver,
                                                    @NonNull final IAS4IncomingAttachmentFactory aIAF,
@@ -1456,8 +1451,8 @@ public final class AS4IncomingHandler
                                                    @Nullable final IAS4IncomingDumper aIncomingDumper,
                                                    @NonNull final IAS4IncomingSecurityConfiguration aIncomingSecurityConfiguration,
                                                    @NonNull final IAS4IncomingReceiverConfiguration aIncomingReceiverConfiguration,
-                                                   @Nullable final IAS4UserMessageConsumer aUserMsgConsumer,
-                                                   @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
+                                                   @Nullable final IAS4IncomingUserMessageConsumer aUserMsgConsumer,
+                                                   @Nullable final IAS4IncomingSignalMessageConsumer aSignalMsgConsumer) throws Phase4Exception
   {
     final IAS4IncomingMessageState aIncomingState = _parseIncomingMessage (aCryptoFactorySign,
                                                                            aCryptoFactoryCrypt,

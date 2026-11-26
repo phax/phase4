@@ -32,25 +32,25 @@ import com.helger.phase4.ebms3header.MessagePartNRInformation;
 import com.helger.phase4.ebms3header.NonRepudiationInformation;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
-import com.helger.phase4.incoming.IAS4SignalMessageConsumer;
+import com.helger.phase4.incoming.IAS4IncomingSignalMessageConsumer;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.xsds.xmldsig.ReferenceType;
 import com.helger.xsds.xmldsig.TransformType;
 
 /**
- * Specific wrapped {@link IAS4SignalMessageConsumer} that verifies the DSig References between the
+ * Specific wrapped {@link IAS4IncomingSignalMessageConsumer} that verifies the DSig References between the
  * sent message and received Receipt is identical.
  *
  * @author Philip Helger
  * @since 3.0.0
  */
-public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageConsumer
+public final class ValidatingAS4SignalMsgConsumer implements IAS4IncomingSignalMessageConsumer
 {
   // The default instance doing some logging only
   private static final IAS4SignalMessageValidationResultHandler DEFAULT_RES_HDL = new LoggingAS4SignalMsgValidationResultHandler ();
 
   private final AS4ClientSentMessage <?> m_aClientSetMsg;
-  private final IAS4SignalMessageConsumer m_aOriginalConsumer;
+  private final IAS4IncomingSignalMessageConsumer m_aOriginalConsumer;
   private final IAS4SignalMessageValidationResultHandler m_aResultHandler;
 
   /**
@@ -67,7 +67,7 @@ public final class ValidatingAS4SignalMsgConsumer implements IAS4SignalMessageCo
    *        messages will be logged.
    */
   public ValidatingAS4SignalMsgConsumer (@NonNull final AS4ClientSentMessage <?> aClientSetMsg,
-                                         @Nullable final IAS4SignalMessageConsumer aOriginalConsumer,
+                                         @Nullable final IAS4IncomingSignalMessageConsumer aOriginalConsumer,
                                          @Nullable final IAS4SignalMessageValidationResultHandler aResultHandler)
   {
     ValueEnforcer.notNull (aClientSetMsg, "ClientSetMsg");

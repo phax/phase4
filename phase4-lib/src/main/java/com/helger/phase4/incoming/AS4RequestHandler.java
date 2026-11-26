@@ -60,7 +60,7 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.client.IAS4OnRetryCallback;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -383,7 +383,7 @@ public class AS4RequestHandler implements AutoCloseable
   private Locale m_aLocale = Locale.US;
   private IAS4IncomingDumper m_aIncomingDumper;
   private IAS4OutgoingDumper m_aOutgoingDumper;
-  private IAS4RetryCallback m_aRetryCallback;
+  private IAS4OnRetryCallback m_aRetryCallback;
   private IAS4SoapProcessingFinalizedCallback m_aSoapProcessingFinalizedCB;
 
   /** By default get all message processors from the global SPI registry */
@@ -698,7 +698,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @since v0.9.14
    */
   @Nullable
-  public final IAS4RetryCallback getRetryCallback ()
+  public final IAS4OnRetryCallback getRetryCallback ()
   {
     return m_aRetryCallback;
   }
@@ -712,7 +712,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @since v0.9.14
    */
   @NonNull
-  public final AS4RequestHandler setRetryCallback (@Nullable final IAS4RetryCallback aRetryCallback)
+  public final AS4RequestHandler setRetryCallback (@Nullable final IAS4OnRetryCallback aRetryCallback)
   {
     m_aRetryCallback = aRetryCallback;
     return this;
@@ -1230,17 +1230,17 @@ public class AS4RequestHandler implements AutoCloseable
       Ebms3Property aOriginalSender = null;
       for (final Ebms3Property aProp : aUserMessage.getMessageProperties ().getProperty ())
       {
-        if (aProp.getName ().equals (CAS4.ORIGINAL_SENDER))
+        if (aProp.getName ().equals (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER))
           aOriginalSender = aProp;
         else
-          if (aProp.getName ().equals (CAS4.FINAL_RECIPIENT))
+          if (aProp.getName ().equals (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT))
             aFinalRecipient = aProp;
       }
 
       if (aOriginalSender != null && aFinalRecipient != null)
       {
-        aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
-        aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
+        aFinalRecipient.setName (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER);
+        aOriginalSender.setName (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT);
 
         aEbms3MessageProperties.addProperty (aFinalRecipient.clone ());
         aEbms3MessageProperties.addProperty (aOriginalSender.clone ());
@@ -1743,7 +1743,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                                            m_aIncomingReceiverConfig);
 
     // Decompose the SOAP message
-    final IAS4IncomingMessageState aIncomingState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
+    final IAS4IncomingMessageState aIncomingState = AS4IncomingHandler.processIncomingEbmsMessage (m_aResHelper,
                                                                                            m_aLocale,
                                                                                            aRegistry,
                                                                                            aHttpHeaders,

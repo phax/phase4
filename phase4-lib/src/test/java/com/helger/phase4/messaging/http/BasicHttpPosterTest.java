@@ -50,7 +50,7 @@ import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
-import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.client.IAS4OnRetryCallback;
 import com.sun.net.httpserver.HttpServer;
 
 /**
@@ -103,7 +103,7 @@ public final class BasicHttpPosterTest
   @Nullable
   private static String _sendWithRetries (@NonNull final String sURL,
                                           @NonNull final HttpRetrySettings aRetrySettings,
-                                          @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
+                                          @Nullable final IAS4OnRetryCallback aRetryCallback) throws IOException
   {
     // Accept all status codes and return them together with the payload
     return new BasicHttpPoster ().sendGenericMessageWithRetries (sURL,
@@ -126,7 +126,7 @@ public final class BasicHttpPosterTest
   }
 
   @NonNull
-  private static IAS4RetryCallback _createRecordingCallback (@NonNull final ICommonsList <Long> aIntervals)
+  private static IAS4OnRetryCallback _createRecordingCallback (@NonNull final ICommonsList <Long> aIntervals)
   {
     return (sMessageID, sURL, nTry, nMaxTries, nRetryIntervalMS, ex) -> {
       aIntervals.add (Long.valueOf (nRetryIntervalMS));

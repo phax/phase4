@@ -60,7 +60,7 @@ final class MockAS4ClientUserMessage extends AS4ClientUserMessage
     final int nOldEnded = MockAS4IncomingMessageProcessingStatusSPI.getEnded ();
 
     final IAS4OutgoingDumper aOutgoingDumper = null;
-    final IAS4RetryCallback aRetryCallback = null;
+    final IAS4OnRetryCallback aRetryCallback = null;
     final IMicroDocument ret = sendMessageWithRetries (sURL,
                                                        GenericAS4HttpResponseHandler.getHandlerMicroDom (),
                                                        aCallback,

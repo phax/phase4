@@ -948,11 +948,11 @@ public final class Phase4HREdeliverySender
     {
       // Add mandatory properties
       addMessageProperty (MessageProperty.builder ()
-                                         .name (CAS4.ORIGINAL_SENDER)
+                                         .name (CAS4.MESSAGE_PROPERTY_ORIGINAL_SENDER)
                                          .type (m_aSenderID.getScheme ())
                                          .value (m_aSenderID.getValue ()));
       addMessageProperty (MessageProperty.builder ()
-                                         .name (CAS4.FINAL_RECIPIENT)
+                                         .name (CAS4.MESSAGE_PROPERTY_FINAL_RECIPIENT)
                                          .type (m_aReceiverID.getScheme ())
                                          .value (m_aReceiverID.getValue ()));
 

@@ -500,7 +500,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                                     @NonNull final HttpClientResponseHandler <? extends T> aResponseHandler,
                                                                     @Nullable final IAS4ClientBuildMessageCallback aCallback,
                                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws IOException, WSSecurityException, MessagingException
+                                                                    @Nullable final IAS4OnRetryCallback aRetryCallback) throws IOException, WSSecurityException, MessagingException
   {
     ValueEnforcer.notNull (sURL, "URL");
     ValueEnforcer.notNull (aResponseHandler, "ResponseHandler");
