@@ -27,10 +27,12 @@ committed with `f591a1bea` - it is part of v4.6.0.
   It is currently only installed in `Phase4PeppolAS4Servlet:79`. It should become part of the default
   `WSSConfig` created by `WSSConfigManager`, so that no profile accepts a signature that is based on a
   bare public key instead of a certificate.
-- [ ] **B4 - Strict timestamp handling.**
-  `Phase4PeppolServletMessageProcessorSPI:468` only logs a warning and substitutes the current date
-  time, if neither the AS4 `MessageInfo/Timestamp` nor the SBDH `CreationDateTime` is present.
-  Add an optional flag to reject such a message instead.
+- [x] **B4 - Strict timestamp handling.** Not needed - closed without code change.
+  `Phase4PeppolServletMessageProcessorSPI.createPeppolReportingItemForReceivedMessage` only logs a
+  warning and substitutes the current date time, if neither the AS4 `MessageInfo/Timestamp` nor the
+  SBDH `CreationDateAndTime` is present. The value is only used as the Peppol Reporting exchange date
+  time. The AS4 `Timestamp` is mandatory in the ebMS 3 header XSD, and an incoming UserMessage
+  without it is already rejected with `EBMS:0009` (`UserMessageFailureForgeryTest.testUserMessageWithoutTimestampShouldFail`).
 - [x] **B5 - Security documentation.** Done for v5.0.0: `SECURITY.md` and the Wiki page "Security Hardening". This was the second explicit request of the reporter and is
   still open.
     - `SECURITY.md` in the repository root: supported versions and a private disclosure channel.
@@ -58,12 +60,11 @@ committed with `f591a1bea` - it is part of v4.6.0.
   implementing the interface outside of phase4 (in-tree there is only the final class
   `AS4IncomingMessageState`). Making them `default` methods returning empty collections would keep
   such implementors compiling and would not change anything in-tree.
-- [ ] **No dedicated test for the SOAP Body coverage check.** The checks for the ebMS `Messaging`
-  element and for attachments are covered by `UserMessageFailureForgeryTest`. For the SOAP `Body` no
-  test could be constructed from the client side, because phase4 signs the Body via a name based
-  `WSEncryptionPart` and removing it from the signing parts still left the Body signed. The check
-  itself is active in `AS4IncomingHandler`.
-- [ ] **Migration note for peppol-commons 12.8.0.** `SMPClientReadOnly.getServiceGroupOrNull` and
+- [x] **No dedicated test for the SOAP Body coverage check.** Done:
+  `UserMessageFailureForgeryTest.testSoapBodyNotCoveredBySignatureShouldFail` removes the name based
+  `Body` part via an `IWSSecSignatureCustomizer` and expects `EBMS:0103`. The checks for the ebMS
+  `Messaging` element and for attachments were already covered by `UserMessageFailureForgeryTest`.
+- [x] **Migration note for peppol-commons 12.8.0.** Done, including the removed `CachingSMPClientReadOnly` cache TTL methods. `SMPClientReadOnly.getServiceGroupOrNull` and
   `getServiceMetadataOrNull` now throw `SMPClientSMPUnavailableException` instead of returning `null`,
   if the SMP could not be contacted. This is in the v4.6.0 news entry, but not yet in the
   `4.5.x to 4.6.x` section of the `Migrations` Wiki page. phase4 itself is not affected - the only
