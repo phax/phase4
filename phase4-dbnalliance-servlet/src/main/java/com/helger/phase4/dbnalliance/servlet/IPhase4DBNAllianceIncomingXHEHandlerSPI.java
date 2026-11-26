@@ -27,7 +27,6 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageMetadata;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
-import com.helger.xhe.v10.XHE10XHEType;
 
 /**
  * This is the interface that must be implemented to handle incoming SBD documents.
@@ -47,15 +46,19 @@ public interface IPhase4DBNAllianceIncomingXHEHandlerSPI
    *        The (HTTP) headers of the incoming request. Never <code>null</code>.
    * @param aUserMessage
    *        The received EBMS user message. Never <code>null</code>.
-   * @param aSBDBytes
-   *        The raw SBD bytes. These are the bytes as received via AS4, just decrypted and
-   *        decompressed. Never <code>null</code>.
-   * @param aXHE
-   *        The incoming parsed Standard Business Document as JAXB data model. This is the
-   *        pre-parsed SBD bytes. Use {@link com.helger.xhe.v10.XHE10Marshaller} to serialize the
-   *        document. Never <code>null</code>
+   * @param aIncomingXHE
+   *        The incoming Exchange Header Envelope. It is not held in memory: use
+   *        {@link Phase4DBNAllianceIncomingXHE#getInputStream()} to read the bytes as received via
+   *        AS4, just decrypted and decompressed - as often as needed, and the payload specific
+   *        methods (e.g. {@link Phase4DBNAllianceIncomingXHE#openPayloadBinaryStream(int)}) to read
+   *        the content of a single payload. Use {@link Phase4DBNAllianceIncomingXHE#getXHE()} only
+   *        if the parsed document is really needed, as its memory depends on the document size. The
+   *        data is only available while this method runs. Never <code>null</code>. Since v5.0.0.
    * @param aDBNAllianceXHE
-   *        The pre-parsed Peppol Standard Business Document. Never <code>null</code>.
+   *        The pre-parsed DBNAlliance Exchange Header Envelope data. It was read in a streaming
+   *        way, so the payloads contain no content, only its kind and for XML payloads the name of
+   *        the root element. The payload indices match the ones of the payload specific methods of
+   *        the incoming XHE. Never <code>null</code>.
    * @param aState
    *        The message state. Can e.g. be used to retrieve information about the certificate found
    *        in the message. Never <code>null</code>.
@@ -67,8 +70,7 @@ public interface IPhase4DBNAllianceIncomingXHEHandlerSPI
   void handleIncomingXHE (@NonNull IAS4IncomingMessageMetadata aMessageMetadata,
                           @NonNull HttpHeaderMap aHeaders,
                           @NonNull Ebms3UserMessage aUserMessage,
-                          byte @NonNull [] aSBDBytes,
-                          @NonNull XHE10XHEType aXHE,
+                          @NonNull Phase4DBNAllianceIncomingXHE aIncomingXHE,
                           @NonNull DBNAllianceXHEData aDBNAllianceXHE,
                           @NonNull IAS4IncomingMessageState aState,
                           @NonNull AS4ErrorList aProcessingErrorMessages) throws Exception;

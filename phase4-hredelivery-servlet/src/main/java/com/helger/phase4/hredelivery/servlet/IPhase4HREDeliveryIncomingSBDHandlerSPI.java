@@ -18,7 +18,6 @@ package com.helger.phase4.hredelivery.servlet;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIInterface;
@@ -50,15 +49,17 @@ public interface IPhase4HREDeliveryIncomingSBDHandlerSPI
    *        The (HTTP) headers of the incoming request. Never <code>null</code>.
    * @param aUserMessage
    *        The received EBMS user message. Never <code>null</code>.
-   * @param aSBDBytes
-   *        The raw SBD bytes. These are the bytes as received via AS4, just decrypted and
-   *        decompressed. Never <code>null</code>.
-   * @param aSBD
-   *        The incoming parsed Standard Business Document as JAXB data model. This is the
-   *        pre-parsed SBD bytes. Use {@link com.helger.sbdh.SBDMarshaller} to serialize the
-   *        document. Never <code>null</code>
+   * @param aIncomingSBD
+   *        The incoming Standard Business Document. It is not held in memory: use
+   *        {@link Phase4HREDeliveryIncomingSBD#getInputStream()} to read the bytes as received via
+   *        AS4, just decrypted and decompressed - as often as needed. Use
+   *        {@link Phase4HREDeliveryIncomingSBD#getStandardBusinessDocument()} only if the parsed
+   *        document is really needed, as its memory depends on the document size. The data is only
+   *        available while this method runs. Never <code>null</code>. Since v5.0.0.
    * @param aHREDeliverySBD
-   *        The pre-parsed HR eDelivery Standard Business Document. Never <code>null</code>.
+   *        The pre-parsed HR eDelivery Standard Business Document Header data. It was read in a
+   *        streaming way, so it contains no business message, only its namespace URI and local
+   *        name. Never <code>null</code>.
    * @param aDocTypeID
    *        The document type ID provided in the AS4 message. Never <code>null</code>.
    * @param aProcessID
@@ -74,8 +75,7 @@ public interface IPhase4HREDeliveryIncomingSBDHandlerSPI
   void handleIncomingSBD (@NonNull IAS4IncomingMessageMetadata aMessageMetadata,
                           @NonNull HttpHeaderMap aHeaders,
                           @NonNull Ebms3UserMessage aUserMessage,
-                          byte @NonNull [] aSBDBytes,
-                          @NonNull StandardBusinessDocument aSBD,
+                          @NonNull Phase4HREDeliveryIncomingSBD aIncomingSBD,
                           @NonNull HREDeliverySBDHData aHREDeliverySBD,
                           @NonNull IDocumentTypeIdentifier aDocTypeID,
                           @NonNull IProcessIdentifier aProcessID,
