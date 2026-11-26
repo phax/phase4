@@ -21,7 +21,9 @@ committed with `f591a1bea` - it is part of v4.6.0.
   Replace this dead code with a real configuration property (e.g.
   `phase4.incoming.signature.checkrevocation`) for the non-Peppol profiles. Only the Peppol profile
   performs its own revocation check today.
-- [ ] **B3 - `AS4CertificateOnlySignatureTrustValidator` for all profiles.**
+- [x] **B3 - `AS4CertificateOnlySignatureTrustValidator` for all profiles.** Done for v5.0.0 per profile:
+  `Phase4DBNAllianceAS4Servlet` and `Phase4HREDeliveryAS4Servlet` like `Phase4PeppolAS4Servlet`; the other profiles
+  stay unchanged, as it is unclear if it is safe for them.
   It is currently only installed in `Phase4PeppolAS4Servlet:79`. It should become part of the default
   `WSSConfig` created by `WSSConfigManager`, so that no profile accepts a signature that is based on a
   bare public key instead of a certificate.
