@@ -43,7 +43,7 @@ import com.helger.phase4.error.AS4ErrorList;
 import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.incoming.spi.AS4MessageProcessorResult;
 import com.helger.phase4.util.AS4ResourceHelper;
-import com.helger.security.certificate.CertificateHelper;
+import com.helger.security.certificate.CertificateDecodeHelper;
 import com.helger.security.certificate.TrustedCAChecker;
 import com.helger.security.revocation.ERevocationCheckMode;
 
@@ -76,7 +76,9 @@ public final class Phase4DBNAllianceServletMessageProcessorSPIFuncTest
                                               "JMoPerRuh4IzD1/VSlcbot3jkrV/IiKij/Ex3D4P5hOcASPLLarxpedsy2jhu/WL" +
                                               "sK5ZqaN40lNdqelCouRRsgBQDKyF/MKlWIluqnwNBsof3phYOLdL1378UWiZRATT" +
                                               "CFHrUeXK5i8nfjlP7T+U5mpzPtKIXslrCk6Z";
-  private static final X509Certificate TEST_CERT = CertificateHelper.convertStringToCertficateOrNull (TEST_CERT_PEM);
+  private static final X509Certificate TEST_CERT = new CertificateDecodeHelper ().source (TEST_CERT_PEM)
+                                                   .pemEncoded (true)
+                                                   .getDecodedOrNull ();
 
   @NonNull
   private static IAS4IncomingMessageState _createState ()
@@ -85,7 +87,6 @@ public final class Phase4DBNAllianceServletMessageProcessorSPIFuncTest
                                                               new Class <?> [] { IAS4IncomingMessageState.class },
                                                               (aProxy, aMethod, aArgs) -> switch (aMethod.getName ())
                                                               {
-                                                                case "isSoapDecrypted", "isSoapSignatureChecked" -> Boolean.TRUE;
                                                                 case "getSigningCertificate" -> TEST_CERT;
                                                                 case "getLocale" -> Locale.ROOT;
                                                                 case "getMessageID" -> MESSAGE_ID;
@@ -128,7 +129,7 @@ public final class Phase4DBNAllianceServletMessageProcessorSPIFuncTest
       final Phase4DBNAllianceServletMessageProcessorSPI aSPI = new Phase4DBNAllianceServletMessageProcessorSPI ();
       aSPI.setReceiverCheckData (Phase4DBNAllianceReceiverConfiguration.builder (Phase4DBNAllianceDefaultReceiverConfiguration.getAsReceiverCheckData ())
                                                                   .receiverCheckEnabled (false)
-                                                                  .apCAChecker (new TrustedCAChecker (TEST_CERT))
+                                                                  .apCAChecker (TrustedCAChecker.builder ().trustedCACertificates (TEST_CERT).build ())
                                                                   .apRevocationCheckMode (ERevocationCheckMode.NONE)
                                                                   .build ());
       final AS4ErrorList ret = new AS4ErrorList ();

@@ -130,4 +130,30 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName
    * @since v2.5.3
    */
   boolean isInvokeSPIForPingMessage ();
+
+  /**
+   * @return The requirement of this profile regarding the signature of incoming UserMessages. It is
+   *         checked independent of the PMode leg security settings and cannot be disabled via
+   *         configuration. Never <code>null</code>. Defaults to
+   *         {@link EAS4ProfileSecurityRequirement#UNSPECIFIED}.
+   * @since 5.0.0
+   */
+  @NonNull
+  default EAS4ProfileSecurityRequirement getIncomingSignatureRequirement ()
+  {
+    return EAS4ProfileSecurityRequirement.UNSPECIFIED;
+  }
+
+  /**
+   * @return The requirement of this profile regarding the encryption of incoming UserMessages. It is
+   *         checked independent of the PMode leg security settings and cannot be disabled via
+   *         configuration. Never <code>null</code>. Defaults to
+   *         {@link EAS4ProfileSecurityRequirement#UNSPECIFIED}.
+   * @since 5.0.0
+   */
+  @NonNull
+  default EAS4ProfileSecurityRequirement getIncomingEncryptionRequirement ()
+  {
+    return EAS4ProfileSecurityRequirement.UNSPECIFIED;
+  }
 }

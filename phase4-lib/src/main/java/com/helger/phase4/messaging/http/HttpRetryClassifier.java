@@ -45,7 +45,6 @@ import com.helger.base.string.StringHelper;
 import com.helger.base.string.StringParser;
 import com.helger.http.CHttp;
 import com.helger.httpclient.response.ExtendedHttpResponseException;
-import com.helger.phase4.model.soapfault.AS4SoapFaultException;
 
 /**
  * Decide whether a failed HTTP transmission may be retried. The guiding question is whether the
@@ -95,8 +94,8 @@ public final class HttpRetryClassifier
   @NonNull
   public static EHttpRetryClassification classifyException (@NonNull final IOException ex)
   {
-    // phase4 specific exceptions that must never be retried
-    if (ex instanceof AS4SoapFaultException || ex instanceof AS4HttpUnauthorizedException)
+    // phase4 specific exception that must never be retried
+    if (ex instanceof AS4HttpUnauthorizedException)
       return EHttpRetryClassification.NO_RETRY;
 
     // An HTTP response was received - decide on the status code. Must be checked before

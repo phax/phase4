@@ -580,28 +580,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
         LOGGER.debug (sLogPrefix + "  SOAP Body Payload = " + XMLWriter.getNodeAsString (aPayload));
     }
 
-    // Check preconditions
-    if (!aIncomingState.isSoapDecrypted ())
-    {
-      final String sDetails = "The received Peppol message seems not to be encrypted (properly).";
-      LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_DECRYPTION.errorBuilder (aDisplayLocale)
-                                                                     .refToMessageInError (sMessageID)
-                                                                     .errorDetail (sDetails)
-                                                                     .build ());
-      return AS4MessageProcessorResult.createFailure ();
-    }
-
-    if (!aIncomingState.isSoapSignatureChecked ())
-    {
-      final String sDetails = "The received Peppol message seems not to be signed (properly).";
-      LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aDisplayLocale)
-                                                                         .refToMessageInError (sMessageID)
-                                                                         .errorDetail (sDetails)
-                                                                         .build ());
-      return AS4MessageProcessorResult.createFailure ();
-    }
+    // The signature and encryption requirements of the AS4 profile were already checked in
+    // AS4IncomingHandler
 
     // Since 4.2.6
     if (aIncomingState.getSigningCertificateReferenceType () != STRParser.REFERENCE_TYPE.DIRECT_REF)
@@ -1082,8 +1062,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
     // Check if Service and Action match the requirements of the Peppol AS4 specification, section
     // 4.6
     // https://docs.peppol.eu/edelivery/as4/specification/#_service_action_and_role
-    // TODO In one of the next versions, a mismatch should be elevated from a warning to an error,
-    // rejecting the message (honoring "bRejectOnNonCompliance") like the checks of section 4.5 do
+    // A mismatch rejects the message (honoring "bRejectOnNonCompliance") like the checks of section
+    // 4.5 do
     {
       // The Service Type defaults to "cenbii-procid-ubl" if it is not specified
       final String sAS4ServiceType = StringHelper.isEmpty (sServiceType) ? PeppolIdentifierHelper.PROCESS_SCHEME_CENBII_PROCID_UBL
@@ -1101,7 +1081,15 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             ") is different from the SBDH Process Identifier (" +
                             aPeppolSBDH.getProcessURIEncoded () +
                             ")";
-        LOGGER.warn (sLogPrefix + sMsg);
+        LOGGER.error (sLogPrefix + sMsg);
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
 
       // The Action is the URI encoded Document Type ID.
@@ -1110,7 +1098,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
       // Note: the presence of "::" cannot be used as the indicator, because a Peppol Document Type
       // ID value contains "::" itself - a scheme less Action therefore splits into a first segment
       // that is way longer than the 25 characters an identifier scheme may have.
-      // Values using URL percent encoding are not parsable either and therefore lead to a warning.
+      // Values using URL percent encoding are not parsable either and are therefore considered a
+      // mismatch.
       IDocumentTypeIdentifier aAS4DocTypeID = aIdentifierFactory.parseDocumentTypeIdentifier (sAction);
       if (aAS4DocTypeID == null)
         aAS4DocTypeID = aIdentifierFactory.createDocumentTypeIdentifier (PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_BUSDOX_DOCID_QNS,
@@ -1124,7 +1113,15 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4IncomingMessa
                             ") is different from the SBDH Document Type Identifier (" +
                             aPeppolSBDH.getDocumentTypeURIEncoded () +
                             ")";
-        LOGGER.warn (sLogPrefix + sMsg);
+        LOGGER.error (sLogPrefix + sMsg);
+        if (bRejectOnNonCompliance)
+        {
+          aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                             .refToMessageInError (aIncomingState.getMessageID ())
+                                                             .errorDetail (sMsg)
+                                                             .build ());
+          return AS4MessageProcessorResult.createFailure ();
+        }
       }
     }
 

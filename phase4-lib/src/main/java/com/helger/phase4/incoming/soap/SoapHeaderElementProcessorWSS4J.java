@@ -198,6 +198,8 @@ public class SoapHeaderElementProcessorWSS4J implements ISoapHeaderElementProces
 
       // Enable CRL checking
       // Only works if Merlin.setCRLCertStore is also called
+      // Revocation must be checked explicitly on application level afterwards (incl. proxy support
+      // etc.)
       if (false)
         aRequestData.setEnableRevocation (true);
 

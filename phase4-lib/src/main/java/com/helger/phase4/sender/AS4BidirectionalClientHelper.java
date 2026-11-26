@@ -76,7 +76,6 @@ import com.helger.phase4.model.EAS4ResponseType;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.model.soapfault.AS4SoapFault;
-import com.helger.phase4.model.soapfault.AS4SoapFaultException;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
@@ -113,18 +112,13 @@ public final class AS4BidirectionalClientHelper
    *
    * @param aResponsePayload
    *        The response payload to check. May be <code>null</code>.
-   * @param sRawXML
-   *        The raw XML string for dumping. May be <code>null</code> in which case the parsed
-   *        document is serialized on demand. Ignored for MIME messages.
    * @param sContentType
    *        The Content-Type of the response. May be <code>null</code>.
    * @return <code>null</code> if the response payload is not a SOAP Fault.
    */
   @Nullable
   @VisibleForTesting
-  static AS4SoapFault _findSoapFault (final byte @Nullable [] aResponsePayload,
-                                      @Nullable final String sRawXML,
-                                      @Nullable final String sContentType)
+  static AS4SoapFault _findSoapFault (final byte @Nullable [] aResponsePayload, @Nullable final String sContentType)
   {
     if (ArrayHelper.isEmpty (aResponsePayload))
       return null;
@@ -162,12 +156,11 @@ public final class AS4BidirectionalClientHelper
           LOGGER.debug ("Failed to read the first MIME part of the response", ex);
         return null;
       }
-      // The raw payload contains the whole MIME message, so serialize the SOAP document
       return AS4SoapFault.createOrNull (aSoapDocument);
     }
 
     final Document aSoapDocument = DOMReader.readXMLDOM (aResponsePayload, aDRS);
-    return AS4SoapFault.createOrNull (aSoapDocument, sRawXML);
+    return AS4SoapFault.createOrNull (aSoapDocument);
   }
 
   /**
@@ -273,7 +266,7 @@ public final class AS4BidirectionalClientHelper
       // may return a fault with HTTP 200
       if (bMayBeSoapFault)
       {
-        final AS4SoapFault aSoapFault = _findSoapFault (aResponsePayload, null, _getContentType (aHttpResponse));
+        final AS4SoapFault aSoapFault = _findSoapFault (aResponsePayload, _getContentType (aHttpResponse));
         if (aSoapFault != null)
         {
           aSoapFaultKeeper.set (aSoapFault);
@@ -296,27 +289,6 @@ public final class AS4BidirectionalClientHelper
                                                            aBuildMessageCallback,
                                                            aOutgoingDumper,
                                                            aRetryCallback);
-    }
-    catch (final AS4SoapFaultException ex)
-    {
-      // A SOAP Fault with a permanent disposition stopped all retries
-      LOGGER.info ("The synchronous AS4 response was classified as " + EAS4ResponseType.SOAP_FAULT);
-      AS4IncomingMessageMetadata aResponseMessageMetadata = null;
-      if (ex.hasSentMessageID ())
-      {
-        aResponseMessageMetadata = AS4IncomingMessageMetadata.createForResponse (ex.getSentMessageID ())
-                                                             .setRemoteAddr (sURL);
-        if (aWrappedHttpResponse.isSet ())
-          aResponseMessageMetadata.setResponseHttpStatusCode (aWrappedHttpResponse.get ().getCode ());
-      }
-      _handleReceivedSoapFault (ex.getSoapFault (),
-                                ex.getSentMessageID (),
-                                null,
-                                aResponseMessageMetadata,
-                                aWrappedHttpResponse.get (),
-                                aIncomingDumper,
-                                aSoapFaultConsumer);
-      throw ex;
     }
     catch (final IOException ex)
     {

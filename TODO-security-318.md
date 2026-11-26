@@ -8,13 +8,15 @@ committed with `f591a1bea` - it is part of v4.6.0.
 
 ## Phase B - defense in depth and consistency
 
-- [ ] **B1 - Move the security enforcement into the core.**
+- [x] **B1 - Move the security enforcement into the core.** Done for v5.0.0: profiles declare the
+  requirement via `IAS4Profile.getIncomingSignatureRequirement ()` / `getIncomingEncryptionRequirement ()`,
+  checked in `AS4IncomingHandler`; together with `phase4.incoming.security.enforcepmode` defaulting to `true`.
   The "message must be signed" resp. "message must be encrypted" check is currently duplicated in the
   message processors of the Peppol, DBNAlliance and HR eDelivery profiles - the other 6 profiles have
   no such check at all. It should be derived from the PMode leg security configuration and performed
   centrally in `AS4IncomingHandler`, so that all profiles benefit from it.
   The profile specific checks (BST `DIRECT_REF`, CA checker) stay where they are.
-- [ ] **B2 - Real revocation toggle in the core.**
+- [x] **B2 - Real revocation toggle in the core.**
   `SoapHeaderElementProcessorWSS4J:201` contains `if (false) aRequestData.setEnableRevocation (true);`.
   Replace this dead code with a real configuration property (e.g.
   `phase4.incoming.signature.checkrevocation`) for the non-Peppol profiles. Only the Peppol profile
@@ -48,7 +50,8 @@ committed with `f591a1bea` - it is part of v4.6.0.
 
 ## Loose ends from the phase A implementation
 
-- [ ] **Decide on `IAS4IncomingMessageState`.** The two new methods `getAllSignedElements ()` and
+- [x] **Decide on `IAS4IncomingMessageState`.** Decided for v5.0.0: the methods stay abstract, a major
+  release may break external implementors. The two new methods `getAllSignedElements ()` and
   `getAllSignedAttachmentIDs ()` are abstract, which is a source incompatible change for anybody
   implementing the interface outside of phase4 (in-tree there is only the final class
   `AS4IncomingMessageState`). Making them `default` methods returning empty collections would keep

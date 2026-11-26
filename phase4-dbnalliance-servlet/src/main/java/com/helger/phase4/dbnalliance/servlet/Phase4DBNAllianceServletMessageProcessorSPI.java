@@ -465,28 +465,8 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
         LOGGER.debug (sLogPrefix + "  SOAP Body Payload = " + XMLWriter.getNodeAsString (aPayload));
     }
 
-    // Check preconditions
-    if (!aIncomingState.isSoapDecrypted ())
-    {
-      final String sDetails = "The received DBNAlliance message seems not to be encrypted (properly).";
-      LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_DECRYPTION.errorBuilder (aDisplayLocale)
-                                                                     .refToMessageInError (sMessageID)
-                                                                     .errorDetail (sDetails)
-                                                                     .build ());
-      return AS4MessageProcessorResult.createFailure ();
-    }
-
-    if (!aIncomingState.isSoapSignatureChecked ())
-    {
-      final String sDetails = "The received DBNAlliance message seems not to be signed (properly).";
-      LOGGER.error (sLogPrefix + sDetails);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.errorBuilder (aDisplayLocale)
-                                                                         .refToMessageInError (sMessageID)
-                                                                         .errorDetail (sDetails)
-                                                                         .build ());
-      return AS4MessageProcessorResult.createFailure ();
-    }
+    // The signature and encryption requirements of the AS4 profile were already checked in
+    // AS4IncomingHandler
 
     // The validity and the trust chain of the signing AP certificate are always checked. The
     // revocation check can be disabled via ERevocationCheckMode.NONE

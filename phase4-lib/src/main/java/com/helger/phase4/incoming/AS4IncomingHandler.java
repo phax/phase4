@@ -40,6 +40,7 @@ import org.w3c.dom.Node;
 
 import com.helger.annotation.WillClose;
 import com.helger.annotation.WillNotClose;
+import com.helger.annotation.style.VisibleForTesting;
 import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.io.nonblocking.NonBlockingByteArrayInputStream;
@@ -99,6 +100,7 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
+import com.helger.phase4.profile.EAS4ProfileSecurityRequirement;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.profile.IAS4ProfileValidator.EAS4ProfileValidationMode;
@@ -809,6 +811,49 @@ public final class AS4IncomingHandler
    * @param aEbmsErrorMessagesTarget
    *        The error list to fill in case the security requirements are not met.
    */
+  /**
+   * Check the security of an incoming UserMessage against the requirements of the AS4 profile. This
+   * check is always performed and cannot be disabled via configuration.
+   *
+   * @param aIncomingState
+   *        The incoming message state. May not be <code>null</code>.
+   * @param aProfile
+   *        The AS4 profile to check against. May not be <code>null</code>.
+   * @param aEbmsErrorMessagesTarget
+   *        The error list to add errors to. May not be <code>null</code>.
+   */
+  @VisibleForTesting
+  static void _checkSecurityAgainstProfile (@NonNull final IAS4IncomingMessageState aIncomingState,
+                                            @NonNull final IAS4Profile aProfile,
+                                            @NonNull final AS4ErrorList aEbmsErrorMessagesTarget)
+  {
+    final String sProfile = "the AS4 profile '" + aProfile.getID () + "'";
+    final ICommonsList <String> aViolations = new CommonsArrayList <> ();
+    final EAS4ProfileSecurityRequirement eSign = aProfile.getIncomingSignatureRequirement ();
+    if (eSign.isRequired () && !aIncomingState.isSoapSignatureChecked ())
+      aViolations.add ("is not signed, but " + sProfile + " requires it");
+    else
+      if (eSign.isForbidden () && aIncomingState.isSoapSignatureChecked ())
+        aViolations.add ("is signed, but " + sProfile + " forbids it");
+
+    final EAS4ProfileSecurityRequirement eCrypt = aProfile.getIncomingEncryptionRequirement ();
+    if (eCrypt.isRequired () && !aIncomingState.isSoapDecrypted ())
+      aViolations.add ("is not encrypted, but " + sProfile + " requires it");
+    else
+      if (eCrypt.isForbidden () && aIncomingState.isSoapDecrypted ())
+        aViolations.add ("is encrypted, but " + sProfile + " forbids it");
+
+    for (final String sViolation : aViolations)
+    {
+      final String sDetails = "The incoming UserMessage " + sViolation;
+      LOGGER.error (sDetails + ". Rejecting the message.");
+      aEbmsErrorMessagesTarget.add (EEbmsError.EBMS_POLICY_NONCOMPLIANCE.errorBuilder (aIncomingState.getLocale ())
+                                                                        .refToMessageInError (aIncomingState.getMessageID ())
+                                                                        .errorDetail (sDetails)
+                                                                        .build ());
+    }
+  }
+
   private static void _checkSecurityAgainstPModeLeg (@NonNull final IAS4IncomingMessageState aIncomingState,
                                                      @NonNull final PModeLeg aEffectiveLeg,
                                                      @NonNull final AS4ErrorList aEbmsErrorMessagesTarget)
@@ -1095,6 +1140,14 @@ public final class AS4IncomingHandler
         // Only check leg if the message is a usermessage
         if (aEffectiveLeg == null)
           throw new Phase4IncomingException ("No AS4 P-Mode leg could be determined!").setRetryFeasible (false);
+
+        // Make sure the message was secured as the AS4 profile requires it. This cannot be disabled
+        if (aProfile != null)
+        {
+          _checkSecurityAgainstProfile (aIncomingState, aProfile, aEbmsErrorMessagesTarget);
+          if (aEbmsErrorMessagesTarget.isNotEmpty ())
+            return aIncomingState;
+        }
 
         // Make sure the message was secured as the PMode leg requires it (see issue #404)
         if (AS4Configuration.isIncomingSecurityEnforcePMode ())
