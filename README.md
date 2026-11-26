@@ -13,6 +13,10 @@ phase4 is an embeddable, lightweight Java library to send and receive AS4 messag
 
 phase4 is part of my Peppol solution stack. See https://github.com/phax/peppol for other components and libraries in that area.
 
+---
+
+This project is neither sponsored nor endorsed by OpenPeppol AISBL.
+
 ## Documentation
 
 The full documentation is in the **[Wiki](https://github.com/phax/phase4/wiki)**:
