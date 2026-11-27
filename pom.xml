@@ -45,7 +45,7 @@
     <connection>scm:git:https://github.com/phax/phase4.git</connection>
     <developerConnection>scm:git:https://github.com/phax/phase4.git</developerConnection>
     <url>https://github.com/phax/phase4</url>
-    <tag>phase4-parent-pom-4.8.3</tag>
+    <tag>4.x</tag>
   </scm>
 
   <organization>
@@ -79,7 +79,7 @@
     <xmlsec.version>4.0.4</xmlsec.version>
     <wss4j.version>4.0.3</wss4j.version>
 
-    <ph-commons.version>12.8.0</ph-commons.version>
+    <ph-commons.version>12.9.0</ph-commons.version>
     <ph-xsds.version>4.1.2</ph-xsds.version>
     <ph-ubl.version>10.2.0</ph-ubl.version>
     <ph-web.version>11.5.1</ph-web.version>
