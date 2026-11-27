@@ -41,7 +41,7 @@ public final class AS4ReadErrorRecordingInputStreamTest
   public void testNoError () throws IOException
   {
     try (final AS4ReadErrorRecordingInputStream aIS = new AS4ReadErrorRecordingInputStream (new NonBlockingByteArrayInputStream (new byte [] { 1,
-                                                                                                                                                2 })))
+                                                                                                                                               2 })))
     {
       assertEquals (2, aIS.readAllBytes ().length);
       assertFalse (aIS.hasReadError ());
@@ -50,7 +50,7 @@ public final class AS4ReadErrorRecordingInputStreamTest
   }
 
   @Test
-  public void testError ()
+  public void testError () throws IOException
   {
     final IOException aEx = new IOException ("bla");
     final InputStream aFailing = new InputStream ()
@@ -61,17 +61,19 @@ public final class AS4ReadErrorRecordingInputStreamTest
         throw aEx;
       }
     };
-    final AS4ReadErrorRecordingInputStream aIS = new AS4ReadErrorRecordingInputStream (aFailing);
-    try
+    try (final AS4ReadErrorRecordingInputStream aIS = new AS4ReadErrorRecordingInputStream (aFailing))
     {
-      aIS.read (new byte [10], 0, 10);
-      fail ();
+      try
+      {
+        aIS.read (new byte [10], 0, 10);
+        fail ();
+      }
+      catch (final IOException ex)
+      {
+        assertSame (aEx, ex);
+      }
+      assertTrue (aIS.hasReadError ());
+      assertSame (aEx, aIS.getReadError ());
     }
-    catch (final IOException ex)
-    {
-      assertSame (aEx, ex);
-    }
-    assertTrue (aIS.hasReadError ());
-    assertSame (aEx, aIS.getReadError ());
   }
 }
