@@ -18,6 +18,7 @@ package com.helger.phase4.messaging.http;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -59,7 +60,13 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.EAS4MessageMode;
+import com.helger.phase4.telemetry.CPhase4Telemetry;
+import com.helger.phase4.telemetry.Phase4Metrics;
 import com.helger.phase4.util.MultiOutputStream;
+import com.helger.telemetry.ETelemetrySpanKind;
+import com.helger.telemetry.ITelemetrySpan;
+import com.helger.telemetry.Telemetry;
+import com.helger.telemetry.TelemetryAttributes;
 
 /**
  * A generic HTTP POST wrapper based on {@link IHttpClientProvider} and {@link HttpPost}. Since
@@ -165,6 +172,61 @@ public class BasicHttpPoster implements IHttpPoster
     return this;
   }
 
+  @Nullable
+  private static String _getServerAddressOrNull (@NonNull final String sURL)
+  {
+    try
+    {
+      return URI.create (sURL).getHost ();
+    }
+    catch (final IllegalArgumentException ex)
+    {
+      return null;
+    }
+  }
+
+  private static void _recordHttpAttemptTelemetry (@NonNull final ITelemetrySpan aSpan,
+                                                   @NonNull final String sURL,
+                                                   @NonNull final HttpEntity aHttpEntity,
+                                                   @NonNull final StopWatch aSW,
+                                                   @Nullable final Exception aException)
+  {
+    // The server address is only used on the span, because of its cardinality
+    aSpan.setAttribute (CPhase4Telemetry.ATTR_SERVER_ADDRESS, _getServerAddressOrNull (sURL));
+
+    final TelemetryAttributes.Builder aAttrs = TelemetryAttributes.builder ();
+    if (aException == null)
+    {
+      aSpan.setAttribute (CPhase4Telemetry.ATTR_OUTCOME, CPhase4Telemetry.OUTCOME_SUCCESS);
+      aSpan.setStatusOk ();
+      aAttrs.put (CPhase4Telemetry.ATTR_OUTCOME, CPhase4Telemetry.OUTCOME_SUCCESS);
+    }
+    else
+    {
+      final String sErrorType = aException.getClass ().getName ();
+      aSpan.setAttribute (CPhase4Telemetry.ATTR_OUTCOME, CPhase4Telemetry.OUTCOME_ERROR);
+      aSpan.setAttribute (CPhase4Telemetry.ATTR_ERROR_TYPE, sErrorType);
+      aSpan.recordException (aException);
+      aSpan.setStatusError (aException.getMessage ());
+      aAttrs.put (CPhase4Telemetry.ATTR_OUTCOME, CPhase4Telemetry.OUTCOME_ERROR)
+            .put (CPhase4Telemetry.ATTR_ERROR_TYPE, sErrorType);
+      if (aException instanceof final ExtendedHttpResponseException aHttpEx)
+      {
+        final int nStatusCode = aHttpEx.getStatusLine ().getStatusCode ();
+        aSpan.setAttribute (CPhase4Telemetry.ATTR_HTTP_RESPONSE_STATUS_CODE, nStatusCode);
+        aAttrs.put (CPhase4Telemetry.ATTR_HTTP_RESPONSE_STATUS_CODE, nStatusCode);
+      }
+    }
+
+    final TelemetryAttributes aBuiltAttrs = aAttrs.build ();
+    Phase4Metrics.HTTP_ATTEMPTS.add (1, aBuiltAttrs);
+    Phase4Metrics.HTTP_DURATION.record (Phase4Metrics.getSeconds (aSW), aBuiltAttrs);
+    // The length is unknown for streamed entities
+    final long nContentLength = aHttpEntity.getContentLength ();
+    if (nContentLength >= 0)
+      Phase4Metrics.HTTP_REQUEST_SIZE.record (nContentLength, aBuiltAttrs);
+  }
+
   /**
    * Send an arbitrary HTTP POST message to the provided URL, using the contained HttpClientFactory
    * as well as the customizer. Additionally the AS4 HTTP debugging is invoked in here.<br>
@@ -203,7 +265,9 @@ public class BasicHttpPoster implements IHttpPoster
     final StopWatch aSW = StopWatch.createdStarted ();
     LOGGER.info ("Starting to transmit AS4 Message to '" + sURL + "'");
 
+    final ITelemetrySpan aSpan = Telemetry.startSpan (CPhase4Telemetry.SPAN_HTTP_SEND, ETelemetrySpanKind.CLIENT);
     IOException aCaughtException = null;
+    RuntimeException aCaughtRuntimeException = null;
     try
     {
       if (m_aSharedHttpClientManager != null)
@@ -230,9 +294,21 @@ public class BasicHttpPoster implements IHttpPoster
       aCaughtException = ex;
       throw ex;
     }
+    catch (final RuntimeException ex)
+    {
+      // Remember something went wrong
+      aCaughtRuntimeException = ex;
+      throw ex;
+    }
     finally
     {
       aSW.stop ();
+      _recordHttpAttemptTelemetry (aSpan,
+                                   sURL,
+                                   aHttpEntity,
+                                   aSW,
+                                   aCaughtException != null ? aCaughtException : aCaughtRuntimeException);
+      aSpan.close ();
       if (aCaughtException != null)
       {
         LOGGER.warn ("Failed to transmit AS4 Message to '" +
@@ -623,6 +699,11 @@ public class BasicHttpPoster implements IHttpPoster
 
             LOGGER.warn (_getErrorText (sMessageID, sURL, ex));
             LOGGER.info ("Now waiting " + aEffectiveDurationBeforeRetry.toMillis () + " ms, then retrying");
+            Phase4Metrics.HTTP_RETRIES.add (1,
+                                            TelemetryAttributes.builder ()
+                                                               .put (CPhase4Telemetry.ATTR_HTTP_RETRY_CLASSIFICATION,
+                                                                     eClassification.name ())
+                                                               .build ());
 
             // Sleep and try again afterwards
             if (ThreadHelper.sleep (aEffectiveDurationBeforeRetry.toMillis ()).isFailure ())

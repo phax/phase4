@@ -29,6 +29,7 @@ import com.helger.annotation.style.ReturnsMutableCopy;
 import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.base.state.ESuccess;
 import com.helger.base.string.StringHelper;
+import com.helger.base.timing.StopWatch;
 import com.helger.base.wrapper.Wrapper;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
@@ -42,8 +43,14 @@ import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.message.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.soapfault.AS4SoapFault;
+import com.helger.phase4.telemetry.CPhase4Telemetry;
+import com.helger.phase4.telemetry.Phase4Metrics;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.telemetry.ETelemetrySpanKind;
+import com.helger.telemetry.ITelemetrySpan;
+import com.helger.telemetry.Telemetry;
+import com.helger.telemetry.TelemetryAttributes;
 
 /**
  * Abstract builder base class for a user message.
@@ -939,45 +946,13 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     aUserMsg.setForceMimeMessage (m_bForceMimeMessage);
   }
 
-  /**
-   * This is a sanity method that encapsulates all the sending checks that are necessary to
-   * determine overall sending success or error.<br>
-   * Note: this method is not thread-safe, because it changes the signal message consumer
-   * internally.
-   *
-   * @return {@link EAS4UserMessageSendResult#SUCCESS} only if all parameters are correct, HTTP
-   *         transmission was successful and if a positive AS4 Receipt was returned. Never
-   *         <code>null</code>.
-   * @since 0.13.0
-   */
   @NonNull
-  public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt ()
-  {
-    // This information might be crucial to determine what went wrong
-    return sendMessageAndCheckForReceipt (ex -> LOGGER.error ("Exception sending AS4 user message", ex));
-  }
-
-  /**
-   * This is a sanity method that encapsulates all the sending checks that are necessary to
-   * determine overall sending success or error.<br>
-   * Note: this method is not thread-safe, because it changes the signal message consumer
-   * internally.
-   *
-   * @param aExceptionConsumer
-   *        An optional Consumer that takes an eventually thrown {@link Phase4Exception}. May be
-   *        <code>null</code>.
-   * @return {@link EAS4UserMessageSendResult#SUCCESS} only if all parameters are correct, HTTP
-   *         transmission was successful and if a positive AS4 Receipt was returned. Never
-   *         <code>null</code>.
-   * @since 1.0.0-rc1
-   */
-  @NonNull
-  public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer)
+  private EAS4UserMessageSendResult _sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer,
+                                                                    @NonNull final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper)
   {
     final IAS4IncomingSignalMessageConsumer aOriginalSignalMsgConsumer = m_aSignalMsgConsumer;
     final IAS4SoapFaultConsumer aOriginalSoapFaultConsumer = m_aSoapFaultConsumer;
-    // Store the received data
-    final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
+    // Store the received data in aSignalMsgKeeper
     final IAS4IncomingSignalMessageConsumer aInternalSignalMsgConsumer = (aSignalMsg,
                                                                   aIncomingMessageMetadata,
                                                                   aIncomingState) -> {
@@ -1091,6 +1066,93 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       // Restore the original values
       m_aSignalMsgConsumer = aOriginalSignalMsgConsumer;
       m_aSoapFaultConsumer = aOriginalSoapFaultConsumer;
+    }
+  }
+
+  /**
+   * This is a sanity method that encapsulates all the sending checks that are necessary to
+   * determine overall sending success or error.<br>
+   * Note: this method is not thread-safe, because it changes the signal message consumer
+   * internally.
+   *
+   * @return {@link EAS4UserMessageSendResult#SUCCESS} only if all parameters are correct, HTTP
+   *         transmission was successful and if a positive AS4 Receipt was returned. Never
+   *         <code>null</code>.
+   * @since 0.13.0
+   */
+  @NonNull
+  public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt ()
+  {
+    // This information might be crucial to determine what went wrong
+    return sendMessageAndCheckForReceipt (ex -> LOGGER.error ("Exception sending AS4 user message", ex));
+  }
+
+  /**
+   * This is a sanity method that encapsulates all the sending checks that are necessary to
+   * determine overall sending success or error.<br>
+   * Note: this method is not thread-safe, because it changes the signal message consumer
+   * internally.
+   *
+   * @param aExceptionConsumer
+   *        An optional Consumer that takes an eventually thrown {@link Phase4Exception}. May be
+   *        <code>null</code>.
+   * @return {@link EAS4UserMessageSendResult#SUCCESS} only if all parameters are correct, HTTP
+   *         transmission was successful and if a positive AS4 Receipt was returned. Never
+   *         <code>null</code>.
+   * @since 1.0.0-rc1
+   */
+  @NonNull
+  public final EAS4UserMessageSendResult sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer)
+  {
+    final StopWatch aSW = StopWatch.createdStarted ();
+    try (final ITelemetrySpan aSpan = Telemetry.startSpan (CPhase4Telemetry.SPAN_OUTGOING_USER_MESSAGE,
+                                                           ETelemetrySpanKind.INTERNAL))
+    {
+      // Stores the received signal message
+      final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
+      EAS4UserMessageSendResult eResult = null;
+      try
+      {
+        eResult = _sendMessageAndCheckForReceipt (aExceptionConsumer, aSignalMsgKeeper);
+        return eResult;
+      }
+      catch (final RuntimeException ex)
+      {
+        aSpan.recordException (ex);
+        throw ex;
+      }
+      finally
+      {
+        aSW.stop ();
+
+        // Never record participant identifiers
+        final String sSendResult = eResult != null ? eResult.getID () : CPhase4Telemetry.OUTCOME_EXCEPTION;
+        aSpan.setAttribute (CPhase4Telemetry.ATTR_MESSAGE_ID, m_sMessageID);
+        aSpan.setAttribute (CPhase4Telemetry.ATTR_PROFILE_ID, m_sAS4ProfileID);
+        aSpan.setAttribute (CPhase4Telemetry.ATTR_PMODE_ID, m_aPMode == null ? null : m_aPMode.getID ());
+        aSpan.setAttribute (CPhase4Telemetry.ATTR_SERVICE, m_sService);
+        aSpan.setAttribute (CPhase4Telemetry.ATTR_ACTION, m_sAction);
+        // Only if explicitly set - a random conversation ID is created otherwise
+        aSpan.setAttribute (CPhase4Telemetry.ATTR_CONVERSATION_ID, m_sConversationID);
+        final Ebms3SignalMessage aSignalMsg = aSignalMsgKeeper.get ();
+        if (aSignalMsg != null && aSignalMsg.getMessageInfo () != null)
+        {
+          aSpan.setAttribute (CPhase4Telemetry.ATTR_SIGNAL_MESSAGE_ID, aSignalMsg.getMessageInfo ().getMessageId ());
+          aSpan.setAttribute (CPhase4Telemetry.ATTR_SIGNAL_REF_TO_MESSAGE_ID, aSignalMsg.getMessageInfo ().getRefToMessageId ());
+        }
+        aSpan.setAttribute (CPhase4Telemetry.ATTR_SEND_RESULT, sSendResult);
+        if (eResult != null && eResult.isSuccess ())
+          aSpan.setStatusOk ();
+        else
+          aSpan.setStatusError (sSendResult);
+
+        final TelemetryAttributes aAttrs = TelemetryAttributes.builder ()
+                                                              .put (CPhase4Telemetry.ATTR_SEND_RESULT, sSendResult)
+                                                              .put (CPhase4Telemetry.ATTR_PROFILE_ID, m_sAS4ProfileID)
+                                                              .build ();
+        Phase4Metrics.OUTGOING_USER_MESSAGES.add (1, aAttrs);
+        Phase4Metrics.OUTGOING_DURATION.record (Phase4Metrics.getSeconds (aSW), aAttrs);
+      }
     }
   }
 }

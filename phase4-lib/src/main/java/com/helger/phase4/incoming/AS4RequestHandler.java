@@ -43,10 +43,12 @@ import com.helger.base.enforce.ValueEnforcer;
 import com.helger.base.iface.IThrowingRunnable;
 import com.helger.base.io.iface.IHasInputStream;
 import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
+import com.helger.base.io.stream.CountingInputStream;
 import com.helger.base.io.stream.HasInputStream;
 import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.state.ISuccessIndicator;
 import com.helger.base.string.StringHelper;
+import com.helger.base.timing.StopWatch;
 import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.ICommonsList;
 import com.helger.http.CHttp;
@@ -116,12 +118,18 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.model.pmode.resolve.IAS4PModeResolver;
 import com.helger.phase4.profile.IAS4Profile;
+import com.helger.phase4.telemetry.CPhase4Telemetry;
+import com.helger.phase4.telemetry.Phase4Metrics;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.phase4.util.Phase4IncomingException;
 import com.helger.phase4.util.Phase4RuntimeException;
 import com.helger.photon.io.PhotonWorkerPool;
+import com.helger.telemetry.ETelemetrySpanKind;
+import com.helger.telemetry.ITelemetrySpan;
+import com.helger.telemetry.Telemetry;
+import com.helger.telemetry.TelemetryAttributes;
 import com.helger.xml.serialize.write.XMLWriter;
 
 import jakarta.mail.MessagingException;
@@ -1734,6 +1742,39 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
+   * The telemetry data of one incoming request, filled while the request is handled. Participant
+   * identifiers are never recorded.
+   */
+  private static final class IncomingTelemetryData
+  {
+    private final ITelemetrySpan m_aSpan;
+    private String m_sOutcome = CPhase4Telemetry.OUTCOME_EXCEPTION;
+    private String m_sMessageType = CPhase4Telemetry.MESSAGE_TYPE_UNKNOWN;
+    private String m_sProfileID;
+
+    IncomingTelemetryData (@NonNull final ITelemetrySpan aSpan)
+    {
+      m_aSpan = aSpan;
+    }
+  }
+
+  @NonNull
+  private static String _getTelemetryMessageType (@NonNull final IAS4IncomingMessageState aIncomingState)
+  {
+    if (aIncomingState.isPingMessage ())
+      return CPhase4Telemetry.MESSAGE_TYPE_PING;
+    if (aIncomingState.getEbmsUserMessage () != null)
+      return CPhase4Telemetry.MESSAGE_TYPE_USER_MESSAGE;
+    if (aIncomingState.getEbmsReceipt () != null)
+      return CPhase4Telemetry.MESSAGE_TYPE_RECEIPT;
+    if (aIncomingState.getEbmsError () != null)
+      return CPhase4Telemetry.MESSAGE_TYPE_ERROR;
+    if (aIncomingState.getEbmsPullRequest () != null)
+      return CPhase4Telemetry.MESSAGE_TYPE_PULL_REQUEST;
+    return CPhase4Telemetry.MESSAGE_TYPE_UNKNOWN;
+  }
+
+  /**
    * This message is called, independent if the source message was sent as a MIME message or as a
    * SOAP message.
    *
@@ -1759,7 +1800,8 @@ public class AS4RequestHandler implements AutoCloseable
   private IAS4ResponseFactory _handleIncomingSoapMessageAndInvokeSPIs (@NonNull final HttpHeaderMap aHttpHeaders,
                                                                        @NonNull final Document aSoapDocument,
                                                                        @NonNull final ESoapVersion eSoapVersion,
-                                                                       @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException, MessagingException, Phase4Exception
+                                                                       @NonNull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                                       @NonNull final IncomingTelemetryData aTelemetryData) throws WSSecurityException, MessagingException, Phase4Exception
   {
     // Collect all runtime errors
     final AS4ErrorList aEbmsErrorMessages = new AS4ErrorList ();
@@ -1793,6 +1835,23 @@ public class AS4RequestHandler implements AutoCloseable
     final Node aPayloadNode = aIncomingState.getSoapBodyPayloadNode ();
     final Ebms3UserMessage aEbmsUserMessage = aIncomingState.getEbmsUserMessage ();
     final Ebms3SignalMessage aEbmsSignalMessage = aIncomingState.getEbmsSignalMessage ();
+
+    // Remember the telemetry data
+    aTelemetryData.m_sMessageType = _getTelemetryMessageType (aIncomingState);
+    aTelemetryData.m_sProfileID = aIncomingState.getProfileID ();
+    final ITelemetrySpan aSpan = aTelemetryData.m_aSpan;
+    aSpan.setAttribute (CPhase4Telemetry.ATTR_MESSAGE_ID, sMessageID);
+    aSpan.setAttribute (CPhase4Telemetry.ATTR_PMODE_ID, aPMode == null ? null : aPMode.getID ());
+    if (aEbmsUserMessage != null && aEbmsUserMessage.getCollaborationInfo () != null)
+    {
+      final Ebms3CollaborationInfo aCollaborationInfo = aEbmsUserMessage.getCollaborationInfo ();
+      aSpan.setAttribute (CPhase4Telemetry.ATTR_SERVICE, aCollaborationInfo.getServiceValue ());
+      aSpan.setAttribute (CPhase4Telemetry.ATTR_ACTION, aCollaborationInfo.getAction ());
+      aSpan.setAttribute (CPhase4Telemetry.ATTR_CONVERSATION_ID, aCollaborationInfo.getConversationId ());
+    }
+    if (aEbmsSignalMessage != null && aEbmsSignalMessage.getMessageInfo () != null)
+      aSpan.setAttribute (CPhase4Telemetry.ATTR_SIGNAL_REF_TO_MESSAGE_ID,
+                          aEbmsSignalMessage.getMessageInfo ().getRefToMessageId ());
 
     boolean bDismissedDuplicate = false;
     if (aIncomingState.isSoapHeaderElementProcessingSuccessful ())
@@ -1831,6 +1890,14 @@ public class AS4RequestHandler implements AutoCloseable
         {
           if (aIncomingState instanceof final AS4IncomingMessageState aRealIncomingState)
             aRealIncomingState.setDuplicate (true);
+
+          Phase4Metrics.INCOMING_DUPLICATES.add (1,
+                                                 TelemetryAttributes.builder ()
+                                                                    .put (CPhase4Telemetry.ATTR_DUPLICATE_HANDLING,
+                                                                          m_eIncomingDuplicateHandling.getID ())
+                                                                    .put (CPhase4Telemetry.ATTR_PROFILE_ID, sProfileID)
+                                                                    .build ());
+          aSpan.addEvent (CPhase4Telemetry.EVENT_DUPLICATE);
 
           switch (m_eIncomingDuplicateHandling)
           {
@@ -2274,7 +2341,43 @@ public class AS4RequestHandler implements AutoCloseable
                             sResponseMessageID,
                             aEbmsErrorMessages);
 
+    aTelemetryData.m_sOutcome = aEbmsErrorMessages.isEmpty () ? CPhase4Telemetry.OUTCOME_SUCCESS
+                                                             : CPhase4Telemetry.OUTCOME_EBMS_ERROR;
+    for (final AS4Error aError : aEbmsErrorMessages)
+      Phase4Metrics.INCOMING_EBMS_ERRORS.add (1,
+                                              TelemetryAttributes.builder ()
+                                                                 .put (CPhase4Telemetry.ATTR_EBMS_ERROR_CODE,
+                                                                       aError.getEbmsError ().getErrorCode ())
+                                                                 .put (CPhase4Telemetry.ATTR_PROFILE_ID,
+                                                                       aTelemetryData.m_sProfileID)
+                                                                 .build ());
+
     return ret;
+  }
+
+  private static void _recordIncomingTelemetry (@NonNull final IncomingTelemetryData aTelemetryData,
+                                                @NonNull final StopWatch aSW,
+                                                final long nBytesRead)
+  {
+    final ITelemetrySpan aSpan = aTelemetryData.m_aSpan;
+    aSpan.setAttribute (CPhase4Telemetry.ATTR_OUTCOME, aTelemetryData.m_sOutcome);
+    aSpan.setAttribute (CPhase4Telemetry.ATTR_MESSAGE_TYPE, aTelemetryData.m_sMessageType);
+    aSpan.setAttribute (CPhase4Telemetry.ATTR_PROFILE_ID, aTelemetryData.m_sProfileID);
+    if (CPhase4Telemetry.OUTCOME_SUCCESS.equals (aTelemetryData.m_sOutcome))
+      aSpan.setStatusOk ();
+    else
+      aSpan.setStatusError (aTelemetryData.m_sOutcome);
+
+    final TelemetryAttributes aAttrs = TelemetryAttributes.builder ()
+                                                          .put (CPhase4Telemetry.ATTR_OUTCOME, aTelemetryData.m_sOutcome)
+                                                          .put (CPhase4Telemetry.ATTR_MESSAGE_TYPE,
+                                                                aTelemetryData.m_sMessageType)
+                                                          .put (CPhase4Telemetry.ATTR_PROFILE_ID,
+                                                                aTelemetryData.m_sProfileID)
+                                                          .build ();
+    Phase4Metrics.INCOMING_REQUESTS.add (1, aAttrs);
+    Phase4Metrics.INCOMING_DURATION.record (Phase4Metrics.getSeconds (aSW), aAttrs);
+    Phase4Metrics.INCOMING_SIZE.record (nBytesRead, aAttrs);
   }
 
   /**
@@ -2300,32 +2403,55 @@ public class AS4RequestHandler implements AutoCloseable
                              @NonNull final HttpHeaderMap aRequestHttpHeaders,
                              @NonNull final IAS4ResponseAbstraction aHttpResponse) throws Phase4Exception, IOException, MessagingException, WSSecurityException
   {
-    final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
-      // SOAP document and SOAP version are determined
-      final IAS4ResponseFactory aResponder = _handleIncomingSoapMessageAndInvokeSPIs (aHttpHeaders,
-                                                                                      aSoapDocument,
-                                                                                      eSoapVersion,
-                                                                                      aIncomingAttachments);
-      if (aResponder != null)
+    final StopWatch aSW = StopWatch.createdStarted ();
+    // Count the bytes read without buffering anything
+    final CountingInputStream aCountingIS = new CountingInputStream (aRequestInputStream);
+    try (final ITelemetrySpan aSpan = Telemetry.startSpan (CPhase4Telemetry.SPAN_INCOMING_REQUEST,
+                                                           ETelemetrySpanKind.SERVER))
+    {
+      final IncomingTelemetryData aTelemetryData = new IncomingTelemetryData (aSpan);
+      try
       {
-        // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
-                                                                                 : AS4DumpManager.getOutgoingDumper ();
-        aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
+        final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
+          // SOAP document and SOAP version are determined
+          final IAS4ResponseFactory aResponder = _handleIncomingSoapMessageAndInvokeSPIs (aHttpHeaders,
+                                                                                          aSoapDocument,
+                                                                                          eSoapVersion,
+                                                                                          aIncomingAttachments,
+                                                                                          aTelemetryData);
+          if (aResponder != null)
+          {
+            // Response present -> send back
+            final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
+                                                                                     : AS4DumpManager.getOutgoingDumper ();
+            aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
+          }
+          else
+          {
+            // Success, HTTP No Content
+            aHttpResponse.setStatus (CHttp.HTTP_NO_CONTENT);
+          }
+          AS4HttpDebug.debug (() -> "RECEIVE-END with " + (aResponder != null ? "EBMS message" : "no content"));
+        };
+        AS4IncomingHandler.parseAS4Message (m_aIncomingAttachmentFactory,
+                                            m_aResHelper,
+                                            m_aIncomingMessageMetadata,
+                                            aCountingIS,
+                                            aRequestHttpHeaders,
+                                            aCallback,
+                                            m_aIncomingDumper);
       }
-      else
+      catch (final Exception ex)
       {
-        // Success, HTTP No Content
-        aHttpResponse.setStatus (CHttp.HTTP_NO_CONTENT);
+        aTelemetryData.m_sOutcome = CPhase4Telemetry.OUTCOME_EXCEPTION;
+        aSpan.recordException (ex);
+        throw ex;
       }
-      AS4HttpDebug.debug (() -> "RECEIVE-END with " + (aResponder != null ? "EBMS message" : "no content"));
-    };
-    AS4IncomingHandler.parseAS4Message (m_aIncomingAttachmentFactory,
-                                        m_aResHelper,
-                                        m_aIncomingMessageMetadata,
-                                        aRequestInputStream,
-                                        aRequestHttpHeaders,
-                                        aCallback,
-                                        m_aIncomingDumper);
+      finally
+      {
+        aSW.stop ();
+        _recordIncomingTelemetry (aTelemetryData, aSW, aCountingIS.getBytesRead ());
+      }
+    }
   }
 }

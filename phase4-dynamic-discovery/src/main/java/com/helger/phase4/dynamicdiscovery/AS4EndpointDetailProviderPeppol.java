@@ -36,6 +36,7 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.peppol.PeppolIdentifierHelper;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.telemetry.CPhase4Telemetry;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.exception.SMPClientException;
 import com.helger.smpclient.peppol.ISMPExtendedServiceMetadataProvider;
@@ -135,6 +136,76 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
     return m_aServiceMetadataProvider.getSchemeSpecificServiceMetadataOrNull (aReceiverID, aDocTypeID);
   }
 
+  private void _lookupEndpoint (@NonNull final IDocumentTypeIdentifier aDocTypeID,
+                                @NonNull final IProcessIdentifier aProcID,
+                                @NonNull final IParticipantIdentifier aReceiverID) throws Phase4Exception
+  {
+    try
+    {
+      final boolean bWildcard;
+      final SignedServiceMetadataType aSSM;
+
+      // PFUOI 4.3.0
+      aSSM = resolvedSchemeSpecificServiceMetadata (aReceiverID, aDocTypeID);
+      // This is just a heuristic, because it is only evaluated in logging
+      bWildcard = aSSM != null &&
+                  PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ()) &&
+                  aDocTypeID.getValue ().indexOf (PeppolIdentifierHelper.DOCUMENT_TYPE_WILDCARD_INDICATOR) >= 0;
+
+      if (aSSM != null)
+      {
+        m_aEndpoint = SMPClientReadOnly.getEndpointAt (aSSM.getServiceMetadata (),
+                                                       aProcID,
+                                                       m_aTP,
+                                                       PDTFactory.getCurrentLocalDateTime ());
+      }
+
+      if (m_aEndpoint == null)
+      {
+        throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
+                                      aReceiverID.getURIEncoded () +
+                                      ", " +
+                                      aDocTypeID.getURIEncoded () +
+                                      ", " +
+                                      aProcID.getURIEncoded () +
+                                      ", " +
+                                      m_aTP.getID () +
+                                      ")" +
+                                      (bWildcard ? " [wildcard]" : " [static]") +
+                                      " - " +
+                                      (aSSM == null ? "no ServiceMetadata found"
+                                                    : "failed to select endpoint from ServiceMetadata"))
+                                                                                                        .setRetryFeasible (false);
+      }
+
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Successfully resolved SMP endpoint (" +
+                      aReceiverID.getURIEncoded () +
+                      ", " +
+                      aDocTypeID.getURIEncoded () +
+                      ", " +
+                      aProcID.getURIEncoded () +
+                      ", " +
+                      m_aTP.getID () +
+                      ")" +
+                      (bWildcard ? " [wildcard]" : " [static]"));
+    }
+    catch (final SMPClientException ex)
+    {
+      final boolean bRetryFeasible = SMPRetryClassifier.isRetryFeasible (ex);
+      throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
+                                    aReceiverID.getURIEncoded () +
+                                    ", " +
+                                    aDocTypeID.getURIEncoded () +
+                                    ", " +
+                                    aProcID.getURIEncoded () +
+                                    ", " +
+                                    m_aTP.getID () +
+                                    ")",
+                                    ex).setRetryFeasible (bRetryFeasible);
+    }
+  }
+
   public void init (@NonNull final IDocumentTypeIdentifier aDocTypeID,
                     @NonNull final IProcessIdentifier aProcID,
                     @NonNull final IParticipantIdentifier aReceiverID) throws Phase4Exception
@@ -159,70 +230,11 @@ public class AS4EndpointDetailProviderPeppol implements IAS4EndpointDetailProvid
                       ")");
 
       // Perform SMP lookup
-      try
-      {
-        final boolean bWildcard;
-        final SignedServiceMetadataType aSSM;
-
-        // PFUOI 4.3.0
-        aSSM = resolvedSchemeSpecificServiceMetadata (aReceiverID, aDocTypeID);
-        // This is just a heuristic, because it is only evaluated in logging
-        bWildcard = aSSM != null &&
-                    PeppolIdentifierHelper.DOCUMENT_TYPE_SCHEME_PEPPOL_DOCTYPE_WILDCARD.equals (aDocTypeID.getScheme ()) &&
-                    aDocTypeID.getValue ().indexOf (PeppolIdentifierHelper.DOCUMENT_TYPE_WILDCARD_INDICATOR) >= 0;
-
-        if (aSSM != null)
-        {
-          m_aEndpoint = SMPClientReadOnly.getEndpointAt (aSSM.getServiceMetadata (),
-                                                         aProcID,
-                                                         m_aTP,
-                                                         PDTFactory.getCurrentLocalDateTime ());
-        }
-
-        if (m_aEndpoint == null)
-        {
-          throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
-                                        aReceiverID.getURIEncoded () +
-                                        ", " +
-                                        aDocTypeID.getURIEncoded () +
-                                        ", " +
-                                        aProcID.getURIEncoded () +
-                                        ", " +
-                                        m_aTP.getID () +
-                                        ")" +
-                                        (bWildcard ? " [wildcard]" : " [static]") +
-                                        " - " +
-                                        (aSSM == null ? "no ServiceMetadata found"
-                                                      : "failed to select endpoint from ServiceMetadata"))
-                                                                                                          .setRetryFeasible (false);
-        }
-
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Successfully resolved SMP endpoint (" +
-                        aReceiverID.getURIEncoded () +
-                        ", " +
-                        aDocTypeID.getURIEncoded () +
-                        ", " +
-                        aProcID.getURIEncoded () +
-                        ", " +
-                        m_aTP.getID () +
-                        ")" +
-                        (bWildcard ? " [wildcard]" : " [static]"));
-      }
-      catch (final SMPClientException ex)
-      {
-        final boolean bRetryFeasible = SMPRetryClassifier.isRetryFeasible (ex);
-        throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
-                                      aReceiverID.getURIEncoded () +
-                                      ", " +
-                                      aDocTypeID.getURIEncoded () +
-                                      ", " +
-                                      aProcID.getURIEncoded () +
-                                      ", " +
-                                      m_aTP.getID () +
-                                      ")",
-                                      ex).setRetryFeasible (bRetryFeasible);
-      }
+      SMPLookupTelemetry.runLookup (CPhase4Telemetry.SMP_PROVIDER_PEPPOL,
+                                    aDocTypeID,
+                                    aProcID,
+                                    m_aTP.getID (),
+                                    () -> _lookupEndpoint (aDocTypeID, aProcID, aReceiverID));
     }
   }
 

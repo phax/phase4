@@ -33,6 +33,7 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.phase4.logging.Phase4LoggerFactory;
+import com.helger.phase4.telemetry.CPhase4Telemetry;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
 import com.helger.smpclient.bdxr1.IBDXRExtendedServiceMetadataProvider;
@@ -107,6 +108,51 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
     return m_aEndpoint;
   }
 
+  private void _lookupEndpoint (@NonNull final IDocumentTypeIdentifier aDocTypeID,
+                                @NonNull final IProcessIdentifier aProcID,
+                                @NonNull final IParticipantIdentifier aReceiverID) throws Phase4Exception
+  {
+    try
+    {
+      m_aEndpoint = m_aSMPClient.getEndpoint (aReceiverID, aDocTypeID, aProcID, m_aTP);
+      if (m_aEndpoint == null)
+        throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
+                                      aReceiverID.getURIEncoded () +
+                                      ", " +
+                                      aDocTypeID.getURIEncoded () +
+                                      ", " +
+                                      aProcID.getURIEncoded () +
+                                      ", " +
+                                      m_aTP.getID () +
+                                      ")").setRetryFeasible (false);
+
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Successfully resolved SMP endpoint (" +
+                      aReceiverID.getURIEncoded () +
+                      ", " +
+                      aDocTypeID.getURIEncoded () +
+                      ", " +
+                      aProcID.getURIEncoded () +
+                      ", " +
+                      m_aTP.getID () +
+                      ")");
+    }
+    catch (final SMPClientException ex)
+    {
+      final boolean bRetryFeasible = SMPRetryClassifier.isRetryFeasible (ex);
+      throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
+                                    aReceiverID.getURIEncoded () +
+                                    ", " +
+                                    aDocTypeID.getURIEncoded () +
+                                    ", " +
+                                    aProcID.getURIEncoded () +
+                                    ", " +
+                                    m_aTP.getID () +
+                                    ")",
+                                    ex).setRetryFeasible (bRetryFeasible);
+    }
+  }
+
   public void init (@NonNull final IDocumentTypeIdentifier aDocTypeID,
                     @NonNull final IProcessIdentifier aProcID,
                     @NonNull final IParticipantIdentifier aReceiverID) throws Phase4Exception
@@ -129,45 +175,11 @@ public class AS4EndpointDetailProviderBDXR implements IAS4EndpointDetailProvider
                       ")");
 
       // Perform SMP lookup
-      try
-      {
-        m_aEndpoint = m_aSMPClient.getEndpoint (aReceiverID, aDocTypeID, aProcID, m_aTP);
-        if (m_aEndpoint == null)
-          throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
-                                        aReceiverID.getURIEncoded () +
-                                        ", " +
-                                        aDocTypeID.getURIEncoded () +
-                                        ", " +
-                                        aProcID.getURIEncoded () +
-                                        ", " +
-                                        m_aTP.getID () +
-                                        ")").setRetryFeasible (false);
-
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Successfully resolved SMP endpoint (" +
-                        aReceiverID.getURIEncoded () +
-                        ", " +
-                        aDocTypeID.getURIEncoded () +
-                        ", " +
-                        aProcID.getURIEncoded () +
-                        ", " +
-                        m_aTP.getID () +
-                        ")");
-      }
-      catch (final SMPClientException ex)
-      {
-        final boolean bRetryFeasible = SMPRetryClassifier.isRetryFeasible (ex);
-        throw new Phase4SMPException ("Failed to resolve SMP endpoint (" +
-                                      aReceiverID.getURIEncoded () +
-                                      ", " +
-                                      aDocTypeID.getURIEncoded () +
-                                      ", " +
-                                      aProcID.getURIEncoded () +
-                                      ", " +
-                                      m_aTP.getID () +
-                                      ")",
-                                      ex).setRetryFeasible (bRetryFeasible);
-      }
+      SMPLookupTelemetry.runLookup (CPhase4Telemetry.SMP_PROVIDER_BDXR1,
+                                    aDocTypeID,
+                                    aProcID,
+                                    m_aTP.getID (),
+                                    () -> _lookupEndpoint (aDocTypeID, aProcID, aReceiverID));
     }
   }
 
