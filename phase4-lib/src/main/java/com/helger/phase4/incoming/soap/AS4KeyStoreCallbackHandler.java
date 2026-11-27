@@ -34,7 +34,9 @@ import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
  * Internal WSS4J callback handler to check if a certain key alias is present in the
- * {@link IAS4CryptoFactory}, and if so return the password for accessing it.
+ * {@link IAS4CryptoFactory}, and if so return the password for accessing it. Only the usages
+ * {@link WSPasswordCallback#DECRYPT} and {@link WSPasswordCallback#SIGNATURE} are answered - all
+ * other callbacks (e.g. {@link WSPasswordCallback#USERNAME_TOKEN}) are left without a password.
  *
  * @author Philip Helger
  */
@@ -77,6 +79,15 @@ public final class AS4KeyStoreCallbackHandler implements CallbackHandler
       {
         throw new UnsupportedCallbackException (aCallback, "Unrecognized Callback");
       }
+      final int nUsage = aPasswordCallback.getUsage ();
+      if (nUsage != WSPasswordCallback.DECRYPT && nUsage != WSPasswordCallback.SIGNATURE)
+      {
+        // Never answer other usages (especially USERNAME_TOKEN) with a key password, as the
+        // identifier is controlled by the sender
+        LOGGER.warn ("Ignoring WSS4J password callback with unsupported usage " + _getUsage (nUsage));
+        continue;
+      }
+
       final String sKeyStoreAlias = aPasswordCallback.getIdentifier ();
 
       // Obtain the password from the crypto factory
@@ -87,14 +98,14 @@ public final class AS4KeyStoreCallbackHandler implements CallbackHandler
         LOGGER.info ("Found keystore password for alias '" +
                      sKeyStoreAlias +
                      "' and usage " +
-                     _getUsage (aPasswordCallback.getUsage ()));
+                     _getUsage (nUsage));
       }
       else
       {
         LOGGER.warn ("Found unsupported keystore alias '" +
                      sKeyStoreAlias +
                      "' and usage " +
-                     _getUsage (aPasswordCallback.getUsage ()));
+                     _getUsage (nUsage));
       }
     }
   }
