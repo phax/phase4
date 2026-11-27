@@ -18,6 +18,7 @@ package com.helger.phase4.config;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -36,6 +37,7 @@ import com.helger.config.IConfig;
 import com.helger.config.fallback.ConfigWithFallback;
 import com.helger.config.fallback.IConfigWithFallback;
 import com.helger.config.source.MultiConfigurationValueProvider;
+import com.helger.phase4.duplicate.EAS4IncomingDuplicateHandling;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 
 /**
@@ -73,14 +75,25 @@ public final class AS4Configuration
   public static final Duration DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_DURATION = Duration.ofMinutes (10);
 
   /**
-   * The boolean property to define whether an incoming duplicate message is answered with an ebMS
-   * Error (<code>EBMS:4001</code>) or whether it is silently ignored (the SPIs are not invoked and
-   * the usual Receipt is returned).
+   * The property to define how an incoming duplicate message is handled. Valid values are the IDs
+   * of {@link EAS4IncomingDuplicateHandling}: <code>error</code> (answer with the ebMS Error
+   * <code>EBMS:4001</code>), <code>dismiss</code> (do not invoke the SPIs, but return the usual
+   * Receipt) and <code>process</code> (invoke the SPIs again and return the usual Receipt).
+   *
+   * @since 5.0.0
+   */
+  public static final String PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING = "phase4.incoming.duplicate.handling";
+  public static final EAS4IncomingDuplicateHandling DEFAULT_PHASE4_INCOMING_DUPLICATE_HANDLING = EAS4IncomingDuplicateHandling.DEFAULT;
+  /**
+   * The legacy boolean property to define whether an incoming duplicate message is answered with an
+   * ebMS Error (<code>true</code>) or silently dismissed (<code>false</code>). It is only evaluated
+   * if {@link #PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING} is not configured. Use
+   * {@link #PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING} instead.
    *
    * @since 4.8.1
    */
+  @Deprecated (forRemoval = true, since = "5.0.0")
   public static final String PROPERTY_PHASE4_INCOMING_DUPLICATE_RETURNERROR = "phase4.incoming.duplicate.returnerror";
-  public static final boolean DEFAULT_PHASE4_INCOMING_DUPLICATE_RETURNERROR = true;
 
   /**
    * The int property for the maximum size of the header section of a single MIME part of an
@@ -185,6 +198,7 @@ public final class AS4Configuration
   private static final SimpleReadWriteLock RW_LOCK = new SimpleReadWriteLock ();
   @GuardedBy ("RW_LOCK")
   private static IConfigWithFallback s_aConfig = DEFAULT_INSTANCE;
+  private static final AtomicBoolean LEGACY_DUPLICATE_RETURNERROR_WARNED = new AtomicBoolean (false);
 
   private AS4Configuration ()
   {}
@@ -302,17 +316,57 @@ public final class AS4Configuration
   }
 
   /**
-   * @return <code>true</code> if an incoming duplicate message should be answered with an ebMS
-   *         Error (<code>EBMS:4001</code>), <code>false</code> if it should be silently ignored (no
-   *         SPI invocation, normal Receipt). The configuration item is
-   *         <code>phase4.incoming.duplicate.returnerror</code>. Defaults to <code>true</code>.
-   * @since 4.8.1
+   * @return The handling of incoming duplicate messages. The configuration item is
+   *         {@value #PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING}. If it is not present, the legacy
+   *         boolean configuration item <code>phase4.incoming.duplicate.returnerror</code> is
+   *         evaluated (<code>true</code> means {@link EAS4IncomingDuplicateHandling#RETURN_ERROR},
+   *         <code>false</code> means {@link EAS4IncomingDuplicateHandling#DISMISS}) and a warning
+   *         is logged once. Defaults to {@link EAS4IncomingDuplicateHandling#RETURN_ERROR}. Never
+   *         <code>null</code>.
+   * @since 5.0.0
    */
-  public static boolean isIncomingDuplicateReturnError ()
+  @NonNull
+  @SuppressWarnings ("removal")
+  public static EAS4IncomingDuplicateHandling getIncomingDuplicateHandling ()
   {
-    // Parse manually
-    final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_INCOMING_DUPLICATE_RETURNERROR);
-    return StringParser.parseBool (sValue, DEFAULT_PHASE4_INCOMING_DUPLICATE_RETURNERROR);
+    final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING);
+    if (sValue == null)
+    {
+      // Fall back to the legacy property
+      final String sLegacyValue = getConfig ().getAsString (PROPERTY_PHASE4_INCOMING_DUPLICATE_RETURNERROR);
+      if (sLegacyValue == null)
+        return DEFAULT_PHASE4_INCOMING_DUPLICATE_HANDLING;
+
+      final boolean bReturnError = StringParser.parseBool (sLegacyValue,
+                                                           DEFAULT_PHASE4_INCOMING_DUPLICATE_HANDLING ==
+                                                                         EAS4IncomingDuplicateHandling.RETURN_ERROR);
+      final EAS4IncomingDuplicateHandling eLegacyHandling = bReturnError ? EAS4IncomingDuplicateHandling.RETURN_ERROR
+                                                                         : EAS4IncomingDuplicateHandling.DISMISS;
+      // This method is called for every incoming message - so warn only once
+      if (LEGACY_DUPLICATE_RETURNERROR_WARNED.compareAndSet (false, true))
+        LOGGER.warn ("The configuration item '" +
+                     PROPERTY_PHASE4_INCOMING_DUPLICATE_RETURNERROR +
+                     "' is deprecated and will be removed in a future major version. Please use '" +
+                     PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING +
+                     "=" +
+                     eLegacyHandling.getID () +
+                     "' instead.");
+      return eLegacyHandling;
+    }
+
+    final EAS4IncomingDuplicateHandling eHandling = EAS4IncomingDuplicateHandling.getFromIDOrNull (sValue.trim ());
+    if (eHandling == null)
+    {
+      LOGGER.warn ("The value '" +
+                   sValue +
+                   "' of the configuration item '" +
+                   PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING +
+                   "' is invalid - using the default '" +
+                   DEFAULT_PHASE4_INCOMING_DUPLICATE_HANDLING.getID () +
+                   "' instead");
+      return DEFAULT_PHASE4_INCOMING_DUPLICATE_HANDLING;
+    }
+    return eHandling;
   }
 
   /**

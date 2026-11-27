@@ -590,6 +590,15 @@ public interface IAS4IncomingMessageState
   boolean isSoapHeaderElementProcessingSuccessful ();
 
   /**
+   * @return <code>true</code> if the incoming message was detected as a duplicate (the AS4 message
+   *         ID was already received), <code>false</code> otherwise. This can only be
+   *         <code>true</code> for the SPIs, if the duplicate handling is
+   *         {@link com.helger.phase4.duplicate.EAS4IncomingDuplicateHandling#PROCESS_AGAIN}.
+   * @since 5.0.0
+   */
+  boolean isDuplicate ();
+
+  /**
    * @return The crypto factory that was used to verify an eventually contained signature. May be
    *         <code>null</code>. If this is non-<code>null</code> it is NO indicator, whether a
    *         message was signed or not.

@@ -65,6 +65,7 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.duplicate.EAS4IncomingDuplicateHandling;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
@@ -390,6 +391,7 @@ public class AS4RequestHandler implements AutoCloseable
   private Supplier <? extends ICommonsList <IAS4IncomingMessageProcessorSPI>> m_aProcessorSupplier = AS4IncomingMessageProcessorManager::getAllProcessors;
   private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
   private IAS4ResponseSignalCustomizer m_aResponseSignalCustomizer;
+  private EAS4IncomingDuplicateHandling m_eIncomingDuplicateHandling = AS4Configuration.getIncomingDuplicateHandling ();
 
   public AS4RequestHandler (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
@@ -841,6 +843,34 @@ public class AS4RequestHandler implements AutoCloseable
   public final AS4RequestHandler setResponseSignalCustomizer (@Nullable final IAS4ResponseSignalCustomizer aResponseSignalCustomizer)
   {
     m_aResponseSignalCustomizer = aResponseSignalCustomizer;
+    return this;
+  }
+
+  /**
+   * @return The handling of incoming duplicate messages. Never <code>null</code>. Defaults to
+   *         {@link AS4Configuration#getIncomingDuplicateHandling()}.
+   * @since 5.0.0
+   */
+  @NonNull
+  public final EAS4IncomingDuplicateHandling getIncomingDuplicateHandling ()
+  {
+    return m_eIncomingDuplicateHandling;
+  }
+
+  /**
+   * Set the handling of incoming duplicate messages. This only applies if duplicate detection is not
+   * disabled in the PMode.
+   *
+   * @param eIncomingDuplicateHandling
+   *        The duplicate handling to be used. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 5.0.0
+   */
+  @NonNull
+  public final AS4RequestHandler setIncomingDuplicateHandling (@NonNull final EAS4IncomingDuplicateHandling eIncomingDuplicateHandling)
+  {
+    ValueEnforcer.notNull (eIncomingDuplicateHandling, "IncomingDuplicateHandling");
+    m_eIncomingDuplicateHandling = eIncomingDuplicateHandling;
     return this;
   }
 
@@ -1764,7 +1794,7 @@ public class AS4RequestHandler implements AutoCloseable
     final Ebms3UserMessage aEbmsUserMessage = aIncomingState.getEbmsUserMessage ();
     final Ebms3SignalMessage aEbmsSignalMessage = aIncomingState.getEbmsSignalMessage ();
 
-    boolean bIgnoredDuplicate = false;
+    boolean bDismissedDuplicate = false;
     if (aIncomingState.isSoapHeaderElementProcessingSuccessful ())
     {
       final String sProfileID = aIncomingState.getProfileID ();
@@ -1799,22 +1829,42 @@ public class AS4RequestHandler implements AutoCloseable
                                                    .isBreak ();
         if (bIsDuplicate)
         {
-          final String sDetails = "Not invoking SPIs, because message with Message ID '" +
-                                  sMessageID +
-                                  "' was already handled (this is a duplicate)";
-          if (AS4Configuration.isIncomingDuplicateReturnError ())
+          if (aIncomingState instanceof final AS4IncomingMessageState aRealIncomingState)
+            aRealIncomingState.setDuplicate (true);
+
+          switch (m_eIncomingDuplicateHandling)
           {
-            LOGGER.error (sDetails);
-            aEbmsErrorMessages.add (EEbmsError.EBMS_PHASE4_DUPLICATE.errorBuilder (m_aLocale)
-                                                                    .refToMessageInError (sMessageID)
-                                                                    .errorDetail (sDetails)
-                                                                    .build ());
-          }
-          else
-          {
-            // Silently ignore - no error, but no SPI invocation either
-            LOGGER.warn (sDetails + " - silently ignoring it");
-            bIgnoredDuplicate = true;
+            case RETURN_ERROR:
+            {
+              final String sDetails = "Not invoking SPIs, because message with Message ID '" +
+                                      sMessageID +
+                                      "' was already handled (this is a duplicate)";
+              LOGGER.error (sDetails);
+              aEbmsErrorMessages.add (EEbmsError.EBMS_PHASE4_DUPLICATE.errorBuilder (m_aLocale)
+                                                                      .refToMessageInError (sMessageID)
+                                                                      .errorDetail (sDetails)
+                                                                      .build ());
+              break;
+            }
+            case DISMISS:
+            {
+              // Silently dismiss - no error, but no SPI invocation either
+              LOGGER.warn ("Not invoking SPIs, because message with Message ID '" +
+                           sMessageID +
+                           "' was already handled (this is a duplicate) - silently dismissing it");
+              bDismissedDuplicate = true;
+              break;
+            }
+            case PROCESS_AGAIN:
+            {
+              // Process like a new message
+              LOGGER.warn ("Message with Message ID '" +
+                           sMessageID +
+                           "' was already handled (this is a duplicate) - processing it again");
+              break;
+            }
+            default:
+              throw new IllegalStateException ("Unsupported duplicate handling " + m_eIncomingDuplicateHandling);
           }
         }
         else
@@ -1842,9 +1892,9 @@ public class AS4RequestHandler implements AutoCloseable
       // Previous processing errors
       bCanInvokeSPIs = false;
     }
-    if (bIgnoredDuplicate)
+    if (bDismissedDuplicate)
     {
-      // Duplicate that is silently ignored
+      // Duplicate that is silently dismissed
       bCanInvokeSPIs = false;
     }
 
@@ -1858,9 +1908,10 @@ public class AS4RequestHandler implements AutoCloseable
     else
     {
       // If an AS4 profile is present, we check if we need to pass through ping
-      // messages or not
-      if (aIncomingState.isPingMessage ())
-        bCanInvokeSPIs = aAS4Profile.isInvokeSPIForPingMessage ();
+      // messages or not. This must never re-enable the SPI invocation, if it was
+      // disabled before (errors or dismissed duplicate).
+      if (aIncomingState.isPingMessage () && !aAS4Profile.isInvokeSPIForPingMessage ())
+        bCanInvokeSPIs = false;
     }
     if (aIncomingState.isPingMessage () && !bCanInvokeSPIs)
       LOGGER.info ("Received an AS4 Ping message - meaning it will NOT be handled by the custom handlers.");

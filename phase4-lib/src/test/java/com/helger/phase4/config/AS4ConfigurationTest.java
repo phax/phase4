@@ -27,6 +27,7 @@ import com.helger.base.system.SystemProperties;
 import com.helger.config.source.IConfigurationSource;
 import com.helger.config.source.resource.IConfigurationSourceResource;
 import com.helger.config.value.ConfiguredValue;
+import com.helger.phase4.duplicate.EAS4IncomingDuplicateHandling;
 
 /**
  * Test class of class {@link AS4Configuration}.
@@ -174,6 +175,45 @@ public final class AS4ConfigurationTest
     finally
     {
       SystemProperties.removePropertyValue (sKey);
+    }
+  }
+
+  @Test
+  @SuppressWarnings ("removal")
+  public void testIncomingDuplicateHandling ()
+  {
+    // Default value
+    assertEquals (EAS4IncomingDuplicateHandling.RETURN_ERROR, AS4Configuration.getIncomingDuplicateHandling ());
+
+    final String sKey = AS4Configuration.PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING;
+    final String sLegacyKey = AS4Configuration.PROPERTY_PHASE4_INCOMING_DUPLICATE_RETURNERROR;
+    try
+    {
+      for (final EAS4IncomingDuplicateHandling e : EAS4IncomingDuplicateHandling.values ())
+      {
+        SystemProperties.setPropertyValue (sKey, e.getID ());
+        assertEquals (e, AS4Configuration.getIncomingDuplicateHandling ());
+      }
+
+      // Invalid value - the default is used
+      SystemProperties.setPropertyValue (sKey, "bla");
+      assertEquals (EAS4IncomingDuplicateHandling.RETURN_ERROR, AS4Configuration.getIncomingDuplicateHandling ());
+
+      // The new property takes precedence over the legacy property
+      SystemProperties.setPropertyValue (sKey, EAS4IncomingDuplicateHandling.PROCESS_AGAIN.getID ());
+      SystemProperties.setPropertyValue (sLegacyKey, "false");
+      assertEquals (EAS4IncomingDuplicateHandling.PROCESS_AGAIN, AS4Configuration.getIncomingDuplicateHandling ());
+
+      // Legacy property only
+      SystemProperties.removePropertyValue (sKey);
+      assertEquals (EAS4IncomingDuplicateHandling.DISMISS, AS4Configuration.getIncomingDuplicateHandling ());
+      SystemProperties.setPropertyValue (sLegacyKey, "true");
+      assertEquals (EAS4IncomingDuplicateHandling.RETURN_ERROR, AS4Configuration.getIncomingDuplicateHandling ());
+    }
+    finally
+    {
+      SystemProperties.removePropertyValue (sKey);
+      SystemProperties.removePropertyValue (sLegacyKey);
     }
   }
 }

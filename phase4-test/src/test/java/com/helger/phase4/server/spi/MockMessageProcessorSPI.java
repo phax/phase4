@@ -24,7 +24,10 @@ import org.w3c.dom.Node;
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.collection.CollectionFind;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.CommonsHashMap;
 import com.helger.collection.commons.ICommonsList;
+import com.helger.collection.commons.ICommonsMap;
 import com.helger.http.header.HttpHeaderMap;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
@@ -67,6 +70,30 @@ public class MockMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
   private static final Logger LOGGER = Phase4LoggerFactory.getLogger (MockMessageProcessorSPI.class);
 
+  /** Message ID to the duplicate flags of all invocations with that message ID */
+  private static final ICommonsMap <String, ICommonsList <Boolean>> s_aUserMessageInvocations = new CommonsHashMap <> ();
+
+  private static synchronized void _recordUserMessageInvocation (@NonNull final String sMessageID,
+                                                                 final boolean bIsDuplicate)
+  {
+    s_aUserMessageInvocations.computeIfAbsent (sMessageID, k -> new CommonsArrayList <> ())
+                             .add (Boolean.valueOf (bIsDuplicate));
+  }
+
+  /**
+   * @param sMessageID
+   *        The AS4 message ID to check. May be <code>null</code>.
+   * @return The {@link IAS4IncomingMessageState#isDuplicate()} values of all invocations of
+   *         {@link #processAS4UserMessage} for the provided message ID, in invocation order. Never
+   *         <code>null</code> but maybe empty.
+   */
+  @NonNull
+  public static synchronized ICommonsList <Boolean> getAllUserMessageInvocationDuplicateFlags (@Nullable final String sMessageID)
+  {
+    final ICommonsList <Boolean> ret = s_aUserMessageInvocations.get (sMessageID);
+    return ret == null ? new CommonsArrayList <> () : ret.getClone ();
+  }
+
   @NonNull
   public AS4MessageProcessorResult processAS4UserMessage (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                           @NonNull final HttpHeaderMap aHttpHeaders,
@@ -77,6 +104,8 @@ public class MockMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
                                                           @NonNull final IAS4IncomingMessageState aState,
                                                           @NonNull final AS4ErrorList aProcessingErrorMessages)
   {
+    _recordUserMessageInvocation (aUserMessage.getMessageInfo ().getMessageId (), aState.isDuplicate ());
+
     // Is a MessageProperty with name "Exception" present?
     if (CollectionFind.containsAny (aUserMessage.getMessageProperties ().getProperty (),
                                     x -> x.getName ().equals ("Exception")))

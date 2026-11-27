@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.server.servlet;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.hc.core5.http.HttpEntity;
@@ -25,11 +26,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.base.concurrent.ThreadHelper;
+import com.helger.collection.commons.CommonsArrayList;
 import com.helger.collection.commons.CommonsHashMap;
 import com.helger.collection.commons.ICommonsMap;
 import com.helger.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
+import com.helger.phase4.ScopedAS4Configuration;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.duplicate.EAS4IncomingDuplicateHandling;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.messaging.http.HttpXMLEntity;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -38,7 +42,10 @@ import com.helger.phase4.model.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.PModeReceptionAwareness;
+import com.helger.phase4.model.message.AS4UserMessage;
 import com.helger.phase4.server.message.MockMessages;
+import com.helger.phase4.server.spi.MockMessageProcessorSPI;
+import com.helger.typeconvert.collection.StringMap;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -66,6 +73,68 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
 
     // Send again
     sendPlainMessageExpectError (aEntity, EEbmsError.EBMS_PHASE4_DUPLICATE.getErrorCode ());
+  }
+
+  @Test
+  public void testSendDuplicateMessageReturnError () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+    final AS4UserMessage aUserMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null);
+    final String sMessageID = aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
+    final HttpEntity aEntity = new HttpXMLEntity (aUserMsg.getAsSoapDocument (aPayload), m_eSoapVersion.getMimeType ());
+
+    try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.createTestConfig (new StringMap (AS4Configuration.PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING,
+                                                                                                   EAS4IncomingDuplicateHandling.RETURN_ERROR.getID ())))
+    {
+      sendPlainMessageExpectSuccess (aEntity);
+      sendPlainMessageExpectError (aEntity, EEbmsError.EBMS_PHASE4_DUPLICATE.getErrorCode ());
+    }
+
+    // The SPI was only invoked for the first message
+    assertEquals (new CommonsArrayList <> (Boolean.FALSE),
+                  MockMessageProcessorSPI.getAllUserMessageInvocationDuplicateFlags (sMessageID));
+  }
+
+  @Test
+  public void testSendDuplicateMessageDismiss () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+    final AS4UserMessage aUserMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null);
+    final String sMessageID = aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
+    final HttpEntity aEntity = new HttpXMLEntity (aUserMsg.getAsSoapDocument (aPayload), m_eSoapVersion.getMimeType ());
+
+    try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.createTestConfig (new StringMap (AS4Configuration.PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING,
+                                                                                                   EAS4IncomingDuplicateHandling.DISMISS.getID ())))
+    {
+      // Both times a Receipt is returned
+      assertTrue (sendPlainMessageExpectSuccess (aEntity).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+      assertTrue (sendPlainMessageExpectSuccess (aEntity).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    }
+
+    // The SPI was only invoked for the first message
+    assertEquals (new CommonsArrayList <> (Boolean.FALSE),
+                  MockMessageProcessorSPI.getAllUserMessageInvocationDuplicateFlags (sMessageID));
+  }
+
+  @Test
+  public void testSendDuplicateMessageProcessAgain () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+    final AS4UserMessage aUserMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null);
+    final String sMessageID = aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
+    final HttpEntity aEntity = new HttpXMLEntity (aUserMsg.getAsSoapDocument (aPayload), m_eSoapVersion.getMimeType ());
+
+    try (final ScopedAS4Configuration aSC = ScopedAS4Configuration.createTestConfig (new StringMap (AS4Configuration.PROPERTY_PHASE4_INCOMING_DUPLICATE_HANDLING,
+                                                                                                   EAS4IncomingDuplicateHandling.PROCESS_AGAIN.getID ())))
+    {
+      // Both times a Receipt is returned
+      assertTrue (sendPlainMessageExpectSuccess (aEntity).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+      assertTrue (sendPlainMessageExpectSuccess (aEntity).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    }
+
+    // The SPI was invoked twice, the second time flagged as duplicate
+    assertEquals (new CommonsArrayList <> (Boolean.FALSE, Boolean.TRUE),
+                  MockMessageProcessorSPI.getAllUserMessageInvocationDuplicateFlags (sMessageID));
   }
 
   @Test

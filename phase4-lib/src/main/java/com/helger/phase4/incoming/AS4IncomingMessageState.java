@@ -101,6 +101,7 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   private static final String KEY_SOAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL = "phase4.soap.header.element.processing.successful";
   private static final String KEY_CRYPTO_FACTORY_SIGN = "phase4.crypto-factory.sign";
   private static final String KEY_CRYPTO_FACTORY_CRYPT = "phase4.crypto-factory.crypt";
+  private static final String KEY_IS_DUPLICATE = "phase4.is.duplicate";
 
   private final OffsetDateTime m_aReceiptDT;
   private final ESoapVersion m_eSoapVersion;
@@ -520,6 +521,23 @@ public final class AS4IncomingMessageState extends AttributeContainerAny <String
   public void setSoapHeaderElementProcessingSuccessful (final boolean bSuccess)
   {
     putIn (KEY_SOAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL, bSuccess);
+  }
+
+  public boolean isDuplicate ()
+  {
+    return getAsBoolean (KEY_IS_DUPLICATE, false);
+  }
+
+  /**
+   * Remember whether the incoming message was detected as a duplicate.
+   *
+   * @param bIsDuplicate
+   *        <code>true</code> if it is a duplicate, <code>false</code> if not.
+   * @since 5.0.0
+   */
+  public void setDuplicate (final boolean bIsDuplicate)
+  {
+    putIn (KEY_IS_DUPLICATE, bIsDuplicate);
   }
 
   @Nullable
