@@ -25,15 +25,17 @@ import org.slf4j.Logger;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIImplementation;
+import com.helger.base.io.stream.StreamHelper;
 import com.helger.collection.CollectionFind;
 import com.helger.dbnalliance.xhe.DBNAllianceXHEData;
 import com.helger.http.header.HttpHeaderMap;
-import com.helger.io.file.SimpleFileIO;
+import com.helger.io.file.FileHelper;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.dbnalliance.server.APConfig;
 import com.helger.phase4.dbnalliance.server.storage.StorageHelper;
 import com.helger.phase4.dbnalliance.servlet.IPhase4DBNAllianceIncomingXHEHandlerSPI;
+import com.helger.phase4.dbnalliance.servlet.Phase4DBNAllianceIncomingXHE;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.AS4ErrorList;
@@ -42,7 +44,6 @@ import com.helger.phase4.incoming.IAS4IncomingMessageState;
 import com.helger.phase4.logging.Phase4LoggerFactory;
 import com.helger.phase4.model.error.EEbmsError;
 import com.helger.security.certificate.CertificateHelper;
-import com.helger.xhe.v10.XHE10XHEType;
 
 /**
  * Logging implementation of {@link IPhase4DBNAllianceIncomingXHEHandlerSPI}.
@@ -57,8 +58,7 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
   public void handleIncomingXHE (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                  @NonNull final HttpHeaderMap aHeaders,
                                  @NonNull final Ebms3UserMessage aUserMessage,
-                                 final byte @NonNull [] aXHEBytes,
-                                 @NonNull final XHE10XHEType aXHE,
+                                 @NonNull final Phase4DBNAllianceIncomingXHE aIncomingXHE,
                                  @NonNull final DBNAllianceXHEData aDBNAllianceXHE,
                                  @NonNull final IAS4IncomingMessageState aIncomingState,
                                  @NonNull final AS4ErrorList aProcessingErrorMessages) throws Exception
@@ -84,15 +84,18 @@ public class StoringDBNAllianceIncomingXHEHandlerSPI implements IPhase4DBNAllian
 
     // Example got that stores the data to disk
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".xhe");
-    LOGGER.info ("Now writing SBD to '" + aFile.getAbsolutePath () + "' (" + aXHEBytes.length + " bytes)");
+    LOGGER.info ("Now writing XHE to '" + aFile.getAbsolutePath () + "'");
 
-    if (SimpleFileIO.writeFile (aFile, aXHEBytes).isFailure ())
-      throw new IllegalStateException ("Failed to write SBD to '" +
-                                       aFile.getAbsolutePath () +
-                                       "' (" +
-                                       aXHEBytes.length +
-                                       " bytes)");
-    LOGGER.info ("Successfully wrote SBD to '" + aFile.getAbsolutePath () + "'");
+    // Stream the payload to disk, so that it is never held in memory as a whole
+    if (StreamHelper.copyByteStream ()
+                    .from (aIncomingXHE.getInputStream ())
+                    .closeFrom (true)
+                    .to (FileHelper.getBufferedOutputStream (aFile))
+                    .closeTo (true)
+                    .build ()
+                    .isFailure ())
+      throw new IllegalStateException ("Failed to write XHE to '" + aFile.getAbsolutePath () + "'");
+    LOGGER.info ("Successfully wrote XHE to '" + aFile.getAbsolutePath () + "' (" + aFile.length () + " bytes)");
 
     // TODO This is only demo code to force an error
     // Check if any "MessageProperty" with name "MockAction" is contained

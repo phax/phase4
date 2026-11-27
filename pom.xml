@@ -80,11 +80,11 @@
     <xmlsec.version>4.0.4</xmlsec.version>
     <wss4j.version>4.0.3</wss4j.version>
 
-    <ph-commons.version>12.8.0</ph-commons.version>
+    <ph-commons.version>12.9.0-SNAPSHOT</ph-commons.version>
     <ph-xsds.version>4.1.2</ph-xsds.version>
     <ph-ubl.version>10.2.0</ph-ubl.version>
     <ph-web.version>11.5.1</ph-web.version>
-    <peppol-commons.version>13.3.0</peppol-commons.version>
+    <peppol-commons.version>13.4.0-SNAPSHOT</peppol-commons.version>
     <peppol-reporting.version>5.0.0-SNAPSHOT</peppol-reporting.version>
     <peppol-ap-support.version>2.5.0-SNAPSHOT</peppol-ap-support.version>
   </properties>

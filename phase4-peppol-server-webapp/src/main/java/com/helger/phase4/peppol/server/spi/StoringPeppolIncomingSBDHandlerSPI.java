@@ -23,16 +23,16 @@ import java.util.Locale;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
-import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.annotation.Nonempty;
 import com.helger.annotation.style.IsSPIImplementation;
+import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.string.StringHelper;
 import com.helger.base.string.StringParser;
 import com.helger.collection.CollectionFind;
 import com.helger.http.CHttp;
 import com.helger.http.header.HttpHeaderMap;
-import com.helger.io.file.SimpleFileIO;
+import com.helger.io.file.FileHelper;
 import com.helger.peppol.reporting.api.PeppolReportingItem;
 import com.helger.peppol.reporting.api.PeppolReportingItemWithID;
 import com.helger.peppol.reporting.api.backend.IPeppolReportingBackend;
@@ -54,6 +54,7 @@ import com.helger.phase4.peppol.server.APConfig;
 import com.helger.phase4.peppol.server.reporting.AppReportingBackend;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI;
+import com.helger.phase4.peppol.servlet.Phase4PeppolIncomingSBD;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletMessageProcessorSPI;
 import com.helger.phase4.util.Phase4IncomingException;
 import com.helger.photon.io.PhotonWorkerPool;
@@ -72,8 +73,7 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
   public void handleIncomingSBD (@NonNull final IAS4IncomingMessageMetadata aMessageMetadata,
                                  @NonNull final HttpHeaderMap aHeaders,
                                  @NonNull final Ebms3UserMessage aUserMessage,
-                                 final byte @NonNull [] aSBDBytes,
-                                 @NonNull final StandardBusinessDocument aSBD,
+                                 @NonNull final Phase4PeppolIncomingSBD aIncomingSBD,
                                  @NonNull final PeppolSBDHData aPeppolSBD,
                                  @NonNull final IAS4IncomingMessageState aIncomingState,
                                  @NonNull final AS4ErrorList aProcessingErrorMessages) throws Exception
@@ -112,15 +112,18 @@ public class StoringPeppolIncomingSBDHandlerSPI implements IPhase4PeppolIncoming
 
     // Example got that stores the data to disk
     final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".sbd");
-    LOGGER.info ("Now writing SBD to '" + aFile.getAbsolutePath () + "' (" + aSBDBytes.length + " bytes)");
+    LOGGER.info ("Now writing SBD to '" + aFile.getAbsolutePath () + "'");
 
-    if (SimpleFileIO.writeFile (aFile, aSBDBytes).isFailure ())
-      throw new IllegalStateException ("Failed to write SBD to '" +
-                                       aFile.getAbsolutePath () +
-                                       "' (" +
-                                       aSBDBytes.length +
-                                       " bytes)");
-    LOGGER.info ("Successfully wrote SBD to '" + aFile.getAbsolutePath () + "'");
+    // Stream the payload to disk, so that it is never held in memory as a whole
+    if (StreamHelper.copyByteStream ()
+                    .from (aIncomingSBD.getInputStream ())
+                    .closeFrom (true)
+                    .to (FileHelper.getBufferedOutputStream (aFile))
+                    .closeTo (true)
+                    .build ()
+                    .isFailure ())
+      throw new IllegalStateException ("Failed to write SBD to '" + aFile.getAbsolutePath () + "'");
+    LOGGER.info ("Successfully wrote SBD to '" + aFile.getAbsolutePath () + "' (" + aFile.length () + " bytes)");
 
     {
       // TODO This is only demo code to force an error

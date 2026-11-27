@@ -17,8 +17,6 @@
 package com.helger.phase4.dbnalliance.servlet;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
@@ -35,13 +33,10 @@ import com.helger.annotation.style.CodingStyleguideUnaware;
 import com.helger.annotation.style.IsSPIImplementation;
 import com.helger.annotation.style.OverrideOnDemand;
 import com.helger.annotation.style.ReturnsMutableCopy;
-import com.helger.annotation.style.ReturnsMutableObject;
 import com.helger.annotation.style.UnsupportedOperation;
 import com.helger.annotation.style.UsedViaReflection;
 import com.helger.base.debug.GlobalDebug;
 import com.helger.base.enforce.ValueEnforcer;
-import com.helger.base.io.nonblocking.NonBlockingByteArrayOutputStream;
-import com.helger.base.io.stream.StreamHelper;
 import com.helger.base.spi.ServiceLoaderHelper;
 import com.helger.base.state.ETriState;
 import com.helger.base.string.StringHelper;
@@ -52,6 +47,7 @@ import com.helger.dbnalliance.commons.smp.EDBNAllianceTransportProfile;
 import com.helger.dbnalliance.xhe.DBNAllianceXHEData;
 import com.helger.dbnalliance.xhe.read.DBNAllianceXHEDataReadException;
 import com.helger.dbnalliance.xhe.read.DBNAllianceXHEDataReader;
+import com.helger.dbnalliance.xhe.read.EDBNAllianceXHEDataReadError;
 import com.helger.diagnostics.error.IError;
 import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.edelivery.smp.ISMPTransportProfile;
@@ -60,9 +56,7 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.IIdentifierFactory;
-import com.helger.phase4.attachment.AS4DecompressException;
-import com.helger.phase4.attachment.EAS4CompressionMode;
-import com.helger.phase4.attachment.IAS4Attachment;
+import com.helger.phase4.attachment.AS4ReadErrorRecordingInputStream;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
@@ -85,7 +79,6 @@ import com.helger.security.revocation.ERevocationCheckMode;
 import com.helger.smpclient.bdxr2.BDXR2ClientReadOnly;
 import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.xhe.v10.XHE10Marshaller;
-import com.helger.xhe.v10.XHE10XHEType;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xsds.bdxr.smp2.ac.CertificateType;
 import com.helger.xsds.bdxr.smp2.ac.EndpointType;
@@ -103,68 +96,6 @@ import com.helger.xsds.bdxr.smp2.ac.EndpointType;
 public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4IncomingMessageProcessorSPI
 {
   private static final String CERT_TYPE_CODE_SMP = "bdxr-as4-signing-encryption";
-
-  /**
-   * This class represents the data of a single AS4 attachment.
-   *
-   * @author Philip Helger
-   */
-  private static final class ReadAttachment
-  {
-    private String m_sID;
-    private String m_sMimeType;
-    private String m_sUncompressedMimeType;
-    private Charset m_aCharset;
-    private EAS4CompressionMode m_eCompressionMode;
-    private byte [] m_aPayloadBytes;
-    private XHE10XHEType m_aXHE;
-
-    private ReadAttachment ()
-    {}
-
-    @Nullable
-    public String getID ()
-    {
-      return m_sID;
-    }
-
-    @Nullable
-    public String getMimeType ()
-    {
-      return m_sMimeType;
-    }
-
-    @Nullable
-    public String getUncompressedMimeType ()
-    {
-      return m_sUncompressedMimeType;
-    }
-
-    @Nullable
-    public Charset getCharset ()
-    {
-      return m_aCharset;
-    }
-
-    @Nullable
-    public EAS4CompressionMode getCompressionMode ()
-    {
-      return m_eCompressionMode;
-    }
-
-    @ReturnsMutableObject
-    public byte @NonNull [] payloadBytes ()
-    {
-      return m_aPayloadBytes;
-    }
-
-    @NonNull
-    @ReturnsMutableObject
-    public XHE10XHEType xhe ()
-    {
-      return m_aXHE;
-    }
-  }
 
   public static final EDBNAllianceTransportProfile DEFAULT_TRANSPORT_PROFILE = EDBNAllianceTransportProfile.AS4_V1;
 
@@ -524,40 +455,60 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
       return AS4MessageProcessorResult.createFailure ();
     }
 
-    // Read all attachments and copy them into local objects. That eventually
-    // includes decompressing them.
-    final ICommonsList <ReadAttachment> aReadAttachments = new CommonsArrayList <> ();
-    if (aIncomingAttachments != null)
-    {
-      int nAttachmentIndex = 0;
-      for (final IAS4Attachment aIncomingAttachment : aIncomingAttachments)
-      {
-        final ReadAttachment a = new ReadAttachment ();
-        a.m_sID = aIncomingAttachment.getId ();
-        a.m_sMimeType = aIncomingAttachment.getMimeType ();
-        a.m_sUncompressedMimeType = aIncomingAttachment.getUncompressedMimeType ();
-        a.m_aCharset = aIncomingAttachment.getCharset ();
-        a.m_eCompressionMode = aIncomingAttachment.getCompressionMode ();
+    // The one and only - the count was checked above
+    final WSS4JAttachment aIncomingAttachment = aIncomingAttachments.getFirstOrNull ();
+    // The payload is not read into memory - every read decompresses it again
+    final Phase4DBNAllianceIncomingXHE aIncomingXHE = new Phase4DBNAllianceIncomingXHE (aIncomingAttachment.getInputStreamProvider ());
+    final IIdentifierFactory aIdentifierFactory = aReceiverCheckData.getIdentifierFactory ();
 
-        // This stream is decompressing if needed
-        try (final InputStream aSIS = aIncomingAttachment.getSourceStream ())
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug (sLogPrefix +
+                    "AS4 Attachment with ID [" +
+                    aIncomingAttachment.getId () +
+                    "] uses [" +
+                    aIncomingAttachment.getMimeType () +
+                    (aIncomingAttachment.getUncompressedMimeType () == null ? ""
+                                                                             : " - uncompressed " +
+                                                                               aIncomingAttachment.getUncompressedMimeType ()) +
+                    "] and [" +
+                    StringHelper.getToString (aIncomingAttachment.getCharset (), "no charset") +
+                    "]" +
+                    (aIncomingAttachment.getCompressionMode () == null ? "" : " and is compressed"));
+
+    // Read the XHE in a streaming way and check it against the DBNAlliance rules. The payload
+    // contents are not held in memory, but the complete document is parsed.
+    final DBNAllianceXHEData aDBNAllianceXHE;
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug (sLogPrefix + "Now evaluating the XHE against DBNAlliance rules");
+
+      final boolean bPerformValueChecks = aReceiverCheckData.isPerformXHEValueChecks ();
+      final ErrorList aXHEErrors = new ErrorList ();
+      final DBNAllianceXHEDataReader aReader = new DBNAllianceXHEDataReader (aIdentifierFactory)
+      {
+        @Override
+        protected XHE10Marshaller createXHEMarshaller ()
         {
-          // Get a decompressed copy
-          // And yes, for very large files, this is not a good idea
-          final NonBlockingByteArrayOutputStream aBAOS = new NonBlockingByteArrayOutputStream ();
-          if (StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aSIS, aBAOS).isSuccess ())
-          {
-            a.m_aPayloadBytes = aBAOS.getBufferOrCopy ();
-          }
+          // Collect the XML Schema errors for the response
+          final XHE10Marshaller ret = super.createXHEMarshaller ();
+          ret.setCollectErrors (aXHEErrors);
+          return ret;
         }
-        catch (final IOException | AS4DecompressException ex)
+      }.setPerformValueChecks (bPerformValueChecks);
+
+      AS4ReadErrorRecordingInputStream aRecordingIS = null;
+      try
+      {
+        aRecordingIS = new AS4ReadErrorRecordingInputStream (aIncomingXHE.getInputStream ());
+        aDBNAllianceXHE = aReader.extractDataStreaming (aRecordingIS);
+      }
+      catch (final IOException | DBNAllianceXHEDataReadException ex)
+      {
+        if (aRecordingIS == null || aRecordingIS.hasReadError ())
         {
-          // Fall through
-        }
-        if (a.m_aPayloadBytes == null)
-        {
-          final String sDetails = "Failed to decompress the payload of attachment #" + nAttachmentIndex;
-          LOGGER.error (sLogPrefix + sDetails);
+          // Opening or reading the payload failed - e.g. decompression or size limit
+          final String sDetails = "Failed to decompress the payload of the attachment";
+          LOGGER.error (sLogPrefix + sDetails, aRecordingIS == null ? ex : aRecordingIS.getReadError ());
           aProcessingErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.errorBuilder (aDisplayLocale)
                                                                              .refToMessageInError (sMessageID)
                                                                              .errorDetail (sDetails)
@@ -565,16 +516,10 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
           return AS4MessageProcessorResult.createFailure ();
         }
 
-        // Read data as XHE
-        // Hint for production systems: this may take a huge amount of memory,
-        // if the payload is large
-        final ErrorList aXHEErrors = new ErrorList ();
-        a.m_aXHE = new XHE10Marshaller ().setCollectErrors (aXHEErrors).read (a.m_aPayloadBytes);
-
-        // Only fail if the first attachment is not an XHE. The check for
-        // exactly 1 attachment is done above
-        if (nAttachmentIndex == 0 && a.m_aXHE == null)
+        final DBNAllianceXHEDataReadException aReadEx = (DBNAllianceXHEDataReadException) ex;
+        if (aReadEx.getErrorCode () == EDBNAllianceXHEDataReadError.INVALID_XHE_XML)
         {
+          // Not a valid XHE at all
           if (aXHEErrors.isEmpty ())
           {
             final String sDetails = "Failed to read the provided XHE document";
@@ -597,63 +542,22 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
                                                                  .build ());
             }
           }
-
           return AS4MessageProcessorResult.createFailure ();
         }
 
-        // We found a valid attachment - remember it
-        aReadAttachments.add (a);
-
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug (sLogPrefix +
-                        "AS4 Attachment " +
-                        nAttachmentIndex +
-                        " with ID [" +
-                        a.m_sID +
-                        "] uses [" +
-                        a.m_sMimeType +
-                        (a.m_sUncompressedMimeType == null ? null : " - uncompressed " + a.m_sUncompressedMimeType) +
-                        "] and [" +
-                        StringHelper.getToString (a.m_aCharset, "no charset") +
-                        "] and length is " +
-                        (a.m_aPayloadBytes == null ? "<error>" : Integer.toString (a.m_aPayloadBytes.length)) +
-                        " bytes" +
-                        (a.m_eCompressionMode == null ? "" : " of compressed payload"));
-        nAttachmentIndex++;
+        final String sMsg = "Failed to extract the DBNAlliance data from XHE.";
+        LOGGER.error (sLogPrefix + sMsg, aReadEx);
+        aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
+                                                           .refToMessageInError (aIncomingState.getMessageID ())
+                                                           .errorDetail (sMsg, aReadEx)
+                                                           .build ());
+        return AS4MessageProcessorResult.createFailure ();
       }
-    }
-
-    // The one and only
-    final ReadAttachment aReadAttachment = aReadAttachments.getFirstOrNull ();
-    final IIdentifierFactory aIdentifierFactory = aReceiverCheckData.getIdentifierFactory ();
-
-    // Extract DBNAlliance values from XHE
-    final DBNAllianceXHEData aDBNAllianceXHE;
-    try
-    {
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug (sLogPrefix + "Now evaluating the XHE against DBNAlliance rules");
-
-      // Interpret as DBNAlliance XHE and eventually perform consistency checks
-      final boolean bPerformValueChecks = aReceiverCheckData.isPerformXHEValueChecks ();
-      final DBNAllianceXHEDataReader aReader = new DBNAllianceXHEDataReader (aIdentifierFactory).setPerformValueChecks (bPerformValueChecks);
-
-      aDBNAllianceXHE = aReader.extractData (aReadAttachment.xhe ());
 
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug (sLogPrefix +
                       "The provided XHE is valid according to DBNAlliance rules, with value checks being " +
                       (bPerformValueChecks ? "enabled" : "disabled"));
-    }
-    catch (final DBNAllianceXHEDataReadException ex)
-    {
-      final String sMsg = "Failed to extract the DBNAlliance data from XHE.";
-      LOGGER.error (sLogPrefix + sMsg, ex);
-      aProcessingErrorMessages.add (EEbmsError.EBMS_OTHER.errorBuilder (aDisplayLocale)
-                                                         .refToMessageInError (aIncomingState.getMessageID ())
-                                                         .errorDetail (sMsg, ex)
-                                                         .build ());
-      return AS4MessageProcessorResult.createFailure ();
     }
 
     // If the receiver checks are activated, run them now
@@ -746,8 +650,7 @@ public class Phase4DBNAllianceServletMessageProcessorSPI implements IAS4Incoming
           aHandler.handleIncomingXHE (aMessageMetadata,
                                       aHttpHeaders.getClone (),
                                       aUserMessage.clone (),
-                                      aReadAttachment.payloadBytes (),
-                                      aReadAttachment.xhe (),
+                                      aIncomingXHE,
                                       aDBNAllianceXHE,
                                       aIncomingState,
                                       aProcessingErrorMessages);
