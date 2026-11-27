@@ -27,7 +27,7 @@
   </parent>
   <groupId>com.helger.phase4</groupId>
   <artifactId>phase4-bom</artifactId>
-  <version>4.9.3-SNAPSHOT</version>
+  <version>4.9.3</version>
   <packaging>pom</packaging>
   <name>phase4-bom</name>
   <description>Bill of Materials for all phase4 artifacts</description>
@@ -176,4 +176,8 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <scm>
+    <tag>phase4-parent-pom-4.9.3</tag>
+  </scm>
 </project>
