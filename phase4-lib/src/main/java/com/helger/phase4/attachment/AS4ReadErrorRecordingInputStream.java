@@ -34,7 +34,7 @@ import com.helger.base.io.stream.WrappedInputStream;
  */
 public class AS4ReadErrorRecordingInputStream extends WrappedInputStream
 {
-  private Exception m_aReadError;
+  private Exception m_aFirstReadError;
 
   /**
    * Constructor
@@ -49,8 +49,8 @@ public class AS4ReadErrorRecordingInputStream extends WrappedInputStream
 
   private void _remember (@NonNull final Exception ex)
   {
-    if (m_aReadError == null)
-      m_aReadError = ex;
+    if (m_aFirstReadError == null)
+      m_aFirstReadError = ex;
   }
 
   @Override
@@ -116,7 +116,7 @@ public class AS4ReadErrorRecordingInputStream extends WrappedInputStream
   @Nullable
   public final Exception getReadError ()
   {
-    return m_aReadError;
+    return m_aFirstReadError;
   }
 
   /**
@@ -124,6 +124,6 @@ public class AS4ReadErrorRecordingInputStream extends WrappedInputStream
    */
   public final boolean hasReadError ()
   {
-    return m_aReadError != null;
+    return m_aFirstReadError != null;
   }
 }
